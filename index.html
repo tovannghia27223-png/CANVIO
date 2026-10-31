@@ -3,12 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>CANVIO — Canva + PPT Morph Studio</title>
-<!-- Thư viện Konva.js cho Canvas 2D -->
+<title>CANVIO — Pro Template & Multi-Animation Studio</title>
 <script src="https://unpkg.com/konva@9/konva.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&family=Manrope:wght@700;800&display=swap" rel="stylesheet">
 <style>
-  :root{--navy:#172b43;--surface:#f5f7fa;--line:#e7ebf0;--ink:#17202c}
+  :root{--navy:#172b43;--surface:#f5f7fa;--line:#e7ebf0;--ink:#17202c;--gold:#c6a77b}
   *{box-sizing:border-box}body{margin:0;background:var(--surface);color:var(--ink);font-family:'DM Sans',sans-serif;display:flex;flex-direction:column;height:100vh}
   header{height:60px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 24px}
   .brand{font:800 18px Manrope;letter-spacing:1.5px;color:var(--navy)}
@@ -16,183 +15,274 @@
   button{background:var(--navy);color:#fff;border:0;border-radius:8px;padding:9px 16px;font-weight:700;cursor:pointer;transition:.2s}
   button:hover{opacity:.9}
   button.secondary{background:#fff;color:var(--ink);border:1px solid var(--line)}
-  .main-container{flex:1;display:grid;grid-template-columns:300px 1fr;overflow:hidden}
-  .sidebar{background:#fff;border-right:1px solid var(--line);padding:20px;display:flex;flex-direction:column;gap:15px}
+  .main-container{flex:1;display:grid;grid-template-columns:320px 1fr;overflow:hidden}
+  .sidebar{background:#fff;border-right:1px solid var(--line);padding:20px;display:flex;flex-direction:column;gap:16px;overflow-y:auto}
   .sidebar h3{font:800 14px Manrope;margin:0}
-  .slide-list{display:flex;flex-direction:column;gap:8px;overflow-y:auto;flex:1}
-  .slide-thumb{padding:12px;border:1px solid var(--line);border-radius:8px;cursor:pointer;background:#fafbfc;font-size:12px;font-weight:700}
-  .slide-thumb.active{border-color:var(--navy);background:#edf2f7}
-  .stage-area{display:grid;place-items:center;padding:20px;overflow:auto;background:#eef2f6}
+  .template-grid{display:grid;grid-template-columns:1fr;gap:10px}
+  .template-card{padding:12px;border:1px solid var(--line);border-radius:10px;cursor:pointer;background:#fafbfc;transition:.2s;text-align:left}
+  .template-card:hover,.template-card.active{border-color:var(--navy);background:#edf2f7}
+  .template-card h4{margin:0 0 4px;font-size:13px;font-weight:800}
+  .template-card p{margin:0;font-size:11px;color:#666}
+  .stage-area{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;overflow:auto;background:#eef2f6}
   #konva-stage-container{background:#fff;box-shadow:0 15px 40px #00000010;border-radius:12px;overflow:hidden}
+  .stage-controls{margin-top:15px;display:flex;gap:10px;align-items:center}
 </style>
 </head>
 <body>
 
 <header>
-  <div class="brand">✦ CANVIO STUDIO</div>
+  <div class="brand">✦ CANVIO CREATIVE STUDIO</div>
   <div class="toolbar">
-    <span id="slide-indicator" style="font-size:12px; font-weight:700; margin-right:10px;">Slide 1 / 2</span>
-    <button class="secondary" id="btn-prev">‹ Trước</button>
-    <button id="btn-play-morph">✨ Chạy Morph & Fade</button>
-    <button class="secondary" id="btn-next">Sau ›</button>
+    <span id="active-template-name" style="font-size:12px; font-weight:700; color:#555;">Đang chọn: Minimalist CV</span>
   </div>
 </header>
 
 <div class="main-container">
   <aside class="sidebar">
-    <h3>Quản lý Slide</h3>
-    <p style="font-size:11px;color:#666;margin:0">Chọn slide để xem hoặc cấu hình chuyển cảnh.</p>
-    <div class="slide-list" id="slide-list">
-      <!-- Danh sách slide render bằng JS -->
+    <h3>Kho Mẫu (Templates)</h3>
+    <p style="font-size:11px;color:#666;margin:0">Chọn mẫu để trải nghiệm các hiệu ứng animation khác nhau.</p>
+    <div class="template-grid" id="template-list">
+      <!-- Render bằng JavaScript -->
     </div>
   </aside>
+
   <main class="stage-area">
     <div id="konva-stage-container"></div>
+    <div class="stage-controls">
+      <button class="secondary" id="btn-prev">‹ Slide trước</button>
+      <span id="slide-indicator" style="font-size:12px; font-weight:700;">Slide 1 / 2</span>
+      <button id="btn-play-animation">▶ Chạy Hiệu Ứng (Play)</button>
+      <button class="secondary" id="btn-next">Slide sau ›</button>
+    </div>
   </main>
 </div>
 
 <script>
-// Cấu trúc dữ liệu dự án mẫu (Mỗi slide chứa các phần tử có chung morphId để chạy hiệu ứng Morph)
-const projectData = {
-  slides: [
-    {
-      id: "slide_1",
-      background: "#172b43",
-      elements: [
-        { morphId: "title", type: "text", text: "ALEX MORGAN", x: 60, y: 100, fontSize: 38, fill: "#ffffff", width: 500 },
-        { morphId: "role", type: "text", text: "HR Specialist & Creative Professional", x: 60, y: 155, fontSize: 16, fill: "#c6a77b", width: 400 },
-        { morphId: "card", type: "rect", x: 60, y: 220, width: 200, height: 200, fill: "#25415f", cornerRadius: 16 }
-      ]
-    },
-    {
-      id: "slide_2",
-      background: "#f8fafc",
-      elements: [
-        { morphId: "title", type: "text", text: "ALEX MORGAN", x: 400, y: 60, fontSize: 22, fill: "#172b43", width: 300 },
-        { morphId: "role", type: "text", text: "HR Specialist & Creative Professional", x: 400, y: 90, fontSize: 12, fill: "#7e8997", width: 300 },
-        { morphId: "card", type: "rect", x: 60, y: 60, width: 310, height: 400, fill: "#c6a77b", cornerRadius: 12 }
-      ]
-    }
-  ]
-};
+// 1. KHO MẪU (TEMPLATES) VỚI CÁC KIỂU ANIMATION KHÁC NHAU (Morph, Fade, Zoom, Slide)
+const templatesLibrary = [
+  {
+    id: "cv_minimal",
+    name: "Minimalist Tech CV",
+    category: "CV",
+    slides: [
+      {
+        background: "#172b43",
+        elements: [
+          { morphId: "name", type: "text", text: "ALEX MORGAN", x: 60, y: 120, fontSize: 36, fill: "#ffffff", animation: "fade-up" },
+          { morphId: "role", type: "text", text: "Senior HR Specialist", x: 60, y: 175, fontSize: 16, fill: "#c6a77b", animation: "fade-left" },
+          { morphId: "box", type: "rect", x: 60, y: 230, width: 150, height: 150, fill: "#25415f", cornerRadius: 12, animation: "zoom-in" }
+        ]
+      },
+      {
+        background: "#ffffff",
+        elements: [
+          { morphId: "name", type: "text", text: "ALEX MORGAN", x: 400, y: 60, fontSize: 22, fill: "#172b43", animation: "morph" },
+          { morphId: "role", type: "text", text: "Senior HR Specialist", x: 400, y: 90, fontSize: 12, fill: "#7e8997", animation: "morph" },
+          { morphId: "box", type: "rect", x: 60, y: 60, width: 310, height: 380, fill: "#c6a77b", cornerRadius: 12, animation: "morph" }
+        ]
+      }
+    ]
+  },
+  {
+    id: "portfolio_creative",
+    name: "Creative Portfolio",
+    category: "Portfolio",
+    slides: [
+      {
+        background: "#0f172a",
+        elements: [
+          { morphId: "title", type: "text", text: "CREATIVE WORKS", x: 60, y: 140, fontSize: 40, fill: "#f8fafc", animation: "slide-right" },
+          { morphId: "subtitle", type: "text", text: "Showcasing digital experiences & design systems.", x: 60, y: 200, fontSize: 16, fill: "#94a3b8", animation: "fade-up" }
+        ]
+      },
+      {
+        background: "#f8fafc",
+        elements: [
+          { morphId: "title", type: "text", text: "CREATIVE WORKS", x: 60, y: 50, fontSize: 24, fill: "#0f172a", animation: "morph" },
+          { morphId: "subtitle", type: "text", text: "Showcasing digital experiences & design systems.", x: 60, y: 80, fontSize: 12, fill: "#64748b", animation: "morph" },
+          { morphId: "card1", type: "rect", x: 60, y: 130, width: 280, height: 260, fill: "#38bdf8", cornerRadius: 16, animation: "bounce" },
+          { morphId: "card2", type: "rect", x: 370, y: 130, width: 280, height: 260, fill: "#c084fc", cornerRadius: 16, animation: "bounce" }
+        ]
+      }
+    ]
+  },
+  {
+    id: "poster_hiring",
+    name: "Startup Hiring Poster",
+    category: "Poster",
+    slides: [
+      {
+        background: "#fef3c7",
+        elements: [
+          { morphId: "headline", type: "text", text: "WE'RE HIRING!", x: 60, y: 100, fontSize: 50, fill: "#b45309", animation: "zoom-in" },
+          { morphId: "desc", type: "text", text: "Join our fast-growing product team in HCMC.", x: 60, y: 180, fontSize: 18, fill: "#78350f", animation: "fade-up" }
+        ]
+      },
+      {
+        background: "#b45309",
+        elements: [
+          { morphId: "headline", type: "text", text: "WE'RE HIRING!", x: 60, y: 60, fontSize: 26, fill: "#fef3c7", animation: "morph" },
+          { morphId: "desc", type: "text", text: "Join our fast-growing product team in HCMC.", x: 60, y: 100, fontSize: 12, fill: "#fde68a", animation: "morph" },
+          { morphId: "badge", type: "rect", x: 60, y: 160, width: 600, height: 240, fill: "#fef3c7", cornerRadius: 16, animation: "fade-up" }
+        ]
+      }
+    ]
+  }
+];
 
-class CanvioMorphEngine {
+// 2. ANIMATION & MORPH ENGINE
+class CanvioStudioEngine {
   constructor(containerId, width, height) {
     this.stage = new Konva.Stage({ container: containerId, width, height });
     this.layer = new Konva.Layer();
     this.stage.add(this.layer);
-    this.currentIdx = 0;
+    this.currentTemplate = templatesLibrary[0];
+    this.currentSlideIdx = 0;
   }
 
-  loadSlide(index, animateIn = false) {
-    this.currentIdx = index;
+  loadTemplate(template) {
+    this.currentTemplate = template;
+    this.currentSlideIdx = 0;
+    this.renderSlide(0, false);
+  }
+
+  renderSlide(index, playAnim = false) {
+    this.currentSlideIdx = index;
     this.layer.destroyChildren();
-    const slide = projectData.slides[index];
+    const slide = this.currentTemplate.slides[index];
     if (!slide) return;
 
-    // Nền slide
+    // Nền
     const bg = new Konva.Rect({ x: 0, y: 0, width: this.stage.width(), height: this.stage.height(), fill: slide.background });
     this.layer.add(bg);
 
     slide.elements.forEach((el, i) => {
       let node;
-      const initAlpha = animateIn ? 0 : 1;
-      const initY = animateIn ? el.y + 15 : el.y;
+      let cfg = { ...el, name: el.morphId };
 
-      const cfg = { ...el, y: initY, opacity: initAlpha, name: el.morphId };
+      // Thiết lập trạng thái ban đầu nếu chạy animation xuất hiện
+      if (playAnim) {
+        if (el.animation === "fade-up") { cfg.opacity = 0; cfg.y = el.y + 30; }
+        else if (el.animation === "zoom-in") { cfg.opacity = 0; cfg.scaleX = 0.2; cfg.scaleY = 0.2; }
+        else if (el.animation === "slide-right") { cfg.opacity = 0; cfg.x = el.x - 50; }
+        else { cfg.opacity = 0; }
+      }
+
       if (el.type === 'text') node = new Konva.Text(cfg);
       else if (el.type === 'rect') node = new Konva.Rect(cfg);
 
       if (node) {
         this.layer.add(node);
-        if (animateIn) {
-          new Konva.Tween({ node, duration: 0.7, y: el.y, opacity: 1, easing: Konva.Easings.EaseOut, delay: i * 0.08 }).play();
+        if (playAnim) {
+          new Konva.Tween({
+            node, duration: 0.8,
+            x: el.x, y: el.y, opacity: 1,
+            scaleX: 1, scaleY: 1,
+            easing: Konva.Easings.EaseOut,
+            delay: i * 0.1
+          }).play();
         }
       }
     });
+
     this.layer.draw();
-    updateUIState();
+    updateUI();
   }
 
-  morphTo(targetIndex) {
-    const toSlide = projectData.slides[targetIndex];
+  nextSlide() {
+    let nextIdx = (this.currentSlideIdx + 1) % this.currentTemplate.slides.length;
+    this.transitionTo(nextIdx);
+  }
+
+  prevSlide() {
+    let prevIdx = (this.currentSlideIdx - 1 + this.currentTemplate.slides.length) % this.currentTemplate.slides.length;
+    this.transitionTo(prevIdx);
+  }
+
+  // Chuyển slide kết hợp Morph & các hiệu ứng động
+  transitionTo(targetIndex) {
+    const toSlide = this.currentTemplate.slides[targetIndex];
     if (!toSlide) return;
 
     const existingNodes = this.layer.getChildren().filter(n => n.name());
 
-    // 1. Morph các phần tử cũ sang vị trí/thuộc tính mới ở slide đích
+    // 1. Morph các phần tử cũ
     existingNodes.forEach(node => {
       const target = toSlide.elements.find(e => e.morphId === node.name());
       if (target) {
         new Konva.Tween({
           node, duration: 1.0, easing: Konva.Easings.EaseInOut,
           x: target.x, y: target.y, width: target.width, height: target.height,
-          fill: target.fill, fontSize: target.fontSize || node.fontSize(), opacity: 1
+          fill: target.fill, fontSize: target.fontSize || node.fontSize(), opacity: 1, scaleX: 1, scaleY: 1
         }).play();
       } else {
-        new Konva.Tween({ node, duration: 0.4, opacity: 0 }).play();
+        new Konva.Tween({ node, duration: 0.3, opacity: 0 }).play();
       }
     });
 
-    // 2. Fade-in các phần tử hoàn toàn mới xuất hiện ở slide đích
+    // 2. Đưa các phần tử mới vào với hiệu ứng animation
     toSlide.elements.forEach((target, i) => {
       const existed = existingNodes.some(n => n.name() === target.morphId);
       if (!existed) {
         let newNode;
-        const cfg = { ...target, opacity: 0, y: target.y + 20, name: target.morphId };
+        let cfg = { ...target, opacity: 0, name: target.morphId };
+        
+        if (target.animation === "bounce") { cfg.scaleX = 0; cfg.scaleY = 0; }
+        else { cfg.y = target.y + 20; }
+
         if (target.type === 'text') newNode = new Konva.Text(cfg);
         else if (target.type === 'rect') newNode = new Konva.Rect(cfg);
 
         if (newNode) {
           this.layer.add(newNode);
-          new Konva.Tween({ node: newNode, duration: 0.8, y: target.y, opacity: 1, easing: Konva.Easings.EaseOut, delay: 0.3 + (i * 0.1) }).play();
+          new Konva.Tween({
+            node: newNode, duration: 0.8,
+            x: target.x, y: target.y, opacity: 1, scaleX: 1, scaleY: 1,
+            easing: Konva.Easings.BackEaseOut,
+            delay: 0.2 + (i * 0.08)
+          }).play();
         }
       }
     });
 
-    // Morph màu nền
+    // Đổi màu nền mượt mà
     const bgNode = this.layer.getChildren()[0];
     if (bgNode) {
       new Konva.Tween({ node: bgNode, duration: 1.0, fill: toSlide.background }).play();
     }
 
-    this.currentIdx = targetIndex;
-    updateUIState();
+    this.currentSlideIdx = targetIndex;
+    updateUI();
   }
 }
 
-// Khởi tạo ứng dụng
-const engine = new CanvioMorphEngine("konva-stage-container", 720, 520);
-engine.loadSlide(0, false);
+// Khởi chạy ứng dụng
+const studio = new CanvioStudioEngine("konva-stage-container", 700, 480);
+studio.loadTemplate(templatesLibrary[0]);
 
-function updateUIState() {
-  document.getElementById("slide-indicator").textContent = `Slide ${engine.currentIdx + 1} / ${projectData.slides.length}`;
-  document.querySelectorAll(".slide-thumb").forEach((el, idx) => {
-    el.classList.toggle("active", idx === engine.currentIdx);
-  });
-}
-
-// Render danh sách slide ở Sidebar
-const listEl = document.getElementById("slide-list");
-projectData.slides.forEach((s, idx) => {
-  const item = document.createElement("div");
-  item.className = `slide-thumb ${idx === 0 ? 'active' : ''}`;
-  item.textContent = `Slide ${idx + 1} (${s.id})`;
-  item.onclick = () => engine.morphTo(idx);
-  listEl.appendChild(item);
+// Render danh sách Template bên Sidebar
+const templateListEl = document.getElementById("template-list");
+templatesLibrary.forEach((tpl, idx) => {
+  const card = document.createElement("div");
+  card.className = `template-card ${idx === 0 ? 'active' : ''}`;
+  card.innerHTML = `<h4>${tpl.name}</h4><p>Danh mục: ${tpl.category} (${tpl.slides.length} slides)</p>`;
+  card.onclick = () => {
+    document.querySelectorAll(".template-card").forEach(c => c.classList.remove("active"));
+    card.classList.add("active");
+    document.getElementById("active-template-name").textContent = `Đang chọn: ${tpl.name}`;
+    studio.loadTemplate(tpl);
+  };
+  templateListEl.appendChild(card);
 });
 
-// Gắn sự kiện nút bấm
-document.getElementById("btn-prev").onclick = () => {
-  if (engine.currentIdx > 0) engine.morphTo(engine.currentIdx - 1);
-};
-document.getElementById("btn-next").onclick = () => {
-  if (engine.currentIdx < projectData.slides.length - 1) engine.morphTo(engine.currentIdx + 1);
-};
-document.getElementById("btn-play-morph").onclick = () => {
-  let next = (engine.currentIdx + 1) % projectData.slides.length;
-  engine.morphTo(next);
-};
+function updateUI() {
+  document.getElementById("slide-indicator").textContent = `Slide ${studio.currentSlideIdx + 1} / ${studio.currentTemplate.slides.length}`;
+}
+
+// Gắn sự kiện nút bấm điều khiển
+document.getElementById("btn-next").onclick = () => studio.nextSlide();
+document.getElementById("btn-prev").onclick = () => studio.prevSlide();
+document.getElementById("btn-play-animation").onclick = () => studio.renderSlide(studio.currentSlideIdx, true);
 </script>
 </body>
 </html>
