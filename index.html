@@ -2,333 +2,1200 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>FORMA — Professional Creative Career Studio</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CANVIO — Creative Career Studio</title>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://unpkg.com/konva@9/konva.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Manrope:wght@700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/konva@9/konva.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+
 <style>
-  :root {
-    --navy: #172b43; --navy2: #25415f; --ink: #17202c; --muted: #7e8997;
-    --line: #e7ebf0; --surface: #f5f7fa; --gold: #c6a77b; --green: #287c60;
-    --radius: 12px; --shadow: 0 15px 35px rgba(23,43,67,0.08);
-  }
-  *{box-sizing:border-box} body{margin:0;background:var(--surface);color:var(--ink);font-family:'DM Sans',sans-serif;height:100vh;overflow:hidden}
-  .hidden{display:none!important} button{cursor:pointer;font-family:inherit;transition:all .2s} button:disabled{opacity:.5;cursor:not-allowed}
-
-  /* AUTH MODAL & OVERLAY */
-  #auth-overlay{position:fixed;inset:0;background:rgba(23,43,67,0.8);backdrop-filter:blur(6px);display:grid;place-items:center;z-index:999}
-  .auth-card{background:#fff;padding:36px;border-radius:16px;width:100%;max-width:400px;box-shadow:var(--shadow)}
-  .auth-card h2{font:800 24px Manrope;margin:0 0 6px;color:var(--navy)}
-  .field{margin:14px 0} .field label{display:block;font-size:11px;font-weight:700;margin-bottom:6px}
-  .field input{width:100%;border:1px solid var(--line);border-radius:8px;padding:11px;outline:none}
-  .btn-primary{background:var(--navy);color:#fff;border:0;border-radius:8px;padding:11px 18px;font-weight:700}
-  .btn-primary:hover{background:var(--navy2)}
-  .btn-secondary{background:#fff;border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:10px 16px;font-weight:700}
-
-  /* MAIN APP LAYOUT */
-  #app{display:flex;height:100vh}
-  .sidebar{width:260px;background:#fff;border-right:1px solid var(--line);padding:24px 16px;display:flex;flex-direction:column;gap:8px}
-  .brand{font:800 20px Manrope;letter-spacing:1px;color:var(--navy);display:flex;align-items:center;gap:10px;margin-bottom:20px}
-  .brand-symbol{width:32px;height:32px;background:var(--navy);color:#fff;border-radius:8px;display:grid;place-items:center;font-weight:800}
-  .nav-btn{width:100%;background:none;border:0;text-align:left;padding:11px 14px;border-radius:9px;font-weight:700;color:var(--muted);display:flex;align-items:center;gap:10px}
-  .nav-btn.active,.nav-btn:hover{background:#edf2f7;color:var(--navy)}
-  
-  .main-stage{flex:1;display:flex;flex-direction:column;overflow:hidden}
-  header{height:65px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 30px}
-  .page{display:none;flex:1;padding:30px;overflow-y:auto} .page.active{display:block}
-
-  /* TEMPLATE GRID */
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;margin-top:20px}
-  .card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);cursor:pointer}
-  .card:hover{transform:translateY(-3px)}
-  .card-thumb{height:160px;display:grid;place-items:center;color:#fff;font:800 16px Manrope;padding:20px;text-align:center}
-  .card-body{padding:16px} .card-body h4{margin:0 0 6px;font-size:15px} .card-body p{margin:0;font-size:12px;color:var(--muted)}
-
-  /* STUDIO EDITOR */
-  .studio-layout{display:grid;grid-template-columns:300px 1fr;height:calc(100vh - 65px)}
-  .studio-panel{background:#fff;border-right:1px solid var(--line);padding:20px;display:flex;flex-direction:column;gap:16px}
-  .canvas-stage{display:flex;flex-direction:column;align-items:center;justify-content:center;background:#eef2f6;position:relative;padding:20px}
-  #konva-holder{background:#fff;box-shadow:0 20px 50px rgba(0,0,0,0.1);border-radius:12px;overflow:hidden}
-  .timeline-bar{position:absolute;bottom:25px;background:#fff;border:1px solid var(--line);padding:8px 20px;border-radius:30px;box-shadow:var(--shadow);display:flex;align-items:center;gap:12px}
-  .slide-dot{width:28px;height:28px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;font-size:11px;font-weight:700;cursor:pointer}
-  .slide-dot.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+:root{
+ --bg:#080b12;
+ --panel:#101521;
+ --panel2:#151c2a;
+ --line:#252d3c;
+ --text:#f4f5f8;
+ --muted:#8b95a8;
+ --gold:#d9b878;
+ --gold2:#f0d49a;
+ --blue:#7c9cff;
+ --danger:#f16d78;
+ --radius:14px;
+}
+*{box-sizing:border-box}
+body{
+ margin:0;background:var(--bg);color:var(--text);
+ font-family:"DM Sans",sans-serif;overflow:hidden;
+}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+.app{display:flex;height:100vh;width:100vw}
+.sidebar{
+ width:245px;min-width:245px;background:#0d111b;
+ border-right:1px solid var(--line);
+ display:flex;flex-direction:column;padding:22px 14px;
+}
+.brand{display:flex;align-items:center;gap:11px;padding:0 10px 28px}
+.brand-logo{
+ width:37px;height:37px;border-radius:11px;
+ display:grid;place-items:center;
+ background:linear-gradient(135deg,#f0d49a,#9e7840);
+ color:#17130b;font-weight:900;font-size:19px;
+}
+.brand-name{font-size:19px;font-weight:800;letter-spacing:2px}
+.brand-sub{font-size:9px;color:var(--muted);letter-spacing:2px}
+.nav-label{font-size:10px;color:#647087;padding:15px 12px 8px;letter-spacing:1.5px}
+.nav-item{
+ padding:11px 12px;border-radius:9px;color:#aeb7c7;
+ display:flex;align-items:center;gap:12px;font-size:13px;
+ margin:2px 0;transition:.2s;
+}
+.nav-item:hover,.nav-item.active{background:#20283a;color:var(--gold2)}
+.nav-icon{width:19px;text-align:center;font-size:16px}
+.sidebar-bottom{margin-top:auto}
+.user-box{
+ border-top:1px solid var(--line);padding:17px 7px 0;
+ display:flex;align-items:center;gap:10px;
+}
+.avatar{
+ width:35px;height:35px;border-radius:50%;
+ background:#27334c;display:grid;place-items:center;color:var(--gold2);
+ font-weight:700;
+}
+.user-info{min-width:0;flex:1}
+.user-info strong{font-size:12px;display:block;overflow:hidden;text-overflow:ellipsis}
+.user-info span{font-size:10px;color:var(--muted)}
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+.topbar{
+ height:65px;border-bottom:1px solid var(--line);
+ display:flex;align-items:center;justify-content:space-between;
+ padding:0 27px;background:#0b0f18;
+}
+.breadcrumb{font-size:13px;color:var(--muted)}
+.breadcrumb strong{color:var(--text)}
+.top-actions{display:flex;align-items:center;gap:10px}
+.btn{
+ border:1px solid var(--line);background:#171e2c;color:var(--text);
+ border-radius:9px;padding:9px 14px;font-size:12px;font-weight:600;
+}
+.btn:hover{border-color:var(--gold);color:var(--gold2)}
+.btn-primary{
+ background:linear-gradient(135deg,#e8cb91,#bd9858);
+ color:#17130c;border:0;
+}
+.btn-primary:hover{color:#17130c;filter:brightness(1.08)}
+.content{flex:1;overflow:auto;padding:30px}
+.page{display:none;max-width:1450px;margin:auto}
+.page.active{display:block}
+.page-heading{
+ display:flex;justify-content:space-between;align-items:center;
+ margin-bottom:25px;
+}
+h1{font-size:27px;margin:0 0 7px;letter-spacing:-.7px}
+.subtitle{font-size:12px;color:var(--muted)}
+.eyebrow{font-size:10px;color:var(--gold);letter-spacing:2px;margin-bottom:9px}
+.stats{
+ display:grid;grid-template-columns:repeat(4,1fr);gap:15px;margin-bottom:26px
+}
+.stat{
+ background:var(--panel);border:1px solid var(--line);
+ border-radius:var(--radius);padding:19px;
+}
+.stat-label{font-size:11px;color:var(--muted)}
+.stat-value{font-size:27px;font-weight:800;margin:12px 0 5px}
+.stat-foot{font-size:10px;color:#7e9c88}
+.section-title{font-size:15px;font-weight:700;margin:25px 0 15px}
+.design-grid{
+ display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:17px;
+}
+.design-card{
+ background:var(--panel);border:1px solid var(--line);
+ border-radius:13px;overflow:hidden;cursor:pointer;transition:.2s;
+}
+.design-card:hover{transform:translateY(-3px);border-color:#786744}
+.design-thumb{
+ height:175px;display:grid;place-items:center;
+ background:linear-gradient(135deg,#202b40,#101521);
+ overflow:hidden;
+}
+.design-thumb-inner{
+ width:105px;height:135px;background:#f5f1e9;color:#252525;
+ box-shadow:0 10px 30px #0008;padding:13px;font-size:8px;
+}
+.design-thumb-inner .fake-line{height:4px;background:#b6b6b6;margin:8px 0;width:80%}
+.design-card-info{padding:14px}
+.design-card-info strong{font-size:12px}
+.design-card-info p{font-size:10px;color:var(--muted);margin:6px 0 0}
+.template-categories{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}
+.chip{
+ background:#141b29;color:#aeb7c7;border:1px solid var(--line);
+ padding:8px 14px;border-radius:20px;font-size:11px;
+}
+.chip.active{background:#403521;color:var(--gold2);border-color:#806b43}
+.template-grid{
+ display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:17px
+}
+.template-card{
+ background:var(--panel);border:1px solid var(--line);
+ border-radius:12px;overflow:hidden;
+}
+.template-preview{
+ height:205px;display:grid;place-items:center;
+ background:#1a2231;position:relative;
+}
+.template-paper{
+ width:115px;height:155px;background:#f5f2eb;color:#222;
+ padding:14px;box-shadow:0 10px 30px #0008;
+}
+.template-paper h3{font-size:12px;margin:0 0 6px}
+.template-paper p{font-size:7px;color:#666}
+.template-paper i{display:block;height:3px;background:#ccc;margin:6px 0}
+.template-info{padding:13px}
+.template-info strong{font-size:12px}
+.template-info p{font-size:10px;color:var(--muted)}
+.template-info button{width:100%;margin-top:8px}
+.empty{
+ border:1px dashed #354057;border-radius:13px;
+ padding:55px;text-align:center;color:var(--muted);
+}
+.editor{
+ display:none;position:fixed;inset:0;background:var(--bg);z-index:20;
+ flex-direction:column;
+}
+.editor.open{display:flex}
+.editor-top{
+ height:58px;border-bottom:1px solid var(--line);
+ display:flex;align-items:center;justify-content:space-between;padding:0 17px;
+}
+.editor-body{flex:1;display:flex;min-height:0}
+.editor-left{
+ width:220px;min-width:220px;background:var(--panel);
+ border-right:1px solid var(--line);padding:15px;overflow:auto;
+}
+.editor-center{
+ flex:1;min-width:0;display:flex;flex-direction:column;
+ background:#171c27;
+}
+.editor-right{
+ width:245px;min-width:245px;background:var(--panel);
+ border-left:1px solid var(--line);padding:16px;overflow:auto;
+}
+.panel-heading{
+ font-size:10px;color:var(--muted);letter-spacing:1.5px;
+ margin:7px 0 14px;
+}
+.tool{
+ display:flex;align-items:center;gap:10px;padding:11px;
+ border:1px solid var(--line);border-radius:8px;margin-bottom:8px;
+ font-size:11px;color:#d2d8e2;background:#151c2a;
+}
+.tool:hover{border-color:var(--gold);color:var(--gold2)}
+.canvas-toolbar{
+ height:48px;display:flex;align-items:center;justify-content:center;
+ gap:8px;border-bottom:1px solid var(--line);
+}
+.canvas-workspace{
+ flex:1;display:grid;place-items:center;overflow:auto;padding:25px;
+}
+#stage-container{
+ background:white;box-shadow:0 15px 60px #0009;
+}
+.slidebar{
+ height:112px;border-top:1px solid var(--line);
+ display:flex;align-items:center;gap:12px;padding:12px 18px;
+ overflow-x:auto;background:#101521;
+}
+.slide-thumb{
+ min-width:110px;height:72px;border:1px solid var(--line);
+ border-radius:6px;background:#f5f2eb;color:#222;
+ display:grid;place-items:center;font-size:11px;position:relative;
+}
+.slide-thumb.active{border:2px solid var(--gold)}
+.slide-add{
+ min-width:75px;height:72px;border:1px dashed #566078;
+ border-radius:7px;background:transparent;color:var(--muted);font-size:20px;
+}
+.field{margin-bottom:15px}
+.field label{display:block;font-size:10px;color:var(--muted);margin-bottom:7px}
+.field input,.field select,.field textarea{
+ width:100%;background:#0c111b;border:1px solid var(--line);
+ border-radius:7px;color:var(--text);padding:10px;font-size:11px;
+ outline:none;
+}
+.field input:focus,.field textarea:focus{border-color:var(--gold)}
+.field input[type=color]{height:38px;padding:3px}
+.field input[type=range]{padding:0}
+.modal-backdrop{
+ display:none;position:fixed;inset:0;background:#000b;z-index:50;
+ align-items:center;justify-content:center;padding:20px;
+}
+.modal-backdrop.open{display:flex}
+.modal{
+ width:420px;max-width:100%;background:var(--panel);
+ border:1px solid var(--line);border-radius:15px;padding:25px;
+}
+.modal h2{font-size:19px;margin:0 0 8px}
+.modal p{font-size:11px;color:var(--muted);margin-bottom:20px}
+.toast{
+ position:fixed;bottom:22px;right:22px;z-index:100;
+ background:#202b3c;border:1px solid #45516a;border-radius:9px;
+ padding:12px 17px;font-size:12px;display:none;
+}
+.toast.show{display:block}
+@media(max-width:900px){
+ .sidebar{width:65px;min-width:65px;padding:15px 8px}
+ .brand{padding:0 5px 25px}
+ .brand-name,.brand-sub,.nav-label,.nav-item span:not(.nav-icon),
+ .user-info{display:none}
+ .nav-item{justify-content:center;padding:12px 5px}
+ .stats{grid-template-columns:repeat(2,1fr)}
+ .design-grid,.template-grid{grid-template-columns:repeat(2,1fr)}
+ .editor-left{width:65px;min-width:65px}
+ .editor-left .tool span:last-child{display:none}
+ .editor-right{width:190px;min-width:190px}
+}
+@media(max-width:600px){
+ .content{padding:17px}
+ .design-grid,.template-grid{grid-template-columns:1fr}
+ .stats{gap:8px}
+ .editor-right{display:none}
+}
 </style>
 </head>
-<body>
 
-<!-- 1. AUTH SYSTEM (Kết Nối Supabase Auth) -->
-<div id="auth-overlay">
-  <div class="auth-card">
-    <div class="brand"><span class="brand-symbol">F</span> FORMA</div>
-    <h2>Đăng Nhập Studio</h2>
-    <p style="font-size:12px;color:var(--muted);margin-bottom:20px">Tạo & Quản lý thiết kế trên Cloud.</p>
-    <form id="auth-form">
-      <div class="field"><label>Email</label><input id="email" type="email" value="demo@forma.ai" required></div>
-      <div class="field"><label>Mật khẩu</label><input id="password" type="password" value="123456" required></div>
-      <button class="btn-primary" style="width:100%" type="submit">Vào Studio →</button>
-      <p id="auth-msg" style="font-size:11px;color:red;margin-top:10px;text-align:center"></p>
-    </form>
+<body>
+<div class="app">
+ <aside class="sidebar">
+  <div class="brand">
+   <div class="brand-logo">C</div>
+   <div>
+    <div class="brand-name">CANVIO</div>
+    <div class="brand-sub">CREATIVE CAREER STUDIO</div>
+   </div>
   </div>
+
+  <div class="nav-label">WORKSPACE</div>
+  <div class="nav-item active" data-page="dashboard"><span class="nav-icon">⌂</span><span>Dashboard</span></div>
+  <div class="nav-item" data-page="projects"><span class="nav-icon">▦</span><span>My Designs</span></div>
+  <div class="nav-item" data-page="templates"><span class="nav-icon">▧</span><span>Template Library</span></div>
+
+  <div class="nav-label">CREATE</div>
+  <div class="nav-item" data-create="cv"><span class="nav-icon">▤</span><span>CV Studio</span></div>
+  <div class="nav-item" data-create="portfolio"><span class="nav-icon">▣</span><span>Portfolio Studio</span></div>
+  <div class="nav-item" data-create="poster"><span class="nav-icon">▩</span><span>Poster Studio</span></div>
+
+  <div class="nav-label">ACCOUNT</div>
+  <div class="nav-item" data-page="settings"><span class="nav-icon">⚙</span><span>Settings</span></div>
+
+  <div class="sidebar-bottom">
+   <div class="user-box">
+    <div class="avatar" id="user-avatar">G</div>
+    <div class="user-info">
+     <strong id="user-name">Guest</strong>
+     <span id="user-email">Not signed in</span>
+    </div>
+    <button class="btn" id="auth-button">Login</button>
+   </div>
+  </div>
+ </aside>
+
+ <main class="main">
+  <header class="topbar">
+   <div class="breadcrumb">CANVIO / <strong id="current-section">Dashboard</strong></div>
+   <div class="top-actions">
+    <button class="btn" id="open-templates">Explore templates</button>
+    <button class="btn btn-primary" id="new-design">＋ Create design</button>
+   </div>
+  </header>
+
+  <div class="content">
+   <section class="page active" id="page-dashboard">
+    <div class="page-heading">
+     <div>
+      <div class="eyebrow">YOUR CREATIVE SPACE</div>
+      <h1>Bring your career to life.</h1>
+      <div class="subtitle">Create professional CVs, portfolios and recruitment visuals.</div>
+     </div>
+     <button class="btn btn-primary" id="dashboard-create">＋ New project</button>
+    </div>
+
+    <div class="stats">
+     <div class="stat"><div class="stat-label">TOTAL DESIGNS</div><div class="stat-value" id="stat-designs">0</div><div class="stat-foot">Your creative projects</div></div>
+     <div class="stat"><div class="stat-label">CV PROJECTS</div><div class="stat-value" id="stat-cv">0</div><div class="stat-foot">Career documents</div></div>
+     <div class="stat"><div class="stat-label">PORTFOLIOS</div><div class="stat-value" id="stat-portfolio">0</div><div class="stat-foot">Personal showcases</div></div>
+     <div class="stat"><div class="stat-label">POSTERS</div><div class="stat-value" id="stat-poster">0</div><div class="stat-foot">Creative campaigns</div></div>
+    </div>
+
+    <div class="section-title">Recent designs</div>
+    <div class="design-grid" id="recent-grid"></div>
+   </section>
+
+   <section class="page" id="page-projects">
+    <div class="page-heading">
+     <div><div class="eyebrow">YOUR WORKSPACE</div><h1>My Designs</h1><div class="subtitle">Manage all your creative projects.</div></div>
+     <button class="btn btn-primary" id="projects-create">＋ Create design</button>
+    </div>
+    <div class="design-grid" id="all-designs-grid"></div>
+   </section>
+
+   <section class="page" id="page-templates">
+    <div class="page-heading">
+     <div><div class="eyebrow">DESIGN COLLECTION</div><h1>Template Library</h1><div class="subtitle">Start with a professional layout.</div></div>
+    </div>
+    <div class="template-categories">
+     <button class="chip active" data-category="all">All templates</button>
+     <button class="chip" data-category="cv">CV</button>
+     <button class="chip" data-category="portfolio">Portfolio</button>
+     <button class="chip" data-category="poster">Poster</button>
+    </div>
+    <div class="template-grid" id="template-grid"></div>
+   </section>
+
+   <section class="page" id="page-settings">
+    <div class="eyebrow">PREFERENCES</div><h1>Settings</h1>
+    <p class="subtitle">Manage your CANVIO account.</p>
+    <div class="section-title">Account</div>
+    <div class="stat" style="max-width:500px">
+     <div class="field"><label>Email</label><input id="settings-email" readonly></div>
+     <button class="btn" id="logout-button">Sign out</button>
+    </div>
+   </section>
+  </div>
+ </main>
 </div>
 
-<!-- 2. MAIN APPLICATION -->
-<div id="app" class="hidden">
-  <aside class="sidebar">
-    <div class="brand"><span class="brand-symbol">F</span> FORMA</div>
-    <button class="nav-btn active" data-page="dashboard">🏠 Dashboard</button>
-    <button class="nav-btn" data-page="templates">📂 Kho Mẫu Pro (10 Slides)</button>
-    <div style="margin-top:auto;font-size:11px;color:var(--muted);padding:10px">Acc: <span id="user-display">---</span></div>
+<!-- EDITOR -->
+<div class="editor" id="editor">
+ <div class="editor-top">
+  <div style="display:flex;align-items:center;gap:12px">
+   <button class="btn" id="close-editor">← Back</button>
+   <input id="design-title" value="Untitled design" style="background:transparent;border:0;color:white;font-weight:700;width:220px;outline:none">
+  </div>
+  <div style="display:flex;gap:8px">
+   <button class="btn" id="undo-button">↶ Undo</button>
+   <button class="btn" id="save-design">Save</button>
+   <button class="btn btn-primary" id="export-design">Export</button>
+  </div>
+ </div>
+
+ <div class="editor-body">
+  <aside class="editor-left">
+   <div class="panel-heading">ADD ELEMENTS</div>
+   <button class="tool" id="add-text"><span>Ｔ</span><span>Add text</span></button>
+   <button class="tool" id="add-heading"><span>H</span><span>Heading</span></button>
+   <button class="tool" id="add-rect"><span>▰</span><span>Rectangle</span></button>
+   <button class="tool" id="add-circle"><span>●</span><span>Circle</span></button>
+   <button class="tool" id="add-image"><span>▧</span><span>Upload image</span></button>
+   <input type="file" id="image-input" accept="image/*" hidden>
+   <div class="panel-heading" style="margin-top:25px">SLIDE MANAGEMENT</div>
+   <button class="tool" id="duplicate-slide"><span>▣</span><span>Duplicate slide</span></button>
+   <button class="tool" id="delete-slide"><span>－</span><span>Delete slide</span></button>
+   <div class="field" style="margin-top:20px">
+    <label>Canvas background</label>
+    <input type="color" id="background-color" value="#ffffff">
+   </div>
   </aside>
 
-  <main class="main-stage">
-    <header>
-      <strong id="header-title">FORMA Workspace</strong>
-      <button class="btn-secondary" id="btn-save-cloud">☁️ Lưu Bản Thiết Kế (Supabase)</button>
-    </header>
+  <section class="editor-center">
+   <div class="canvas-toolbar">
+    <span style="font-size:10px;color:var(--muted)">CANVAS</span>
+    <button class="btn" id="zoom-out">−</button>
+    <span id="zoom-label" style="font-size:11px">100%</span>
+    <button class="btn" id="zoom-in">＋</button>
+   </div>
+   <div class="canvas-workspace">
+    <div id="stage-container"></div>
+   </div>
+   <div class="slidebar" id="slidebar"></div>
+  </section>
 
-    <!-- Trang Dashboard -->
-    <section class="page active" id="page-dashboard">
-      <h2>Dự Án Động Nổi Bật</h2>
-      <p style="font-size:13px;color:var(--muted)">Chọn mẫu thiết kế chuyên nghiệp với chuỗi trình chiếu Morph 10 trang liền mạch.</p>
-      <div class="grid" id="dash-grid"></div>
-    </section>
-
-    <!-- Trang Kho Mẫu -->
-    <section class="page" id="page-templates">
-      <h2>Thư Viện Mẫu 10 Slide</h2>
-      <div class="grid" id="gallery-grid"></div>
-    </section>
-
-    <!-- Trang Studio Editor (Canvas Morph & Animation) -->
-    <section class="page" id="page-editor" style="padding:0">
-      <div class="studio-layout">
-        <aside class="studio-panel">
-          <h3 id="tpl-name" style="margin:0">Mẫu Thiết Kế</h3>
-          <p style="font-size:11px;color:var(--muted);margin:0">Tự động Morph giữa 10 Slide với các Animation khác nhau.</p>
-          <hr style="border:0;border-top:1px solid var(--line)">
-          <button class="btn-secondary" onclick="navigate('dashboard')">← Trở về Dashboard</button>
-          <div id="slide-list-preview" style="display:flex;flex-direction:column;gap:6px;overflow-y:auto;flex:1"></div>
-        </aside>
-
-        <main class="canvas-stage">
-          <div id="konva-holder"></div>
-          <div class="timeline-bar">
-            <button class="btn-secondary" id="btn-prev-slide" style="padding:4px 10px">‹</button>
-            <div id="slide-dots" style="display:flex;gap:4px"></div>
-            <button class="btn-secondary" id="btn-next-slide" style="padding:4px 10px">›</button>
-            <button class="btn-primary" id="btn-play-all" style="padding:6px 14px;background:var(--green)">▶ Auto Play (10 Trang)</button>
-          </div>
-        </main>
-      </div>
-    </section>
-  </main>
+  <aside class="editor-right">
+   <div class="panel-heading">OBJECT PROPERTIES</div>
+   <div id="no-selection" class="subtitle">Select an object to edit its properties.</div>
+   <div id="object-properties" style="display:none">
+    <div class="field"><label>Text</label><textarea id="prop-text" rows="3"></textarea></div>
+    <div class="field"><label>Font size</label><input id="prop-size" type="number" min="6" max="150"></div>
+    <div class="field"><label>Color</label><input id="prop-color" type="color" value="#222222"></div>
+    <div class="field"><label>Opacity</label><input id="prop-opacity" type="range" min="0" max="1" step=".05"></div>
+    <div class="field"><label>Position X</label><input id="prop-x" type="number"></div>
+    <div class="field"><label>Position Y</label><input id="prop-y" type="number"></div>
+    <div class="field"><label>Width</label><input id="prop-width" type="number"></div>
+    <div class="field"><label>Height</label><input id="prop-height" type="number"></div>
+    <button class="btn" id="delete-object" style="width:100%;color:var(--danger)">Delete object</button>
+   </div>
+  </aside>
+ </div>
 </div>
 
-<script>
-/* 1. SUPABASE CLIENT CONFIG (Dùng bảng designs vừa tạo) */
-const CONFIG = {
-  URL: "https://tjrbuixjmcgqgfxzdswi.supabase.co",
-  KEY: "sb_publishable_NzJCKHCmcXobu1KNMW3x9A_hL4-8gvy"
-};
-const db = window.supabase?.createClient(CONFIG.URL, CONFIG.KEY);
-let currentUser = null, activeDesignData = null;
+<!-- AUTH MODAL -->
+<div class="modal-backdrop" id="auth-modal">
+ <div class="modal">
+  <h2 id="auth-title">Welcome to CANVIO</h2>
+  <p>Sign in to save and manage your creative projects.</p>
+  <div class="field"><label>Email</label><input id="auth-email" type="email" placeholder="you@example.com"></div>
+  <div class="field"><label>Password</label><input id="auth-password" type="password" placeholder="Password"></div>
+  <div class="field" id="auth-name-field" style="display:none"><label>Full name</label><input id="auth-name" placeholder="Your name"></div>
+  <button class="btn btn-primary" id="auth-submit" style="width:100%">Sign in</button>
+  <p style="margin-top:15px;text-align:center">
+   <span id="auth-switch-text">New to CANVIO?</span>
+   <a href="#" id="auth-switch" style="color:var(--gold2)">Create account</a>
+  </p>
+  <button class="btn" id="auth-close" style="width:100%">Close</button>
+ </div>
+</div>
 
-/* 2. THƯ VIỆN MẪU PRO 10 SLIDES CHO CV, PORTFOLIO & POSTER */
-function generate10Slides(type, title, primaryColor) {
-  const slides = [];
-  for (let i = 1; i <= 10; i++) {
-    slides.push({
-      id: `slide_${i}`,
-      background: i % 2 === 1 ? primaryColor : "#ffffff",
-      elements: [
-        { morphId: "header_title", type: "text", text: `${title.toUpperCase()}`, x: i % 2 === 1 ? 50 : 380, y: 40, fontSize: i % 2 === 1 ? 28 : 20, fill: i % 2 === 1 ? "#ffffff" : primaryColor },
-        { morphId: "page_num", type: "text", text: `0${i} / 10`, x: 620, y: 40, fontSize: 14, fill: i % 2 === 1 ? "#c6a77b" : "#7e8997" },
-        { morphId: "main_card", type: "rect", x: i % 2 === 1 ? 50 : 50, y: 100, width: i % 2 === 1 ? 220 : 300, height: 320, fill: i % 2 === 1 ? "#ffffff20" : primaryColor, cornerRadius: 12 },
-        { morphId: "content_body", type: "text", text: `Trang ${i}: Trình bày chi tiết ${type === 'cv' ? 'Kinh nghiệm & Kỹ năng' : type === 'portfolio' ? 'Dự án nổi bật' : 'Thông tin chiến dịch'}`, x: i % 2 === 1 ? 300 : 380, y: 120, fontSize: 14, fill: i % 2 === 1 ? "#ffffff" : "#17202c", width: 300 }
-      ]
-    });
-  }
-  return slides;
+<div class="toast" id="toast"></div>
+
+<script>
+/* =========================================
+   CANVIO CONFIGURATION
+========================================= */
+const SUPABASE_URL = "https://tjrbuixjmcgqgfxzdswi.supabase.co";
+const SUPABASE_KEY = "sb_publishable_NzJCKHCmcXobu1KNMW3x9A_hL4-8gvy";
+
+const supabaseClient = window.supabase.createClient(
+ SUPABASE_URL,
+ SUPABASE_KEY
+);
+
+/* =========================================
+   APPLICATION STATE
+========================================= */
+const state = {
+ user:null,
+ designs:[],
+ currentDesign:null,
+ currentSlide:0,
+ slides:[],
+ stage:null,
+ layer:null,
+ transformer:null,
+ selected:null,
+ zoom:1,
+ history:[],
+ authMode:"login",
+ templateCategory:"all"
+};
+
+const $ = id => document.getElementById(id);
+
+function toast(message){
+ const el=$("toast");
+ el.textContent=message;
+ el.classList.add("show");
+ setTimeout(()=>el.classList.remove("show"),2600);
 }
 
-const templatesPro = [
-  { id: "cv_executive_10", name: "Executive 10-Page Master CV", type: "cv", color: "#172b43", slides: generate10Slides("cv", "Executive CV", "#172b43") },
-  { id: "portfolio_agency_10", name: "Agency Interactive Portfolio", type: "portfolio", color: "#25415f", slides: generate10Slides("portfolio", "Creative Portfolio", "#25415f") },
-  { id: "poster_campaign_10", name: "Hiring Campaign 10-Slide Deck", type: "poster", color: "#287c60", slides: generate10Slides("poster", "Recruitment Campaign", "#287c60") }
+/* =========================================
+   TEMPLATE LIBRARY
+========================================= */
+const templates = [
+ {id:"cv-01",type:"cv",name:"Executive Minimal",desc:"Clean professional CV",theme:"light",background:"#f7f5ef",accent:"#9b7846"},
+ {id:"cv-02",type:"cv",name:"Modern Professional",desc:"Contemporary career profile",theme:"dark",background:"#172235",accent:"#d9b878"},
+ {id:"cv-03",type:"cv",name:"Creative Profile",desc:"Creative CV layout",theme:"light",background:"#f0e9df",accent:"#8b6e9d"},
+ {id:"cv-04",type:"cv",name:"Corporate Classic",desc:"Traditional business CV",theme:"light",background:"#ffffff",accent:"#304c72"},
+ {id:"cv-05",type:"cv",name:"Elegant Editorial",desc:"Editorial-inspired resume",theme:"light",background:"#f3eee7",accent:"#9a654b"},
+
+ {id:"port-01",type:"portfolio",name:"Creative Showcase",desc:"Personal creative portfolio",theme:"dark",background:"#111827",accent:"#d9b878"},
+ {id:"port-02",type:"portfolio",name:"Architecture Studio",desc:"Minimal project presentation",theme:"light",background:"#f0eee9",accent:"#8d8d83"},
+ {id:"port-03",type:"portfolio",name:"Digital Designer",desc:"Modern digital portfolio",theme:"dark",background:"#19172b",accent:"#9a8cff"},
+ {id:"port-04",type:"portfolio",name:"Personal Brand",desc:"Professional personal brand",theme:"light",background:"#f6f2ed",accent:"#ad7757"},
+ {id:"port-05",type:"portfolio",name:"Business Profile",desc:"Corporate portfolio",theme:"light",background:"#edf1f5",accent:"#365a7a"},
+
+ {id:"poster-01",type:"poster",name:"Hiring Announcement",desc:"Professional recruitment poster",theme:"dark",background:"#182338",accent:"#e8c786"},
+ {id:"poster-02",type:"poster",name:"Job Opportunity",desc:"Modern job vacancy",theme:"light",background:"#f3eee5",accent:"#9d6547"},
+ {id:"poster-03",type:"poster",name:"Corporate Hiring",desc:"Corporate recruitment design",theme:"light",background:"#edf2f7",accent:"#294b73"},
+ {id:"poster-04",type:"poster",name:"Creative Campaign",desc:"Bold visual recruitment",theme:"dark",background:"#221b30",accent:"#d99bd4"},
+ {id:"poster-05",type:"poster",name:"Premium Recruitment",desc:"Premium hiring campaign",theme:"light",background:"#f6f0e6",accent:"#a47a3d"}
 ];
 
-/* 3. AUTHENTICATION & DATABASE SYNC */
-document.getElementById("auth-form").onsubmit = async (e) => {
-  e.preventDefault();
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-  try {
-    if (db) {
-      const { data, error } = await db.auth.signInWithPassword({ email, password });
-      if (error) {
-        const { data: signData, error: signErr } = await db.auth.signUp({ email, password });
-        if (signErr) throw signErr;
-        currentUser = signData.user;
-      } else {
-        currentUser = data.user;
-      }
-    }
-  } catch (err) {
-    console.warn("Auth Fallback Local Mode:", err.message);
-    currentUser = { id: "local-user-id", email };
+function templateMarkup(t){
+ return `
+ <div class="template-card">
+  <div class="template-preview">
+   <div class="template-paper" style="background:${t.background}">
+    <h3 style="color:${t.accent}">${t.name}</h3>
+    <p>YOUR NAME / PROFESSIONAL</p>
+    <i></i><i style="width:65%"></i>
+    <p>PROFILE</p><i></i><i></i><i style="width:75%"></i>
+    <p>EXPERIENCE</p><i></i><i style="width:80%"></i>
+   </div>
+  </div>
+  <div class="template-info">
+   <strong>${t.name}</strong>
+   <p>${t.desc}</p>
+   <button class="btn btn-primary" onclick="createFromTemplate('${t.id}')">Use template</button>
+  </div>
+ </div>`;
+}
+
+function renderTemplates(){
+ const list=templates.filter(t=>
+  state.templateCategory==="all"||t.type===state.templateCategory
+ );
+ $("template-grid").innerHTML=list.map(templateMarkup).join("");
+}
+
+function createFromTemplate(id){
+ const t=templates.find(x=>x.id===id);
+ if(!t)return;
+ const title=t.name;
+ const slides=[makeInitialSlide(t)];
+ openEditor({
+  id:null,
+  title,
+  type:t.type,
+  content:{slides}
+ });
+}
+
+function makeInitialSlide(t){
+ const dark=t.theme==="dark";
+ const textColor=dark?"#ffffff":"#242424";
+ return {
+  background:t.background,
+  objects:[
+   {id:crypto.randomUUID(),morphId:"title",kind:"text",x:65,y:75,width:650,height:75,text:t.type==="poster"?"WE ARE HIRING": "YOUR NAME",fontSize:42,fontFamily:"DM Sans",fill:t.accent,fontStyle:"bold"},
+   {id:crypto.randomUUID(),morphId:"subtitle",kind:"text",x:68,y:160,width:620,height:40,text:t.desc,fontSize:19,fill:textColor,fontFamily:"DM Sans"},
+   {id:crypto.randomUUID(),morphId:"line",kind:"rect",x:68,y:225,width:160,height:5,fill:t.accent},
+   {id:crypto.randomUUID(),morphId:"body",kind:"text",x:68,y:265,width:600,height:120,text:"Add your information here.\nBuild your professional story.",fontSize:17,fill:textColor,fontFamily:"DM Sans"}
+  ]
+ };
+}
+
+/* =========================================
+   NAVIGATION
+========================================= */
+function navigate(page){
+ document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+ $("page-"+page)?.classList.add("active");
+ document.querySelectorAll(".nav-item").forEach(n=>n.classList.toggle("active",n.dataset.page===page));
+ $("current-section").textContent=page==="dashboard"?"Dashboard":page==="projects"?"My Designs":page==="templates"?"Template Library":"Settings";
+ if(page==="templates")renderTemplates();
+}
+
+document.querySelectorAll(".nav-item[data-page]").forEach(el=>{
+ el.addEventListener("click",()=>navigate(el.dataset.page));
+});
+document.querySelectorAll(".nav-item[data-create]").forEach(el=>{
+ el.addEventListener("click",()=>createBlank(el.dataset.create));
+});
+$("open-templates").onclick=()=>navigate("templates");
+$("new-design").onclick=()=>showCreateOptions();
+$("dashboard-create").onclick=()=>showCreateOptions();
+$("projects-create").onclick=()=>showCreateOptions();
+
+/* =========================================
+   CREATE PROJECT
+========================================= */
+function showCreateOptions(){
+ const choice=prompt("Chọn loại thiết kế: cv / portfolio / poster","cv");
+ if(!choice)return;
+ if(!["cv","portfolio","poster"].includes(choice.toLowerCase())){
+  toast("Loại thiết kế không hợp lệ");return;
+ }
+ navigate("templates");
+ state.templateCategory=choice.toLowerCase();
+ document.querySelectorAll(".chip").forEach(c=>
+  c.classList.toggle("active",c.dataset.category===state.templateCategory)
+ );
+ renderTemplates();
+}
+
+function createBlank(type){
+ openEditor({
+  id:null,
+  title:"Untitled "+type,
+  type,
+  content:{slides:[{
+   background:"#ffffff",
+   objects:[]
+  }]}
+ });
+}
+
+/* =========================================
+   KONVA EDITOR
+========================================= */
+function openEditor(design){
+ state.currentDesign=design;
+ state.slides=structuredClone(design.content?.slides||[]);
+ if(!state.slides.length)state.slides=[{background:"#ffffff",objects:[]}];
+ state.currentSlide=0;
+ state.history=[];
+ state.selected=null;
+ $("design-title").value=design.title||"Untitled design";
+ $("editor").classList.add("open");
+ initializeStage();
+ renderSlides();
+ renderCurrentSlide();
+}
+
+function initializeStage(){
+ if(state.stage)state.stage.destroy();
+ const workspace=$("stage-container");
+ workspace.innerHTML="";
+ const width=800,height=520;
+ state.stage=new Konva.Stage({
+  container:"stage-container",
+  width:width,
+  height:height
+ });
+ state.layer=new Konva.Layer();
+ state.stage.add(state.layer);
+ state.transformer=new Konva.Transformer({
+  rotateEnabled:true,
+  borderStroke:"#d9b878",
+  anchorStroke:"#d9b878",
+  anchorFill:"#fff"
+ });
+ state.layer.add(state.transformer);
+ state.stage.on("click tap",e=>{
+  if(e.target===state.stage){
+   state.selected=null;
+   state.transformer.nodes([]);
+   renderProperties();
+   return;
   }
-  document.getElementById("auth-overlay").classList.add("hidden");
-  document.getElementById("app").classList.remove("hidden");
-  document.getElementById("user-display").textContent = currentUser?.email || email;
-  renderGrids();
-};
+  let node=e.target;
+  if(node===state.transformer)return;
+  state.selected=node;
+  state.transformer.nodes([node]);
+  renderProperties();
+  state.layer.batchDraw();
+ });
+}
 
-document.getElementById("btn-save-cloud").onclick = async () => {
-  if (!activeDesignData) return alert("Vui lòng chọn một mẫu để lưu!");
-  if (!db || !currentUser?.id) return alert("Đã lưu ở chế độ Local!");
+function renderCurrentSlide(){
+ const slide=state.slides[state.currentSlide];
+ if(!slide)return;
+ state.layer.destroyChildren();
+ state.transformer=new Konva.Transformer({
+  rotateEnabled:true,
+  borderStroke:"#d9b878",
+  anchorStroke:"#d9b878",
+  anchorFill:"#fff"
+ });
+ state.layer.add(state.transformer);
+ state.selected=null;
+ state.stage.container().style.background=slide.background||"#ffffff";
 
-  const payload = {
-    user_id: currentUser.id,
-    title: activeDesignData.name,
-    design_type: activeDesignData.type,
-    status: "draft",
-    content: { slides: activeDesignData.slides }
+ (slide.objects||[]).forEach(obj=>{
+  let node;
+  if(obj.kind==="text"){
+   node=new Konva.Text({
+    x:obj.x,y:obj.y,width:obj.width||300,
+    text:obj.text||"Text",
+    fontSize:obj.fontSize||24,
+    fontFamily:obj.fontFamily||"Arial",
+    fill:obj.fill||"#222222",
+    fontStyle:obj.fontStyle||"normal",
+    draggable:true,
+    opacity:obj.opacity??1
+   });
+  }else if(obj.kind==="rect"){
+   node=new Konva.Rect({
+    x:obj.x,y:obj.y,width:obj.width||150,
+    height:obj.height||80,
+    fill:obj.fill||"#d9b878",
+    draggable:true,
+    opacity:obj.opacity??1
+   });
+  }else if(obj.kind==="circle"){
+   node=new Konva.Circle({
+    x:obj.x,y:obj.y,radius:obj.radius||45,
+    fill:obj.fill||"#d9b878",
+    draggable:true,
+    opacity:obj.opacity??1
+   });
+  }else if(obj.kind==="image"&&obj.src){
+   const image=new Image();
+   image.onload=()=>{
+    node=new Konva.Image({
+     x:obj.x,y:obj.y,width:obj.width||200,
+     height:obj.height||150,image,
+     draggable:true,opacity:obj.opacity??1
+    });
+    node.setAttr("objectId",obj.id);
+    state.layer.add(node);
+    state.layer.draw();
+   };
+   image.src=obj.src;
+   return;
+  }
+  if(node){
+   node.setAttr("objectId",obj.id);
+   node.on("dragend transformend",()=>syncSlideObjects());
+   state.layer.add(node);
+  }
+ });
+ state.layer.draw();
+ $("background-color").value=slide.background||"#ffffff";
+ renderProperties();
+}
+
+function syncSlideObjects(){
+ const slide=state.slides[state.currentSlide];
+ slide.objects=state.layer.getChildren().filter(n=>
+  n!==state.transformer
+ ).map(n=>{
+  const id=n.getAttr("objectId");
+  const original=slide.objects.find(o=>o.id===id)||{};
+  const base={
+   ...original,
+   x:n.x(),y:n.y(),
+   width:n.width()*n.scaleX(),
+   height:n.height()*n.scaleY(),
+   opacity:n.opacity()
   };
+  if(n instanceof Konva.Text){
+   base.kind="text";base.text=n.text();
+   base.fontSize=n.fontSize();base.fill=n.fill();
+  }else if(n instanceof Konva.Rect){
+   base.kind="rect";base.fill=n.fill();
+  }else if(n instanceof Konva.Circle){
+   base.kind="circle";base.radius=n.radius();
+   base.fill=n.fill();
+  }else if(n instanceof Konva.Image){
+   base.kind="image";
+  }
+  return base;
+ });
+ renderSlides();
+}
 
-  const { error } = await db.from("designs").insert([payload]);
-  if (error) alert("Lỗi khi lưu Supabase: " + error.message);
-  else alert("✨ Đã lưu thiết kế và 10 Slides vào Supabase Database!");
+function addObject(kind){
+ const slide=state.slides[state.currentSlide];
+ const id=crypto.randomUUID();
+ const base={id,morphId:id,kind,x:100,y:100,width:300,height:70};
+ if(kind==="text"||kind==="heading"){
+  slide.objects.push({
+   ...base,kind:"text",
+   text:kind==="heading"?"Your heading":"Double-click to edit",
+   fontSize:kind==="heading"?38:22,
+   fill:"#222222",fontFamily:"DM Sans"
+  });
+ }else if(kind==="rect"){
+  slide.objects.push({...base,width:180,height:90,fill:"#d9b878"});
+ }else if(kind==="circle"){
+  slide.objects.push({...base,width:90,height:90,radius:45,fill:"#d9b878"});
+ }
+ renderCurrentSlide();
+}
+
+$("add-text").onclick=()=>addObject("text");
+$("add-heading").onclick=()=>addObject("heading");
+$("add-rect").onclick=()=>addObject("rect");
+$("add-circle").onclick=()=>addObject("circle");
+
+$("add-image").onclick=()=>$("image-input").click();
+$("image-input").onchange=async e=>{
+ const file=e.target.files?.[0];
+ if(!file)return;
+ const reader=new FileReader();
+ reader.onload=()=>{
+  state.slides[state.currentSlide].objects.push({
+   id:crypto.randomUUID(),morphId:crypto.randomUUID(),
+   kind:"image",x:100,y:100,width:250,height:180,src:reader.result
+  });
+  renderCurrentSlide();
+ };
+ reader.readAsDataURL(file);
+ e.target.value="";
 };
 
-/* 4. NAVIGATION & UI RENDERING */
-function navigate(pageId) {
-  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
-  document.querySelectorAll(".nav-btn").forEach(n => n.classList.remove("active"));
-  document.getElementById("page-" + pageId).classList.add("active");
-}
-document.querySelectorAll(".nav-btn[data-page]").forEach(b => b.onclick = () => navigate(b.dataset.page));
-
-function renderGrids() {
-  const html = templatesPro.map(t => `
-    <div class="card" onclick="openStudio('${t.id}')">
-      <div class="card-thumb" style="background:${t.color}">${t.name}</div>
-      <div class="card-body">
-        <h4>${t.name}</h4>
-        <p>${t.type.toUpperCase()} · 10 Slide Morph Animation</p>
-      </div>
-    </div>
-  `).join("");
-  document.getElementById("dash-grid").innerHTML = html;
-  document.getElementById("gallery-grid").innerHTML = html;
+/* =========================================
+   OBJECT INSPECTOR
+========================================= */
+function renderProperties(){
+ const n=state.selected;
+ $("no-selection").style.display=n?"none":"block";
+ $("object-properties").style.display=n?"block":"none";
+ if(!n)return;
+ $("prop-text").value=n instanceof Konva.Text?n.text():"";
+ $("prop-size").value=n instanceof Konva.Text?n.fontSize():24;
+ $("prop-color").value=toHex(n.fill());
+ $("prop-opacity").value=n.opacity();
+ $("prop-x").value=Math.round(n.x());
+ $("prop-y").value=Math.round(n.y());
+ $("prop-width").value=Math.round(n.width()*n.scaleX());
+ $("prop-height").value=Math.round(n.height()*n.scaleY());
 }
 
-/* 5. KONVA MORPH ENGINE (10 SLIDES AUTO PRESENTATION) */
-let studioEngine = null;
-
-function openStudio(tplId) {
-  activeDesignData = templatesPro.find(t => t.id === tplId);
-  if (!activeDesignData) return;
-  navigate("editor");
-  document.getElementById("tpl-name").textContent = activeDesignData.name;
-
-  if (studioEngine) studioEngine.stage.destroy();
-  studioEngine = new MorphStudioEngine("konva-holder", 700, 460, activeDesignData);
+function toHex(color){
+ if(typeof color!=="string"||!color.startsWith("rgb"))return color||"#222222";
+ const nums=color.match(/\d+/g);
+ if(!nums)return "#222222";
+ return "#"+nums.slice(0,3).map(n=>Number(n).toString(16).padStart(2,"0")).join("");
 }
 
-class MorphStudioEngine {
-  constructor(containerId, width, height, data) {
-    this.stage = new Konva.Stage({ container: containerId, width, height });
-    this.layer = new Konva.Layer();
-    this.stage.add(this.layer);
-    this.data = data;
-    this.currentIdx = 0;
-    this.autoTimer = null;
-
-    this.renderDots();
-    this.loadSlide(0);
-
-    document.getElementById("btn-next-slide").onclick = () => this.next();
-    document.getElementById("btn-prev-slide").onclick = () => this.prev();
-    document.getElementById("btn-play-all").onclick = () => this.playContinuous();
-  }
-
-  renderDots() {
-    const dotsHolder = document.getElementById("slide-dots");
-    dotsHolder.innerHTML = this.data.slides.map((_, i) => `
-      <div class="slide-dot ${i === 0 ? 'active' : ''}" onclick="studioEngine.morphTo(${i})">${i + 1}</div>
-    `).join("");
-
-    const previewList = document.getElementById("slide-list-preview");
-    previewList.innerHTML = this.data.slides.map((s, i) => `
-      <div class="btn-secondary" style="font-size:11px;padding:8px" onclick="studioEngine.morphTo(${i})">Slide ${i + 1} (${s.id})</div>
-    `).join("");
-  }
-
-  loadSlide(idx) {
-    this.currentIdx = idx;
-    this.layer.destroyChildren();
-    const slide = this.data.slides[idx];
-
-    const bg = new Konva.Rect({ x: 0, y: 0, width: this.stage.width(), height: this.stage.height(), fill: slide.background });
-    this.layer.add(bg);
-
-    slide.elements.forEach(el => {
-      let node;
-      const cfg = { ...el, name: el.morphId };
-      if (el.type === 'text') node = new Konva.Text(cfg);
-      else if (el.type === 'rect') node = new Konva.Rect(cfg);
-      if (node) this.layer.add(node);
-    });
-    this.layer.draw();
-    this.updateUI();
-  }
-
-  next() { this.morphTo((this.currentIdx + 1) % this.data.slides.length); }
-  prev() { this.morphTo((this.currentIdx - 1 + this.data.slides.length) % this.data.slides.length); }
-
-  morphTo(targetIdx) {
-    const toSlide = this.data.slides[targetIdx];
-    const existingNodes = this.layer.getChildren().filter(n => n.name());
-
-    existingNodes.forEach(node => {
-      const target = toSlide.elements.find(e => e.morphId === node.name());
-      if (target) {
-        new Konva.Tween({
-          node, duration: 0.8, easing: Konva.Easings.EaseInOut,
-          x: target.x, y: target.y, width: target.width, height: target.height,
-          fill: target.fill, fontSize: target.fontSize || node.fontSize()
-        }).play();
-      } else {
-        new Konva.Tween({ node, duration: 0.3, opacity: 0 }).play();
-      }
-    });
-
-    const bgNode = this.layer.getChildren()[0];
-    if (bgNode) {
-      new Konva.Tween({ node: bgNode, duration: 0.8, fill: toSlide.background }).play();
-    }
-
-    this.currentIdx = targetIdx;
-    this.updateUI();
-  }
-
-  playContinuous() {
-    clearInterval(this.autoTimer);
-    let step = 0;
-    this.autoTimer = setInterval(() => {
-      step = (this.currentIdx + 1) % this.data.slides.length;
-      this.morphTo(step);
-      if (step === 9) clearInterval(this.autoTimer); // Trình diễn đủ 10 trang
-    }, 1200);
-  }
-
-  updateUI() {
-    document.querySelectorAll(".slide-dot").forEach((d, i) => {
-      d.classList.toggle("active", i === this.currentIdx);
-    });
-  }
+function updateSelected(key,value){
+ const n=state.selected;if(!n)return;
+ if(key==="text"&&n instanceof Konva.Text)n.text(value);
+ else if(key==="fontSize"&&n instanceof Konva.Text)n.fontSize(Number(value));
+ else if(key==="fill")n.fill(value);
+ else if(key==="opacity")n.opacity(Number(value));
+ else if(key==="x"||key==="y")n[key](Number(value));
+ else if(key==="width"||key==="height"){
+  n[key](Number(value));n.scaleX(1);n.scaleY(1);
+ }
+ state.layer.batchDraw();
+ syncSlideObjects();
 }
+
+$("prop-text").oninput=e=>updateSelected("text",e.target.value);
+$("prop-size").onchange=e=>updateSelected("fontSize",e.target.value);
+$("prop-color").oninput=e=>updateSelected("fill",e.target.value);
+$("prop-opacity").oninput=e=>updateSelected("opacity",e.target.value);
+["x","y","width","height"].forEach(key=>{
+ $("prop-"+key).onchange=e=>updateSelected(key,e.target.value);
+});
+$("delete-object").onclick=()=>{
+ if(!state.selected)return;
+ const id=state.selected.getAttr("objectId");
+ state.selected.destroy();state.selected=null;
+ state.slides[state.currentSlide].objects=
+  state.slides[state.currentSlide].objects.filter(o=>o.id!==id);
+ state.transformer.nodes([]);
+ renderProperties();state.layer.draw();renderSlides();
+};
+
+/* =========================================
+   SLIDE MANAGEMENT
+========================================= */
+function renderSlides(){
+ const bar=$("slidebar");
+ bar.innerHTML=state.slides.map((s,i)=>`
+  <button class="slide-thumb ${i===state.currentSlide?"active":""}" data-slide="${i}">
+   <span>Slide ${i+1}</span>
+   <small>${s.objects?.length||0} objects</small>
+  </button>
+ `).join("")+`
+ <button class="slide-add" id="add-slide">＋</button>`;
+ bar.querySelectorAll("[data-slide]").forEach(el=>{
+  el.onclick=()=>{
+   syncSlideObjects();
+   state.currentSlide=Number(el.dataset.slide);
+   renderCurrentSlide();renderSlides();
+  };
+ });
+ $("add-slide").onclick=()=>{
+  if(state.slides.length>=10){toast("Tối đa 10 slide");return}
+  syncSlideObjects();
+  const previous=state.slides[state.currentSlide];
+  state.slides.push(structuredClone(previous));
+  state.slides[state.slides.length-1].objects=
+   state.slides[state.slides.length-1].objects.map(o=>({
+    ...o,id:crypto.randomUUID()
+   }));
+  state.currentSlide=state.slides.length-1;
+  renderCurrentSlide();renderSlides();
+ };
+}
+
+$("duplicate-slide").onclick=()=>{
+ if(state.slides.length>=10){toast("Tối đa 10 slide");return}
+ syncSlideObjects();
+ const copy=structuredClone(state.slides[state.currentSlide]);
+ copy.objects=copy.objects.map(o=>({...o,id:crypto.randomUUID()}));
+ state.slides.splice(state.currentSlide+1,0,copy);
+ state.currentSlide++;
+ renderCurrentSlide();renderSlides();
+};
+$("delete-slide").onclick=()=>{
+ if(state.slides.length<=1){toast("Thiết kế cần ít nhất một slide");return}
+ state.slides.splice(state.currentSlide,1);
+ state.currentSlide=Math.max(0,state.currentSlide-1);
+ renderCurrentSlide();renderSlides();
+};
+$("background-color").oninput=e=>{
+ state.slides[state.currentSlide].background=e.target.value;
+ state.stage.container().style.background=e.target.value;
+};
+
+/* =========================================
+   ZOOM
+========================================= */
+function setZoom(value){
+ state.zoom=Math.max(.4,Math.min(1.5,value));
+ state.stage.scale({x:state.zoom,y:state.zoom});
+ state.stage.width(800*state.zoom);
+ state.stage.height(520*state.zoom);
+ $("zoom-label").textContent=Math.round(state.zoom*100)+"%";
+}
+$("zoom-in").onclick=()=>setZoom(state.zoom+.1);
+$("zoom-out").onclick=()=>setZoom(state.zoom-.1);
+
+/* =========================================
+   UNDO SNAPSHOTS
+========================================= */
+function saveHistory(){
+ state.history.push(structuredClone(state.slides));
+ if(state.history.length>30)state.history.shift();
+}
+$("undo-button").onclick=()=>{
+ const previous=state.history.pop();
+ if(!previous){toast("Không có thao tác để hoàn tác");return}
+ state.slides=previous;
+ state.currentSlide=Math.min(state.currentSlide,state.slides.length-1);
+ renderCurrentSlide();renderSlides();
+};
+
+/* =========================================
+   SAVE DESIGN TO SUPABASE
+========================================= */
+async function saveDesign(){
+ if(!state.user){
+  toast("Đăng nhập để lưu thiết kế");
+  $("auth-modal").classList.add("open");return;
+ }
+ syncSlideObjects();
+ const title=$("design-title").value.trim()||"Untitled design";
+ const type=state.currentDesign.type||"cv";
+ const content={
+  version:1,
+  editor:"canvio",
+  slides:state.slides,
+  updated_at:new Date().toISOString()
+ };
+ const payload={
+  user_id:state.user.id,
+  title,type,content,
+  updated_at:new Date().toISOString()
+ };
+ let result;
+ if(state.currentDesign.id){
+  result=await supabaseClient.from("designs")
+   .update(payload).eq("id",state.currentDesign.id)
+   .eq("user_id",state.user.id).select().single();
+ }else{
+  result=await supabaseClient.from("designs")
+   .insert(payload).select().single();
+ }
+ if(result.error){console.error(result.error);toast("Lỗi lưu: "+result.error.message);return}
+ state.currentDesign={...result.data,type};
+ toast("Đã lưu thiết kế");
+ await loadDesigns();
+}
+$("save-design").onclick=saveDesign;
+
+/* =========================================
+   DESIGN LIST
+========================================= */
+function designCard(d){
+ const count=d.content?.slides?.length||1;
+ return `
+ <div class="design-card" onclick="editDesign('${d.id}')">
+  <div class="design-thumb">
+   <div class="design-thumb-inner">
+    <strong>${escapeHTML(d.title||"Untitled")}</strong>
+    <div class="fake-line"></div><div class="fake-line"></div>
+    <div class="fake-line"></div>
+   </div>
+  </div>
+  <div class="design-card-info">
+   <strong>${escapeHTML(d.title||"Untitled")}</strong>
+   <p>${escapeHTML(d.type||"design")} · ${count} slides</p>
+  </div>
+ </div>`;
+}
+function escapeHTML(value){
+ return String(value).replace(/[&<>"']/g,c=>({
+  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+ }[c]));
+}
+async function loadDesigns(){
+ if(!state.user){state.designs=[];renderDesignLists();return}
+ const {data,error}=await supabaseClient.from("designs")
+  .select("*").eq("user_id",state.user.id)
+  .order("updated_at",{ascending:false});
+ if(error){console.error(error);toast("Không tải được thiết kế");return}
+ state.designs=data||[];
+ renderDesignLists();
+}
+function renderDesignLists(){
+ $("recent-grid").innerHTML=state.designs.slice(0,3).map(designCard).join("")||
+  `<div class="empty">Your creative journey starts here.</div>`;
+ $("all-designs-grid").innerHTML=state.designs.map(designCard).join("")||
+  `<div class="empty">No designs yet. Create your first project.</div>`;
+ $("stat-designs").textContent=state.designs.length;
+ $("stat-cv").textContent=state.designs.filter(d=>d.type==="cv").length;
+ $("stat-portfolio").textContent=state.designs.filter(d=>d.type==="portfolio").length;
+ $("stat-poster").textContent=state.designs.filter(d=>d.type==="poster").length;
+}
+async function editDesign(id){
+ const d=state.designs.find(x=>x.id===id);
+ if(!d)return;
+ openEditor(d);
+}
+
+/* =========================================
+   EXPORT PNG / JPG / PDF
+========================================= */
+async function exportCurrent(){
+ syncSlideObjects();
+ const format=prompt("Xuất file: png / jpg / pdf","png");
+ if(!format)return;
+ const fmt=format.toLowerCase();
+ if(!["png","jpg","pdf"].includes(fmt)){toast("Định dạng chưa hỗ trợ");return}
+ const slides=state.slides;
+ if(fmt==="pdf"){
+  const {jsPDF}=window.jspdf;
+  const pdf=new jsPDF({orientation:"landscape",unit:"px",format:[800,520]});
+  for(let i=0;i<slides.length;i++){
+   if(i>0)pdf.addPage([800,520],"landscape");
+   const canvas=await renderSlideToCanvas(slides[i]);
+   pdf.addImage(canvas.toDataURL("image/jpeg",.95),"JPEG",0,0,800,520);
+  }
+  pdf.save("canvio-design.pdf");
+ }else{
+  const canvas=await renderSlideToCanvas(slides[state.currentSlide]);
+  const mime=fmt==="jpg"?"image/jpeg":"image/png";
+  const a=document.createElement("a");
+  a.href=canvas.toDataURL(mime,.95);
+  a.download="canvio-slide-"+(state.currentSlide+1)+"."+fmt;
+  a.click();
+ }
+ toast("Đã xuất file");
+}
+function renderSlideToCanvas(slide){
+ return new Promise(resolve=>{
+  const temp=document.createElement("div");
+  temp.style.position="fixed";temp.style.left="-9999px";
+  document.body.appendChild(temp);
+  const stage=new Konva.Stage({container:temp,width:800,height:520});
+  const layer=new Konva.Layer();stage.add(layer);
+  const bg=new Konva.Rect({x:0,y:0,width:800,height:520,fill:slide.background||"#fff"});
+  layer.add(bg);
+  let pending=0;
+  const finish=()=>{
+   layer.draw();
+   const canvas=stage.toCanvas({pixelRatio:2});
+   stage.destroy();temp.remove();resolve(canvas);
+  };
+  (slide.objects||[]).forEach(o=>{
+   if(o.kind==="text"){
+    layer.add(new Konva.Text({
+     x:o.x,y:o.y,width:o.width,text:o.text,
+     fontSize:o.fontSize,fill:o.fill,fontFamily:o.fontFamily||"Arial",
+     fontStyle:o.fontStyle||"normal"
+    }));
+   }else if(o.kind==="rect"){
+    layer.add(new Konva.Rect({
+     x:o.x,y:o.y,width:o.width,height:o.height,fill:o.fill
+    }));
+   }else if(o.kind==="circle"){
+    layer.add(new Konva.Circle({
+     x:o.x,y:o.y,radius:o.radius,fill:o.fill
+    }));
+   }else if(o.kind==="image"&&o.src){
+    pending++;
+    const img=new Image();
+    img.onload=()=>{
+     layer.add(new Konva.Image({x:o.x,y:o.y,width:o.width,height:o.height,image:img}));
+     pending--;if(pending===0)finish();
+    };
+    img.onerror=()=>{pending--;if(pending===0)finish()};
+    img.src=o.src;
+   }
+  });
+  if(pending===0)finish();
+ });
+}
+$("export-design").onclick=exportCurrent;
+
+/* =========================================
+   AUTHENTICATION
+========================================= */
+function showAuth(){
+ $("auth-modal").classList.add("open");
+}
+$("auth-button").onclick=showAuth;
+$("auth-close").onclick=()=>$("auth-modal").classList.remove("open");
+$("auth-switch").onclick=e=>{
+ e.preventDefault();
+ state.authMode=state.authMode==="login"?"register":"login";
+ const register=state.authMode==="register";
+ $("auth-title").textContent=register?"Create your CANVIO account":"Welcome to CANVIO";
+ $("auth-submit").textContent=register?"Create account":"Sign in";
+ $("auth-name-field").style.display=register?"block":"none";
+ $("auth-switch-text").textContent=register?"Already have an account?":"New to CANVIO?";
+ $("auth-switch").textContent=register?"Sign in":"Create account";
+};
+$("auth-submit").onclick=async()=>{
+ const email=$("auth-email").value.trim();
+ const password=$("auth-password").value;
+ if(!email||!password){toast("Vui lòng nhập email và mật khẩu");return}
+ let result;
+ if(state.authMode==="register"){
+  result=await supabaseClient.auth.signUp({
+   email,password,
+   options:{data:{full_name:$("auth-name").value.trim()}}
+  });
+ }else{
+  result=await supabaseClient.auth.signInWithPassword({email,password});
+ }
+ if(result.error){toast(result.error.message);return}
+ if(state.authMode==="register"&&!result.data.session){
+  toast("Kiểm tra email để xác nhận tài khoản");
+  return;
+ }
+ $("auth-modal").classList.remove("open");
+ toast("Đăng nhập thành công");
+ await loadUser();
+};
+
+async function loadUser(){
+ const {data}=await supabaseClient.auth.getUser();
+ state.user=data?.user||null;
+ if(state.user){
+  const name=state.user.user_metadata?.full_name||state.user.email;
+  $("user-name").textContent=name;
+  $("user-email").textContent=state.user.email;
+  $("user-avatar").textContent=(name[0]||"U").toUpperCase();
+  $("auth-button").textContent="Account";
+  $("settings-email").value=state.user.email;
+ }else{
+  $("user-name").textContent="Guest";
+  $("user-email").textContent="Not signed in";
+  $("user-avatar").textContent="G";
+  $("auth-button").textContent="Login";
+  $("settings-email").value="";
+ }
+ await loadDesigns();
+}
+$("logout-button").onclick=async()=>{
+ await supabaseClient.auth.signOut();
+ await loadUser();navigate("dashboard");toast("Đã đăng xuất");
+};
+supabaseClient.auth.onAuthStateChange(()=>loadUser());
+
+/* =========================================
+   EDITOR EXIT
+========================================= */
+$("close-editor").onclick=()=>{
+ if(confirm("Đóng trình chỉnh sửa? Hãy lưu trước khi rời đi.")){
+  $("editor").classList.remove("open");
+  navigate("projects");
+ }
+};
+
+/* =========================================
+   STARTUP
+========================================= */
+document.querySelectorAll(".chip").forEach(chip=>{
+ chip.onclick=()=>{
+  state.templateCategory=chip.dataset.category;
+  document.querySelectorAll(".chip").forEach(c=>c.classList.toggle("active",c===chip));
+  renderTemplates();
+ };
+});
+renderTemplates();
+loadUser();
 </script>
 </body>
 </html>
