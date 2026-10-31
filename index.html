@@ -1,361 +1,136 @@
 from pathlib import Path
+import zipfile, json, textwrap
 
-html = r'''<!DOCTYPE html>
-<html lang="vi">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#172b43">
-<title>CANVIO — Creative Career Studio</title>
-<meta name="description" content="Create a CV, portfolio and visual career story with CANVIO.">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<style>
-:root{--navy:#172b43;--navy2:#25415f;--ink:#17202c;--muted:#7e8997;--line:#e7ebf0;--paper:#fff;--surface:#f5f7fa;--gold:#c6a77b;--green:#287c60;--red:#c64e4e;--radius:14px;--shadow:0 18px 55px #182b4310}
-*{box-sizing:border-box}body{margin:0;background:var(--surface);color:var(--ink);font-family:'DM Sans',sans-serif}button,input,textarea,select{font:inherit}button{cursor:pointer}button:disabled{opacity:.55;cursor:not-allowed}.hidden{display:none!important}.eyebrow{font-size:10px;letter-spacing:1.8px;font-weight:800;color:#a18a68;text-transform:uppercase}.brand{font:800 20px Manrope;letter-spacing:2.5px;display:flex;align-items:center;gap:10px}.brand-symbol{width:34px;height:34px;border-radius:10px;background:var(--navy);color:#fff;display:grid;place-items:center;font:800 20px Manrope;letter-spacing:-1px}.primary{background:var(--navy);color:#fff;border:0;border-radius:9px;padding:12px 17px;font-weight:700;transition:.2s}.primary:hover{background:var(--navy2);transform:translateY(-1px)}.secondary{background:#fff;border:1px solid var(--line);border-radius:9px;padding:11px 15px;color:var(--ink);font-weight:700}.danger{color:var(--red)!important}.muted{color:var(--muted)}.small{font-size:11px}.full{width:100%}.icon-btn{border:1px solid var(--line);background:#fff;border-radius:9px;padding:9px 11px;color:var(--ink)}.field{margin:16px 0}.field label{display:block;font-size:11px;font-weight:700;margin-bottom:7px}.field input,.field textarea,.field select{width:100%;border:1px solid var(--line);border-radius:9px;padding:12px;background:#fbfcfd;outline:none;color:var(--ink)}.field textarea{min-height:85px;resize:vertical;line-height:1.55}.field input:focus,.field textarea:focus,.field select:focus{border-color:#9aabba;background:#fff}.error{color:var(--red);font-size:12px;min-height:17px}.success{color:var(--green);font-size:12px;min-height:17px}
-/* auth */
-#auth{min-height:100vh;display:grid;grid-template-columns:1.05fr .95fr;background:#fff}.auth-visual{background:linear-gradient(145deg,#14273d,#203b58);color:#fff;padding:42px 8%;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden;position:relative}.auth-visual:after{content:"";position:absolute;width:470px;height:470px;border:1px solid #ffffff20;border-radius:50%;right:-190px;bottom:-170px;box-shadow:0 0 0 55px #ffffff08,0 0 0 110px #ffffff05}.auth-visual .brand-symbol{background:#d1b58c;color:var(--navy)}.auth-visual h1{font:800 clamp(42px,5vw,70px)/1.08 Manrope;letter-spacing:-3px;margin:22px 0}.auth-visual h1 span{color:#d2b58d}.auth-visual p{color:#b5c1ce;line-height:1.8;max-width:400px;font-size:14px}.auth-art{height:220px;position:relative;margin-top:25px}.paper{position:absolute;width:180px;height:210px;background:#fff;border-radius:10px;left:35px;top:0;transform:rotate(-7deg);padding:23px;box-shadow:0 24px 65px #0004}.paper:before{content:"";display:block;width:43px;height:43px;border-radius:50%;background:#243d58;margin-bottom:19px}.paper i{display:block;height:5px;background:#e4e8ed;margin:11px 0}.paper i:nth-child(3){width:62%}.paper i:nth-child(4){height:43px;background:#f0f2f5}.paper2{position:absolute;width:160px;height:185px;background:#d6c3a5;border-radius:10px;left:165px;top:27px;transform:rotate(8deg);box-shadow:0 20px 50px #0003;padding:20px;color:#20364f;font:800 20px Manrope}.auth-panel{display:grid;place-items:center;padding:38px}.auth-box{width:100%;max-width:410px}.auth-box h2{font:800 34px Manrope;letter-spacing:-1.2px;margin:13px 0 7px}.auth-box>p{font-size:13px;color:var(--muted)}.auth-switch{text-align:center;margin-top:22px;color:var(--muted);font-size:12px}.link-btn{border:0;background:none;color:#92744d;font-weight:800}.terms{font-size:10px;color:#a2aab3;text-align:center;margin-top:34px;line-height:1.7}
-/* app shell */
-#app{min-height:100vh;display:flex}.sidebar{width:244px;background:#fff;border-right:1px solid var(--line);padding:25px 16px 14px;display:flex;flex-direction:column;flex-shrink:0}.sidebar-brand{padding:0 9px 37px}.side-label,.nav-section{font-size:9px;letter-spacing:1.6px;color:#a0a8b2;font-weight:800;padding:0 11px 12px}.nav-section{padding-top:24px}.nav-item{width:100%;border:0;background:none;text-align:left;padding:11px;border-radius:9px;color:#75808e;font-size:12px;font-weight:700;display:flex;align-items:center;gap:12px;margin:2px 0}.nav-item .ico{width:18px;font-size:16px;text-align:center}.nav-item.active,.nav-item:hover{background:#eff2f6;color:var(--navy)}.sidebar-bottom{margin-top:auto}.upgrade{background:#f3f0e9;border-radius:11px;padding:15px;margin:14px 0}.upgrade strong{font-size:11px}.upgrade p{font-size:10px;color:#777f87;line-height:1.6}.profile{display:flex;align-items:center;gap:9px;border-top:1px solid var(--line);padding:13px 4px 3px}.avatar{width:34px;height:34px;border-radius:50%;background:#e9dfd0;color:#725d40;display:grid;place-items:center;font-weight:800;border:0;flex-shrink:0}.profile-info{flex:1;min-width:0;display:grid;gap:4px}.profile-info strong{font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.profile-info small{font-size:9px;color:var(--muted)}.main{flex:1;min-width:0}.topbar{height:70px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 4%}.breadcrumb{font-size:11px;color:var(--muted)}.breadcrumb strong{color:var(--ink)}.top-actions{display:flex;align-items:center;gap:12px}.search{background:#f7f8fa;border:1px solid var(--line);border-radius:8px;padding:8px 11px}.search input{border:0;background:none;outline:none;font-size:11px;width:170px}.content{padding:38px 4.5%;max-width:1500px;margin:auto}.page{display:none}.page.active{display:block}.welcome{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:29px}.welcome h1{font:800 29px Manrope;letter-spacing:-1.2px;margin:9px 0 5px}.welcome p{color:var(--muted);font-size:12px;margin:0}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}.stat{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px 20px}.stat-label{font-size:11px;color:#77818e}.stat strong{display:block;font:800 29px Manrope;margin:10px 0 3px}.stat small{font-size:10px;color:#9ba2ab}.section{margin-top:38px}.section-head{display:flex;justify-content:space-between;align-items:end;margin-bottom:16px}.section-head h2{font:800 20px Manrope;margin:7px 0 0}.section-head p{font-size:10px;color:var(--muted)}.creation-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}.creation{background:#fff;border:1px solid var(--line);border-radius:12px;padding:9px;text-align:left;transition:.2s}.creation:hover{transform:translateY(-4px);box-shadow:var(--shadow)}.art{height:150px;border-radius:8px;display:grid;place-items:center;overflow:hidden}.art.cv{background:#e9edf1}.cv-mini{width:90px;height:117px;background:#fff;padding:14px;box-shadow:0 9px 22px #0001;transform:rotate(-5deg)}.cv-mini i{display:block;height:4px;background:#dce1e6;margin:8px 0}.cv-mini b{display:block;height:29px;background:#edf0f3;margin-top:11px}.art.portfolio{background:#d8d4c9;color:#344239;font:800 27px Manrope}.art.poster{background:#ead9c9;color:#8a4d37;font:800 26px Manrope}.creation-info{display:flex;justify-content:space-between;align-items:center;padding:12px 8px 6px}.creation-info h3{font-size:12px;margin:0 0 4px}.creation-info p{font-size:10px;color:var(--muted);margin:0}.creation-info span{color:#a68a63}.recent,.design-list{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.empty{grid-column:1/-1;padding:32px;background:#fff;border:1px dashed #d8dce2;text-align:center;border-radius:12px}.empty h3{font-size:13px;margin:0 0 6px}.empty p{font-size:11px;color:var(--muted)}.design-card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;min-width:0}.design-card h3{font-size:13px;margin:9px 0 5px;overflow-wrap:anywhere}.design-card p{font-size:10px;color:var(--muted);margin:0 0 12px}.card-actions{display:flex;gap:7px;flex-wrap:wrap}.card-actions button{font-size:10px;padding:7px 9px;border:1px solid var(--line);background:#fff;border-radius:7px}.tag{font-size:9px;letter-spacing:1px;text-transform:uppercase;color:#9a805e;font-weight:800}.morph-banner{margin-top:40px;background:#172b43;border-radius:15px;color:#fff;padding:32px 38px;display:grid;grid-template-columns:1fr 1fr;min-height:220px;overflow:hidden}.morph-banner h2{font:800 28px/1.2 Manrope}.morph-banner p{color:#b3bfcc;font-size:11px;line-height:1.7;max-width:370px}.morph-banner button{background:none;border:0;color:#d4ba95;font-weight:700;padding:0}.morph-demo{display:grid;place-items:center}.morph-shape{width:125px;height:125px;border:1px solid #d2b58a;border-radius:50%;animation:morph 6s ease-in-out infinite alternate;box-shadow:0 0 60px #d2b58a18}@keyframes morph{to{border-radius:18%;transform:rotate(135deg) scale(1.18)}}
-/* editor */
-.editor-shell{display:grid;grid-template-columns:minmax(260px,340px) minmax(0,1fr);gap:18px;align-items:start}.editor-panel,.preview-panel{background:#fff;border:1px solid var(--line);border-radius:13px;padding:18px}.editor-panel{position:sticky;top:15px;max-height:calc(100vh - 100px);overflow:auto}.editor-panel h3{font:800 16px Manrope;margin:0 0 4px}.editor-panel .hint{font-size:10px;color:var(--muted);line-height:1.5}.editor-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.editor-actions button{font-size:11px}.preview-toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:8px}.preview-toolbar strong{font-size:12px}.preview-stage{background:#eef1f5;border-radius:10px;padding:24px;min-height:650px;overflow:auto}.resume-page{background:#fff;width:min(100%,720px);min-height:900px;margin:0 auto;padding:48px 54px;box-shadow:0 8px 30px #182b4310;color:#202a35}.resume-head{border-bottom:2px solid #243d58;padding-bottom:20px;margin-bottom:20px}.resume-head h1{font:800 30px Manrope;margin:0 0 6px;letter-spacing:-1px}.resume-head .role{font-size:14px;color:#9a805e;font-weight:700}.resume-contact{font-size:10px;color:#657180;margin-top:10px;line-height:1.7}.resume-section{margin:20px 0}.resume-section h2{font:800 12px Manrope;letter-spacing:1.5px;text-transform:uppercase;color:#243d58;border-bottom:1px solid #dfe4e9;padding-bottom:7px;margin:0 0 9px}.resume-section p{font-size:11px;line-height:1.7;white-space:pre-line;margin:0;color:#485462}.resume-entry{margin:10px 0}.resume-entry strong{font-size:11px}.resume-entry small{display:block;color:#8a7658;font-size:10px;margin:3px 0}.resume-entry p{font-size:10px;line-height:1.6;white-space:pre-line}.portfolio-preview{width:min(100%,760px);min-height:650px;margin:auto;background:#fff;box-shadow:0 8px 30px #182b4310;padding:55px;display:flex;flex-direction:column;justify-content:center}.portfolio-preview .big{font:800 clamp(36px,5vw,62px)/1.02 Manrope;letter-spacing:-2px;color:#172b43}.portfolio-preview .big span{color:#b39368}.portfolio-preview .lead{font-size:14px;line-height:1.8;color:#6d7886;max-width:530px}.portfolio-projects{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:25px}.portfolio-projects div{background:#f0f2f4;padding:17px;border-radius:9px;font-size:11px}.poster-preview{width:min(100%,600px);min-height:720px;margin:auto;background:#d9e2df;color:#1c3d38;padding:55px 42px;display:flex;flex-direction:column;justify-content:space-between;text-align:left}.poster-preview .poster-kicker{font-size:10px;letter-spacing:3px;font-weight:800}.poster-preview h1{font:800 clamp(40px,6vw,68px)/.98 Manrope;letter-spacing:-3px;margin:22px 0}.poster-preview p{font-size:13px;line-height:1.7;max-width:400px}.poster-preview .poster-footer{border-top:1px solid #1c3d3855;padding-top:15px;font-size:11px;line-height:1.7}.share-view{max-width:900px;margin:40px auto;padding:25px}.share-view .resume-page,.share-view .portfolio-preview,.share-view .poster-preview{box-shadow:0 15px 60px #182b4318}
-/* modal, toast */
-.modal{position:fixed;inset:0;z-index:20;display:grid;place-items:center;padding:15px}.backdrop{position:absolute;inset:0;background:#101a28aa;backdrop-filter:blur(4px)}.modal-box{position:relative;background:#fff;padding:30px;border-radius:16px;width:min(520px,95vw);box-shadow:0 25px 90px #0003}.modal-close{position:absolute;right:16px;top:12px;border:0;background:none;font-size:24px}.modal-options{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:20px}.modal-options button{border:1px solid var(--line);background:#fafbfc;border-radius:9px;padding:15px 9px;display:grid;gap:8px;text-align:left}.modal-options strong{font-size:11px}.modal-options small{font-size:9px;color:var(--muted)}#toast{position:fixed;right:22px;bottom:22px;background:#172b43;color:#fff;padding:12px 16px;border-radius:9px;font-size:12px;box-shadow:var(--shadow);z-index:50;max-width:360px}.loading{opacity:.6;pointer-events:none}
-@media(max-width:1000px){.sidebar{width:205px}.editor-shell{grid-template-columns:1fr}.editor-panel{position:static;max-height:none}.preview-stage{min-height:500px}}
-@media(max-width:720px){#auth{grid-template-columns:1fr}.auth-visual{display:none}.sidebar{display:none}.content{padding:23px 15px}.topbar{height:60px;padding:0 15px}.search{display:none}.stats,.creation-grid,.recent,.design-list{grid-template-columns:1fr}.welcome{align-items:flex-start;flex-direction:column}.morph-banner{grid-template-columns:1fr;padding:24px}.modal-options{grid-template-columns:1fr}.preview-stage{padding:10px}.resume-page{padding:25px 22px;min-height:800px}.portfolio-preview,.poster-preview{padding:30px 24px}.portfolio-projects{grid-template-columns:1fr}.auth-panel{padding:25px}}
-@media print{body{background:#fff!important}#auth,#app,.editor-panel,.preview-toolbar,.topbar,.sidebar{display:none!important}.editor-shell{display:block}.preview-stage{padding:0;background:#fff;overflow:visible}.resume-page,.portfolio-preview,.poster-preview{box-shadow:none!important;margin:0 auto!important;width:100%!important;min-height:0!important}.resume-page{padding:18mm 16mm!important}.portfolio-preview,.poster-preview{padding:20mm!important;min-height:260mm!important}.share-view{margin:0;padding:0;max-width:none}.share-view .resume-page,.share-view .portfolio-preview,.share-view .poster-preview{box-shadow:none!important}@page{size:A4;margin:0}}
-</style>
-</head>
-<body>
-<section id="auth">
-  <div class="auth-visual">
-    <div class="brand"><span class="brand-symbol">C</span> CANVIO</div>
-    <div><span class="eyebrow">CREATIVE CAREER PLATFORM</span><h1>Make your<br><span>potential visible.</span></h1><p>Turn your experience into a visual story. Create a CV, build a portfolio and present your next big idea.</p>
-      <div class="auth-art"><div class="paper"><i></i><i></i><i></i><i></i></div><div class="paper2">YOUR<br>STORY.</div></div>
-    </div>
-    <small>© 2026 CANVIO STUDIO</small>
-  </div>
-  <div class="auth-panel"><div class="auth-box">
-    <span class="eyebrow">WELCOME TO CANVIO</span><h2 id="auth-title">Welcome back.</h2><p id="auth-desc">Sign in to continue building your story.</p>
-    <form id="auth-form">
-      <div class="field hidden" id="name-field"><label>Họ và tên</label><input id="full-name" autocomplete="name" placeholder="Nguyễn Văn A"></div>
-      <div class="field"><label>Email address</label><input id="email" type="email" autocomplete="email" placeholder="name@example.com" required></div>
-      <div class="field"><label>Password</label><input id="password" type="password" autocomplete="current-password" placeholder="At least 6 characters" required minlength="6"></div>
-      <p id="auth-error" class="error"></p><button class="primary full" id="auth-submit">Sign in →</button>
-    </form>
-    <div class="auth-switch"><span id="switch-text">Don't have an account?</span> <button class="link-btn" id="switch-auth" type="button">Create account</button></div>
-    <div class="terms">By continuing, you agree to CANVIO's Terms of Service and Privacy Policy. Your designs are private unless you choose to share them.</div>
-  </div></div>
-</section>
+out = Path("/mnt/data/canvio_template_library_addon")
+out.mkdir(exist_ok=True)
 
-<div id="app" class="hidden">
-  <aside class="sidebar">
-    <div class="brand sidebar-brand"><span class="brand-symbol">C</span> CANVIO</div>
-    <div class="side-label">WORKSPACE</div>
-    <nav>
-      <button class="nav-item active" data-page="dashboard"><span class="ico">▦</span>Dashboard</button>
-      <div class="nav-section">CREATE</div>
-      <button class="nav-item" data-page="cv"><span class="ico">▤</span>CV Studio</button>
-      <button class="nav-item" data-page="portfolio"><span class="ico">▧</span>Portfolio Studio</button>
-      <button class="nav-item" data-page="poster"><span class="ico">▣</span>Poster Studio</button>
-      <div class="nav-section">LIBRARY</div>
-      <button class="nav-item" data-page="templates"><span class="ico">▥</span>Templates</button>
-      <button class="nav-item" data-page="projects"><span class="ico">◫</span>My Designs</button>
-    </nav>
-    <div class="sidebar-bottom"><div class="upgrade"><strong>✦ Your creative workspace</strong><p>Create, edit and share your professional story in one place.</p></div>
-      <div class="profile"><div class="avatar" id="sidebar-avatar">U</div><div class="profile-info"><strong id="sidebar-name">Your account</strong><small>Personal workspace</small></div><button class="icon-btn" id="logout" title="Sign out">↗</button></div>
-    </div>
-  </aside>
-  <main class="main">
-    <header class="topbar"><div class="breadcrumb">Workspace / <strong id="breadcrumb">Dashboard</strong></div><div class="top-actions"><div class="search">⌕ <input id="search" placeholder="Search designs..."></div><button class="avatar" id="top-avatar" title="Account">U</button></div></header>
-    <div class="content">
-      <section class="page active" id="page-dashboard">
-        <div class="welcome"><div><span class="eyebrow">YOUR CREATIVE WORKSPACE</span><h1>Good to see you, <span id="welcome-name">there</span>.</h1><p>Let's turn your next big idea into something remarkable.</p></div><button class="primary" id="create-button">＋ Create new design</button></div>
-        <div class="stats"><div class="stat"><div class="stat-label">Total designs</div><strong id="total">0</strong><small>Your creative projects</small></div><div class="stat"><div class="stat-label">Published</div><strong id="published">0</strong><small>Shared with a public link</small></div><div class="stat"><div class="stat-label">In progress</div><strong id="drafts">0</strong><small>Private projects</small></div></div>
-        <section class="section"><div class="section-head"><div><span class="eyebrow">START CREATING</span><h2>Your next creation.</h2></div><p>Choose a creative direction</p></div>
-          <div class="creation-grid">
-            <button class="creation" data-create="cv"><div class="art cv"><div class="cv-mini"><i></i><i></i><b></b><i></i></div></div><div class="creation-info"><div><h3>CV Studio</h3><p>Build a CV that stands out.</p></div><span>↗</span></div></button>
-            <button class="creation" data-create="portfolio"><div class="art portfolio">YOUR<br>STORY.</div><div class="creation-info"><div><h3>Portfolio Studio</h3><p>Showcase your best work.</p></div><span>↗</span></div></button>
-            <button class="creation" data-create="poster"><div class="art poster">MAKE IT<br>MATTER</div><div class="creation-info"><div><h3>Poster Studio</h3><p>Create visual campaigns.</p></div><span>↗</span></div></button>
-          </div>
-        </section>
-        <section class="section"><div class="section-head"><div><span class="eyebrow">YOUR WORKSPACE</span><h2>Recent designs</h2></div><button class="secondary" data-page="projects">View all →</button></div><div id="recent" class="recent"><div class="empty"><h3>Your workspace is ready.</h3><p>Create your first design to see it here.</p></div></div></section>
-        <section class="morph-banner"><div><span class="eyebrow">THE CANVIO DIFFERENCE</span><h2>One story.<br>Infinite possibilities.</h2><p>Present your professional journey through fluid, cinematic transitions and thoughtful design.</p><button id="morph-button">Discover Morph Motion ↗</button></div><div class="morph-demo"><div class="morph-shape"></div></div></section>
-      </section>
-      <section class="page" id="page-library"><div class="welcome"><div><span class="eyebrow">CANVIO WORKSPACE</span><h1 id="other-title">My Designs</h1><p id="other-desc">Manage all your creative work in one place.</p></div><button class="primary" id="other-create">＋ Create new</button></div><div id="other-content" class="design-list"></div></section>
-      <section class="page" id="page-editor"><div class="welcome"><div><span class="eyebrow" id="editor-eyebrow">CANVIO STUDIO</span><h1 id="editor-title">CV Studio</h1><p id="editor-subtitle">Build your professional story.</p></div><button class="secondary" id="back-projects">← Back to workspace</button></div>
-        <div class="editor-shell"><div class="editor-panel"><h3 id="form-heading">Design details</h3><p class="hint">Changes appear in the live preview. Save to keep your work in your account.</p><div id="editor-fields"></div>
-          <div class="field"><label>Design title</label><input id="design-title" maxlength="100" placeholder="My professional profile"></div>
-          <div class="editor-actions"><button class="primary" id="save-design">Save design</button><button class="secondary" id="export-design">Export PDF</button><button class="secondary" id="share-design">Share link</button></div><p id="editor-message" class="success"></p>
-        </div><div class="preview-panel"><div class="preview-toolbar"><strong>Live preview</strong><span class="small muted" id="save-state">Unsaved changes</span></div><div class="preview-stage" id="preview-stage"></div></div></div>
-      </section>
-    </div>
-  </main>
-</div>
+js = r'''/* CANVIO Template Library Add-on
+   Integration contract:
+   1) Load canvio-template-library.css and this file after Supabase/app scripts.
+   2) Call CANVIO_TEMPLATE_LIBRARY.mount({ root: document.querySelector('#templateLibraryRoot'), onUse(template) { ... } })
+   3) In onUse, map template.content into your existing editor's content schema and open your existing editor.
+   This add-on does not write to Supabase directly and does not replace existing app logic.
+*/
+(() => {
+  const templates = [
+    // CV
+    {id:"cv-001",type:"cv",name:"Executive Navy",category:"Corporate",level:"Experienced",industry:"Management",style:"Professional",premium:false,description:"Bố cục quản lý cấp cao, nhấn mạnh thành tựu và năng lực điều hành.",accent:"#183153",layout:"sidebar",content:{full_name:"Nguyễn Minh Anh",headline:"Senior Business Manager",summary:"Nhà quản lý với kinh nghiệm phát triển đội ngũ, tối ưu vận hành và tăng trưởng doanh thu.",skills:["Leadership","Strategic Planning","P&L Management"],experience:[{role:"Business Manager",company:"ABC Corporation",period:"2022 — 2026",detail:"Dẫn dắt đội ngũ 18 người; tối ưu quy trình và hiệu suất vận hành."}],education:[{school:"Đại học Kinh tế TP.HCM",degree:"Quản trị kinh doanh"}]}},
+    {id:"cv-002",type:"cv",name:"ATS Clean",category:"ATS Friendly",level:"Fresher",industry:"General",style:"Minimalist",premium:false,description:"Một cột, rõ ràng, ưu tiên khả năng đọc và trích xuất thông tin.",accent:"#222222",layout:"single",content:{full_name:"Trần Gia Huy",headline:"Business Analyst Fresher",summary:"Ứng viên mới tốt nghiệp có tư duy phân tích và khả năng làm việc với dữ liệu.",skills:["Excel","SQL","Power BI"],experience:[{role:"Business Analyst Intern",company:"XYZ",period:"2025 — 2026",detail:"Phân tích yêu cầu và xây dựng báo cáo hỗ trợ quyết định."}],education:[{school:"Đại học",degree:"Cử nhân"}]}},
+    {id:"cv-003",type:"cv",name:"Modern Violet",category:"Modern",level:"Junior",industry:"Marketing",style:"Modern",premium:false,description:"Phong cách hiện đại cho Marketing, truyền thông và phát triển thương hiệu.",accent:"#7656C8",layout:"sidebar",content:{full_name:"Lê Khánh Linh",headline:"Digital Marketing Specialist",summary:"Tập trung vào chiến dịch đa kênh, nội dung và tối ưu hiệu quả quảng cáo.",skills:["Content Strategy","SEO","Meta Ads"],experience:[{role:"Marketing Executive",company:"Creative Studio",period:"2024 — 2026",detail:"Triển khai nội dung đa nền tảng và theo dõi chỉ số chiến dịch."}],education:[{school:"Đại học",degree:"Marketing"}]}},
+    {id:"cv-004",type:"cv",name:"Minimal Beige",category:"Minimalist",level:"Intern",industry:"General",style:"Minimalist",premium:false,description:"Tối giản, nhẹ nhàng, phù hợp sinh viên và ứng viên thực tập.",accent:"#A17C5A",layout:"single",content:{full_name:"Phạm Ngọc Hà",headline:"Human Resources Intern",summary:"Sinh viên định hướng nhân sự, yêu thích tuyển dụng và trải nghiệm nhân viên.",skills:["Communication","Excel","Recruitment"],experience:[{role:"HR Intern",company:"Company Name",period:"2025 — 2026",detail:"Hỗ trợ đăng tin, sàng lọc hồ sơ và sắp xếp phỏng vấn."}],education:[{school:"Đại học",degree:"Quản trị nguồn nhân lực"}]}},
+    {id:"cv-005",type:"cv",name:"Creative Editorial",category:"Creative",level:"Middle",industry:"Design",style:"Creative",premium:true,description:"Typography nổi bật cho designer, art director và creative.",accent:"#E15B3D",layout:"editorial",content:{full_name:"Đỗ Hoàng Nam",headline:"Visual Designer",summary:"Thiết kế nhận diện thương hiệu và trải nghiệm hình ảnh có tính hệ thống.",skills:["Brand Identity","Figma","Art Direction"],experience:[{role:"Visual Designer",company:"Studio 09",period:"2022 — 2026",detail:"Phát triển hệ thống nhận diện và thiết kế chiến dịch."}],education:[{school:"Đại học",degree:"Thiết kế đồ họa"}]}},
+    {id:"cv-006",type:"cv",name:"Finance Precision",category:"Corporate",level:"Experienced",industry:"Finance",style:"Professional",premium:false,description:"Cấu trúc chặt chẽ cho kế toán, tài chính và kiểm toán.",accent:"#176B5B",layout:"single",content:{full_name:"Võ Thanh Tùng",headline:"Financial Analyst",summary:"Phân tích tài chính, lập ngân sách và kiểm soát chi phí.",skills:["Financial Modeling","Excel","Budgeting"],experience:[{role:"Financial Analyst",company:"Finance Group",period:"2021 — 2026",detail:"Xây dựng báo cáo quản trị và phân tích biến động ngân sách."}],education:[{school:"Đại học",degree:"Tài chính — Ngân hàng"}]}},
+    {id:"cv-007",type:"cv",name:"Tech Grid",category:"Modern",level:"Junior",industry:"IT",style:"Modern",premium:true,description:"Bố cục kỹ thuật, làm nổi bật dự án và tech stack.",accent:"#2874B8",layout:"grid",content:{full_name:"Nguyễn Quốc Bảo",headline:"Frontend Developer",summary:"Phát triển giao diện web responsive, chú trọng hiệu năng và trải nghiệm.",skills:["JavaScript","React","CSS"],experience:[{role:"Frontend Developer",company:"Tech Lab",period:"2024 — 2026",detail:"Xây dựng component và tích hợp API cho sản phẩm web."}],education:[{school:"Đại học",degree:"Công nghệ thông tin"}]}},
+    {id:"cv-008",type:"cv",name:"HR Professional",category:"Corporate",level:"Junior",industry:"HR",style:"Professional",premium:false,description:"Mẫu chuyên biệt cho tuyển dụng, C&B và hành chính nhân sự.",accent:"#285D72",layout:"sidebar",content:{full_name:"Trần Thu Trang",headline:"HR & C&B Executive",summary:"Có kinh nghiệm hồ sơ nhân sự, chấm công, BHXH và hỗ trợ tính lương.",skills:["HRIS","Payroll","Social Insurance"],experience:[{role:"C&B Intern",company:"ABC Company",period:"2025 — 2026",detail:"Cập nhật hồ sơ, tăng giảm BHXH, tổng hợp công và hỗ trợ payroll."}],education:[{school:"Đại học",degree:"Quản trị nguồn nhân lực"}]}},
+    {id:"cv-009",type:"cv",name:"Sales Impact",category:"Modern",level:"Middle",industry:"Sales",style:"Modern",premium:false,description:"Nhấn mạnh KPI, doanh số và kết quả kinh doanh.",accent:"#D17A22",layout:"sidebar",content:{full_name:"Lê Minh Khang",headline:"Sales Executive",summary:"Phát triển khách hàng, quản lý pipeline và đạt mục tiêu doanh số.",skills:["Negotiation","CRM","Account Management"],experience:[{role:"Sales Executive",company:"Retail Co.",period:"2022 — 2026",detail:"Quản lý danh mục khách hàng và duy trì tăng trưởng doanh thu."}],education:[{school:"Đại học",degree:"Quản trị kinh doanh"}]}},
+    {id:"cv-010",type:"cv",name:"Academic Profile",category:"Academic",level:"Fresher",industry:"Education",style:"Minimalist",premium:false,description:"Trang nhã cho học thuật, nghiên cứu và giáo dục.",accent:"#385B8A",layout:"single",content:{full_name:"Nguyễn An Nhiên",headline:"Research Assistant",summary:"Quan tâm nghiên cứu, tổng hợp tài liệu và phân tích dữ liệu.",skills:["Research","Academic Writing","SPSS"],experience:[{role:"Research Assistant",company:"University Lab",period:"2025 — 2026",detail:"Hỗ trợ khảo sát, làm sạch dữ liệu và tổng hợp kết quả."}],education:[{school:"Đại học",degree:"Cử nhân"}]}},
+    {id:"cv-011",type:"cv",name:"Product Manager",category:"Executive",level:"Senior",industry:"Technology",style:"Professional",premium:true,description:"Dành cho Product Owner, Product Manager và trưởng nhóm.",accent:"#3A526B",layout:"editorial",content:{full_name:"Phan Đức Long",headline:"Senior Product Manager",summary:"Định hướng sản phẩm dựa trên dữ liệu và nhu cầu khách hàng.",skills:["Product Strategy","Roadmapping","Analytics"],experience:[{role:"Product Manager",company:"Digital Product",period:"2020 — 2026",detail:"Quản lý roadmap, phối hợp đa chức năng và theo dõi product metrics."}],education:[{school:"Đại học",degree:"Information Systems"}]}},
+    {id:"cv-012",type:"cv",name:"Monochrome Bold",category:"Creative",level:"Middle",industry:"General",style:"Creative",premium:false,description:"Tương phản mạnh, cá tính nhưng vẫn dễ đọc.",accent:"#111111",layout:"editorial",content:{full_name:"Bùi Nhật Minh",headline:"Creative Strategist",summary:"Kết nối insight, chiến lược và ý tưởng sáng tạo.",skills:["Research","Storytelling","Campaign Planning"],experience:[{role:"Creative Strategist",company:"Mosaic",period:"2022 — 2026",detail:"Phát triển concept và định hướng chiến dịch thương hiệu."}],education:[{school:"Đại học",degree:"Truyền thông"}]}},
+    // Portfolio
+    {id:"pf-001",type:"portfolio",name:"Studio Showcase",category:"Creative",level:"All levels",industry:"Design",style:"Editorial",premium:false,description:"Portfolio dạng studio với dự án lớn, mô tả vai trò và kết quả.",accent:"#E15B3D",layout:"showcase",content:{name:"Nguyễn Minh Anh",title:"Brand & Visual Designer",about:"Tôi biến ý tưởng thành hệ thống hình ảnh rõ ràng và có bản sắc.",projects:[{name:"Brand Identity — North",role:"Lead Designer",year:"2026",description:"Hệ thống nhận diện thương hiệu."},{name:"Digital Campaign",role:"Visual Designer",year:"2025",description:"Thiết kế chiến dịch đa nền tảng."}]}},
+    {id:"pf-002",type:"portfolio",name:"Personal Minimal",category:"Minimalist",level:"All levels",industry:"General",style:"Minimalist",premium:false,description:"Trang cá nhân tinh gọn, phù hợp nhiều ngành nghề.",accent:"#6E7D6B",layout:"minimal",content:{name:"Trần Gia Huy",title:"Product-minded Professional",about:"Tôi thích giải quyết vấn đề bằng tư duy hệ thống.",projects:[{name:"Selected Work 01",role:"Contributor",year:"2026",description:"Mô tả dự án và tác động."}]}},
+    {id:"pf-003",type:"portfolio",name:"Developer Terminal",category:"Modern",level:"All levels",industry:"IT",style:"Tech",premium:true,description:"Portfolio cho developer với dự án, công nghệ và GitHub links.",accent:"#25A56A",layout:"terminal",content:{name:"Lê Quốc Bảo",title:"Full-stack Developer",about:"Building useful digital products.",projects:[{name:"HR Dashboard",role:"Full-stack",year:"2026",description:"Dashboard quản trị dữ liệu."}]}},
+    {id:"pf-004",type:"portfolio",name:"Case Study Grid",category:"Corporate",level:"Middle",industry:"Product",style:"Grid",premium:false,description:"Trình bày quy trình, vấn đề, giải pháp và kết quả.",accent:"#3C67A5",layout:"grid",content:{name:"Phạm Khánh Linh",title:"Product Designer",about:"Designing clear and useful experiences.",projects:[{name:"Onboarding Flow",role:"Product Designer",year:"2026",description:"Tăng khả năng hoàn thành onboarding."}]}},
+    {id:"pf-005",type:"portfolio",name:"Motion Story",category:"Creative",level:"All levels",industry:"Motion",style:"Animated",premium:true,description:"Bố cục kể chuyện theo từng màn hình, sẵn sàng mở rộng animation.",accent:"#8B5CF6",layout:"story",content:{name:"Đỗ Hoàng Nam",title:"Motion & Visual Designer",about:"Visual stories with movement and meaning.",projects:[{name:"Motion Identity",role:"Motion Designer",year:"2026",description:"Hệ thống chuyển động cho thương hiệu."}]}},
+    {id:"pf-006",type:"portfolio",name:"Photography Journal",category:"Creative",level:"All levels",industry:"Photography",style:"Gallery",premium:false,description:"Gallery ảnh lớn, chú trọng hình ảnh và caption.",accent:"#B58A56",layout:"gallery",content:{name:"Mai Phương",title:"Photographer",about:"People, places and everyday stories.",projects:[{name:"City Fragments",role:"Photographer",year:"2026",description:"Bộ ảnh đường phố."}]}},
+    // Posters
+    {id:"po-001",type:"poster",name:"We're Hiring",category:"Recruitment",level:"Business",industry:"HR",style:"Corporate",premium:false,description:"Poster tuyển dụng doanh nghiệp, rõ vị trí và CTA.",accent:"#215B78",layout:"hiring",content:{headline:"WE'RE HIRING",subheadline:"Join our team",position:"Marketing Executive",location:"Ho Chi Minh City",cta:"APPLY NOW"}},
+    {id:"po-002",type:"poster",name:"Creative Festival",category:"Event",level:"Business",industry:"Event",style:"Bold",premium:true,description:"Poster sự kiện với typography lớn và màu sắc nổi bật.",accent:"#E85D3F",layout:"event",content:{headline:"CREATE / CONNECT",subheadline:"Creative Festival 2026",position:"Ideas meet possibilities",location:"Saigon",cta:"REGISTER NOW"}},
+    {id:"po-003",type:"poster",name:"Product Launch",category:"Marketing",level:"Business",industry:"Marketing",style:"Modern",premium:false,description:"Ra mắt sản phẩm, nhấn mạnh lợi ích và lời kêu gọi.",accent:"#5B62C9",layout:"launch",content:{headline:"MEET WHAT'S NEXT",subheadline:"A smarter way to work",position:"Introducing the new platform",location:"Online",cta:"DISCOVER"}},
+    {id:"po-004",type:"poster",name:"Minimal Workshop",category:"Education",level:"Business",industry:"Education",style:"Minimalist",premium:false,description:"Workshop, khóa học và hội thảo theo phong cách tối giản.",accent:"#A47B58",layout:"workshop",content:{headline:"DESIGN BETTER",subheadline:"A practical workshop",position:"Learn by doing",location:"Online · 09:00 AM",cta:"SAVE YOUR SEAT"}},
+    {id:"po-005",type:"poster",name:"Job Fair",category:"Recruitment",level:"Business",industry:"HR",style:"Modern",premium:false,description:"Ngày hội việc làm, nhiều vị trí và thông tin doanh nghiệp.",accent:"#147D70",layout:"jobfair",content:{headline:"CAREER DAY 2026",subheadline:"Meet your next opportunity",position:"50+ open positions",location:"Ho Chi Minh City",cta:"EXPLORE JOBS"}},
+    {id:"po-006",type:"poster",name:"Sale Campaign",category:"Marketing",level:"Business",industry:"Retail",style:"Bold",premium:true,description:"Khuyến mãi thương mại, headline và ưu đãi nổi bật.",accent:"#E04444",layout:"sale",content:{headline:"UP TO 50% OFF",subheadline:"The seasonal edit",position:"Limited-time offers",location:"Online & in-store",cta:"SHOP NOW"}}
+  ];
 
-<div id="modal" class="modal hidden"><div class="backdrop" id="modal-backdrop"></div><div class="modal-box"><button class="modal-close" id="close-modal">×</button><span class="eyebrow">NEW PROJECT</span><h2>What are we creating?</h2><p class="muted small">Choose a format to start your next project.</p><div class="modal-options"><button data-create="cv"><span>▤</span><strong>CV Design</strong><small>Professional resume</small></button><button data-create="portfolio"><span>▧</span><strong>Portfolio</strong><small>Personal showcase</small></button><button data-create="poster"><span>▣</span><strong>Poster</strong><small>Visual communication</small></button></div></div></div>
-<div id="toast" class="hidden" role="status"></div>
+  const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  const typeLabel = t => ({cv:"CV",portfolio:"Portfolio",poster:"Poster"}[t] || t);
+  const preview = t => {
+    const c=t.content||{}, a=t.accent;
+    if(t.type==="cv") return `<div class="cvp ${t.layout}" style="--accent:${a}"><div class="cvp-head"><span class="cvp-avatar">${esc((c.full_name||"C").split(" ").map(x=>x[0]).slice(-2).join(""))}</span><div><b>${esc(c.full_name)}</b><small>${esc(c.headline)}</small></div></div><div class="cvp-rule"></div><div class="cvp-columns"><div><i>PROFILE</i><p>${esc(c.summary)}</p><i>EXPERIENCE</i><b>${esc(c.experience?.[0]?.role)}</b><small>${esc(c.experience?.[0]?.company)}</small><p>${esc(c.experience?.[0]?.detail)}</p></div><aside><i>SKILLS</i>${(c.skills||[]).map(x=>`<span>${esc(x)}</span>`).join("")}<i>EDUCATION</i><small>${esc(c.education?.[0]?.school)}</small></aside></div></div>`;
+    if(t.type==="portfolio") return `<div class="pfp ${t.layout}" style="--accent:${a}"><small>SELECTED WORK / 2026</small><h2>${esc(c.name)}</h2><h3>${esc(c.title)}</h3><p>${esc(c.about)}</p><div class="pfp-tiles">${(c.projects||[]).map((p,i)=>`<div><b>0${i+1}</b><strong>${esc(p.name)}</strong><small>${esc(p.role)} · ${esc(p.year)}</small></div>`).join("")}</div></div>`;
+    return `<div class="pop ${t.layout}" style="--accent:${a}"><small>CANVIO / CREATIVE SERIES</small><h2>${esc(c.headline)}</h2><h3>${esc(c.subheadline)}</h3><p>${esc(c.position)}</p><div class="pop-foot"><span>${esc(c.location)}</span><b>${esc(c.cta)} ↗</b></div></div>`;
+  };
 
-<script>
-/* CANVIO CONFIG — Publishable key is intended for browser use; protect data with RLS. */
-const CONFIG={SUPABASE_URL:"https://tjrbuixjmcgqgfxzdswi.supabase.co",SUPABASE_ANON_KEY:"sb_publishable_NzJCKHCmcXobu1KNMW3x9A_hL4-8gvy"};
-const db=window.supabase?.createClient(CONFIG.SUPABASE_URL,CONFIG.SUPABASE_ANON_KEY);
-const $=id=>document.getElementById(id);
-let currentUser=null,designs=[],authMode="login",activeDesign=null,activeType="cv",dirty=false,authListenerReady=false,toastTimer=null;
-const defaults={
- cv:{title:"My Professional CV",full_name:"Alex Morgan",role:"Human Resources Specialist",email:"alex@example.com",phone:"+84 900 000 000",location:"Ho Chi Minh City, Vietnam",summary:"A motivated professional with a passion for people, organization and continuous improvement. Experienced in coordinating daily operations and supporting business goals.",experience:"HR Intern | ABC Company | 2025–2026\nSupported recruitment, onboarding and employee records.\n\nAdministrative Assistant | XYZ Company | 2024–2025\nCoordinated documentation and daily office operations.",education:"Bachelor's Degree | Business Administration\nUniversity Name | 2021–2025",skills:"Recruitment · HR Administration · Excel · Communication · Teamwork",language:"Vietnamese · English"},
- portfolio:{title:"My Creative Portfolio",full_name:"Alex Morgan",role:"Creative Professional",tagline:"I turn ideas into meaningful experiences.",about:"I am a curious, detail-oriented professional who enjoys solving problems, creating useful work and learning new things.",email:"alex@example.com",location:"Ho Chi Minh City, Vietnam",projects:"01 — Brand Identity\nA visual identity concept built around clarity and simplicity.\n\n02 — Digital Experience\nA responsive digital concept focused on intuitive user journeys.\n\n03 — Creative Direction\nA campaign concept connecting message, audience and design.",skills:"Creative thinking · Communication · Design · Strategy"},
- poster:{title:"We're Hiring",headline:"MAKE YOUR\nNEXT MOVE.",subheadline:"Join a team where your ideas can make a difference.",company:"YOUR COMPANY",role:"We're looking for talented people",details:"Open positions: Marketing · HR · Design\nLocation: Ho Chi Minh City\nApply with your CV today.",contact:"careers@example.com · www.example.com",theme:"sage"}
-};
-const fieldSchemas={
- cv:[["full_name","Full name","text"],["role","Professional title","text"],["email","Email","email"],["phone","Phone","text"],["location","Location","text"],["summary","Professional summary","textarea"],["experience","Work experience","textarea"],["education","Education","textarea"],["skills","Skills","textarea"],["language","Languages","textarea"]],
- portfolio:[["full_name","Your name","text"],["role","Professional title","text"],["tagline","Headline / tagline","text"],["about","About you","textarea"],["projects","Selected projects","textarea"],["skills","Skills","textarea"],["email","Contact email","email"],["location","Location","text"]],
- poster:[["headline","Main headline","textarea"],["subheadline","Supporting message","textarea"],["company","Company / brand","text"],["role","Position / campaign","text"],["details","Details","textarea"],["contact","Contact information","text"],["theme","Color theme","select"]]
-};
-function toast(message){const el=$("toast");el.textContent=message;el.classList.remove("hidden");clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.add("hidden"),3200)}
-function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
-function setAuthMode(mode){authMode=mode;const reg=mode==="register";$("auth-title").textContent=reg?"Create your account.":"Welcome back.";$("auth-desc").textContent=reg?"Start building your professional identity.":"Sign in to continue building your story.";$("auth-submit").textContent=reg?"Create account →":"Sign in →";$("switch-text").textContent=reg?"Already have an account?":"Don't have an account?";$("switch-auth").textContent=reg?"Sign in":"Create account";$("name-field").classList.toggle("hidden",!reg);$("password").autocomplete=reg?"new-password":"current-password";$("auth-error").textContent=""}
-$("switch-auth").onclick=()=>setAuthMode(authMode==="login"?"register":"login");
-$("auth-form").onsubmit=async e=>{e.preventDefault();$("auth-error").textContent="";const btn=$("auth-submit");btn.disabled=true;try{if(!db)throw new Error("Supabase client could not initialize. Check the CDN connection.");const email=$("email").value.trim(),password=$("password").value;if(authMode==="register"){const {data,error}=await db.auth.signUp({email,password,options:{data:{full_name:$("full-name").value.trim()}}});if(error)throw error;if(!data.session){$("auth-error").textContent="Account created. Please confirm your email, then sign in.";return}await openApp(data.user)}else{const {data,error}=await db.auth.signInWithPassword({email,password});if(error)throw error;await openApp(data.user)}}catch(err){$("auth-error").textContent=err.message||"Unable to continue."}finally{btn.disabled=false}};
-function showAuth(){$("app").classList.add("hidden");$("auth").classList.remove("hidden");currentUser=null;activeDesign=null}
-async function restoreSession(){if(!db){$("auth-error").textContent="Unable to connect to Supabase. Check your internet connection.";return}const {data,error}=await db.auth.getSession();if(error)console.error(error);if(data.session)await openApp(data.session.user);if(!authListenerReady){authListenerReady=true;db.auth.onAuthStateChange((event,session)=>{if(event==="SIGNED_OUT"){showAuth()}else if(event==="TOKEN_REFRESHED"&&session?.user){currentUser=session.user}})}}
-async function openApp(user){currentUser=user;$("auth").classList.add("hidden");$("app").classList.remove("hidden");const name=user.user_metadata?.full_name||user.email?.split("@")[0]||"User",first=name.trim().split(/\s+/)[0]||"User";$("welcome-name").textContent=first;$("sidebar-name").textContent=name;$("sidebar-avatar").textContent=first[0].toUpperCase();$("top-avatar").textContent=first[0].toUpperCase();await loadDesigns();navigate("dashboard")}
-async function signOut(){if(db){const {error}=await db.auth.signOut();if(error){toast(error.message);return}}showAuth()}
-$("logout").onclick=signOut;$("top-avatar").onclick=()=>toast(currentUser?.email||"Signed in");
-async function loadDesigns(){if(!currentUser)return;const {data,error}=await db.from("designs").select("id,title,design_type,status,content,updated_at,created_at").eq("user_id",currentUser.id).order("updated_at",{ascending:false});if(error){console.error(error);toast("Could not load designs: "+error.message);return}designs=data||[];renderDesigns()}
-function renderDesigns(){const published=designs.filter(x=>x.status==="published").length;$("total").textContent=designs.length;$("published").textContent=published;$("drafts").textContent=designs.length-published;const recent=designs.slice(0,6);$("recent").innerHTML=recent.length?recent.map(cardHTML).join(""):`<div class="empty"><h3>Your workspace is ready.</h3><p>Create your first design to see it here.</p></div>`;if($("page-library").classList.contains("active"))renderLibrary()}
-function typeLabel(t){return({cv:"CV Studio",portfolio:"Portfolio Studio",poster:"Poster Studio"})[t]||t}
-function cardHTML(x){return `<article class="design-card"><span class="tag">${esc(typeLabel(x.design_type))} · ${esc(x.status)}</span><h3>${esc(x.title)}</h3><p>Updated ${x.updated_at?new Date(x.updated_at).toLocaleDateString("vi-VN"):"—"}</p><div class="card-actions"><button data-action="edit" data-id="${esc(x.id)}">Open editor</button><button data-action="duplicate" data-id="${esc(x.id)}">Duplicate</button><button data-action="delete" data-id="${esc(x.id)}" class="danger">Delete</button></div></article>`}
-function renderLibrary(){const filtered=designs.filter(x=>(x.title+" "+x.design_type).toLowerCase().includes(($("search").value||"").toLowerCase()));$("other-content").innerHTML=filtered.length?filtered.map(cardHTML).join(""):`<div class="empty"><h3>No designs found.</h3><p>Create a new design or change your search.</p></div>`}
-function navigate(page){document.querySelectorAll(".nav-item[data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===page));$("breadcrumb").textContent=({dashboard:"Dashboard",projects:"My Designs",templates:"Templates",cv:"CV Studio",portfolio:"Portfolio Studio",poster:"Poster Studio"})[page]||page;if(page==="dashboard"){$("page-dashboard").classList.add("active");$("page-library").classList.remove("active");$("page-editor").classList.remove("active")}else if(page==="projects"||page==="templates"){$("page-dashboard").classList.remove("active");$("page-library").classList.add("active");$("page-editor").classList.remove("active");$("other-title").textContent=page==="templates"?"Template Library":"My Designs";$("other-desc").textContent=page==="templates"?"Start from a ready-made design direction.":"Manage all your creative work in one place."; $("other-create").classList.toggle("hidden",page==="templates");renderLibrary()}else{openNewDesign(page)}}
-document.querySelectorAll(".nav-item[data-page]").forEach(b=>b.addEventListener("click",()=>navigate(b.dataset.page)));
-function openNewDesign(type){activeType=type;activeDesign={id:null,title:defaults[type].title,design_type:type,status:"draft",content:{...defaults[type]}};openEditor()}
-function openEditor(){const t=activeDesign.design_type;$("page-dashboard").classList.remove("active");$("page-library").classList.remove("active");$("page-editor").classList.add("active");$("breadcrumb").textContent=typeLabel(t);$("editor-title").textContent=typeLabel(t);$("editor-subtitle").textContent=({cv:"Build a professional resume that represents your value.",portfolio:"Turn your projects into a compelling personal story.",poster:"Create a polished recruitment or campaign poster."})[t];$("form-heading").textContent=t==="cv"?"Your CV details":t==="portfolio"?"Your portfolio content":"Poster content";$("design-title").value=activeDesign.title;$("editor-fields").innerHTML=fieldSchemas[t].map(([key,label,type])=>{const val=activeDesign.content[key]??"";if(type==="textarea")return `<div class="field"><label>${esc(label)}</label><textarea data-field="${key}" rows="4">${esc(val)}</textarea></div>`;if(type==="select")return `<div class="field"><label>${esc(label)}</label><select data-field="${key}"><option value="sage" ${val==="sage"?"selected":""}>Sage green</option><option value="navy" ${val==="navy"?"selected":""}>Navy blue</option><option value="terracotta" ${val==="terracotta"?"selected":""}>Terracotta</option></select></div>`;return `<div class="field"><label>${esc(label)}</label><input data-field="${key}" type="${type}" value="${esc(val)}"></div>`}).join("");$("editor-fields").querySelectorAll("[data-field]").forEach(el=>el.addEventListener("input",()=>{activeDesign.content[el.dataset.field]=el.value;markDirty();renderPreview()}));$("design-title").oninput=()=>{activeDesign.title=$("design-title").value;markDirty()};$("editor-message").textContent="";dirty=false;$("save-state").textContent=activeDesign.id?"Saved version":"New design";renderPreview()}
-function markDirty(){dirty=true;$("save-state").textContent="Unsaved changes"}
-function renderPreview(){const d=activeDesign.content,t=activeDesign.design_type;let html="";if(t==="cv"){const section=(title,value)=>value?`<section class="resume-section"><h2>${esc(title)}</h2><p>${esc(value)}</p></section>`:"";html=`<article class="resume-page"><header class="resume-head"><h1>${esc(d.full_name)}</h1><div class="role">${esc(d.role)}</div><div class="resume-contact">${esc(d.email)} · ${esc(d.phone)}<br>${esc(d.location)}</div></header>${section("Profile",d.summary)}${section("Experience",d.experience)}${section("Education",d.education)}${section("Skills",d.skills)}${section("Languages",d.language)}</article>`}else if(t==="portfolio"){const projects=(d.projects||"").split(/\n\s*\n/).filter(Boolean);html=`<article class="portfolio-preview"><span class="eyebrow">PERSONAL PORTFOLIO</span><div class="big">${esc(d.full_name)}<br><span>${esc(d.role)}</span></div><p class="lead">${esc(d.tagline)}</p><section class="resume-section"><h2>ABOUT</h2><p>${esc(d.about)}</p></section><section class="resume-section"><h2>SELECTED WORK</h2><div class="portfolio-projects">${projects.map(p=>`<div>${esc(p).replace(/\n/g,"<br>")}</div>`).join("")}</div></section><section class="resume-section"><h2>SKILLS</h2><p>${esc(d.skills)}</p></section><section class="resume-section"><h2>CONTACT</h2><p>${esc(d.email)} · ${esc(d.location)}</p></section></article>`}else{const themes={sage:["#d9e2df","#1c3d38"],navy:["#172b43","#fff"],terracotta:["#ead9c9","#854b36"]},[bg,fg]=themes[d.theme]||themes.sage;html=`<article class="poster-preview" style="background:${bg};color:${fg}"><div><div class="poster-kicker">${esc(d.company)}</div><h1>${esc(d.headline).replace(/\n/g,"<br>")}</h1><p>${esc(d.subheadline)}</p></div><div><p><strong>${esc(d.role)}</strong></p><p>${esc(d.details).replace(/\n/g,"<br>")}</p><div class="poster-footer">${esc(d.contact)}</div></div></article>`}$("preview-stage").innerHTML=html}
-async function saveDesign(){if(!activeDesign||!currentUser)return;const btn=$("save-design");btn.disabled=true;try{const payload={title:(activeDesign.title||"Untitled design").trim(),design_type:activeDesign.design_type,status:activeDesign.status||"draft",content:activeDesign.content,updated_at:new Date().toISOString()};let result;if(activeDesign.id){result=await db.from("designs").update(payload).eq("id",activeDesign.id).eq("user_id",currentUser.id).select().single()}else{result=await db.from("designs").insert({...payload,user_id:currentUser.id}).select().single()}if(result.error)throw result.error;activeDesign={...result.data};dirty=false;$("save-state").textContent="All changes saved";$("editor-message").textContent="Saved successfully.";toast("Design saved to your workspace.");await loadDesigns()}catch(err){$("editor-message").textContent=err.message||"Save failed";toast("Could not save: "+(err.message||"Unknown error"))}finally{btn.disabled=false}}
-$("save-design").onclick=saveDesign;$("export-design").onclick=()=>{if(dirty&&!activeDesign.id){toast("Save your design before exporting.");return}window.print()};$("back-projects").onclick=()=>navigate("projects");
-async function handleCardAction(action,id){const item=designs.find(x=>x.id===id);if(!item)return;if(action==="edit"){activeDesign=JSON.parse(JSON.stringify(item));openEditor()}else if(action==="duplicate"){const {data,error}=await db.from("designs").insert({user_id:currentUser.id,title:item.title+" (copy)",design_type:item.design_type,status:"draft",content:item.content}).select().single();if(error){toast(error.message);return}designs.unshift(data);renderDesigns();toast("Design duplicated.")}else if(action==="delete"){if(!confirm(`Delete "${item.title}"? This cannot be undone.`))return;const {error}=await db.from("designs").delete().eq("id",id).eq("user_id",currentUser.id);if(error){toast(error.message);return}designs=designs.filter(x=>x.id!==id);renderDesigns();toast("Design deleted.")}}
-document.addEventListener("click",e=>{const b=e.target.closest("[data-action]");if(b)handleCardAction(b.dataset.action,b.dataset.id);const c=e.target.closest("[data-create]");if(c){closeModal();openNewDesign(c.dataset.create)}const p=e.target.closest("[data-page]");if(p&&!p.classList.contains("nav-item"))navigate(p.dataset.page)});
-function openModal(){$("modal").classList.remove("hidden")}function closeModal(){$("modal").classList.add("hidden")}$("create-button").onclick=openModal;$("other-create").onclick=openModal;$("close-modal").onclick=closeModal;$("modal-backdrop").onclick=closeModal;
-$("search").oninput=()=>renderLibrary();
-$("morph-button").onclick=()=>{const shape=document.querySelector(".morph-shape");shape.animate([{borderRadius:"50%",transform:"rotate(0) scale(1)"},{borderRadius:"18%",transform:"rotate(135deg) scale(1.25)"},{borderRadius:"50%",transform:"rotate(270deg) scale(1)"}],{duration:1200,easing:"cubic-bezier(.22,1,.36,1)"})};
-$("share-design").onclick=async()=>{if(!activeDesign?.id){toast("Save this design before sharing.");return}try{const {data,error}=await db.from("portfolio_shares").upsert({design_id:activeDesign.id,user_id:currentUser.id,is_active:true},{onConflict:"design_id"}).select("share_token").single();if(error)throw error;const url=location.origin+location.pathname+"#share="+data.share_token;await navigator.clipboard.writeText(url);toast("Public link copied. Anyone with the link can view this design.")}catch(err){toast("Sharing failed: "+err.message)}};
-async function loadSharedView(token){$("auth").classList.add("hidden");$("app").classList.add("hidden");const {data,error}=await db.from("portfolio_shares").select("share_token,designs(title,design_type,content)").eq("share_token",token).eq("is_active",true).maybeSingle();if(error||!data?.designs){document.body.innerHTML="<main style='font:16px sans-serif;padding:50px;text-align:center'><h2>Link unavailable</h2><p>This design may have been removed or sharing disabled.</p></main>";return}const d=data.designs,content=d.content;let html="";if(d.design_type==="cv"){const sec=(t,v)=>v?`<section class="resume-section"><h2>${esc(t)}</h2><p>${esc(v)}</p></section>`:"";html=`<article class="resume-page"><header class="resume-head"><h1>${esc(content.full_name)}</h1><div class="role">${esc(content.role)}</div><div class="resume-contact">${esc(content.email)} · ${esc(content.phone)}<br>${esc(content.location)}</div></header>${sec("Profile",content.summary)}${sec("Experience",content.experience)}${sec("Education",content.education)}${sec("Skills",content.skills)}${sec("Languages",content.language)}</article>`}else if(d.design_type==="portfolio"){html=`<article class="portfolio-preview"><span class="eyebrow">PERSONAL PORTFOLIO</span><div class="big">${esc(content.full_name)}<br><span>${esc(content.role)}</span></div><p class="lead">${esc(content.tagline)}</p><section class="resume-section"><h2>ABOUT</h2><p>${esc(content.about)}</p></section><section class="resume-section"><h2>SELECTED WORK</h2><p>${esc(content.projects)}</p></section><section class="resume-section"><h2>SKILLS</h2><p>${esc(content.skills)}</p></section></article>`}else{html=`<article class="poster-preview"><div><div class="poster-kicker">${esc(content.company)}</div><h1>${esc(content.headline).replace(/\n/g,"<br>")}</h1><p>${esc(content.subheadline)}</p></div><div><p>${esc(content.role)}</p><p>${esc(content.details)}</p><div class="poster-footer">${esc(content.contact)}</div></div></article>`}document.body.innerHTML=`<main class="share-view"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px"><div class="brand"><span class="brand-symbol">C</span> CANVIO</div><button class="secondary" onclick="window.print()">Print / Save PDF</button></div>${html}<p style="text-align:center;color:#87909e;font:11px sans-serif;margin:25px">Created with CANVIO</p></main>`}
-async function init(){if(!db){$("auth-error").textContent="Could not initialize Supabase. Check the network and project configuration.";return}const share=new URLSearchParams(location.hash.slice(1)).get("share");if(share){await loadSharedView(share);return}await restoreSession()}
-init();
-</script>
-</body>
-</html>'''
+  function mount({root,onUse=()=>{},onPreview=()=>{}}={}) {
+    if(!root) throw new Error("CANVIO Template Library: root element is required.");
+    let state={type:"all",category:"all",style:"all",level:"all",q:"",sort:"popular"};
+    const categories=["all",...new Set(templates.map(t=>t.category))];
+    const styles=["all",...new Set(templates.map(t=>t.style))];
+    const levels=["all",...new Set(templates.map(t=>t.level))];
+    const render=()=>{
+      const filtered=templates.filter(t=>(state.type==="all"||t.type===state.type)&&(state.category==="all"||t.category===state.category)&&(state.style==="all"||t.style===state.style)&&(state.level==="all"||t.level===state.level)&&(`${t.name} ${t.description} ${t.industry} ${t.category} ${t.style}`).toLowerCase().includes(state.q.toLowerCase()));
+      root.innerHTML=`<section class="canvio-lib">
+        <header class="cl-hero"><div><span class="cl-eyebrow">CANVIO / CREATIVE LIBRARY</span><h1>Make your potential <em>visible.</em></h1><p>Khám phá mẫu thiết kế cho hồ sơ nghề nghiệp, portfolio và truyền thông tuyển dụng.</p></div><div class="cl-count"><strong>${templates.length}</strong><span>DESIGN TEMPLATES</span></div></header>
+        <div class="cl-search"><span>⌕</span><input data-q placeholder="Tìm mẫu CV, portfolio, poster, ngành nghề..." value="${esc(state.q)}"><span class="cl-shortcut">⌘ K</span></div>
+        <nav class="cl-types">${[["all","Tất cả"],["cv","CV"],["portfolio","Portfolio"],["poster","Poster"]].map(([v,l])=>`<button data-type="${v}" class="${state.type===v?"active":""}">${l}</button>`).join("")}</nav>
+        <div class="cl-toolbar"><div><b>${filtered.length} mẫu thiết kế</b><span> · Bộ sưu tập CANVIO</span></div><select data-sort><option value="popular">Đề xuất</option><option value="az">Tên A–Z</option></select></div>
+        <div class="cl-filters"><select data-category>${categories.map(v=>`<option value="${esc(v)}" ${state.category===v?"selected":""}>${v==="all"?"Tất cả danh mục":esc(v)}</option>`).join("")}</select><select data-style>${styles.map(v=>`<option value="${esc(v)}" ${state.style===v?"selected":""}>${v==="all"?"Mọi phong cách":esc(v)}</option>`).join("")}</select><select data-level>${levels.map(v=>`<option value="${esc(v)}" ${state.level===v?"selected":""}>${v==="all"?"Mọi cấp độ":esc(v)}</option>`).join("")}</select><button data-reset>Làm mới bộ lọc</button></div>
+        <div class="cl-grid">${filtered.sort((a,b)=>state.sort==="az"?a.name.localeCompare(b.name):0).map(t=>`<article class="cl-card" data-id="${t.id}"><div class="cl-thumb">${preview(t)}<span class="cl-type">${typeLabel(t.type)}</span>${t.premium?'<span class="cl-premium">PRO</span>':""}<button class="cl-preview" data-preview="${t.id}">Xem trước ↗</button></div><div class="cl-meta"><div><b>${esc(t.name)}</b><small>${esc(t.category)} · ${esc(t.industry)}</small></div><button class="cl-use" data-use="${t.id}">Sử dụng mẫu</button></div><p>${esc(t.description)}</p></article>`).join("")||'<div class="cl-empty">Không tìm thấy mẫu phù hợp. Thử thay đổi bộ lọc nhé.</div>'}</div>
+        <footer class="cl-footer">CANVIO · CREATE BEYOND LIMITS <span>New templates added regularly</span></footer>
+      </section>`;
+      root.querySelector("[data-q]").addEventListener("input",e=>{state.q=e.target.value;const p=e.target.selectionStart;render();const n=root.querySelector("[data-q]");n.focus();n.setSelectionRange(p,p)});
+      root.querySelectorAll("[data-type]").forEach(b=>b.addEventListener("click",()=>{state.type=b.dataset.type;render()}));
+      ["category","style","level"].forEach(k=>root.querySelector(`[data-${k}]`).addEventListener("change",e=>{state[k]=e.target.value;render()}));
+      root.querySelector("[data-sort]").addEventListener("change",e=>{state.sort=e.target.value;render()});
+      root.querySelector("[data-reset]").addEventListener("click",()=>{state={type:"all",category:"all",style:"all",level:"all",q:"",sort:"popular"};render()});
+      root.querySelectorAll("[data-use]").forEach(b=>b.addEventListener("click",()=>{const t=templates.find(x=>x.id===b.dataset.use);onUse(structuredClone(t))}));
+      root.querySelectorAll("[data-preview]").forEach(b=>b.addEventListener("click",()=>{const t=templates.find(x=>x.id===b.dataset.preview);onPreview(structuredClone(t))}));
+    };
+    render();
+    return {templates:structuredClone(templates),render, getState:()=>({...state}), setFilters(next){state={...state,...next};render();}};
+  }
+  window.CANVIO_TEMPLATE_LIBRARY={templates,mount};
+})();'''
 
-sql = r'''-- CANVIO database schema
--- Run once in Supabase SQL Editor for project: tjrbuixjmcgqgfxzdswi
--- Uses Supabase Auth + Postgres RLS. Never put service_role/secret keys in the browser.
-
-create extension if not exists pgcrypto;
-
--- User profile. A profile is created automatically after Auth signup.
-create table if not exists public.profiles (
-  id uuid primary key references auth.users(id) on delete cascade,
-  full_name text not null default '',
-  avatar_url text,
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
-);
-
--- One record per saved creative project; design content is stored as JSONB.
-create table if not exists public.designs (
-  id uuid primary key default gen_random_uuid(),
-  user_id uuid not null references auth.users(id) on delete cascade,
-  title text not null default 'Untitled design',
-  design_type text not null check (design_type in ('cv','portfolio','poster')),
-  status text not null default 'draft' check (status in ('draft','published')),
-  content jsonb not null default '{}'::jsonb,
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
-);
-
-create index if not exists designs_user_updated_idx
-  on public.designs(user_id, updated_at desc);
-create index if not exists designs_type_idx
-  on public.designs(design_type);
-
--- Version history snapshots, useful for future undo/history UI.
-create table if not exists public.design_versions (
-  id uuid primary key default gen_random_uuid(),
-  design_id uuid not null references public.designs(id) on delete cascade,
-  user_id uuid not null references auth.users(id) on delete cascade,
-  version_number integer not null,
-  title text not null,
-  content jsonb not null default '{}'::jsonb,
-  created_at timestamptz not null default now(),
-  unique (design_id, version_number)
-);
-create index if not exists design_versions_owner_idx
-  on public.design_versions(user_id, design_id, version_number desc);
-
--- Public links are opt-in. Anyone with the unguessable token can view the linked design.
-create table if not exists public.portfolio_shares (
-  id uuid primary key default gen_random_uuid(),
-  design_id uuid not null unique references public.designs(id) on delete cascade,
-  user_id uuid not null references auth.users(id) on delete cascade,
-  share_token uuid not null unique default gen_random_uuid(),
-  is_active boolean not null default true,
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
-);
-create index if not exists portfolio_shares_token_idx
-  on public.portfolio_shares(share_token) where is_active = true;
-
--- Keep updated_at current.
-create or replace function public.set_updated_at()
-returns trigger language plpgsql as $$
-begin
-  new.updated_at = now();
-  return new;
-end;
-$$;
-
-drop trigger if exists profiles_set_updated_at on public.profiles;
-create trigger profiles_set_updated_at before update on public.profiles
-for each row execute function public.set_updated_at();
-
-drop trigger if exists designs_set_updated_at on public.designs;
-create trigger designs_set_updated_at before update on public.designs
-for each row execute function public.set_updated_at();
-
-drop trigger if exists portfolio_shares_set_updated_at on public.portfolio_shares;
-create trigger portfolio_shares_set_updated_at before update on public.portfolio_shares
-for each row execute function public.set_updated_at();
-
--- Create profile after signup. Metadata is user supplied; it is only a display name.
-create or replace function public.handle_new_user()
-returns trigger language plpgsql security definer
-set search_path = ''
-as $$
-begin
-  insert into public.profiles (id, full_name)
-  values (new.id, coalesce(new.raw_user_meta_data ->> 'full_name', ''))
-  on conflict (id) do nothing;
-  return new;
-end;
-$$;
-
-drop trigger if exists on_auth_user_created on auth.users;
-create trigger on_auth_user_created
-after insert on auth.users
-for each row execute procedure public.handle_new_user();
-
--- RLS
-alter table public.profiles enable row level security;
-alter table public.designs enable row level security;
-alter table public.design_versions enable row level security;
-alter table public.portfolio_shares enable row level security;
-
--- Profiles: each user can read/update only their own profile.
-drop policy if exists "profiles_select_own" on public.profiles;
-create policy "profiles_select_own" on public.profiles
-for select to authenticated using (auth.uid() = id);
-
-drop policy if exists "profiles_insert_own" on public.profiles;
-create policy "profiles_insert_own" on public.profiles
-for insert to authenticated with check (auth.uid() = id);
-
-drop policy if exists "profiles_update_own" on public.profiles;
-create policy "profiles_update_own" on public.profiles
-for update to authenticated using (auth.uid() = id) with check (auth.uid() = id);
-
--- Designs: users can only access their own private designs.
-drop policy if exists "designs_select_own" on public.designs;
-create policy "designs_select_own" on public.designs
-for select to authenticated using (auth.uid() = user_id);
-
-drop policy if exists "designs_insert_own" on public.designs;
-create policy "designs_insert_own" on public.designs
-for insert to authenticated with check (auth.uid() = user_id);
-
-drop policy if exists "designs_update_own" on public.designs;
-create policy "designs_update_own" on public.designs
-for update to authenticated using (auth.uid() = user_id) with check (auth.uid() = user_id);
-
-drop policy if exists "designs_delete_own" on public.designs;
-create policy "designs_delete_own" on public.designs
-for delete to authenticated using (auth.uid() = user_id);
-
--- Version snapshots: owner-only.
-drop policy if exists "versions_select_own" on public.design_versions;
-create policy "versions_select_own" on public.design_versions
-for select to authenticated using (auth.uid() = user_id);
-
-drop policy if exists "versions_insert_own" on public.design_versions;
-create policy "versions_insert_own" on public.design_versions
-for insert to authenticated with check (
-  auth.uid() = user_id and exists (
-    select 1 from public.designs d
-    where d.id = design_id and d.user_id = auth.uid()
-  )
-);
-
-drop policy if exists "versions_delete_own" on public.design_versions;
-create policy "versions_delete_own" on public.design_versions
-for delete to authenticated using (auth.uid() = user_id);
-
--- Share links: owners manage their links. Anonymous visitors can read active share rows
--- and the matching design through the narrowly scoped public policy below.
-drop policy if exists "shares_select_own" on public.portfolio_shares;
-create policy "shares_select_own" on public.portfolio_shares
-for select to authenticated using (auth.uid() = user_id);
-
-drop policy if exists "shares_insert_own" on public.portfolio_shares;
-create policy "shares_insert_own" on public.portfolio_shares
-for insert to authenticated with check (
-  auth.uid() = user_id and exists (
-    select 1 from public.designs d
-    where d.id = design_id and d.user_id = auth.uid()
-  )
-);
-
-drop policy if exists "shares_update_own" on public.portfolio_shares;
-create policy "shares_update_own" on public.portfolio_shares
-for update to authenticated using (auth.uid() = user_id) with check (auth.uid() = user_id);
-
-drop policy if exists "shares_delete_own" on public.portfolio_shares;
-create policy "shares_delete_own" on public.portfolio_shares
-for delete to authenticated using (auth.uid() = user_id);
-
--- Public access is limited to active shares and is only used by the public share URL.
-drop policy if exists "shares_public_read_active" on public.portfolio_shares;
-create policy "shares_public_read_active" on public.portfolio_shares
-for select to anon using (is_active = true);
-
--- Public design read is allowed only when an active share row exists.
-drop policy if exists "designs_public_read_shared" on public.designs;
-create policy "designs_public_read_shared" on public.designs
-for select to anon using (
-  exists (
-    select 1 from public.portfolio_shares s
-    where s.design_id = designs.id
-      and s.is_active = true
-  )
-);
-
--- Grant only the table operations needed by the frontend.
-grant usage on schema public to anon, authenticated;
-grant select, insert, update, delete on public.designs to authenticated;
-grant select, insert, update, delete on public.profiles to authenticated;
-grant select, insert, delete on public.design_versions to authenticated;
-grant select, insert, update, delete on public.portfolio_shares to authenticated;
-grant select on public.portfolio_shares to anon;
-grant select on public.designs to anon;
-
--- Optional: after running the script, enable email confirmation settings in
--- Authentication -> Providers -> Email according to your desired signup flow.
+css = r'''/* CANVIO Template Library */
+.canvio-lib{--ink:#17212b;--muted:#75808b;--line:#e8ebef;--paper:#fff;--brand:#5b5ce2;color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif}
+.canvio-lib *{box-sizing:border-box}.cl-hero{display:flex;justify-content:space-between;align-items:end;padding:34px 0 28px;border-bottom:1px solid var(--line);gap:20px}.cl-eyebrow{font-size:10px;font-weight:800;letter-spacing:.18em;color:var(--brand)}.cl-hero h1{font-size:clamp(30px,4vw,48px);line-height:1.04;letter-spacing:-.055em;margin:12px 0}.cl-hero h1 em{font-family:Georgia,serif;font-weight:400;color:var(--brand)}.cl-hero p{color:var(--muted);margin:0;max-width:550px}.cl-count{display:flex;flex-direction:column;text-align:right}.cl-count strong{font-size:38px;letter-spacing:-.06em}.cl-count span{font-size:9px;letter-spacing:.16em;color:var(--muted);font-weight:800}.cl-search{display:flex;align-items:center;gap:12px;border:1px solid var(--line);border-radius:12px;padding:0 16px;height:52px;margin:24px 0 18px}.cl-search>span:first-child{font-size:25px;color:var(--muted)}.cl-search input{border:0;outline:0;flex:1;font:inherit;min-width:0}.cl-shortcut{font-size:11px;color:var(--muted);border:1px solid var(--line);padding:4px 7px;border-radius:5px}.cl-types{display:flex;gap:7px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:16px}.cl-types button,.cl-filters button{border:1px solid var(--line);background:#fff;border-radius:8px;padding:9px 15px;color:#52606d;cursor:pointer;font-weight:650}.cl-types button.active{background:var(--ink);color:#fff;border-color:var(--ink)}.cl-toolbar{display:flex;justify-content:space-between;align-items:center;margin:22px 0 14px}.cl-toolbar span{color:var(--muted);font-size:13px}.cl-toolbar select,.cl-filters select{background:#fff;border:1px solid var(--line);padding:9px 12px;border-radius:8px;color:#4b5662}.cl-filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px}.cl-filters button{background:#f8f9fb}.cl-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}.cl-card{min-width:0}.cl-thumb{height:310px;background:#f0f2f5;border-radius:12px;position:relative;overflow:hidden;padding:18px;display:flex;align-items:center;justify-content:center}.cl-type,.cl-premium{position:absolute;top:12px;left:12px;background:#fff;color:#27313b;padding:5px 8px;border-radius:5px;font-size:9px;font-weight:800;letter-spacing:.07em;z-index:2}.cl-premium{left:auto;right:12px;background:#202a35;color:#fff}.cl-preview{position:absolute;bottom:12px;right:12px;border:0;border-radius:7px;padding:8px 11px;background:#fff;color:#17212b;font-weight:700;opacity:0;transform:translateY(4px);transition:.2s;cursor:pointer}.cl-thumb:hover .cl-preview{opacity:1;transform:none}.cl-meta{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:12px 0 6px}.cl-meta>div{min-width:0}.cl-meta b,.cl-meta small{display:block}.cl-meta b{font-size:14px}.cl-meta small{font-size:11px;color:var(--muted);margin-top:3px}.cl-use{border:0;background:#eff0ff;color:#4f50c8;border-radius:7px;padding:8px 10px;font-size:11px;font-weight:800;white-space:nowrap;cursor:pointer}.cl-card>p{font-size:12px;line-height:1.5;color:var(--muted);margin:0}.cl-empty{grid-column:1/-1;padding:50px;text-align:center;color:var(--muted)}.cl-footer{display:flex;justify-content:space-between;margin-top:35px;padding:18px 0;border-top:1px solid var(--line);font-size:9px;letter-spacing:.12em;font-weight:800;color:#89929b}.cl-footer span{letter-spacing:0;font-weight:500}
+.cvp{width:100%;height:100%;max-width:205px;background:#fff;box-shadow:0 5px 20px #18233318;padding:16px 14px;overflow:hidden;font-family:Arial,sans-serif;color:#27313b}.cvp-head{display:flex;align-items:center;gap:9px}.cvp-avatar{width:32px;height:32px;border-radius:50%;background:var(--accent);color:white;display:grid;place-items:center;font-size:10px;font-weight:bold}.cvp-head b{display:block;font-size:10px}.cvp-head small{display:block;font-size:7px;color:#777;margin-top:3px}.cvp-rule{height:3px;background:var(--accent);margin:12px 0}.cvp-columns{display:grid;grid-template-columns:1.4fr .8fr;gap:9px}.cvp.single .cvp-columns{grid-template-columns:1fr}.cvp i{font-size:6px;letter-spacing:.12em;color:var(--accent);font-style:normal;font-weight:bold;display:block;margin:8px 0 4px}.cvp p{font-size:6px;line-height:1.5;color:#69727b;margin:3px 0 7px}.cvp b{font-size:7px;display:block}.cvp small{font-size:6px;color:#69727b;display:block}.cvp aside{background:#f5f6f8;padding:6px}.cvp aside span{display:block;font-size:6px;padding:3px 0;border-bottom:1px solid #e7e9ed}.cvp.editorial .cvp-head b{font-family:Georgia,serif;font-size:15px}.cvp.grid .cvp-columns{grid-template-columns:1fr 1fr}
+.pfp{width:100%;height:100%;background:#fff;box-shadow:0 5px 20px #18233318;padding:18px;overflow:hidden;color:#202a35}.pfp>small{font-size:6px;letter-spacing:.15em;color:var(--accent)}.pfp h2{font-size:20px;letter-spacing:-.06em;margin:30px 0 4px}.pfp h3{font-size:8px;color:var(--accent);margin:0}.pfp>p{font-size:7px;color:#727b84;max-width:90%;line-height:1.5}.pfp-tiles{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:20px}.pfp-tiles div{height:75px;background:color-mix(in srgb,var(--accent) 13%,white);padding:8px;display:flex;flex-direction:column;justify-content:space-between}.pfp-tiles b{font-size:7px;color:var(--accent)}.pfp-tiles strong{font-size:8px}.pfp-tiles small{font-size:6px;color:#7b838b}.pfp.terminal{background:#15221d;color:#d5f5df}.pfp.terminal .pfp-tiles div{background:#20372d}.pfp.gallery .pfp-tiles div{height:90px}
+.pop{width:100%;height:100%;background:var(--accent);color:#fff;padding:23px 18px;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden}.pop>small{font-size:6px;letter-spacing:.17em;opacity:.8}.pop h2{font-size:25px;line-height:.92;letter-spacing:-.07em;margin:18px 0 6px;overflow-wrap:anywhere}.pop h3{font-size:10px;margin:0;font-weight:500}.pop p{font-size:8px;opacity:.85}.pop-foot{display:flex;justify-content:space-between;gap:5px;border-top:1px solid #ffffff66;padding-top:10px;font-size:7px}.pop-foot b{font-size:7px}.pop.event h2,.pop.sale h2{font-size:30px}.pop.workshop{background:#eee8dd;color:#352d25}.pop.workshop .pop-foot{border-color:#352d2555}
+@media(max-width:900px){.cl-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.cl-thumb{height:290px}}@media(max-width:560px){.cl-hero{align-items:start}.cl-count{display:none}.cl-grid{grid-template-columns:1fr 1fr;gap:12px}.cl-thumb{height:220px;padding:10px}.cl-meta{align-items:flex-start;flex-direction:column}.cl-use{width:100%}.cl-filters select{flex:1;min-width:130px}.cl-footer{font-size:8px}.cl-footer span{display:none}}
 '''
 
-out = Path("/mnt/data")
-(out / "index.html").write_text(html, encoding="utf-8")
-(out / "canvio.sql").write_text(sql, encoding="utf-8")
-print("Created:", out / "index.html", "and", out / "canvio.sql")
-print("HTML bytes:", (out / "index.html").stat().st_size, "| SQL bytes:", (out / "canvio.sql").stat().st_size)
+readme = """# CANVIO Template Library Add-on
+
+Gói này là module thư viện mẫu độc lập để ghép vào CANVIO hiện tại. Có 24 mẫu dữ liệu khởi tạo:
+- 12 CV (ATS, HR, IT, Marketing, Finance, Sales, Academic, Executive...)
+- 6 Portfolio
+- 6 Poster
+
+## Tích hợp
+1. Thêm `canvio-template-library.css` vào trang:
+   `<link rel="stylesheet" href="canvio-template-library.css">`
+2. Thêm `canvio-template-library.js` sau script khởi tạo ứng dụng.
+3. Tạo một vùng hiển thị trong trang Templates:
+   `<div id="templateLibraryRoot"></div>`
+4. Khởi tạo:
+```js
+const canvioLibrary = CANVIO_TEMPLATE_LIBRARY.mount({
+  root: document.querySelector('#templateLibraryRoot'),
+  onUse(template) {
+    // Map template.content vào schema hiện tại của editor.
+    // Sau đó gọi hàm mở editor/lưu thiết kế hiện có.
+    console.log('Selected template', template);
+  },
+  onPreview(template) {
+    // Có thể mở modal preview riêng của app.
+    console.log('Preview template', template);
+  }
+});
+```
+
+## Lưu ý kỹ thuật
+- Module không ghi Supabase trực tiếp; thao tác lưu vẫn nên đi qua logic `designs` hiện tại.
+- `onUse` trả về object template đầy đủ gồm id/type/name/content/style/accent/layout.
+- Không chạy SQL migration vì kho mẫu tĩnh này không cần thêm bảng.
+- Đây là module bổ sung, chưa phải file `index.html` CANVIO đã merge hoàn chỉnh. Cần ghép adapter `onUse` với hàm editor thật trong source hiện tại để tránh phá vỡ chức năng đang chạy.
+"""
+(out/"canvio-template-library.js").write_text(js, encoding="utf-8")
+(out/"canvio-template-library.css").write_text(css, encoding="utf-8")
+(out/"README-INTEGRATION.md").write_text(readme, encoding="utf-8")
+zip_path=Path("/mnt/data/CANVIO_Template_Library_Addon.zip")
+with zipfile.ZipFile(zip_path,"w",zipfile.ZIP_DEFLATED) as z:
+    for p in out.iterdir():
+        z.write(p,p.name)
+print(zip_path, zip_path.stat().st_size)
