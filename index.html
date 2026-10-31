@@ -368,6 +368,66 @@ h1{font-size:27px;margin:0 0 7px;letter-spacing:-.7px}
  </main>
 </div>
 
+<!-- AI CV & PORTFOLIO GENERATOR -->
+<section id="ai-generator" style="
+ display:none;position:fixed;inset:0;z-index:30;
+ background:#080b12;color:#f4f5f8;overflow:auto;
+ font-family:'DM Sans',sans-serif;padding:28px">
+ <div style="max-width:1150px;margin:auto">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:35px">
+   <div>
+    <div style="color:#d9b878;font-size:10px;letter-spacing:2px">CANVIO INTELLIGENCE</div>
+    <h1 style="font-size:28px;margin:8px 0">AI Career Generator</h1>
+    <p style="color:#8b95a8;font-size:12px">Turn your experience into a professional career identity.</p>
+   </div>
+   <button class="btn" id="ai-close">✕ Close</button>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:22px">
+   <div class="stat">
+    <div class="section-title">01 / YOUR INFORMATION</div>
+    <div class="field">
+     <label>Paste your existing CV or career information</label>
+     <textarea id="ai-input" rows="19" placeholder="Paste your CV here..."></textarea>
+    </div>
+    <div class="field">
+     <label>Target position</label>
+     <input id="ai-target" placeholder="Business Development Executive">
+    </div>
+    <div class="field">
+     <label>Output language</label>
+     <select id="ai-language">
+      <option value="vi">Vietnamese</option>
+      <option value="en">English</option>
+     </select>
+    </div>
+    <div class="field">
+     <label>Design type</label>
+     <select id="ai-output">
+      <option value="both">CV + Portfolio</option>
+      <option value="cv">CV only</option>
+      <option value="portfolio">Portfolio only</option>
+     </select>
+    </div>
+    <button class="btn btn-primary" id="ai-analyze" style="width:100%;padding:13px">
+     ✦ Analyze my career information
+    </button>
+   </div>
+
+   <div class="stat">
+    <div class="section-title">02 / STRUCTURED PROFILE</div>
+    <div id="ai-result" style="font-size:12px;color:#8b95a8;line-height:1.8">
+     Your structured career profile will appear here.
+    </div>
+    <div style="display:flex;gap:8px;margin-top:20px">
+     <button class="btn btn-primary" id="ai-create-cv" disabled>Create CV</button>
+     <button class="btn" id="ai-create-portfolio" disabled>Create Portfolio</button>
+    </div>
+   </div>
+  </div>
+ </div>
+</section>
+
 <!-- EDITOR -->
 <div class="editor" id="editor">
  <div class="editor-top">
@@ -1196,6 +1256,315 @@ document.querySelectorAll(".chip").forEach(chip=>{
 });
 renderTemplates();
 loadUser();
+ 
+/* =========================================
+   CANVIO CAREER DATA ENGINE
+========================================= */
+
+const CareerEngine = (() => {
+
+ const patterns = {
+  email:/[\w.+-]+@[\w.-]+\.[a-zA-Z]{2,}/g,
+  phone:/(?:\+84|0)[\d\s.-]{8,13}/g,
+  date:/\b(?:19|20)\d{2}\b/g
+ };
+
+ function clean(text){
+  return String(text||"")
+   .replace(/\r/g,"")
+   .replace(/[ \t]+/g," ")
+   .trim();
+ }
+
+ function extractLines(text){
+  return clean(text).split("\n")
+   .map(x=>x.trim())
+   .filter(Boolean);
+ }
+
+ function extractSection(lines,headers){
+  const result=[];
+  let active=false;
+  for(const line of lines){
+   const normalized=line.toLowerCase();
+   if(headers.some(h=>normalized.includes(h))){
+    active=true;
+    continue;
+   }
+   if(active && isSectionHeader(normalized))break;
+   if(active)result.push(line);
+  }
+  return result;
+ }
+
+ function isSectionHeader(line){
+  return [
+   "học vấn","kinh nghiệm làm việc","mục tiêu nghề nghiệp",
+   "kỹ năng","chứng chỉ","hoạt động","sở thích",
+   "education","experience","skills","certificates",
+   "activities","career objective"
+  ].some(h=>line.includes(h));
+ }
+
+ function parse(text,target){
+  const lines=extractLines(text);
+  const full=lines.join("\n");
+
+  const emails=full.match(patterns.email)||[];
+  const phones=full.match(patterns.phone)||[];
+
+  const sections={
+   objective:extractSection(lines,["mục tiêu nghề nghiệp","career objective","professional summary"]),
+   education:extractSection(lines,["học vấn","education"]),
+   experience:extractSection(lines,["kinh nghiệm làm việc","work experience","experience"]),
+   skills:extractSection(lines,["kỹ năng","skills"]),
+   certificates:extractSection(lines,["chứng chỉ","certificates"]),
+   activities:extractSection(lines,["hoạt động","activities"]),
+   interests:extractSection(lines,["sở thích","interests"]),
+   awards:extractSection(lines,["danh hiệu và giải thưởng","giải thưởng","awards"])
+  };
+
+  const firstLine=lines.find(x=>
+   x.length>2 && !x.includes("@") && !/^\d/.test(x)
+  )||"";
+
+  return {
+   personal:{
+    full_name:firstLine,
+    position:target||"",
+    email:emails[0]||"",
+    phone:phones[0]||"",
+    website:"",
+    address:"",
+    birth_date:"",
+    gender:""
+   },
+   objective:sections.objective.join("\n"),
+   education:sections.education,
+   experience:sections.experience,
+   skills:sections.skills,
+   certificates:sections.certificates,
+   activities:sections.activities,
+   interests:sections.interests,
+   awards:sections.awards,
+   raw_text:full,
+   metadata:{
+    parsed_at:new Date().toISOString(),
+    parser:"canvio-local-parser"
+   }
+  };
+ }
+
+ return {parse};
+})();
+
+/* =========================================
+   AI GENERATOR UI
+========================================= */
+
+let canvioCareerProfile=null;
+
+function openAIGenerator(){
+ $("ai-generator").style.display="block";
+}
+function closeAIGenerator(){
+ $("ai-generator").style.display="none";
+}
+
+$("ai-close").onclick=closeAIGenerator;
+
+document.querySelectorAll(".nav-item[data-create]").forEach(item=>{
+ item.addEventListener("contextmenu",e=>{
+  e.preventDefault();
+  openAIGenerator();
+ });
+});
+
+// Dedicated generator entry point
+const aiButton=document.createElement("button");
+aiButton.className="nav-item";
+aiButton.innerHTML='<span class="nav-icon">✦</span><span>AI Generator</span>';
+aiButton.onclick=openAIGenerator;
+document.querySelector(".sidebar").insertBefore(
+ aiButton,document.querySelector(".sidebar-bottom")
+);
+
+/* =========================================
+   ANALYZE CAREER PROFILE
+========================================= */
+
+$("ai-analyze").onclick=()=>{
+ const raw=$("ai-input").value.trim();
+ const target=$("ai-target").value.trim();
+
+ if(raw.length<40){
+  toast("Vui lòng nhập đầy đủ thông tin CV");
+  return;
+ }
+
+ canvioCareerProfile=CareerEngine.parse(raw,target);
+
+ const p=canvioCareerProfile;
+
+ const groups=[
+  ["PERSONAL INFORMATION",p.personal.full_name,p.personal.email,p.personal.phone],
+  ["CAREER OBJECTIVE",p.objective],
+  ["EDUCATION",p.education],
+  ["WORK EXPERIENCE",p.experience],
+  ["SKILLS",p.skills],
+  ["CERTIFICATES",p.certificates],
+  ["ACTIVITIES",p.activities],
+  ["AWARDS",p.awards]
+ ];
+
+ $("ai-result").innerHTML=groups.map(([title,...values])=>{
+  const content=values.flat().filter(Boolean).join("<br>");
+  return `
+   <div style="padding:11px 0;border-bottom:1px solid #252d3c">
+    <strong style="color:#d9b878;font-size:10px">${title}</strong>
+    <div style="margin-top:5px;color:#d7dce6">
+     ${escapeHTML(content||"No information detected")}
+    </div>
+   </div>`;
+ }).join("");
+
+ $("ai-create-cv").disabled=false;
+ $("ai-create-portfolio").disabled=false;
+
+ toast("Đã phân tích nội dung CV");
+};
+
+/* =========================================
+   PROFILE TO DESIGN DOCUMENT
+========================================= */
+
+function createCareerDocument(type){
+
+ if(!canvioCareerProfile)return;
+
+ const p=canvioCareerProfile;
+ const isPortfolio=type==="portfolio";
+
+ const title=p.personal.full_name+
+  (isPortfolio?" — Portfolio":" — CV");
+
+ const slides=[];
+
+ if(!isPortfolio){
+
+  const background="#ffffff";
+  const accent="#24476a";
+
+  slides.push({
+   background,
+   objects:[
+    textObject("name",p.personal.full_name,55,45,680,65,36,accent),
+    textObject("position",p.personal.position,57,110,680,35,19,"#777777"),
+    rectObject("line",55,160,690,4,accent),
+    textObject("contact",
+     [p.personal.email,p.personal.phone].filter(Boolean).join(" | "),
+     55,180,690,35,12,"#555555"),
+    textObject("objective-title","PROFILE",55,245,690,30,17,accent),
+    textObject("objective",p.objective||"Add your professional summary.",
+     55,285,690,105,13,"#333333"),
+    textObject("experience-title","EXPERIENCE",55,415,690,30,17,accent)
+   ]
+  });
+
+  const sections=[
+   {title:"WORK EXPERIENCE",items:p.experience},
+   {title:"EDUCATION",items:p.education},
+   {title:"SKILLS & CERTIFICATES",items:[...p.skills,...p.certificates]}
+  ];
+
+  sections.forEach((section,index)=>{
+   slides.push({
+    background,
+    objects:[
+     textObject("section-title",section.title,55,55,690,50,27,accent),
+     rectObject("section-line",55,115,120,4,accent),
+     textObject("section-content",
+      section.items.join("\n\n")||"Add information here.",
+      55,155,680,300,16,"#333333")
+    ]
+   });
+  });
+
+ }else{
+
+  slides.push({
+   background:"#111827",
+   objects:[
+    textObject("hero-name",p.personal.full_name,65,140,670,80,48,"#e4c78e"),
+    textObject("hero-position",p.personal.position,70,235,650,50,22,"#ffffff"),
+    rectObject("hero-line",70,315,150,5,"#e4c78e"),
+    textObject("hero-description",p.objective||"Professional Portfolio",
+     70,355,630,100,17,"#ffffff")
+   ]
+  });
+
+  const portfolioSections=[
+   ["ABOUT ME",p.objective],
+   ["EXPERIENCE",p.experience.join("\n\n")],
+   ["EDUCATION",p.education.join("\n\n")],
+   ["SKILLS",p.skills.join("\n")],
+   ["ACHIEVEMENTS",p.awards.join("\n")]
+  ];
+
+  portfolioSections.forEach(([heading,content])=>{
+   slides.push({
+    background:"#f5f2eb",
+    objects:[
+     textObject("portfolio-heading",heading,60,65,680,55,32,"#876b3d"),
+     rectObject("portfolio-line",60,130,110,4,"#c5a36a"),
+     textObject("portfolio-content",
+      content||"Add your information here.",
+      60,170,680,280,17,"#252525")
+    ]
+   });
+  });
+ }
+
+ openEditor({
+  id:null,
+  title,
+  type,
+  content:{slides:slides.slice(0,10)}
+ });
+
+ closeAIGenerator();
+}
+
+function textObject(morphId,text,x,y,width,height,fontSize,fill){
+ return {
+  id:crypto.randomUUID(),
+  morphId,
+  kind:"text",
+  text:String(text||""),
+  x,y,width,height,fontSize,
+  fill,fontFamily:"DM Sans"
+ };
+}
+
+function rectObject(morphId,x,y,width,height,fill){
+ return {
+  id:crypto.randomUUID(),
+  morphId,
+  kind:"rect",
+  x,y,width,height,fill
+ };
+}
+
+$("ai-create-cv").onclick=()=>{
+ const mode=$("ai-output").value;
+ if(mode==="portfolio")return createCareerDocument("portfolio");
+ createCareerDocument("cv");
+};
+
+$("ai-create-portfolio").onclick=()=>{
+ createCareerDocument("portfolio");
+};
+
 </script>
 </body>
 </html>
