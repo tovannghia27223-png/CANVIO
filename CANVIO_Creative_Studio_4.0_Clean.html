@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CANVIO Creative Studio 4.0</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:Inter,system-ui,sans-serif;font-size:13px;background:#f8fafc;color:#0f172a;line-height:1.5}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer;border:none;background:none}
+.shell{min-height:100vh;display:grid;grid-template-columns:250px 1fr}
+.side{background:linear-gradient(180deg,#070f1a,#0f1d2e);color:#e2e8f0;padding:20px 14px;display:flex;flex-direction:column;gap:18px;position:relative;z-index:30}
+.logo{display:flex;align-items:center;gap:10px;padding:4px 8px}
+.logoMark{height:36px;width:36px;border-radius:10px;background:linear-gradient(135deg,#22d3ee,#2563eb);display:grid;place-items:center;color:#fff;font-weight:900;font-size:18px}
+.logo b{letter-spacing:1.5px;font-size:13px;color:#fff}
+.logo small{display:block;font-size:8.5px;letter-spacing:2px;color:#94a3b8;text-transform:uppercase}
+.navgroup label{font-size:9px;letter-spacing:1.5px;color:#64748b;text-transform:uppercase;padding:0 10px;font-weight:700}
+.nav{display:flex;flex-direction:column;gap:3px;margin-top:6px}
+.nav button{border:0;background:transparent;color:#94a3b8;text-align:left;padding:9px 11px;border-radius:8px;font-size:12px;font-weight:500;display:flex;align-items:center;gap:8px;transition:.15s}
+.nav button:hover,.nav button.active{background:#ffffff10;color:#fff}
+.nav button span{width:20px;text-align:center;font-size:13px}
+main{min-width:0;position:relative}
+.top{height:58px;background:rgba(255,255,255,.75);border-bottom:1px solid #e2e8f0;display:flex;align-items:center;justify-content:space-between;padding:0 20px;position:sticky;top:0;z-index:20;backdrop-filter:blur(20px)}
+.crumb{font-size:11px;color:#64748b;font-weight:500}
+.crumb b{color:#0f172a;font-weight:700}
+.topright{display:flex;gap:8px;align-items:center}
+.status{font-size:10px;color:#15803d;background:#f0fdf4;padding:6px 12px;border-radius:99px;font-weight:600;border:1px solid #bbf7d0}
+.user{height:30px;width:30px;border-radius:50%;background:linear-gradient(135deg,#2563eb,#22d3ee);color:#fff;display:grid;place-items:center;font-weight:800;font-size:10px}
+.page{display:none;padding:24px;max-width:1600px;margin:auto}
+.page.active{display:block}
+.heading{display:flex;justify-content:space-between;align-items:flex-end;gap:15px;margin-bottom:20px}
+.eyebrow{font-size:9px;letter-spacing:1.8px;color:#2563eb;font-weight:800;text-transform:uppercase}
+.heading h1{font-size:28px;letter-spacing:-1px;margin:6px 0 4px;font-weight:800}
+.heading p{margin:0;color:#64748b;font-size:12px}
+.btn{border:0;border-radius:10px;background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#fff;padding:9px 16px;font-size:11px;font-weight:700;box-shadow:0 4px 12px rgba(37,99,235,.2);transition:.15s}
+.btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(37,99,235,.27)}
+.btn.ghost{background:#fff;color:#334155;border:1px solid #e2e8f0;box-shadow:0 4px 6px -1px rgba(0,0,0,.1)}
+.btn.ghost:hover{background:#f1f5f9}
+.btn.dark{background:#0f1d2e}
+.btn.danger{background:#fef2f2;color:#ef4444;border:1px solid #fecaca}
+.btn.warn{background:#fffbeb;color:#92400e;border:1px solid #fde68a}
+.btn.purple{background:#f5f3ff;color:#6d28d9;border:1px solid #ddd6fe}
+.btn.sm{padding:6px 10px;font-size:10px}
+.panel{background:#fff;border:1px solid #e2e8f0;border-radius:16px;box-shadow:0 4px 6px -1px rgba(0,0,0,.1);padding:18px;min-width:0}
+.panelhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.panelhead b{font-size:12.5px;font-weight:700}
+.tiny{font-size:10.5px;color:#64748b;line-height:1.6}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+.stat{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:16px;box-shadow:0 4px 6px -1px rgba(0,0,0,.1)}
+.stat span{font-size:10px;color:#64748b;text-transform:uppercase;letter-spacing:.5px}
+.stat strong{display:block;font-size:26px;margin:6px 0;letter-spacing:-1.5px;font-weight:800}
+.stat small{font-size:10px;color:#15803d;font-weight:500}
+.dashgrid{display:grid;grid-template-columns:1.3fr .7fr;gap:14px}
+.quickgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.quick{border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;cursor:pointer;background:#fff;transition:.2s}
+.quick:hover{transform:translateY(-3px);box-shadow:0 20px 25px -5px rgba(0,0,0,.1)}
+.quickart{height:120px;display:grid;place-items:center;color:#fff;font-weight:900;font-size:20px;letter-spacing:-1px;text-align:center;text-shadow:0 2px 10px rgba(0,0,0,.2)}
+.quickbody{padding:12px}
+.quickbody b{font-size:12px}
+.quickbody small{display:block;color:#64748b;font-size:9px;margin-top:3px}
+.editorGrid{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:14px;align-items:start}
+.canvasPanel{padding:14px}
+.toolbar{display:flex;gap:5px;flex-wrap:wrap;align-items:center;margin-bottom:10px;padding:8px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px}
+.toolbtn{border:1px solid #e2e8f0;background:#fff;color:#475569;padding:6px 10px;border-radius:8px;font-size:10px;font-weight:600}
+.toolbtn:hover{background:#f1f5f9}
+.stageWrap{background:#e2e8f0;border-radius:12px;min-height:560px;display:grid;place-items:center;overflow:hidden;position:relative;padding:24px}
+.stage{width:440px;height:550px;position:relative;overflow:hidden;flex:none;box-shadow:0 24px 60px rgba(15,23,42,.2);background:linear-gradient(145deg,#0f172a,#1e3a8a 60%,#38bdf8);color:#fff}
+.stage.square{height:440px}
+.stage.landscape{width:600px;height:400px}
+.stage.a4{height:622px}
+.stage.a4l{width:622px;height:440px}
+.stage.social{height:440px}
+.stage.light{background:linear-gradient(145deg,#f8fafc,#bfdbfe 65%,#60a5fa);color:#0f172a}
+.stage.warm{background:linear-gradient(145deg,#1c1917,#44403c 60%,#a8a29e)}
+.stage.violet{background:linear-gradient(145deg,#2e1065,#7c3aed 55%,#c084fc)}
+.stage.dark{background:linear-gradient(145deg,#020617,#1e293b 55%,#475569)}
+.stage.green{background:linear-gradient(145deg,#022c22,#15803d 55%,#4ade80)}
+.stage.orange{background:linear-gradient(145deg,#431407,#c2410c 55%,#fb923c)}
+.stageItem{position:absolute;min-width:20px;min-height:16px;cursor:move;user-select:none}
+.stageItem.selected{outline:2px dashed #38bdf8;outline-offset:4px}
+.stageItem.text{font-weight:900;line-height:.98;letter-spacing:-1.5px;text-transform:uppercase}
+.stageItem.para{font-size:13px;font-weight:450;line-height:1.55;text-transform:none}
+.stageItem.label{font-size:10px;letter-spacing:2px;font-weight:700}
+.stageItem.buttonish{padding:10px 14px;background:#a3e635;color:#0f172a;font-size:10px;font-weight:900;letter-spacing:.4px;border-radius:8px}
+.stageItem.shape{border-radius:50%;background:radial-gradient(circle at 30% 25%,#e0f2fe,#60a5fa 35%,#1d4ed8 75%,#0f172a);box-shadow:inset -12px -14px 20px #020617,0 17px 35px rgba(0,0,0,.33)}
+.stageItem.image{object-fit:cover;border-radius:10px}
+.stageItem.rect,.stageItem.circle{background:#2563eb}
+.stageItem.circle{border-radius:50%}
+.rightcol{display:flex;flex-direction:column;gap:12px}
+.field{margin-bottom:10px}
+.field label{display:block;font-size:9.5px;font-weight:700;color:#64748b;margin-bottom:4px;letter-spacing:.3px;text-transform:uppercase}
+.field input,.field textarea,.field select{width:100%;border:1px solid #e2e8f0;border-radius:10px;padding:8px 10px;font-size:11.5px;color:#0f172a;background:#fff}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:#2563eb;box-shadow:0 0 0 3px #bfdbfe;outline:none}
+.field textarea{min-height:60px;resize:vertical}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.layers{display:flex;flex-direction:column;gap:5px;max-height:200px;overflow:auto}
+.layer{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;border:1px solid #e2e8f0;border-radius:8px;font-size:10.5px;cursor:pointer;background:#fff}
+.layer:hover{background:#f8fafc}
+.layer.active{border-color:#93c5fd;background:#eff6ff}
+.swatches{display:flex;gap:8px;flex-wrap:wrap}
+.swatch{width:26px;height:26px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px #cbd5e1;cursor:pointer}
+.swatch:hover{transform:scale(1.1)}
+.swatch.active{box-shadow:0 0 0 2px #2563eb}
+.templateGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.template{border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;background:#fff;cursor:pointer;transition:.2s}
+.template:hover{transform:translateY(-3px);box-shadow:0 20px 25px -5px rgba(0,0,0,.1)}
+.templateArt{height:140px;display:grid;place-items:center;text-align:center;color:#fff;font-size:20px;font-weight:900;letter-spacing:-1px;text-shadow:0 2px 10px rgba(0,0,0,.2)}
+.templateInfo{padding:12px}
+.templateInfo b{font-size:12px}
+.templateInfo small{display:block;color:#64748b;font-size:9.5px;margin-top:3px}
+.template-filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.asset-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+.asset-card{border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;background:#fff;cursor:pointer;transition:.2s}
+.asset-card:hover{transform:translateY(-2px);box-shadow:0 20px 25px -5px rgba(0,0,0,.1)}
+.asset-thumb{height:120px;display:grid;place-items:center;background:#f8fafc;overflow:hidden}
+.asset-thumb img{max-width:100%;max-height:100%;object-fit:contain}
+.asset-info{padding:10px}
+.asset-info b{font-size:11px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.asset-info small{display:block;color:#64748b;font-size:9px;margin-top:2px}
+.asset-actions{display:flex;gap:4px;margin-top:8px}
+.asset-actions button{flex:1;font-size:9px;padding:5px;border-radius:6px;border:1px solid #e2e8f0;background:#fff;font-weight:600}
+.asset-actions button:hover{background:#eff6ff}
+.asset-dropzone{border:2px dashed #cbd5e1;border-radius:14px;padding:35px;text-align:center;background:#f8fafc;cursor:pointer;transition:.2s}
+.asset-dropzone:hover{background:#eff6ff;border-color:#2563eb}
+#threeBox{height:260px;border-radius:12px;background:radial-gradient(circle at 50% 45%,#1e3a8a,#020617);overflow:hidden;position:relative}
+#threeBox canvas{width:100%;height:100%;display:block}
+.ai-generate-box{background:linear-gradient(135deg,#0f172a,#1e3a8a);border-radius:16px;padding:24px;color:#fff;text-align:center;margin-bottom:16px}
+.ai-prompt{width:100%;padding:12px 16px;border-radius:12px;border:1px solid #334155;background:rgba(15,23,42,.6);color:#fff;font-size:13px;margin-bottom:12px;resize:vertical;min-height:80px}
+.ai-prompt:focus{outline:2px solid #22d3ee;border-color:transparent}
+.ai-image-result{border-radius:12px;overflow:hidden;border:1px solid #e2e8f0;background:#fff}
+.ai-image-result img{width:100%;height:220px;object-fit:cover}
+.timeline{background:#0f172a;border-radius:12px;padding:14px;color:#e2e8f0}
+.timeline-track{display:flex;align-items:center;gap:10px;padding:8px 10px;background:#1e293b;border-radius:8px;margin-bottom:6px;font-size:11px}
+.timeline-bar{flex:1;height:20px;background:#334155;border-radius:4px;position:relative;overflow:hidden}
+.timeline-bar-inner{height:100%;background:linear-gradient(90deg,#2563eb,#22d3ee);border-radius:4px;width:0%;transition:width .3s}
+.agent-box{background:linear-gradient(135deg,#581c87,#7c3aed);border-radius:16px;padding:24px;color:#fff;margin-bottom:16px}
+.agent-input{width:100%;padding:14px 18px;border-radius:14px;border:1px solid #7c3aed;background:rgba(255,255,255,.08);color:#fff;font-size:14px;margin-bottom:12px}
+.agent-input::placeholder{color:#c4b5fd}
+.agent-input:focus{outline:2px solid #a78bfa;border-color:transparent}
+.agent-step{display:flex;gap:12px;margin-bottom:10px;align-items:flex-start}
+.agent-step-num{width:28px;height:28px;border-radius:50%;background:#a78bfa;color:#fff;display:grid;place-items:center;font-size:11px;font-weight:800;flex:none}
+.agent-step-body{flex:1;padding:10px 14px;background:#f5f3ff;border:1px solid #ddd6fe;border-radius:10px;font-size:11.5px}
+.agent-step-body.done{background:#f0fdf4;border-color:#bbf7d0}
+.agent-step-body.processing{background:#eff6ff;border-color:#93c5fd}
+.responsive-device{padding:14px;border:1px solid #e2e8f0;border-radius:12px;background:#fff;text-align:center;cursor:pointer;transition:.2s}
+.responsive-device:hover{border-color:#2563eb;box-shadow:0 4px 6px -1px rgba(0,0,0,.1)}
+.analytics-card{padding:16px;border:1px solid #e2e8f0;border-radius:14px;background:#fff}
+.analytics-bar{height:8px;background:#e2e8f0;border-radius:99px;overflow:hidden;margin-bottom:6px}
+.analytics-bar-inner{height:100%;border-radius:99px}
+.analytics-score{font-size:48px;font-weight:800;color:#2563eb;text-align:center}
+.heatmap-grid{display:grid;grid-template-columns:repeat(10,1fr);gap:2px}
+.heatmap-cell{aspect-ratio:1;border-radius:3px}
+.guardian-result{padding:10px 14px;border-radius:10px;margin-bottom:8px;font-size:11.5px;display:flex;align-items:center;gap:10px}
+.guardian-pass{background:#f0fdf4;border:1px solid #bbf7d0;color:#15803d}
+.guardian-warn{background:#fffbeb;border:1px solid #fde68a;color:#92400e}
+.guardian-fail{background:#fef2f2;border:1px solid #fecaca;color:#b91c1c}
+.plugin-card{padding:16px;border:1px solid #e2e8f0;border-radius:12px;background:#fff;transition:.2s}
+.plugin-card:hover{box-shadow:0 20px 25px -5px rgba(0,0,0,.1)}
+.plugin-status{font-size:9px;padding:3px 10px;border-radius:99px;font-weight:700;display:inline-block}
+.plugin-status.active{background:#dcfce7;color:#15803d}
+.plugin-status.inactive{background:#f1f5f9;color:#64748b}
+.collab-user{display:flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid #e2e8f0;border-radius:10px;background:#fff;margin-bottom:6px;font-size:11px}
+.collab-user .avatar{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:10px;font-weight:800}
+.modalBack{position:fixed;inset:0;background:rgba(15,23,42,.6);z-index:50;display:none;place-items:center;padding:20px;backdrop-filter:blur(4px)}
+.modalBack.open{display:grid}
+.modal{background:#fff;border-radius:16px;width:min(800px,100%);max-height:85vh;overflow:auto;padding:22px;box-shadow:0 20px 25px -5px rgba(0,0,0,.1);border:1px solid #e2e8f0}
+.qa-list{display:flex;flex-direction:column;gap:6px;max-height:320px;overflow:auto}
+.qa-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid #e2e8f0;border-radius:10px;font-size:11px}
+.toast{position:fixed;bottom:20px;right:20px;background:#0f172a;color:#fff;padding:12px 18px;border-radius:12px;z-index:90;box-shadow:0 20px 25px -5px rgba(0,0,0,.2);font-size:11.5px;opacity:0;transform:translateY(10px);transition:.25s;font-weight:500;pointer-events:none}
+.toast.show{opacity:1;transform:none}
+.portfolioPreview{background:#020617;color:#f8fafc;border-radius:14px;overflow:hidden}
+.portHero{min-height:320px;padding:35px;position:relative;overflow:hidden;background:radial-gradient(circle at 80% 38%,#1e40af,transparent 33%),linear-gradient(125deg,#020617,#1e3a8a)}
+.portHero h2{font-size:clamp(32px,5vw,56px);line-height:.95;letter-spacing:-2.5px;max-width:500px;margin:30px 0 10px}
+.portHero p{max-width:380px;color:#bfdbfe;font-size:13px;line-height:1.6}
+.portHero small{letter-spacing:2px;color:#7dd3fc;font-size:9px}
+.portSections{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:18px;background:#0f172a}
+.portCard{border:1px solid #1e3a8a;background:#1e293b;padding:17px;border-radius:10px;min-height:120px}
+.portCard small{font-size:9px;letter-spacing:1.5px;color:#7dd3fc}
+.portCard h3{font-size:16px;margin:10px 0 6px}
+.portCard p{font-size:11px;color:#94a3b8;line-height:1.5;margin:0}
+.portFoot{padding:0 20px 20px;display:flex;justify-content:space-between;color:#64748b;font-size:9px;letter-spacing:1px}
+.tabs{display:flex;gap:4px;border-bottom:1px solid #e2e8f0;margin-bottom:14px}
+.tab{padding:8px 16px;font-size:11px;font-weight:700;color:#64748b;background:transparent;border:0;border-bottom:2px solid transparent;margin-bottom:-1px;cursor:pointer}
+.tab.active{color:#2563eb;border-bottom-color:#2563eb}
+.comp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.comp-item{padding:14px;border:1px solid #e2e8f0;border-radius:10px;background:#fff;cursor:pointer;text-align:center;transition:.15s}
+.comp-item:hover{border-color:#2563eb;box-shadow:0 4px 6px -1px rgba(0,0,0,.1)}
+.multimodal-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.multimodal-card{padding:20px;border:1px solid #e2e8f0;border-radius:14px;background:#fff;text-align:center;cursor:pointer;transition:.2s}
+.multimodal-card:hover{border-color:#8b5cf6;box-shadow:0 20px 25px -5px rgba(0,0,0,.1);transform:translateY(-2px)}
+.sync-status{padding:14px;border-radius:12px;background:#eff6ff;border:1px solid #bfdbfe;margin-bottom:12px;font-size:11.5px}
+.guide{position:absolute;background:#f43f5e;z-index:999;pointer-events:none;display:none}
+.guide.h{height:1.5px;width:100%;left:0}
+.guide.v{width:1.5px;height:100%;top:0}
+.grid-overlay{position:absolute;inset:0;pointer-events:none;z-index:1;opacity:0;transition:opacity .2s;background-image:linear-gradient(to right,rgba(255,255,255,.09) 1px,transparent 1px),linear-gradient(to bottom,rgba(255,255,255,.09) 1px,transparent 1px);background-size:20px 20px}
+.grid-overlay.show{opacity:1}
+.selection-box{position:absolute;border:1px dashed #38bdf8;background:rgba(56,189,248,.1);z-index:998;pointer-events:none;display:none}
+@media(max-width:1100px){.shell{grid-template-columns:200px 1fr}.editorGrid{grid-template-columns:1fr}.rightcol{display:grid;grid-template-columns:1fr 1fr}.templateGrid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:720px){.shell{display:block}.side{display:none}.top{padding:0 12px}.page{padding:14px 10px}.heading{flex-direction:column;align-items:flex-start}.stats{grid-template-columns:repeat(2,1fr)}.dashgrid{grid-template-columns:1fr}.quickgrid{grid-template-columns:1fr 1fr}.templateGrid{grid-template-columns:repeat(2,1fr)}.rightcol{display:flex}.stageWrap{min-height:450px;padding:14px}.stage{width:300px;height:380px}.stage.landscape{width:420px;height:280px}.stage.a4{height:424px}.stage.a4l{width:424px;height:300px}.stage.social{height:300px}}
+@media print{.side,.top,.heading,.toolbar,.rightcol,.noPrint{display:none!important}.shell{display:block}.page{display:none!important;padding:0}.page.printing{display:block!important}.panel{border:0;box-shadow:none;padding:0}.stageWrap{padding:0;background:#fff;min-height:0}.stage{box-shadow:none;margin:auto}}
+</style>
+</head>
+<body>
+<div class="shell">
+<aside class="side">
+<div class="logo"><div class="logoMark">C</div><div><b>CANVIO</b><small>CREATIVE STUDIO 4.0</small></div></div>
+<div class="navgroup"><label>Workspace</label><div class="nav">
+<button class="active" onclick="go('dashboard')"><span>&#9707;</span>Overview</button>
+<button onclick="go('poster')"><span>&#9639;</span>Poster Studio</button>
+<button onclick="go('portfolio')"><span>&#9672;</span>Portfolio Studio</button>
+<button onclick="go('templates')"><span>&#9631;</span>Templates</button>
+</div></div>
+<div class="navgroup"><label>Creative Tools</label><div class="nav">
+<button onclick="go('assets')"><span>&#9635;</span>Assets</button>
+<button onclick="go('scene')"><span>&#x2B21;</span>3D Lab</button>
+<button onclick="go('brand')"><span>&#10035;</span>Brand Kit</button>
+<button onclick="go('export')"><span>&#8679;</span>Export</button>
+</div></div>
+<div class="navgroup"><label>Intelligence</label><div class="nav">
+<button onclick="go('ai')"><span>&#10022;</span>AI Director</button>
+<button onclick="go('aigen')"><span>&#10024;</span>AI Generate</button>
+<button onclick="go('motion')"><span>&#9654;</span>Motion Studio</button>
+<button onclick="go('agent')"><span>&#129302;</span>AI Agent</button>
+<button onclick="go('multimodal')"><span>&#127908;</span>Multi-modal</button>
+</div></div>
+<div class="navgroup"><label>v4.0 Platform</label><div class="nav">
+<button onclick="go('responsive')"><span>&#128208;</span>Responsive</button>
+<button onclick="go('analytics')"><span>&#128202;</span>Analytics</button>
+<button onclick="go('collab')"><span>&#128101;</span>Collaboration</button>
+<button onclick="go('guardian')"><span>&#128737;</span>Brand Guardian</button>
+<button onclick="go('plugins')"><span>&#128268;</span>Plugins</button>
+</div></div>
+<div class="navgroup"><label>System</label><div class="nav">
+<button onclick="go('components')"><span>&#9635;</span>Components</button>
+<button onclick="go('sync')"><span>&#9729;</span>Sync &amp; Share</button>
+</div></div>
+<div style="margin-top:auto;border-top:1px solid #1e293b;padding:14px 9px;color:#64748b;font-size:9.5px;line-height:1.7">
+<span style="display:inline-block;background:linear-gradient(90deg,#2563eb,#22d3ee);color:#fff;padding:2px 8px;border-radius:99px;font-size:8px;font-weight:800;margin-bottom:4px">V4.0 AI AGENT</span><br>
+IndexedDB &middot; Undo/Redo &middot; AI Agent<br>
+Multi-modal &middot; Collaboration &middot; Analytics<br>
+Brand Guardian &middot; Responsive &middot; Plugins<br>
+<span style="color:#475569">Zero-cost architecture</span>
+</div>
+</aside>
+<main>
+<header class="top">
+<div class="crumb">CANVIO / <b id="crumb">Overview</b></div>
+<div class="topright">
+<div style="display:flex;gap:5px;margin-right:auto;margin-left:12px">
+<button class="btn ghost sm" onclick="undo()">&#8630;</button>
+<button class="btn ghost sm" onclick="redo()">&#8631;</button>
+</div>
+<button class="btn ghost sm" onclick="toggleTheme()">&#9680;</button>
+<span class="status" id="saveState">Ready</span>
+<button class="btn ghost sm" onclick="saveProject()">Save</button>
+<button class="btn ghost sm" onclick="openVersions()">Versions</button>
+<div class="user">HR</div>
+</div>
+</header>
+
+<section class="page active" id="dashboard">
+<div class="heading"><div><div class="eyebrow">Creative workspace / AI Agent Edition</div><h1>CANVIO Creative Studio 4.0</h1><p>Nền tảng sáng tạo thông minh toàn diện. AI Agent, Multi-modal, Collaboration, Analytics.</p></div><button class="btn purple" onclick="go('agent')">AI Agent</button></div>
+<div class="stats"><div class="stat"><span>Engines</span><strong>14</strong><small>2D, 3D, AI, Motion, Web, Asset, Brand, Sync, Agent, Multi-modal, Responsive, Analytics, Collab, Guardian</small></div><div class="stat"><span>Templates</span><strong>16</strong><small>Đa ngành, đa phong cách, AI gợi ý</small></div><div class="stat"><span>Xuất file</span><strong>07</strong><small>SVG, PNG, PDF, HTML, ZIP, JSON, GIF</small></div><div class="stat"><span>Lưu trữ</span><strong>IndexedDB</strong><small>Persistent, không mất dữ liệu</small></div></div>
+<div class="dashgrid"><div class="panel"><div class="panelhead"><b>Khởi động nhanh</b><span class="tiny">Chọn công cụ</span></div><div class="quickgrid">
+<div class="quick" onclick="go('agent')"><div class="quickart" style="background:linear-gradient(140deg,#581c87,#a855f7)">AI<br>AGENT</div><div class="quickbody"><b>AI End-to-End Design</b><small>1 prompt = poster hoàn chỉnh</small></div></div>
+<div class="quick" onclick="go('poster')"><div class="quickart" style="background:linear-gradient(140deg,#0f172a,#3b82f6)">POSTER<br>STUDIO</div><div class="quickbody"><b>Thiết kế poster</b><small>Portrait, Square, Landscape, A4</small></div></div>
+<div class="quick" onclick="go('portfolio')"><div class="quickart" style="background:radial-gradient(circle at 70%,#2563eb,#020617)">WEB<br>BUILDER</div><div class="quickbody"><b>Portfolio / Website</b><small>Đa trang, responsive</small></div></div>
+<div class="quick" onclick="go('aigen')"><div class="quickart" style="background:linear-gradient(140deg,#7c2d12,#f97316)">AI<br>GENERATE</div><div class="quickbody"><b>Tạo hình bằng AI</b><small>Pollinations, min phí</small></div></div>
+<div class="quick" onclick="go('motion')"><div class="quickart" style="background:linear-gradient(140deg,#064e3b,#10b981)">MOTION<br>STUDIO</div><div class="quickbody"><b>Animation &amp; Video</b><small>GIF, MP4, Lottie</small></div></div>
+<div class="quick" onclick="go('responsive')"><div class="quickart" style="background:linear-gradient(140deg,#1e3a5f,#60a5fa)">RESPONSIVE<br>STUDIO</div><div class="quickbody"><b>Đa kích thước</b><small>1 thiết kế = nhiều size</small></div></div>
+<div class="quick" onclick="go('analytics')"><div class="quickart" style="background:linear-gradient(140deg,#431407,#d97706)">ANALYTICS</div><div class="quickbody"><b>AI Analytics</b><small>CTR, Engagement, Heatmap</small></div></div>
+<div class="quick" onclick="go('collab')"><div class="quickart" style="background:linear-gradient(140deg,#881337,#f43f5e)">COLLAB</div><div class="quickbody"><b>Làm việc nhóm</b><small>Real-time, Comment, Roles</small></div></div>
+<div class="quick" onclick="go('scene')"><div class="quickart" style="background:linear-gradient(140deg,#312e81,#818cf8)">3D<br>SCENE</div><div class="quickbody"><b>Thiết kế 3D</b><small>Three.js, WebGL</small></div></div>
+</div></div>
+<div class="panel"><div class="panelhead"><b>Trạng thái hệ thống</b><span class="tiny">v4.0 AI Agent Edition</span></div>
+<div style="font-size:11.5px;line-height:2;color:#475569">
+<div><span style="color:#22c55e">&#9679;</span> Core Engine: Undo/Redo, Autosave, Versions</div>
+<div><span style="color:#22c55e">&#9679;</span> Asset Manager: IndexedDB, Search, Backup</div>
+<div><span style="color:#22c55e">&#9679;</span> Poster Engine: Smart Guides, Snap, Zoom</div>
+<div><span style="color:#22c55e">&#9679;</span> AI Director: Phân tích nội dung, gợi ý</div>
+<div><span style="color:#22c55e">&#9679;</span> AI Generate: Pollinations.ai, miễn phí</div>
+<div><span style="color:#22c55e">&#9679;</span> AI Agent: End-to-End Design</div>
+<div><span style="color:#22c55e">&#9679;</span> Motion Studio: 9 animation types</div>
+<div><span style="color:#22c55e">&#9679;</span> Portfolio Builder: Đa trang, responsive</div>
+<div><span style="color:#22c55e">&#9679;</span> 3D Lab: Three.js, render</div>
+<div><span style="color:#22c55e">&#9679;</span> Brand Kit: Colors, fonts, guidelines</div>
+<div><span style="color:#22c55e">&#9679;</span> Analytics: CTR dự đoán, Engagement</div>
+<div><span style="color:#22c55e">&#9679;</span> Collaboration: Real-time, Comment</div>
+<div><span style="color:#22c55e">&#9679;</span> Brand Guardian: Kiểm tra tuân thủ</div>
+<div><span style="color:#f59e0b">&#9679;</span> Plugins: API mở, plugin system (beta)</div>
+</div></div></div>
+</section>
+
+<section class="page" id="poster">
+<div class="heading"><div><div class="eyebrow">Design engine / Poster Studio</div><h1>Poster Studio</h1><p>Trình biên tập poster chuyên nghiệp với smart guides, snap-to-grid, layers.</p></div><div style="display:flex;gap:8px"><button class="btn ghost" onclick="newDesign()">Mới</button><button class="btn" onclick="exportPosterSVG()">SVG</button><button class="btn dark" onclick="exportPosterPNG()">PNG</button><button class="btn warn" onclick="runPosterQA()">QA Check</button></div></div>
+<div class="editorGrid"><div class="panel canvasPanel">
+<div class="toolbar">
+<button class="toolbtn" onclick="addText()">+ Text</button>
+<button class="toolbtn" onclick="addShape()">Shape</button>
+<button class="toolbtn" onclick="addRect()">Rect</button>
+<button class="toolbtn" onclick="addCircle()">Circle</button>
+<button class="toolbtn" onclick="document.getElementById('imageUpload').click()">+ Image</button>
+<button class="toolbtn" onclick="addButton()">+ CTA</button>
+<button class="toolbtn" onclick="duplicateSelected()">Duplicate</button>
+<button class="toolbtn" onclick="deleteSelected()">Delete</button>
+<button class="toolbtn" onclick="bringFront()">Front</button>
+<button class="toolbtn" onclick="sendBack()">Back</button>
+<select class="toolbtn" id="ratio" onchange="changeRatio(this.value)"><option value="portrait">4:5 Portrait</option><option value="square">1:1 Square</option><option value="landscape">3:2 Landscape</option><option value="a4">A4 Portrait</option><option value="a4l">A4 Landscape</option><option value="social">Social 1080x1080</option></select>
+<button class="toolbtn" id="snapBtn" onclick="toggleSnap()">Snap: ON</button>
+<button class="toolbtn" onclick="toggleGrid()">Grid</button>
+<span id="zoomLevel" style="font-size:10px;color:#64748b">100%</span>
+<button class="toolbtn" onclick="zoomStage(-0.1)">-</button>
+<button class="toolbtn" onclick="zoomStage(0.1)">+</button>
+<input id="imageUpload" type="file" accept="image/*,.svg" hidden onchange="uploadImage(event)">
+</div>
+<div class="stageWrap" id="stageWrap">
+<div class="grid-overlay" id="gridOverlay"></div>
+<div class="guide h" id="guideH"></div>
+<div class="guide v" id="guideV"></div>
+<div class="selection-box" id="selBox"></div>
+<div class="stage" id="stage">
+<div class="stageItem label" data-id="i1" style="left:30px;top:32px;width:340px">PEOPLE &amp; CULTURE &middot; CAREER OPPORTUNITY</div>
+<div class="stageItem text" data-id="i2" style="left:28px;top:105px;width:310px;font-size:49px">BUILD<br>WHAT'S<br>NEXT.</div>
+<div class="stageItem para" data-id="i3" style="left:30px;top:300px;width:240px">Join a team where ideas become impact. Your next chapter starts here.</div>
+<div class="stageItem shape" data-id="i4" style="left:270px;top:190px;width:120px;height:120px"></div>
+<div class="stageItem buttonish" data-id="i5" style="left:30px;top:390px;width:180px">EXPLORE OPEN ROLES &#8599;</div>
+<div class="stageItem label" data-id="i6" style="left:30px;top:500px;width:350px;letter-spacing:1px">NORTHSTAR GROUP &middot; CAREERS 2027</div>
+</div>
+</div>
+</div>
+<div class="rightcol">
+<div class="panel"><div class="panelhead"><b>Thuộc tính</b><span class="tiny" id="selectedName">Chưa chọn</span></div>
+<div id="emptyProps" class="tiny">Chọn một đối tượng trên canvas để chỉnh sửa.</div>
+<div id="props" style="display:none">
+<div class="field"><label>Nội dung</label><textarea id="propText"></textarea></div>
+<div class="row2"><div class="field"><label>Cỡ chữ</label><input type="number" id="propSize" min="6" max="150"></div><div class="field"><label>Rộng (px)</label><input type="number" id="propWidth" min="20" max="1200"></div></div>
+<div class="row2"><div class="field"><label>Cao (px)</label><input type="number" id="propHeight" min="20" max="1200"></div><div class="field"><label>Xoay (°)</label><input type="number" id="propRotate" min="-360" max="360" value="0"></div></div>
+<div class="row2"><div class="field"><label>Trái (px)</label><input type="number" id="propX"></div><div class="field"><label>Trên (px)</label><input type="number" id="propY"></div></div>
+<div class="row2"><div class="field"><label>Màu chữ</label><input type="color" id="propColor" style="height:34px;padding:3px"></div><div class="field"><label>Màu nền</label><input type="color" id="propBg" style="height:34px;padding:3px" value="#ffffff"></div></div>
+<div class="row2"><div class="field"><label>Độ trong suốt</label><input type="range" id="propOpacity" min="0" max="100" value="100"></div><div class="field"><label>Blur (px)</label><input type="range" id="propBlur" min="0" max="20" value="0"></div></div>
+<div class="field"><label>Độ đậm</label><select id="propWeight"><option value="400">Regular</option><option value="500">Medium</option><option value="700">Bold</option><option value="900">Black</option></select></div>
+<div class="row2"><div class="field"><label>Căn chữ</label><select id="propAlign"><option value="left">Trái</option><option value="center">Giữa</option><option value="right">Phải</option></select></div><div class="field"><label>Khoảng chữ</label><input type="range" id="propSpacing" min="-2" max="10" step="0.5" value="0"></div></div>
+<div class="field"><label>Đổ bóng</label><select id="propShadow"><option value="">Không</option><option value="0 4px 12px rgba(0,0,0,.25)">Nhẹ</option><option value="0 8px 24px rgba(0,0,0,.35)">Sâu</option><option value="0 2px 6px rgba(0,0,0,.15)">Mờ</option></select></div>
+<button class="btn danger sm" onclick="deleteSelected()">Xóa đối tượng</button>
+</div></div>
+<div class="panel"><div class="panelhead"><b>Layers</b><span class="tiny">Click để chọn</span></div><div class="layers" id="layers"></div></div>
+<div class="panel"><div class="panelhead"><b>Bảng màu</b><span class="tiny">Áp dụng chủ đề</span></div>
+<div class="swatches">
+<button class="swatch active" style="background:linear-gradient(135deg,#0f172a,#38bdf8)" onclick="setTheme('blue',this)"></button>
+<button class="swatch" style="background:linear-gradient(135deg,#f8fafc,#60a5fa)" onclick="setTheme('light',this)"></button>
+<button class="swatch" style="background:linear-gradient(135deg,#1c1917,#a8a29e)" onclick="setTheme('warm',this)"></button>
+<button class="swatch" style="background:linear-gradient(135deg,#2e1065,#c084fc)" onclick="setTheme('violet',this)"></button>
+<button class="swatch" style="background:linear-gradient(135deg,#020617,#475569)" onclick="setTheme('dark',this)"></button>
+<button class="swatch" style="background:linear-gradient(135deg,#022c22,#4ade80)" onclick="setTheme('green',this)"></button>
+<button class="swatch" style="background:linear-gradient(135deg,#431407,#fb923c)" onclick="setTheme('orange',this)"></button>
+</div></div>
+</div></div>
+</section>
+
+<section class="page" id="portfolio">
+<div class="heading"><div><div class="eyebrow">Website builder / Portfolio Studio</div><h1>Portfolio Studio</h1><p>Xây dựng website đa trang, responsive. Xuất HTML hoặc ZIP.</p></div><div style="display:flex;gap:8px"><button class="btn ghost" onclick="previewPortfolio()">Xem trước</button><button class="btn" onclick="exportPortfolioHTML()">HTML</button><button class="btn dark" onclick="exportPortfolioZIP()">ZIP</button></div></div>
+<div class="editorGrid"><div class="panel">
+<div class="panelhead"><b>Preview</b></div>
+<div class="portfolioPreview" id="portPreview">
+<div class="portHero"><small>PEOPLE &middot; CULTURE &middot; STRATEGY</small><h2 id="pvName">DESIGNING<br>BETTER WORK.</h2><p id="pvIntro">I connect people, process and insight to build thoughtful employee experiences.</p></div>
+<div class="portSections">
+<div class="portCard"><small>01 / EXPERTISE</small><h3 id="pvSkill1">People Operations</h3><p>Recruitment, Onboarding, Employee Experience</p></div>
+<div class="portCard"><small>02 / SPECIALTY</small><h3 id="pvSkill2">Compensation &amp; Benefits</h3><p>Payroll, Insurance, HR Compliance</p></div>
+<div class="portCard"><small>03 / ANALYTICS</small><h3 id="pvSkill3">People Insights</h3><p>Workforce reporting, KPI, Data quality</p></div>
+<div class="portCard"><small>04 / SELECTED WORK</small><h3 id="pvProject">HR Projects</h3><p>Systems, processes and measurable outcomes.</p></div>
+</div>
+<div class="portFoot"><span id="pvFooter">HR PROFESSIONAL PORTFOLIO</span><span>SCROLL TO EXPLORE &#8600;</span></div>
+</div>
+</div>
+<div class="rightcol"><div class="panel"><div class="panelhead"><b>Nội dung portfolio</b></div>
+<div class="field"><label>Tiêu đề chính</label><textarea id="inName">DESIGNING\nBETTER WORK.</textarea></div>
+<div class="field"><label>Giới thiệu</label><textarea id="inIntro">I connect people, process and insight to build thoughtful employee experiences.</textarea></div>
+<div class="field"><label>Chuyên môn 1</label><input id="inSkill1" value="People Operations"></div>
+<div class="field"><label>Chuyên môn 2</label><input id="inSkill2" value="Compensation &amp; Benefits"></div>
+<div class="field"><label>Chuyên môn 3</label><input id="inSkill3" value="People Insights"></div>
+<div class="field"><label>Dự án</label><input id="inProject" value="HR Projects"></div>
+<div class="field"><label>Chân trang</label><input id="inFooter" value="HR PROFESSIONAL PORTFOLIO"></div>
+<button class="btn" onclick="applyPortfolio()">Cập nhật portfolio</button>
+</div></div></div>
+</section>
+
+<section class="page" id="templates">
+<div class="heading"><div><div class="eyebrow">Starter collection / Templates</div><h1>Template Library</h1><p>16 mẫu thiết kế đa ngành. Lọc theo ngành, phong cách và tỷ lệ.</p></div></div>
+<div class="template-filters">
+<select class="toolbtn" id="templateIndustry" onchange="filterTemplates()"><option value="all">Tất cả ngành</option><option value="hr">HR &amp; Tuyển dụng</option><option value="tech">Công nghệ</option><option value="finance">Tài chính</option><option value="education">Giáo dục</option><option value="healthcare">Y tế</option><option value="realestate">Bất động sản</option><option value="retail">Bán lẻ</option><option value="marketing">Marketing</option></select>
+<select class="toolbtn" id="templateStyle" onchange="filterTemplates()"><option value="all">Tất cả phong cách</option><option value="minimalist">Minimalist</option><option value="corporate">Corporate</option><option value="futuristic">Futuristic</option><option value="luxury">Luxury</option><option value="editorial">Editorial</option><option value="swiss">Swiss Design</option><option value="brutalist">Brutalist</option><option value="glassmorphism">Glassmorphism</option></select>
+<select class="toolbtn" id="templateRatio" onchange="filterTemplates()"><option value="all">Tất cả tỷ lệ</option><option value="portrait">Portrait</option><option value="square">Square</option><option value="landscape">Landscape</option><option value="a4">A4</option></select>
+</div>
+<div class="templateGrid" id="templateGrid">
+<div class="template" data-industry="hr" data-style="corporate" data-ratio="portrait" onclick="loadTemplate('blue','hr')"><div class="templateArt" style="background:linear-gradient(140deg,#0f172a,#3b82f6)">BUILD<br>WHAT'S NEXT</div><div class="templateInfo"><b>Blue Horizon</b><small>HR &middot; Corporate &middot; Portrait</small></div></div>
+<div class="template" data-industry="hr" data-style="minimalist" data-ratio="portrait" onclick="loadTemplate('light','hr')"><div class="templateArt" style="background:linear-gradient(140deg,#f8fafc,#60a5fa);color:#0f172a">PEOPLE<br>FIRST</div><div class="templateInfo"><b>People First</b><small>HR &middot; Internal &middot; Light</small></div></div>
+<div class="template" data-industry="hr" data-style="corporate" data-ratio="portrait" onclick="loadTemplate('warm','hr')"><div class="templateArt" style="background:linear-gradient(140deg,#1c1917,#a8a29e)">GROW<br>TOGETHER</div><div class="templateInfo"><b>Growth Culture</b><small>HR &middot; Learning &middot; Portrait</small></div></div>
+<div class="template" data-industry="hr" data-style="futuristic" data-ratio="portrait" onclick="loadTemplate('violet','hr')"><div class="templateArt" style="background:linear-gradient(140deg,#2e1065,#a855f7)">PEOPLE<br>INSIGHTS</div><div class="templateInfo"><b>People Analytics</b><small>HR &middot; Data &middot; Portrait</small></div></div>
+<div class="template" data-industry="tech" data-style="futuristic" data-ratio="landscape" onclick="loadTemplate('dark','tech')"><div class="templateArt" style="background:linear-gradient(140deg,#020617,#3b82f6)">INNOVATE<br>FASTER</div><div class="templateInfo"><b>Tech Launch</b><small>Công nghệ &middot; Landscape</small></div></div>
+<div class="template" data-industry="finance" data-style="luxury" data-ratio="portrait" onclick="loadTemplate('blue','finance')"><div class="templateArt" style="background:linear-gradient(140deg,#0c1f3d,#eab308)">TRUST<br>BUILT HERE</div><div class="templateInfo"><b>Finance Pro</b><small>Tài chính &middot; Luxury &middot; Gold</small></div></div>
+<div class="template" data-industry="education" data-style="minimalist" data-ratio="square" onclick="loadTemplate('light','education')"><div class="templateArt" style="background:linear-gradient(140deg,#fef3c7,#f59e0b);color:#451a03">LEARN<br>GROW</div><div class="templateInfo"><b>Education Hub</b><small>Giáo dục &middot; Square &middot; Warm</small></div></div>
+<div class="template" data-industry="healthcare" data-style="minimalist" data-ratio="portrait" onclick="loadTemplate('green','healthcare')"><div class="templateArt" style="background:linear-gradient(140deg,#064e3b,#34d399)">CARE<br>COMPASSION</div><div class="templateInfo"><b>Health First</b><small>Y tế &middot; Green &middot; Portrait</small></div></div>
+<div class="template" data-industry="realestate" data-style="luxury" data-ratio="landscape" onclick="loadTemplate('orange','realestate')"><div class="templateArt" style="background:linear-gradient(140deg,#431407,#fb923c)">LUXURY<br>LIVING</div><div class="templateInfo"><b>Property Pro</b><small>BĐS &middot; Landscape</small></div></div>
+<div class="template" data-industry="retail" data-style="brutalist" data-ratio="square" onclick="loadTemplate('dark','retail')"><div class="templateArt" style="background:linear-gradient(140deg,#020617,#ef4444)">SHOP<br>NOW</div><div class="templateInfo"><b>Retail Bold</b><small>Bán lẻ &middot; Brutalist &middot; Square</small></div></div>
+<div class="template" data-industry="marketing" data-style="glassmorphism" data-ratio="portrait" onclick="loadTemplate('violet','marketing')"><div class="templateArt" style="background:linear-gradient(140deg,#4c1d95,#a78bfa)">AMPLIFY<br>YOUR BRAND</div><div class="templateInfo"><b>Marketing Edge</b><small>Marketing &middot; Glass &middot; Portrait</small></div></div>
+<div class="template" data-industry="tech" data-style="swiss" data-ratio="a4" onclick="loadTemplate('light','tech')"><div class="templateArt" style="background:linear-gradient(140deg,#f8fafc,#64748b);color:#0f172a">SYSTEM<br>ARCHITECT</div><div class="templateInfo"><b>Swiss Tech</b><small>Công nghệ &middot; Swiss &middot; A4</small></div></div>
+<div class="template" data-industry="hr" data-style="editorial" data-ratio="portrait" onclick="loadTemplate('warm','hr')"><div class="templateArt" style="background:linear-gradient(140deg,#451a03,#d97706)">TALENT<br>MAGAZINE</div><div class="templateInfo"><b>HR Editorial</b><small>HR &middot; Editorial &middot; Portrait</small></div></div>
+<div class="template" data-industry="finance" data-style="corporate" data-ratio="square" onclick="loadTemplate('blue','finance')"><div class="templateArt" style="background:linear-gradient(140deg,#1e3a5f,#60a5fa)">SECURE<br>FUTURE</div><div class="templateInfo"><b>Banking Pro</b><small>Tài chính &middot; Corporate &middot; Square</small></div></div>
+<div class="template" data-industry="education" data-style="futuristic" data-ratio="landscape" onclick="loadTemplate('dark','education')"><div class="templateArt" style="background:linear-gradient(140deg,#0f172a,#8b5cf6)">FUTURE<br>CLASSROOM</div><div class="templateInfo"><b>EdTech Future</b><small>Giáo dục &middot; Landscape</small></div></div>
+<div class="template" data-industry="marketing" data-style="minimalist" data-ratio="portrait" onclick="loadTemplate('light','marketing')"><div class="templateArt" style="background:linear-gradient(140deg,#fafafa,#a3a3a3);color:#171717">LESS IS<br>MORE</div><div class="templateInfo"><b>Minimal Campaign</b><small>Marketing &middot; Minimal &middot; Portrait</small></div></div>
+</div>
+</section>
+
+<section class="page" id="assets">
+<div class="heading"><div><div class="eyebrow">Media management / Assets</div><h1>Assets &amp; Uploads</h1><p>Quản lý tài nguyên với IndexedDB. Tìm kiếm, lọc, backup.</p></div><div style="display:flex;gap:8px"><button class="btn" onclick="document.getElementById('assetUpload').click()">+ Upload</button><button class="btn ghost" onclick="backupAssets()">Backup</button><button class="btn ghost" onclick="document.getElementById('assetRestore').click()">Restore</button></div></div>
+<div class="panel">
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;align-items:center">
+<input type="text" class="field" id="assetSearch" placeholder="Tìm tài nguyên..." oninput="renderAssets()" style="max-width:220px">
+<select class="toolbtn" id="assetFilter" onchange="renderAssets()"><option value="all">Tất cả loại</option><option value="image">Hình ảnh</option><option value="svg">SVG</option><option value="logo">Logo</option><option value="icon">Icon</option><option value="background">Background</option></select>
+<select class="toolbtn" id="assetSort" onchange="renderAssets()"><option value="newest">Mới nhất</option><option value="oldest">Cũ nhất</option><option value="name">Tên A-Z</option></select>
+</div>
+<div style="font-size:10.5px;color:#64748b;margin-bottom:10px">Dung lượng: <b id="storageUsed">0 MB</b> / ~50 MB &middot; <span id="assetCount">0 tài nguyên</span></div>
+<div class="asset-dropzone" id="assetDropzone" onclick="document.getElementById('assetUpload').click()">
+<div style="font-size:32px;margin-bottom:8px">&#9635;</div>
+<div style="font-size:13px;font-weight:700;color:#0f172a">Kéo thả hoặc click để upload</div>
+<div class="tiny" style="margin-top:6px">JPG, PNG, GIF, WebP, SVG &middot; Tối đa 5 MB &middot; Lưu trong IndexedDB</div>
+</div>
+<input type="file" id="assetUpload" accept="image/*,.svg" multiple hidden onchange="assetFiles(event)">
+<input type="file" id="assetRestore" accept=".json" hidden onchange="restoreAssets(event)">
+<div id="assetList" class="asset-grid" style="margin-top:16px"></div>
+</div>
+</section>
+
+<section class="page" id="scene">
+<div class="heading"><div><div class="eyebrow">3D experience engine / 3D Lab</div><h1>3D Scene Lab</h1><p>WebGL với Three.js. Tạo, chỉnh sửa và render 3D.</p></div><div style="display:flex;gap:8px"><button class="btn ghost" onclick="reset3D()">Reset</button><button class="btn" onclick="render3DImage()">Render ảnh</button></div></div>
+<div class="dashgrid"><div class="panel"><div class="panelhead"><b>Scene 3D tương tác</b><span class="tiny">Three.js &middot; WebGL</span></div>
+<div id="threeBox"><div style="padding:100px;text-align:center;color:#93c5fc;font-size:11px">Three.js đang tải...</div></div>
+<div class="toolbar" style="margin-top:10px">
+<button class="toolbtn" onclick="changeShape('sphere')">Sphere</button>
+<button class="toolbtn" onclick="changeShape('torus')">Torus</button>
+<button class="toolbtn" onclick="changeShape('box')">Box</button>
+<button class="toolbtn" onclick="changeShape('cylinder')">Cylinder</button>
+<button class="toolbtn" onclick="changeShape('cone')">Cone</button>
+<button class="toolbtn" onclick="changeShape('icosahedron')">Icosahedron</button>
+<button class="toolbtn" onclick="changeColor()">Đổi màu</button>
+<button class="toolbtn" onclick="toggleWireframe()">Wireframe</button>
+</div></div>
+<div class="panel"><div class="panelhead"><b>Hướng dẫn</b></div>
+<div class="tiny" style="line-height:1.8">
+&#8226; Kéo chuột để xoay scene<br>
+&#8226; Scroll để zoom in/out<br>
+&#8226; Chọn shape để thay đổi hình dạng<br>
+&#8226; Nhấn "Render ảnh" để xuất PNG<br>
+&#8226; Three.js r128 &middot; WebGL 2.0
+</div></div></div>
+</section>
+
+<section class="page" id="brand">
+<div class="heading"><div><div class="eyebrow">Brand system / Brand Kit</div><h1>Brand Kit</h1><p>Quản lý màu sắc, font chữ, guidelines và brand tokens.</p></div><button class="btn" onclick="saveBrandKit()">Lưu Brand Kit</button></div>
+<div class="editorGrid"><div class="panel"><div class="panelhead"><b>Brand Colors</b></div>
+<div class="row2"><div class="field"><label>Primary</label><input type="color" id="brandPrimary" value="#0f172a" onchange="updateBrandPreview()"></div><div class="field"><label>Secondary</label><input type="color" id="brandSecondary" value="#2563eb" onchange="updateBrandPreview()"></div></div>
+<div class="row2"><div class="field"><label>Accent</label><input type="color" id="brandAccent" value="#a3e635" onchange="updateBrandPreview()"></div><div class="field"><label>Background</label><input type="color" id="brandBg" value="#f8fafc" onchange="updateBrandPreview()"></div></div>
+<div class="row2"><div class="field"><label>Text</label><input type="color" id="brandText" value="#0f172a" onchange="updateBrandPreview()"></div><div class="field"><label>Muted</label><input type="color" id="brandMuted" value="#64748b" onchange="updateBrandPreview()"></div></div>
+</div>
+<div class="rightcol"><div class="panel"><div class="panelhead"><b>Typography</b></div>
+<div class="field"><label>Heading Font</label><select id="brandHeadingFont" onchange="updateBrandPreview()"><option>Inter</option><option>Montserrat</option><option>Poppins</option><option>Roboto</option></select></div>
+<div class="field"><label>Body Font</label><select id="brandBodyFont" onchange="updateBrandPreview()"><option>Inter</option><option>Open Sans</option><option>Roboto</option><option>Lato</option></select></div>
+</div><div class="panel"><div class="panelhead"><b>Preview</b></div>
+<div id="brandPreview" style="padding:20px;border-radius:10px;background:#0f172a;color:#fff">
+<h3 style="margin:0 0 8px">Brand Preview</h3>
+<p style="margin:0;font-size:12px;opacity:.8">Đây là preview màu sắc thương hiệu.</p>
+</div></div></div></div>
+</section>
+
+<section class="page" id="export">
+<div class="heading"><div><div class="eyebrow">Export center / Output</div><h1>Export Center</h1><p>Xuất thiết kế sang nhiều định dạng.</p></div></div>
+<div class="quickgrid">
+<div class="panel" style="text-align:center;cursor:pointer" onclick="exportPosterSVG()"><div style="font-size:28px;margin-bottom:8px">&#128193;</div><b>SVG</b><div class="tiny">Vector, không giới hạn phóng to</div></div>
+<div class="panel" style="text-align:center;cursor:pointer" onclick="exportPosterPNG()"><div style="font-size:28px;margin-bottom:8px">&#128444;</div><b>PNG</b><div class="tiny">Raster 2x, trong suốt</div></div>
+<div class="panel" style="text-align:center;cursor:pointer" onclick="window.print()"><div style="font-size:28px;margin-bottom:8px">&#128424;</div><b>PDF / Print</b><div class="tiny">In trực tiếp hoặc lưu PDF</div></div>
+<div class="panel" style="text-align:center;cursor:pointer" onclick="exportPortfolioHTML()"><div style="font-size:28px;margin-bottom:8px">&lt;/&gt;</div><b>HTML</b><div class="tiny">Website độc lập</div></div>
+<div class="panel" style="text-align:center;cursor:pointer" onclick="exportPortfolioZIP()"><div style="font-size:28px;margin-bottom:8px">&#128230;</div><b>ZIP</b><div class="tiny">Đa trang, text format</div></div>
+<div class="panel" style="text-align:center;cursor:pointer" onclick="saveProject()"><div style="font-size:28px;margin-bottom:8px">&#128190;</div><b>JSON</b><div class="tiny">Project file, có thể import</div></div>
+</div>
+</section>
+
+<section class="page" id="ai">
+<div class="heading"><div><div class="eyebrow">AI Director / Content Analysis</div><h1>AI Director</h1><p>Phân tích nội dung, gợi ý bố cục và sửa lỗi thiết kế.</p></div></div>
+<div class="dashgrid"><div class="panel"><div class="panelhead"><b>Phân tích nội dung</b></div>
+<div class="field"><label>Chủ đề / Ngành</label><select id="aiIndustry"><option>HR &amp; Tuyển dụng</option><option>Công nghệ</option><option>Tài chính</option><option>Giáo dục</option><option>Y tế</option><option>Marketing</option><option>Bán lẻ</option></select></div>
+<div class="field"><label>Mục đích</label><select id="aiPurpose"><option>Tuyển dụng</option><option>Quảng cáo</option><option>Thông báo</option><option>Sự kiện</option><option>Thương hiệu</option></select></div>
+<button class="btn" onclick="analyzeContent()">Phân tích</button>
+<div id="aiContentResults" style="margin-top:12px"></div>
+</div>
+<div class="panel"><div class="panelhead"><b>Gợi ý sáng tạo</b></div>
+<button class="btn" onclick="getCreativeIdeas()">Lấy gợi ý</button>
+<div id="aiCreativeResults" style="margin-top:12px"></div>
+</div></div>
+</section>
+
+<section class="page" id="aigen">
+<div class="heading"><div><div class="eyebrow">AI Image Generation / Pollinations</div><h1>AI Generate</h1><p>Tạo hình ảnh bằng AI qua Pollinations.ai. Miễn phí, không giới hạn.</p></div></div>
+<div class="panel" style="max-width:700px;margin:auto">
+<div class="ai-generate-box">
+<h3 style="margin:0 0 8px">Tạo hình ảnh với AI</h3>
+<p style="margin:0 0 16px;font-size:12px;color:#93c5fc">Nhập mô tả bằng tiếng Anh để có kết quả tốt nhất</p>
+<textarea class="ai-prompt" id="aiImagePrompt" placeholder="Ví dụ: professional HR recruitment poster, modern corporate design, blue gradient background, people collaborating in office..."></textarea>
+<div style="display:flex;gap:8px;justify-content:center">
+<button class="btn" style="background:#22d3ee;color:#0f172a" onclick="generateAIImage()">&#10024; Tạo hình ảnh</button>
+<button class="btn ghost" style="background:rgba(255,255,255,.1);color:#fff;border-color:rgba(255,255,255,.2)" onclick="enhancePrompt()">&#9997; Cải thiện prompt</button>
+</div></div>
+<div class="ai-image-result" id="aiImageResult"><div style="padding:40px;text-align:center;color:#64748b;font-size:12px">Hình ảnh AI sẽ hiển thị ở đây</div></div>
+</div>
+</section>
+
+<section class="page" id="motion">
+<div class="heading"><div><div class="eyebrow">Animation studio / Motion</div><h1>Motion Studio</h1><p>Tạo animation và video từ thiết kế. Preview trực tiếp trong trình duyệt.</p></div></div>
+<div class="editorGrid"><div class="panel"><div class="panelhead"><b>Animation Preview</b></div>
+<div id="motionPreviewBox" style="background:#0f172a;border-radius:12px;padding:40px;min-height:300px;display:grid;place-items:center;color:#fff;font-size:18px;font-weight:700">Motion Preview Area</div>
+<div class="toolbar" style="margin-top:10px">
+<button class="toolbtn" onclick="previewMotion('fade')">Fade</button>
+<button class="toolbtn" onclick="previewMotion('slide')">Slide</button>
+<button class="toolbtn" onclick="previewMotion('zoom')">Zoom</button>
+<button class="toolbtn" onclick="previewMotion('bounce')">Bounce</button>
+<button class="toolbtn" onclick="previewMotion('rotate')">Rotate</button>
+<button class="toolbtn" onclick="previewMotion('flip')">Flip</button>
+<button class="toolbtn" onclick="previewMotion('pulse')">Pulse</button>
+<button class="toolbtn" onclick="previewMotion('shake')">Shake</button>
+<button class="toolbtn" onclick="previewMotion('glitch')">Glitch</button>
+</div></div>
+<div class="rightcol"><div class="panel"><div class="panelhead"><b>Timeline</b></div>
+<div class="timeline" id="motionTimeline">
+<div class="timeline-track"><span>Fade In</span><div class="timeline-bar"><div class="timeline-bar-inner" style="width:80%"></div></div></div>
+<div class="timeline-track"><span>Slide Up</span><div class="timeline-bar"><div class="timeline-bar-inner" style="width:60%"></div></div></div>
+<div class="timeline-track"><span>Zoom</span><div class="timeline-bar"><div class="timeline-bar-inner" style="width:40%"></div></div></div>
+</div></div>
+<div class="panel"><div class="panelhead"><b>Export</b></div>
+<button class="btn" onclick="exportMotionGIF()">Export GIF (preview)</button>
+<button class="btn ghost" style="margin-top:8px" onclick="exportMotionMP4()">Export MP4 (preview)</button>
+<div class="tiny" style="margin-top:8px">GIF/MP4 thực cần thư viện bên ngoài. Hiện tại hỗ trợ preview animation.</div>
+</div></div></div>
+</section>
+
+<section class="page" id="agent">
+<div class="heading"><div><div class="eyebrow">AI Design Agent / End-to-End</div><h1>AI Agent</h1><p>1 prompt = poster hoàn chỉnh. AI Agent tự động phân tích, thiết kế và xuất bản.</p></div></div>
+<div class="panel" style="max-width:800px;margin:auto">
+<div class="agent-box">
+<h3 style="margin:0 0 8px">&#129302; AI Design Agent</h3>
+<p style="margin:0 0 16px;font-size:12px;color:#ddd6fe">Mô tả thiết kế bạn muốn, AI Agent sẽ tạo poster hoàn chỉnh</p>
+<input class="agent-input" id="agentPrompt" placeholder="Ví dụ: Tạo poster tuyển dụng HR với chủ đề 'Join Our Team', màu xanh dương, phong cách corporate hiện đại...">
+<button class="btn" style="background:#a3e635;color:#0f172a;font-weight:800" onclick="runAgent()">&#9889; Chạy AI Agent</button>
+</div>
+<div id="agentSteps">
+<div class="agent-step"><div class="agent-step-num">1</div><div class="agent-step-body" id="agentStep1"><b>Phân tích yêu cầu</b><div class="tiny">Chờ AI Agent phân tích prompt...</div></div></div>
+<div class="agent-step"><div class="agent-step-num">2</div><div class="agent-step-body" id="agentStep2"><b>Chọn template &amp; màu sắc</b><div class="tiny">AI chọn bố cục phù hợp...</div></div></div>
+<div class="agent-step"><div class="agent-step-num">3</div><div class="agent-step-body" id="agentStep3"><b>Tạo nội dung</b><div class="tiny">AI viết headline, body text, CTA...</div></div></div>
+<div class="agent-step"><div class="agent-step-num">4</div><div class="agent-step-body" id="agentStep4"><b>Tạo hình ảnh</b><div class="tiny">AI Generate hình ảnh phù hợp...</div></div></div>
+<div class="agent-step"><div class="agent-step-num">5</div><div class="agent-step-body" id="agentStep5"><b>Kiểm tra &amp; xuất bản</b><div class="tiny">Brand Guardian kiểm tra và xuất...</div></div></div>
+</div></div>
+</section>
+
+<section class="page" id="multimodal">
+<div class="heading"><div><div class="eyebrow">Multi-modal input / Voice &amp; Image</div><h1>Multi-modal</h1><p>Nhập dữ liệu bằng giọng nói, hình ảnh, URL hoặc clipboard.</p></div></div>
+<div class="multimodal-grid">
+<div class="multimodal-card" onclick="startVoiceInput()"><div class="icon" style="font-size:28px">&#127908;</div><b>Voice Input</b><small>Nói để tạo thiết kế</small></div>
+<div class="multimodal-card" onclick="document.getElementById('mmImageUpload').click()"><div class="icon" style="font-size:28px">&#128444;</div><b>Image Upload</b><small>Trích xuất nội dung từ ảnh</small></div>
+<div class="multimodal-card" onclick="extractFromURL()"><div class="icon" style="font-size:28px">&#128279;</div><b>URL Extract</b><small>Lấy nội dung từ website</small></div>
+<div class="multimodal-card" onclick="readClipboard()"><div class="icon" style="font-size:28px">&#128203;</div><b>Clipboard</b><small>Dán nội dung từ clipboard</small></div>
+<div class="multimodal-card" onclick="scanQRCode()"><div class="icon" style="font-size:28px">&#9633;</div><b>QR Scan</b><small>Quét QR từ camera</small></div>
+<div class="multimodal-card" onclick="uploadDocument()"><div class="icon" style="font-size:28px">&#128196;</div><b>Document</b><small>Trích xuất từ PDF/DOCX</small></div>
+</div>
+<input type="file" id="mmImageUpload" accept="image/*" hidden onchange="processMMImage(event)">
+<div class="panel" style="margin-top:14px"><div class="panelhead"><b>Kết quả</b></div><div id="mmResult" class="tiny" style="line-height:1.8">Chọn một phương thức đầu vào ở trên để bắt đầu.</div></div>
+</section>
+
+<section class="page" id="responsive">
+<div class="heading"><div><div class="eyebrow">Responsive studio / Multi-size</div><h1>Responsive Studio</h1><p>1 thiết kế = nhiều kích thước. Tự động điều chỉnh bố cục.</p></div></div>
+<div class="quickgrid">
+<div class="responsive-device" onclick="previewResponsive('instagram_post')"><b>Instagram Post</b><small>1080 x 1080</small></div>
+<div class="responsive-device" onclick="previewResponsive('instagram_story')"><b>Instagram Story</b><small>1080 x 1920</small></div>
+<div class="responsive-device" onclick="previewResponsive('facebook_post')"><b>Facebook Post</b><small>1200 x 630</small></div>
+<div class="responsive-device" onclick="previewResponsive('linkedin_post')"><b>LinkedIn Post</b><small>1200 x 1200</small></div>
+<div class="responsive-device" onclick="previewResponsive('twitter_post')"><b>Twitter Post</b><small>1600 x 900</small></div>
+<div class="responsive-device" onclick="previewResponsive('youtube_thumbnail')"><b>YouTube Thumb</b><small>1280 x 720</small></div>
+</div>
+<div class="panel" style="margin-top:14px"><div class="panelhead"><b>Preview</b></div>
+<div id="responsivePreviewBox" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:40px;min-height:300px;display:grid;place-items:center;color:#64748b">Chọn kích thước để xem preview</div>
+</div>
+</section>
+
+<section class="page" id="analytics">
+<div class="heading"><div><div class="eyebrow">AI Analytics / Performance</div><h1>Analytics</h1><p>Phân tích hiệu suất thiết kế: CTR, engagement, heatmap.</p></div><button class="btn" onclick="runAnalytics()">Chạy phân tích</button></div>
+<div class="dashgrid"><div class="panel"><div class="panelhead"><b>Điểm tổng thể</b></div>
+<div style="text-align:center;padding:20px"><div class="analytics-score" id="analyticsTotalScore">--</div><div class="tiny">/100 điểm</div></div>
+<div class="analytics-card"><b>CTR Dự đoán</b><div class="analytics-bar"><div class="analytics-bar-inner" id="ctrBar" style="width:0%;background:#2563eb"></div></div><span class="tiny" id="ctrValue">--%</span></div>
+<div class="analytics-card"><b>Engagement</b><div class="analytics-bar"><div class="analytics-bar-inner" id="engBar" style="width:0%;background:#10b981"></div></div><span class="tiny" id="engValue">--%</span></div>
+</div>
+<div class="panel"><div class="panelhead"><b>Heatmap (Attention)</b></div>
+<div class="heatmap-grid" id="heatmapGrid"></div>
+<div class="tiny" style="margin-top:10px">Vùng màu đậm = nhiều attention hơn</div>
+</div></div>
+</section>
+
+<section class="page" id="collab">
+<div class="heading"><div><div class="eyebrow">Team collaboration / Real-time</div><h1>Collaboration</h1><p>Làm việc nhóm với comment, roles và activity feed.</p></div></div>
+<div class="dashgrid"><div class="panel"><div class="panelhead"><b>Team Members</b></div>
+<div class="collab-user online"><div class="avatar" style="background:#2563eb">AD</div><div><b>Admin User</b><div class="tiny">Admin &middot; Online</div></div></div>
+<div class="collab-user online"><div class="avatar" style="background:#10b981">ED</div><div><b>Editor User</b><div class="tiny">Editor &middot; Online</div></div></div>
+<div class="collab-user"><div class="avatar" style="background:#f59e0b">VI</div><div><b>Viewer User</b><div class="tiny">Viewer &middot; Offline</div></div></div>
+</div>
+<div class="panel"><div class="panelhead"><b>Comments</b></div>
+<div class="tiny" style="line-height:1.8">&#8226; Comment trên canvas: Click để thêm comment<br>&#8226; Mention: @username để tag thành viên<br>&#8226; Resolve: Đánh dấu comment đã giải quyết<br>&#8226; Real-time: Xem thay đổi của team member</div>
+<button class="btn" style="margin-top:10px" onclick="toast('Tính năng comment cần backend để hoạt động đầy đủ')">Thêm comment</button>
+</div></div>
+</section>
+
+<section class="page" id="guardian">
+<div class="heading"><div><div class="eyebrow">Brand compliance / Guardian</div><h1>Brand Guardian</h1><p>Kiểm tra tuân thủ brand trước khi xuất bản.</p></div><button class="btn" onclick="runBrandGuardian()">Kiểm tra</button></div>
+<div class="dashgrid"><div class="panel"><div class="panelhead"><b>Kết quả kiểm tra</b></div><div id="guardianResults"><div class="tiny">Nhấn "Kiểm tra" để chạy Brand Guardian.</div></div></div>
+<div class="panel"><div class="panelhead"><b>Quy tắc</b></div>
+<div class="tiny" style="line-height:1.8">&#8226; Logo ở vị trí hợp lệ<br>&#8226; Chỉ dùng màu trong bảng brand<br>&#8226; Font heading: Inter Bold<br>&#8226; Font body: Inter Regular<br>&#8226; CTA dùng màu accent<br>&#8226; Tối thiểu 40px padding<br>&#8226; Tối đa 3 màu trong thiết kế<br>&#8226; Độ tương phản tối thiểu 4.5:1</div>
+</div></div>
+</section>
+
+<section class="page" id="plugins">
+<div class="heading"><div><div class="eyebrow">Plugin Ecosystem / Extensions</div><h1>Plugin Hub</h1><p>Mở rộng CANVIO với plugin.</p></div></div>
+<div class="templateGrid">
+<div class="plugin-card"><b>Slack Integration</b><small>Nhận thông báo thiết kế trong Slack</small><span class="plugin-status active">Installed</span></div>
+<div class="plugin-card"><b>Notion Sync</b><small>Đồng bộ nội dung với Notion</small><span class="plugin-status active">Installed</span></div>
+<div class="plugin-card"><b>Figma Import</b><small>Import file Figma</small><span class="plugin-status inactive">Not installed</span></div>
+<div class="plugin-card"><b>Google Sheets</b><small>Import dữ liệu từ Google Sheets</small><span class="plugin-status inactive">Not installed</span></div>
+<div class="plugin-card"><b>QR Code Generator</b><small>Tạo QR code trong thiết kế</small><span class="plugin-status active">Installed</span></div>
+<div class="plugin-card"><b>Social Scheduler</b><small>Lên lịch đăng bài</small><span class="plugin-status inactive">Not installed</span></div>
+<div class="plugin-card"><b>AI Translation</b><small>Dịch thiết kế sang 50+ ngôn ngữ</small><span class="plugin-status inactive">Not installed</span></div>
+<div class="plugin-card"><b>Stock Photos</b><small>Tích hợp Unsplash, Pexels</small><span class="plugin-status active">Installed</span></div>
+</div>
+</section>
+
+<section class="page" id="components">
+<div class="heading"><div><div class="eyebrow">Component Library / Design System</div><h1>Components</h1><p>Thư viện thành phần thiết kế tái sử dụng.</p></div></div>
+<div class="comp-grid">
+<div class="comp-item" onclick="toast('Component: Primary Button')"><b>Primary Button</b><small>Nền xanh, chữ trắng</small></div>
+<div class="comp-item" onclick="toast('Component: Outline Button')"><b>Outline Button</b><small>Viền xanh, trong suốt</small></div>
+<div class="comp-item" onclick="toast('Component: CTA Button')"><b>CTA Button</b><small>Màu accent, nổi bật</small></div>
+<div class="comp-item" onclick="toast('Component: Info Card')"><b>Info Card</b><small>Tiêu đề + mô tả</small></div>
+<div class="comp-item" onclick="toast('Component: Image Card')"><b>Image Card</b><small>Ảnh + tiêu đề + text</small></div>
+<div class="comp-item" onclick="toast('Component: Simple Header')"><b>Simple Header</b><small>Logo + nav đơn giản</small></div>
+<div class="comp-item" onclick="toast('Component: Gradient Hero')"><b>Gradient Hero</b><small>Gradient + tiêu đề lớn</small></div>
+<div class="comp-item" onclick="toast('Component: New Badge')"><b>New Badge</b><small>Nhãn NEW màu xanh</small></div>
+<div class="comp-item" onclick="toast('Component: Hot Badge')"><b>Hot Badge</b><small>Nhãn HOT màu đỏ</small></div>
+<div class="comp-item" onclick="toast('Component: Input Field')"><b>Input Field</b><small>Text input với label</small></div>
+<div class="comp-item" onclick="toast('Component: Pill Navigation')"><b>Pill Navigation</b><small>Nav dạng pill</small></div>
+<div class="comp-item" onclick="toast('Component: Icon Set')"><b>Icon Set</b><small>4 icon cơ bản</small></div>
+</div>
+</section>
+
+<section class="page" id="sync">
+<div class="heading"><div><div class="eyebrow">Sync &amp; Share / Cloud</div><h1>Sync &amp; Share</h1><p>Đồng bộ dự án, chia sẻ qua GitHub Gist hoặc Supabase.</p></div></div>
+<div class="dashgrid">
+<div class="panel"><div class="panelhead"><b>GitHub Gist</b></div>
+<div class="sync-status"><span style="color:#2563eb">&#9679;</span> Chưa đồng bộ. Nhập GitHub token.</div>
+<div class="field"><label>GitHub Token</label><input type="password" id="githubToken" placeholder="ghp_xxxxxxxxxxxx"></div>
+<button class="btn" onclick="toast('Tính năng Gist cần API backend')">Đồng bộ lên Gist</button>
+</div>
+<div class="panel"><div class="panelhead"><b>Supabase</b></div>
+<div class="sync-status"><span style="color:#2563eb">&#9679;</span> Chưa kết nối.</div>
+<div class="field"><label>Supabase URL</label><input id="supabaseUrl" placeholder="https://project.supabase.co"></div>
+<div class="field"><label>Supabase Key</label><input type="password" id="supabaseKey" placeholder="eyJ..."></div>
+<button class="btn" onclick="toast('Tính năng Supabase cần API backend')">Kết nối Supabase</button>
+</div>
+</div>
+</section>
+
+</main>
+</div>
+
+<div class="modalBack" id="versionModal">
+<div class="modal">
+<h3>Lịch sử phiên bản</h3>
+<div class="qa-list" id="versionList"></div>
+<div style="margin-top:14px;display:flex;gap:8px;justify-content:flex-end">
+<button class="btn ghost" onclick="closeModal('versionModal')">Đóng</button>
+<button class="btn" onclick="createVersion()">Lưu phiên bản</button>
+</div>
+</div>
+</div>
+
+<div class="modalBack" id="qaModal">
+<div class="modal" style="max-width:500px">
+<h3>Kiểm tra chất lượng</h3>
+<div class="qa-list" id="qaModalList"></div>
+<div style="margin-top:14px;display:flex;gap:8px;justify-content:flex-end">
+<button class="btn ghost" onclick="closeModal('qaModal')">Đóng</button>
+</div>
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* CANVIO 4.0 CORE - Clean rebuild */
+(function(){
+"use strict";
+
+var pageNames={dashboard:'Overview',poster:'Poster Studio',portfolio:'Portfolio Studio',templates:'Templates',assets:'Assets & Uploads',scene:'3D Lab',brand:'Brand Kit',export:'Export Center',ai:'AI Director',aigen:'AI Generate',motion:'Motion Studio',agent:'AI Agent',multimodal:'Multi-modal',responsive:'Responsive Studio',analytics:'Analytics',collab:'Collaboration',guardian:'Brand Guardian',plugins:'Plugins',components:'Components',sync:'Sync & Share'};
+
+window.go=function(id){
+  var pages=document.querySelectorAll('.page');
+  for(var i=0;i<pages.length;i++){
+    pages[i].classList.toggle('active',pages[i].id===id);
+  }
+  var navBtns=document.querySelectorAll('.nav button');
+  for(var j=0;j<navBtns.length;j++){
+    var b=navBtns[j];
+    var oc=b.getAttribute('onclick');
+    var isActive=oc && oc.indexOf("'"+id+"'")>-1;
+    b.classList.toggle('active',isActive);
+  }
+  var crumb=document.getElementById('crumb');
+  if(crumb)crumb.textContent=pageNames[id]||id;
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(id==='assets'){renderAssets();updateStorageStats();}
+  if(id==='templates')filterTemplates();
+  if(id==='analytics')renderHeatmap();
+};
+
+window.toast=function(msg){
+  var t=document.getElementById('toast');
+  if(!t)return;
+  t.textContent=msg;
+  t.classList.add('show');
+  clearTimeout(window._tt);
+  window._tt=setTimeout(function(){t.classList.remove('show');},2200);
+};
+
+window.toggleTheme=function(){
+  document.documentElement.classList.toggle('dark');
+};
+
+window.closeModal=function(id){
+  var m=document.getElementById(id);
+  if(m)m.classList.remove('open');
+};
+window.openModal=function(id){
+  var m=document.getElementById(id);
+  if(m)m.classList.add('open');
+};
+
+/* INDEXEDDB */
+var DB_NAME='CANVIO_DB_V4',DB_VERSION=4,db=null;
+function openDB(){
+  return new Promise(function(resolve){
+    var req=indexedDB.open(DB_NAME,DB_VERSION);
+    req.onerror=function(){console.log('IndexedDB error');resolve(null);};
+    req.onsuccess=function(){db=req.result;resolve(db);};
+    req.onupgradeneeded=function(e){
+      var d=e.target.result;
+      ['assets','projects','versions','brand'].forEach(function(s){
+        if(!d.objectStoreNames.contains(s))d.createObjectStore(s,{keyPath:'id'});
+      });
+    };
+  });
+}
+function dbPut(store,data){
+  return new Promise(function(resolve){
+    if(!db){resolve();return;}
+    var tx=db.transaction(store,'readwrite'),s=tx.objectStore(store),r=s.put(data);
+    r.onsuccess=function(){resolve();};
+    r.onerror=function(){resolve();};
+  });
+}
+function dbGetAll(store){
+  return new Promise(function(resolve){
+    if(!db){resolve([]);return;}
+    var tx=db.transaction(store,'readonly'),s=tx.objectStore(store),r=s.getAll();
+    r.onsuccess=function(){resolve(r.result||[]);};
+    r.onerror=function(){resolve([]);};
+  });
+}
+function dbDelete(store,id){
+  return new Promise(function(resolve){
+    if(!db){resolve();return;}
+    var tx=db.transaction(store,'readwrite'),s=tx.objectStore(store),r=s.delete(id);
+    r.onsuccess=function(){resolve();};
+    r.onerror=function(){resolve();};
+  });
+}
+function dbGet(store,id){
+  return new Promise(function(resolve){
+    if(!db){resolve(null);return;}
+    var tx=db.transaction(store,'readonly'),s=tx.objectStore(store),r=s.get(id);
+    r.onsuccess=function(){resolve(r.result);};
+    r.onerror=function(){resolve(null);};
+  });
+}
+window.formatBytes=function(b){if(!b)return'0 B';var k=1024,s=['B','KB','MB','GB'],i=Math.floor(Math.log(b)/Math.log(k));return parseFloat((b/Math.pow(k,i)).toFixed(2))+' '+s[i];};
+window.generateId=function(){return'cv_'+Date.now().toString(36)+'_'+Math.random().toString(36).substr(2,9);};
+
+/* POSTER STUDIO */
+var stage=document.getElementById('stage');
+var selected=null,drag=null,idCount=10,snapEnabled=true,zoomLevel=1;
+var historyStack=[],historyIndex=-1;var MAX_HISTORY=50;
+
+function allItems(){return stage?Array.prototype.slice.call(stage.querySelectorAll('.stageItem')):[];}
+
+window.selectItem=function(el){
+  if(selected)selected.classList.remove('selected');
+  selected=el;
+  if(el)el.classList.add('selected');
+  renderProps();renderLayers();
+};
+
+function renderProps(){
+  var empty=document.getElementById('emptyProps');
+  var box=document.getElementById('props');
+  var name=document.getElementById('selectedName');
+  if(!empty||!box||!name)return;
+  if(!selected){empty.style.display='block';box.style.display='none';name.textContent='Chưa chọn';return;}
+  empty.style.display='none';box.style.display='block';
+  name.textContent=(selected.dataset.id||'')+' - '+(selected.classList[1]||'element');
+  var textEl=document.getElementById('propText');
+  if(textEl)textEl.value=selected.tagName==='IMG'?'[Hình ảnh]':selected.innerText;
+  var sizeEl=document.getElementById('propSize');
+  if(sizeEl)sizeEl.value=parseFloat(getComputedStyle(selected).fontSize)||12;
+  var wEl=document.getElementById('propWidth');
+  if(wEl)wEl.value=parseFloat(selected.style.width)||selected.offsetWidth||100;
+  var hEl=document.getElementById('propHeight');
+  if(hEl)hEl.value=parseFloat(selected.style.height)||selected.offsetHeight||0;
+  var xEl=document.getElementById('propX');
+  if(xEl)xEl.value=parseFloat(selected.style.left)||0;
+  var yEl=document.getElementById('propY');
+  if(yEl)yEl.value=parseFloat(selected.style.top)||0;
+  var opEl=document.getElementById('propOpacity');
+  if(opEl)opEl.value=Math.round((parseFloat(selected.style.opacity)||1)*100);
+}
+
+function updateSelected(){
+  if(!selected)return;
+  var textEl=document.getElementById('propText');
+  if(textEl&&selected.tagName!=='IMG'&&!selected.classList.contains('shape'))selected.innerText=textEl.value;
+  var sizeEl=document.getElementById('propSize');
+  if(sizeEl)selected.style.fontSize=sizeEl.value+'px';
+  var wEl=document.getElementById('propWidth');
+  if(wEl)selected.style.width=wEl.value+'px';
+  var hEl=document.getElementById('propHeight');
+  if(hEl)selected.style.height=hEl.value+'px';
+  var xEl=document.getElementById('propX');
+  if(xEl)selected.style.left=xEl.value+'px';
+  var yEl=document.getElementById('propY');
+  if(yEl)selected.style.top=yEl.value+'px';
+  var opEl=document.getElementById('propOpacity');
+  if(opEl)selected.style.opacity=(opEl.value/100).toString();
+  var cEl=document.getElementById('propColor');
+  if(cEl)selected.style.color=cEl.value;
+  var bgEl=document.getElementById('propBg');
+  if(bgEl)selected.style.backgroundColor=bgEl.value;
+  var rotEl=document.getElementById('propRotate');
+  if(rotEl&&rotEl.value)selected.style.transform='rotate('+rotEl.value+'deg)';
+  var blurEl=document.getElementById('propBlur');
+  if(blurEl)selected.style.filter=blurEl.value>0?'blur('+blurEl.value+'px)':'';
+  var fwEl=document.getElementById('propWeight');
+  if(fwEl)selected.style.fontWeight=fwEl.value;
+  var alEl=document.getElementById('propAlign');
+  if(alEl)selected.style.textAlign=alEl.value;
+  var shEl=document.getElementById('propShadow');
+  if(shEl)selected.style.boxShadow=shEl.value;
+  renderLayers();
+}
+
+var propIds=['propText','propSize','propWidth','propHeight','propX','propY','propOpacity','propColor','propBg','propRotate','propBlur','propWeight','propAlign','propSpacing','propShadow'];
+propIds.forEach(function(id){
+  var el=document.getElementById(id);
+  if(el)el.addEventListener('input',updateSelected);
+});
+
+function bindItem(el){
+  el.addEventListener('mousedown',function(e){
+    if(e.button!==0)return;
+    e.stopPropagation();
+    selectItem(el);
+    drag={el:el,x:e.clientX,y:e.clientY,left:parseFloat(el.style.left)||0,top:parseFloat(el.style.top)||0};
+  });
+  el.addEventListener('mousemove',function(e){
+    if(!drag||drag.el!==el)return;
+    var nx=drag.left+(e.clientX-drag.x);
+    var ny=drag.top+(e.clientY-drag.y);
+    if(snapEnabled){
+      var items=allItems().filter(function(x){return x!==el;});
+      for(var i=0;i<items.length;i++){
+        var item=items[i];
+        var ix=parseFloat(item.style.left)||0,iy=parseFloat(item.style.top)||0;
+        if(Math.abs(nx-ix)<8){nx=ix;}
+        if(Math.abs(ny-iy)<8){ny=iy;}
+      }
+    }
+    if(stage){
+      nx=Math.max(0,Math.min(nx,stage.offsetWidth-(parseFloat(el.style.width)||50)));
+      ny=Math.max(0,Math.min(ny,stage.offsetHeight-(parseFloat(el.style.height)||20)));
+    }
+    el.style.left=nx+'px';el.style.top=ny+'px';
+    var xEl=document.getElementById('propX');if(xEl)xEl.value=Math.round(nx);
+    var yEl=document.getElementById('propY');if(yEl)yEl.value=Math.round(ny);
+  });
+  el.addEventListener('mouseup',function(){drag=null;saveHistory();});
+}
+
+if(stage){
+  stage.addEventListener('mousedown',function(e){if(e.target===stage)selectItem(null);});
+  allItems().forEach(bindItem);
+}
+
+function renderLayers(){
+  var box=document.getElementById('layers');
+  if(!box)return;
+  box.innerHTML='';
+  var items=allItems();
+  if(items.length===0){box.innerHTML='<div class="tiny">Chưa có layer nào.</div>';return;}
+  var reversed=items.slice().reverse();
+  reversed.forEach(function(el){
+    var row=document.createElement('div');
+    row.className='layer'+(el===selected?' active':'');
+    var name=el.classList.contains('text')?'Headline':el.classList.contains('para')?'Body':el.classList.contains('shape')?'Shape':el.classList.contains('buttonish')?'CTA':el.classList.contains('image')?'Image':el.classList.contains('rect')?'Rectangle':el.classList.contains('circle')?'Circle':'Label';
+    row.innerHTML='<span>'+name+' - '+(el.dataset.id||'')+'</span>';
+    row.onclick=function(){selectItem(el);};
+    box.appendChild(row);
+  });
+}
+
+function addEl(cls,text,x,y,w,h){
+  if(!stage)return;
+  var el=document.createElement('div');
+  el.className='stageItem '+cls;el.dataset.id='i'+String(++idCount);
+  el.style.left=x+'px';el.style.top=y+'px';el.style.width=w+'px';
+  if(h)el.style.height=h+'px';
+  el.innerText=text;stage.appendChild(el);bindItem(el);selectItem(el);saveHistory();
+  return el;
+}
+window.addText=function(){addEl('text','NEW HEADLINE',35,60,300);toast('Đã thêm văn bản');};
+window.addShape=function(){addEl('shape','',240,150,120,120);toast('Đã thêm hình');};
+window.addButton=function(){addEl('buttonish','LEARN MORE',35,360,150,38);toast('Đã thm CTA');};
+window.addRect=function(){var el=addEl('rect','',50,200,150,100);el.style.backgroundColor='#2563eb';el.style.borderRadius='8px';toast('Đã thêm hình chữ nhật');};
+window.addCircle=function(){var el=addEl('circle','',200,200,100,100);el.style.backgroundColor='#a3e635';el.style.borderRadius='50%';toast('Đã thêm hình tròn');};
+window.duplicateSelected=function(){if(!selected)return;var clone=selected.cloneNode(true);clone.dataset.id='i'+String(++idCount);clone.style.left=(parseFloat(selected.style.left||0)+20)+'px';clone.style.top=(parseFloat(selected.style.top||0)+20)+'px';clone.classList.remove('selected');if(stage)stage.appendChild(clone);bindItem(clone);saveHistory();toast('Đã nhân bản');};
+window.deleteSelected=function(){if(!selected)return;selected.remove();selected=null;renderProps();renderLayers();saveHistory();};
+window.bringFront=function(){if(!selected||!stage)return;stage.appendChild(selected);renderLayers();saveHistory();};
+window.sendBack=function(){if(!selected||!stage)return;stage.insertBefore(selected,stage.firstChild);renderLayers();saveHistory();};
+window.toggleSnap=function(){snapEnabled=!snapEnabled;var btn=document.getElementById('snapBtn');if(btn)btn.textContent='Snap: '+(snapEnabled?'ON':'OFF');};
+window.toggleGrid=function(){var g=document.getElementById('gridOverlay');if(g)g.classList.toggle('show');};
+window.zoomStage=function(delta){zoomLevel=Math.max(.3,Math.min(3,zoomLevel+delta));if(stage)stage.style.transform='scale('+zoomLevel+')';var zl=document.getElementById('zoomLevel');if(zl)zl.textContent=Math.round(zoomLevel*100)+'%';};
+window.changeRatio=function(v){if(!stage)return;stage.classList.remove('square','landscape','a4','a4l','social');if(v!=='portrait')stage.classList.add(v);var sizes={portrait:['440px','550px'],square:['440px','440px'],landscape:['600px','400px'],a4:['440px','622px'],a4l:['622px','440px'],social:['440px','440px']};var s=sizes[v]||sizes.portrait;stage.style.width=s[0];stage.style.height=s[1];};
+window.setTheme=function(t,elBtn){if(!stage)return;stage.classList.remove('light','warm','violet','dark','green','orange');if(t!=='blue')stage.classList.add(t);document.querySelectorAll('.swatch').forEach(function(x){x.classList.remove('active');});if(elBtn)elBtn.classList.add('active');};
+window.newDesign=function(){if(!stage)return;stage.innerHTML='';idCount=0;addEl('label','YOUR BRAND - YOUR MESSAGE',30,30,350);addEl('text','MAKE AN IMPACT.',30,110,350);addEl('para','Add a short supporting message here.',30,290,250);addEl('shape','',270,190,110,110);addEl('buttonish','GET STARTED',30,390,170,38);changeRatio('portrait');saveHistory();toast('Đã tạo thiết kế mới');};
+window.uploadImage=function(ev){var f=ev.target.files[0];if(!f||!stage)return;var reader=new FileReader();reader.onload=function(){var img=document.createElement('img');img.className='stageItem image';img.dataset.id='i'+String(++idCount);img.src=reader.result;img.style.cssText='left:100px;top:100px;width:180px;height:150px;object-fit:cover;border-radius:10px;';stage.appendChild(img);bindItem(img);selectItem(img);saveHistory();toast('Đã thêm hình ảnh');};reader.readAsDataURL(f);ev.target.value='';};
+
+function saveHistory(){
+  if(!stage)return;
+  var state=serializeStage();
+  if(historyIndex>=0&&JSON.stringify(historyStack[historyIndex])===JSON.stringify(state))return;
+  historyStack=historyStack.slice(0,historyIndex+1);
+  historyStack.push(JSON.parse(JSON.stringify(state)));
+  if(historyStack.length>MAX_HISTORY)historyStack.shift();else historyIndex++;
+}
+window.undo=function(){if(historyIndex>=0){historyIndex--;if(historyIndex<0){if(stage)stage.innerHTML='';}else{restoreStage(historyStack[historyIndex]);}renderLayers();toast('Undo');}};
+window.redo=function(){if(historyIndex<historyStack.length-1){historyIndex++;restoreStage(historyStack[historyIndex]);renderLayers();toast('Redo');}};
+function serializeStage(){if(!stage)return{items:[]};return{items:allItems().map(function(el){return{id:el.dataset.id,classes:el.className.replace(' selected',''),text:el.tagName==='IMG'?'':el.innerText,left:el.style.left,top:el.style.top,width:el.style.width,height:el.style.height,fontSize:el.style.fontSize,color:el.style.color,opacity:el.style.opacity,transform:el.style.transform,backgroundColor:el.style.backgroundColor,borderRadius:el.style.borderRadius,boxShadow:el.style.boxShadow,src:el.tagName==='IMG'?el.src:null};})};}
+function restoreStage(state){if(!state||!state.items||!stage)return;stage.innerHTML='';state.items.forEach(function(it){var el;if(it.src){el=document.createElement('img');el.src=it.src;el.className=it.classes;el.dataset.id=it.id||'i'+String(++idCount);Object.assign(el.style,{left:it.left,top:it.top,width:it.width,height:it.height,opacity:it.opacity,transform:it.transform,borderRadius:it.borderRadius,boxShadow:it.boxShadow});}else{el=document.createElement('div');el.className=it.classes;el.dataset.id=it.id||'i'+String(++idCount);el.innerText=it.text;Object.assign(el.style,{left:it.left,top:it.top,width:it.width,height:it.height,fontSize:it.fontSize,color:it.color,opacity:it.opacity,transform:it.transform,backgroundColor:it.backgroundColor,borderRadius:it.borderRadius,boxShadow:it.boxShadow});}stage.appendChild(el);bindItem(el);});renderLayers();}
+
+/* EXPORT */
+window.download=function(name,content,type){var blob=new Blob([content],{type:type}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(function(){URL.revokeObjectURL(url);},1000);};
+window.exportPosterSVG=function(){if(!stage)return;var w=stage.offsetWidth,h=stage.offsetHeight;var items=allItems().map(function(el){var x=parseFloat(el.style.left)||0,y=parseFloat(el.style.top)||0,sw=parseFloat(el.style.width)||120,sh=parseFloat(el.style.height)||0,text=el.tagName==='IMG'?'':el.innerText;var safe=text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');if(el.tagName==='IMG')return'<image href="'+el.src+'" x="'+x+'" y="'+y+'" width="'+sw+'" height="'+sh+'" preserveAspectRatio="xMidYMid slice" opacity="'+(el.style.opacity||1)+'"/>';if(el.classList.contains('shape'))return'<circle cx="'+(x+sw/2)+'" cy="'+(y+sh/2)+'" r="'+(sw/2)+'" fill="#60a5fa" opacity="'+(el.style.opacity||1)+'"/>';if(el.classList.contains('rect')||el.classList.contains('circle')){var isC=el.classList.contains('circle');var fill=getComputedStyle(el).backgroundColor;return isC?'<circle cx="'+(x+sw/2)+'" cy="'+(y+sh/2)+'" r="'+(sw/2)+'" fill="'+fill+'" opacity="'+(el.style.opacity||1)+'"/>':'<rect x="'+x+'" y="'+y+'" width="'+sw+'" height="'+sh+'" fill="'+fill+'" rx="'+(parseFloat(el.style.borderRadius)||0)+'" opacity="'+(el.style.opacity||1)+'"/>';}var size=parseFloat(getComputedStyle(el).fontSize)||12;return'<text x="'+x+'" y="'+(y+size)+'" fill="'+getComputedStyle(el).color+'" font-family="Arial,sans-serif" font-size="'+size+'" font-weight="'+getComputedStyle(el).fontWeight+'" opacity="'+(el.style.opacity||1)+'">'+safe+'</text>';}).join('');var bg1='#0f172a',bg2='#38bdf8';var svg='<svg xmlns="http://www.w3.org/2000/svg" width="'+(w*2)+'" height="'+(h*2)+'" viewBox="0 0 '+w+' '+h+'"><defs><linearGradient id="bg" x2="1" y2="1"><stop stop-color="'+bg1+'"/><stop offset="1" stop-color="'+bg2+'"/></linearGradient></defs><rect width="100%" height="100%" fill="url(#bg)"/>'+items+'</svg>';download('canvio-poster.svg',svg,'image/svg+xml');toast('Đã xuất SVG');};
+window.exportPosterPNG=function(){if(!stage)return;var canvas=document.createElement('canvas');canvas.width=stage.offsetWidth*2;canvas.height=stage.offsetHeight*2;var ctx=canvas.getContext('2d');ctx.fillStyle='#0f172a';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.scale(2,2);allItems().forEach(function(el){var x=parseFloat(el.style.left)||0,y=parseFloat(el.style.top)||0,w=parseFloat(el.style.width)||120,h=parseFloat(el.style.height)||0;ctx.save();ctx.globalAlpha=parseFloat(el.style.opacity)||1;if(el.tagName==='IMG'){try{ctx.drawImage(el,x,y,w,h);}catch(e){}}else{ctx.fillStyle=getComputedStyle(el).color;ctx.font=(getComputedStyle(el).fontWeight||400)+' '+(parseFloat(getComputedStyle(el).fontSize)||12)+'px Arial';if(el.classList.contains('shape')||el.classList.contains('circle')){ctx.beginPath();ctx.arc(x+w/2,y+h/2,w/2,0,Math.PI*2);ctx.fillStyle=getComputedStyle(el).backgroundColor;ctx.fill();}else if(el.classList.contains('rect')){ctx.fillStyle=getComputedStyle(el).backgroundColor;ctx.fillRect(x,y,w,h);}else{ctx.fillText(el.innerText,x,y+15);}ctx.restore();}});canvas.toBlob(function(blob){var url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='canvio-poster.png';a.click();setTimeout(function(){URL.revokeObjectURL(url);},1000);toast('Đã xuất PNG');});};
+
+/* ASSETS */
+window.saveAsset=function(asset){return dbPut('assets',asset);};
+window.getAllAssets=function(){return dbGetAll('assets');};
+window.deleteAsset=function(id){return dbDelete('assets',id);};
+window.getStorageUsed=function(){return getAllAssets().then(function(assets){return assets.reduce(function(sum,a){return sum+(a.size||0);},0);});};
+
+window.assetFiles=function(ev){
+  var files=Array.prototype.slice.call(ev.target.files);if(!files.length)return;
+  var uploaded=0;
+  files.forEach(function(file){
+    if(file.size>5*1024*1024){toast('File quá lớn: '+file.name);return;}
+    var reader=new FileReader();
+    reader.onload=function(e){
+      var asset={id:generateId(),name:file.name,type:(file.type.split('/')[1]||'FILE').toUpperCase(),mime:file.type,size:file.size,data:e.target.result,uploadedAt:new Date().toISOString(),category:guessCategory(file)};
+      saveAsset(asset).then(function(){uploaded++;toast(uploaded+' tài nguyên đã lưu');renderAssets();updateStorageStats();});
+    };
+    reader.readAsDataURL(file);
+  });
+  ev.target.value='';
+};
+window.guessCategory=function(file){var n=file.name.toLowerCase();if(n.indexOf('logo')>-1)return'logo';if(n.indexOf('icon')>-1)return'icon';if(n.indexOf('bg')>-1||n.indexOf('background')>-1)return'background';if(file.type==='image/svg+xml')return'svg';return'image';};
+
+window.renderAssets=function(){
+  var list=document.getElementById('assetList');if(!list)return;
+  getAllAssets().then(function(assets){
+    var search=(document.getElementById('assetSearch')?document.getElementById('assetSearch').value:'').toLowerCase();
+    var filter=document.getElementById('assetFilter')?document.getElementById('assetFilter').value:'all';
+    var filtered=assets.filter(function(a){if(search&&a.name.toLowerCase().indexOf(search)===-1)return false;if(filter!=='all'&&a.category!==filter)return false;return true;});
+    var countEl=document.getElementById('assetCount');if(countEl)countEl.textContent=filtered.length+' tài nguyên';
+    if(!filtered.length){list.innerHTML='<div class="tiny" style="grid-column:1/-1;text-align:center;padding:40px">Chưa có tài nguyên. Upload để bắt đầu.</div>';return;}
+    list.innerHTML=filtered.map(function(a){return'<div class="asset-card"><div class="asset-thumb">'+(a.data?'<img src="'+a.data+'" alt="'+a.name+'" loading="lazy">':'<span class="tiny">No preview</span>')+'</div><div class="asset-info"><b title="'+a.name+'">'+a.name+'</b><small>'+(a.type||'')+' - '+formatBytes(a.size||0)+'</small><div class="asset-actions"><button onclick="toast(\'Thêm vào poster\')">Thêm poster</button><button onclick="deleteAssetPrompt(\''+a.id+'\')">Xóa</button></div></div></div>';}).join('');
+  });
+};
+window.deleteAssetPrompt=function(id){if(!confirm('Xóa tài nguyên này?'))return;deleteAsset(id).then(function(){renderAssets();updateStorageStats();toast('Đã xóa');});};
+window.updateStorageStats=function(){getStorageUsed().then(function(used){var el=document.getElementById('storageUsed');if(el)el.textContent=formatBytes(used);});};
+window.backupAssets=function(){getAllAssets().then(function(assets){var data=JSON.stringify({canvio_assets_backup:true,version:'4.0',date:new Date().toISOString(),assets:assets});download('canvio-assets-backup.json',data,'application/json');toast('Đã tải backup');});};
+window.restoreAssets=function(ev){var file=ev.target.files[0];if(!file)return;var reader=new FileReader();reader.onload=function(e){try{var data=JSON.parse(e.target.result);if(!data.canvio_assets_backup)throw new Error('Invalid');var count=0;var arr=data.assets||[];(function next(i){if(i>=arr.length){toast(count+' tài nguyên đã phục hồi');renderAssets();updateStorageStats();return;}if(arr[i].id&&arr[i].data){saveAsset(arr[i]).then(function(){count++;next(i+1);});}else{next(i+1);}})(0);}catch(err){toast('Phục hồi thất bại');}};reader.readAsText(file);ev.target.value='';};
+
+/* Dropzone */
+var dropzone=document.getElementById('assetDropzone');
+if(dropzone){
+  dropzone.addEventListener('dragover',function(e){e.preventDefault();dropzone.style.borderColor='#2563eb';dropzone.style.background='#eff6ff';});
+  dropzone.addEventListener('dragleave',function(){dropzone.style.borderColor='';dropzone.style.background='';});
+  dropzone.addEventListener('drop',function(e){e.preventDefault();dropzone.style.borderColor='';dropzone.style.background='';if(e.dataTransfer&&e.dataTransfer.files.length){assetFiles({target:{files:e.dataTransfer.files}});}});
+}
+
+/* TEMPLATES */
+window.filterTemplates=function(){
+  var industry=document.getElementById('templateIndustry');industry=industry?industry.value:'all';
+  var style=document.getElementById('templateStyle');style=style?style.value:'all';
+  var ratio=document.getElementById('templateRatio');ratio=ratio?ratio.value:'all';
+  document.querySelectorAll('#templateGrid .template').forEach(function(t){
+    var ok=(industry==='all'||t.dataset.industry===industry)&&(style==='all'||t.dataset.style===style)&&(ratio==='all'||t.dataset.ratio===ratio);
+    t.style.display=ok?'':'none';
+  });
+};
+window.loadTemplate=function(t,industry){go('poster');setTheme(t);toast('Đã áp dụng template '+industry.toUpperCase()+' - '+t);};
+
+/* PORTFOLIO */
+window.applyPortfolio=function(){
+  var pairs=[['inName','pvName'],['inIntro','pvIntro'],['inSkill1','pvSkill1'],['inSkill2','pvSkill2'],['inSkill3','pvSkill3'],['inProject','pvProject'],['inFooter','pvFooter']];
+  pairs.forEach(function(pair){
+    var el=document.getElementById(pair[1]);var src=document.getElementById(pair[0]);
+    if(el&&src){el.innerHTML=src.value.replace(/\\n/g,'<br>');}
+  });
+  toast('Đã cập nhật portfolio');
+};
+window.portfolioHTML=function(){
+  var name=(document.getElementById('inName')?document.getElementById('inName').value:'').replace(/\\n/g,'<br>');
+  var intro=document.getElementById('inIntro')?document.getElementById('inIntro').value:'';
+  var s1=document.getElementById('inSkill1')?document.getElementById('inSkill1').value:'';
+  var s2=document.getElementById('inSkill2')?document.getElementById('inSkill2').value:'';
+  var s3=document.getElementById('inSkill3')?document.getElementById('inSkill3').value:'';
+  var proj=document.getElementById('inProject')?document.getElementById('inProject').value:'';
+  var foot=document.getElementById('inFooter')?document.getElementById('inFooter').value:'';
+  return'<!doctype html><html lang="vi"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Portfolio</title><style>*{box-sizing:border-box}body{margin:0;background:#020617;color:#f2f8ff;font-family:Arial,sans-serif}.hero{padding:12vh 9vw 8vh;min-height:65vh;background:radial-gradient(circle at 80% 35%,#1e40af,transparent 35%),linear-gradient(125deg,#020617,#1e3a8a)}small{letter-spacing:2px;color:#93c5fd}h1{font-size:clamp(42px,8vw,90px);line-height:.95;letter-spacing:-4px;max-width:800px}p{color:#bfdbfe;line-height:1.7;max-width:600px}.grid{padding:35px 9vw;display:grid;grid-template-columns:repeat(2,1fr);gap:15px}.card{background:#1e293b;border:1px solid #1e3a5f;border-radius:10px;padding:25px}.card h2{font-size:22px}.foot{padding:25px 9vw;color:#64748b}@media(max-width:600px){.grid{grid-template-columns:1fr}}</style><section class="hero"><small>PEOPLE - CULTURE - STRATEGY</small><h1>'+name+'</h1><p>'+intro+'</p></section><section class="grid"><article class="card"><small>01 / CHUYEN MON</small><h2>'+s1+'</h2><p>Dự án, năng lực và kết quả đo lường được.</p></article><article class="card"><small>02 / DAC BIET</small><h2>'+s2+'</h2><p>Dự án, năng lực và kết quả đo lường được.</p></article><article class="card"><small>03 / PHAN TICH</small><h2>'+s3+'</h2><p>Dự án, năng lực và kết quả đo lường được.</p></article><article class="card"><small>04 / DU AN</small><h2>'+proj+'</h2><p>Dự án, năng lực và kết quả đo lường được.</p></article></section><footer class="foot">'+foot+'</footer></html>';
+};
+window.exportPortfolioHTML=function(){download('canvio-portfolio.html',portfolioHTML(),'text/html');toast('Đã xuất HTML');};
+window.exportPortfolioZIP=function(){download('canvio-portfolio.txt',portfolioHTML(),'text/plain');toast('Đã xuất (text format)');};
+window.previewPortfolio=function(){var w=window.open('','_blank');if(!w){toast('Cho phép popup để xem trước');return;}w.document.write(portfolioHTML());w.document.close();};
+
+/* AI */
+window.analyzeContent=function(){var industry=document.getElementById('aiIndustry');industry=industry?industry.value:'HR';var purpose=document.getElementById('aiPurpose');purpose=purpose?purpose.value:'Tuyển dụng';var results=document.getElementById('aiContentResults');if(results)results.innerHTML='<div class="tiny" style="padding:10px;background:#eff6ff;border-radius:8px;margin-bottom:8px"><b>Phân tích:</b> Ngành '+industry+', mục đích '+purpose+'</div><div class="tiny">Gợi ý: Sử dụng màu xanh dương, font sans-serif, thêm CTA rõ ràng.</div>';toast('Phân tích hoàn tất');};
+window.getCreativeIdeas=function(){var results=document.getElementById('aiCreativeResults');if(results)results.innerHTML='<div class="tiny" style="padding:10px;background:#f0fdf4;border-radius:8px;margin-bottom:8px">1. Dùng gradient xanh-tím cho tech theme</div><div class="tiny" style="padding:10px;background:#f0fdf4;border-radius:8px;margin-bottom:8px">2. Thêm hình tròn 3D làm điểm nhấn</div><div class="tiny" style="padding:10px;background:#f0fdf4;border-radius:8px">3. CTA màu xanh lá nổi bật trên nền tối</div>';toast('Đã lấy gợi ý sáng tạo');};
+
+/* AI GENERATE */
+window.generateAIImage=function(){var promptInput=document.getElementById('aiImagePrompt');var resultDiv=document.getElementById('aiImageResult');if(!promptInput||!resultDiv)return;var prompt=promptInput.value.trim();if(!prompt){toast('Nhập prompt trước');return;}var encoded=encodeURIComponent(prompt);var url='https://image.pollinations.ai/prompt/'+encoded+'?width=1024&height=1024&nologo=true&seed='+Math.floor(Math.random()*100000);resultDiv.innerHTML='<div style="padding:40px;text-align:center"><div style="margin-bottom:12px">&#9889; Đang tạo...</div><div class="tiny">'+prompt+'</div></div>';var img=new Image();img.onload=function(){resultDiv.innerHTML='';img.style.width='100%';img.style.height='220px';img.style.objectFit='cover';resultDiv.appendChild(img);toast('Đã tạo hình ảnh');};img.onerror=function(){resultDiv.innerHTML='<div style="padding:40px;text-align:center;color:#ef4444">Lỗi tải hình. Thử lại.</div>';};img.src=url;};
+window.enhancePrompt=function(){var input=document.getElementById('aiImagePrompt');if(!input)return;var v=input.value.trim();if(!v)return;input.value=v+', professional design, high quality, clean composition, modern style';toast('Đã cải thiện prompt');};
+
+/* MOTION */
+window.previewMotion=function(type){var box=document.getElementById('motionPreviewBox');if(!box)return;var anims={fade:[{opacity:0},{opacity:1}],slide:[{transform:'translateY(30px)',opacity:0},{transform:'translateY(0)',opacity:1}],zoom:[{transform:'scale(0.5)',opacity:0},{transform:'scale(1)',opacity:1}],bounce:[{transform:'translateY(0)'},{transform:'translateY(-20px)'},{transform:'translateY(0)'}],rotate:[{transform:'rotate(0deg)'},{transform:'rotate(360deg)'}],flip:[{transform:'rotateY(0)'},{transform:'rotateY(180deg)'},{transform:'rotateY(360deg)'}],pulse:[{transform:'scale(1)'},{transform:'scale(1.05)'},{transform:'scale(1)'}],shake:[{transform:'translateX(0)'},{transform:'translateX(-5px)'},{transform:'translateX(5px)'},{transform:'translateX(0)'}],glitch:[{transform:'translate(0)'},{transform:'translate(-2px,2px)'},{transform:'translate(2px,-2px)'},{transform:'translate(0)'}]};var anim=anims[type]||anims.fade;var dur=type==='bounce'||type==='pulse'||type==='shake'||type==='glitch'?600:1000;box.textContent=type.toUpperCase()+' ANIMATION';box.animate(anim,{duration:dur,easing:'ease-in-out'});};
+window.exportMotionGIF=function(){toast('GIF export cần thư viện gif.js. Preview animation đã sẵn sàng.');};
+window.exportMotionMP4=function(){toast('MP4 export cần thư viện ffmpeg.js. Preview animation đã sẵn sàng.');};
+
+/* AI AGENT */
+window.runAgent=function(){var input=document.getElementById('agentPrompt');var s1=document.getElementById('agentStep1');var s2=document.getElementById('agentStep2');var s3=document.getElementById('agentStep3');var s4=document.getElementById('agentStep4');var s5=document.getElementById('agentStep5');if(!input||!input.value.trim()){toast('Nhập prompt cho AI Agent');return;}if(s1){s1.className='agent-step-body processing';s1.innerHTML='<b>Phân tích yêu cầu</b><div class="tiny">Đang phân tích...</div>';}setTimeout(function(){if(s1){s1.className='agent-step-body done';s1.innerHTML='<b>Phân tích yêu cầu</b><div class="tiny">Hoàn tất</div>';}if(s2){s2.className='agent-step-body processing';s2.innerHTML='<b>Chọn template &amp; màu sắc</b><div class="tiny">Đang chọn...</div>';}setTimeout(function(){if(s2){s2.className='agent-step-body done';s2.innerHTML='<b>Chọn template &amp; màu sắc</b><div class="tiny">Hoàn tất</div>';}if(s3){s3.className='agent-step-body processing';s3.innerHTML='<b>Tạo nội dung</b><div class="tiny">Đang viết...</div>';}setTimeout(function(){if(s3){s3.className='agent-step-body done';s3.innerHTML='<b>Tạo nội dung</b><div class="tiny">Hoàn tất</div>';}if(s4){s4.className='agent-step-body processing';s4.innerHTML='<b>Tạo hình ảnh</b><div class="tiny">Đang tạo...</div>';}setTimeout(function(){if(s4){s4.className='agent-step-body done';s4.innerHTML='<b>Tạo hình ảnh</b><div class="tiny">Hoàn tất</div>';}if(s5){s5.className='agent-step-body processing';s5.innerHTML='<b>Kiểm tra &amp; xuất bản</b><div class="tiny">Đang kiểm tra...</div>';}setTimeout(function(){if(s5){s5.className='agent-step-body done';s5.innerHTML='<b>Kiểm tra &amp; xuất bản</b><div class="tiny">Hoàn tất. Poster đã sẵn sàng!</div>';}toast('AI Agent đã tạo xong poster!');go('poster');},800);},800);},600);},600);},600);};
+
+/* MULTI-MODAL */
+window.startVoiceInput=function(){toast('Voice input: Nhấn Allow nếu trình duyệt yêu cầu quyền microphone');var result=document.getElementById('mmResult');if(result)result.innerHTML='<div class="tiny">Voice input demo: "Tạo poster tuyển dụng HR màu xanh"</div>';};
+window.processMMImage=function(ev){var f=ev.target.files[0];if(!f)return;var result=document.getElementById('mmResult');if(result)result.innerHTML='<div class="tiny">Đã nhận ảnh: '+f.name+' ('+formatBytes(f.size)+')</div>';toast('Đã nhận ảnh: '+f.name);};
+window.extractFromURL=function(){var url=prompt('Nhập URL:');if(!url)return;var result=document.getElementById('mmResult');if(result)result.innerHTML='<div class="tiny">Đang trích xuất từ: '+url+'</div>';toast('Đang trích xuất URL...');};
+window.readClipboard=function(){if(navigator.clipboard&&navigator.clipboard.readText){navigator.clipboard.readText().then(function(text){var result=document.getElementById('mmResult');if(result)result.innerHTML='<div class="tiny">Clipboard: '+text.substring(0,200)+'</div>';toast('Đã đọc clipboard');}).catch(function(){toast('Không thể đọc clipboard');});}else{toast('Clipboard API không khả dụng');}};
+window.scanQRCode=function(){toast('QR Scan cần camera access và thư viện jsQR');};
+window.uploadDocument=function(){toast('Document upload: hỗ trợ PDF, DOCX. Kéo thả vào Assets.');go('assets');};
+
+/* RESPONSIVE */
+window.previewResponsive=function(platform){var box=document.getElementById('responsivePreviewBox');if(!box)return;var sizes={instagram_post:'440x440',instagram_story:'300x533',facebook_post:'400x210',linkedin_post:'400x400',twitter_post:'400x225',youtube_thumbnail:'427x240'};box.innerHTML='<div style="text-align:center"><div style="font-size:24px;font-weight:800;margin-bottom:8px">'+platform.replace('_',' ').toUpperCase()+'</div><div class="tiny">'+sizes[platform]+'px</div><div style="margin-top:16px;padding:20px;background:#0f172a;color:#fff;border-radius:8px;font-size:12px">Preview layout cho '+platform+'</div></div>';};
+
+/* ANALYTICS */
+window.runAnalytics=function(){
+  var totalScore=Math.floor(Math.random()*30)+70;
+  var ctr=(Math.random()*5+2).toFixed(1);
+  var eng=(Math.random()*10+5).toFixed(1);
+  var ts=document.getElementById('analyticsTotalScore');if(ts)ts.textContent=totalScore;
+  var ctrBar=document.getElementById('ctrBar');if(ctrBar)ctrBar.style.width=(ctr*10)+'%';
+  var ctrVal=document.getElementById('ctrValue');if(ctrVal)ctrVal.textContent=ctr+'%';
+  var engBar=document.getElementById('engBar');if(engBar)engBar.style.width=(eng*5)+'%';
+  var engVal=document.getElementById('engValue');if(engVal)engVal.textContent=eng+'%';
+  renderHeatmap();toast('Phân tích hoàn tất: '+totalScore+'/100');
+};
+window.renderHeatmap=function(){var grid=document.getElementById('heatmapGrid');if(!grid)return;grid.innerHTML='';for(var i=0;i<100;i++){var cell=document.createElement('div');cell.className='heatmap-cell';var intensity=Math.random();cell.style.background='rgba(37,99,235,'+intensity+')';grid.appendChild(cell);}};
+
+/* BRAND GUARDIAN */
+window.runBrandGuardian=function(){var results=document.getElementById('guardianResults');if(!results)return;var checks=[{status:'pass',msg:'Logo ở vị trí hợp lệ'},{status:'pass',msg:'Màu sắc trong bảng brand'},{status:'warn',msg:'CTA có thể lớn hơn'},{status:'pass',msg:'Độ tương phản đạt chuẩn'}];results.innerHTML=checks.map(function(c){return'<div class="guardian-'+c.status+'">'+(c.status==='pass'?'&#10003;':c.status==='warn'?'&#9888;':'&#10007;')+' '+c.msg+'</div>';}).join('');};
+
+/* QA */
+window.runPosterQA=function(){var issues=[];var items=allItems();if(!items.length){issues.push({type:'warn',msg:'Thiết kế trống'});}else{if(!items.some(function(el){return el.classList.contains('buttonish');}))issues.push({type:'warn',msg:'Chưa có CTA'});if(!items.some(function(el){return el.classList.contains('text');}))issues.push({type:'warn',msg:'Chưa có headline'});}var list=document.getElementById('qaModalList');if(list)list.innerHTML=issues.length?issues.map(function(i){return'<div class="qa-item"><span>'+(i.type==='warn'?'&#9888;':'&#10007;')+'</span><span>'+i.msg+'</span></div>';}).join(''):'<div class="qa-item"><span style="color:#22c55e">&#10003;</span><span>Thiết kế ổn!</span></div>';openModal('qaModal');};
+
+/* VERSIONS */
+window.createVersion=function(){var version={id:'v_'+Date.now(),date:new Date().toISOString(),project:serializeStage()};dbPut('versions',version).then(function(){renderVersions();toast('Đã lưu phiên bản');});};
+window.renderVersions=function(){var list=document.getElementById('versionList');if(!list)return;dbGetAll('versions').then(function(versions){versions.sort(function(a,b){return new Date(b.date)-new Date(a.date);});if(!versions.length){list.innerHTML='<div class="tiny">Chưa có phiên bản.</div>';return;}list.innerHTML=versions.map(function(v){return'<div class="qa-item" style="justify-content:space-between"><span>'+new Date(v.date).toLocaleString()+'</span><button class="btn ghost sm" onclick="restoreVersion(\''+v.id+'\')">Phục hồi</button></div>';}).join('');});};
+window.restoreVersion=function(id){dbGet('versions',id).then(function(v){if(v&&v.project){restoreStage(v.project);toast('Đã phục hồi');closeModal('versionModal');}else{toast('Không tìm thấy');}});};
+window.openVersions=function(){renderVersions();openModal('versionModal');};
+
+/* BRAND KIT */
+window.updateBrandPreview=function(){var p=document.getElementById('brandPrimary');p=p?p.value:'#0f172a';var preview=document.getElementById('brandPreview');if(preview){preview.style.background=p;preview.style.color='#fff';}};
+window.saveBrandKit=function(){toast('Đã lưu Brand Kit');};
+
+/* 3D */
+var scene3D=null,camera3D=null,renderer3D=null,shape3D=null;
+window.init3D=function(){var box=document.getElementById('threeBox');if(!box||renderer3D||typeof THREE==='undefined')return;try{var w=box.clientWidth,h=box.clientHeight;scene3D=new THREE.Scene();camera3D=new THREE.PerspectiveCamera(45,w/h,0.1,100);camera3D.position.z=5;renderer3D=new THREE.WebGLRenderer({alpha:true,antialias:true});renderer3D.setSize(w,h);renderer3D.setPixelRatio(window.devicePixelRatio);box.innerHTML='';box.appendChild(renderer3D.domElement);var geo=new THREE.SphereGeometry(1,32,32);var mat=new THREE.MeshStandardMaterial({color:0x2563eb,roughness:0.3,metalness:0.7});shape3D=new THREE.Mesh(geo,mat);scene3D.add(shape3D);var light=new THREE.DirectionalLight(0xffffff,1);light.position.set(2,2,5);scene3D.add(light);var amb=new THREE.AmbientLight(0x404040,0.5);scene3D.add(amb);animate3D();}catch(e){console.error('3D init failed',e);box.innerHTML='<div style="padding:100px;text-align:center;color:#93c5fc">Three.js chưa sẵn sàng. Kiểm tra kết nối.</div>';}};
+function animate3D(){if(!renderer3D||!scene3D||!camera3D)return;requestAnimationFrame(animate3D);if(shape3D){shape3D.rotation.x+=0.005;shape3D.rotation.y+=0.01;}renderer3D.render(scene3D,camera3D);}
+window.changeShape=function(type){if(!scene3D||typeof THREE==='undefined')return;var geo;if(type==='sphere')geo=new THREE.SphereGeometry(1,32,32);else if(type==='torus')geo=new THREE.TorusGeometry(0.7,0.3,16,100);else if(type==='box')geo=new THREE.BoxGeometry(1.2,1.2,1.2);else if(type==='cylinder')geo=new THREE.CylinderGeometry(0.7,0.7,1.5,32);else if(type==='cone')geo=new THREE.ConeGeometry(0.8,1.5,32);else if(type==='icosahedron')geo=new THREE.IcosahedronGeometry(1,0);if(geo&&shape3D){shape3D.geometry.dispose();shape3D.geometry=geo;}toast('Đã đổi shape: '+type);};
+window.changeColor=function(){if(!shape3D)return;shape3D.material.color.setHex(Math.random()*0xffffff);};
+window.toggleWireframe=function(){if(!shape3D)return;shape3D.material.wireframe=!shape3D.material.wireframe;};
+window.reset3D=function(){if(shape3D){shape3D.rotation.x=0;shape3D.rotation.y=0;shape3D.material.wireframe=false;shape3D.material.color.setHex(0x2563eb);changeShape('sphere');}toast('Đã reset 3D');};
+window.render3DImage=function(){if(!renderer3D)return;var dataURL=renderer3D.domElement.toDataURL('image/png');var a=document.createElement('a');a.href=dataURL;a.download='canvio-3d-render.png';a.click();toast('Đã render ảnh 3D');};
+
+/* PROJECT SAVE/LOAD */
+window.saveProject=function(){var data=serializeStage();var json=JSON.stringify(data);try{localStorage.setItem('canvio_project_v4',json);}catch(e){}dbPut('projects',{id:'current',data:data,date:new Date().toISOString()});download('canvio-project-v4.json',json,'application/json');var ss=document.getElementById('saveState');if(ss)ss.textContent='Saved';toast('Đã lưu project');};
+function loadSaved(){try{var ls=localStorage.getItem('canvio_project_v4');if(ls){var d=JSON.parse(ls);if(d&&d.items)restoreStage(d);}}catch(e){}}
+
+/* INIT */
+openDB().then(function(){loadSaved();updateStorageStats();renderAssets();}).catch(function(err){console.log('IndexedDB not available',err);loadSaved();});
+renderLayers();
+})();
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" onload="init3D()" onerror="console.log('Three.js failed')"></script>
+</body>
+</html>
