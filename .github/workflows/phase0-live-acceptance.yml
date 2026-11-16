@@ -124,9 +124,14 @@ jobs:
             const browser = await chromium.launch({headless:true});
             const context = await browser.newContext({viewport:{width:1440,height:1000}});
             const page = await context.newPage();
-            const pageErrors = [], consoleErrors = [];
+            const pageErrors = [], consoleErrors = [], stylesheetResponses = [];
             page.on("pageerror", e => pageErrors.push(String(e && e.stack || e)));
             page.on("console", m => { if (m.type()==="error") consoleErrors.push(m.text()); });
+            page.on("response", r => {
+              if (r.request().resourceType()==="stylesheet") {
+                stylesheetResponses.push({url:r.url(),status:r.status(),ok:r.ok()});
+              }
+            });
             try {
               const response = await page.goto(url,{waitUntil:"domcontentloaded",timeout:120000});
               if (!response || response.status()!==200) throw new Error("Live page did not return HTTP 200");
@@ -141,7 +146,7 @@ jobs:
               }));
               if (!String(initial.build||"").includes("23.3.60-r6")) throw new Error("Wrong build: "+initial.build);
               const responsive=[];
-              for (const width of [375,768,1280,1440]) {
+              for (const width of [375,720,768,1280,1440]) {
                 await page.setViewportSize({width,height:900});
                 responsive.push(await page.evaluate(()=>({
                   viewport:innerWidth,documentWidth:document.documentElement.scrollWidth,
@@ -217,6 +222,34 @@ jobs:
                 };
               });
               if(qa.missingModules && qa.missingModules.length) throw new Error("Missing QA modules: "+qa.missingModules.join(", "));
+              await page.setViewportSize({width:1440,height:900});
+              await page.locator("body").click({position:{x:4,y:4}}).catch(()=>{});
+              const tabFocus=[];
+              for(let i=0;i<80;i++){
+                await page.keyboard.press("Tab");
+                tabFocus.push(await page.evaluate(()=>{
+                  const a=document.activeElement;
+                  if(!a)return {tag:null,name:""};
+                  const name=a.getAttribute("aria-label")||
+                    (a.getAttribute("aria-labelledby")?"labelledby:"+a.getAttribute("aria-labelledby"):"")||
+                    a.getAttribute("title")||a.getAttribute("alt")||
+                    a.getAttribute("placeholder")||(a.innerText||a.textContent||"").trim().slice(0,100);
+                  return {tag:a.tagName.toLowerCase(),id:a.id||"",role:a.getAttribute("role")||"",name};
+                }));
+              }
+              const keyboardTraversal={
+                tabPresses:tabFocus.length,
+                focusedElements:tabFocus.filter(x=>x.tag!=="body"&&x.tag!=="html").length,
+                unnamedFocusedElements:tabFocus.filter(x=>x.tag!=="body"&&x.tag!=="html"&&!x.name).length,
+                firstFocuses:tabFocus.slice(0,12)
+              };
+              const stylesheetLinks=await page.evaluate(()=>Array.from(document.querySelectorAll('link[rel~="stylesheet"]')).map(x=>({
+                href:x.href,
+                rel:x.rel,
+                integrity:x.integrity||"",
+                crossOrigin:x.crossOrigin||"",
+                loaded:!!x.sheet
+              })));
               const performance=await page.evaluate(()=>{
                 const n=performance.getEntriesByType("navigation")[0];
                 const resources=performance.getEntriesByType("resource");
@@ -282,7 +315,7 @@ jobs:
                   return {writeSucceeded:false,persistedAcrossChromiumRestart:false,error:String(e&&e.message||e)};
                 }
               })();
-              const result={url,responseStatus:response.status(),initial,responsive,performance,restartProbe,qa,pageErrors,consoleErrors};
+              const result={url,responseStatus:response.status(),initial,responsive,keyboardTraversal,stylesheetLinks,stylesheetResponses,performance,restartProbe,qa,pageErrors,consoleErrors};
               const fs=require("fs"), output=JSON.stringify(result,null,2);
               fs.writeFileSync(process.env.RUNNER_TEMP+"/canvio-phase0-browser.json",output);
               console.log(output);
@@ -291,6 +324,9 @@ jobs:
                 "- URL: "+url,"- HTTP: "+response.status(),"- Build: "+initial.build,
                 "- Body text length: "+initial.bodyTextLength,
                 "- IndexedDB persisted across real Chromium process restart: "+restartProbe.persistedAcrossChromiumRestart,
+                "- Keyboard Tab presses: "+keyboardTraversal.tabPresses+"; unnamed focus stops: "+keyboardTraversal.unnamedFocusedElements,
+                "- Stylesheet links: "+JSON.stringify(stylesheetLinks),
+                "- Stylesheet responses: "+JSON.stringify(stylesheetResponses),
                 "- Performance snapshot: "+JSON.stringify(performance),
                 "",
                 "| Viewport | Document width | Body width | Horizontal overflow |",
