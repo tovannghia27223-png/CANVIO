@@ -1,67 +1,108 @@
 # CANVIO Phase 0 — Acceptance Audit
 
 **Audit date:** 2026-11-16  
-**Baseline:** `main` at `85cdccc746d27df4effd99799c24d8606e5ae9fa`  
+**Application baseline:** `main` at `85cdccc746d27df4effd99799c24d8606e5ae9fa`  
 **Application build:** `23.3.60-r6`  
-**Release posture:** Conditional — repository CI is green; production-origin and real-browser acceptance remain open.
+**Audit branch:** `docs/phase-0-acceptance-audit-2026-11-16`  
+**Release posture:** CONDITIONAL — automated live-origin acceptance is green, but P42 retains host-policy and project-context warnings plus human signoff items.
 
 ## 1. Scope and safety
 
-This audit documents verifiable release evidence and the remaining acceptance gates. It does not change `index.html`, application engines, user project data, storage schemas, or deployment settings.
+This is an evidence-only audit of the existing R6 release. It does not change `index.html`, engines, project schemas, user project data, storage ownership, or production deployment settings.
 
-The audit is intentionally conservative: a successful GitHub Actions deployment proves that the configured workflow completed. It does **not**, by itself, certify the live site's HTTP/TLS behavior, browser compatibility, persistence after a real browser restart, or all creative export paths.
+All browser acceptance runs use a new isolated Playwright/Chromium profile. The IndexedDB restart check creates one uniquely named temporary database, writes a marker, closes the Chromium process, reopens the same test profile, verifies the marker, and deletes the database. It does not access a user's browser profile or project.
 
-## 2. Verified repository and CI evidence
+A successful CI or headless browser run is not represented as full production certification. User-created projects, actual media exports, assistive-technology use, and target hardware still require the appropriate acceptance procedure.
+
+## 2. Verified baseline and CI
 
 | Check | Evidence | Result |
 |---|---|---|
-| Repository baseline | `main`, commit `85cdccc` | Verified |
-| R6 application integrity | Workflow SHA-256 equals `11d1ba5394ee315e97909fba5efd99adc09a412227a443c94a3e3fdddbfed9dd` | PASS |
-| Inline scripts | 79 script blocks found and checked with Node `--check` | 79/79 PASS |
-| External script tags | Workflow requires zero external `src` scripts | 0 found |
-| HTML IDs | 486 IDs, 486 unique | 0 duplicates |
-| Build/package job | Run #14, job `Validate and package CANVIO P42 R6` | SUCCESS |
-| Pages deploy job | Run #14, job `Deploy to GitHub Pages` | SUCCESS |
-| Main workflow | [Run #14](https://github.com/tovannghia27223-png/CANVIO/actions/runs/43841204017) | SUCCESS |
+| Production baseline | `main`, `85cdccc`, build `23.3.60-r6` | Verified |
+| R6 artifact integrity | SHA-256 `11d1ba5394ee315e97909fba5efd99adc09a412227a443c94a3e3fdddbfed9dd` | PASS |
+| Inline JavaScript | 79 blocks checked by Node `--check` | 79/79 PASS |
+| External script tags | No inline HTML script `src` declarations | 0 |
+| HTML IDs | 486 IDs, all unique | 0 duplicates |
+| Main branch Pages deploy | [Actions run #14](https://github.com/tovannghia27223-png/CANVIO/actions/runs/43841204017) | SUCCESS |
+| PR branch Node 24 validation | [Latest PR validation](https://github.com/tovannghia27223-png/CANVIO/actions/runs/43847482739) | SUCCESS |
+| Live-origin acceptance workflow | [Run 43847482763](https://github.com/tovannghia27223-png/CANVIO/actions/runs/43847482763) | SUCCESS |
 
-The latest recorded run is the push to `main` for commit `85cdccc`. The prior failed Node 24 attempts are superseded by later successful runs, including the latest run above; they remain historical records, not current failures.
+The audit changes are limited to this file and `.github/workflows/phase0-live-acceptance.yml`. The PR build is validation-only; its Pages deployment job is skipped by design.
 
-## 3. Release gates — status
+## 3. Live-origin results
 
-| Gate | Current status | Acceptance evidence still required |
-|---|---|---|
-| P30 — hosting / HTTP / TLS | OPEN | From an external client, record final URL, status code, redirect chain, TLS certificate validity/expiry/hostname, and response headers. |
-| P31 — website / SEO / accessibility acceptance | OPEN | Inspect the deployed page and rendered metadata; test navigation and key flows with keyboard and assistive technology. Existing isolated-fixture evidence is not a live-origin signoff. |
-| P39 — creative persistence round-trip | CONDITIONAL | Run on the real HTTPS origin with a disposable test project: save, reload, close/reopen Chrome, recover, compare project/media state, and verify the temporary QA record is removed. Confirm native IndexedDB behavior; do not overwrite a real user project. |
-| P40 — responsive / accessibility | CONDITIONAL | Verify 375, 768, 1280, and 1440 CSS-pixel viewports; test actual browser zoom at 200%, keyboard focus/operation, accessible names, and at least one screen reader. The 720px reflow proxy and automated heuristic are not WCAG certification. |
-| P41 — performance / resource diagnostics | CONDITIONAL | Capture repeatable cold/warm load measurements and inspect memory, resource, and canvas behavior on target devices with representative project sizes. Record device/browser and test conditions. |
-| P42 — production release candidate | CONDITIONAL | Re-run the P37–P41 evidence set on the target origin, resolve blockers, export the report, and obtain explicit human signoff. `READY_FOR_MANUAL_SIGNOFF` is not production certification. |
+Latest verified live run: [CANVIO Phase 0 Live Acceptance](https://github.com/tovannghia27223-png/CANVIO/actions/runs/43847482763).
 
-### Specific limitations already documented by P42
+### P30 — HTTPS / hosting response
 
-- Native IndexedDB persistence across a normal Chrome restart remains an external-origin acceptance item; isolated localStorage fallback tests do not replace it.
-- Synthetic WebM playback does not certify project-specific timelines, audio sync, long media, MP4/H.264, print/PDF, or every motion-transfer path.
-- A 720px viewport reflow proxy is not the same as actual browser zoom at 200%.
-- Automated accessibility heuristics and Chromium accessibility-tree scans are not a substitute for real screen-reader and target-device tests.
-- The existing P42 gate is fail-closed and explicitly reports missing local acceptance stages; keep this behavior.
+**External runner:** HTTP 200, final URL remained HTTPS, 0 redirects, curl TLS verification result 0, OpenSSL certificate verification passed, HTTP/2, and the response carried `Content-Type: text/html; charset=utf-8`. HSTS was present as `max-age=31556952`.
 
-## 4. Safe manual acceptance procedure
+The response did not include these headers: `Content-Security-Policy`, `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, and `Permissions-Policy`. The P30 in-app report therefore records **7 PASS · 5 WARN · 0 FAIL · 2 INFO**. These are actual host-response observations, not TLS or HTTP availability failures.
 
-1. Open the deployed CANVIO URL in a clean Chrome profile and record the exact URL, Chrome version, OS, and date/time.
-2. Complete P30 checks externally. Save command output or screenshots with the report; do not infer TLS or headers from a successful Actions run.
-3. Create a clearly disposable test project. Never use a user's only/production project for destructive tests.
-4. Exercise save → reload → close browser → reopen → recover. Verify project metadata and representative media/timeline state. Record whether the app used native IndexedDB or a fallback.
-5. Test responsive layouts and keyboard-only operation; perform an actual 200% browser zoom check and a screen-reader smoke test.
-6. Run performance checks with both an empty workspace and a representative non-sensitive test project. Record device details, measurements, and any regressions.
-7. Export P42 evidence. Any FAIL blocks signoff; any WARN must have an owner, impact assessment, and explicit disposition.
+The raw HTML had a CANVIO R6 title, Vietnamese document language, viewport metadata, a meta description, 486 unique IDs, and no duplicate IDs. A canonical link was not present; record this as an SEO advisory rather than claim it passed a canonical check.
+
+GitHub Pages served the site successfully but the tested response did not expose the five listed security headers. Adding HTML meta tags is not equivalent to setting response headers; do not add a speculative CSP that could block the app's inline scripts, media, or integrations. A hosting/CDN layer with explicit response-header configuration is a possible future route (for example, [Cloudflare Pages custom headers](https://developers.cloudflare.com/pages/configuration/headers/)), but changing providers, DNS, or production routing is outside this audit and needs explicit owner approval.
+
+### P31 — live HTML / accessibility heuristic
+
+The production-origin HTML audit returned **12 PASS · 0 WARN · 0 FAIL · 0 INFO**:
+- title and 160-character meta description present;
+- `lang="vi"` and viewport metadata present;
+- one H1 in the active SPA page and no heading-level skip;
+- no duplicate IDs, unnamed buttons, unlabeled fields, empty links, or unnamed links in the audited active page;
+- a main landmark is present.
+
+This is an HTML/accessibility heuristic. It is not a WCAG conformance declaration or a replacement for NVDA/JAWS/VoiceOver testing.
+
+### P37–P42 — isolated live Chromium
+
+| Module / check | Latest result | Notes |
+|---|---:|---|
+| P37 reliability | 9 PASS · 0 WARN · 0 FAIL · 2 INFO | No runtime event errors observed after instrumentation. |
+| P38 website acceptance | 2 PASS · 1 WARN · 0 FAIL · 1 INFO | Same-origin P30/P31 reports were collected; P30 remains WARN because the five host headers are absent. |
+| P39 creative persistence | 4 PASS · 0 WARN · 0 FAIL · 2 INFO | Native IndexedDB temporary write/read/delete passed; separate Chromium-process restart test passed and test DB was cleaned up. |
+| P40 responsive/accessibility | 6 PASS · 0 WARN · 0 FAIL · 1 INFO | Five viewport widths below; 80 Tab presses, 79 focus stops, 0 unnamed focus stops. |
+| P41 performance diagnostics | 5 PASS · 0 WARN · 0 FAIL · 1 INFO | DOM/resource/canvas/heap checks passed. A real project export benchmark is still outstanding. |
+| System QA | 17 PASS · 1 WARN · 0 FAIL | The one warning is one external stylesheet declaration. |
+| Ops diagnostics | 22/22 PASS · 0 FAIL | Core system diagnostics passed. |
+
+Responsive sweep:
+
+| CSS viewport | Document width | Body width | Horizontal overflow |
+|---:|---:|---:|---|
+| 375 | 375 | 375 | No |
+| 720 | 720 | 720 | No |
+| 768 | 768 | 768 | No |
+| 1280 | 1280 | 1280 | No |
+| 1440 | 1440 | 1440 | No |
+
+Keyboard smoke test: 80 Tab presses, 79 actual focusable stops observed, 0 unnamed focus stops. This test checks focus traversal and accessible names; it does not test every control's activation semantics or screen-reader announcements.
+
+External stylesheet detail: the page declares Google Fonts CSS; the two observed stylesheet requests returned HTTP 200. System QA flags the existence of an external stylesheet as a dependency warning even though the captured requests loaded. Keep the dependency visible; do not remove or silently reclassify it without an explicit privacy/performance decision.
+
+Latest browser performance snapshot (one isolated runner, not a device benchmark): DOMContentLoaded 1,096 ms; load event 1,108 ms; response start 232 ms; Resource Timing reported 4 resources and 1,587,215 transferred bytes; JavaScript heap used approximately 26 MB; 13 canvases with approximately 3.95 million aggregate canvas pixels. Resource Timing can omit cross-origin transfer sizes, and these measurements are not a target-device SLA.
+
+## 4. Remaining P42 warnings and manual acceptance
+
+The live acceptance run had **0 FAIL**, but P42 remains **CONDITIONAL** with **2 PASS · 3 WARN · 0 FAIL · 4 INFO**. Its warnings aggregate:
+1. P36's previous gate (8 PASS · 2 WARN · 0 FAIL);
+2. P8 Professional QC (14 PASS · 6 WARN · 0 FAIL · 2 INFO);
+3. P38 website acceptance (2 PASS · 1 WARN · 0 FAIL · 1 INFO).
+
+The P8 report was run from the home workspace, without a selected Command Center project or an initialized Website/GrapesJS editing session. Its warnings included: no active project brief; the System QA external stylesheet warning; asset/font/stock-media usage rights requiring owner confirmation; Website editor checks not mounted; and social metadata checks with three warnings. The project-selection and editor-mount warnings are context-specific. Rights confirmation cannot be inferred by automation and must be made by the content owner. Do not create a fake user project or fabricate rights evidence to make QC green.
+
+Manual acceptance still required before calling Phase 0 fully signed off:
+1. On an actual target Chrome installation, set browser zoom to 200% and inspect all critical controls and page reflow. The 720 CSS-pixel emulation above is only a reflow proxy.
+2. Use at least one real screen reader (NVDA, JAWS, or VoiceOver) to smoke-test navigation, names, state announcements, dialogs, and primary workflows.
+3. With a clearly disposable test project and non-sensitive media, test project save/reopen/restore and real export paths: representative timeline/audio sync, MP4/H.264 if supported, WebM, print/PDF, and motion transfer. Never use a user's only project as a test target.
+4. Record target device/OS/browser and repeat a cold/warm load plus real media encode/export timing. The current P41 snapshot is a headless runner observation, not a real-device performance certification.
+5. Review and approve the GitHub Pages header limitation. If those five headers are mandatory, choose and authorize a host/CDN capable of response-header configuration, then run the live workflow against that approved origin. No DNS, provider, or production route change is authorized by this PR.
 
 ## 5. Change-control decision
 
-- Keep `23.3.60-r6` as the Phase 0 baseline.
-- Do not modify engines, storage ownership, project schemas, or production user data as part of this evidence-only audit.
-- Do not start UX unification or major Design/Video upgrades until the open Phase 0 gates have evidence and P42 has explicit manual signoff.
-- This document is an audit record and test plan, not a claim that all gates are passed.
+- Keep `23.3.60-r6` as the application baseline.
+- Keep the PR draft until the documented manual signoffs and header-policy decision are recorded.
+- Do not alter the app engine, schema, storage owner, project data, or main deployment to suppress QA warnings.
+- Do not begin UX unification or major Design/Video upgrades until P42 is no longer conditional and the Phase 0 owner signs off the remaining manual items.
 
-## 6. Next required inputs
-
-A person with access to the production browser/device must perform the external-origin checks in section 4 and attach the resulting evidence. Once those results are available, update this matrix with dated outcomes and link the exported P42 report.
+This document records the current evidence and remaining blockers. It does not claim Phase 0 is complete yet.
