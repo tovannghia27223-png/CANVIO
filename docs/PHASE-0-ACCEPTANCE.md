@@ -63,6 +63,8 @@ This is an HTML/accessibility heuristic. It is not a WCAG conformance declaratio
 | P39 creative persistence | 4 PASS · 0 WARN · 0 FAIL · 2 INFO | Native IndexedDB temporary write/read/delete passed; separate Chromium-process restart test passed and test DB was cleaned up. |
 | P40 responsive/accessibility | 6 PASS · 0 WARN · 0 FAIL · 1 INFO | Five viewport widths below; 80 Tab presses, 79 focus stops, 0 unnamed focus stops. |
 | P41 performance diagnostics | 5 PASS · 0 WARN · 0 FAIL · 1 INFO | DOM/resource/canvas/heap checks passed. A real project export benchmark is still outstanding. |
+
+**P41 version-provenance caveat:** the live P41 module report self-identifies as build `23.3.58-r1`, while the tested page and P42 release envelope are `23.3.60-r6`. P41 reported no failed checks, but the version attribution is not aligned. Retain these figures as diagnostic observations only until the P41 module version is confirmed or its independent versioning is documented.
 | System QA | 17 PASS · 1 WARN · 0 FAIL | The one warning is one external stylesheet declaration. |
 | Ops diagnostics | 22/22 PASS · 0 FAIL | Core system diagnostics passed. |
 
