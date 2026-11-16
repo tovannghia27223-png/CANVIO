@@ -112,6 +112,9 @@ jobs:
         run: |
           set -euo pipefail
           npm install --prefix "$RUNNER_TEMP/canvio-playwright" --no-save --no-audit --no-fund playwright@1.65.1
+          npm install --prefix "$RUNNER_TEMP/canvio-grapesjs" --no-save --no-audit --no-fund grapesjs@0.23.9
+          test -s "$RUNNER_TEMP/canvio-grapesjs/node_modules/grapesjs/dist/grapes.min.js"
+          test -s "$RUNNER_TEMP/canvio-grapesjs/node_modules/grapesjs/dist/css/grapes.min.css"
           "$RUNNER_TEMP/canvio-playwright/node_modules/.bin/playwright" install chromium --with-deps
       - name: Run existing acceptance modules on the live origin
         shell: bash
@@ -385,8 +388,68 @@ jobs:
                   navButtons,pages
                 };
               });
-              const result={url,responseStatus:response.status(),initial,responsive,keyboardTraversal,stylesheetLinks,stylesheetResponses,performance,restartProbe,navigationInspection,qa,pageErrors,consoleErrors};
-              const fs=require("fs"), output=JSON.stringify(result,null,2);
+              const fs=require("fs");
+              const grapesjsUpgradeProbe=await (async()=>{
+                const jsPath=process.env.RUNNER_TEMP+"/canvio-grapesjs/node_modules/grapesjs/dist/grapes.min.js";
+                const cssPath=process.env.RUNNER_TEMP+"/canvio-grapesjs/node_modules/grapesjs/dist/css/grapes.min.css";
+                const modernJs=fs.readFileSync(jsPath);
+                const modernCss=fs.readFileSync(cssPath);
+                const modernContext=await browser.newContext({viewport:{width:1440,height:1000}});
+                const modernPage=await modernContext.newPage();
+                const hits={js:0,css:0};
+                const modernPageErrors=[],modernConsoleErrors=[];
+                modernPage.on("pageerror",e=>modernPageErrors.push(String(e&&e.stack||e)));
+                modernPage.on("console",m=>{if(m.type()==="error")modernConsoleErrors.push(m.text())});
+                await modernPage.route("**/grapesjs@0.22.13/dist/grapes.min.js*",async route=>{
+                  hits.js++;
+                  await route.fulfill({status:200,contentType:"application/javascript",body:modernJs});
+                });
+                await modernPage.route("**/grapesjs@0.22.13/dist/css/grapes.min.css*",async route=>{
+                  hits.css++;
+                  await route.fulfill({status:200,contentType:"text/css",body:modernCss});
+                });
+                try{
+                  const r=await modernPage.goto(url,{waitUntil:"domcontentloaded",timeout:120000});
+                  if(!r||r.status()!==200) throw new Error("Upgrade probe page did not return HTTP 200");
+                  await modernPage.waitForFunction(()=>window.CANVIO_BUILD&&window.CV,{timeout:120000});
+                  await modernPage.evaluate(()=>{
+                    const b=Array.from(document.querySelectorAll('button[data-page="webEngine"]'))
+                      .find(el=>el.closest(".nav")||el.closest("nav"))||document.querySelector('button[data-page="webEngine"]');
+                    if(b)b.click();else if(window.CV&&typeof CV.go==="function")CV.go("webEngine");
+                  });
+                  await modernPage.waitForFunction(()=>window.grapesjs&&document.querySelector(".gjs-editor"),{timeout:30000});
+                  await modernPage.waitForTimeout(1500);
+                  const runtime=await modernPage.evaluate(async()=>{
+                    const ids=Array.from(document.querySelectorAll("[id]")).reduce((m,e)=>{m[e.id]=(m[e.id]||0)+1;return m},{});
+                    const duplicateIds=Object.entries(ids).filter(([,n])=>n>1).map(([id,count])=>({id,count}));
+                    const qc=window.CVProfessionalQC&&typeof CVProfessionalQC.run==="function"
+                      ?await CVProfessionalQC.run():null;
+                    const editor=window.CV&&CV.web&&typeof CV.web==="object"?{
+                      keys:Object.keys(CV.web),
+                      initType:typeof CV.web.init,
+                      exportHTMLType:typeof CV.web.exportHTML,
+                      buildHTMLType:typeof CV.web.buildHTML
+                    }:null;
+                    return {
+                      grapesjsType:typeof window.grapesjs,
+                      editorCount:document.querySelectorAll(".gjs-editor").length,
+                      canvasCount:document.querySelectorAll(".gjs-cv-canvas").length,
+                      duplicateIds,
+                      p8Summary:qc&&qc.summary||null,
+                      p8Failures:qc&&Array.isArray(qc.checks)?qc.checks.filter(x=>x.status==="fail"):[],
+                      p8Warnings:qc&&Array.isArray(qc.checks)?qc.checks.filter(x=>x.status==="warn"):[],
+                      editor
+                    };
+                  });
+                  return {packageVersion:"0.23.9",interceptHits:hits,runtime,pageErrors:modernPageErrors,consoleErrors:modernConsoleErrors};
+                }catch(e){
+                  return {packageVersion:"0.23.9",interceptHits:hits,error:String(e&&e.message||e),pageErrors:modernPageErrors,consoleErrors:modernConsoleErrors};
+                }finally{
+                  await modernContext.close();
+                }
+              })();
+              const result={url,responseStatus:response.status(),initial,responsive,keyboardTraversal,stylesheetLinks,stylesheetResponses,performance,restartProbe,navigationInspection,qa,grapesjsUpgradeProbe,pageErrors,consoleErrors};
+              const output=JSON.stringify(result,null,2);
               fs.writeFileSync(process.env.RUNNER_TEMP+"/canvio-phase0-browser.json",output);
               console.log(output);
               const lines=[
@@ -399,6 +462,7 @@ jobs:
                 "- Stylesheet responses: "+JSON.stringify(stylesheetResponses),
                 "- Performance snapshot: "+JSON.stringify(performance),
                 "- Website/editor navigation inventory: "+JSON.stringify(navigationInspection),
+                "- GrapesJS 0.23.9 compatibility probe: "+JSON.stringify(grapesjsUpgradeProbe),
                 "",
                 "| Viewport | Document width | Body width | Horizontal overflow |",
                 "|---:|---:|---:|---|",
