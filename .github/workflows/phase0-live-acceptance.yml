@@ -195,13 +195,14 @@ jobs:
                   ? await CVLiveSiteQualityAudit.run() : null;
                 const liveP38=api.modules.P38&&typeof api.modules.P38.run==="function"
                   ? await api.modules.P38.run() : null;
-                const websiteNavButton=Array.from(document.querySelectorAll('button[data-page="web"]'))
-                  .find(el=>el.closest(".nav")||el.closest("nav"))||document.querySelector('button[data-page="web"]');
+                const websiteNavButton=Array.from(document.querySelectorAll('button[data-page="webEngine"]'))
+                  .find(el=>el.closest(".nav")||el.closest("nav"))||document.querySelector('button[data-page="webEngine"]');
                 if(websiteNavButton) websiteNavButton.click();
-                else if(window.CV&&typeof CV.go==="function") CV.go("web");
-                await new Promise(resolve=>setTimeout(resolve,4000));
+                else if(window.CV&&typeof CV.go==="function") CV.go("webEngine");
+                await new Promise(resolve=>setTimeout(resolve,4500));
+                const activeEditor=document.querySelector(".page.active");
                 const editorInspection={
-                  activePage:document.querySelector(".page.active")?.id||null,
+                  activePage:activeEditor?.id||null,
                   grapesjs:typeof window.grapesjs,
                   editorGlobalKeys:Object.keys(window).filter(k=>/grapes|gjs/i.test(k)).slice(0,40),
                   editorDom:{
@@ -210,14 +211,23 @@ jobs:
                     editor:!!document.querySelector(".gjs-editor"),
                     iframe:document.querySelectorAll(".gjs-frame").length
                   },
-                  pageTitle:(document.querySelector(".page.active h1,.page.active h2")?.innerText||"").trim().slice(0,120)
+                  pageTitle:(activeEditor?.querySelector("h1,h2")?.innerText||"").trim().slice(0,120),
+                  visibleText:(activeEditor?.innerText||"").slice(0,2500),
+                  buttons:Array.from(activeEditor?.querySelectorAll("button")||[]).slice(0,50).map(el=>({
+                    text:(el.innerText||el.textContent||"").trim().slice(0,100),
+                    id:el.id||"",
+                    title:el.title||"",
+                    aria:el.getAttribute("aria-label")||"",
+                    data:Object.fromEntries(Array.from(el.attributes).filter(a=>a.name.startsWith("data-")).map(a=>[a.name,a.value]))
+                  })),
+                  scripts:Array.from(activeEditor?.querySelectorAll("script[src]")||[]).map(el=>el.src)
                 };
+                if(window.CV&&typeof CV.go==="function") CV.go("home");
+                await new Promise(resolve=>setTimeout(resolve,700));
                 const legacyP8=window.CVProfessionalQC&&typeof CVProfessionalQC.run==="function"
                   ? await CVProfessionalQC.run() : null;
                 const legacyP36=window.CVProductionReleaseGate&&typeof CVProductionReleaseGate.run==="function"
                   ? await CVProductionReleaseGate.run() : null;
-                if(window.CV&&typeof CV.go==="function") CV.go("home");
-                await new Promise(resolve=>setTimeout(resolve,700));
                 const testFlags=api.tests();
                 const reports=await api.runAll();
                 const release=await api.modules.P42.run();
