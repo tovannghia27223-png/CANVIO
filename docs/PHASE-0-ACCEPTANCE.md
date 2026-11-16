@@ -4,7 +4,7 @@
 **Application baseline:** `main` at `85cdccc746d27df4effd99799c24d8606e5ae9fa`  
 **Application build:** `23.3.60-r6`  
 **Audit branch:** `docs/phase-0-acceptance-audit-2026-11-16`  
-**Release posture:** BLOCKED — the latest live rerun (2026-11-16, run `43856436690`) mounted the Website/GrapesJS editor and exposed runtime DOM-ID and accessibility-QC failures. Do not merge this audit or start UX/Design/Video expansion until the editor findings are resolved and the live gate passes.
+**Release posture:** BLOCKED — the latest live rerun (2026-11-16, run `43858132865`) mounted the Website/GrapesJS editor and exposed runtime DOM-ID and accessibility-QC failures. Do not merge this audit or start UX/Design/Video expansion until the editor findings are resolved and the live gate passes.
 
 ## 1. Scope and safety
 
@@ -24,15 +24,15 @@ A successful CI or headless browser run is not represented as full production ce
 | External script tags | No inline HTML script `src` declarations | 0 |
 | HTML IDs | 486 IDs, all unique | 0 duplicates |
 | Main branch Pages deploy | [Actions run #14](https://github.com/tovannghia27223-png/CANVIO/actions/runs/43841204017) | SUCCESS |
-| PR branch Node 24 validation | [Run 43856436663](https://github.com/tovannghia27223-png/CANVIO/actions/runs/43856436663) | SUCCESS · deploy skipped by design |
+| PR branch Node 24 validation | [Run 43858132875](https://github.com/tovannghia27223-png/CANVIO/actions/runs/43858132875) | SUCCESS · deploy skipped by design |
 | Earlier live-origin acceptance | [Run 43847482763](https://github.com/tovannghia27223-png/CANVIO/actions/runs/43847482763) | SUCCESS · earlier coverage | 
-| Latest live-origin rerun | [Run 43856436690](https://github.com/tovannghia27223-png/CANVIO/actions/runs/43856436690) | P30/P31 SUCCESS · P37–P42 FAILED |
+| Latest live-origin rerun | [Run 43858132865](https://github.com/tovannghia27223-png/CANVIO/actions/runs/43858132865) | P30/P31 SUCCESS · P37–P42 FAILED |
 
 The PR changes are limited to `docs/PHASE-0-ACCEPTANCE.md` and `.github/workflows/phase0-live-acceptance.yml`; `index.html`, application engines, project schemas, and user project data are unchanged. The PR build is validation-only; its Pages deployment job is skipped by design.
 
 ## 3. Live-origin results
 
-Earlier successful live run: [43847482763](https://github.com/tovannghia27223-png/CANVIO/actions/runs/43847482763). The latest rerun is [43856436690](https://github.com/tovannghia27223-png/CANVIO/actions/runs/43856436690): external P30/P31 passed, but the Chromium P37–P42 job failed after exercising the Website editor. Treat the latest run as the current release gate.
+Earlier successful live run: [43847482763](https://github.com/tovannghia27223-png/CANVIO/actions/runs/43847482763). The latest rerun is [43858132865](https://github.com/tovannghia27223-png/CANVIO/actions/runs/43858132865): external P30/P31 passed, but the Chromium P37–P42 job failed after exercising the Website editor. Treat the latest run as the current release gate.
 
 ### P30 — HTTPS / hosting response
 
@@ -88,7 +88,7 @@ Latest browser performance snapshot (one isolated runner, not a device benchmark
 
 ## 4. Latest rerun findings and remaining acceptance gates
 
-The earlier live run `43847482763` reported **0 FAIL** and P42 **CONDITIONAL**. The latest run `43856436690` is authoritative for this audit because it opened the Website editor before re-running QC. Its P42 result is **BLOCKED** with **2 PASS · 1 WARN · 3 FAIL · 3 INFO**. The separate PR Node 24 validation (`43856436663`) passed; its deployment job is skipped by design. The three failing gates are P36, P8 Professional QC, and P37 reliability; P38 remains a warning. P30/P31 external-origin checks passed.
+The earlier live run `43847482763` reported **0 FAIL** and P42 **CONDITIONAL**. The latest run `43858132865` is authoritative for this audit because it opened the Website editor before re-running QC. Its P42 result is **BLOCKED** with **2 PASS · 1 WARN · 3 FAIL · 3 INFO**. The separate PR Node 24 validation (`43858132875`) passed; its deployment job is skipped by design. The three failing gates are P36, P8 Professional QC, and P37 reliability; P38 remains a warning. P30/P31 external-origin checks passed.
 
 ### Confirmed runtime finding
 
