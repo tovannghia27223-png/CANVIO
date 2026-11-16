@@ -167,6 +167,16 @@ jobs:
                   P31:summarizeGlobal(window.CVLiveSiteQualityAudit)
                 };
                 const P38source=api.modules.P38&&typeof api.modules.P38.run==="function"?api.modules.P38.run.toString().slice(0,8000):null;
+                const relatedGlobals=Object.keys(window).filter(k=>/system.?qa|system.?qc|canvio.*qa|qa.*canvio|cv.*quality/i.test(k)).slice(0,100);
+                const relatedMethods=Object.fromEntries(relatedGlobals.map(k=>{
+                  const obj=window[k];
+                  return [k,{
+                    type:typeof obj,
+                    keys:obj&&typeof obj==="object"?Object.keys(obj).slice(0,40):[],
+                    runSource:obj&&typeof obj.run==="function"?obj.run.toString().slice(0,4000):null,
+                    testsSource:obj&&typeof obj.tests==="function"?obj.tests.toString().slice(0,3000):null
+                  }];
+                }));
                 const ensureInput=(id,value)=>{
                   let node=document.getElementById(id);
                   if(!node){node=document.createElement("input");node.id=id;node.type="url";node.hidden=true;document.body.appendChild(node);}
@@ -194,7 +204,7 @@ jobs:
                   scope:r.scope||null
                 }):null;
                 return {
-                  keys,testFlags,legacyInspection,P38source,
+                  keys,testFlags,legacyInspection,P38source,relatedGlobals,relatedMethods,
                   liveEvidence:{
                     P30:clean(liveP30),P31:clean(liveP31),P38:clean(liveP38),
                     P8:clean(legacyP8),P36:clean(legacyP36)
