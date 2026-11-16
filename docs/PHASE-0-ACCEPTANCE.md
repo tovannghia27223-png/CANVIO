@@ -28,7 +28,7 @@ A successful CI or headless browser run is not represented as full production ce
 | Earlier live-origin acceptance | [Run 43847482763](https://github.com/tovannghia27223-png/CANVIO/actions/runs/43847482763) | SUCCESS · earlier coverage | 
 | Latest live-origin rerun | [Run 43856436690](https://github.com/tovannghia27223-png/CANVIO/actions/runs/43856436690) | P30/P31 SUCCESS · P37–P42 FAILED |
 
-The audit changes are limited to this file and `.github/workflows/phase0-live-acceptance.yml`. The PR build is validation-only; its Pages deployment job is skipped by design.
+The PR changes are limited to `docs/PHASE-0-ACCEPTANCE.md` and `.github/workflows/phase0-live-acceptance.yml`; `index.html`, application engines, project schemas, and user project data are unchanged. The PR build is validation-only; its Pages deployment job is skipped by design.
 
 ## 3. Live-origin results
 
