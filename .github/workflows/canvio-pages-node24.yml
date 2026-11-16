@@ -33,8 +33,8 @@ jobs:
           actual="$(sha256sum index.html | cut -d' ' -f1)"
           expected="ed4a39f149151ee849416423c544a005fe0e4cf2f01b1c84027395a2c078a2b5"
           test "$actual" = "$expected"
-          git apply --check patches/canvio-p42-r6.patch
-          git apply patches/canvio-p42-r6.patch
+          git apply --check --unidiff-zero patches/canvio-p42-r6.patch
+          git apply --unidiff-zero patches/canvio-p42-r6.patch
           actual_r6="$(sha256sum index.html | cut -d' ' -f1)"
           expected_r6="11d1ba5394ee315e97909fba5efd99adc09a412227a443c94a3e3fdddbfed9dd"
           test "$actual_r6" = "$expected_r6"
