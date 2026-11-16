@@ -70,7 +70,7 @@ jobs:
           audit.feed(source)
           ids = Counter(audit.ids)
           duplicates = [key for key, count in ids.items() if count > 1]
-          scripts = re.findall(r"<script\\b[^>]*>([\\s\\S]*?)</script\\s*>", source, re.I)
+          scripts = re.findall(r"<script\b[^>]*>([\s\S]*?)</script\s*>", source, re.I)
           if audit.scripts != 79 or len(scripts) != 79:
               raise SystemExit(f"Expected 79 inline script blocks; parser={audit.scripts}, extracted={len(scripts)}")
           if audit.external_scripts:
@@ -88,10 +88,13 @@ jobs:
                       failures.append((index, result.stderr))
           if failures:
               for index, error in failures:
-                  print(f"Inline script {index} failed:\\n{error}", file=sys.stderr)
+                  print(f"Inline script {index} failed:\n{error}", file=sys.stderr)
               raise SystemExit(f"{len(failures)} inline JavaScript syntax error(s)")
           print(f"PASS: {audit.scripts} inline scripts; 0 external script src; {len(audit.ids)} IDs / {len(ids)} unique / 0 duplicates; Node syntax {len(scripts)}/{len(scripts)}.")
           PY
+
+          mkdir -p _site
+          cp index.html _site/index.html
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d
@@ -99,7 +102,7 @@ jobs:
       - name: Upload GitHub Pages artifact
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9
         with:
-          path: .
+          path: _site
 
   deploy:
     name: Deploy to GitHub Pages
