@@ -201,15 +201,32 @@ jobs:
                 else if(window.CV&&typeof CV.go==="function") CV.go("webEngine");
                 await new Promise(resolve=>setTimeout(resolve,4500));
                 const activeEditor=document.querySelector(".page.active");
+                const duplicateSnapshot=()=>{
+                  const nodes=Array.from(document.querySelectorAll("[id]"));
+                  const counts={};
+                  nodes.forEach(el=>{counts[el.id]=(counts[el.id]||0)+1});
+                  return Object.entries(counts).filter(([,n])=>n>1).map(([id,count])=>({
+                    id,count,elements:Array.from(document.querySelectorAll('[id="'+CSS.escape(id)+'"]')).map(el=>({
+                      tag:el.tagName.toLowerCase(),className:typeof el.className==="string"?el.className:"",
+                      parent:el.parentElement?.id||el.parentElement?.className||"",
+                      outerHTML:el.outerHTML.slice(0,600)
+                    }))
+                  }));
+                };
+                const dupOnEditor=duplicateSnapshot();
                 const editorInspection={
                   activePage:activeEditor?.id||null,
                   grapesjs:typeof window.grapesjs,
-                  editorGlobalKeys:Object.keys(window).filter(k=>/grapes|gjs/i.test(k)).slice(0,40),
+                  editorGlobalKeys:Object.keys(window).filter(k=>/grapes|gjs|webengine|website/i.test(k)).slice(0,60),
+                  cvWebKeys:window.CV&&CV.web&&typeof CV.web==="object"?Object.keys(CV.web).slice(0,60):[],
                   editorDom:{
                     gjs:!!document.querySelector("#gjs"),
+                    gjsCount:document.querySelectorAll("#gjs").length,
                     canvas:!!document.querySelector(".gjs-cv-canvas"),
                     editor:!!document.querySelector(".gjs-editor"),
-                    iframe:document.querySelectorAll(".gjs-frame").length
+                    editorCount:document.querySelectorAll(".gjs-editor").length,
+                    iframe:document.querySelectorAll(".gjs-frame").length,
+                    duplicateIds:dupOnEditor
                   },
                   pageTitle:(activeEditor?.querySelector("h1,h2")?.innerText||"").trim().slice(0,120),
                   visibleText:(activeEditor?.innerText||"").slice(0,2500),
@@ -222,12 +239,15 @@ jobs:
                   })),
                   scripts:Array.from(activeEditor?.querySelectorAll("script[src]")||[]).map(el=>el.src)
                 };
-                if(window.CV&&typeof CV.go==="function") CV.go("home");
-                await new Promise(resolve=>setTimeout(resolve,700));
                 const legacyP8=window.CVProfessionalQC&&typeof CVProfessionalQC.run==="function"
                   ? await CVProfessionalQC.run() : null;
                 const legacyP36=window.CVProductionReleaseGate&&typeof CVProductionReleaseGate.run==="function"
                   ? await CVProductionReleaseGate.run() : null;
+                const p8AfterEditor=legacyP8;
+                const duplicateAfterQc=duplicateSnapshot();
+                if(window.CV&&typeof CV.go==="function") CV.go("home");
+                await new Promise(resolve=>setTimeout(resolve,700));
+                const duplicateAfterHome=duplicateSnapshot();
                 const testFlags=api.tests();
                 const reports=await api.runAll();
                 const release=await api.modules.P42.run();
@@ -243,6 +263,7 @@ jobs:
                     P30:clean(liveP30),P31:clean(liveP31),P38:clean(liveP38),
                     P8:clean(legacyP8),P36:clean(legacyP36),
                     websiteEditor:editorInspection,
+                    duplicateAfterQc,duplicateAfterHome,
                     SystemQA:window.CANVIOSystemQA&&typeof CANVIOSystemQA.last==="function"?clean(CANVIOSystemQA.last()):null,
                     OpsDiagnostics:window.CANVIOOpsIntelligence&&typeof CANVIOOpsIntelligence.diagnostics==="function"?CANVIOOpsIntelligence.diagnostics():null,
                     VideoEngineTests:window.CV&&CV.engines&&CV.engines.video&&typeof CV.engines.video.tests==="function"?CV.engines.video.tests():null
