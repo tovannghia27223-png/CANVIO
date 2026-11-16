@@ -265,6 +265,7 @@ jobs:
                   liveEvidence:{
                     P30:clean(liveP30),P31:clean(liveP31),P38:clean(liveP38),
                     P8:clean(legacyP8),P36:clean(legacyP36),
+                    AccessibilityQC:(function(){const a=window.CVAccessibilityQC&&typeof CVAccessibilityQC.last==="function"?CVAccessibilityQC.last():null;return a?{summary:a.summary,scope:a.scope,checks:(a.checks||[]).map(x=>({level:x.level,code:x.code,label:x.label,detail:x.detail,id:x.id,tag:x.tag}))}:null})(),
                     websiteEditor:editorInspection,
                     duplicateAfterQc,duplicateAfterHome,
                     SystemQA:window.CANVIOSystemQA&&typeof CANVIOSystemQA.last==="function"?clean(CANVIOSystemQA.last()):null,
