@@ -195,10 +195,29 @@ jobs:
                   ? await CVLiveSiteQualityAudit.run() : null;
                 const liveP38=api.modules.P38&&typeof api.modules.P38.run==="function"
                   ? await api.modules.P38.run() : null;
+                const websiteNavButton=Array.from(document.querySelectorAll('button[data-page="web"]'))
+                  .find(el=>el.closest(".nav")||el.closest("nav"))||document.querySelector('button[data-page="web"]');
+                if(websiteNavButton) websiteNavButton.click();
+                else if(window.CV&&typeof CV.go==="function") CV.go("web");
+                await new Promise(resolve=>setTimeout(resolve,4000));
+                const editorInspection={
+                  activePage:document.querySelector(".page.active")?.id||null,
+                  grapesjs:typeof window.grapesjs,
+                  editorGlobalKeys:Object.keys(window).filter(k=>/grapes|gjs/i.test(k)).slice(0,40),
+                  editorDom:{
+                    gjs:!!document.querySelector("#gjs"),
+                    canvas:!!document.querySelector(".gjs-cv-canvas"),
+                    editor:!!document.querySelector(".gjs-editor"),
+                    iframe:document.querySelectorAll(".gjs-frame").length
+                  },
+                  pageTitle:(document.querySelector(".page.active h1,.page.active h2")?.innerText||"").trim().slice(0,120)
+                };
                 const legacyP8=window.CVProfessionalQC&&typeof CVProfessionalQC.run==="function"
                   ? await CVProfessionalQC.run() : null;
                 const legacyP36=window.CVProductionReleaseGate&&typeof CVProductionReleaseGate.run==="function"
                   ? await CVProductionReleaseGate.run() : null;
+                if(window.CV&&typeof CV.go==="function") CV.go("home");
+                await new Promise(resolve=>setTimeout(resolve,700));
                 const testFlags=api.tests();
                 const reports=await api.runAll();
                 const release=await api.modules.P42.run();
@@ -213,6 +232,7 @@ jobs:
                   liveEvidence:{
                     P30:clean(liveP30),P31:clean(liveP31),P38:clean(liveP38),
                     P8:clean(legacyP8),P36:clean(legacyP36),
+                    websiteEditor:editorInspection,
                     SystemQA:window.CANVIOSystemQA&&typeof CANVIOSystemQA.last==="function"?clean(CANVIOSystemQA.last()):null,
                     OpsDiagnostics:window.CANVIOOpsIntelligence&&typeof CANVIOOpsIntelligence.diagnostics==="function"?CANVIOOpsIntelligence.diagnostics():null,
                     VideoEngineTests:window.CV&&CV.engines&&CV.engines.video&&typeof CV.engines.video.tests==="function"?CV.engines.video.tests():null
