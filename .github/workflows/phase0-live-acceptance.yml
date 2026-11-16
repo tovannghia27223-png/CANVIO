@@ -1,0 +1,200 @@
+name: CANVIO Phase 0 Live Acceptance
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - .github/workflows/phase0-live-acceptance.yml
+      - docs/PHASE-0-ACCEPTANCE.md
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  p30-p31-origin:
+    name: P30-P31 live HTTPS, headers, document
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Verify TLS and fetch deployed page
+        shell: bash
+        run: |
+          set -euo pipefail
+          host="tovannghia27223-png.github.io"
+          url="https://tovannghia27223-png.github.io/CANVIO/"
+          out="$RUNNER_TEMP/canvio-phase0"
+          mkdir -p "$out"
+          openssl s_client -connect "$host:443" -servername "$host" -verify_hostname "$host" -verify_return_error </dev/null > "$out/tls.txt" 2>&1
+          grep -q "Verify return code: 0 (ok)" "$out/tls.txt"
+          curl --silent --show-error --fail-with-body --location --max-redirs 5 --proto '=https' --proto-redir '=https' --tlsv1.2 --dump-header "$out/headers.txt" --output "$out/index.html" --write-out '%{http_code}\n%{url_effective}\n%{num_redirects}\n%{content_type}\n%{time_total}\n%{ssl_verify_result}\n%{http_version}\n' "$url" > "$out/response.txt"
+          python3 - "$out" "$GITHUB_STEP_SUMMARY" <<'PY'
+          from pathlib import Path
+          from html.parser import HTMLParser
+          from collections import Counter
+          import re, sys
+          root=Path(sys.argv[1]); summary=Path(sys.argv[2])
+          meta=(root/'response.txt').read_text().splitlines()
+          if len(meta)<7: raise SystemExit(f'Incomplete curl metadata: {meta!r}')
+          status,final_url,redirects,ctype,elapsed,ssl,http=meta[:7]
+          if status!='200': raise SystemExit(f'Expected HTTP 200, got {status}')
+          if not final_url.startswith('https://'): raise SystemExit(f'Not HTTPS: {final_url}')
+          if ssl!='0': raise SystemExit(f'TLS verification failed: {ssl}')
+          class Audit(HTMLParser):
+              def __init__(self):
+                  super().__init__(); self.lang=''; self.title=''; self.in_title=False
+                  self.description=''; self.robots=''; self.canonical=''; self.viewport=''
+                  self.ids=[]; self.h1=0
+              def handle_starttag(self,tag,attrs):
+                  a=dict(attrs)
+                  if tag=='html': self.lang=a.get('lang','')
+                  if a.get('id'): self.ids.append(a['id'])
+                  if tag=='meta':
+                      n=(a.get('name') or '').lower()
+                      if n=='description': self.description=a.get('content','')
+                      elif n=='robots': self.robots=a.get('content','')
+                      elif n=='viewport': self.viewport=a.get('content','')
+                  if tag=='link' and (a.get('rel') or '').lower()=='canonical': self.canonical=a.get('href','')
+                  if tag=='title': self.in_title=True
+                  if tag=='h1': self.h1+=1
+              def handle_endtag(self,tag):
+                  if tag=='title': self.in_title=False
+              def handle_data(self,data):
+                  if self.in_title: self.title+=data
+          body=(root/'index.html').read_text(encoding='utf-8',errors='replace')
+          if not body.strip(): raise SystemExit('Deployed HTML body is empty')
+          a=Audit(); a.feed(body)
+          if 'CANVIO' not in a.title.upper(): raise SystemExit(f'Missing CANVIO title: {a.title!r}')
+          if 'noindex' in a.robots.lower(): raise SystemExit(f'Production robots directive is noindex: {a.robots}')
+          counts=Counter(a.ids); dup=[k for k,v in counts.items() if v>1]
+          if dup: raise SystemExit(f'Duplicate IDs: {dup[:20]}')
+          raw=(root/'headers.txt').read_text(errors='replace')
+          blocks=re.split(r'(?im)(?=^HTTP/)',raw); headers={}
+          for line in (blocks[-1] if blocks else '').splitlines():
+              if ':' in line and not line.upper().startswith('HTTP/'):
+                  k,v=line.split(':',1); headers[k.strip().lower()]=v.strip()
+          rows=[
+              '## P30-P31 — live origin smoke test','',
+              f'- HTTP: **{status}**','- Final URL: '+final_url,
+              '- Redirects: '+redirects,'- Content-Type: '+ctype,
+              '- Total transfer time: '+elapsed+'s','- curl TLS verify: '+ssl,
+              '- HTTP version: '+http,
+              f'- Body size: {len(body.encode()):,} bytes',
+              '- Title: '+a.title.strip(),'- HTML lang: '+(a.lang or 'MISSING'),
+              '- Viewport: '+(a.viewport or 'MISSING'),
+              '- Description: '+('present' if a.description else 'MISSING'),
+              '- Canonical: '+(a.canonical or 'MISSING'),'- H1 count: '+str(a.h1),
+              f'- IDs: {len(a.ids)} total / {len(counts)} unique / {len(dup)} duplicates','',
+              '### Visible response security headers',''
+          ]
+          for k in ('strict-transport-security','content-security-policy','x-content-type-options','x-frame-options','referrer-policy','permissions-policy'):
+              rows.append(f'- {k}: {headers.get(k,"not present")}')
+          rows += ['', 'Missing optional headers/metadata are reported for human policy review; presence alone is not a security certification.', '']
+          summary.open('a').write('\n'.join(rows))
+          print('\n'.join(rows))
+          PY
+      - name: Record negotiated TLS details
+        shell: bash
+        run: |
+          {
+            echo "### TLS certificate handshake"
+            grep -E 'Protocol *:|Cipher *:|Verify return code:' "$RUNNER_TEMP/canvio-phase0/tls.txt" || true
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  p37-p42-browser:
+    name: P37-P42 live Chromium acceptance
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: p30-p31-origin
+    steps:
+      - name: Install pinned Playwright and Chromium
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm install --prefix "$RUNNER_TEMP/canvio-playwright" --no-save --no-audit --no-fund playwright@1.65.1
+          "$RUNNER_TEMP/canvio-playwright/node_modules/.bin/playwright" install chromium --with-deps
+      - name: Run existing acceptance modules on the live origin
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > "$RUNNER_TEMP/canvio-phase0-browser.cjs" <<'NODE'
+          const { chromium } = require(process.env.RUNNER_TEMP + "/canvio-playwright/node_modules/playwright");
+          (async () => {
+            const url = "https://tovannghia27223-png.github.io/CANVIO/";
+            const browser = await chromium.launch({headless:true});
+            const context = await browser.newContext({viewport:{width:1440,height:1000}});
+            const page = await context.newPage();
+            const pageErrors = [], consoleErrors = [];
+            page.on("pageerror", e => pageErrors.push(String(e && e.stack || e)));
+            page.on("console", m => { if (m.type()==="error") consoleErrors.push(m.text()); });
+            try {
+              const response = await page.goto(url,{waitUntil:"domcontentloaded",timeout:120000});
+              if (!response || response.status()!==200) throw new Error("Live page did not return HTTP 200");
+              await page.waitForFunction(()=>window.CANVIO_BUILD && window.CANVIO_P37_P42,{timeout:120000});
+              await page.waitForTimeout(5000);
+              const initial = await page.evaluate(()=>({
+                title:document.title,readyState:document.readyState,
+                build:window.CANVIO_BUILD && window.CANVIO_BUILD.version,
+                qaVersion:window.CANVIO_P37_P42 && window.CANVIO_P37_P42.version,
+                bodyTextLength:(document.body && document.body.innerText || "").length,
+                htmlLang:document.documentElement.lang || ""
+              }));
+              if (!String(initial.build||"").includes("23.3.60-r6")) throw new Error("Wrong build: "+initial.build);
+              const responsive=[];
+              for (const width of [375,768,1280,1440]) {
+                await page.setViewportSize({width,height:900});
+                responsive.push(await page.evaluate(()=>({
+                  viewport:innerWidth,documentWidth:document.documentElement.scrollWidth,
+                  bodyWidth:document.body ? document.body.scrollWidth : null,
+                  horizontalOverflow:document.documentElement.scrollWidth>innerWidth+1
+                })));
+              }
+              const qa=await page.evaluate(async()=>{
+                const api=window.CANVIO_P37_P42, keys=Object.keys(api.modules||{});
+                const required=["P37","P38","P39","P40","P41","P42"];
+                const missing=required.filter(k=>!api.modules[k]);
+                if(missing.length) return {missingModules:missing,keys};
+                const testFlags=api.tests();
+                const reports=await api.runAll();
+                const release=await api.modules.P42.run();
+                const clean=r=>r?({
+                  format:r.format||null,build:r.build||null,status:r.status||null,
+                  summary:r.summary||null,metrics:r.metrics||null,
+                  limitations:r.limitations||null,checks:Array.isArray(r.checks)?r.checks:null,
+                  scope:r.scope||null
+                }):null;
+                return {
+                  keys,testFlags,
+                  reports:Object.fromEntries(required.slice(0,5).map(k=>[k,clean(reports&&reports[k])])),
+                  release:clean(release||(reports&&reports.P42))
+                };
+              });
+              if(qa.missingModules && qa.missingModules.length) throw new Error("Missing QA modules: "+qa.missingModules.join(", "));
+              const result={url,responseStatus:response.status(),initial,responsive,qa,pageErrors,consoleErrors};
+              const fs=require("fs"), output=JSON.stringify(result,null,2);
+              fs.writeFileSync(process.env.RUNNER_TEMP+"/canvio-phase0-browser.json",output);
+              console.log(output);
+              const lines=[
+                "## Live Chromium acceptance (isolated profile)","",
+                "- URL: "+url,"- HTTP: "+response.status(),"- Build: "+initial.build,
+                "- Body text length: "+initial.bodyTextLength,"",
+                "| Viewport | Document width | Body width | Horizontal overflow |",
+                "|---:|---:|---:|---|",
+                ...responsive.map(x=>"| "+x.viewport+" | "+x.documentWidth+" | "+x.bodyWidth+" | "+(x.horizontalOverflow?"YES":"no")+" |"),
+                "","P37-P42 module report:",JSON.stringify(qa,null,2),
+                "","Uncaught page errors: "+pageErrors.length,
+                "Console errors (informational): "+consoleErrors.length,
+                "",
+                "This is a fresh isolated Playwright profile. P39's temporary probe cannot access a user's browser profile or project. Headless testing does not replace manual screen-reader signoff."
+              ].join("\n");
+              fs.writeFileSync(process.env.RUNNER_TEMP+"/canvio-phase0-summary.md",lines);
+              fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY,lines+"\n");
+              if(pageErrors.length) process.exitCode=1;
+              if(qa.release && qa.release.status==="BLOCKED") process.exitCode=1;
+            } finally {
+              await context.close();
+              await browser.close();
+            }
+          })().catch(e=>{console.error(e&&e.stack||e);process.exit(1);});
+          NODE
+          node "$RUNNER_TEMP/canvio-phase0-browser.cjs"
