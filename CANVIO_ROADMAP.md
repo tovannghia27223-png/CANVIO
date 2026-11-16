@@ -16,6 +16,8 @@
 
 ## Giai đoạn 1 — Nền tảng tin cậy (Production)
 - Project recovery: autosave + khôi phục sau crash, danh sách phiên bản (snapshot có tên) trên Project Vault hiện có.
+  - ✅ Đã làm (P44): lịch sử phiên bản trong trang "Dự án của tôi": 📌 ghim phiên bản có tên (tối đa 20/workspace, không bị tự lưu ghi đè), khôi phục từ bản tự lưu hoặc bản ghim (bản hiện tại được giữ lại làm điểm khôi phục). API: `CANVIOPersistentProjects.pinVersion(key,name)`, `.restoreVersion(key,index)`. Dùng chung store IndexedDB cũ, không thêm store mới.
+  - ⏳ Còn lại: adapter cho videoEngine/webEngine/portfolioStudio; hợp nhất timeline MotionCut–Video Engine; test export bằng file thật.
 - Mở rộng adapter Unified Layers cho `videoEngine`, `webEngine`, `portfolioStudio` (hiện chưa có history/snapshot chung).
 - Hợp nhất timeline: `MotionCut` và `Video Engine` dùng một nguồn dữ liệu, không tạo timeline thứ ba.
 - Test hook cho export: kiểm file thật (kích thước, mime, giải mã lại được), không chỉ kiểm nút bấm.
