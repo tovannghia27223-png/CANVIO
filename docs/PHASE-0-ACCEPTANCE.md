@@ -4,7 +4,7 @@
 **Application baseline:** `main` at `85cdccc746d27df4effd99799c24d8606e5ae9fa`  
 **Application build:** `23.3.60-r6`  
 **Audit branch:** `docs/phase-0-acceptance-audit-2026-11-16`  
-**Release posture:** CONDITIONAL — automated live-origin acceptance is green, but P42 retains host-policy and project-context warnings plus human signoff items.
+**Release posture:** BLOCKED — the latest live rerun (2026-11-16, run `43852629430`) mounted the Website/GrapesJS editor and exposed runtime DOM-ID and accessibility-QC failures. Do not merge this audit or start UX/Design/Video expansion until the editor findings are resolved and the live gate passes.
 
 ## 1. Scope and safety
 
@@ -24,14 +24,15 @@ A successful CI or headless browser run is not represented as full production ce
 | External script tags | No inline HTML script `src` declarations | 0 |
 | HTML IDs | 486 IDs, all unique | 0 duplicates |
 | Main branch Pages deploy | [Actions run #14](https://github.com/tovannghia27223-png/CANVIO/actions/runs/43841204017) | SUCCESS |
-| PR branch Node 24 validation | [Latest PR validation](https://github.com/tovannghia27223-png/CANVIO/actions/runs/43847482739) | SUCCESS |
-| Live-origin acceptance workflow | [Run 43847482763](https://github.com/tovannghia27223-png/CANVIO/actions/runs/43847482763) | SUCCESS |
+| PR branch Node 24 validation | [Run 43852629465](https://github.com/tovannghia27223-png/CANVIO/actions/runs/43852629465) | SUCCESS · deploy skipped by design |
+| Earlier live-origin acceptance | [Run 43847482763](https://github.com/tovannghia27223-png/CANVIO/actions/runs/43847482763) | SUCCESS · earlier coverage | 
+| Latest live-origin rerun | [Run 43852629430](https://github.com/tovannghia27223-png/CANVIO/actions/runs/43852629430) | P30/P31 SUCCESS · P37–P42 FAILED |
 
 The audit changes are limited to this file and `.github/workflows/phase0-live-acceptance.yml`. The PR build is validation-only; its Pages deployment job is skipped by design.
 
 ## 3. Live-origin results
 
-Latest verified live run: [CANVIO Phase 0 Live Acceptance](https://github.com/tovannghia27223-png/CANVIO/actions/runs/43847482763).
+Earlier successful live run: [43847482763](https://github.com/tovannghia27223-png/CANVIO/actions/runs/43847482763). The latest rerun is [43852629430](https://github.com/tovannghia27223-png/CANVIO/actions/runs/43852629430): external P30/P31 passed, but the Chromium P37–P42 job failed after exercising the Website editor. Treat the latest run as the current release gate.
 
 ### P30 — HTTPS / hosting response
 
@@ -58,15 +59,16 @@ This is an HTML/accessibility heuristic. It is not a WCAG conformance declaratio
 
 | Module / check | Latest result | Notes |
 |---|---:|---|
-| P37 reliability | 9 PASS · 0 WARN · 0 FAIL · 2 INFO | No runtime event errors observed after instrumentation. |
+| P37 reliability | 8 PASS · 0 WARN · 1 FAIL · 2 INFO | Runtime JavaScript errors remain 0; P37 fails because the mounted Website editor leaves duplicate `gjs-sm-input-holder` IDs in the live DOM. |
 | P38 website acceptance | 2 PASS · 1 WARN · 0 FAIL · 1 INFO | Same-origin P30/P31 reports were collected; P30 remains WARN because the five host headers are absent. |
 | P39 creative persistence | 4 PASS · 0 WARN · 0 FAIL · 2 INFO | Native IndexedDB temporary write/read/delete passed; separate Chromium-process restart test passed and test DB was cleaned up. |
 | P40 responsive/accessibility | 6 PASS · 0 WARN · 0 FAIL · 1 INFO | Five viewport widths below; 80 Tab presses, 79 focus stops, 0 unnamed focus stops. |
-| P41 performance diagnostics | 5 PASS · 0 WARN · 0 FAIL · 1 INFO | DOM/resource/canvas/heap checks passed. A real project export benchmark is still outstanding. |
+| P41 performance diagnostics | 5 PASS · 0 WARN · 0 FAIL · 1 INFO | Diagnostic budgets passed; real project export benchmark remains outstanding. The module reports build `23.3.58-r1`, not the page/P42 build `23.3.60-r6`. |
 
 **P41 version-provenance caveat:** the live P41 module report self-identifies as build `23.3.58-r1`, while the tested page and P42 release envelope are `23.3.60-r6`. P41 reported no failed checks, but the version attribution is not aligned. Retain these figures as diagnostic observations only until the P41 module version is confirmed or its independent versioning is documented.
-| System QA | 17 PASS · 1 WARN · 0 FAIL | The one warning is one external stylesheet declaration. |
-| Ops diagnostics | 22/22 PASS · 0 FAIL | Core system diagnostics passed. |
+
+| System QA (editor mounted) | 15 PASS · 1 FAIL · 2 WARN | The sole fail is duplicate DOM ID `gjs-sm-input-holder`; the warning includes external dependencies. |
+| Ops diagnostics (editor mounted) | 21/22 PASS · 1 FAIL | The fail is the same duplicate DOM ID finding. |
 
 Responsive sweep:
 
@@ -84,16 +86,23 @@ External stylesheet detail: the page declares Google Fonts CSS; the two observed
 
 Latest browser performance snapshot (one isolated runner, not a device benchmark): DOMContentLoaded 1,096 ms; load event 1,108 ms; response start 232 ms; Resource Timing reported 4 resources and 1,587,215 transferred bytes; JavaScript heap used approximately 26 MB; 13 canvases with approximately 3.95 million aggregate canvas pixels. Resource Timing can omit cross-origin transfer sizes, and these measurements are not a target-device SLA.
 
-## 4. Remaining P42 warnings and manual acceptance
+## 4. Latest rerun findings and remaining acceptance gates
 
-The live acceptance run had **0 FAIL**, but P42 remains **CONDITIONAL** with **2 PASS · 3 WARN · 0 FAIL · 4 INFO**. Its warnings aggregate:
-1. P36's previous gate (8 PASS · 2 WARN · 0 FAIL);
-2. P8 Professional QC (14 PASS · 6 WARN · 0 FAIL · 2 INFO);
-3. P38 website acceptance (2 PASS · 1 WARN · 0 FAIL · 1 INFO).
+The earlier live run `43847482763` reported **0 FAIL** and P42 **CONDITIONAL**. The newer run `43852629430` is authoritative for this audit because it opened the Website editor before re-running QC. Its P42 result is **BLOCKED** with **2 PASS · 1 WARN · 3 FAIL · 3 INFO**. The three failing gates are P36, P8 Professional QC, and P37 reliability; P38 remains a warning. P30/P31 external-origin checks passed.
 
-The P8 report was run from the home workspace, without a selected Command Center project or an initialized Website/GrapesJS editing session. Its warnings included: no active project brief; the System QA external stylesheet warning; asset/font/stock-media usage rights requiring owner confirmation; Website editor checks not mounted; and social metadata checks with three warnings. The project-selection and editor-mount warnings are context-specific. Rights confirmation cannot be inferred by automation and must be made by the content owner. Do not create a fake user project or fabricate rights evidence to make QC green.
+### Confirmed runtime finding
 
-Manual acceptance still required before calling Phase 0 fully signed off:
+- The live page starts as R6 and the static source HTML still has 486 unique IDs. After navigating to `page-webEngine`, the editor mounts (`#gjs`, one `.gjs-editor`, one canvas, one iframe).
+- The GrapesJS Style Manager then renders eight elements with the same ID `gjs-sm-input-holder`. P37 reports this as `runtime-duplicate-ids`; System QA reports it as its single failed check; P8 DOM ID integrity fails for the same reason. The duplicate is in the editor-generated DOM, not in the original 486-ID static HTML.
+- P8 Accessibility & Keyboard QC also reports **37 FAIL · 38 WARN · 0 PASS** in that editor session. The browser run recorded **0 page errors and 0 console errors**, so this is not evidence of a JavaScript crash.
+- A separate probe substituting GrapesJS `0.23.9` for the currently requested `0.22.13` still produced repeated GrapesJS IDs. This does not establish a safe upgrade path and is not authorization to upgrade the production editor.
+- The PR Node 24 validation still succeeds; its deployment job is skipped as intended. The live Chromium workflow fails because the application QA gates detect the editor findings.
+
+Do not suppress the duplicate-ID check, exclude the editor DOM from QA, or mark the accessibility report as passed merely to make CI green. Do not patch vendor-generated IDs blindly: GrapesJS may rely on those identifiers internally. The correct next engineering task is a focused Website/GrapesJS integration fix with regression coverage for unique IDs, accessible control names, keyboard operation, editor navigation/unmount, and stable export/save behavior. Re-run P37, P8, System QA, and P42 after that fix.
+
+P8 in the same run also retains context/owner warnings: no active Command Center brief, usage-rights confirmation needed for fonts/stock media, and website social metadata checks. These should not be fabricated. The older report's statement that GrapesJS was not mounted is superseded by this newer run, which explicitly observed the mounted editor.
+
+### Manual acceptance still required before Phase 0 signoff
 1. On an actual target Chrome installation, set browser zoom to 200% and inspect all critical controls and page reflow. The 720 CSS-pixel emulation above is only a reflow proxy.
 2. Use at least one real screen reader (NVDA, JAWS, or VoiceOver) to smoke-test navigation, names, state announcements, dialogs, and primary workflows.
 3. With a clearly disposable test project and non-sensitive media, test project save/reopen/restore and real export paths: representative timeline/audio sync, MP4/H.264 if supported, WebM, print/PDF, and motion transfer. Never use a user's only project as a test target.
@@ -103,8 +112,9 @@ Manual acceptance still required before calling Phase 0 fully signed off:
 ## 5. Change-control decision
 
 - Keep `23.3.60-r6` as the application baseline.
-- Keep the PR draft until the documented manual signoffs and header-policy decision are recorded.
-- Do not alter the app engine, schema, storage owner, project data, or main deployment to suppress QA warnings.
-- Do not begin UX unification or major Design/Video upgrades until P42 is no longer conditional and the Phase 0 owner signs off the remaining manual items.
+- Keep PR #4 in Draft; do not merge while the latest P42 result is BLOCKED.
+- Fix the Website/GrapesJS runtime DOM and accessibility findings first; do not change engine ownership, project schema, storage ownership, or production project data as a shortcut.
+- After the editor fix, rerun the live acceptance workflow and complete the real-browser, screen-reader, disposable-project media/export, target-device performance, and hosting-header policy signoffs.
+- Do not begin UX unification or major Design/Video upgrades until the latest P42 result is no longer BLOCKED/CONDITIONAL and the Phase 0 owner signs off.
 
 This document records the current evidence and remaining blockers. It does not claim Phase 0 is complete yet.
