@@ -114,9 +114,9 @@ jobs:
 
   deploy:
     name: Deploy to GitHub Pages
-    # Fail closed: configure Pages Source = GitHub Actions first, then set
-    # repository Actions variable CANVIO_ENABLE_PAGES_DEPLOY=true.
-    if: github.event_name != 'pull_request' && vars.CANVIO_ENABLE_PAGES_DEPLOY == 'true'
+    # Pages Source was confirmed as GitHub Actions in the repository settings.
+    # Pull requests never deploy; only a merged main push or manual dispatch can publish.
+    if: github.event_name != 'pull_request'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
