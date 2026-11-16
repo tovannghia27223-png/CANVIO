@@ -154,6 +154,17 @@ jobs:
                 const required=["P37","P38","P39","P40","P41","P42"];
                 const missing=required.filter(k=>!api.modules[k]);
                 if(missing.length) return {missingModules:missing,keys};
+                const summarizeGlobal=(obj)=>({
+                  type:typeof obj,
+                  keys:obj&&typeof obj==="object"?Object.keys(obj):[],
+                  runType:obj&&typeof obj.run,
+                  runSource:obj&&typeof obj.run==="function"?obj.run.toString().slice(0,8000):null
+                });
+                const legacyInspection={
+                  P8:summarizeGlobal(window.CVProfessionalQC),
+                  P36:summarizeGlobal(window.CVProductionReleaseGate)
+                };
+                const P38source=api.modules.P38&&typeof api.modules.P38.run==="function"?api.modules.P38.run.toString().slice(0,8000):null;
                 const testFlags=api.tests();
                 const reports=await api.runAll();
                 const release=await api.modules.P42.run();
@@ -164,20 +175,88 @@ jobs:
                   scope:r.scope||null
                 }):null;
                 return {
-                  keys,testFlags,
+                  keys,testFlags,legacyInspection,P38source,
                   reports:Object.fromEntries(required.slice(0,5).map(k=>[k,clean(reports&&reports[k])])),
                   release:clean(release||(reports&&reports.P42))
                 };
               });
               if(qa.missingModules && qa.missingModules.length) throw new Error("Missing QA modules: "+qa.missingModules.join(", "));
-              const result={url,responseStatus:response.status(),initial,responsive,qa,pageErrors,consoleErrors};
+              const performance=await page.evaluate(()=>{
+                const n=performance.getEntriesByType("navigation")[0];
+                const resources=performance.getEntriesByType("resource");
+                return n?{
+                  domContentLoadedMs:Math.round(n.domContentLoadedEventEnd),
+                  loadEventMs:Math.round(n.loadEventEnd),
+                  responseStartMs:Math.round(n.responseStart),
+                  transferBytes:resources.reduce((sum,x)=>sum+(x.transferSize||0),0),
+                  resourceCount:resources.length,
+                  scriptResourceCount:resources.filter(x=>/\\.js(?:[?#]|$)/i.test(x.name)).length,
+                  memory:performance.memory?{
+                    usedJSHeapSize:performance.memory.usedJSHeapSize,
+                    totalJSHeapSize:performance.memory.totalJSHeapSize,
+                    jsHeapSizeLimit:performance.memory.jsHeapSizeLimit
+                  }:null
+                }:null;
+              });
+              const restartProbe=await (async()=>{
+                const fs=require("fs"),path=require("path");
+                const profilePath=path.join(process.env.RUNNER_TEMP,"canvio-phase0-restart-profile");
+                const dbName="CANVIO_PHASE0_RESTART_PROBE_"+(process.env.GITHUB_RUN_ID||"run");
+                const marker="phase0-restart-"+(process.env.GITHUB_RUN_ID||"run");
+                let profile;
+                try{
+                  profile=await chromium.launchPersistentContext(profilePath,{headless:true});
+                  let probePage=profile.pages()[0]||await profile.newPage();
+                  await probePage.goto(url,{waitUntil:"domcontentloaded",timeout:120000});
+                  const write=await probePage.evaluate(({dbName,marker})=>new Promise((resolve,reject)=>{
+                    const req=indexedDB.open(dbName,1);
+                    req.onupgradeneeded=()=>req.result.createObjectStore("kv");
+                    req.onerror=()=>reject(req.error);
+                    req.onsuccess=()=>{
+                      const db=req.result,tx=db.transaction("kv","readwrite");
+                      tx.objectStore("kv").put(marker,"marker");
+                      tx.oncomplete=()=>{db.close();resolve(true)};
+                      tx.onerror=()=>{db.close();reject(tx.error)};
+                    };
+                  }),{dbName,marker});
+                  await profile.close();profile=null;
+                  profile=await chromium.launchPersistentContext(profilePath,{headless:true});
+                  probePage=profile.pages()[0]||await profile.newPage();
+                  await probePage.goto(url,{waitUntil:"domcontentloaded",timeout:120000});
+                  const value=await probePage.evaluate(dbName=>new Promise((resolve,reject)=>{
+                    const req=indexedDB.open(dbName);
+                    req.onerror=()=>reject(req.error);
+                    req.onsuccess=()=>{
+                      const db=req.result;
+                      if(!db.objectStoreNames.contains("kv")){db.close();resolve(null);return}
+                      const tx=db.transaction("kv","readonly"),get=tx.objectStore("kv").get("marker");
+                      get.onsuccess=()=>{const v=get.result;db.close();resolve(v??null)};
+                      get.onerror=()=>{db.close();reject(get.error)};
+                    };
+                  }),dbName);
+                  const matched=value===marker;
+                  await probePage.evaluate(dbName=>new Promise(resolve=>{
+                    const req=indexedDB.deleteDatabase(dbName);
+                    req.onsuccess=req.onerror=req.onblocked=()=>resolve(true);
+                  }),dbName).catch(()=>{});
+                  await profile.close();profile=null;
+                  return {writeSucceeded:write,persistedAcrossChromiumRestart:matched,cleanedUp:true};
+                }catch(e){
+                  if(profile) await profile.close().catch(()=>{});
+                  return {writeSucceeded:false,persistedAcrossChromiumRestart:false,error:String(e&&e.message||e)};
+                }
+              })();
+              const result={url,responseStatus:response.status(),initial,responsive,performance,restartProbe,qa,pageErrors,consoleErrors};
               const fs=require("fs"), output=JSON.stringify(result,null,2);
               fs.writeFileSync(process.env.RUNNER_TEMP+"/canvio-phase0-browser.json",output);
               console.log(output);
               const lines=[
                 "## Live Chromium acceptance (isolated profile)","",
                 "- URL: "+url,"- HTTP: "+response.status(),"- Build: "+initial.build,
-                "- Body text length: "+initial.bodyTextLength,"",
+                "- Body text length: "+initial.bodyTextLength,
+                "- IndexedDB persisted across real Chromium process restart: "+restartProbe.persistedAcrossChromiumRestart,
+                "- Performance snapshot: "+JSON.stringify(performance),
+                "",
                 "| Viewport | Document width | Body width | Horizontal overflow |",
                 "|---:|---:|---:|---|",
                 ...responsive.map(x=>"| "+x.viewport+" | "+x.documentWidth+" | "+x.bodyWidth+" | "+(x.horizontalOverflow?"YES":"no")+" |"),
@@ -190,6 +269,7 @@ jobs:
               fs.writeFileSync(process.env.RUNNER_TEMP+"/canvio-phase0-summary.md",lines);
               fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY,lines+"\n");
               if(pageErrors.length) process.exitCode=1;
+              if(!restartProbe.persistedAcrossChromiumRestart) process.exitCode=1;
               if(qa.release && qa.release.status==="BLOCKED") process.exitCode=1;
             } finally {
               await context.close();
