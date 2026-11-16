@@ -167,6 +167,23 @@ jobs:
                   P31:summarizeGlobal(window.CVLiveSiteQualityAudit)
                 };
                 const P38source=api.modules.P38&&typeof api.modules.P38.run==="function"?api.modules.P38.run.toString().slice(0,8000):null;
+                const ensureInput=(id,value)=>{
+                  let node=document.getElementById(id);
+                  if(!node){node=document.createElement("input");node.id=id;node.type="url";node.hidden=true;document.body.appendChild(node);}
+                  node.value=value;
+                };
+                ensureInput("cv30-url",location.href);
+                ensureInput("cv31-url",location.href);
+                const liveP30=window.CVLiveWebsiteVerification&&typeof CVLiveWebsiteVerification.run==="function"
+                  ? await CVLiveWebsiteVerification.run() : null;
+                const liveP31=window.CVLiveSiteQualityAudit&&typeof CVLiveSiteQualityAudit.run==="function"
+                  ? await CVLiveSiteQualityAudit.run() : null;
+                const liveP38=api.modules.P38&&typeof api.modules.P38.run==="function"
+                  ? await api.modules.P38.run() : null;
+                const legacyP8=window.CVProfessionalQC&&typeof CVProfessionalQC.run==="function"
+                  ? await CVProfessionalQC.run() : null;
+                const legacyP36=window.CVProductionReleaseGate&&typeof CVProductionReleaseGate.run==="function"
+                  ? await CVProductionReleaseGate.run() : null;
                 const testFlags=api.tests();
                 const reports=await api.runAll();
                 const release=await api.modules.P42.run();
@@ -178,9 +195,9 @@ jobs:
                 }):null;
                 return {
                   keys,testFlags,legacyInspection,P38source,
-                  P30P31Methods:{
-                    P30:legacyInspection.P30,
-                    P31:legacyInspection.P31
+                  liveEvidence:{
+                    P30:clean(liveP30),P31:clean(liveP31),P38:clean(liveP38),
+                    P8:clean(legacyP8),P36:clean(legacyP36)
                   },
                   reports:Object.fromEntries(required.slice(0,5).map(k=>[k,clean(reports&&reports[k])])),
                   release:clean(release||(reports&&reports.P42))
