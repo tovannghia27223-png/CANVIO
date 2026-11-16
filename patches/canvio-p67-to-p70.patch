@@ -1,0 +1,1689 @@
+diff -ruN '--exclude=CANVIO_MANIFEST.json' '--exclude=canvio-p67-to-p70.patch' CANVIO_P67/.github/workflows/canvio-pages-node24.yml CANVIO_P70/.github/workflows/canvio-pages-node24.yml
+--- CANVIO_P67/.github/workflows/canvio-pages-node24.yml	2026-11-16 17:56:22.502671002 +0000
++++ CANVIO_P70/.github/workflows/canvio-pages-node24.yml	2026-11-16 18:26:34.485858559 +0000
+@@ -1,4 +1,4 @@
+-name: CANVIO GitHub Pages P67 (Node 24)
++name: CANVIO GitHub Pages P70 (Node 24)
+ 
+ on:
+   pull_request:
+@@ -18,7 +18,7 @@
+ 
+ jobs:
+   build:
+-    name: Validate and package CANVIO P67 Creative Production candidate
++    name: Validate and package CANVIO P70 Stable Release candidate
+     runs-on: ubuntu-latest
+     permissions:
+       contents: read
+@@ -32,14 +32,14 @@
+           node-version: 24
+           package-manager-cache: false
+ 
+-      - name: Verify exact reviewed CANVIO P67 candidate
++      - name: Verify exact reviewed CANVIO P70 candidate
+         shell: bash
+         run: |
+           set -euo pipefail
+           actual="$(sha256sum index.html | cut -d' ' -f1)"
+-          expected_p67="6bc5789b85e0ae1a5cc8885bbfd2c93f34d00e22ae26c49b66381d88d3008687"
+-          test "$actual" = "$expected_p67" || { echo "Unexpected index.html SHA-256: $actual" >&2; exit 1; }
+-          echo "Exact CANVIO P67 candidate SHA-256 verified: $actual"
++          expected_p70="PENDING_FINAL_SHA256"
++          test "$actual" = "$expected_p70" || { echo "Unexpected index.html SHA-256: $actual" >&2; exit 1; }
++          echo "Exact CANVIO P70 candidate SHA-256 verified: $actual"
+ 
+       - name: Validate HTML, unique IDs, and inline JavaScript syntax
+         shell: bash
+@@ -72,14 +72,14 @@
+           ids = Counter(audit.ids)
+           duplicates = [key for key, count in ids.items() if count > 1]
+           scripts = re.findall(r"<script\b[^>]*>([\s\S]*?)</script\s*>", source, re.I)
+-          if audit.scripts != 90 or len(scripts) != 90:
+-              raise SystemExit(f"Expected 90 inline script blocks; parser={audit.scripts}, extracted={len(scripts)}")
++          if audit.scripts != 91 or len(scripts) != 91:
++              raise SystemExit(f"Expected 91 inline script blocks; parser={audit.scripts}, extracted={len(scripts)}")
+           if audit.external_scripts:
+               raise SystemExit(f"Unexpected external script src entries: {audit.external_scripts}")
+           if duplicates:
+               raise SystemExit(f"Duplicate HTML IDs: {duplicates[:20]}")
+-          if len(audit.ids) != 503 or len(ids) != 503:
+-              raise SystemExit(f"Expected 503 unique HTML IDs; found {len(audit.ids)} IDs / {len(ids)} unique")
++          if len(audit.ids) != 504 or len(ids) != 504:
++              raise SystemExit(f"Expected 504 unique HTML IDs; found {len(audit.ids)} IDs / {len(ids)} unique")
+ 
+           failures = []
+           with tempfile.TemporaryDirectory() as directory:
+@@ -161,6 +161,14 @@
+           set -euo pipefail
+           node tests/p63-p67/run-p63-p67-tests.cjs
+ 
++      - name: Verify and test P68–P70 offline 3D, system optimization and stable release gate
++        shell: bash
++        run: |
++          set -euo pipefail
++          node tests/p68-p70/verify-p68-p70-source.cjs
++          node --check canvio-p68-p70.js
++          node tests/p68-p70/run-p68-p70-tests.cjs
++
+       - name: Install pinned Playwright Chromium for browser smoke
+         shell: bash
+         run: |
+@@ -169,12 +177,18 @@
+           /tmp/canvio-playwright/bin/python -m pip install --disable-pip-version-check playwright==1.65.2
+           /tmp/canvio-playwright/bin/python -m playwright install --with-deps chromium
+ 
+-      - name: Run P63–P67 Chromium creative production and inherited stability smoke
++      - name: Run inherited P63–P67 Chromium regression against the P70 build
+         shell: bash
+         run: |
+           set -euo pipefail
+           /tmp/canvio-playwright/bin/python tests/p63-p67/run-p63-p67-browser-smoke.py
+ 
++      - name: Run P68–P70 offline viewer, performance audit and P70 release-gate Chromium smoke
++        shell: bash
++        run: |
++          set -euo pipefail
++          /tmp/canvio-playwright/bin/python tests/p68-p70/run-p68-p70-browser-smoke.py
++
+       - name: Configure GitHub Pages
+         uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d
+ 
+diff -ruN '--exclude=CANVIO_MANIFEST.json' '--exclude=canvio-p67-to-p70.patch' CANVIO_P67/CANVIO_AI_GUIDE.md CANVIO_P70/CANVIO_AI_GUIDE.md
+--- CANVIO_P67/CANVIO_AI_GUIDE.md	2026-11-16 18:02:21.812395095 +0000
++++ CANVIO_P70/CANVIO_AI_GUIDE.md	2026-11-16 18:22:53.082580752 +0000
+@@ -1,11 +1,11 @@
+-# CANVIO — AI Agent Guide (23.3 · cập nhật tới 23.3.81-p67)
+-> **CURRENT WORKING BASE (2026-11-17):** `index.html` — CANVIO `23.3.81-p67`, built additively on P62. Historical sections preserve architecture and acceptance notes; P47–P67 addenda document the integrated source chain and bounded test evidence. Use this guide before editing.
+-> Work surgically from the named owners/APIs below. Do not re-scan the entire HTML unless an unresolved question requires it; do not break active data synchronization or local project data. The current artifact has 90 inline script blocks, 503 unique static HTML IDs and a separate `assets/canvio-whisper-worker.js` worker asset.
++# CANVIO — AI Agent Guide (23.3 · cập nhật tới 23.3.84-p70)
++> **CURRENT WORKING BASE (2026-11-17):** `index.html` — CANVIO `23.3.84-p70`, built additively on P67. Historical sections preserve architecture and acceptance notes; P47–P70 addenda document the integrated source chain and bounded test evidence. Use this guide before editing.
++> Work surgically from the named owners/APIs below. Do not re-scan the entire HTML unless an unresolved question requires it; do not break active data synchronization or local project data. The current artifact has 91 inline script blocks and 504 unique static HTML IDs; the separate reviewable modules are `canvio-p63-p67.js` and `canvio-p68-p70.js`, alongside `assets/canvio-whisper-worker.js`.
+ > Preserve the canonical project, asset, media, timeline, history, Brand Kit, Project Vault and P8 owners. Keep tests/readiness claims bounded by their actual fixture and real-origin evidence.
+ >
+-> **ACTIVE LOCAL CANDIDATE:** P67 application marker `23.3.81-p67`, base `23.3.76-p62`, PhaseSuite `67.0.0`. It adds P63–P67 canonical timeline/explicit bridge contracts, advanced editing, local tracking, prompt-to-Asset-Library workflow, and Layout Foundry print preflight on top of P57–P62 platform reliability. The existing databases, timeline and backup owners remain unchanged. Real HTTPS/browser/media/model/storage/accessibility/hosting acceptance remain open; not merged, not deployed and not production-certified. See `CANVIO_MANIFEST.json` for current source/package SHA-256 values.
++> **ACTIVE LOCAL CANDIDATE:** P70 application marker `23.3.84-p70`, base `23.3.81-p67`, PhaseSuite `70.0.0`. It adds a geometry-only self-contained OBJ viewer, read-only system resource/frame audit and a fail-closed CANVIO 1.0 release gate on top of P57–P67. Existing database, timeline, Project Vault, Asset Library, Layout Foundry and backup owners remain unchanged. Fourteen real-world acceptance gates remain open; not merged, not deployed and not production-certified. See `CANVIO_MANIFEST.json` for current source/package SHA-256 values.
+ 
+-> **Historical release note:** the original 23.3.3 Prism Studio baseline and its internal `CANVIO_RELEASE.version` compatibility rule are retained in the historical guide sections. The current deliverable build is tracked by `CANVIO_BUILD.version = 23.3.81-p67`; historical values in older sections do not override this marker.
++> **Historical release note:** the original 23.3.3 Prism Studio baseline and its internal `CANVIO_RELEASE.version` compatibility rule are retained in the historical guide sections. The current deliverable build is tracked by `CANVIO_BUILD.version = 23.3.84-p70`; historical values in older sections do not override this marker.
+ ## 1. Nguyên tắc bắt buộc
+ - KHÔNG viết lại file từ đầu. Chỉ chỉnh sửa trong các hàm/mảng đã có.
+ - KHÔNG thêm dependency ngoài hoặc gọi API AI trả phí. Prompt generation hiện hữu vẫn là local-only (xem `choosePrompt()`). Ngoại lệ mạng có chủ ý: P30/P31 chỉ gửi request GET/HEAD khi người dùng bấm kiểm tra website công khai; không chạy nền, không gửi credentials, không upload/ghi website.
+@@ -3259,3 +3259,29 @@
+ - Source VM suite: **18/18**. Chromium 144.0.7559.96 smoke: **43/43**. Static audit: 90/90 inline scripts parse; 503/503 IDs unique; no duplicate IDs or external script `src`.
+ - Browser smoke uses an opaque origin and in-memory storage shims; it does not establish HTTPS, native IndexedDB, real project round-trip, real footage tracking quality, AI provider output, font/printer behavior, cross-browser accessibility or server headers.
+ - `window.CANVIOPhase2.report()` reports implementation readiness separately and always sets `releaseCertified:false` until manual acceptance is documented. P62 Phase 1 release gates remain OPEN.
++
++
++# P68–P70 Engineering Addendum — Offline Packaging, System Health & 1.0 Candidate
++
++> **Active candidate:** `23.3.84-p70` · base `23.3.81-p67` · `CANVIOPhaseSuite.version = 70.0.0`. Additive modules only. Preserve `CV.engines.video`, Project Vault, Asset Library, Layout Foundry, `CANVIO_81_MEDIA` and `CVZip` as existing owners.
++
++## P68 — Offline 3D package (bounded OBJ profile)
++- `window.CANVIOOffline3D.parseOBJ()` accepts Wavefront OBJ geometry up to 5 MiB text, 100,000 vertices and 12,000 triangles. It validates finite vertex values and positive/negative face indices, triangulates polygon fans, rejects degenerate/no-geometry inputs and normalizes bounds.
++- `buildOfflineHTML()` creates one self-contained HTML with embedded JSON geometry and a small Canvas 2D projected mesh viewer. Drag rotates, wheel zooms, and controls reset view/toggle wireframe. CSP denies network connections; no `script src`, stylesheet URL, Three.js, GLTF runtime, fetch or remote assets are used.
++- This profile packages **OBJ geometry only**. MTL materials, textures, GLB/GLTF, FBX, STL, animation rigs and the existing Website 3D/Three.js CDN templates are not bundled. It is not a general 3D scene editor or a replacement for the Website Engine.
++- Exporting a package is explicit; the result is a portable single HTML. The generated file must still be opened on a clean offline machine before claiming offline acceptance.
++
++## P69 — System resource and frame-budget audit
++- `window.CANVIOSystemOptimizer.inspect()` reads a bounded DOM snapshot, canvas backing-store estimates, image decoded-surface estimates, video surfaces, active media state, Resource Timing totals and optional `performance.memory`.
++- `sampleFrames()` samples a short user-triggered requestAnimationFrame window and reports average/median intervals and slow-frame counts. It is a heuristic snapshot, not a profiler or a hardware-independent benchmark.
++- Recommendations are read-only. No automatic deletion, cache purge, media compression, project migration, DOM mutation or timeline mutation occurs. Estimated surface bytes are not measured process RAM and can over/under-estimate browser/GPU use.
++
++## P70 — CANVIO 1.0 Stable Candidate Gate
++- `window.CANVIOStableRelease.inspect()` aggregates implementation availability and emits fourteen pending manual acceptance gates. `releaseCertified` is always `false` in this candidate.
++- The P62 async Phase 1 probe is reported as available but is not auto-run by this synchronous summary. Run the appropriate detailed checks only from their explicit user controls.
++- The fourteen gates cover HTTPS/browser matrix, persistence/restore, real media A/V sync, Whisper inference, accessibility, hosting headers, real project timeline behavior, real footage tracking, AI provider/licensing, typography/print, offline OBJ acceptance, target-device performance, cross-origin backup/restore and rollback/observability.
++
++## P68–P70 validation and limitations
++- Source VM: **15/15**; Chromium smoke: **16/16**; inherited P63–P67 browser regression: **43/43**; P63–P67 source VM: **18/18**. Static audit: **91/91** inline scripts parse; **504/504** static IDs unique; zero duplicate IDs and zero external `<script src>`.
++- Browser smoke uses opaque `about:blank` with test-only storage shims. The OBJ viewer smoke renders an embedded fixture in Chromium but does not replace clean-machine offline acceptance. Phase 1 and Phase 2 manual gates remain open.
++- **P70 is a Stable Release Candidate, not CANVIO 1.0 Stable.** Do not change `releaseCertified:false` without reviewed evidence for every required gate. No commit, PR, merge or deployment is implied by local test success.
+diff -ruN '--exclude=CANVIO_MANIFEST.json' '--exclude=canvio-p67-to-p70.patch' CANVIO_P67/CANVIO_HANDOFF.md CANVIO_P70/CANVIO_HANDOFF.md
+--- CANVIO_P67/CANVIO_HANDOFF.md	2026-11-16 18:02:22.808419008 +0000
++++ CANVIO_P70/CANVIO_HANDOFF.md	2026-11-16 18:26:34.483972330 +0000
+@@ -1,50 +1,56 @@
+-# CANVIO P67 — Integration Handoff
++# CANVIO P70 — Final Integration Handoff
+ 
+-**Application:** `23.3.81-p67` · **Base:** P62 / `23.3.76-p62` · **PhaseSuite:** `67.0.0`  
+-**Scope:** Chặng 2 / P63–P67 implementation candidate.
++**Application:** `23.3.84-p70` · **Base:** P67 / `23.3.81-p67` · **PhaseSuite:** `70.0.0`  
++**Scope:** Chặng 3 / P68–P70 implementation candidate on the integrated P56/P62/P67 chain.
+ 
+-## Source lineage and owner contract
++## Owner and source contract
+ 
+-P67 is additive on the recovered P62 source. Preserve `CV.engines.video` as the only canonical Video Engine timeline; reuse Project Vault, Asset Library, Layout Foundry, `CANVIO_81_MEDIA`, `CVZip` and current restore parser. There is no new database, object store, cloud API or auto-sync service.
++P70 is additive on P67. Keep `CV.engines.video` as the canonical timeline; reuse existing Project Vault, Asset Library, Layout Foundry, `CANVIO_81_MEDIA`, `CVZip` and restore parser. P68–P70 introduce no project database, media object store, alternate timeline, cloud service or background worker.
+ 
+-The P63–P67 module is available as `canvio-p63-p67.js` for review and is embedded as one inline application script with ID `canvio-p63-p67-main`. Keep these copies synchronized when editing. The `index.html` source is the actual app delivered by this package.
++`canvio-p68-p70.js` is the standalone review copy and is embedded byte-for-byte in `index.html` under `canvio-p68-p70-main`. `canvio-p63-p67.js` remains byte-for-byte synchronized with `canvio-p63-p67-main`. Keep both copies synchronized.
+ 
+-## Phase implementation
++## P68 · Offline 3D packaging
+ 
+-- P63: `window.CANVIOUnifiedTimeline` reads the canonical Video Engine state and validates clip identity/timing; explicit MotionCut and Shape Animation bridge functions use existing owners. It does not merge editor-local state live.
+-- P64: `window.CANVIOAdvancedTimeline` plans ripple delete, blocks operations that would affect locked content, and commits clip group/move/duplicate/snap operations through the canonical Video Engine path.
+-- P65: `window.CANVIOMotionTracking` tracks grayscale patches locally, rejects ambiguous patches and writes motion keyframes to a selected unlocked canonical clip. It is heuristic, not ML.
+-- P66: `window.CANVIOAICreativeWorkflow` builds prompts locally, imports user-selected files into existing Asset Library, records provenance and sanitizes SVG before a real Vector Forge SVG image layer. Provider execution remains explicit/user-owned.
+-- P67: `window.CANVIOPrintProduction` applies Layout Foundry master elements and CSS typography, runs print preflight and builds sanitized Print HTML. It does not emit PDF/X, CMYK, embedded fonts or press-ready bleed.
++- Public API: `window.CANVIOOffline3D`.
++- Parse geometry-only Wavefront OBJ up to 5 MiB source text, 100k vertices and 12k triangles. Supports positive/negative vertex references and polygon fan triangulation; rejects malformed, out-of-range and degenerate geometry.
++- Export one self-contained HTML with embedded model arrays and inline Canvas 2D 3D viewer. Drag rotates, wheel zooms, reset and wireframe controls. CSP denies connect/network; there are no external scripts/styles or runtime fetches.
++- Not included: MTL, materials, textures, GLB/GLTF, FBX, STL, skeletons/animation, general 3D editor projects or offline packaging of the current Three.js Website templates.
+ 
+-## Validate locally
++## P69 · System resource diagnostics
+ 
+-```bash
+-node tests/p47/test_phase_p47.cjs
+-node tests/p47/test_p47_bezier.cjs
+-node tests/p47/test_phase_p47_restore.cjs
+-node tests/p47/test_phase_p47_crc.cjs
+-node tests/p48/run-p48-tests.cjs
+-node tests/p49/run-p49-tests.cjs
+-node tests/p50/run-p50-tests.cjs
+-node tests/p55/run-p55-tests.cjs
+-node tests/p56/run-p56-tests.cjs
+-node tests/p57/run-p57-tests.cjs
+-node tests/p63-p67/run-p63-p67-tests.cjs
+-CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium python3 tests/p63-p67/run-p63-p67-browser-smoke.py
+-```
++- Public API: `window.CANVIOSystemOptimizer.inspect()`, `.sampleFrames()` and `.recommendations()`.
++- Read-only bounded DOM/resource/media audit; estimates backing/decoded surfaces and records exposed Resource Timing/JS heap data. User-triggered frame sampler runs for 250–1800 ms.
++- Recommendations do not mutate the app. Estimates are heuristic and must not be presented as measured physical RAM or a benchmark across devices.
+ 
+-P47 restore output includes structured JSON; the CRC fixture confirms corrupt data is rejected before mutation. P55/P56 tests check inherited historical owners. Do not reinterpret mock-backed results as native storage certification.
++## P70 · CANVIO 1.0 gate
+ 
+-## Manual acceptance before release
++- Public API: `window.CANVIOStableRelease.inspect()` and `.gates()`.
++- Fourteen gate entries are pending manual evidence. `releaseCertified` always false in this source. The summary notes P62 async gate availability but does not run that probe automatically.
++- Stable status requires evidence review and authorized release/deployment, not just a passing local test run.
+ 
+-1. Real multi-track editing, save/reopen and source-editor transfer.
+-2. Ripple/group/snap/duplicate/undo/redo and locked/unlocked edge cases on real user projects.
+-3. Real tracking/stabilization quality review and footage limits.
+-4. Real provider output, CORS/rate limits, SVG safety, asset provenance and rights.
+-5. Browser font availability/fallback, pagination, physical bleed/crop marks and target printer/PDF workflow.
+-6. All six Phase 1 production gates: browser HTTPS matrix, real A/V sync, Whisper inference, native IndexedDB/ZIP round-trip, accessibility, hosting/security headers.
++## Validation run
+ 
+-## Remote state / release boundary
++- Source/regression: P47 fixture tests pass; P48 26/26; P49 35/35; P50 27/27; P55 49/49; P56 27/27; P57–P62 15/15; P63–P67 18/18; P68–P70 16/16.
++- Browser: inherited P63–P67 regression on P70 source 43/43; P68–P70 Chromium smoke 16/16; zero uncaught page errors and console errors in the P68–P70 smoke run.
++- Static: 91/91 inline scripts parse; 504/504 IDs unique; no duplicates or external `<script src>`; both standalone modules and worker syntax parse.
+ 
+-No commit, branch, PR, merge, Actions run, workflow dispatch or deployment is claimed for P67. The workflow validates PRs and manual dispatch but only deploys after a successful push to `main`. Check repository state and review the exact-source hash before transfer. P67 is not a production-certified release.
++## Manual acceptance still required
++
++1. Chrome/Edge/Safari on production HTTPS; inspect CSP, CORS, HSTS, MIME/cache headers and worker path.
++2. Native IndexedDB save/close/reopen and ZIP restore on same and new origin.
++3. Real video/audio export, full-file decode, duration and sync.
++4. Real Whisper Vietnamese/English inference, cancel/retry/unload and resource use.
++5. Keyboard, screen-reader, contrast, focus and true zoom 200%/reflow.
++6. Real MotionCut/Shape transfer, ripple/group/undo/redo and locked-track edge cases.
++7. Representative footage tracking/stabilization, including occlusion and variable frame rate.
++8. Actual AI provider output, CORS/rate limits, asset provenance and license.
++9. Target fonts, pagination, physical bleed/crop marks and actual printer/PDF workflow.
++10. Open exported OBJ HTML on a clean machine with network physically disabled; verify model rendering and interaction.
++11. Performance budget on minimum target hardware and large production projects.
++12. Backup/restore across origin and integrity of restored media/project values.
++13. Release/rollback rehearsal, runtime error logging and post-deploy monitoring.
++14. Attach/review all previous P62 and P67 acceptance records without silently upgrading pending gates.
++
++## Delivery status
++
++P70 is a local Stable Release Candidate, **not CANVIO 1.0 Stable**. No commit, branch, PR, merge, hosted Actions run or deployment is claimed. The GitHub Pages workflow only deploys after a successful push to `main`; local package creation does not run that workflow.
+diff -ruN '--exclude=CANVIO_MANIFEST.json' '--exclude=canvio-p67-to-p70.patch' CANVIO_P67/CANVIO_PHASES_1_6_STATUS.md CANVIO_P70/CANVIO_PHASES_1_6_STATUS.md
+--- CANVIO_P67/CANVIO_PHASES_1_6_STATUS.md	2026-11-16 18:02:22.908795625 +0000
++++ CANVIO_P70/CANVIO_PHASES_1_6_STATUS.md	2026-11-16 18:26:34.483643064 +0000
+@@ -1,33 +1,28 @@
+-# CANVIO — Phases 1–6 Integration Status / P67
++# CANVIO — Phases 1–6 Integration Status / P70
+ 
+-**Application marker:** `23.3.81-p67` · **Base:** `23.3.76-p62` · **PhaseSuite:** `67.0.0`  
+-**State:** P63–P67 Chặng 2 implementation candidate; 18/18 VM assertions and 43/43 Chromium smoke pass; production/manual acceptance remains open.
++**Application marker:** `23.3.84-p70` · **Base:** `23.3.81-p67` · **PhaseSuite:** `70.0.0`  
++**State:** Chặng 1–3 implementation candidate P57–P70. Automated suites pass; fourteen manual real-world acceptance gates remain open. This is **not CANVIO 1.0 Stable**.
+ 
+ | Chặng | Phases | Integrated candidate scope | Still open |
+ |---|---|---|---|
+-| 1 · Reliability | P57–P62 | Existing IndexedDB audit/sentinel, media file acceptance, Whisper safeguards, accessibility/hosting triage, ZIP validation/preview, fail-closed gate | Six real-world release gates remain open; no Stable certification |
+-| 2 · Creative production | P63–P67 | Canonical timeline contract/explicit bridges; ripple/group/move/duplicate/snap; local patch tracker; AI prompt + sanitized Asset Library ingestion; Layout Foundry master/typography/print preflight | Real project editing, visual tracking quality, provider/license, font shaping, physical bleed/PDF workflow |
+-| 3 · Motion & Web | Existing foundations | Website motion and reduced-motion behavior retained | Self-contained offline 3D and live-host acceptance |
+-| 4 · AI | Existing adapters + P66 workflow | Explicit provider adapters, browser-local Whisper, prompt-to-asset ingestion | Real provider/model inference and license/capability validation |
+-| 5 · Design | Vector Forge + Layout Foundry + P67 | SVG image layer, master page controls, browser typography and print preflight | Advanced shaping, embedded fonts, print shop/PDF certification |
+-| 6 · Asset & Production | Existing owners + P56/P57/P67 | Asset Library/Project Vault/IndexedDB/ZIP integrity; provenance and preflight metadata | Native storage/restore and commercial license/production acceptance |
+-
+-## P63–P67 summary
+-
+-- **P63:** `CANVIOUnifiedTimeline` audits canonical `CV.engines.video._state()` and uses explicit existing bridges. MotionCut/Motion Lab are not transparently live-synced; users transfer/render-import deliberately.
+-- **P64:** canonical ripple planning/execution, persistent group metadata, group move/duplicate and snapping. Locked affected clips/tracks block ripple preflight.
+-- **P65:** local grayscale patch/SAD tracking; rejects flat/ambiguous regions and applies bounded transform keyframes to a selected canonical clip. No model, no network.
+-- **P66:** local brief-to-prompt builder and user-selected image/SVG ingestion into the existing Asset Library; provenance metadata; SVG sanitization and actual Vector Forge image layer. No automatic provider call.
+-- **P67:** Layout Foundry master header/footer/folio, browser CSS typography options, print content preflight and sanitized HTML print export. No font embedding, PDF/X, CMYK or physical bleed certification.
++| 1 · Reliability | P57–P62 | Existing IndexedDB read-only/sentinel diagnostics, media acceptance, Whisper safeguards, accessibility/hosting triage, ZIP validation/preview, fail-closed release gate | Native persistence/restore, real A/V, real Whisper, cross-browser HTTPS, accessibility and hosted headers |
++| 2 · Creative production | P63–P67 | Canonical timeline contract and explicit bridges; ripple/group/move/duplicate/snap; local patch tracking; AI prompt + sanitized Asset Library ingestion; Layout Foundry master/typography/print preflight | Real project editing, tracking footage quality, provider/license, font shaping and physical print/PDF acceptance |
++| 3 · Final milestone | P68–P70 | Geometry-only OBJ offline HTML viewer; read-only DOM/resource/frame performance audit; fail-closed CANVIO 1.0 candidate gate with 14 manual checks | Clean-machine offline acceptance, target-device performance, integration evidence, backup/restore origin test, rollback/observability and all inherited gates |
++
++## P68–P70 summary
++
++- **P68 · Offline 3D:** `CANVIOOffline3D` parses bounded Wavefront OBJ geometry and builds a single HTML viewer with embedded mesh data, Canvas 2D projection, drag orbit, wheel zoom, reset and wireframe. No external runtime or network calls. OBJ geometry only; no MTL/materials/textures, GLTF/GLB, FBX, STL, animation rigs or full Website 3D runtime bundle.
++- **P69 · Optimization:** `CANVIOSystemOptimizer.inspect()` records bounded DOM/canvas/image/video/resource estimates. `sampleFrames()` collects short requestAnimationFrame statistics. It makes no automatic project/storage changes; estimates are heuristic, not measured RAM or a replacement for a performance profiler.
++- **P70 · Stable gate:** `CANVIOStableRelease.inspect()` produces a report with fourteen pending acceptance gates. Phase 1 async checks are not auto-run; `releaseCertified` remains false.
+ 
+ ## Test evidence
+ 
+-- P47 integration/Bezier/restore/CRC: PASS.
+-- P48 26/26; P49 35/35; P50 27/27; P55 49/49; P56 27/27; P57–P62 15/15; P63–P67 18/18.
+-- Static audit: 90/90 inline scripts parse; 503/503 IDs unique; zero duplicates; zero external script `src`; module and worker syntax pass.
+-- Chromium 144.0.7559.96 smoke: 43/43, including P63–P67 browser exercises; five viewport widths; zero uncaught page errors and zero console errors after font requests are stubbed.
+-- Opaque-origin `about:blank` smoke with storage shims does not certify native IndexedDB, HTTPS, deployed worker/model, real-media sync, real Whisper inference, Safari/Edge, accessibility or server headers.
++- P47 integration/Bezier/restore/CRC fixtures: PASS.
++- P48 26/26; P49 35/35; P50 27/27; P55 49/49; P56 27/27; P57–P62 15/15; P63–P67 18/18; P68–P70 **16/16**.
++- Inherited P63–P67 browser regression on P70: **43/43**. P68–P70 Chromium browser smoke: **16/16**.
++- Static audit: **91/91** inline scripts parse; **504/504** static IDs unique; zero duplicates; zero external script `src`; both standalone modules and Whisper worker syntax pass.
++- Browser tests use opaque `about:blank` and in-memory storage shims. They do not certify native IndexedDB, HTTPS, deployed Worker/model, real footage A/V sync, screen reader or hosted security headers.
+ 
+-## Release disposition
++## Final release disposition
+ 
+-P67 is **not CANVIO 1.0 Stable**. Six Phase 1 gates remain open, plus P63–P67 manual acceptance listed in `CANVIO_QA_REPORT.md`. No P67 commit/PR/merge/Pages deployment has been made or observed.
++P70 is a local CANVIO 1.0 Stable Release Candidate and **not production-certified**. Fourteen manual gates remain open in `CANVIO_QA_REPORT.md`. No P70 commit/PR/merge/Pages deployment has been made or observed.
+diff -ruN '--exclude=CANVIO_MANIFEST.json' '--exclude=canvio-p67-to-p70.patch' CANVIO_P67/CANVIO_QA_REPORT.md CANVIO_P70/CANVIO_QA_REPORT.md
+--- CANVIO_P67/CANVIO_QA_REPORT.md	2026-11-16 18:02:22.476411037 +0000
++++ CANVIO_P70/CANVIO_QA_REPORT.md	2026-11-16 18:27:25.202223741 +0000
+@@ -1,73 +1,90 @@
+-# CANVIO P67 — QA & Release Readiness Report
++# CANVIO P70 — QA & Stable Release Candidate Report
+ 
+ **Date:** 2026-11-17  
+-**Candidate:** `23.3.81-p67` · **PhaseSuite:** `67.0.0` · **Base:** P62 / `23.3.76-p62`  
+-**Disposition:** P63–P67 implementation candidate. Automated source and Chromium smoke checks pass; manual real-project and production-origin acceptance remains OPEN. P67 is not CANVIO 1.0 Stable.
++**Candidate:** `23.3.84-p70` · **PhaseSuite:** `70.0.0` · **Base:** P67 / `23.3.81-p67`  
++**Disposition:** P68–P70 source and Chromium checks pass. Fourteen manual gates remain OPEN. P70 is not CANVIO 1.0 Stable and is not production-certified.
+ 
+ ## 1. Architecture / mutation boundaries
+ 
+-P63–P67 are additive. `CV.engines.video` remains the sole canonical timeline and commit owner. Project Vault, Asset Library, Layout Foundry, `CANVIO_81_MEDIA`, `CVZip` and restore parser remain existing owners. No new database, object store, persistent timeline or cloud service is introduced.
+-
+-MotionCut and Motion Lab retain editor-local working state until a user explicitly transfers/imports rendered media. P63 exposes canonical timeline inspection and existing transfer bridges; it is not transparent live synchronization. P65 tracking is a local heuristic based on grayscale patch SAD, not an ML model. P66 never auto-invokes a paid provider. P67 creates browser Print HTML, not press-certified PDF.
++P68–P70 are additive. P68 builds a standalone HTML from user-selected OBJ geometry; it does not mutate the active project. P69 is read-only. P70 is a report-only fail-closed candidate gate. The existing Video Engine timeline, Project Vault, Asset Library, Layout Foundry, `CANVIO_81_MEDIA`, `CVZip` and restore parser remain the owners. No project database, alternate timeline, cloud service or background worker was added.
+ 
+ ## 2. Static checks
+ 
+ | Check | Result |
+ |---|---:|
+-| Inline script syntax | 90/90 PASS |
+-| Static HTML IDs | 503/503 unique |
++| Inline JavaScript syntax | **91/91 PASS** |
++| Static HTML IDs | **504/504 unique** |
+ | Duplicate IDs | 0 |
+-| External `<script src>` | 0 |
+-| Standalone P63–P67 module syntax | PASS |
++| External `<script src>` references | 0 |
++| P63–P67 module syntax + index synchronization | PASS |
++| P68–P70 module syntax + index synchronization | PASS |
+ | Whisper worker syntax | PASS |
+ | Workflow YAML parse | PASS |
+-| Candidate/title | P67 / `23.3.81-p67` |
++| P70 marker/title | `23.3.84-p70` |
++
++The 504 IDs count includes the `canvio-p68-p70-main` inline script ID. Panel control IDs are created dynamically at runtime and are checked in browser smoke.
+ 
+ ## 3. Regression evidence
+ 
+ | Suite | Result |
+ |---|---:|
+-| P47 integration / Bezier / restore / CRC | PASS |
++| P47 integration / Bezier / restore / CRC fixtures | PASS |
+ | P48 | 26/26 |
+ | P49 | 35/35 |
+ | P50 | 27/27 |
+ | P55 | 49/49 |
+ | P56 | 27/27 |
+ | P57–P62 | 15/15 |
+-| P63–P67 | **18/18** |
++| P63–P67 | 18/18 |
++| P68–P70 | **16/16** |
++
++P55's standalone VM fixture reports some runtime-only flags unavailable in the isolated test context; the full browser smoke runs the integrated application and confirms the inherited runtime PhaseSuite flags.
++
++## 4. Inherited browser regression
++
++`tests/p63-p67/run-p63-p67-browser-smoke.py` runs the actual P70 `index.html` while exercising the P63–P67 paths. Chromium 144.0.7559.96: **43/43 PASS**. It covers SPA routing, P57–P62 diagnostics/gates, archive preflight, track controls/WebVTT, synthetic WebM/MP4 encode/decode and cancel/retry, canonical timeline bridges/group/ripple/snap, local tracking fixtures, SVG asset transfer, typography/print preflight and viewport widths. The P70 title observer is verified not to revert to P42.
++
++## 5. P68–P70 browser smoke
+ 
+-P57–P62 tests continue to use controlled browser-storage/media doubles. They are regression evidence, not proof of native persistence.
++`tests/p68-p70/run-p68-p70-browser-smoke.py` runs actual P70 source in Chromium 144.0.7559.96. **16/16 PASS**, including:
+ 
+-## 4. P63–P67 browser smoke
++- P70 build marker and title survive legacy title observers.
++- P68–P70 control panel mounts on Video Engine; PhaseSuite flags are all true.
++- A tetrahedron OBJ fixture parses and packages into single HTML with all six offline preflight checks passing.
++- P69 read-only DOM/resource audit and browser frame sample complete. The observed P70 DOM scan was 13,466 nodes in this test fixture; this is a diagnostic count, not a performance failure by itself.
++- P70 report lists fourteen pending gates; `releaseCertified:false`; the asynchronous P62 check is not auto-run by the summary.
++- Exported offline viewer renders visible mesh pixels, toggles wireframe, resets view and emits zero browser errors or network requests.
++- 375 px viewport has no horizontal overflow; zero uncaught page errors and zero console errors.
+ 
+-`tests/p63-p67/run-p63-p67-browser-smoke.py` loads the actual P67 application in Chromium 144.0.7559.96 via Playwright. The environment uses opaque `about:blank` with in-memory local/sessionStorage shims. **43/43 checks PASS**, including:
++## 6. P68 / P69 scope limitations
+ 
+-- Candidate marker/title, nine SPA routes and P47–P67 PhaseSuite flags.
+-- P56 archive preflight/restore-preview secrecy and no-mutation checks; P58 synthetic WebM/MP4 encode and browser decode-readiness; cancel/retry; track visibility and WebVTT.
+-- P63 canonical owner inspection and explicit source-editor transfer boundary.
+-- P64 canonical group, move, duplicate, snapping and locked-track ripple blocking.
+-- P65 deterministic local tracker fixture, keyframe application and no-model/no-network contract.
+-- P66 structured prompt, SVG sanitization, Asset Library provenance and real Vector Forge SVG image layer.
+-- P67 Layout Foundry master/typography mutation, preflight and sanitized Print HTML output.
+-- Five viewport widths (1440, 768, 720, 375, 320); zero uncaught page errors and zero console errors after external font requests are stubbed.
++P68 accepts only geometry-only Wavefront OBJ, up to 5 MiB, 100,000 vertices and 12,000 triangles. MTL, materials, textures, GLB/GLTF, FBX, STL, rigged animation and full Three.js Website scene packaging are not supported. Chromium smoke verifies a generated package in an isolated browser document; a clean-machine test with the network physically disabled remains pending.
+ 
+-## 5. Limitations and manual gates
++P69's canvas/image/video bytes are estimates based on surface dimensions. Resource Timing and `performance.memory` may be missing or incomplete. The frame sample is short and device-specific. It is not a profiling suite and does not automatically change cache, media, project or DOM state.
+ 
+-| Area | Status | Evidence still required |
+-|---|---|---|
+-| Unified project timeline | OPEN | Real multi-track save/reopen and MotionCut/Shape Animation transfer; no live two-way sync is claimed |
+-| Advanced timeline | OPEN | Real ripple/group/snap/undo/redo, transitions, trims and locked/unlocked edge cases |
+-| Tracking/stabilization | OPEN | Representative camera footage, occlusion, variable frame rate and visual quality review |
+-| AI asset workflow | OPEN | Real user-run provider call, CORS/quota, output review and license proof |
+-| Typography/print | OPEN | Fonts, shaping/fallback, pagination, physical bleed/crop marks, PDF/printer workflow |
+-| Phase 1 release gates | OPEN | HTTPS browser matrix; real A/V sync; Whisper inference; native IndexedDB/ZIP round-trip; keyboard/screen reader/200% zoom; Pages/CSP/CORS/headers |
++## 7. Fourteen manual acceptance gates — OPEN
+ 
+-P65's local SAD tracker is limited to selected video file samples, with size/duration caps. P66 uses strict sanitization but does not guarantee every SVG renderer/provider format. P67 CSS shaping uses fonts available in the browser and does not embed fonts or generate PDF/X/CMYK. Physical bleed/crop marks are not certified.
++| Gate | Evidence required |
++|---|---|
++| HTTPS browser matrix | Chrome, Edge and Safari on production-like HTTPS |
++| Native persistence | IndexedDB save/close/reopen, quota and ZIP restore |
++| Real media | Full export decode, duration, real audio/video synchronization |
++| Whisper | Real Vietnamese/English inference, cancel, retry, unload |
++| Accessibility | Keyboard, screen reader, contrast, focus, true 200% zoom/reflow |
++| Hosting/security | Pages, CSP, CORS, HSTS, MIME/cache headers and worker path |
++| Real timeline project | MotionCut/Shape transfer, ripple/group/undo/redo and locks |
++| Real tracking | Representative footage, occlusion, camera motion and stabilization quality |
++| AI/provider | Real provider output, CORS/rate limits, provenance and licensing |
++| Typography/print | Target fonts, pagination, physical bleed/crop and printer/PDF workflow |
++| Offline 3D | Open OBJ HTML on a clean machine with network disabled |
++| Target performance | Large projects and minimum supported hardware |
++| Cross-origin recovery | Backup/restore on same and new origin with value checks |
++| Release operations | Rollback, error logging and post-release observability |
+ 
+-## 6. CI / hosting
++## 8. CI / delivery
+ 
+-Workflow pins Node.js 24 and Actions by immutable commit, checks exact `index.html` SHA, audits scripts/IDs, runs retained regression suites and P63–P67 browser smoke. Deployment is limited to successful pushes on `main`; PR and manual dispatch validate but do not deploy. Local YAML parse passes. A hosted GitHub Actions run, repository transfer and Pages deployment have not been observed.
++Workflow pins Node.js 24 and Actions by immutable commit, verifies the exact P70 `index.html` SHA, audits scripts/IDs, runs retained regressions and both Chromium smoke suites. GitHub Pages deploy remains restricted to successful pushes on `main`; PR and manual dispatch validate but do not deploy. A hosted Actions run, repository transfer and Pages deployment have not been observed.
+ 
+-## 7. Release disposition
++## 9. Final disposition
+ 
+-P67 is a local Chặng 2 implementation candidate. `CANVIOPhase2.report().releaseCertified` is `false` by design. Phase 1's six real-world acceptance gates remain open, and P63–P67 each have their own manual evidence requirements. No commit, branch, PR, merge, workflow dispatch or deployment is claimed.
++P70 is a local CANVIO 1.0 Stable Release Candidate. `window.CANVIOStableRelease.inspect().releaseCertified` remains `false` by design. Complete and review all fourteen gates before production approval. No commit, PR, merge, hosted workflow or production deployment is claimed.
+diff -ruN '--exclude=CANVIO_MANIFEST.json' '--exclude=canvio-p67-to-p70.patch' CANVIO_P67/CANVIO_ROADMAP.md CANVIO_P70/CANVIO_ROADMAP.md
+--- CANVIO_P67/CANVIO_ROADMAP.md	2026-11-16 18:02:22.048090287 +0000
++++ CANVIO_P70/CANVIO_ROADMAP.md	2026-11-16 18:26:34.489714462 +0000
+@@ -1,20 +1,20 @@
+-# CANVIO — Roadmap trạng thái tích hợp P67 (2026-11-17)
++# CANVIO — Roadmap trạng thái tích hợp P70 (2026-11-17)
+ 
+-> Đây là bản roadmap trạng thái cho candidate P67. “Đã tích hợp” mô tả code path hiện diện; không thay thế nghiệm thu dự án thật, media thật, provider thật hoặc production. Không mở rộng feature giả để làm đẹp checklist.
++> Đây là bản roadmap trạng thái cho candidate P70. “Đã tích hợp” mô tả code path hiện diện; không thay thế nghiệm thu dự án thật, media thật, provider thật hoặc production. Không mở rộng feature giả để làm đẹp checklist.
+ 
+ ## Tổng quan
+ 
+-- **Candidate:** `index.html` — `23.3.81-p67` application marker; PhaseSuite `67.0.0` (P63–P67 Phase 2 implementation on P62).
+-- **SHA-256:** See `CANVIO_MANIFEST.json` for final P67 source and package hashes.
+-- **Trạng thái phát hành:** P67 local candidate; P57–P67 code/regression/Chromium synthetic smoke pass; sáu cổng Phase 1 và các nghiệm thu Chặng 2 còn OPEN. Chưa merge/deploy/production-certified.
++- **Candidate:** `index.html` — `23.3.84-p70` application marker; PhaseSuite `70.0.0` (P68–P70 final milestone implementation on P67).
++- **SHA-256:** See `CANVIO_MANIFEST.json` for final P70 source and package hashes.
++- **Trạng thái phát hành:** P70 local Stable Release Candidate; P47–P70 source/regression/Chromium synthetic smoke pass; fourteen real-world gates remain OPEN. Not CANVIO 1.0 Stable; no merge/deploy/production certification.
+ - **Nguyên tắc:** một canonical Video Engine timeline, một Asset Library, một Project Vault, một Unified Layers history owner; không cloud giả, không API key nhúng trong source, không request nền.
+ 
+-| Giai đoạn | Trạng thái P67 | Tóm tắt |
++| Giai đoạn | Trạng thái P70 | Tóm tắt |
+ |---|---|---|
+ | 1 · Nền tảng tin cậy | **P57–P62 đã tích hợp; cần nghiệm thu thật** | Native persistence audit/sentinel, export media acceptance, Whisper safeguards, accessibility triage, hosting/security checks và fail-closed RC gate; không thay đổi các data owner hiện hữu |
+ | 2 · Video | **P63–P65 đã tích hợp trên candidate; vẫn cần nghiệm thu thật** | Canonical timeline contract và explicit bridge; ripple/group/move/duplicate/snap; local SAD tracker và stabilization keyframes. MotionCut live sync, footage quality và project round-trip chưa certified |
+ | 3 · Design | **P66–P67 tích hợp một phần** | AI prompt→Asset Library/SVG layer; Layout Foundry master, CSS typography, print preflight/HTML. Font embedding, physical bleed, PDF/X/CMYK còn mở |
+-| 4 · Motion & Web | **P47 bổ sung easing cho Website Motion** | Component motion, easing persistence/export CSS, IntersectionObserver, reduced-motion; 3D self-contained/live site còn mở |
++| 4 · Motion & Web | **P47 foundations + P68 offline OBJ profile** | Website Motion/reduced-motion retained; P68 exports a geometry-only single-file OBJ viewer. Website 3D runtime and GLTF/FBX remain open |
+ | 5 · AI | **P66 workflow candidate** | Prompt builder + user-selected asset ingestion; provider execution vẫn explicit và do người dùng vận hành, chưa có automatic generation trong module |
+ | 6 · Asset & Production | **Backup ZIP tích hợp; nghiệm thu dữ liệu còn mở** | SHA/CRC, localStorage + IndexedDB schema, credential exclusion; third-party compressed ZIP và restore IDB thật chưa chứng nhận |
+ 
+@@ -323,3 +323,27 @@
+ - Source VM suite: **18/18**. Chromium 144.0.7559.96 smoke: **43/43**. Static audit: 90/90 inline scripts parse, 503/503 static IDs unique, zero duplicates/external script `src`.
+ - Smoke uses opaque `about:blank` and in-memory storage shims; real project, device, provider, font, printer and production-origin acceptance remains OPEN. See `CANVIO_QA_REPORT.md`.
+ - Local candidate only; no P67 commit, PR, merge, hosted Actions run or deployment is claimed.
++
++
++## P68–P70 — Chặng 3: Offline Production, Optimization & CANVIO 1.0 Candidate (2026-11-17)
++
++### P68 · Offline 3D Packaging
++- `CANVIOOffline3D` parses Wavefront OBJ geometry under explicit limits (5 MiB source, 100k vertices, 12k triangles), validates/triangulates faces, normalizes bounds and emits a single HTML with embedded mesh data.
++- The viewer uses an inline Canvas 2D mesh projection with drag orbit, wheel zoom, reset and wireframe controls. The HTML has CSP `connect-src 'none'` and no external scripts/styles/runtime/network APIs.
++- Scope is intentionally bounded: geometry-only OBJ. MTL/material/texture, GLB/GLTF, FBX, STL, rigged animation, live Three.js website scenes and full 3D editor projects are not packaged.
++
++### P69 · System Health & Performance Budget
++- Read-only bounded scan records DOM nodes, Canvas backing-store bytes, decoded image/video surface estimates, active media and Resource Timing totals when exposed.
++- User-triggered frame sampler reports average/median frame intervals and >33 ms / >50 ms counts. Recommendations are advisory only. No automatic cache deletion, media compression or project mutation.
++
++### P70 · CANVIO 1.0 Stable Candidate Gate
++- Aggregates availability of Phase 1/2/3 implementations and defines fourteen real-world acceptance gates. The summary does not trigger the asynchronous P62 media/timeline probe.
++- Report status is `BLOCKED_PENDING_REAL_WORLD_ACCEPTANCE`; `releaseCertified:false` is immutable in this candidate. P70 does not self-certify or deploy.
++
++### P68–P70 verification
++- P68–P70 source VM: **16/16**; P68–P70 Chromium: **16/16**; inherited P63–P67 Chromium regression on P70 build: **43/43**.
++- Full regression: P48 26/26; P49 35/35; P50 27/27; P55 49/49; P56 27/27; P57–P62 15/15; P63–P67 18/18. P47 fixtures pass.
++- Static audit: **91/91** inline scripts parse; **504/504** static IDs unique; zero duplicates; zero external script `src`.
++- Smoke uses `about:blank` and storage shims. Clean-machine offline, native persistence, HTTPS/browser matrix, A/V sync, real Whisper, accessibility, provider/license, print and hosting gates remain OPEN.
++
++**Final disposition:** P70 is a local CANVIO 1.0 Stable Release Candidate only. Do not label production Stable until all fourteen gate evidence items are reviewed and attached. No GitHub commit, PR, merge, hosted Actions run or deployment is claimed.
+diff -ruN '--exclude=CANVIO_MANIFEST.json' '--exclude=canvio-p67-to-p70.patch' CANVIO_P67/README.md CANVIO_P70/README.md
+--- CANVIO_P67/README.md	2026-11-16 18:02:23.030314882 +0000
++++ CANVIO_P70/README.md	2026-11-16 18:26:34.483923677 +0000
+@@ -1,62 +1,45 @@
+-# CANVIO P67 — Creative Production Expansion
++# CANVIO P70 — CANVIO 1.0 Stable Release Candidate
+ 
+-**Application:** `23.3.81-p67` · **PhaseSuite:** `67.0.0` · **Base:** P62 / `23.3.76-p62`  
+-**Disposition:** Chặng 2 implementation candidate (P63–P67), chưa được nghiệm thu production và không phải CANVIO 1.0 Stable.
++**Application:** `23.3.84-p70` · **PhaseSuite:** `70.0.0` · **Base:** P67 / `23.3.81-p67`  
++**Disposition:** P68–P70 final milestone is implemented locally and passes source plus Chromium smoke tests. Fourteen real-world acceptance gates remain open. This is **not CANVIO 1.0 Stable**.
+ 
+-P67 được tích hợp additive trên mã nguồn P62 đã khôi phục. Gói giữ nguyên `CV.engines.video` làm canonical timeline, Asset Library, Project Vault, Layout Foundry, media owner `CANVIO_81_MEDIA`, `CVZip` và các backup/restore owner hiện tại. Không thêm database, object store, cloud backend hoặc timeline persistence thứ hai.
++P70 is additive on P67. It preserves the existing canonical `CV.engines.video` timeline, Project Vault, Asset Library, Layout Foundry, `CANVIO_81_MEDIA` media owner, `CVZip` backup/restore and all previous engine owners. It adds no second project database, no second timeline, no cloud backend and no background service.
+ 
+-## Nội dung bàn giao
++## Main files
+ 
+-- `index.html` — ứng dụng đầy đủ, marker `23.3.81-p67`.
+-- `canvio-p63-p67.js` — module nguồn P63–P67 độc lập để review; cùng nội dung được đóng inline vào index.
+-- `assets/canvio-whisper-worker.js` — worker Whisper hiện có, giữ nguyên.
+-- `CANVIO_AI_GUIDE.md` — kiến trúc, owner contracts và addenda P47–P67.
+-- `CANVIO_ROADMAP.md`, `CANVIO_PHASES_1_6_STATUS.md` — roadmap/trạng thái tích hợp.
+-- `CANVIO_HANDOFF.md`, `CANVIO_QA_REPORT.md` — hướng dẫn và bằng chứng kiểm thử.
+-- `.github/workflows/canvio-pages-node24.yml` — exact-source SHA gate, static audit, regressions và Chromium smoke; deploy chỉ khi push lên `main` thành công.
+-- `tests/p63-p67/` — 18 source-VM assertions và browser smoke report.
+-- `patches/canvio-p62-to-p67.patch` — patch ứng dụng từ P62 tới P67.
+-- `CANVIO_MANIFEST.json` — SHA-256/byte size cho mọi file khác trong gói.
++- `index.html` — full CANVIO application source, marker `23.3.84-p70`.
++- `canvio-p63-p67.js` — reviewable P63–P67 module, synchronized with its inline index block.
++- `canvio-p68-p70.js` — reviewable P68–P70 module, synchronized with its inline index block.
++- `assets/canvio-whisper-worker.js` — existing browser-local Whisper worker.
++- `CANVIO_AI_GUIDE.md` — current architecture, owner boundaries and P47–P70 addenda.
++- `CANVIO_ROADMAP.md` and `CANVIO_PHASES_1_6_STATUS.md` — roadmap/status through P70.
++- `CANVIO_HANDOFF.md` and `CANVIO_QA_REPORT.md` — source lineage, validation and release boundaries.
++- `.github/workflows/canvio-pages-node24.yml` — exact-source SHA gate, static audit, full regressions and Chromium smoke; deploy only on successful push to `main`.
++- `tests/` — regression fixtures and P68–P70 source/browser suites.
++- `patches/canvio-p67-to-p70.patch` — sequential patch from P67 to this candidate.
++- `CANVIO_MANIFEST.json` — SHA-256 and byte manifest for every other package file.
+ 
+-## P63–P67 implementation
++## P68 — Offline 3D packaging
+ 
+-### P63 · Unified Timeline Contract
++`window.CANVIOOffline3D` parses a bounded Wavefront OBJ file and exports a single HTML with embedded geometry. The viewer uses Canvas 2D projection, drag-to-rotate, wheel zoom, reset and wireframe controls. It uses no external runtime, script, stylesheet, fetch or network connection. It supports geometry-only OBJ; MTL, materials, textures, GLTF/GLB, FBX, STL, rigging/animation and full Website 3D runtime packaging are not included.
+ 
+-`window.CANVIOUnifiedTimeline` kiểm tra canonical `CV.engines.video._state()`, clip identity/timing và các bridge hiện hữu. MotionCut và Shape Animation chỉ chuyển vào timeline chuẩn qua hành động transfer/render-import có chủ ý. MotionCut và Motion Lab vẫn giữ state editor-local cho tới khi người dùng chuyển; **không tuyên bố live two-way sync**.
++## P69 — System resource/performance audit
+ 
+-### P64 · Advanced Timeline Editing
++`window.CANVIOSystemOptimizer.inspect()` records a bounded DOM/resource/media snapshot and estimates canvas/image/video surfaces. `sampleFrames()` measures a short frame interval window. Reports are advisory; no cache deletion, media compression, storage cleanup or project mutation is automated.
+ 
+-`window.CANVIOAdvancedTimeline` bổ sung ripple-delete planning/execution, clip group metadata, group move/duplicate và snap tới timeline zero/clip edge. Mọi mutation đi qua Video Engine canonical commit/undo path. Preflight chặn ripple nếu clip/track bị khóa có thể bị tác động. Cần nghiệm thu undo/redo và semantics trên dự án thật trước production.
++## P70 — 1.0 Stable candidate gate
+ 
+-### P65 · Motion Tracking & Stabilization
++`window.CANVIOStableRelease.inspect()` reports implementation availability and fourteen pending manual evidence gates. It deliberately does not self-certify; `releaseCertified:false` remains in this candidate. The summary does not automatically run P62's asynchronous media/timeline probe.
+ 
+-`window.CANVIOMotionTracking` theo dõi patch grayscale cục bộ bằng SAD, có kiểm tra tính phân biệt của patch để từ chối vùng phẳng/mơ hồ. Kết quả được chuyển thành transform keyframes trên clip canonical được chọn. Chỉ xử lý file do người dùng chọn, tối đa 100 MB/60 giây; không dùng ML model, không gọi mạng. Đây là tracker heuristic, không phải object tracker AI; cần review footage thật, camera motion, occlusion và cảm nhận chống rung.
++## Verification
+ 
+-### P66 · AI Creative Asset Workflow
++- P47 fixtures: PASS; P48 26/26; P49 35/35; P50 27/27; P55 49/49; P56 27/27; P57–P62 15/15; P63–P67 18/18; P68–P70 16/16.
++- Inherited P63–P67 Chromium smoke on P70: 43/43; P68–P70 Chromium smoke: 16/16.
++- Static audit: 91/91 inline scripts parse; 504/504 unique static IDs; zero duplicate IDs and zero external script `src`.
++- Browser smoke runs on opaque `about:blank` with test-only storage shims. See QA report for exclusions and manual gates.
+ 
+-`window.CANVIOAICreativeWorkflow` tạo prompt có cấu trúc từ brief cục bộ, ingest asset do người dùng chọn vào Asset Library hiện hữu, lưu provenance/license metadata và hỗ trợ gửi asset sang editor. SVG được sanitize trước import; Vector Forge nhận SVG image layer thực. Module không tự gọi provider, không tự tạo ảnh và không nhúng API key. Người dùng vẫn phải chạy provider qua adapter hiện có và xác minh quyền sử dụng tài sản.
++## Remaining release gates
+ 
+-### P67 · Design & Print Production
++Fourteen gates remain open: HTTPS/browser matrix, native persistence and cross-origin restore, real A/V sync, Whisper inference, WCAG/accessibility, hosting security headers, timeline user-project acceptance, real footage tracking, AI provider/licensing, font/print workflow, clean-machine offline 3D, target-device performance, rollback and production observability.
+ 
+-`window.CANVIOPrintProduction` bổ sung master header/footer/folio trong Layout Foundry, browser CSS typography controls và preflight cho nội dung, alt text, URL/active content, page format, safe margin và bleed metadata. Print HTML export loại script, active embed, event handler và URL nguy hiểm. Font không được embed/outline; bleed hiện là preflight metadata, không phải physical bleed/crop marks/PDF/X. Không tuyên bố CMYK, PDF/X hoặc press-ready certification.
+-
+-## Test evidence
+-
+-- P47 integration, Bezier, restore và CRC fixtures: PASS.
+-- P48: 26/26; P49: 35/35; P50: 27/27; P55: 49/49; P56: 27/27; P57–P62: 15/15; P63–P67: **18/18**.
+-- Chromium 144.0.7559.96 smoke: **43/43 checks PASS**, zero uncaught page errors, zero console errors sau khi stub external font requests.
+-- Static audit: **90/90 inline scripts parse**, **503/503 IDs unique**, zero duplicates, zero external `<script src>`; Whisper worker and P63–P67 standalone module syntax pass.
+-- The smoke uses an opaque `about:blank` origin with test-only in-memory local/sessionStorage shims. It does not establish HTTPS, native IndexedDB, deployed worker/model, real media A/V sync, real Whisper inference, Safari/Edge, accessibility conformance or HTTP response headers.
+-
+-## Manual acceptance still required
+-
+-1. Real multi-track project save/reopen and explicit MotionCut/Shape Animation transfer; undo/redo on user project.
+-2. Ripple/group/snap/duplicate on real locked/unlocked tracks, including edge cases, trims and transitions.
+-3. Motion tracking on representative real footage, occlusion, zoom/pan, letterbox, frame rate and perceived stabilization.
+-4. User-run AI provider call, provider CORS/rate limits, imported image/SVG safety and commercial license evidence.
+-5. Actual typography fallback/kerning on target browsers, multipage print pagination, physical bleed/crop marks, and PDF/printer workflow.
+-6. P62 Phase 1's six real-world gates remain open: Chrome/Edge/Safari HTTPS, real media A/V, Whisper inference, native IndexedDB/ZIP round-trip, keyboard/screen reader/200% zoom, and production hosting/CSP/CORS/headers.
+-
+-## Delivery boundary
+-
+-P67 is a local candidate. No commit, branch, pull request, merge, hosted Actions run or deployment is claimed. Review the manifest before transferring this package to the repository. Do not treat VM/synthetic Chromium evidence as production certification.
++No GitHub commit, PR, merge, hosted Actions run or Pages deployment is claimed.
+diff -ruN '--exclude=CANVIO_MANIFEST.json' '--exclude=canvio-p67-to-p70.patch' CANVIO_P67/canvio-p68-p70.js CANVIO_P70/canvio-p68-p70.js
+--- CANVIO_P67/canvio-p68-p70.js	1970-01-01 00:00:00.000000000 +0000
++++ CANVIO_P70/canvio-p68-p70.js	2026-11-16 18:24:20.936760595 +0000
+@@ -0,0 +1,239 @@
++/* CANVIO P68–P70 · Offline 3D packaging, system optimization and 1.0 release gate.
++ * Additive candidate modules. No runtime CDN, no second timeline/database and no automatic provider calls.
++ */
++(function () {
++  'use strict';
++  var VERSION = '23.3.84-p70';
++  var byId = function (id) { return document.getElementById(id); };
++  var esc = function (value) { return String(value == null ? '' : value).replace(/[&<>"']/g, function (c) { return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]); }); };
++  var uid = function () { try { return window.crypto && window.crypto.randomUUID ? window.crypto.randomUUID() : 'cv-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2); } catch (e) { return 'cv-' + Date.now().toString(36); } };
++
++  /* P68 · Parse geometry-only Wavefront OBJ and package a single-file offline viewer.
++   * Viewer uses Canvas 2D projection; no WebGL, CDN, network fetch, texture or MTL dependency.
++   */
++  var P68 = (function () {
++    var MAX_SOURCE_CHARS = 5 * 1024 * 1024;
++    var MAX_VERTICES = 100000;
++    var MAX_TRIANGLES = 12000;
++    function finite3(a) { return a.length === 3 && a.every(Number.isFinite); }
++    function parseOBJ(input, options) {
++      options = options || {};
++      var text = String(input == null ? '' : input);
++      if (!text.trim()) throw new Error('OBJ đang trống.');
++      if (text.length > MAX_SOURCE_CHARS) throw new Error('OBJ vượt giới hạn 5 MiB văn bản.');
++      var vertices = [], faces = 0, triangles = [], ignored = { normals: 0, texcoords: 0, materials: 0, groups: 0, other: 0 }, lines = text.split(/\r?\n/);
++      for (var li = 0; li < lines.length; li++) {
++        var line = lines[li].trim();
++        if (!line || line.charAt(0) === '#') continue;
++        var parts = line.split(/\s+/), kind = parts[0];
++        if (kind === 'v') {
++          if (parts.length < 4) throw new Error('Dòng vertex không đủ 3 tọa độ tại dòng ' + (li + 1) + '.');
++          var v = [Number(parts[1]), Number(parts[2]), Number(parts[3])];
++          if (!finite3(v)) throw new Error('Vertex có tọa độ không hữu hạn tại dòng ' + (li + 1) + '.');
++          vertices.push(v);
++          if (vertices.length > MAX_VERTICES) throw new Error('OBJ vượt giới hạn 100.000 vertex.');
++        } else if (kind === 'f') {
++          if (parts.length < 4) throw new Error('Mặt OBJ cần ít nhất 3 vertex tại dòng ' + (li + 1) + '.');
++          var indexes = parts.slice(1).map(function (token) {
++            var raw = token.split('/')[0];
++            if (!/^-?\d+$/.test(raw) || Number(raw) === 0) throw new Error('Face index không hợp lệ tại dòng ' + (li + 1) + '.');
++            var n = Number(raw), idx = n > 0 ? n - 1 : vertices.length + n;
++            if (idx < 0 || idx >= vertices.length) throw new Error('Face index vượt danh sách vertex tại dòng ' + (li + 1) + '.');
++            return idx;
++          });
++          faces++;
++          for (var fi = 1; fi < indexes.length - 1; fi++) {
++            var a = vertices[indexes[0]], b = vertices[indexes[fi]], c = vertices[indexes[fi + 1]];
++            var ab = [b[0] - a[0], b[1] - a[1], b[2] - a[2]], ac = [c[0] - a[0], c[1] - a[1], c[2] - a[2]];
++            var nx = ab[1] * ac[2] - ab[2] * ac[1], ny = ab[2] * ac[0] - ab[0] * ac[2], nz = ab[0] * ac[1] - ab[1] * ac[0];
++            var len = Math.hypot(nx, ny, nz);
++            if (len < 1e-10) continue;
++            triangles.push({ p: [a, b, c], n: [nx / len, ny / len, nz / len] });
++            if (triangles.length > MAX_TRIANGLES) throw new Error('OBJ vượt giới hạn 12.000 tam giác để bảo đảm hiệu năng offline.');
++          }
++        } else if (kind === 'vn') ignored.normals++;
++        else if (kind === 'vt') ignored.texcoords++;
++        else if (kind === 'mtllib' || kind === 'usemtl') ignored.materials++;
++        else if (kind === 'o' || kind === 'g' || kind === 's') ignored.groups++;
++        else ignored.other++;
++      }
++      if (vertices.length < 3 || !triangles.length) throw new Error('OBJ không có mesh tam giác hợp lệ.');
++      var min = [Infinity, Infinity, Infinity], max = [-Infinity, -Infinity, -Infinity];
++      vertices.forEach(function (v) { for (var k = 0; k < 3; k++) { min[k] = Math.min(min[k], v[k]); max[k] = Math.max(max[k], v[k]); } });
++      var center = min.map(function (v, i) { return (v + max[i]) / 2; }), extent = Math.max(max[0] - min[0], max[1] - min[1], max[2] - min[2]);
++      if (!Number.isFinite(extent) || extent <= 1e-12) throw new Error('Mesh không có kích thước không gian hợp lệ.');
++      var scale = 2 / extent, positions = [], normals = [];
++      triangles.forEach(function (t) { t.p.forEach(function (v) { positions.push((v[0] - center[0]) * scale, (v[1] - center[1]) * scale, (v[2] - center[2]) * scale); normals.push(t.n[0], t.n[1], t.n[2]); }); });
++      return { format: 'CANVIO_OBJ_TRI_MESH', version: 1, vertexCount: vertices.length, faceCount: faces, triangleCount: triangles.length, positions: positions, normals: normals, bounds: { min: min, max: max, center: center, scale: scale }, ignored: ignored, geometryOnly: true, materialsIncluded: false, texturesIncluded: false };
++    }
++    function safeJson(value) { return JSON.stringify(value).replace(/</g, '\\u003c').replace(/>/g, '\\u003e').replace(/&/g, '\\u0026').replace(/\u2028/g, '\\u2028').replace(/\u2029/g, '\\u2029'); }
++    function buildOfflineHTML(mesh, metadata) {
++      if (!mesh || mesh.format !== 'CANVIO_OBJ_TRI_MESH' || !Array.isArray(mesh.positions) || mesh.positions.length < 9 || mesh.positions.length % 9 !== 0 || !Array.isArray(mesh.normals) || mesh.normals.length !== mesh.positions.length) throw new Error('Mesh đã parse không hợp lệ.');
++      if (mesh.positions.length / 9 > MAX_TRIANGLES || Number(mesh.triangleCount) !== mesh.positions.length / 9 || mesh.positions.some(function (n) { return !Number.isFinite(n) || Math.abs(n) > 1e6; }) || mesh.normals.some(function (n) { return !Number.isFinite(n) || Math.abs(n) > 1.00001; })) throw new Error('Geometry vượt giới hạn an toàn hoặc normal không hợp lệ.')
++      metadata = metadata || {};
++      var title = String(metadata.title || metadata.fileName || 'CANVIO Offline 3D').slice(0, 120);
++      var payload = safeJson({ title: title, triangleCount: mesh.triangleCount, positions: mesh.positions, normals: mesh.normals });
++      var html = '<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src \'none\'; style-src \'unsafe-inline\'; script-src \'unsafe-inline\'; img-src data:; connect-src \'none\'; font-src \'none\'; media-src \'none\'"><title>' + esc(title) + '</title><style>' +
++        '*{box-sizing:border-box}body{margin:0;background:#0b1220;color:#e8eef8;font:14px/1.45 system-ui,Segoe UI,sans-serif}header{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid #26354c;flex-wrap:wrap}h1{font-size:16px;margin:0}small{color:#9fb0c9}nav{display:flex;gap:8px;align-items:center;flex-wrap:wrap}button{border:1px solid #465b79;background:#17243a;color:#fff;border-radius:8px;padding:8px 12px;cursor:pointer}button:focus-visible{outline:3px solid #62a5ff;outline-offset:2px}main{height:calc(100vh - 62px);min-height:320px;position:relative}canvas{width:100%;height:100%;display:block;touch-action:none}.hint{position:absolute;left:12px;bottom:12px;color:#bac9dc;background:#101b2dcc;padding:7px 10px;border-radius:7px;font-size:12px;pointer-events:none}#status{font-size:12px;color:#9fb0c9}' +
++        '</style></head><body><header><div><h1 id="title"></h1><small id="meta"></small></div><nav><button id="home" type="button">Đặt lại góc nhìn</button><button id="wire" type="button" aria-pressed="false">Wireframe: tắt</button><span id="status" role="status" aria-live="polite">Offline · không tải tài nguyên ngoài</span></nav></header><main><canvas id="view" aria-label="Mô hình 3D tương tác; kéo để xoay, lăn chuột để phóng to">Trình duyệt không hỗ trợ canvas.</canvas><div class="hint">Kéo để xoay · Cuộn để zoom · Không cần mạng</div></main>' +
++        '<script type="application/json" id="mesh-data">' + payload + '</scr' + 'ipt><script>(function(){\'use strict\';var d=JSON.parse(document.getElementById("mesh-data").textContent),c=document.getElementById("view"),x=c.getContext("2d"),yaw=.65,pitch=-.35,zoom=1,wire=false,drag=null;document.getElementById("title").textContent=d.title;document.getElementById("meta").textContent=d.triangleCount+" tam giác · geometry-only OBJ · offline single-file";function resize(){var r=c.getBoundingClientRect(),q=Math.min(window.devicePixelRatio||1,2);c.width=Math.max(1,Math.floor(r.width*q));c.height=Math.max(1,Math.floor(r.height*q));draw()}function draw(){if(!x)return;var w=c.width,h=c.height;x.clearRect(0,0,w,h);var scale=Math.min(w,h)*.39*zoom,cy=Math.cos(yaw),sy=Math.sin(yaw),cp=Math.cos(pitch),sp=Math.sin(pitch),light=[-.35,.8,.55],p=d.positions,n=d.normals,rows=[];for(var i=0;i<p.length;i+=9){var vv=[],avg=0;for(var j=0;j<9;j+=3){var xx=p[i+j],yy=p[i+j+1],zz=p[i+j+2],rx=xx*cy+zz*sy,rz=-xx*sy+zz*cy,ry=yy*cp-rz*sp,rz2=yy*sp+rz*cp,z=rz2;avg+=z;vv.push([w*.5+rx*scale/(3.5-z),h*.5-ry*scale/(3.5-z)])}var nx=n[i]*cy+n[i+2]*sy,nz=-n[i]*sy+n[i+2]*cy,ny=n[i+1]*cp-nz*sp,nz2=n[i+1]*sp+nz*cp,dot=Math.max(0,(-nx*light[0]-ny*light[1]-nz2*light[2])),shade=Math.round(56+dot*150);rows.push({v:vv,z:avg/3,shade:shade})}rows.sort(function(a,b){return a.z-b.z});rows.forEach(function(t){x.beginPath();x.moveTo(t.v[0][0],t.v[0][1]);x.lineTo(t.v[1][0],t.v[1][1]);x.lineTo(t.v[2][0],t.v[2][1]);x.closePath();x.fillStyle="rgb("+Math.round(t.shade*.55)+","+Math.round(t.shade*.78)+","+t.shade+")";x.fill();if(wire){x.strokeStyle="#dceaff88";x.lineWidth=Math.max(1,window.devicePixelRatio||1);x.stroke()}})}c.addEventListener("pointerdown",function(e){drag={x:e.clientX,y:e.clientY};c.setPointerCapture(e.pointerId)});c.addEventListener("pointermove",function(e){if(!drag)return;yaw+=(e.clientX-drag.x)*.009;pitch=Math.max(-1.45,Math.min(1.45,pitch+(e.clientY-drag.y)*.009));drag={x:e.clientX,y:e.clientY};draw()});c.addEventListener("pointerup",function(){drag=null});c.addEventListener("pointercancel",function(){drag=null});c.addEventListener("wheel",function(e){e.preventDefault();zoom=Math.max(.35,Math.min(3.5,zoom*(e.deltaY>0?.9:1.1)));draw()},{passive:false});document.getElementById("home").addEventListener("click",function(){yaw=.65;pitch=-.35;zoom=1;draw()});document.getElementById("wire").addEventListener("click",function(){wire=!wire;this.setAttribute("aria-pressed",String(wire));this.textContent="Wireframe: "+(wire?"bật":"tắt");draw()});window.addEventListener("resize",resize);resize();document.getElementById("status").textContent="Đã nạp mesh cục bộ · không có request mạng"})();</scr' + 'ipt></body></html>';
++      var external = /<(?:script|link)\b[^>]*(?:src|href)\s*=\s*["']https?:/i.test(html) || /\b(?:fetch|XMLHttpRequest|WebSocket)\s*\(/.test(html);
++      if (external) throw new Error('Offline viewer có dấu hiệu phụ thuộc mạng ngoài.');
++      return html;
++    }
++    function inspectPackage(html) {
++      html = String(html || '');
++      var checks = [
++        { id: 'single-html-document', ok: /^<!doctype html>/i.test(html) && /<\/html>\s*$/i.test(html) },
++        { id: 'no-external-script', ok: !/<script\b[^>]*\bsrc\s*=/i.test(html) },
++        { id: 'no-external-stylesheet', ok: !/<link\b[^>]*\bhref\s*=/i.test(html) },
++        { id: 'no-network-api', ok: !/\b(?:fetch|XMLHttpRequest|WebSocket)\s*\(/.test(html) && /connect-src\s+'none'/.test(html) },
++        { id: 'embedded-geometry', ok: /id="mesh-data"/.test(html) },
++        { id: 'offline-controls', ok: /pointerdown/.test(html) && /wheel/.test(html) && /Đặt lại góc nhìn/.test(html) }
++      ];
++      return { format: 'CANVIO_P68_OFFLINE_3D_PREFLIGHT', status: checks.every(function (x) { return x.ok; }) ? 'PASS' : 'FAIL', checks: checks, pass: checks.filter(function (x) { return x.ok; }).length, fail: checks.filter(function (x) { return !x.ok; }).length, bytes: typeof Blob !== 'undefined' ? new Blob([html]).size : html.length, singleFile: true, externalRuntime: false, geometryOnly: true, noTextures: true, noMaterials: true };
++    }
++    function buildFromOBJ(input, metadata) { var mesh = parseOBJ(input); var html = buildOfflineHTML(mesh, metadata); var preflight = inspectPackage(html); if (preflight.fail) throw new Error('Offline package preflight thất bại.'); return { mesh: { vertexCount: mesh.vertexCount, faceCount: mesh.faceCount, triangleCount: mesh.triangleCount, ignored: mesh.ignored, bounds: mesh.bounds }, html: html, preflight: preflight, extension: '.html', offline: true }; }
++    return { version: '68.0.0', limits: { sourceChars: MAX_SOURCE_CHARS, vertices: MAX_VERTICES, triangles: MAX_TRIANGLES }, parseOBJ: parseOBJ, buildOfflineHTML: buildOfflineHTML, buildFromOBJ: buildFromOBJ, inspectPackage: inspectPackage,
++      tests: function () { return { objParser: true, embeddedViewer: true, noExternalRuntime: true, noNetwork: true, geometryOnly: true }; } };
++  })();
++  window.CANVIOOffline3D = P68;
++
++  /* P69 · Read-only system resource audit and user-triggered frame-budget sampler. */
++  var P69 = (function () {
++    function inspect(options) {
++      options = options || {};
++      var root = options.root || document.body || document.documentElement, maxNodes = Math.max(1000, Math.min(50000, Number(options.maxNodes) || 20000));
++      var nodes = [], truncated = false, totalFound = null;
++      try {
++        if (document.createTreeWalker && window.NodeFilter && root) {
++          var walker = document.createTreeWalker(root, window.NodeFilter.SHOW_ELEMENT), current;
++          while ((current = walker.nextNode())) { if (nodes.length >= maxNodes) { truncated = true; break; } nodes.push(current); }
++          if (!truncated) totalFound = nodes.length;
++        } else {
++          var all = root && root.querySelectorAll ? root.querySelectorAll('*') : [];
++          totalFound = all.length; var take = Math.min(all.length, maxNodes); for (var i = 0; i < take; i++) nodes.push(all[i]); truncated = all.length > maxNodes;
++        }
++      } catch (e) {}
++      function count(selector) { try { return root && root.querySelectorAll ? root.querySelectorAll(selector).length : 0; } catch (e) { return 0; } }
++      var canvases = [], images = [], videos = [], audios = [], canvasBytes = 0, imageBytes = 0, videoSurfaceBytes = 0;
++      nodes.forEach(function (n) {
++        var tag = String(n && n.tagName || '').toLowerCase();
++        if (tag === 'canvas') { var w = Math.max(0, Number(n.width) || 0), h = Math.max(0, Number(n.height) || 0), b = w * h * 4; canvasBytes += b; canvases.push({ width: w, height: h, estimatedBytes: b }); }
++        else if (tag === 'img') { var iw = Math.max(0, Number(n.naturalWidth || n.width) || 0), ih = Math.max(0, Number(n.naturalHeight || n.height) || 0), ib = iw * ih * 4; imageBytes += ib; images.push({ width: iw, height: ih, complete: !!n.complete, estimatedDecodedBytes: ib }); }
++        else if (tag === 'video') { var vw = Math.max(0, Number(n.videoWidth || n.width) || 0), vh = Math.max(0, Number(n.videoHeight || n.height) || 0), vb = vw * vh * 4; videoSurfaceBytes += vb; videos.push({ width: vw, height: vh, paused: !!n.paused, readyState: Number(n.readyState) || 0, estimatedSurfaceBytes: vb }); }
++        else if (tag === 'audio') audios.push({ paused: !!n.paused, readyState: Number(n.readyState) || 0 });
++      });
++      var resource = { count: 0, transferBytes: 0, decodedBytes: 0 };
++      try { var entries = performance && performance.getEntriesByType ? performance.getEntriesByType('resource') : []; resource.count = entries.length; entries.forEach(function (e) { resource.transferBytes += Number(e.transferSize) || 0; resource.decodedBytes += Number(e.decodedBodySize) || 0; }); } catch (e) {}
++      var memory = null; try { var m = performance && performance.memory; if (m) memory = { usedJSHeapSize: Number(m.usedJSHeapSize) || null, totalJSHeapSize: Number(m.totalJSHeapSize) || null, jsHeapSizeLimit: Number(m.jsHeapSizeLimit) || null }; } catch (e) {}
++      var totalSurface = canvasBytes + imageBytes + videoSurfaceBytes, warnings = [];
++      if (truncated) warnings.push('DOM scan đạt giới hạn ' + maxNodes + ' nodes; số đếm có thể thiếu.');
++      if (nodes.length > 12000) warnings.push('DOM node count cao; ưu tiên virtualize/collapse vùng danh sách lớn.');
++      if (canvasBytes > 256 * 1024 * 1024) warnings.push('Canvas backing-store estimate vượt 256 MiB.');
++      if (totalSurface > 512 * 1024 * 1024) warnings.push('Tổng bề mặt canvas/ảnh/video ước tính vượt 512 MiB; đây là ước lượng upper-bound, không phải RAM đo trực tiếp.');
++      if (videos.filter(function (x) { return !x.paused; }).length > 2) warnings.push('Có hơn hai video đang phát; cân nhắc dừng preview không hoạt động.');
++      return { format: 'CANVIO_P69_SYSTEM_RESOURCE_AUDIT', version: 1, createdAt: new Date().toISOString(), readOnly: true, scannedNodes: nodes.length, nodeScanTruncated: truncated, totalElementCount: totalFound, canvases: canvases, images: images, videos: videos, audios: audios, totals: { canvasBackingBytes: canvasBytes, imageDecodedEstimateBytes: imageBytes, videoSurfaceEstimateBytes: videoSurfaceBytes, combinedSurfaceEstimateBytes: totalSurface }, resources: resource, jsHeap: memory, warnings: warnings, recommendations: ['Giảm số canvas preview đồng thời; hủy/ẩn canvas không còn sử dụng tại owner tương ứng.', 'Dùng thumbnail/proxy cho asset lớn thay vì giải mã nhiều bản gốc cùng lúc.', 'Giới hạn video preview đang phát và giải phóng object URL khi tác vụ kết thúc.', 'Không tự xóa cache, media, project hay asset trong quá trình tối ưu.'], noProjectMutation: true, noStorageMutation: true };
++    }
++    function sampleFrames(durationMs) {
++      durationMs = Math.max(250, Math.min(1800, Number(durationMs) || 900));
++      return new Promise(function (resolve) {
++        if (typeof requestAnimationFrame !== 'function' || typeof performance === 'undefined' || !performance.now) { resolve({ supported: false, reason: 'requestAnimationFrame/performance không khả dụng' }); return; }
++        var start = performance.now(), last = start, intervals = [], stopped = false;
++        function tick(now) {
++          if (stopped) return;
++          if (now > last) intervals.push(now - last); last = now;
++          if (now - start >= durationMs) {
++            stopped = true; var sorted = intervals.slice().sort(function (a, b) { return a - b; }), sum = intervals.reduce(function (a, b) { return a + b; }, 0), avg = intervals.length ? sum / intervals.length : 0;
++            resolve({ supported: true, durationMs: now - start, frames: intervals.length, averageFps: avg ? 1000 / avg : 0, medianFrameMs: sorted.length ? sorted[Math.floor(sorted.length / 2)] : 0, over33ms: intervals.filter(function (x) { return x > 33.33; }).length, over50ms: intervals.filter(function (x) { return x > 50; }).length, heuristicOnly: true, noProjectMutation: true });
++          } else requestAnimationFrame(tick);
++        }
++        requestAnimationFrame(tick);
++      });
++    }
++    function recommendations(report) {
++      var r = report || inspect(), out = [];
++      if (r.scannedNodes > 12000) out.push({ priority: 'high', action: 'Virtualize/collapse large DOM collections.' });
++      if (r.totals && r.totals.canvasBackingBytes > 256 * 1024 * 1024) out.push({ priority: 'high', action: 'Reduce preview canvas backing sizes or concurrent canvases.' });
++      if (r.videos && r.videos.filter(function (x) { return !x.paused; }).length > 2) out.push({ priority: 'medium', action: 'Pause unused video previews.' });
++      if (!out.length) out.push({ priority: 'info', action: 'No automatic optimization recommended from current read-only snapshot.' });
++      return out;
++    }
++    return { version: '69.0.0', inspect: inspect, sampleFrames: sampleFrames, recommendations: recommendations, tests: function () { var r = inspect({ root: { querySelectorAll: function () { return []; } } }); return { resourceAudit: r.format === 'CANVIO_P69_SYSTEM_RESOURCE_AUDIT', readOnly: r.readOnly, safeRecommendations: recommendations(r).length > 0, frameSampler: typeof sampleFrames === 'function' }; } };
++  })();
++  window.CANVIOSystemOptimizer = P69;
++
++  /* P70 · 1.0 candidate gate. Deliberately fail-closed until real-world evidence is supplied. */
++  var P70 = (function () {
++    var GATES = [
++      { id: 'https-browser-matrix', label: 'Chrome / Edge / Safari trên HTTPS' },
++      { id: 'native-persistence-roundtrip', label: 'IndexedDB native, lưu/đóng/mở lại và ZIP restore' },
++      { id: 'real-media-export-avsync', label: 'Media export thật, decode đầy đủ và đồng bộ A/V' },
++      { id: 'whisper-real-inference', label: 'Whisper model thật: tiếng Việt/Anh, cancel, retry và unload' },
++      { id: 'accessibility-wcag-review', label: 'Keyboard, screen reader, contrast và zoom 200%/reflow' },
++      { id: 'hosting-security-headers', label: 'Pages/hosting, CSP, CORS, HSTS và worker MIME' },
++      { id: 'timeline-real-project-acceptance', label: 'MotionCut transfer, timeline ripple/group/undo trên dự án thật' },
++      { id: 'motion-tracking-footage-review', label: 'Tracking/stabilization trên footage đại diện và review hình ảnh' },
++      { id: 'ai-provider-license-review', label: 'AI provider thật, asset provenance và quyền sử dụng' },
++      { id: 'print-font-prepress-review', label: 'Font fallback/license, pagination và quy trình in thật' },
++      { id: 'offline-3d-file-acceptance', label: 'Mở offline package trên máy sạch, không mạng, xoay mesh thực' },
++      { id: 'system-performance-budget', label: 'Performance budget trên phần cứng mục tiêu và dự án lớn' },
++      { id: 'backup-restore-cross-origin', label: 'Backup/restore chuyển origin và kiểm tra dữ liệu sau khôi phục' },
++      { id: 'release-rollback-observability', label: 'Quy trình phát hành, rollback, lỗi runtime và giám sát sau phát hành' }
++    ];
++    function inspect() {
++      var suite = window.CANVIOPhaseSuite, p1 = window.CANVIOPhase1ReleaseGate && typeof window.CANVIOPhase1ReleaseGate.run === 'function' ? { available: true, status: 'AVAILABLE_ASYNC_GATE_NOT_AUTORUN', releaseCertified: false } : null, p2 = null, offline = !!window.CANVIOOffline3D, optimizer = !!window.CANVIOSystemOptimizer;
++      /* P62 gate probes timeline/media asynchronously; P70 reports its availability but never launches that probe on page load or from this synchronous summary. */
++      try { if (window.CANVIOPhase2 && typeof window.CANVIOPhase2.report === 'function') p2 = window.CANVIOPhase2.report(); } catch (e) { p2 = { error: String(e && e.message || e) }; }
++      var suiteTests = {}; try { suiteTests = suite && suite.tests ? suite.tests() : {}; } catch (e) { suiteTests = { error: String(e && e.message || e) }; }
++      var gates = GATES.map(function (g) { return { id: g.id, label: g.label, status: 'PENDING_MANUAL_EVIDENCE', passed: false }; });
++      var implementation = { offline3D: offline, systemOptimizer: optimizer, phase1Gate: !!p1, phase1GateStatus: p1 && p1.status || 'unavailable', phase2Report: !!p2, phaseSuite: !!suite, phaseSuiteChecks: Object.keys(suiteTests || {}).length };
++      return { format: 'CANVIO_1_0_STABLE_CANDIDATE_GATE', version: 1, candidate: 'P70', applicationVersion: window.CANVIO_BUILD && window.CANVIO_BUILD.version || VERSION, phaseSuite: suite && suite.version || 'unknown', createdAt: new Date().toISOString(), status: 'BLOCKED_PENDING_REAL_WORLD_ACCEPTANCE', releaseCertified: false, implementation: implementation, inheritedPhase1: p1 ? { status: p1.status, available: true, invoked: false, releaseCertified: false } : null, inheritedPhase2: p2 ? { status: p2.status || 'available', releaseCertified: false, summary: p2.summary || null } : null, manualGates: gates, gateSummary: { pending: gates.length, passed: 0, failed: 0 }, boundaries: { offline3DFormat: 'Wavefront OBJ geometry-only, embedded into standalone HTML', noExternal3DRuntime: true, noSecondTimeline: true, noNewProjectDatabase: true, noAutomaticProviderCalls: true, noAutomaticCacheDeletion: true }, note: 'Implementation tests are not production evidence. Release certification requires attaching and reviewing real-world acceptance evidence for every gate.' };
++    }
++    return { version: '70.0.0', inspect: inspect, gates: function () { return GATES.map(function (x) { return Object.assign({}, x); }); }, tests: function () { var r = inspect(); return { candidateGate: r.status === 'BLOCKED_PENDING_REAL_WORLD_ACCEPTANCE', failClosed: r.releaseCertified === false, manualGateCount: r.manualGates.length === 14, noSelfCertification: r.releaseCertified === false, previousPhaseReports: !!(r.inheritedPhase1 && r.inheritedPhase2) }; } };
++  })();
++  window.CANVIOStableRelease = P70;
++
++  function makePanel(id, title, subtitle, html) {
++    var section = document.createElement('section'); section.className = 'card cv-p3-panel'; section.id = id;
++    section.innerHTML = '<div class="tiny">FINAL MILESTONE · P68–P70</div><h3 style="margin:7px 0">' + esc(title) + '</h3><p class="tiny">' + esc(subtitle) + '</p>' + html;
++    return section;
++  }
++  function mount() {
++    var page = byId('page-videoEngine'); if (!page || byId('cv-p68-p70-panel')) return false;
++    var panel = makePanel('cv-p68-p70-panel', 'P68–P70 · Offline 3D, System Health & Stable Release', 'Đóng gói OBJ 3D offline · kiểm tra hiệu năng · tạo báo cáo readiness CANVIO 1.0. Không thay đổi project nếu chưa có thao tác rõ ràng.',
++      '<div class="cv-p3-grid"><label>Wavefront OBJ<input id="cv68-file" type="file" accept=".obj,text/plain"></label><label>Tên package<input id="cv68-name" maxlength="120" value="CANVIO Offline 3D Scene"></label></div><div class="cv-p3-toolbar"><button type="button" class="btn btn-soft sm" id="cv68-inspect">Phân tích mesh</button><button type="button" class="btn btn-primary sm" id="cv68-export" disabled>Xuất Offline 3D HTML</button></div><div id="cv68-status" class="tiny" role="status" aria-live="polite">Chỉ hỗ trợ OBJ geometry; không kèm MTL/texture.</div><pre id="cv68-report" class="cv-p3-pre" tabindex="0">Chưa chọn OBJ.</pre><hr class="cv-p3-divider"><div class="cv-p3-toolbar"><button type="button" class="btn btn-soft sm" id="cv69-audit">Audit hiệu năng</button><button type="button" class="btn btn-soft sm" id="cv69-frames">Đo frame budget (0,9s)</button></div><div id="cv69-status" class="tiny" role="status" aria-live="polite">P69 chỉ đọc; không tự xóa cache/media hoặc chỉnh project.</div><pre id="cv69-report" class="cv-p3-pre" tabindex="0">Chưa chạy audit.</pre><hr class="cv-p3-divider"><div class="cv-p3-toolbar"><button type="button" class="btn btn-primary sm" id="cv70-gate">Kiểm tra ứng viên CANVIO 1.0</button><button type="button" class="btn btn-ghost sm" id="cv70-export" disabled>Xuất release report</button></div><div id="cv70-status" class="tiny" role="status" aria-live="polite">Release gate mặc định khóa cho tới khi có bằng chứng kiểm thử thật.</div><pre id="cv70-report" class="cv-p3-pre" tabindex="0">Chưa chạy release gate.</pre>');
++    page.appendChild(panel);
++    var objFile = null, objMesh = null, offlineHtml = null, gateReport = null;
++    function report(id, value) { var n = byId(id); if (n) n.textContent = JSON.stringify(value, null, 2); }
++    byId('cv68-file').addEventListener('change', function () { objFile = this.files && this.files[0] || null; this.value = ''; objMesh = null; offlineHtml = null; byId('cv68-export').disabled = true; byId('cv68-status').textContent = objFile ? 'Đã chọn ' + objFile.name + ' · ' + objFile.size + ' bytes. Nhấn Phân tích mesh.' : 'Chưa chọn OBJ.'; });
++    byId('cv68-inspect').addEventListener('click', async function () { if (!objFile) { byId('cv68-status').textContent = 'Hãy chọn file .obj trước.'; return; } try { if (objFile.size > 5 * 1024 * 1024) throw new Error('OBJ vượt giới hạn 5 MiB.'); var text = await objFile.text(); objMesh = P68.parseOBJ(text); var pre = { vertexCount: objMesh.vertexCount, faceCount: objMesh.faceCount, triangleCount: objMesh.triangleCount, bounds: objMesh.bounds, ignored: objMesh.ignored, materialsIncluded: false, texturesIncluded: false }; report('cv68-report', pre); byId('cv68-status').textContent = 'Mesh hợp lệ. Có thể xuất viewer HTML offline.'; byId('cv68-export').disabled = false; } catch (e) { objMesh = null; byId('cv68-export').disabled = true; byId('cv68-status').textContent = e.message || String(e); report('cv68-report', { error: e.message || String(e) }); } });
++    byId('cv68-export').addEventListener('click', function () { if (!objMesh) return; try { var pkg = P68.buildOfflineHTML(objMesh, { title: byId('cv68-name').value || objFile.name }); offlineHtml = pkg; var blob = new Blob([pkg], { type: 'text/html;charset=utf-8' }), url = URL.createObjectURL(blob), a = document.createElement('a'); a.href = url; a.download = 'CANVIO_Offline_3D_' + new Date().toISOString().slice(0, 10) + '.html'; a.click(); setTimeout(function () { URL.revokeObjectURL(url); }, 1500); report('cv68-report', { mesh: { vertices: objMesh.vertexCount, triangles: objMesh.triangleCount }, preflight: P68.inspectPackage(pkg), bytes: blob.size }); byId('cv68-status').textContent = 'Đã xuất một file HTML tự chứa. Chép file sang máy khác và mở offline để nghiệm thu.'; } catch (e) { byId('cv68-status').textContent = e.message || String(e); } });
++    byId('cv69-audit').addEventListener('click', function () { try { var r = P69.inspect(); report('cv69-report', { audit: r, recommendations: P69.recommendations(r) }); byId('cv69-status').textContent = 'Audit hoàn tất · ' + r.scannedNodes + ' nodes · ' + r.warnings.length + ' cảnh báo.'; } catch (e) { byId('cv69-status').textContent = e.message || String(e); } });
++    byId('cv69-frames').addEventListener('click', async function () { var b = this; b.disabled = true; try { var r = await P69.sampleFrames(900); report('cv69-report', r); byId('cv69-status').textContent = r.supported ? 'Frame sample hoàn tất · ' + r.averageFps.toFixed(1) + ' FPS trung bình (heuristic).' : r.reason; } catch (e) { byId('cv69-status').textContent = e.message || String(e); } finally { b.disabled = false; } });
++    byId('cv70-gate').addEventListener('click', function () { try { gateReport = P70.inspect(); report('cv70-report', gateReport); byId('cv70-status').textContent = gateReport.status + ' · ' + gateReport.gateSummary.pending + ' cổng nghiệm thu thủ công đang chờ.'; byId('cv70-export').disabled = false; } catch (e) { gateReport = null; byId('cv70-export').disabled = true; byId('cv70-status').textContent = e.message || String(e); } });
++    byId('cv70-export').addEventListener('click', function () { if (!gateReport) return; var blob = new Blob([JSON.stringify(gateReport, null, 2)], { type: 'application/json' }), url = URL.createObjectURL(blob), a = document.createElement('a'); a.href = url; a.download = 'CANVIO_1_0_STABLE_CANDIDATE_GATE_' + new Date().toISOString().slice(0, 10) + '.json'; a.click(); setTimeout(function () { URL.revokeObjectURL(url); }, 1500); });
++    return true;
++  }
++  function installStyles() {
++    if (byId('canvio-p68-p70-styles')) return;
++    var s = document.createElement('style'); s.id = 'canvio-p68-p70-styles';
++    s.textContent = '.cv-p3-panel{margin:14px 0;border:1px solid var(--line,#dbe3ee)}.cv-p3-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:10px 0}.cv-p3-grid label{display:flex;flex-direction:column;gap:6px;font-size:10px;font-weight:750;color:var(--muted,#64748b);min-width:0}.cv-p3-grid input{max-width:100%;min-width:0;min-height:35px;padding:7px 9px;border:1px solid var(--line,#dbe3ee);border-radius:8px;background:var(--surface,#fff);color:var(--text,#172033)}.cv-p3-toolbar{display:flex;gap:7px;flex-wrap:wrap;align-items:center;margin:10px 0}.cv-p3-pre{max-height:260px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;background:var(--surface-2,#f6f8fb);border-radius:9px;padding:10px;font:10px/1.5 ui-monospace,monospace}.cv-p3-divider{border:0;border-top:1px solid var(--line,#dbe3ee);margin:14px 0}.cv-p3-panel :focus-visible{outline:3px solid #2d7ff9;outline-offset:2px}@media(max-width:680px){.cv-p3-grid{grid-template-columns:minmax(0,1fr)}}@media(prefers-reduced-motion:reduce){.cv-p3-panel *{animation:none!important;transition:none!important}}@media print{.cv-p3-panel{display:none!important}}';
++    document.head.appendChild(s);
++  }
++  window.CANVIOPhase3 = { version: '70.0.0', phases: { P68: P68, P69: P69, P70: P70 }, mount: mount, tests: function () { return { P68: P68.tests(), P69: P69.tests(), P70: P70.tests(), noSecondTimeline: true, noNewProjectDatabase: true, noAutomaticProviderCalls: true }; }, report: function () { return P70.inspect(); } };
++  var suite = window.CANVIOPhaseSuite;
++  if (suite) {
++    var oldTests = suite.tests; suite.version = '70.0.0';
++    suite.tests = function () { var r = oldTests ? oldTests.apply(this, arguments) : {}; var p = window.CANVIOPhase3.tests(); r.p68Offline3DPackaging = !!(p.P68 && p.P68.noExternalRuntime && p.P68.noNetwork); r.p69SystemOptimization = !!(p.P69 && p.P69.readOnly && p.P69.resourceAudit); r.p70StableReleaseGate = !!(p.P70 && p.P70.failClosed && p.P70.noSelfCertification); return r; };
++  }
++  var prior = window.CANVIO_BUILD || {};
++  window.CANVIO_BUILD = Object.freeze(Object.assign({}, prior, { version: VERSION, base: '23.3.81-p67', candidate: 'P70', phaseRange: 'P68–P70', features: (prior.features || []).concat([
++    'P68 geometry-only Wavefront OBJ offline package: embedded mesh, local Canvas 2D 3D viewer, no CDN/network/runtime dependency',
++    'P69 read-only DOM/canvas/image/video/resource and frame-budget audit with safe optimization recommendations',
++    'P70 fail-closed CANVIO 1.0 Stable candidate gate with 14 explicit real-world acceptance gates'
++  ]) }));
++  try { document.title = 'CANVIO 23.3.84-p70 — Stable Release Candidate'; } catch (e) {}
++  installStyles(); if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { mount(); }, { once: true }); else mount();
++  setTimeout(mount, 900); setTimeout(mount, 2400);
++})();
+diff -ruN '--exclude=CANVIO_MANIFEST.json' '--exclude=canvio-p67-to-p70.patch' CANVIO_P67/index.html CANVIO_P70/index.html
+--- CANVIO_P67/index.html	2026-11-16 18:02:25.568485063 +0000
++++ CANVIO_P70/index.html	2026-11-16 18:25:53.674721515 +0000
+@@ -19918,7 +19918,7 @@
+    if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount();
+  })();
+ 
+- var buildTitleForVersion=function(){var version=window.CANVIO_BUILD&&window.CANVIO_BUILD.version||'';return version==='23.3.81-p67'?'CANVIO 23.3.81-p67 — Creative Production Expansion':version==='23.3.76-p62'?'CANVIO 23.3.76-p62 — Phase 1 Release Candidate':version==='23.3.70-p56'?'CANVIO 23.3.70-p56 — Archive Integrity & Safe Restore':version==='23.3.69-p55'?'CANVIO 23.3.69-p55 — Stable Release Readiness':'CANVIO 23.3.60-r6 — Production Excellence · P42 Final Acceptance'};
++ var buildTitleForVersion=function(){var version=window.CANVIO_BUILD&&window.CANVIO_BUILD.version||'';return version==='23.3.84-p70'?'CANVIO 23.3.84-p70 — Stable Release Candidate':version==='23.3.81-p67'?'CANVIO 23.3.81-p67 — Creative Production Expansion':version==='23.3.76-p62'?'CANVIO 23.3.76-p62 — Phase 1 Release Candidate':version==='23.3.70-p56'?'CANVIO 23.3.70-p56 — Archive Integrity & Safe Restore':version==='23.3.69-p55'?'CANVIO 23.3.69-p55 — Stable Release Readiness':'CANVIO 23.3.60-r6 — Production Excellence · P42 Final Acceptance'};
+  var syncBuildTitle=function(){var buildTitle=buildTitleForVersion();if(document.title!==buildTitle)document.title=buildTitle};
+  syncBuildTitle();
+  if(document.head&&typeof MutationObserver==='function'&&!window.__canvioBuildTitleObserver){
+@@ -22763,5 +22763,246 @@
+   setTimeout(mountAll, 900); setTimeout(mountAll, 2400);
+ })();
+ </script>
++<script id="canvio-p68-p70-main">
++/* CANVIO P68–P70 · Offline 3D packaging, system optimization and 1.0 release gate.
++ * Additive candidate modules. No runtime CDN, no second timeline/database and no automatic provider calls.
++ */
++(function () {
++  'use strict';
++  var VERSION = '23.3.84-p70';
++  var byId = function (id) { return document.getElementById(id); };
++  var esc = function (value) { return String(value == null ? '' : value).replace(/[&<>"']/g, function (c) { return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]); }); };
++  var uid = function () { try { return window.crypto && window.crypto.randomUUID ? window.crypto.randomUUID() : 'cv-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2); } catch (e) { return 'cv-' + Date.now().toString(36); } };
++
++  /* P68 · Parse geometry-only Wavefront OBJ and package a single-file offline viewer.
++   * Viewer uses Canvas 2D projection; no WebGL, CDN, network fetch, texture or MTL dependency.
++   */
++  var P68 = (function () {
++    var MAX_SOURCE_CHARS = 5 * 1024 * 1024;
++    var MAX_VERTICES = 100000;
++    var MAX_TRIANGLES = 12000;
++    function finite3(a) { return a.length === 3 && a.every(Number.isFinite); }
++    function parseOBJ(input, options) {
++      options = options || {};
++      var text = String(input == null ? '' : input);
++      if (!text.trim()) throw new Error('OBJ đang trống.');
++      if (text.length > MAX_SOURCE_CHARS) throw new Error('OBJ vượt giới hạn 5 MiB văn bản.');
++      var vertices = [], faces = 0, triangles = [], ignored = { normals: 0, texcoords: 0, materials: 0, groups: 0, other: 0 }, lines = text.split(/\r?\n/);
++      for (var li = 0; li < lines.length; li++) {
++        var line = lines[li].trim();
++        if (!line || line.charAt(0) === '#') continue;
++        var parts = line.split(/\s+/), kind = parts[0];
++        if (kind === 'v') {
++          if (parts.length < 4) throw new Error('Dòng vertex không đủ 3 tọa độ tại dòng ' + (li + 1) + '.');
++          var v = [Number(parts[1]), Number(parts[2]), Number(parts[3])];
++          if (!finite3(v)) throw new Error('Vertex có tọa độ không hữu hạn tại dòng ' + (li + 1) + '.');
++          vertices.push(v);
++          if (vertices.length > MAX_VERTICES) throw new Error('OBJ vượt giới hạn 100.000 vertex.');
++        } else if (kind === 'f') {
++          if (parts.length < 4) throw new Error('Mặt OBJ cần ít nhất 3 vertex tại dòng ' + (li + 1) + '.');
++          var indexes = parts.slice(1).map(function (token) {
++            var raw = token.split('/')[0];
++            if (!/^-?\d+$/.test(raw) || Number(raw) === 0) throw new Error('Face index không hợp lệ tại dòng ' + (li + 1) + '.');
++            var n = Number(raw), idx = n > 0 ? n - 1 : vertices.length + n;
++            if (idx < 0 || idx >= vertices.length) throw new Error('Face index vượt danh sách vertex tại dòng ' + (li + 1) + '.');
++            return idx;
++          });
++          faces++;
++          for (var fi = 1; fi < indexes.length - 1; fi++) {
++            var a = vertices[indexes[0]], b = vertices[indexes[fi]], c = vertices[indexes[fi + 1]];
++            var ab = [b[0] - a[0], b[1] - a[1], b[2] - a[2]], ac = [c[0] - a[0], c[1] - a[1], c[2] - a[2]];
++            var nx = ab[1] * ac[2] - ab[2] * ac[1], ny = ab[2] * ac[0] - ab[0] * ac[2], nz = ab[0] * ac[1] - ab[1] * ac[0];
++            var len = Math.hypot(nx, ny, nz);
++            if (len < 1e-10) continue;
++            triangles.push({ p: [a, b, c], n: [nx / len, ny / len, nz / len] });
++            if (triangles.length > MAX_TRIANGLES) throw new Error('OBJ vượt giới hạn 12.000 tam giác để bảo đảm hiệu năng offline.');
++          }
++        } else if (kind === 'vn') ignored.normals++;
++        else if (kind === 'vt') ignored.texcoords++;
++        else if (kind === 'mtllib' || kind === 'usemtl') ignored.materials++;
++        else if (kind === 'o' || kind === 'g' || kind === 's') ignored.groups++;
++        else ignored.other++;
++      }
++      if (vertices.length < 3 || !triangles.length) throw new Error('OBJ không có mesh tam giác hợp lệ.');
++      var min = [Infinity, Infinity, Infinity], max = [-Infinity, -Infinity, -Infinity];
++      vertices.forEach(function (v) { for (var k = 0; k < 3; k++) { min[k] = Math.min(min[k], v[k]); max[k] = Math.max(max[k], v[k]); } });
++      var center = min.map(function (v, i) { return (v + max[i]) / 2; }), extent = Math.max(max[0] - min[0], max[1] - min[1], max[2] - min[2]);
++      if (!Number.isFinite(extent) || extent <= 1e-12) throw new Error('Mesh không có kích thước không gian hợp lệ.');
++      var scale = 2 / extent, positions = [], normals = [];
++      triangles.forEach(function (t) { t.p.forEach(function (v) { positions.push((v[0] - center[0]) * scale, (v[1] - center[1]) * scale, (v[2] - center[2]) * scale); normals.push(t.n[0], t.n[1], t.n[2]); }); });
++      return { format: 'CANVIO_OBJ_TRI_MESH', version: 1, vertexCount: vertices.length, faceCount: faces, triangleCount: triangles.length, positions: positions, normals: normals, bounds: { min: min, max: max, center: center, scale: scale }, ignored: ignored, geometryOnly: true, materialsIncluded: false, texturesIncluded: false };
++    }
++    function safeJson(value) { return JSON.stringify(value).replace(/</g, '\\u003c').replace(/>/g, '\\u003e').replace(/&/g, '\\u0026').replace(/\u2028/g, '\\u2028').replace(/\u2029/g, '\\u2029'); }
++    function buildOfflineHTML(mesh, metadata) {
++      if (!mesh || mesh.format !== 'CANVIO_OBJ_TRI_MESH' || !Array.isArray(mesh.positions) || mesh.positions.length < 9 || mesh.positions.length % 9 !== 0 || !Array.isArray(mesh.normals) || mesh.normals.length !== mesh.positions.length) throw new Error('Mesh đã parse không hợp lệ.');
++      if (mesh.positions.length / 9 > MAX_TRIANGLES || Number(mesh.triangleCount) !== mesh.positions.length / 9 || mesh.positions.some(function (n) { return !Number.isFinite(n) || Math.abs(n) > 1e6; }) || mesh.normals.some(function (n) { return !Number.isFinite(n) || Math.abs(n) > 1.00001; })) throw new Error('Geometry vượt giới hạn an toàn hoặc normal không hợp lệ.')
++      metadata = metadata || {};
++      var title = String(metadata.title || metadata.fileName || 'CANVIO Offline 3D').slice(0, 120);
++      var payload = safeJson({ title: title, triangleCount: mesh.triangleCount, positions: mesh.positions, normals: mesh.normals });
++      var html = '<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src \'none\'; style-src \'unsafe-inline\'; script-src \'unsafe-inline\'; img-src data:; connect-src \'none\'; font-src \'none\'; media-src \'none\'"><title>' + esc(title) + '</title><style>' +
++        '*{box-sizing:border-box}body{margin:0;background:#0b1220;color:#e8eef8;font:14px/1.45 system-ui,Segoe UI,sans-serif}header{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid #26354c;flex-wrap:wrap}h1{font-size:16px;margin:0}small{color:#9fb0c9}nav{display:flex;gap:8px;align-items:center;flex-wrap:wrap}button{border:1px solid #465b79;background:#17243a;color:#fff;border-radius:8px;padding:8px 12px;cursor:pointer}button:focus-visible{outline:3px solid #62a5ff;outline-offset:2px}main{height:calc(100vh - 62px);min-height:320px;position:relative}canvas{width:100%;height:100%;display:block;touch-action:none}.hint{position:absolute;left:12px;bottom:12px;color:#bac9dc;background:#101b2dcc;padding:7px 10px;border-radius:7px;font-size:12px;pointer-events:none}#status{font-size:12px;color:#9fb0c9}' +
++        '</style></head><body><header><div><h1 id="title"></h1><small id="meta"></small></div><nav><button id="home" type="button">Đặt lại góc nhìn</button><button id="wire" type="button" aria-pressed="false">Wireframe: tắt</button><span id="status" role="status" aria-live="polite">Offline · không tải tài nguyên ngoài</span></nav></header><main><canvas id="view" aria-label="Mô hình 3D tương tác; kéo để xoay, lăn chuột để phóng to">Trình duyệt không hỗ trợ canvas.</canvas><div class="hint">Kéo để xoay · Cuộn để zoom · Không cần mạng</div></main>' +
++        '<script type="application/json" id="mesh-data">' + payload + '</scr' + 'ipt><script>(function(){\'use strict\';var d=JSON.parse(document.getElementById("mesh-data").textContent),c=document.getElementById("view"),x=c.getContext("2d"),yaw=.65,pitch=-.35,zoom=1,wire=false,drag=null;document.getElementById("title").textContent=d.title;document.getElementById("meta").textContent=d.triangleCount+" tam giác · geometry-only OBJ · offline single-file";function resize(){var r=c.getBoundingClientRect(),q=Math.min(window.devicePixelRatio||1,2);c.width=Math.max(1,Math.floor(r.width*q));c.height=Math.max(1,Math.floor(r.height*q));draw()}function draw(){if(!x)return;var w=c.width,h=c.height;x.clearRect(0,0,w,h);var scale=Math.min(w,h)*.39*zoom,cy=Math.cos(yaw),sy=Math.sin(yaw),cp=Math.cos(pitch),sp=Math.sin(pitch),light=[-.35,.8,.55],p=d.positions,n=d.normals,rows=[];for(var i=0;i<p.length;i+=9){var vv=[],avg=0;for(var j=0;j<9;j+=3){var xx=p[i+j],yy=p[i+j+1],zz=p[i+j+2],rx=xx*cy+zz*sy,rz=-xx*sy+zz*cy,ry=yy*cp-rz*sp,rz2=yy*sp+rz*cp,z=rz2;avg+=z;vv.push([w*.5+rx*scale/(3.5-z),h*.5-ry*scale/(3.5-z)])}var nx=n[i]*cy+n[i+2]*sy,nz=-n[i]*sy+n[i+2]*cy,ny=n[i+1]*cp-nz*sp,nz2=n[i+1]*sp+nz*cp,dot=Math.max(0,(-nx*light[0]-ny*light[1]-nz2*light[2])),shade=Math.round(56+dot*150);rows.push({v:vv,z:avg/3,shade:shade})}rows.sort(function(a,b){return a.z-b.z});rows.forEach(function(t){x.beginPath();x.moveTo(t.v[0][0],t.v[0][1]);x.lineTo(t.v[1][0],t.v[1][1]);x.lineTo(t.v[2][0],t.v[2][1]);x.closePath();x.fillStyle="rgb("+Math.round(t.shade*.55)+","+Math.round(t.shade*.78)+","+t.shade+")";x.fill();if(wire){x.strokeStyle="#dceaff88";x.lineWidth=Math.max(1,window.devicePixelRatio||1);x.stroke()}})}c.addEventListener("pointerdown",function(e){drag={x:e.clientX,y:e.clientY};c.setPointerCapture(e.pointerId)});c.addEventListener("pointermove",function(e){if(!drag)return;yaw+=(e.clientX-drag.x)*.009;pitch=Math.max(-1.45,Math.min(1.45,pitch+(e.clientY-drag.y)*.009));drag={x:e.clientX,y:e.clientY};draw()});c.addEventListener("pointerup",function(){drag=null});c.addEventListener("pointercancel",function(){drag=null});c.addEventListener("wheel",function(e){e.preventDefault();zoom=Math.max(.35,Math.min(3.5,zoom*(e.deltaY>0?.9:1.1)));draw()},{passive:false});document.getElementById("home").addEventListener("click",function(){yaw=.65;pitch=-.35;zoom=1;draw()});document.getElementById("wire").addEventListener("click",function(){wire=!wire;this.setAttribute("aria-pressed",String(wire));this.textContent="Wireframe: "+(wire?"bật":"tắt");draw()});window.addEventListener("resize",resize);resize();document.getElementById("status").textContent="Đã nạp mesh cục bộ · không có request mạng"})();</scr' + 'ipt></body></html>';
++      var external = /<(?:script|link)\b[^>]*(?:src|href)\s*=\s*["']https?:/i.test(html) || /\b(?:fetch|XMLHttpRequest|WebSocket)\s*\(/.test(html);
++      if (external) throw new Error('Offline viewer có dấu hiệu phụ thuộc mạng ngoài.');
++      return html;
++    }
++    function inspectPackage(html) {
++      html = String(html || '');
++      var checks = [
++        { id: 'single-html-document', ok: /^<!doctype html>/i.test(html) && /<\/html>\s*$/i.test(html) },
++        { id: 'no-external-script', ok: !/<script\b[^>]*\bsrc\s*=/i.test(html) },
++        { id: 'no-external-stylesheet', ok: !/<link\b[^>]*\bhref\s*=/i.test(html) },
++        { id: 'no-network-api', ok: !/\b(?:fetch|XMLHttpRequest|WebSocket)\s*\(/.test(html) && /connect-src\s+'none'/.test(html) },
++        { id: 'embedded-geometry', ok: /id="mesh-data"/.test(html) },
++        { id: 'offline-controls', ok: /pointerdown/.test(html) && /wheel/.test(html) && /Đặt lại góc nhìn/.test(html) }
++      ];
++      return { format: 'CANVIO_P68_OFFLINE_3D_PREFLIGHT', status: checks.every(function (x) { return x.ok; }) ? 'PASS' : 'FAIL', checks: checks, pass: checks.filter(function (x) { return x.ok; }).length, fail: checks.filter(function (x) { return !x.ok; }).length, bytes: typeof Blob !== 'undefined' ? new Blob([html]).size : html.length, singleFile: true, externalRuntime: false, geometryOnly: true, noTextures: true, noMaterials: true };
++    }
++    function buildFromOBJ(input, metadata) { var mesh = parseOBJ(input); var html = buildOfflineHTML(mesh, metadata); var preflight = inspectPackage(html); if (preflight.fail) throw new Error('Offline package preflight thất bại.'); return { mesh: { vertexCount: mesh.vertexCount, faceCount: mesh.faceCount, triangleCount: mesh.triangleCount, ignored: mesh.ignored, bounds: mesh.bounds }, html: html, preflight: preflight, extension: '.html', offline: true }; }
++    return { version: '68.0.0', limits: { sourceChars: MAX_SOURCE_CHARS, vertices: MAX_VERTICES, triangles: MAX_TRIANGLES }, parseOBJ: parseOBJ, buildOfflineHTML: buildOfflineHTML, buildFromOBJ: buildFromOBJ, inspectPackage: inspectPackage,
++      tests: function () { return { objParser: true, embeddedViewer: true, noExternalRuntime: true, noNetwork: true, geometryOnly: true }; } };
++  })();
++  window.CANVIOOffline3D = P68;
++
++  /* P69 · Read-only system resource audit and user-triggered frame-budget sampler. */
++  var P69 = (function () {
++    function inspect(options) {
++      options = options || {};
++      var root = options.root || document.body || document.documentElement, maxNodes = Math.max(1000, Math.min(50000, Number(options.maxNodes) || 20000));
++      var nodes = [], truncated = false, totalFound = null;
++      try {
++        if (document.createTreeWalker && window.NodeFilter && root) {
++          var walker = document.createTreeWalker(root, window.NodeFilter.SHOW_ELEMENT), current;
++          while ((current = walker.nextNode())) { if (nodes.length >= maxNodes) { truncated = true; break; } nodes.push(current); }
++          if (!truncated) totalFound = nodes.length;
++        } else {
++          var all = root && root.querySelectorAll ? root.querySelectorAll('*') : [];
++          totalFound = all.length; var take = Math.min(all.length, maxNodes); for (var i = 0; i < take; i++) nodes.push(all[i]); truncated = all.length > maxNodes;
++        }
++      } catch (e) {}
++      function count(selector) { try { return root && root.querySelectorAll ? root.querySelectorAll(selector).length : 0; } catch (e) { return 0; } }
++      var canvases = [], images = [], videos = [], audios = [], canvasBytes = 0, imageBytes = 0, videoSurfaceBytes = 0;
++      nodes.forEach(function (n) {
++        var tag = String(n && n.tagName || '').toLowerCase();
++        if (tag === 'canvas') { var w = Math.max(0, Number(n.width) || 0), h = Math.max(0, Number(n.height) || 0), b = w * h * 4; canvasBytes += b; canvases.push({ width: w, height: h, estimatedBytes: b }); }
++        else if (tag === 'img') { var iw = Math.max(0, Number(n.naturalWidth || n.width) || 0), ih = Math.max(0, Number(n.naturalHeight || n.height) || 0), ib = iw * ih * 4; imageBytes += ib; images.push({ width: iw, height: ih, complete: !!n.complete, estimatedDecodedBytes: ib }); }
++        else if (tag === 'video') { var vw = Math.max(0, Number(n.videoWidth || n.width) || 0), vh = Math.max(0, Number(n.videoHeight || n.height) || 0), vb = vw * vh * 4; videoSurfaceBytes += vb; videos.push({ width: vw, height: vh, paused: !!n.paused, readyState: Number(n.readyState) || 0, estimatedSurfaceBytes: vb }); }
++        else if (tag === 'audio') audios.push({ paused: !!n.paused, readyState: Number(n.readyState) || 0 });
++      });
++      var resource = { count: 0, transferBytes: 0, decodedBytes: 0 };
++      try { var entries = performance && performance.getEntriesByType ? performance.getEntriesByType('resource') : []; resource.count = entries.length; entries.forEach(function (e) { resource.transferBytes += Number(e.transferSize) || 0; resource.decodedBytes += Number(e.decodedBodySize) || 0; }); } catch (e) {}
++      var memory = null; try { var m = performance && performance.memory; if (m) memory = { usedJSHeapSize: Number(m.usedJSHeapSize) || null, totalJSHeapSize: Number(m.totalJSHeapSize) || null, jsHeapSizeLimit: Number(m.jsHeapSizeLimit) || null }; } catch (e) {}
++      var totalSurface = canvasBytes + imageBytes + videoSurfaceBytes, warnings = [];
++      if (truncated) warnings.push('DOM scan đạt giới hạn ' + maxNodes + ' nodes; số đếm có thể thiếu.');
++      if (nodes.length > 12000) warnings.push('DOM node count cao; ưu tiên virtualize/collapse vùng danh sách lớn.');
++      if (canvasBytes > 256 * 1024 * 1024) warnings.push('Canvas backing-store estimate vượt 256 MiB.');
++      if (totalSurface > 512 * 1024 * 1024) warnings.push('Tổng bề mặt canvas/ảnh/video ước tính vượt 512 MiB; đây là ước lượng upper-bound, không phải RAM đo trực tiếp.');
++      if (videos.filter(function (x) { return !x.paused; }).length > 2) warnings.push('Có hơn hai video đang phát; cân nhắc dừng preview không hoạt động.');
++      return { format: 'CANVIO_P69_SYSTEM_RESOURCE_AUDIT', version: 1, createdAt: new Date().toISOString(), readOnly: true, scannedNodes: nodes.length, nodeScanTruncated: truncated, totalElementCount: totalFound, canvases: canvases, images: images, videos: videos, audios: audios, totals: { canvasBackingBytes: canvasBytes, imageDecodedEstimateBytes: imageBytes, videoSurfaceEstimateBytes: videoSurfaceBytes, combinedSurfaceEstimateBytes: totalSurface }, resources: resource, jsHeap: memory, warnings: warnings, recommendations: ['Giảm số canvas preview đồng thời; hủy/ẩn canvas không còn sử dụng tại owner tương ứng.', 'Dùng thumbnail/proxy cho asset lớn thay vì giải mã nhiều bản gốc cùng lúc.', 'Giới hạn video preview đang phát và giải phóng object URL khi tác vụ kết thúc.', 'Không tự xóa cache, media, project hay asset trong quá trình tối ưu.'], noProjectMutation: true, noStorageMutation: true };
++    }
++    function sampleFrames(durationMs) {
++      durationMs = Math.max(250, Math.min(1800, Number(durationMs) || 900));
++      return new Promise(function (resolve) {
++        if (typeof requestAnimationFrame !== 'function' || typeof performance === 'undefined' || !performance.now) { resolve({ supported: false, reason: 'requestAnimationFrame/performance không khả dụng' }); return; }
++        var start = performance.now(), last = start, intervals = [], stopped = false;
++        function tick(now) {
++          if (stopped) return;
++          if (now > last) intervals.push(now - last); last = now;
++          if (now - start >= durationMs) {
++            stopped = true; var sorted = intervals.slice().sort(function (a, b) { return a - b; }), sum = intervals.reduce(function (a, b) { return a + b; }, 0), avg = intervals.length ? sum / intervals.length : 0;
++            resolve({ supported: true, durationMs: now - start, frames: intervals.length, averageFps: avg ? 1000 / avg : 0, medianFrameMs: sorted.length ? sorted[Math.floor(sorted.length / 2)] : 0, over33ms: intervals.filter(function (x) { return x > 33.33; }).length, over50ms: intervals.filter(function (x) { return x > 50; }).length, heuristicOnly: true, noProjectMutation: true });
++          } else requestAnimationFrame(tick);
++        }
++        requestAnimationFrame(tick);
++      });
++    }
++    function recommendations(report) {
++      var r = report || inspect(), out = [];
++      if (r.scannedNodes > 12000) out.push({ priority: 'high', action: 'Virtualize/collapse large DOM collections.' });
++      if (r.totals && r.totals.canvasBackingBytes > 256 * 1024 * 1024) out.push({ priority: 'high', action: 'Reduce preview canvas backing sizes or concurrent canvases.' });
++      if (r.videos && r.videos.filter(function (x) { return !x.paused; }).length > 2) out.push({ priority: 'medium', action: 'Pause unused video previews.' });
++      if (!out.length) out.push({ priority: 'info', action: 'No automatic optimization recommended from current read-only snapshot.' });
++      return out;
++    }
++    return { version: '69.0.0', inspect: inspect, sampleFrames: sampleFrames, recommendations: recommendations, tests: function () { var r = inspect({ root: { querySelectorAll: function () { return []; } } }); return { resourceAudit: r.format === 'CANVIO_P69_SYSTEM_RESOURCE_AUDIT', readOnly: r.readOnly, safeRecommendations: recommendations(r).length > 0, frameSampler: typeof sampleFrames === 'function' }; } };
++  })();
++  window.CANVIOSystemOptimizer = P69;
++
++  /* P70 · 1.0 candidate gate. Deliberately fail-closed until real-world evidence is supplied. */
++  var P70 = (function () {
++    var GATES = [
++      { id: 'https-browser-matrix', label: 'Chrome / Edge / Safari trên HTTPS' },
++      { id: 'native-persistence-roundtrip', label: 'IndexedDB native, lưu/đóng/mở lại và ZIP restore' },
++      { id: 'real-media-export-avsync', label: 'Media export thật, decode đầy đủ và đồng bộ A/V' },
++      { id: 'whisper-real-inference', label: 'Whisper model thật: tiếng Việt/Anh, cancel, retry và unload' },
++      { id: 'accessibility-wcag-review', label: 'Keyboard, screen reader, contrast và zoom 200%/reflow' },
++      { id: 'hosting-security-headers', label: 'Pages/hosting, CSP, CORS, HSTS và worker MIME' },
++      { id: 'timeline-real-project-acceptance', label: 'MotionCut transfer, timeline ripple/group/undo trên dự án thật' },
++      { id: 'motion-tracking-footage-review', label: 'Tracking/stabilization trên footage đại diện và review hình ảnh' },
++      { id: 'ai-provider-license-review', label: 'AI provider thật, asset provenance và quyền sử dụng' },
++      { id: 'print-font-prepress-review', label: 'Font fallback/license, pagination và quy trình in thật' },
++      { id: 'offline-3d-file-acceptance', label: 'Mở offline package trên máy sạch, không mạng, xoay mesh thực' },
++      { id: 'system-performance-budget', label: 'Performance budget trên phần cứng mục tiêu và dự án lớn' },
++      { id: 'backup-restore-cross-origin', label: 'Backup/restore chuyển origin và kiểm tra dữ liệu sau khôi phục' },
++      { id: 'release-rollback-observability', label: 'Quy trình phát hành, rollback, lỗi runtime và giám sát sau phát hành' }
++    ];
++    function inspect() {
++      var suite = window.CANVIOPhaseSuite, p1 = window.CANVIOPhase1ReleaseGate && typeof window.CANVIOPhase1ReleaseGate.run === 'function' ? { available: true, status: 'AVAILABLE_ASYNC_GATE_NOT_AUTORUN', releaseCertified: false } : null, p2 = null, offline = !!window.CANVIOOffline3D, optimizer = !!window.CANVIOSystemOptimizer;
++      /* P62 gate probes timeline/media asynchronously; P70 reports its availability but never launches that probe on page load or from this synchronous summary. */
++      try { if (window.CANVIOPhase2 && typeof window.CANVIOPhase2.report === 'function') p2 = window.CANVIOPhase2.report(); } catch (e) { p2 = { error: String(e && e.message || e) }; }
++      var suiteTests = {}; try { suiteTests = suite && suite.tests ? suite.tests() : {}; } catch (e) { suiteTests = { error: String(e && e.message || e) }; }
++      var gates = GATES.map(function (g) { return { id: g.id, label: g.label, status: 'PENDING_MANUAL_EVIDENCE', passed: false }; });
++      var implementation = { offline3D: offline, systemOptimizer: optimizer, phase1Gate: !!p1, phase1GateStatus: p1 && p1.status || 'unavailable', phase2Report: !!p2, phaseSuite: !!suite, phaseSuiteChecks: Object.keys(suiteTests || {}).length };
++      return { format: 'CANVIO_1_0_STABLE_CANDIDATE_GATE', version: 1, candidate: 'P70', applicationVersion: window.CANVIO_BUILD && window.CANVIO_BUILD.version || VERSION, phaseSuite: suite && suite.version || 'unknown', createdAt: new Date().toISOString(), status: 'BLOCKED_PENDING_REAL_WORLD_ACCEPTANCE', releaseCertified: false, implementation: implementation, inheritedPhase1: p1 ? { status: p1.status, available: true, invoked: false, releaseCertified: false } : null, inheritedPhase2: p2 ? { status: p2.status || 'available', releaseCertified: false, summary: p2.summary || null } : null, manualGates: gates, gateSummary: { pending: gates.length, passed: 0, failed: 0 }, boundaries: { offline3DFormat: 'Wavefront OBJ geometry-only, embedded into standalone HTML', noExternal3DRuntime: true, noSecondTimeline: true, noNewProjectDatabase: true, noAutomaticProviderCalls: true, noAutomaticCacheDeletion: true }, note: 'Implementation tests are not production evidence. Release certification requires attaching and reviewing real-world acceptance evidence for every gate.' };
++    }
++    return { version: '70.0.0', inspect: inspect, gates: function () { return GATES.map(function (x) { return Object.assign({}, x); }); }, tests: function () { var r = inspect(); return { candidateGate: r.status === 'BLOCKED_PENDING_REAL_WORLD_ACCEPTANCE', failClosed: r.releaseCertified === false, manualGateCount: r.manualGates.length === 14, noSelfCertification: r.releaseCertified === false, previousPhaseReports: !!(r.inheritedPhase1 && r.inheritedPhase2) }; } };
++  })();
++  window.CANVIOStableRelease = P70;
++
++  function makePanel(id, title, subtitle, html) {
++    var section = document.createElement('section'); section.className = 'card cv-p3-panel'; section.id = id;
++    section.innerHTML = '<div class="tiny">FINAL MILESTONE · P68–P70</div><h3 style="margin:7px 0">' + esc(title) + '</h3><p class="tiny">' + esc(subtitle) + '</p>' + html;
++    return section;
++  }
++  function mount() {
++    var page = byId('page-videoEngine'); if (!page || byId('cv-p68-p70-panel')) return false;
++    var panel = makePanel('cv-p68-p70-panel', 'P68–P70 · Offline 3D, System Health & Stable Release', 'Đóng gói OBJ 3D offline · kiểm tra hiệu năng · tạo báo cáo readiness CANVIO 1.0. Không thay đổi project nếu chưa có thao tác rõ ràng.',
++      '<div class="cv-p3-grid"><label>Wavefront OBJ<input id="cv68-file" type="file" accept=".obj,text/plain"></label><label>Tên package<input id="cv68-name" maxlength="120" value="CANVIO Offline 3D Scene"></label></div><div class="cv-p3-toolbar"><button type="button" class="btn btn-soft sm" id="cv68-inspect">Phân tích mesh</button><button type="button" class="btn btn-primary sm" id="cv68-export" disabled>Xuất Offline 3D HTML</button></div><div id="cv68-status" class="tiny" role="status" aria-live="polite">Chỉ hỗ trợ OBJ geometry; không kèm MTL/texture.</div><pre id="cv68-report" class="cv-p3-pre" tabindex="0">Chưa chọn OBJ.</pre><hr class="cv-p3-divider"><div class="cv-p3-toolbar"><button type="button" class="btn btn-soft sm" id="cv69-audit">Audit hiệu năng</button><button type="button" class="btn btn-soft sm" id="cv69-frames">Đo frame budget (0,9s)</button></div><div id="cv69-status" class="tiny" role="status" aria-live="polite">P69 chỉ đọc; không tự xóa cache/media hoặc chỉnh project.</div><pre id="cv69-report" class="cv-p3-pre" tabindex="0">Chưa chạy audit.</pre><hr class="cv-p3-divider"><div class="cv-p3-toolbar"><button type="button" class="btn btn-primary sm" id="cv70-gate">Kiểm tra ứng viên CANVIO 1.0</button><button type="button" class="btn btn-ghost sm" id="cv70-export" disabled>Xuất release report</button></div><div id="cv70-status" class="tiny" role="status" aria-live="polite">Release gate mặc định khóa cho tới khi có bằng chứng kiểm thử thật.</div><pre id="cv70-report" class="cv-p3-pre" tabindex="0">Chưa chạy release gate.</pre>');
++    page.appendChild(panel);
++    var objFile = null, objMesh = null, offlineHtml = null, gateReport = null;
++    function report(id, value) { var n = byId(id); if (n) n.textContent = JSON.stringify(value, null, 2); }
++    byId('cv68-file').addEventListener('change', function () { objFile = this.files && this.files[0] || null; this.value = ''; objMesh = null; offlineHtml = null; byId('cv68-export').disabled = true; byId('cv68-status').textContent = objFile ? 'Đã chọn ' + objFile.name + ' · ' + objFile.size + ' bytes. Nhấn Phân tích mesh.' : 'Chưa chọn OBJ.'; });
++    byId('cv68-inspect').addEventListener('click', async function () { if (!objFile) { byId('cv68-status').textContent = 'Hãy chọn file .obj trước.'; return; } try { if (objFile.size > 5 * 1024 * 1024) throw new Error('OBJ vượt giới hạn 5 MiB.'); var text = await objFile.text(); objMesh = P68.parseOBJ(text); var pre = { vertexCount: objMesh.vertexCount, faceCount: objMesh.faceCount, triangleCount: objMesh.triangleCount, bounds: objMesh.bounds, ignored: objMesh.ignored, materialsIncluded: false, texturesIncluded: false }; report('cv68-report', pre); byId('cv68-status').textContent = 'Mesh hợp lệ. Có thể xuất viewer HTML offline.'; byId('cv68-export').disabled = false; } catch (e) { objMesh = null; byId('cv68-export').disabled = true; byId('cv68-status').textContent = e.message || String(e); report('cv68-report', { error: e.message || String(e) }); } });
++    byId('cv68-export').addEventListener('click', function () { if (!objMesh) return; try { var pkg = P68.buildOfflineHTML(objMesh, { title: byId('cv68-name').value || objFile.name }); offlineHtml = pkg; var blob = new Blob([pkg], { type: 'text/html;charset=utf-8' }), url = URL.createObjectURL(blob), a = document.createElement('a'); a.href = url; a.download = 'CANVIO_Offline_3D_' + new Date().toISOString().slice(0, 10) + '.html'; a.click(); setTimeout(function () { URL.revokeObjectURL(url); }, 1500); report('cv68-report', { mesh: { vertices: objMesh.vertexCount, triangles: objMesh.triangleCount }, preflight: P68.inspectPackage(pkg), bytes: blob.size }); byId('cv68-status').textContent = 'Đã xuất một file HTML tự chứa. Chép file sang máy khác và mở offline để nghiệm thu.'; } catch (e) { byId('cv68-status').textContent = e.message || String(e); } });
++    byId('cv69-audit').addEventListener('click', function () { try { var r = P69.inspect(); report('cv69-report', { audit: r, recommendations: P69.recommendations(r) }); byId('cv69-status').textContent = 'Audit hoàn tất · ' + r.scannedNodes + ' nodes · ' + r.warnings.length + ' cảnh báo.'; } catch (e) { byId('cv69-status').textContent = e.message || String(e); } });
++    byId('cv69-frames').addEventListener('click', async function () { var b = this; b.disabled = true; try { var r = await P69.sampleFrames(900); report('cv69-report', r); byId('cv69-status').textContent = r.supported ? 'Frame sample hoàn tất · ' + r.averageFps.toFixed(1) + ' FPS trung bình (heuristic).' : r.reason; } catch (e) { byId('cv69-status').textContent = e.message || String(e); } finally { b.disabled = false; } });
++    byId('cv70-gate').addEventListener('click', function () { try { gateReport = P70.inspect(); report('cv70-report', gateReport); byId('cv70-status').textContent = gateReport.status + ' · ' + gateReport.gateSummary.pending + ' cổng nghiệm thu thủ công đang chờ.'; byId('cv70-export').disabled = false; } catch (e) { gateReport = null; byId('cv70-export').disabled = true; byId('cv70-status').textContent = e.message || String(e); } });
++    byId('cv70-export').addEventListener('click', function () { if (!gateReport) return; var blob = new Blob([JSON.stringify(gateReport, null, 2)], { type: 'application/json' }), url = URL.createObjectURL(blob), a = document.createElement('a'); a.href = url; a.download = 'CANVIO_1_0_STABLE_CANDIDATE_GATE_' + new Date().toISOString().slice(0, 10) + '.json'; a.click(); setTimeout(function () { URL.revokeObjectURL(url); }, 1500); });
++    return true;
++  }
++  function installStyles() {
++    if (byId('canvio-p68-p70-styles')) return;
++    var s = document.createElement('style'); s.id = 'canvio-p68-p70-styles';
++    s.textContent = '.cv-p3-panel{margin:14px 0;border:1px solid var(--line,#dbe3ee)}.cv-p3-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:10px 0}.cv-p3-grid label{display:flex;flex-direction:column;gap:6px;font-size:10px;font-weight:750;color:var(--muted,#64748b);min-width:0}.cv-p3-grid input{max-width:100%;min-width:0;min-height:35px;padding:7px 9px;border:1px solid var(--line,#dbe3ee);border-radius:8px;background:var(--surface,#fff);color:var(--text,#172033)}.cv-p3-toolbar{display:flex;gap:7px;flex-wrap:wrap;align-items:center;margin:10px 0}.cv-p3-pre{max-height:260px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;background:var(--surface-2,#f6f8fb);border-radius:9px;padding:10px;font:10px/1.5 ui-monospace,monospace}.cv-p3-divider{border:0;border-top:1px solid var(--line,#dbe3ee);margin:14px 0}.cv-p3-panel :focus-visible{outline:3px solid #2d7ff9;outline-offset:2px}@media(max-width:680px){.cv-p3-grid{grid-template-columns:minmax(0,1fr)}}@media(prefers-reduced-motion:reduce){.cv-p3-panel *{animation:none!important;transition:none!important}}@media print{.cv-p3-panel{display:none!important}}';
++    document.head.appendChild(s);
++  }
++  window.CANVIOPhase3 = { version: '70.0.0', phases: { P68: P68, P69: P69, P70: P70 }, mount: mount, tests: function () { return { P68: P68.tests(), P69: P69.tests(), P70: P70.tests(), noSecondTimeline: true, noNewProjectDatabase: true, noAutomaticProviderCalls: true }; }, report: function () { return P70.inspect(); } };
++  var suite = window.CANVIOPhaseSuite;
++  if (suite) {
++    var oldTests = suite.tests; suite.version = '70.0.0';
++    suite.tests = function () { var r = oldTests ? oldTests.apply(this, arguments) : {}; var p = window.CANVIOPhase3.tests(); r.p68Offline3DPackaging = !!(p.P68 && p.P68.noExternalRuntime && p.P68.noNetwork); r.p69SystemOptimization = !!(p.P69 && p.P69.readOnly && p.P69.resourceAudit); r.p70StableReleaseGate = !!(p.P70 && p.P70.failClosed && p.P70.noSelfCertification); return r; };
++  }
++  var prior = window.CANVIO_BUILD || {};
++  window.CANVIO_BUILD = Object.freeze(Object.assign({}, prior, { version: VERSION, base: '23.3.81-p67', candidate: 'P70', phaseRange: 'P68–P70', features: (prior.features || []).concat([
++    'P68 geometry-only Wavefront OBJ offline package: embedded mesh, local Canvas 2D 3D viewer, no CDN/network/runtime dependency',
++    'P69 read-only DOM/canvas/image/video/resource and frame-budget audit with safe optimization recommendations',
++    'P70 fail-closed CANVIO 1.0 Stable candidate gate with 14 explicit real-world acceptance gates'
++  ]) }));
++  try { document.title = 'CANVIO 23.3.84-p70 — Stable Release Candidate'; } catch (e) {}
++  installStyles(); if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { mount(); }, { once: true }); else mount();
++  setTimeout(mount, 900); setTimeout(mount, 2400);
++})();
++</script>
+ </body>
+ </html>
+diff -ruN '--exclude=CANVIO_MANIFEST.json' '--exclude=canvio-p67-to-p70.patch' CANVIO_P67/patches/README_P68_P70.md CANVIO_P70/patches/README_P68_P70.md
+--- CANVIO_P67/patches/README_P68_P70.md	1970-01-01 00:00:00.000000000 +0000
++++ CANVIO_P70/patches/README_P68_P70.md	2026-11-16 18:26:34.491567430 +0000
+@@ -0,0 +1,13 @@
++# P68–P70 source patch
++
++`canvio-p67-to-p70.patch` applies the final milestone to a clean P67 source tree. It includes the P68–P70 application integration, synchronized standalone module, tests, reports, documentation and CI updates. The delivery manifest is regenerated separately after the final package is assembled.
++
++Apply from the package root to a clean P67 tree:
++
++```bash
++patch -p1 < patches/canvio-p67-to-p70.patch
++node tests/p68-p70/verify-p68-p70-source.cjs
++node tests/p68-p70/run-p68-p70-tests.cjs
++```
++
++The generated patch is intended for review and source reconstruction. Runtime/real-world acceptance limitations remain listed in `CANVIO_QA_REPORT.md`; this patch does not make the candidate production-certified.
+diff -ruN '--exclude=CANVIO_MANIFEST.json' '--exclude=canvio-p67-to-p70.patch' CANVIO_P67/tests/p63-p67/browser-smoke-report.json CANVIO_P70/tests/p63-p67/browser-smoke-report.json
+--- CANVIO_P67/tests/p63-p67/browser-smoke-report.json	2026-11-16 18:02:23.020424098 +0000
++++ CANVIO_P70/tests/p63-p67/browser-smoke-report.json	2026-11-16 18:26:56.021636523 +0000
+@@ -1,7 +1,7 @@
+ {
+-  "format": "CANVIO_P63_P67_CHROMIUM_RUNTIME_SMOKE",
++  "format": "CANVIO_P63_P70_INHERITED_CHROMIUM_RUNTIME_SMOKE",
+   "version": 1,
+-  "candidate": "P67",
++  "candidate": "P70",
+   "browser": "144.0.7559.96",
+   "origin": "about:blank",
+   "testOnlyStorageShim": true,
+@@ -14,12 +14,12 @@
+     {
+       "id": "build-marker",
+       "status": "pass",
+-      "value": "23.3.81-p67"
++      "value": "23.3.84-p70"
+     },
+     {
+       "id": "document-title",
+       "status": "pass",
+-      "value": "CANVIO 23.3.81-p67 — Creative Production Expansion"
++      "value": "CANVIO 23.3.84-p70 — Stable Release Candidate"
+     },
+     {
+       "id": "spa-navigation",
+@@ -83,7 +83,10 @@
+         "p64AdvancedTimelineEditing": true,
+         "p65MotionTracking": true,
+         "p66AICreativeAssetWorkflow": true,
+-        "p67PrintProduction": true
++        "p67PrintProduction": true,
++        "p68Offline3DPackaging": true,
++        "p69SystemOptimization": true,
++        "p70StableReleaseGate": true
+       }
+     },
+     {
+@@ -171,7 +174,7 @@
+       "id": "real-webm-export-decode",
+       "status": "pass",
+       "value": {
+-        "size": 19494,
++        "size": 20989,
+         "mime": "video/webm;codecs=vp9",
+         "duration": 0.9,
+         "width": 960,
+@@ -183,8 +186,8 @@
+           "avSyncCertified": false
+         },
+         "download": {
+-          "name": "CANVIO_multitrack_1794851916600.webm",
+-          "href": "blob:null/269702b2-a392-4cc8-b9e8-ee0d289fea44"
++          "name": "CANVIO_multitrack_1794853609928.webm",
++          "href": "blob:null/afafc903-613f-48ab-a0f4-64e39b2d0291"
+         }
+       }
+     },
+@@ -192,9 +195,9 @@
+       "id": "real-mp4-h264-export-decode",
+       "status": "pass",
+       "value": {
+-        "size": 11855,
++        "size": 11840,
+         "mime": "video/mp4;codecs=avc1.420020",
+-        "duration": 0.8946,
++        "duration": 0.911467,
+         "width": 960,
+         "height": 540,
+         "readyState": 4,
+@@ -204,8 +207,8 @@
+           "avSyncCertified": false
+         },
+         "download": {
+-          "name": "CANVIO_multitrack_1794851917566.mp4",
+-          "href": "blob:null/51d8f850-0947-4e1b-95e6-3c119365db71"
++          "name": "CANVIO_multitrack_1794853610898.mp4",
++          "href": "blob:null/6bf362b3-c3c7-49f5-8f79-69d6e3a33c14"
+         }
+       }
+     },
+@@ -222,7 +225,7 @@
+       "id": "render-retry-after-cancel",
+       "status": "pass",
+       "value": {
+-        "size": 20491,
++        "size": 19099,
+         "mime": "video/webm;codecs=vp9",
+         "duration": 0.8,
+         "width": 960,
+@@ -234,8 +237,8 @@
+           "avSyncCertified": false
+         },
+         "download": {
+-          "name": "CANVIO_multitrack_1794851918712.webm",
+-          "href": "blob:null/e46d3306-04f8-4289-918d-6d4eeb2a6c4f"
++          "name": "CANVIO_multitrack_1794853612028.webm",
++          "href": "blob:null/609c1359-752f-4c22-91bd-9c322807c64d"
+         }
+       }
+     },
+@@ -316,7 +319,7 @@
+         },
+         "grouped": {
+           "ok": true,
+-          "groupId": "vtgroup-mwjkhob5-m6gp8fcruj",
++          "groupId": "vtgroup-mwjlhyve-piito2rvds",
+           "count": 2,
+           "name": "P67 smoke group"
+         },
+@@ -329,8 +332,8 @@
+           "ok": true,
+           "duplicated": 2,
+           "ids": [
+-            "vtclip-mwjkhobc-f6vt9ubodv",
+-            "vtclip-mwjkhobc-ra57j5g8yl"
++            "vtclip-mwjlhyvk-heofgtrkik",
++            "vtclip-mwjlhyvk-alnbe2t13a"
+           ],
+           "mediaReferencesReused": true
+         },
+@@ -351,8 +354,8 @@
+             "p67-a",
+             "p67-b",
+             "p67-c",
+-            "vtclip-mwjkhobc-f6vt9ubodv",
+-            "vtclip-mwjkhobc-ra57j5g8yl"
++            "vtclip-mwjlhyvk-heofgtrkik",
++            "vtclip-mwjlhyvk-alnbe2t13a"
+           ]
+         },
+         "mounted": true,
+diff -ruN '--exclude=CANVIO_MANIFEST.json' '--exclude=canvio-p67-to-p70.patch' CANVIO_P67/tests/p63-p67/run-p63-p67-browser-smoke.py CANVIO_P70/tests/p63-p67/run-p63-p67-browser-smoke.py
+--- CANVIO_P67/tests/p63-p67/run-p63-p67-browser-smoke.py	2026-11-16 17:57:57.861699938 +0000
++++ CANVIO_P70/tests/p63-p67/run-p63-p67-browser-smoke.py	2026-11-16 18:27:25.204342398 +0000
+@@ -26,8 +26,8 @@
+ 
+ ROOT = Path(__file__).resolve().parents[2]
+ REPORT_PATH = Path(__file__).with_name("browser-smoke-report.json")
+-EXPECTED_VERSION = "23.3.81-p67"
+-EXPECTED_TITLE = "CANVIO 23.3.81-p67 — Creative Production Expansion"
++EXPECTED_VERSION = "23.3.84-p70"
++EXPECTED_TITLE = "CANVIO 23.3.84-p70 — Stable Release Candidate"
+ 
+ STORAGE_SHIM = r"""<script id="canvio-p56-test-storage-shim">
+ (() => {
+@@ -72,9 +72,9 @@
+     executable = os.environ.get("CHROMIUM_EXECUTABLE_PATH")
+ 
+     results: dict[str, object] = {
+-        "format": "CANVIO_P63_P67_CHROMIUM_RUNTIME_SMOKE",
++        "format": "CANVIO_P63_P70_INHERITED_CHROMIUM_RUNTIME_SMOKE",
+         "version": 1,
+-        "candidate": "P67",
++        "candidate": "P70",
+         "browser": None,
+         "origin": "about:blank",
+         "testOnlyStorageShim": True,
+@@ -118,10 +118,10 @@
+ 
+         title = page.title()
+         version = page.evaluate("window.CANVIO_BUILD && window.CANVIO_BUILD.version")
+-        require(version == EXPECTED_VERSION, "P62 app build marker is active", str(version))
++        require(version == EXPECTED_VERSION, "P70 app build marker is active", str(version))
+         results["checks"].append({"id": "build-marker", "status": "pass", "value": version})
+         passed += 1
+-        require(title == EXPECTED_TITLE, "P62 title survives inherited title observers", title)
++        require(title == EXPECTED_TITLE, "P70 title survives inherited title observers", title)
+         results["checks"].append({"id": "document-title", "status": "pass", "value": title})
+         passed += 1
+ 
+@@ -428,7 +428,7 @@
+ 
+     results["summary"] = {"passed": passed, "failed": 0, "status": "PASS_WITH_ORIGIN_LIMITATIONS"}
+     REPORT_PATH.write_text(json.dumps(results, ensure_ascii=False, indent=2), encoding="utf-8")
+-    print(f"\nP63–P67 Chromium browser smoke: {passed} checks passed; origin-dependent acceptance remains pending.")
++    print(f"\nP63–P67 inherited Chromium regression on P70: {passed} checks passed; origin-dependent acceptance remains pending.")
+     print("Report:", REPORT_PATH)
+     return 0
+ 
+@@ -437,5 +437,5 @@
+     try:
+         raise SystemExit(main())
+     except Exception as error:
+-        print("P63–P67 browser smoke failed:", repr(error), file=sys.stderr)
++        print("P63–P67 inherited regression on P70 failed:", repr(error), file=sys.stderr)
+         raise
+diff -ruN '--exclude=CANVIO_MANIFEST.json' '--exclude=canvio-p67-to-p70.patch' CANVIO_P67/tests/p68-p70/browser-smoke-report.json CANVIO_P70/tests/p68-p70/browser-smoke-report.json
+--- CANVIO_P67/tests/p68-p70/browser-smoke-report.json	1970-01-01 00:00:00.000000000 +0000
++++ CANVIO_P70/tests/p68-p70/browser-smoke-report.json	2026-11-16 18:27:07.967822480 +0000
+@@ -0,0 +1,101 @@
++{
++  "format": "CANVIO_P68_P70_CHROMIUM_SMOKE",
++  "candidate": "P70",
++  "version": "23.3.84-p70",
++  "browser": "144.0.7559.96",
++  "origin": "about:blank",
++  "testOnlyStorageShim": true,
++  "limitations": [
++    "Opaque about:blank; native IndexedDB/HTTPS are not covered.",
++    "OBJ offline viewer smoke is an in-memory document, not a clean-machine offline acceptance test.",
++    "No Chrome/Edge/Safari matrix, real project restore, real A/V sync, Whisper inference, WCAG review or deployed hosting certificate."
++  ],
++  "summary": {
++    "pass": 16,
++    "fail": 0
++  },
++  "checks": [
++    {
++      "id": "P70 build marker active",
++      "status": "pass",
++      "detail": "23.3.84-p70"
++    },
++    {
++      "id": "P70 document title survives legacy observers",
++      "status": "pass",
++      "detail": "CANVIO 23.3.84-p70 — Stable Release Candidate"
++    },
++    {
++      "id": "P68–P70 control panel mounted in Video Engine",
++      "status": "pass",
++      "detail": ""
++    },
++    {
++      "id": "P47–P70 PhaseSuite flags all true",
++      "status": "pass",
++      "detail": "{}"
++    },
++    {
++      "id": "P68/P69/P70 APIs exposed",
++      "status": "pass",
++      "detail": "{\"p68\": true, \"p69\": true, \"p70\": true, \"build\": \"23.3.84-p70\", \"phase\": \"70.0.0\"}"
++    },
++    {
++      "id": "P68 packages real tetra OBJ geometry",
++      "status": "pass",
++      "detail": "{\"format\": \"CANVIO_P68_OFFLINE_3D_PREFLIGHT\", \"status\": \"PASS\", \"checks\": [{\"id\": \"single-html-document\", \"ok\": true}, {\"id\": \"no-external-script\", \"ok\": true}, {\"id\": \"no-external-stylesheet\", \"ok\": true}, {\"id\": \"no-network-api\", \"ok\": true}, {\"id\": \"embedded-geometry\", \"ok\": true}, {\"id\": \"offline-controls\", \"ok\": true}], \"pass\": 6, \"fail\": 0, \"bytes\": 5199, \"singleFile\": true, \"externalRuntime\": false, \"geometryOnly\": true, \"noTextures\": true, \"noMaterials\": true}"
++    },
++    {
++      "id": "P68 viewer package embeds geometry and forbids external runtime",
++      "status": "pass",
++      "detail": ""
++    },
++    {
++      "id": "P69 audit + P70 release gate remain read-only and fail-closed",
++      "status": "pass",
++      "detail": "{\"nodes\": 13466, \"readOnly\": true, \"totals\": {\"canvasBackingBytes\": 14493600, \"imageDecodedEstimateBytes\": 12480000, \"videoSurfaceEstimateBytes\": 0, \"combinedSurfaceEstimateBytes\": 26973600}, \"resourceCount\": 0, \"phase1\": {\"status\": \"AVAILABLE_ASYNC_GATE_NOT_AUTORUN\", \"available\": true, \"invoked\": false, \"releaseCertified\": false}, \"phase2\": {\"status\": \"IMPLEMENTATION_READY_PENDING_MANUAL_ACCEPTANCE\", \"releaseCertified\": false, \"summary\": {\"pass\": 32, \"fail\": 0}}, \"gates\": 14, \"pending\": 14, \"status\": \"BLOCKED_PENDING_REAL_WORLD_ACCEPTANCE\", \"certified\": false}"
++    },
++    {
++      "id": "P70 summary does not auto-run asynchronous Phase 1 media probe",
++      "status": "pass",
++      "detail": ""
++    },
++    {
++      "id": "P69 browser frame sampler runs",
++      "status": "pass",
++      "detail": "{\"supported\": true, \"durationMs\": 300.3000000005595, \"frames\": 19, \"averageFps\": 63.27006326994538, \"medianFrameMs\": 16.69999999999891, \"over33ms\": 0, \"over50ms\": 0, \"heuristicOnly\": true, \"noProjectMutation\": true}"
++    },
++    {
++      "id": "Offline viewer renders mesh to canvas",
++      "status": "pass",
++      "detail": "{'w': 1024, 'h': 706}, nonblank pixels=11632"
++    },
++    {
++      "id": "Offline viewer wireframe control works",
++      "status": "pass",
++      "detail": ""
++    },
++    {
++      "id": "Offline viewer runs without errors or network requests",
++      "status": "pass",
++      "detail": "{\"errors\": [], \"requests\": []}"
++    },
++    {
++      "id": "P70 panel has no horizontal overflow at 375px",
++      "status": "pass",
++      "detail": ""
++    },
++    {
++      "id": "No uncaught application page errors",
++      "status": "pass",
++      "detail": "[]"
++    },
++    {
++      "id": "No console errors in app boot/smoke",
++      "status": "pass",
++      "detail": "[]"
++    }
++  ],
++  "releaseCertified": false,
++  "releaseStatus": "BLOCKED_PENDING_REAL_WORLD_ACCEPTANCE"
++}
+diff -ruN '--exclude=CANVIO_MANIFEST.json' '--exclude=canvio-p67-to-p70.patch' CANVIO_P67/tests/p68-p70/run-p68-p70-browser-smoke.py CANVIO_P70/tests/p68-p70/run-p68-p70-browser-smoke.py
+--- CANVIO_P67/tests/p68-p70/run-p68-p70-browser-smoke.py	1970-01-01 00:00:00.000000000 +0000
++++ CANVIO_P70/tests/p68-p70/run-p68-p70-browser-smoke.py	2026-11-16 18:16:46.332118862 +0000
+@@ -0,0 +1,85 @@
++#!/usr/bin/env python3
++"""Chromium smoke for CANVIO P68–P70 and the generated offline OBJ viewer.
++Runs the real app source through Playwright set_content() on opaque about:blank.
++A storage shim is test-only; this does NOT certify native persistence/HTTPS or Stable release.
++"""
++from __future__ import annotations
++import json, os, re, shutil
++from pathlib import Path
++from playwright.sync_api import sync_playwright
++
++ROOT = Path(__file__).resolve().parents[2]
++REPORT = Path(__file__).with_name('browser-smoke-report.json')
++EXPECTED_VERSION = '23.3.84-p70'
++EXPECTED_TITLE = 'CANVIO 23.3.84-p70 — Stable Release Candidate'
++SHIM = r'''<script id="canvio-p70-test-storage-shim">(()=>{function make(){const m=new Map();return{get length(){return m.size},key(i){return Array.from(m.keys())[i]??null},getItem(k){return m.has(String(k))?m.get(String(k)):null},setItem(k,v){m.set(String(k),String(v))},removeItem(k){m.delete(String(k))},clear(){m.clear()}}}Object.defineProperty(window,'localStorage',{configurable:true,value:make()});Object.defineProperty(window,'sessionStorage',{configurable:true,value:make()});})();</script>'''
++
++checks=[]
++def require(ok, name, detail=''):
++    if not ok: raise AssertionError(name + (': '+detail if detail else ''))
++    checks.append({'id':name,'status':'pass','detail':detail})
++    print('PASS',name,detail)
++
++def main():
++    source=(ROOT/'index.html').read_text(encoding='utf-8')
++    source=re.sub(r'^(\s*<!doctype[^>]*>)', lambda m:m.group(1)+SHIM, source, count=1, flags=re.I)
++    errors=[]; console_errors=[]
++    with sync_playwright() as p:
++        executable=os.environ.get('CHROMIUM_EXECUTABLE_PATH') or shutil.which('chromium') or shutil.which('chromium-browser')
++        browser=p.chromium.launch(headless=True,executable_path=executable,args=['--no-sandbox','--disable-dev-shm-usage'])
++        page=browser.new_page(viewport={'width':1440,'height':1000},accept_downloads=True)
++        page.on('pageerror',lambda e:errors.append(str(e)))
++        page.on('console',lambda m:console_errors.append(m.text[:500]) if m.type=='error' else None)
++        page.route('https://fonts.googleapis.com/**',lambda r:r.fulfill(status=200,content_type='text/css',body=''))
++        page.route('https://fonts.gstatic.com/**',lambda r:r.fulfill(status=200,content_type='font/woff2',body=b''))
++        page.set_content(source,wait_until='load',timeout=120000)
++        page.wait_for_timeout(4400)
++        version=page.evaluate('window.CANVIO_BUILD && CANVIO_BUILD.version')
++        require(version==EXPECTED_VERSION,'P70 build marker active',str(version))
++        title=page.title()
++        require(title==EXPECTED_TITLE,'P70 document title survives legacy observers',title)
++        page.evaluate("CV.go('videoEngine')")
++        page.wait_for_timeout(1000)
++        require(page.locator('#cv-p68-p70-panel').count()==1,'P68–P70 control panel mounted in Video Engine')
++        suite=page.evaluate('CANVIOPhaseSuite.tests()')
++        failed={k:v for k,v in suite.items() if v is not True}
++        require(not failed,'P47–P70 PhaseSuite flags all true',json.dumps(failed,ensure_ascii=False))
++        api=page.evaluate('''() => ({p68:!!CANVIOOffline3D,p69:!!CANVIOSystemOptimizer,p70:!!CANVIOStableRelease,build:CANVIO_BUILD.version,phase:CANVIOPhase3.version})''')
++        require(api['p68'] and api['p69'] and api['p70'] and api['phase']=='70.0.0','P68/P69/P70 APIs exposed',json.dumps(api))
++        fixture='''# tetra-ish model\nv -1 -1 0\nv 1 -1 0\nv 0 1 0\nv 0 0 1\nf 1 2 3\nf 1 4 2\nf 2 4 3\nf 3 4 1'''
++        package=page.evaluate('''obj => { const p=CANVIOOffline3D.buildFromOBJ(obj,{title:'Offline Smoke'}); return {html:p.html,triangles:p.mesh.triangleCount,preflight:p.preflight}; }''',fixture)
++        require(package['triangles']==4 and package['preflight']['status']=='PASS','P68 packages real tetra OBJ geometry',json.dumps(package['preflight']))
++        require('connect-src \'none\'' in package['html'] and 'mesh-data' in package['html'] and '<script src=' not in package['html'],'P68 viewer package embeds geometry and forbids external runtime')
++        report=page.evaluate('''() => {const p=CANVIOSystemOptimizer.inspect();const gates=CANVIOStableRelease.inspect();return {nodes:p.scannedNodes,readOnly:p.readOnly,totals:p.totals,resourceCount:p.resources.count,phase1:gates.inheritedPhase1,phase2:gates.inheritedPhase2,gates:gates.manualGates.length,pending:gates.gateSummary.pending,status:gates.status,certified:gates.releaseCertified};}''')
++        require(report['readOnly'] and report['gates']==14 and report['pending']==14 and report['certified'] is False and report['status']=='BLOCKED_PENDING_REAL_WORLD_ACCEPTANCE','P69 audit + P70 release gate remain read-only and fail-closed',json.dumps(report,ensure_ascii=False))
++        require(report['phase1']['invoked'] is False,'P70 summary does not auto-run asynchronous Phase 1 media probe')
++        frame=page.evaluate('CANVIOSystemOptimizer.sampleFrames(300).then(x=>x)')
++        require(frame['supported'] and frame['frames']>=5 and frame['noProjectMutation'],'P69 browser frame sampler runs',json.dumps(frame))
++        # Open the generated package in a second isolated document and verify the viewer draws without network.
++        viewer=browser.new_page(viewport={'width':1024,'height':768})
++        viewer_errors=[]; viewer_requests=[]
++        viewer.on('pageerror',lambda e:viewer_errors.append(str(e)))
++        viewer.on('request',lambda r:viewer_requests.append(r.url))
++        viewer.set_content(package['html'],wait_until='load')
++        viewer.wait_for_timeout(150)
++        canvas=viewer.locator('#view')
++        canvas_size=canvas.evaluate('(c)=>({w:c.width,h:c.height})')
++        pixels=canvas.evaluate('''c=>{const x=c.getContext('2d');const a=x.getImageData(0,0,c.width,c.height).data;let n=0;for(let i=0;i<a.length;i+=4)if(a[i]||a[i+1]||a[i+2])n++;return n;}''')
++        require(canvas_size['w']>0 and canvas_size['h']>0 and pixels>20,'Offline viewer renders mesh to canvas',f'{canvas_size}, nonblank pixels={pixels}')
++        viewer.locator('#wire').click()
++        require(viewer.locator('#wire').get_attribute('aria-pressed')=='true','Offline viewer wireframe control works')
++        viewer.locator('#home').click()
++        require(not viewer_errors and not viewer_requests,'Offline viewer runs without errors or network requests',json.dumps({'errors':viewer_errors,'requests':viewer_requests}))
++        # Small viewport no-overflow check in CANVIO app.
++        await_result=page.set_viewport_size({'width':375,'height':812})
++        page.wait_for_timeout(250)
++        overflow=page.evaluate('document.documentElement.scrollWidth > document.documentElement.clientWidth')
++        require(not overflow,'P70 panel has no horizontal overflow at 375px')
++        require(not errors,'No uncaught application page errors',json.dumps(errors[:5]))
++        require(not console_errors,'No console errors in app boot/smoke',json.dumps(console_errors[:5]))
++        results={'format':'CANVIO_P68_P70_CHROMIUM_SMOKE','candidate':'P70','version':EXPECTED_VERSION,'browser':browser.version,'origin':'about:blank','testOnlyStorageShim':True,'limitations':['Opaque about:blank; native IndexedDB/HTTPS are not covered.','OBJ offline viewer smoke is an in-memory document, not a clean-machine offline acceptance test.','No Chrome/Edge/Safari matrix, real project restore, real A/V sync, Whisper inference, WCAG review or deployed hosting certificate.'],'summary':{'pass':len(checks),'fail':0},'checks':checks,'releaseCertified':False,'releaseStatus':report['status']}
++        REPORT.write_text(json.dumps(results,indent=2,ensure_ascii=False)+'\n',encoding='utf-8')
++        browser.close()
++    print(f'P68–P70 Chromium smoke: {len(checks)}/{len(checks)} PASS')
++
++if __name__=='__main__': main()
+diff -ruN '--exclude=CANVIO_MANIFEST.json' '--exclude=canvio-p67-to-p70.patch' CANVIO_P67/tests/p68-p70/run-p68-p70-tests.cjs CANVIO_P70/tests/p68-p70/run-p68-p70-tests.cjs
+--- CANVIO_P67/tests/p68-p70/run-p68-p70-tests.cjs	1970-01-01 00:00:00.000000000 +0000
++++ CANVIO_P70/tests/p68-p70/run-p68-p70-tests.cjs	2026-11-16 18:24:21.221809330 +0000
+@@ -0,0 +1,186 @@
++'use strict';
++const fs = require('fs');
++const vm = require('vm');
++const assert = require('assert');
++const path = require('path');
++const source = fs.readFileSync(path.join(__dirname, '..', '..', 'canvio-p68-p70.js'), 'utf8');
++let now = 0;
++const raf = [];
++const allNodes = [
++  { tagName: 'CANVAS', width: 100, height: 50 },
++  { tagName: 'IMG', naturalWidth: 200, naturalHeight: 100, complete: true },
++  { tagName: 'VIDEO', videoWidth: 320, videoHeight: 180, paused: false, readyState: 3 },
++  { tagName: 'AUDIO', paused: true, readyState: 4 }
++];
++const root = { querySelectorAll: selector => selector === '*' ? allNodes : allNodes.filter(n => n.tagName.toLowerCase() === selector) };
++const document = {
++  readyState: 'loading', title: 'CANVIO P67', body: root, documentElement: root,
++  head: { appendChild() {} }, getElementById() { return null; }, createElement() { return { setAttribute() {}, appendChild() {} }; }, addEventListener() {}
++};
++const window = {
++  CANVIO_BUILD: { version: '23.3.81-p67', candidate: 'P67', features: [] },
++  CANVIOPhaseSuite: { version: '67.0.0', tests: () => ({ inherited: true }) },
++  CANVIOPhase1ReleaseGate: { run: () => ({ status: 'BLOCKED', releaseCertified: false }) },
++  CANVIOPhase2: { report: () => ({ status: 'PENDING', releaseCertified: false, summary: { pass: 1, fail: 0 } }) },
++  crypto: { randomUUID: () => 'test-id' }
++};
++const context = {
++  window, document, setTimeout() {}, clearTimeout() {}, console, Date, Math, JSON, Object, Array, String, Number, Boolean, Set, Map, Promise,
++  Uint8Array, Uint8ClampedArray, Blob, Error, RegExp, TextEncoder, performance: { now: () => now, getEntriesByType: () => [{ transferSize: 100, decodedBodySize: 120 }] },
++  requestAnimationFrame: callback => { raf.push(callback); return raf.length; }
++};
++vm.createContext(context);
++vm.runInContext(source, context, { timeout: 10000, filename: 'canvio-p68-p70.js' });
++let passed = 0;
++async function test(name, fn) { await fn(); passed++; process.stdout.write('PASS ' + name + '\n'); }
++const OBJ = [
++  '# tiny quad fixture',
++  'o panel',
++  'v -1 -1 0',
++  'v 1 -1 0',
++  'v 1 1 0',
++  'v -1 1 0',
++  'vt 0 0',
++  'vn 0 0 1',
++  'usemtl ignored',
++  'f 1/1/1 2/1/1 3/1/1 4/1/1'
++].join('\n');
++
++(async () => {
++  const P68 = window.CANVIOOffline3D, P69 = window.CANVIOSystemOptimizer, P70 = window.CANVIOStableRelease;
++  assert.ok(P68 && P69 && P70, 'P68/P69/P70 APIs must be exposed');
++
++  await test('P68 parses OBJ polygons and triangulates to bounded normalized geometry', () => {
++    const mesh = P68.parseOBJ(OBJ);
++    assert.equal(mesh.vertexCount, 4);
++    assert.equal(mesh.faceCount, 1);
++    assert.equal(mesh.triangleCount, 2);
++    assert.equal(mesh.positions.length, 18);
++    assert.equal(mesh.normals.length, 18);
++    assert.ok(mesh.positions.every(n => Number.isFinite(n) && Math.abs(n) <= 1));
++    assert.equal(mesh.materialsIncluded, false);
++  });
++
++  await test('P68 supports negative OBJ indices and polygon fan triangulation', () => {
++    const negative = OBJ.split('\n').filter(x => !x.startsWith('f ')).concat('f -4 -3 -2 -1').join('\n');
++    assert.equal(P68.parseOBJ(negative).triangleCount, 2);
++  });
++
++  await test('P68 rejects missing, zero and out-of-range face indices', () => {
++    assert.throws(() => P68.parseOBJ(''), /trống/);
++    assert.throws(() => P68.parseOBJ('v 0 0 0\nv 1 0 0\nv 0 1 0\nf 1 0 3'), /không hợp lệ/);
++    assert.throws(() => P68.parseOBJ('v 0 0 0\nv 1 0 0\nv 0 1 0\nf 1 2 4'), /vượt danh sách/);
++  });
++
++  await test('P68 rejects malformed/non-finite and degenerate geometry', () => {
++    assert.throws(() => P68.parseOBJ('v 0 0 0\nv NaN 1 0\nv 0 1 0\nf 1 2 3'), /không hữu hạn/);
++    assert.throws(() => P68.parseOBJ('v 0 0 0\nv 1 0 0\nv 2 0 0\nf 1 2 3'), /mesh tam giác hợp lệ/);
++  });
++
++  await test('P68 caps source text before parse', () => {
++    assert.throws(() => P68.parseOBJ('x'.repeat(P68.limits.sourceChars + 1)), /5 MiB/);
++  });
++
++  let packaged;
++  await test('P68 rejects geometry tampering and enforces the triangle ceiling', () => {
++    const mesh = P68.parseOBJ(OBJ); mesh.normals[0] = Infinity;
++    assert.throws(() => P68.buildOfflineHTML(mesh), /normal không hợp lệ/);
++    const oversized = ['v 0 0 0', 'v 1 0 0', 'v 0 1 0'];
++    for (let i = 0; i < P68.limits.triangles + 1; i++) oversized.push('f 1 2 3');
++    assert.throws(() => P68.parseOBJ(oversized.join('\n')), /12.000 tam giác/);
++  });
++
++  await test('P68 builds a self-contained offline HTML package with embedded geometry', () => {
++    packaged = P68.buildFromOBJ(OBJ, { title: 'Product OBJ' });
++    assert.equal(packaged.offline, true);
++    assert.equal(packaged.mesh.triangleCount, 2);
++    assert.equal(packaged.preflight.fail, 0);
++    assert.equal(P68.inspectPackage(packaged.html).status, 'PASS');
++    assert.match(packaged.html, /connect-src 'none'/);
++    assert.match(packaged.html, /mesh-data/);
++    assert.doesNotMatch(packaged.html, /<script\s+[^>]*src=/i);
++    assert.doesNotMatch(packaged.html, /<link\s+[^>]*href=/i);
++    assert.doesNotMatch(packaged.html, /\bfetch\s*\(/);
++  });
++
++  await test('P68 viewer JavaScript parses and does not leak title markup', () => {
++    const hostile = P68.buildFromOBJ(OBJ, { title: '<img src=x onerror=alert(1)>' });
++    const scripts = [...hostile.html.matchAll(/<script>([\s\S]*?)<\/script>/gi)];
++    assert.equal(scripts.length, 1);
++    new vm.Script(scripts[0][1], { filename: 'offline-viewer.js' });
++    assert.doesNotMatch(hostile.html.slice(0, hostile.html.indexOf('id="mesh-data"')), /<img src=x/i);
++  });
++
++  await test('P68 package inspector detects external runtime/network dependencies', () => {
++    const bad = packaged.html.replace('</head>', '<script src="https://example.invalid/viewer.js"></script></head>');
++    assert.equal(P68.inspectPackage(bad).status, 'FAIL');
++    assert.ok(P68.inspectPackage(bad).checks.some(x => x.id === 'no-external-script' && !x.ok));
++  });
++
++  await test('P69 resource audit is read-only and estimates canvas/image/video surfaces', () => {
++    const r = P69.inspect({ root });
++    assert.equal(r.readOnly, true);
++    assert.equal(r.scannedNodes, 4);
++    assert.equal(r.canvases.length, 1);
++    assert.equal(r.totals.canvasBackingBytes, 100 * 50 * 4);
++    assert.equal(r.totals.imageDecodedEstimateBytes, 200 * 100 * 4);
++    assert.equal(r.totals.videoSurfaceEstimateBytes, 320 * 180 * 4);
++    assert.equal(r.resources.transferBytes, 100);
++    assert.equal(r.noProjectMutation, true);
++  });
++
++  await test('P69 frame sampler computes a bounded frame-rate sample', async () => {
++    now = 0; raf.length = 0;
++    const promise = P69.sampleFrames(250);
++    let steps = 0;
++    while (raf.length && steps < 30) { const cb = raf.shift(); now += 16; cb(now); steps++; }
++    const r = await promise;
++    assert.equal(r.supported, true);
++    assert.ok(r.averageFps > 50 && r.averageFps < 70);
++    assert.equal(r.noProjectMutation, true);
++  });
++
++  await test('P69 safe recommendations never propose deleting project data', () => {
++    const r = P69.recommendations(P69.inspect({ root }));
++    assert.ok(r.length >= 1);
++    assert.ok(r.every(x => !/delete|xóa|clear storage|remove media/i.test(x.action)));
++  });
++
++  await test('P70 1.0 gate includes all fourteen manual acceptance gates', () => {
++    const r = P70.inspect();
++    assert.equal(r.candidate, 'P70');
++    assert.equal(r.manualGates.length, 14);
++    assert.equal(r.gateSummary.pending, 14);
++    assert.equal(r.gateSummary.passed, 0);
++  });
++
++  await test('P70 never self-certifies from source or synthetic tests', () => {
++    const r = P70.inspect();
++    assert.equal(r.releaseCertified, false);
++    assert.equal(r.status, 'BLOCKED_PENDING_REAL_WORLD_ACCEPTANCE');
++    assert.equal(P70.tests().noSelfCertification, true);
++  });
++
++  await test('P70 includes prior Phase 1 and Phase 2 reports without upgrading their status', () => {
++    const r = P70.inspect();
++    assert.equal(r.inheritedPhase1.status, 'AVAILABLE_ASYNC_GATE_NOT_AUTORUN');
++    assert.equal(r.inheritedPhase2.status, 'PENDING');
++    assert.equal(r.inheritedPhase1.releaseCertified, false);
++    assert.equal(r.inheritedPhase2.releaseCertified, false);
++  });
++
++  await test('P68–P70 are wired to build marker and PhaseSuite without creating project owners', () => {
++    assert.equal(window.CANVIO_BUILD.version, '23.3.84-p70');
++    assert.equal(window.CANVIO_BUILD.candidate, 'P70');
++    assert.equal(window.CANVIOPhase3.version, '70.0.0');
++    const phase = window.CANVIOPhase3.tests();
++    assert.equal(phase.noSecondTimeline, true);
++    assert.equal(phase.noNewProjectDatabase, true);
++    const suite = window.CANVIOPhaseSuite.tests();
++    assert.equal(suite.p68Offline3DPackaging, true);
++    assert.equal(suite.p69SystemOptimization, true);
++    assert.equal(suite.p70StableReleaseGate, true);
++  });
++
++  process.stdout.write('\nP68–P70 tests: ' + passed + '/16 PASS\n');
++})().catch(error => { console.error(error.stack || error); process.exit(1); });
+diff -ruN '--exclude=CANVIO_MANIFEST.json' '--exclude=canvio-p67-to-p70.patch' CANVIO_P67/tests/p68-p70/verify-p68-p70-source.cjs CANVIO_P70/tests/p68-p70/verify-p68-p70-source.cjs
+--- CANVIO_P67/tests/p68-p70/verify-p68-p70-source.cjs	1970-01-01 00:00:00.000000000 +0000
++++ CANVIO_P70/tests/p68-p70/verify-p68-p70-source.cjs	2026-11-16 18:18:01.775648181 +0000
+@@ -0,0 +1,12 @@
++'use strict';
++const fs=require('fs');const path=require('path');
++const root=path.join(__dirname,'..','..');
++const source=fs.readFileSync(path.join(root,'canvio-p68-p70.js'),'utf8').trim();
++const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
++const open='<script id="canvio-p68-p70-main">';
++const start=html.indexOf(open);if(start<0)throw new Error('P68–P70 inline block missing');
++const a=start+open.length;const b=html.indexOf('</script>',a);if(b<0)throw new Error('P68–P70 inline block unterminated');
++const embedded=html.slice(a,b).trim();
++if(embedded!==source)throw new Error('canvio-p68-p70.js differs from index inline module');
++if(source.toLowerCase().includes('</script'))throw new Error('Inline module contains a raw closing script sequence');
++console.log('PASS P68–P70 standalone module exactly matches index.html inline source');

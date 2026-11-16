@@ -1,0 +1,254 @@
+{
+  "format": "CANVIO_P55_CHROMIUM_RUNTIME_SMOKE",
+  "version": 1,
+  "candidate": "P55",
+  "browser": "144.0.7559.96",
+  "origin": "about:blank",
+  "testOnlyStorageShim": true,
+  "limitations": [
+    "Opaque about:blank origin; native IndexedDB and secure-context acceptance are not covered.",
+    "Navigation to localhost, file:// and other URLs is blocked by the host browser policy.",
+    "No Safari/Edge, real Whisper model download/inference, screen-reader or hosting acceptance in this run."
+  ],
+  "checks": [
+    {
+      "id": "build-marker",
+      "status": "pass",
+      "value": "23.3.69-p55"
+    },
+    {
+      "id": "document-title",
+      "status": "pass",
+      "value": "CANVIO 23.3.69-p55 — Stable Release Readiness"
+    },
+    {
+      "id": "spa-navigation",
+      "status": "pass",
+      "pages": [
+        "home",
+        "poster",
+        "web",
+        "videoEngine",
+        "assets",
+        "motion",
+        "insight",
+        "export",
+        "settings"
+      ]
+    },
+    {
+      "id": "phase-suite",
+      "status": "pass",
+      "flags": {
+        "websiteMotionRuntimeInjected": true,
+        "websiteMotionRuntimeIdempotent": true,
+        "websiteRuntimeHasRealScriptClose": true,
+        "websiteMotionProgressiveEnhancement": true,
+        "websiteMotionEasingVariable": true,
+        "videoCustomBezierMathAvailable": true,
+        "localProviderEndpointResolved": true,
+        "nonLocalHttpRejected": true,
+        "providerCallsOnlyOnExplicitClick": true,
+        "providerKeysRemainSessionOnly": true,
+        "zipOwner": true,
+        "backupIntegrityOwner": true,
+        "zipRestoreOwner": true,
+        "idbSchemaMetadata": true,
+        "idbRestoreOpensWithoutVersionBump": true,
+        "noSecondVideoTimeline": true,
+        "webAndPortfolioVaultAdapters": true,
+        "videoTrackControls": true,
+        "videoWebVTT": true,
+        "videoTrackStateInSnapshot": true,
+        "videoNativeMP4H264": true,
+        "videoCaptionPreflight": true,
+        "videoWhisperASR": true,
+        "videoWhisperCancellation": true,
+        "videoExportCancellation": true,
+        "p55RuntimeDiagnostics": true,
+        "p55RenderRecovery": true,
+        "p55ProjectIntegrity": true,
+        "p55PerformanceBudget": true,
+        "p55ReleaseGate": true
+      }
+    },
+    {
+      "id": "runtime-duplicate-ids",
+      "status": "pass",
+      "count": 0
+    },
+    {
+      "id": "video-track-vtt",
+      "status": "pass",
+      "value": {
+        "before": false,
+        "during": true,
+        "after": false,
+        "parsed": 1
+      }
+    },
+    {
+      "id": "real-webm-export-decode",
+      "status": "pass",
+      "value": {
+        "size": 19515,
+        "mime": "video/webm;codecs=vp9",
+        "duration": 0.9,
+        "width": 960,
+        "height": 540,
+        "readyState": 4,
+        "download": {
+          "name": "CANVIO_multitrack_1794847994277.webm",
+          "href": "blob:null/b2cfe1c8-3a79-4978-bc1d-6806b931c042"
+        }
+      }
+    },
+    {
+      "id": "real-mp4-h264-export-decode",
+      "status": "pass",
+      "value": {
+        "size": 11915,
+        "mime": "video/mp4;codecs=avc1.420020",
+        "duration": 0.8889,
+        "width": 960,
+        "height": 540,
+        "readyState": 4,
+        "download": {
+          "name": "CANVIO_multitrack_1794847995225.mp4",
+          "href": "blob:null/9a35a9ee-0fb8-4f54-bc8c-ca3477c0308f"
+        }
+      }
+    },
+    {
+      "id": "render-cancel",
+      "status": "pass",
+      "value": {
+        "returnedBlob": false,
+        "recovery": "cancelled",
+        "cancelButtonDisabled": true
+      }
+    },
+    {
+      "id": "render-retry-after-cancel",
+      "status": "pass",
+      "value": {
+        "size": 20013,
+        "mime": "video/webm;codecs=vp9",
+        "duration": 0.8,
+        "width": 960,
+        "height": 540,
+        "readyState": 4,
+        "download": {
+          "name": "CANVIO_multitrack_1794847996349.webm",
+          "href": "blob:null/5103f8dc-bf22-4e0a-a429-02b54bf94018"
+        }
+      }
+    },
+    {
+      "id": "responsive-widths",
+      "status": "pass",
+      "value": [
+        {
+          "width": 1440,
+          "documentWidth": 1440,
+          "bodyWidth": 1440,
+          "overflow": false
+        },
+        {
+          "width": 768,
+          "documentWidth": 768,
+          "bodyWidth": 768,
+          "overflow": false
+        },
+        {
+          "width": 720,
+          "documentWidth": 720,
+          "bodyWidth": 720,
+          "overflow": false
+        },
+        {
+          "width": 375,
+          "documentWidth": 375,
+          "bodyWidth": 375,
+          "overflow": false
+        },
+        {
+          "width": 320,
+          "documentWidth": 320,
+          "bodyWidth": 320,
+          "overflow": false
+        }
+      ]
+    },
+    {
+      "id": "release-gate-fail-closed",
+      "status": "pass",
+      "value": {
+        "status": "BLOCKED",
+        "failures": [
+          "secure-context: about:"
+        ],
+        "manualAcceptance": [
+          {
+            "id": "browser-matrix",
+            "label": "Chrome, Edge và Safari trên HTTPS",
+            "status": "pending"
+          },
+          {
+            "id": "real-media-export",
+            "label": "WebM/MP4 decode, audio và A/V sync bằng media thật",
+            "status": "pending"
+          },
+          {
+            "id": "whisper-model",
+            "label": "Whisper model download, inference, hủy và unload thật",
+            "status": "pending"
+          },
+          {
+            "id": "project-persistence",
+            "label": "IndexedDB save/reopen và ZIP restore trên origin thật",
+            "status": "pending"
+          },
+          {
+            "id": "accessibility",
+            "label": "Keyboard, screen reader, focus và zoom 200%",
+            "status": "pending"
+          },
+          {
+            "id": "hosting",
+            "label": "Pages/hosting, worker path, CSP/CORS và console",
+            "status": "pending"
+          }
+        ]
+      }
+    },
+    {
+      "id": "uncaught-page-errors",
+      "status": "pass",
+      "count": 0
+    },
+    {
+      "id": "console-errors",
+      "status": "pass",
+      "count": 0
+    }
+  ],
+  "timelineFixture": {
+    "canvasWidth": 960,
+    "canvasHeight": 540
+  },
+  "codecCapabilities": {
+    "mediaRecorder": true,
+    "canvasCapture": true,
+    "webmMime": "video/webm;codecs=vp9",
+    "mp4Mime": "video/mp4;codecs=avc1.42E01E",
+    "h264Supported": true,
+    "mp4RequiresNativeH264": true,
+    "ffmpegFallback": false
+  },
+  "summary": {
+    "passed": 24,
+    "failed": 0,
+    "status": "PASS_WITH_ORIGIN_LIMITATIONS"
+  }
+}

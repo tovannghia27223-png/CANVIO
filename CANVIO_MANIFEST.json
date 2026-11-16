@@ -1,0 +1,299 @@
+{
+  "format": "CANVIO_DELIVERY_MANIFEST",
+  "schemaVersion": 1,
+  "application": "CANVIO",
+  "candidate": "23.3.84-p70",
+  "phaseSuite": "70.0.0",
+  "base": "23.3.81-p67",
+  "phaseRange": "P68-P70",
+  "generatedAt": "2026-11-17",
+  "hashAlgorithm": "SHA-256",
+  "fileCount": 57,
+  "files": [
+    {
+      "path": ".github/workflows/canvio-pages-node24.yml",
+      "bytes": 7839,
+      "sha256": "333229521f7e90dda45e43d80c23fa4f46405606dc428d63e07608cad23e2eae"
+    },
+    {
+      "path": "CANVIO_AI_GUIDE.md",
+      "bytes": 323502,
+      "sha256": "9a38772974648cd81a9ebcf21890f6a1058e2923c530175ad02271f5445379bd"
+    },
+    {
+      "path": "CANVIO_HANDOFF.md",
+      "bytes": 4413,
+      "sha256": "f9bc899a1063ea018769b33dab142ace68311fef68aa5c925774e074a7b7e11e"
+    },
+    {
+      "path": "CANVIO_PHASES_1_6_STATUS.md",
+      "bytes": 3228,
+      "sha256": "c5957d97cd4f22c0bdd5564d56ed5de613312d48a7eabfdcb0a94aabb668f2f9"
+    },
+    {
+      "path": "CANVIO_QA_REPORT.md",
+      "bytes": 5999,
+      "sha256": "8c202a4f23f7c7275571bb03bcfb730fdf1d6257abafdc9c69677f3f335650e7"
+    },
+    {
+      "path": "CANVIO_ROADMAP.md",
+      "bytes": 33276,
+      "sha256": "76d87b03191c3e4204673e08d12b97f84f1abf2c2a00c7582ade9a12c1dbb2ae"
+    },
+    {
+      "path": "README.md",
+      "bytes": 3812,
+      "sha256": "4027195bfbc6ebe564edce2388e63c873425b317c5bebdb2775e0ce976a264ee"
+    },
+    {
+      "path": "assets/canvio-whisper-worker.js",
+      "bytes": 3458,
+      "sha256": "1d3b7d3e015ffc9afc985820b7466bd578be410aa22f7064e17d0b5d624c33e6"
+    },
+    {
+      "path": "canvio-p63-p67.js",
+      "bytes": 74776,
+      "sha256": "586c03952d2ed49cec829f074a02a05f5f20770256a8f3f94f775a4cd52af20e"
+    },
+    {
+      "path": "canvio-p68-p70.js",
+      "bytes": 34782,
+      "sha256": "141df571853cfc01859fd9d7027ac762c739ce6aee61cb08b3c80f6ee1f052df"
+    },
+    {
+      "path": "index.html",
+      "bytes": 4428042,
+      "sha256": "73e97aeb4b538f7e7c828ac740084113574db671206a1a1db0f19a45fb22d45c"
+    },
+    {
+      "path": "patches/README_P63_P67.md",
+      "bytes": 507,
+      "sha256": "7dfdc6942e4720fccdaecef353ae6c6ae0bba8eaf6457d4b03dbe75cee7c0e08"
+    },
+    {
+      "path": "patches/README_P68_P70.md",
+      "bytes": 730,
+      "sha256": "75eb990a75baa0bc233d185c8a884624712048edc11f24573ebd96418abee3cf"
+    },
+    {
+      "path": "patches/canvio-p45-to-p46.patch",
+      "bytes": 100198,
+      "sha256": "9f59a4a8082171af91f8c28587ec1ccb49beaf53e449c33f715633e69fa05bd8"
+    },
+    {
+      "path": "patches/canvio-p46-to-p47.patch",
+      "bytes": 92876,
+      "sha256": "c61d09c78c4a271ac348cf47e494941fe3b7726d35e36daf57bd0d438b710277"
+    },
+    {
+      "path": "patches/canvio-p47-to-p48.patch",
+      "bytes": 171076,
+      "sha256": "4d6a4dcd051c8484c9de61fd32964ae3c4a126e0619fd1ed8956edc084598187"
+    },
+    {
+      "path": "patches/canvio-p48-to-p49.patch",
+      "bytes": 46096,
+      "sha256": "040ead83aacb52a6c118229bcd85ae0b7e1053c2314254ab0528aa10c6b44528"
+    },
+    {
+      "path": "patches/canvio-p49-to-p50.patch",
+      "bytes": 93722,
+      "sha256": "984f4d47b54415d0250487d5b63b7d20b1969f5765f144de81931d9de7b8af91"
+    },
+    {
+      "path": "patches/canvio-p50-to-p55.patch",
+      "bytes": 157719,
+      "sha256": "55fb6e479679360e39107fe4bcd6600ff7ed27a38712eced8b4100941d9d24af"
+    },
+    {
+      "path": "patches/canvio-p55-to-p56.patch",
+      "bytes": 127119,
+      "sha256": "1ad46e50ae58e637d5e2370ba3b5a1781b33b990b20ca7b962ba746a1b2597b6"
+    },
+    {
+      "path": "patches/canvio-p56-to-p62.patch",
+      "bytes": 183980,
+      "sha256": "22ae6401a5273b2b3d8f5d325076c8f7d3054bf77602e1aea73231686b907e7f"
+    },
+    {
+      "path": "patches/canvio-p62-to-p67.patch",
+      "bytes": 76728,
+      "sha256": "3cef6235df7e35ab71e3ffea781b866a5147eb59a9ba8fdc98f92ef426d45fe4"
+    },
+    {
+      "path": "patches/canvio-p67-to-p70.patch",
+      "bytes": 160323,
+      "sha256": "c2c2b75b1e139c4d600ef792e5de3ff18278af1187ce5392470d12d10b9281d5"
+    },
+    {
+      "path": "patches/canvio-r6-to-p45.patch",
+      "bytes": 53483,
+      "sha256": "31a26c078aee263ac008175459c989022d46bd3e20059685d49fc50ac4e94c03"
+    },
+    {
+      "path": "tests/p47/fixtures/restore-fixture-corrupt.zip",
+      "bytes": 291,
+      "sha256": "6fd5b149f9f1258a61c7582ef6fcdfd62977750471ce89524f5d087ce26f14a9"
+    },
+    {
+      "path": "tests/p47/fixtures/restore-fixture.zip",
+      "bytes": 291,
+      "sha256": "f19cddf0c8ba90d87ff82011115d026e8385384447b440c33fd0527049bdd73a"
+    },
+    {
+      "path": "tests/p47/test_p47_bezier.cjs",
+      "bytes": 3607,
+      "sha256": "56df6c3c138b72f74711455cf2c437401ece2625d01012437f71846227ed9c7e"
+    },
+    {
+      "path": "tests/p47/test_phase_p47.cjs",
+      "bytes": 3030,
+      "sha256": "88ed06cd5ce2b4a6cecf190ca4349a10485c6578536b5f691c151250e4380cb0"
+    },
+    {
+      "path": "tests/p47/test_phase_p47_crc.cjs",
+      "bytes": 2051,
+      "sha256": "62a045b21fdb6d754dbf91b02b3aeed8c83d1298109a222fd794dba786cb479f"
+    },
+    {
+      "path": "tests/p47/test_phase_p47_restore.cjs",
+      "bytes": 3124,
+      "sha256": "c5634f774f54291cb28aab7133b52157bbddaf3d099d97e8ced5c3c295fe3d1d"
+    },
+    {
+      "path": "tests/p48/run-p48-tests.cjs",
+      "bytes": 6129,
+      "sha256": "b3512877557374c5879ebc60b7833d990bdcb2eef9d0a487a720beb0a7c7f3d4"
+    },
+    {
+      "path": "tests/p49/run-p49-tests.cjs",
+      "bytes": 8466,
+      "sha256": "716d154909d3dbe5900a35b563e515698bb2c7ef3be1ab6fb97b2076a5c3edc2"
+    },
+    {
+      "path": "tests/p50/run-p50-tests.cjs",
+      "bytes": 10333,
+      "sha256": "69be2fde7dad8d34efd7ec72c65a757541314c310a649683bbf88dfce2d01258"
+    },
+    {
+      "path": "tests/p55/browser-smoke-report.json",
+      "bytes": 6662,
+      "sha256": "199bc1c81667e7d109fcffe6e84b4d381341185405817d214e59e12767b860ad"
+    },
+    {
+      "path": "tests/p55/run-p55-browser-smoke.py",
+      "bytes": 15890,
+      "sha256": "1d1875c892afa6a0a57947c4275e014b32a6fb03ff09a9d5ad0b25d5ed98aeaf"
+    },
+    {
+      "path": "tests/p55/run-p55-tests.cjs",
+      "bytes": 12560,
+      "sha256": "0d8c066ad66099c76ab1f9f011da74df62bf225a009a14958f8187a878668b11"
+    },
+    {
+      "path": "tests/p56/browser-smoke-report.json",
+      "bytes": 7412,
+      "sha256": "a56c6b02e72e1e4ba66d55fc73cb99fc9feb47471a142a18b4f75634967c3976"
+    },
+    {
+      "path": "tests/p56/run-p56-browser-smoke.py",
+      "bytes": 18601,
+      "sha256": "88eb373960fd1ae845638797b0b2d14e5a1c02b443055c13ba422fae8bb6e2d7"
+    },
+    {
+      "path": "tests/p56/run-p56-tests.cjs",
+      "bytes": 10738,
+      "sha256": "46509dbbd1fb1fb8acea7c56e2dda40a6ac738d7d2a5c7c87248524150d7f17c"
+    },
+    {
+      "path": "tests/p57/p57-native-persistence.js",
+      "bytes": 7862,
+      "sha256": "2f16472b13277df56229ec23f4a0a83432646f0881acdaf6f11dac1d754ce488"
+    },
+    {
+      "path": "tests/p57/run-p57-tests.cjs",
+      "bytes": 8386,
+      "sha256": "f9a6d5c6a4e3451566f4d79ab74d9def952edfa4686b5f88c95c5bd351e7266e"
+    },
+    {
+      "path": "tests/p58/p58-media-export-acceptance.js",
+      "bytes": 4602,
+      "sha256": "37255d8e28bbd330c37fe428b211c652b08ac7e3a627123a756fd6fb8ad837cb"
+    },
+    {
+      "path": "tests/p59/p59-whisper-runtime-acceptance.js",
+      "bytes": 2918,
+      "sha256": "f8216fc4d0c5dc1a3893b88dbe15ce159c37adbfc47da56b6083c9893b7000ed"
+    },
+    {
+      "path": "tests/p60/p60-accessibility-audit.js",
+      "bytes": 4349,
+      "sha256": "2af24016602d2ceb6f034a95b0ed93f0d5a8f4f2a9209ce4d81c595bad3bf1a8"
+    },
+    {
+      "path": "tests/p61/p61-hosting-security-audit.js",
+      "bytes": 3256,
+      "sha256": "4771944a4cd731c8babad74c0e80599cc8ca2a6eb628d6cec63e6dc07c58e03e"
+    },
+    {
+      "path": "tests/p62/browser-smoke-report.json",
+      "bytes": 9085,
+      "sha256": "80379ce9cb8718a6b6030640b1abe3875b19f9f2d3100a00a5088472a61304af"
+    },
+    {
+      "path": "tests/p62/p62-phase1-dashboard.js",
+      "bytes": 6613,
+      "sha256": "a86b1f9dc4d00a706be4a2d91e0cbbef9b357e2e12d8908137d1dcd19996a15e"
+    },
+    {
+      "path": "tests/p62/p62-release-candidate-gate.js",
+      "bytes": 4464,
+      "sha256": "96cf5b06b67f3dbb04f2b259d84cd55b9b608c70fcbd8602f2105b1579b5ca8f"
+    },
+    {
+      "path": "tests/p62/run-p62-browser-smoke.py",
+      "bytes": 21510,
+      "sha256": "e0cdca561ae7ccedc3a1e2b311262839e92d5e7f79b917bf5c0503b21d25483c"
+    },
+    {
+      "path": "tests/p63-p67/browser-smoke-report.json",
+      "bytes": 15398,
+      "sha256": "30381748bdd33377ec26104384a7ccbd6a622e4045faa7875a5105e951333b1d"
+    },
+    {
+      "path": "tests/p63-p67/run-p63-p67-browser-smoke.py",
+      "bytes": 30159,
+      "sha256": "6a614fd22ce6f88cd7152b7ef84454634eacf2ea299933528c0b3cd148675cf5"
+    },
+    {
+      "path": "tests/p63-p67/run-p63-p67-tests.cjs",
+      "bytes": 12619,
+      "sha256": "69e477802bb2431e9ead80f6edee1145fbc8b039574c06c7d6f5b1e49e33f801"
+    },
+    {
+      "path": "tests/p63-p67/verify-p63-p67-source.cjs",
+      "bytes": 792,
+      "sha256": "3f2b24f64f26260e9e85399872e4d4dc39161a403b6f344cd518402116bfff3c"
+    },
+    {
+      "path": "tests/p68-p70/browser-smoke-report.json",
+      "bytes": 4119,
+      "sha256": "57bfb57d639c5374ede464c3f0122d58e705fdde684ae5e05c646119c06a3f9b"
+    },
+    {
+      "path": "tests/p68-p70/run-p68-p70-browser-smoke.py",
+      "bytes": 7786,
+      "sha256": "145c69e024b7f4ce15c1917d0546fd56262f3e555d942280103b76cfc335f8db"
+    },
+    {
+      "path": "tests/p68-p70/run-p68-p70-tests.cjs",
+      "bytes": 8919,
+      "sha256": "72c3e0fc4d926eef89dfe9c3f7a397765d13dd032e8002c454cde01273065ee0"
+    },
+    {
+      "path": "tests/p68-p70/verify-p68-p70-source.cjs",
+      "bytes": 859,
+      "sha256": "c2cd2a4bdc74ba47e25311c77c689c6d7567c668acdac74a5ec278d861b1a901"
+    }
+  ]
+}

@@ -1,0 +1,794 @@
+--- a/.github/workflows/canvio-pages-node24.yml
++++ b/.github/workflows/canvio-pages-node24.yml
+@@ -18,7 +18,7 @@
+ 
+ jobs:
+   build:
+-    name: Validate and package CANVIO P49 video production / AI caption
++    name: Validate and package CANVIO P50 production controls
+     runs-on: ubuntu-latest
+     permissions:
+       contents: read
+@@ -26,7 +26,7 @@
+       - name: Checkout
+         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+ 
+-      - name: Verify reviewed CANVIO P49 candidate
++      - name: Verify reviewed CANVIO P50 candidate
+         shell: bash
+         run: |
+           set -euo pipefail
+@@ -40,19 +40,20 @@
+           expected_p47="3dde04dda166f411b9f4391176f4a1c42cbc26f1a0735143c7b65fbb62c42e10"
+           expected_p48="6dc2eb3f18be18e567d955ee90a59f478c756de4146fa11aa5dc9832a47b2039"
+           expected_p49="ef527c7265becae4d389ed1a97ecfc8bdb6927cdab2fbd7d50a4e4df5f25293f"
+-          expected_r6="$expected_p49"
++          expected_p50="6c0774debb4f33d8789a171d570016245ef16e9bd7d3b6afc6f2ab6f27be873d"
++          expected_r6="$expected_p50"
+ 
+-          if [ "$actual" = "$expected_p49" ] || [ "$actual" = "$expected_p48" ] || [ "$actual" = "$expected_p47" ] || [ "$actual" = "$expected_r6_p46" ] || [ "$actual" = "$expected_r6_p45" ] || [ "$actual" = "$expected_r6_p44" ] || [ "$actual" = "$expected_r6_p43b" ] || [ "$actual" = "$expected_r6_p43" ] || [ "$actual" = "$expected_r6_base" ]; then
++          if [ "$actual" = "$expected_p50" ] || [ "$actual" = "$expected_p49" ] || [ "$actual" = "$expected_p48" ] || [ "$actual" = "$expected_p47" ] || [ "$actual" = "$expected_r6_p46" ] || [ "$actual" = "$expected_r6_p45" ] || [ "$actual" = "$expected_r6_p44" ] || [ "$actual" = "$expected_r6_p43b" ] || [ "$actual" = "$expected_r6_p43" ] || [ "$actual" = "$expected_r6_base" ]; then
+             echo "A reviewed CANVIO candidate is already present; no source rewrite is attempted."
+           else
+             echo "Unexpected index.html SHA-256: $actual" >&2
+             exit 1
+           fi
+ 
+-          test "$actual" = "$expected_p49" || test "$actual" = "$expected_p48" || test "$actual" = "$expected_p47" || test "$actual" = "$expected_r6_p46" || test "$actual" = "$expected_r6_p45" || test "$actual" = "$expected_r6_p44" || test "$actual" = "$expected_r6_p43b" || test "$actual" = "$expected_r6_p43" || test "$actual" = "$expected_r6_base"
++          test "$actual" = "$expected_p50" || test "$actual" = "$expected_p49" || test "$actual" = "$expected_p48" || test "$actual" = "$expected_p47" || test "$actual" = "$expected_r6_p46" || test "$actual" = "$expected_r6_p45" || test "$actual" = "$expected_r6_p44" || test "$actual" = "$expected_r6_p43b" || test "$actual" = "$expected_r6_p43" || test "$actual" = "$expected_r6_base"
+           echo "CANVIO candidate SHA-256 verified: $actual"
+           if [ "${GITHUB_EVENT_NAME}" != "pull_request" ]; then
+-            test "$actual" = "$expected_p49" || { echo "Main/manual deployment requires the exact P49 candidate SHA." >&2; exit 1; }
++            test "$actual" = "$expected_p50" || { echo "Main/manual deployment requires the exact P50 candidate SHA." >&2; exit 1; }
+           fi
+ 
+       - name: Validate HTML, unique IDs, and inline JavaScript syntax
+@@ -92,8 +93,8 @@
+               raise SystemExit(f"Unexpected external script src entries: {audit.external_scripts}")
+           if duplicates:
+               raise SystemExit(f"Duplicate HTML IDs: {duplicates[:20]}")
+-          if len(audit.ids) != 490 or len(ids) != 490:
+-              raise SystemExit(f"Expected 490 unique HTML IDs; found {len(audit.ids)} IDs / {len(ids)} unique")
++          if len(audit.ids) != 493 or len(ids) != 493:
++              raise SystemExit(f"Expected 493 unique HTML IDs; found {len(audit.ids)} IDs / {len(ids)} unique")
+ 
+           failures = []
+           with tempfile.TemporaryDirectory() as directory:
+@@ -138,6 +139,12 @@
+           set -euo pipefail
+           node tests/p49/run-p49-tests.cjs
+ 
++      - name: Run P50 production-control lifecycle suite
++        shell: bash
++        run: |
++          set -euo pipefail
++          node tests/p50/run-p50-tests.cjs
++
+       - name: Configure GitHub Pages
+         uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d
+ 
+--- a/CANVIO_AI_GUIDE.md
++++ b/CANVIO_AI_GUIDE.md
+@@ -1,9 +1,9 @@
+-# CANVIO — AI Agent Guide (23.3 · cập nhật tới 23.3.63-p49)
+-> **CURRENT WORKING BASE (2026-11-16):** `index.html` — CANVIO `23.3.63-p49`, built from the integrated P48 candidate. Sections 1–76 preserve historical architecture and acceptance notes; section 77 is the P49 implementation addendum. Use this guide before editing.
+-> Work surgically from the named owners/APIs below. Do not re-scan the entire HTML unless an unresolved question requires it; do not break active data synchronization or local project data. The current artifact has 80 inline script blocks, 490 unique HTML IDs and a separate `assets/canvio-whisper-worker.js` worker asset.
++# CANVIO — AI Agent Guide (23.3 · cập nhật tới 23.3.64-p50)
++> **CURRENT WORKING BASE (2026-11-16):** `index.html` — CANVIO `23.3.64-p50`, built from the integrated P49 candidate. Sections 1–76 preserve historical architecture and acceptance notes; section 77 documents the P49 parent implementation and the P50 addendum follows it. Use this guide before editing.
++> Work surgically from the named owners/APIs below. Do not re-scan the entire HTML unless an unresolved question requires it; do not break active data synchronization or local project data. The current artifact has 80 inline script blocks, 493 unique HTML IDs and a separate `assets/canvio-whisper-worker.js` worker asset.
+ > Preserve the canonical project, asset, media, timeline, history, Brand Kit, Project Vault and P8 owners. Keep tests/readiness claims bounded by their actual fixture and real-origin evidence.
+ >
+-> **ACTIVE LOCAL CANDIDATE:** P49 application marker `23.3.63-p49`, base `23.3.62-p48`, PhaseSuite `49.0.0`. It is a local candidate only; not merged, not deployed and not production-certified. See `CANVIO_MANIFEST.json` for current source/package SHA-256 values.
++> **ACTIVE LOCAL CANDIDATE:** P50 application marker `23.3.64-p50`, base `23.3.63-p49`, PhaseSuite `50.0.0`. It is a local candidate only; not merged, not deployed and not production-certified. See `CANVIO_MANIFEST.json` for current source/package SHA-256 values.
+ 
+ > **Historical release note:** the original 23.3.3 Prism Studio baseline and its internal `CANVIO_RELEASE.version` compatibility rule are retained in the historical guide sections. The current deliverable build is tracked separately by `CANVIO_BUILD.version = 23.3.60-r1`; do not infer the patch version from older historical fields.
+ ## 1. Nguyên tắc bắt buộc
+@@ -3029,7 +3029,7 @@
+ 
+ # 77. CANVIO P49 — Video Production & Whisper AI Caption (2026-11-16)
+ 
+-> **Current candidate:** `index.html`, application marker `23.3.63-p49`, base `23.3.62-p48`, `CANVIOPhaseSuite.version = 49.0.0`. SHA-256 is recorded in `CANVIO_MANIFEST.json` and `CANVIO_HANDOFF.md`. P49 is a local candidate only.
++> **Parent candidate (P49):** `index.html`, application marker `23.3.63-p49`, base `23.3.62-p48`, `CANVIOPhaseSuite.version = 49.0.0`. SHA-256 is recorded in `CANVIO_MANIFEST.json` and `CANVIO_HANDOFF.md`. P49 behavior is retained in the active P50 candidate.
+ 
+ ## 77.1 Ownership and compatibility
+ 
+@@ -3070,3 +3070,36 @@
+ - P48 regression harness remains 26/26; P47 motion/backup/restore/CRC fixtures pass against the P49 source.
+ - Static project audit expected: 80 inline scripts pass Node syntax check, 490/490 unique HTML IDs, no duplicate IDs and no external `<script src>`; worker is separately `node --check` validated.
+ - These checks do not run a complete Whisper model or a real MediaRecorder session. Chromium in the available environment was blocked before application boot by `ERR_BLOCKED_BY_ADMINISTRATOR`. Real browser MP4/H.264 recording, A/V sync, memory profile, worker CDN/CORS/cache, model output quality, offline repeat and public-origin deployment are still OPEN.
++
++
++# P50 Engineering Addendum — Production Controls & Resource Lifecycle
++
++## Scope and ownership
++
++P50 continues to use the canonical `CV.engines.video` timeline, MediaRecorder path and Whisper module worker introduced in P49. It does not add a second timeline, new database, remote ASR service, API credential or background process.
++
++## Export lifecycle
++
++- Public control: `CV.engines.video.cancelExport()` and UI button `#vtExportCancel`.
++- A module-local `vExportBusy` guard prevents two concurrent Video Engine export sessions. `vExportCancelActive` points to the current operation's stop callback only while a render is active.
++- The shared completion path clears the busy guard and callback, disables the UI control, stops the audio mixer and capture stream tracks, cancels the active animation frame and restores the playhead to the value captured before render. Cancelled output is rejected and not downloaded.
++- `exportWebM` and `exportMP4` UI wrappers catch expected Promise rejections and return `null` after the user is informed. The native MP4 capability/MIME rules from P49 remain unchanged.
++
++## Whisper worker lifecycle
++
++- Public controls: `whisperCancel()` invalidates the active job token and terminates the worker; `whisperUnload()` additionally exposes the intentional release action to the user. The existing `whisperUnload` name is retained.
++- On cancellation, pending worker promises are rejected and removed; their watchdog timers are cleared. A late decode or inference result is compared against the job token before any cue is added, so cancelled jobs cannot commit stale subtitle clips.
++- Cancellation during AudioContext/OfflineAudioContext decoding is cooperative: P50 does not claim to abort the decode operation itself. After the pending decode settles, the token check stops further inference and timeline mutation.
++- Worker requests have a 900,000 ms (15-minute) watchdog. Timeout terminates the worker, rejects pending work, clears timers and returns a retry-oriented error.
++- Unloading terminates the worker and releases its in-memory pipeline/model references. It does not delete runtime/model files from browser HTTP cache or Cache Storage; those caches are controlled by the browser/runtime.
++- Controls `#vtWhisperCancel` and `#vtWhisperUnload` are enabled/disabled from current job/worker state.
++
++## Validation contract
++
++- `tests/p50/run-p50-tests.cjs` uses Node VM and browser stubs to check worker cancellation, job-token invalidation, pending rejection/cleanup, timeout behavior, module-worker path, transferable audio, export cancel callback, concurrency guard and public UI/API wiring.
++- P50 source harness: 27/27. P49: 35/35. P48: 26/26. Retained P47 integration, bezier and backup/restore/CRC fixtures pass. HTML static audit: 80/80 inline JS blocks, 493 unique IDs, no duplicate IDs, no external script `src`; the module worker is syntax-checked separately.
++- These tests do not guarantee MediaRecorder cancellation timing, browser codec finalization, actual no-file-after-cancel behavior, AudioContext interruption, memory reclamation, Whisper model inference or application runtime. Real HTTPS browser acceptance remains mandatory.
++
++## Release gate
++
++P50 is a local candidate only. Test real browser render cancellation at several progress points, ensure capture/audio resources stop and a new export can start; test Whisper cancel during decode, runtime/model download and inference; verify no late cue commit; and compare memory pressure before/after model unload. Keep real browser, real media, IndexedDB, provider/CORS, accessibility, P30/P31 and production acceptance OPEN until run on an ordinary HTTPS origin.
+--- a/CANVIO_HANDOFF.md
++++ b/CANVIO_HANDOFF.md
+@@ -1,15 +1,15 @@
+-# CANVIO P49 — Handoff tích hợp Giai đoạn 1–6
++# CANVIO P50 — Handoff tích hợp Giai đoạn 1–6
+ 
+ **Ngày:** 2026-11-16  
+ **Repository:** https://github.com/tovannghia27223-png/CANVIO  
+ **Candidate files:** `index.html` + `assets/canvio-whisper-worker.js`  
+-**SHA-256:** `index.html` = `ef527c7265becae4d389ed1a97ecfc8bdb6927cdab2fbd7d50a4e4df5f25293f`; worker = `10df236ff2146ea2c055630c517c48db76e74da0cd599959ddcf5e0e55cae7a1`  
+-**Bytes / lines:** `index.html` = 4,246,953 bytes / 21,424 lines; worker = 2,830 bytes / 67 lines  
+-**Application marker:** `23.3.63-p49` · **PhaseSuite:** `49.0.0`
++**SHA-256:** `index.html` = `6c0774debb4f33d8789a171d570016245ef16e9bd7d3b6afc6f2ab6f27be873d`; worker = `10df236ff2146ea2c055630c517c48db76e74da0cd599959ddcf5e0e55cae7a1`  
++**Bytes / lines:** `index.html` = 4,250,429 bytes / 21,434 lines; worker = 2,830 bytes / 67 lines  
++**Application marker:** `23.3.64-p50` · **PhaseSuite:** `50.0.0`
+ 
+ ## Trạng thái
+ 
+-P49 là local integrated candidate, kế thừa P48. Không tạo commit/branch/PR mới, không merge, không dispatch workflow và không deploy Pages. Workflow Node 24 chỉ cho main/manual deploy nếu source SHA trùng chính xác P49; PR vẫn chạy static/integration tests nhưng không deploy.
++P50 là local integrated candidate, kế thừa P49; P49 kế thừa P48. Không tạo commit/branch/PR mới, không merge, không dispatch workflow và không deploy Pages. Workflow chỉ cho main/manual deploy nếu source SHA trùng chính xác P50; PR vẫn chạy static/integration tests nhưng không deploy.
+ 
+ ## Lineage
+ 
+@@ -21,6 +21,8 @@
+ 6. P46 all-phase integration: `b8c36bbafd97e080055675b9cd2f9c736ffe868871526240c2c06eb533739a99`.
+ 7. P47 motion/typography refinement: `3dde04dda166f411b9f4391176f4a1c42cbc26f1a0735143c7b65fbb62c42e10`.
+ 8. P48 Video track/WebVTT reliability: `6dc2eb3f18be18e567d955ee90a59f478c756de4146fa11aa5dc9832a47b2039`.
++9. P49 Video Export / Whisper Caption / Subtitle QC: `ef527c7265becae4d389ed1a97ecfc8bdb6927cdab2fbd7d50a4e4df5f25293f`.
++10. P50 Production Controls: `6c0774debb4f33d8789a171d570016245ef16e9bd7d3b6afc6f2ab6f27be873d`.
+ 
+ ## P48 source changes
+ 
+@@ -33,7 +35,7 @@
+ 
+ ## Verification evidence
+ 
+-- 80/80 inline scripts pass Node `--check`; 490/490 IDs unique; 0 duplicates; 0 external script `src`.
++- 80/80 inline scripts pass Node `--check`; 493/493 IDs unique; 0 duplicates; 0 external script `src`.
+ - P48 isolated VM source harness: 26/26 assertions pass.
+ - P47 cubic-bezier math test and backup/restore/CRC fixtures pass against the P48 source.
+ - Chromium was blocked before application boot by `ERR_BLOCKED_BY_ADMINISTRATOR`; no full-app runtime/pageerror PASS, native IndexedDB acceptance or real media export is claimed.
+@@ -46,7 +48,7 @@
+ 4. Verify WebM output with real video/audio, duration, decode, A/V sync, media size and memory use.
+ 5. Native IndexedDB save/reopen/restore, Blob-heavy projects, quota and schema drift.
+ 6. Actual provider CORS/API, secret handling, P30/P31 staging/public origin, accessibility, keyboard-only, screen reader and true 200% zoom.
+-7. Remaining roadmap: Whisper WASM, tracking/stabilization, MP4/H.264, fully shared timeline model, full AI image-to-asset workflow, offline 3D packaging, kerning/print/license QA.
++7. Remaining roadmap: real-browser Whisper inference and MP4/H.264 acceptance, tracking/stabilization, fully shared timeline model, full AI image-to-asset workflow, offline 3D packaging, kerning/print/license QA.
+ 
+ ## Safeguards
+ 
+@@ -55,7 +57,9 @@
+ - Review `patches/canvio-p47-to-p48.patch` and `patches/canvio-p48-to-p49.patch`; source changes remain additive and preserve existing engine owners.
+ 
+ 
+-## P49 changes and delivery notes
++## P49 changes retained in P50
++
++## P50 changes and delivery notes
+ 
+ - Added canonical Video Engine format-aware native export. WebM probes VP9/VP8/generic; MP4 path requires explicit AVC MIME support through `MediaRecorder.isTypeSupported()` and checks the actual resulting recorder MIME before download. No silent mislabeled MP4 fallback.
+ - Added subtitle QC for basic cue validity, overlaps, reading speed and line layout. Thresholds are heuristics only.
+@@ -78,3 +82,16 @@
+ 3. Transcribe real Vietnamese and English files; inspect language, proper nouns, timing, long audio memory use, worker errors and repeat cached runs.
+ 4. Import/export SRT/WebVTT and verify external tool round-trip; validate track 3 lock/undo/save/reopen.
+ 5. Complete IndexedDB/project recovery, P30/P31, keyboard-only, screen reader, 200% zoom and public-origin production acceptance.
++
++
++### P50 production controls
++
++- Video Engine `Hủy render` routes through the active recorder stop callback. A busy flag rejects overlapping export requests. Completion/cancel/error shares one cleanup path: disable cancel UI, clear active callback, stop audio + capture tracks, cancel RAF, restore the previous playhead, and do not download on cancellation. Public APIs: `cancelExport`, plus safe UI wrappers for `exportWebM` and `exportMP4`.
++- Whisper adds job-token cancellation, module-worker termination, pending-request rejection/timer cleanup, a 15-minute worker watchdog, and `Giải phóng model`. Late ASR results are invalidated before subtitle clips are committed. Decoding cancellation is cooperative, not an abortable AudioContext operation.
++- Source test: `tests/p50/run-p50-tests.cjs` verifies cancellation state, worker termination, pending cleanup, timeout behavior, export guard/API/UI and marker: 27/27 assertions pass.
++- Current Chromium environment remains blocked before app boot. No native browser render-cancel timing or physical memory return is claimed. Browser cache may retain downloaded model files after worker unload.
++
++### P50 lineage and release
++
++- Parent candidate: P49 application `23.3.63-p49` / PhaseSuite `49.0.0`. P50 candidate: application `23.3.64-p50` / PhaseSuite `50.0.0`. Exact source and package hashes are recorded in `CANVIO_MANIFEST.json`.
++- Workflow main/manual deploy requires the exact P50 source hash. PR runs validate but do not deploy. No GitHub commit, branch, PR, workflow dispatch, merge or deployment was performed in this task.
+--- a/CANVIO_PHASES_1_6_STATUS.md
++++ b/CANVIO_PHASES_1_6_STATUS.md
+@@ -1,13 +1,13 @@
+-# CANVIO — Phase 1–6 integration status / P49
++# CANVIO — Phase 1–6 integration status / P50
+ 
+ **Candidate SHA-256:** see `CANVIO_MANIFEST.json`  
+-**Application marker:** `23.3.63-p49` · **Phase suite:** `49.0.0`  
++**Application marker:** `23.3.64-p50` · **Phase suite:** `50.0.0`  
+ **Release:** local candidate; not merged, not deployed, not production-certified.
+ 
+ | Phase | Integrated code | Remaining critical work |
+ |---|---|---|
+ | 1 Project/recovery | P44 named Project Vault history; P46 Web/Portfolio adapters and MotionCut source handoff; Video Engine remains canonical timeline | Native Chrome IndexedDB acceptance and truly unified MotionCut/Video Engine state model |
+-| 2 Video | Existing multitrack/keyframes; P47 cubic-bezier editing; P48 track visibility/lock/audio mute + SRT/WebVTT; P49 capability-aware MP4/H.264, WebM, subtitle QC and user-triggered Whisper q8 CPU/WASM captions | Real browser codec/ASR acceptance, tracking/stabilization, track grouping/full ripple semantics and real media export |
++| 2 Video | Existing multitrack/keyframes; P47 cubic-bezier editing; P48 track visibility/lock/audio mute + SRT/WebVTT; P49 capability-aware MP4/H.264, WebM, subtitle QC and user-triggered Whisper q8 CPU/WASM captions; P50 cancellable render/ASR jobs and worker unload | Real browser codec/ASR acceptance, tracking/stabilization, track grouping/full ripple semantics and real media export |
+ | 3 Design | SVG TextPath; P47 font weight, tracking and text anchor; existing Layout Foundry/Brand Kit | Advanced kerning/font shaping, print/bleed signoff and verified asset/font licensing |
+ | 4 Motion/Web | Component motion, P47 per-component easing persisted to exported CSS, reduced-motion runtime | Shared graph editor, self-contained 3D/offline export, browser acceptance |
+ | 5 AI | Direct user-triggered Gemini/OpenAI-compatible/Anthropic/local text adapters | Live provider/CORS tests, model capability checks, image generation and generated-asset ingestion |
+@@ -25,15 +25,15 @@
+ ## P48 verification (retained regression evidence)
+ 
+ - 80/80 inline scripts pass `node --check`.
+-- 490/490 HTML IDs are unique; 0 duplicates; 0 external script `src` entries.
++- 493/493 HTML IDs are unique; 0 duplicates; 0 external script `src` entries.
+ - Isolated P48 Node VM harness: 26/26 assertions pass, covering track state/lock/visibility/mute, generated track controls, persistence in save/snapshot/restore, Audio Mixer/Studio lock guards, WebVTT parser/formatter/escaping and caption-track lock behavior.
+ - Prior P47 cubic-bezier and backup/restore/CRC fixtures continue to pass on the P48 source.
+ - These checks are source/static/unit fixtures; they do not prove full application browser runtime or real media rendering.
+ 
+ ## Explicitly open
+ 
+-- Whisper WASM speech-to-text is not included; WebVTT is a subtitle interchange format, not automatic speech recognition.
+-- MP4/H.264/WebCodecs muxer, point tracking/stabilization, a truly shared MotionCut/Video Engine state model, full kerning, and offline 3D package export remain unimplemented or unverified.
++- Whisper ASR was added in P49 through a Transformers.js worker; real model execution remains unverified in this environment. WebVTT itself remains subtitle interchange, not speech recognition.
++- WebCodecs muxer, point tracking/stabilization, a truly shared MotionCut/Video Engine state model, full kerning, and offline 3D package export remain unimplemented or unverified.
+ - Real Chrome origin, IndexedDB persistence, real audio/video decode/export/A/V sync, provider API/CORS, accessibility and P30/P31 acceptance are still release gates.
+ 
+ 
+@@ -54,3 +54,13 @@
+ - Remaining roadmap items include point tracking/stabilization, unified MotionCut/Video Engine model, deeper editing/ripple semantics, full generated image→asset workflow, advanced kerning/print and offline 3D packaging.
+ 
+ **Release state:** P49 is a local candidate only. It is not merged, deployed or production-certified; Chromium was blocked before app boot in the available execution environment.
++
++
++## P50 — Production controls
++
++- `Hủy render`: stops the active MediaRecorder path, prevents concurrent export, cleans stream/audio tracks and restores the playhead before settlement.
++- `Hủy Whisper`: invalidates the active job token and terminates worker inference; during AudioContext decoding the operation is cooperative and stops before creating any subtitle clips.
++- `Giải phóng model`: terminates worker/model memory references; browser cache files may remain.
++- A 15-minute watchdog terminates a stalled worker request.
++- P50 harness: 27/27; P49: 35/35; P48: 26/26; P47 integration/bezier/restore/CRC: pass. Static audit: 80/80 scripts, 493/493 unique IDs, zero duplicates.
++- Real browser cancellation and memory reclamation remain unverified because Chromium is blocked before app boot.
+--- a/CANVIO_QA_REPORT.md
++++ b/CANVIO_QA_REPORT.md
+@@ -1,10 +1,10 @@
+-# CANVIO P49 — QA report
++# CANVIO P50 — QA report
+ 
+ ## Candidate
+ 
+-- `index.html` + `assets/canvio-whisper-worker.js` — P43/P44/P45/P46/P47/P48/P49 integrated local candidate.
++- `index.html` + `assets/canvio-whisper-worker.js` — P43/P44/P45/P46/P47/P48/P49/P50 integrated local candidate.
+ - Source SHA-256 and bytes: see `CANVIO_MANIFEST.json` (regenerated after final source audit).
+-- App marker: `23.3.63-p49`; PhaseSuite `49.0.0`.
++- App marker: `23.3.64-p50`; PhaseSuite `50.0.0`.
+ 
+ ## Static checks — PASS
+ 
+@@ -13,8 +13,8 @@
+ | Parsed `<script>` elements | 80 |
+ | Extracted inline script blocks | 80 |
+ | `node --check` | **80/80 PASS** |
+-| HTML IDs | 490 |
+-| Unique IDs | 490 |
++| HTML IDs | 493 |
++| Unique IDs | 493 |
+ | Duplicate IDs | 0 |
+ | External `<script src>` | 0 |
+ 
+@@ -32,7 +32,7 @@
+ ## P47 regression fixtures — PASS
+ 
+ - Cubic-bezier source-function tests: six assertions pass (midpoint, custom curve, exact endpoints, retention and invalid X rejection).
+-- P47 phase-suite integration checks pass. The P47 fixture excludes newer P48/P49 runtime-only feature flags because its mock does not mount the complete app; the dedicated P48/P49 source harnesses cover their source-level logic.
++- P47 phase-suite integration checks pass. The P47 fixture excludes newer P48/P49/P50 runtime-only feature flags because its mock does not mount the complete app; the dedicated P48/P49 source harnesses cover their source-level logic.
+ - Direct + ZIP backup/restore fixture passes under mock storage.
+ - Corrupted ZIP CRC is rejected before mock localStorage mutation.
+ 
+@@ -55,10 +55,28 @@
+ - Whisper timestamp mapping, transcript fallback, null/malformed timestamp filtering, exposed caption/unload API and worker model/runtime/CPU-WASM/timestamp configuration.
+ - Worker source has no direct fetch/XHR call to a remote ASR endpoint. This source check is not a network trace or privacy penetration test.
+ 
+-The worker file separately passes `node --check`. The main HTML audit retains 80/80 inline script syntax, 490 unique IDs and zero external script `src` entries. All P47/P48 regression fixtures pass against the P49 source.
++The worker file separately passes `node --check`. The main HTML audit retains 80/80 inline script syntax, 493 unique IDs and zero external script `src` entries. All P47/P48/P49 regression fixtures pass against the P50 source.
+ 
+ ## Runtime acceptance remains OPEN / BLOCKED
+ 
+ - P49 source harness does not instantiate MediaRecorder or encode MP4/H.264; actual MediaRecorder success, final codec, decode, audio, A/V sync and resource stability need a real supported browser. `isTypeSupported()` is only a capability probe.
+ - Whisper inference is not executed by Node fixtures. Worker CDN import, model download, browser cache, real audio decoding/resampling, model accuracy, memory, error recovery and offline repeat use require a real HTTPS browser session. Audio is intended to stay in the worker/browser; first-use runtime/model downloads require network.
+ - Chromium in this environment was blocked before application boot with `ERR_BLOCKED_BY_ADMINISTRATOR`; complete browser page-error, origin, storage, accessibility and deployment acceptance cannot be claimed.
++
++
++## P50 production-control source harness — PASS within fixture scope
++
++`tests/p50/run-p50-tests.cjs` extracts the production helper functions from the actual Video Engine source and verifies **27/27 assertions**:
++
++- Whisper cancel no-op/active paths, token invalidation, Worker termination, pending Promise rejection and pending-map cleanup.
++- Relative module-worker path, transferable Float32Array payload and 15-minute watchdog install/timeout/cleanup/actionable rejection.
++- Export cancel idle/active callback behavior and prevention of concurrent export.
++- Public API wiring for `cancelExport`, `whisperCancel`, toolbar cancel/unload control IDs, disabled initial state and common export cleanup.
++
++All retained P47/P48/P49 tests pass against P50: P48 26/26; P49 35/35; P50 27/27; P47 integration, bezier and mock backup/restore/CRC pass. Static audit: 80/80 script blocks parse, 493/493 IDs unique, zero duplicate IDs, zero external script `src`; worker syntax passes.
++
++## P50 runtime acceptance remains OPEN
++
++- VM fixtures do not execute real MediaRecorder, and do not prove final codec/container, no-partial-file behavior, A/V sync or recorder stop latency. Test cancel at several points on a real supported browser and confirm another export can start afterward.
++- Worker stubs do not run Transformers.js or Whisper. Real browser checks are still required for cancellation while decoding/downloading/inference, model unload memory pressure, retries, cache behavior and accurate subtitle generation. AudioContext decoding cannot be interrupted natively by this P50 code; cancellation is checked immediately after decode before inference or clip commit.
++- Chromium remains blocked before app boot with `ERR_BLOCKED_BY_ADMINISTRATOR`; no browser-runtime/pageerror, real-media, IndexedDB, accessibility or production PASS is claimed.
+--- a/CANVIO_ROADMAP.md
++++ b/CANVIO_ROADMAP.md
+@@ -1,18 +1,18 @@
+-# CANVIO — Roadmap trạng thái tích hợp P49 (2026-11-16)
+-
+-> Đây là bản roadmap trạng thái cho candidate P49. “Đã tích hợp” mô tả code path hiện diện; không thay thế nghiệm thu trình duyệt, media thật, provider thật hoặc production. Không mở rộng feature giả để làm đẹp checklist.
++# CANVIO — Roadmap trạng thái tích hợp P50 (2026-11-16)
++
++> Đây là bản roadmap trạng thái cho candidate P50. “Đã tích hợp” mô tả code path hiện diện; không thay thế nghiệm thu trình duyệt, media thật, provider thật hoặc production. Không mở rộng feature giả để làm đẹp checklist.
+ 
+ ## Tổng quan
+ 
+-- **Candidate:** `index.html` — `23.3.63-p49` application marker; PhaseSuite `49.0.0` (built from P48).
+-- **SHA-256:** See `CANVIO_MANIFEST.json` for the P49 source SHA-256.
++- **Candidate:** `index.html` — `23.3.64-p50` application marker; PhaseSuite `50.0.0` (built from P49).
++- **SHA-256:** See `CANVIO_MANIFEST.json` for the P50 source SHA-256.
+ - **Trạng thái phát hành:** local candidate; chưa merge, chưa deploy, chưa production-certified.
+ - **Nguyên tắc:** một canonical Video Engine timeline, một Asset Library, một Project Vault, một Unified Layers history owner; không cloud giả, không API key nhúng trong source, không request nền.
+ 
+-| Giai đoạn | Trạng thái P49 | Tóm tắt |
++| Giai đoạn | Trạng thái P50 | Tóm tắt |
+ |---|---|---|
+ | 1 · Nền tảng tin cậy | **Đã tích hợp một phần, cần nghiệm thu** | P44 history, Web/Portfolio adapters, MotionCut source handoff; chưa có một timeline native hợp nhất |
+-| 2 · Video | **P48 track controls/WebVTT + P49 codec-aware MP4/H.264 probe, Whisper ASR và caption QC; vẫn cần nghiệm thu** | Multi-track, lock/visibility/mute, cubic-bezier, SRT/WebVTT/EDL, WebM; tracking/stabilization, full ripple/grouping semantics và real export acceptance vẫn mở |
++| 2 · Video | **P48 track controls/WebVTT + P49 codec-aware MP4/H.264, Whisper ASR, caption QC + P50 cancellable render/ASR lifecycle; vẫn cần nghiệm thu** | Multi-track, lock/visibility/mute, cubic-bezier, SRT/WebVTT/EDL, WebM; tracking/stabilization, full ripple/grouping semantics và real export acceptance vẫn mở |
+ | 3 · Design | **Một phần đã có; P47 bổ sung typography controls** | SVG TextPath, weight/tracking/anchor, layout/multi-page; kerning/license/print còn mở |
+ | 4 · Motion & Web | **P47 bổ sung easing cho Website Motion** | Component motion, easing persistence/export CSS, IntersectionObserver, reduced-motion; 3D self-contained/live site còn mở |
+ | 5 · AI | **Adapter runtime một phần** | Gemini owner + OpenAI-compatible, Anthropic Messages và local endpoint; chưa có full image generation workflow |
+@@ -180,3 +180,29 @@
+ - Tracking/stabilization, unified MotionCut+Video Engine model, full edit/ripple/group semantics, complete AI image→asset path, advanced kerning/print and offline 3D export remain open.
+ 
+ **Release disposition:** P49 local candidate with static/source-level tests passing. Not merged, not deployed and not production-certified because full browser/media/model acceptance is blocked in this environment.
++
++
++## P50 — Production Controls & Resource Lifecycle (2026-11-16)
++
++### Đã tích hợp trong source
++
++- **Render cancellation:** thêm `Hủy render` trong Video Engine. Chỉ một render được chạy tại một thời điểm; nút hủy gọi trực tiếp stop handler đang hoạt động. Cleanup khôi phục playhead, dừng audio/stream tracks, hủy animation frame và vô hiệu hóa nút sau khi recorder settle. `exportWebM`/`exportMP4` UI wrappers xử lý Promise rejection để thao tác hủy không phát sinh unhandled rejection do click handler.
++- **Whisper cancellation:** `Hủy Whisper` tăng job token, terminate module worker, reject/clear request đang chờ và bảo đảm kết quả trả về muộn không được ghi vào timeline. Hủy trong giai đoạn AudioContext decode là cooperative; decode hiện tại có thể hoàn tất rồi mới dừng trước bước inference/tạo cue.
++- **Model unload:** `Giải phóng model` terminate worker, giải phóng pipeline/model trong memory và clear pending work. Browser HTTP cache có thể vẫn giữ model asset đã tải; nút này không xóa browser cache.
++- **Watchdog:** inference worker có timeout 15 phút; khi timeout, worker bị terminate và lỗi hướng dẫn retry được trả về.
++- API bổ sung trên canonical Video Engine: `cancelExport`, `whisperCancel`; `whisperUnload` được giữ và nối với control cập nhật trạng thái. `CANVIOPhaseSuite.tests()` thêm `videoWhisperCancellation` và `videoExportCancellation`.
++
++### P50 validation
++
++- P50 source VM harness: **27/27 assertions** pass, gồm worker cancellation, job-token invalidation, pending rejection, worker URL/module loading, ArrayBuffer transfer, 15-minute watchdog, export cancel callback, single-render guard, UI wiring và candidate marker.
++- P49 source harness: 35/35; P48: 26/26; P47 integration, bezier, restore and CRC fixtures pass.
++- Static audit after P50: 80/80 inline scripts pass `node --check`; 493/493 IDs are unique; zero duplicate IDs; zero external script `src`; Whisper worker syntax passes.
++- These fixtures verify source-level state transitions with stubs. They do not prove native `MediaRecorder.stop()` latency, real browser codec finalization, AudioContext cancellation, GPU/RAM reclamation, model accuracy, or browser page runtime.
++
++### P50 remaining acceptance
++
++- Real browser: cancel WebM/MP4 export at multiple progress points; confirm no file is saved, track/playhead returns to previous time, audio/stream tracks stop, a new export can start after cancellation and no late `dataavailable` chunk creates output.
++- Real browser: cancel Whisper during decode, first runtime/model download, inference and post-result boundary; confirm no partial caption clips, retry works, unload reduces memory pressure and cached assets are not misreported as deleted.
++- Run Chrome/Edge/Safari HTTPS, native IndexedDB, WebVTT external round-trip, real A/V decode/sync, accessibility and public-origin P30/P31 acceptance.
++
++**Release disposition:** P50 local candidate. No commit, PR, merge or deployment was performed; Chromium in this environment remains blocked before application boot (`ERR_BLOCKED_BY_ADMINISTRATOR`).
+--- a/README.md
++++ b/README.md
+@@ -1,19 +1,19 @@
+-# CANVIO P49 — Video Production & AI Caption candidate
++# CANVIO P50 — Production Controls candidate
+ 
+-This package is the complete local P49 candidate built on the P48 integrated source. It preserves the existing CANVIO application and the canonical `CV.engines.video` timeline; it does not add a second timeline, media store, project database or cloud backend.
++This package is the complete local P50 candidate built on the P49 integrated source. It preserves the existing CANVIO application and the canonical `CV.engines.video` timeline; it does not add a second timeline, media store, project database or cloud backend.
+ 
+ ## Main files
+ 
+-- `index.html` — complete application source, marker `23.3.63-p49` / PhaseSuite `49.0.0`.
++- `index.html` — complete application source, marker `23.3.64-p50` / PhaseSuite `50.0.0`.
+ - `assets/canvio-whisper-worker.js` — user-triggered Whisper ASR worker. It imports pinned Transformers.js `3.8.1` on demand and loads `Xenova/whisper-tiny` (q8).
+-- `CANVIO_AI_GUIDE.md` — architecture guide and P49 engineering addendum.
++- `CANVIO_AI_GUIDE.md` — architecture guide and P49/P50 engineering addenda.
+ - `CANVIO_ROADMAP.md` — integrated phases 1–6 and remaining acceptance.
+ - `CANVIO_PHASES_1_6_STATUS.md` — concise phase status.
+ - `CANVIO_HANDOFF.md` — source lineage, implementation and release gates.
+ - `CANVIO_QA_REPORT.md` — static checks and regression evidence.
+ - `.github/workflows/canvio-pages-node24.yml` — exact-hash candidate gate, Node 24 checks and worker packaging.
+-- `tests/p47/`, `tests/p48/`, `tests/p49/` — retained regression fixtures and candidate-specific test harnesses.
+-- `patches/` — sequential, reviewable source patches through P49.
++- `tests/p47/`, `tests/p48/`, `tests/p49/`, `tests/p50/` — retained regression fixtures and candidate-specific test harnesses.
++- `patches/` — sequential, reviewable source patches through P50.
+ - `CANVIO_MANIFEST.json` — SHA-256 and byte manifest for every other packaged file.
+ 
+ ## Video Engine P49 features
+@@ -25,6 +25,15 @@
+ ### Whisper network/cache note
+ 
+ The worker and inference run in the browser. The audio samples are not sent to a hosted speech-to-text API by this code path. On first use the browser must download the pinned Transformers.js runtime from `esm.sh` and the Whisper model files from Hugging Face; model caching is enabled where the browser permits it. Therefore this is **not a guaranteed first-run offline feature**. A cached model may be usable later offline only if the browser retained all required files and the app origin/runtime policy allows it. The `whisper-tiny` model can make recognition errors; manually review wording, names, punctuation, timestamps and speaker changes. No diarization or professional subtitle certification is claimed.
++
++## P50 production controls
++
++- **Cancel render:** Video Engine exposes `Hủy render` while a render is active. A single-export guard prevents concurrent recorder sessions. Cancellation stops the recorder/stream, cancels the animation frame, restores the playhead, rejects the render result and disables the cancel control after cleanup. The UI wrapper absorbs the expected cancellation rejection.
++- **Cancel Whisper:** `Hủy Whisper` invalidates the current job token, terminates the module worker if it exists, rejects and clears pending worker requests, and prevents a late decode/inference result from creating subtitle clips. During audio decoding, cancellation is cooperative: decoding itself may finish before the stale-job check returns.
++- **Release Whisper memory:** `Giải phóng model` terminates the worker and releases its in-memory pipeline/model references. Run this after transcription when the machine needs memory back. This does not erase files that the browser cache may have retained.
++- **Watchdog:** a worker request exceeding 15 minutes is terminated, pending work is rejected, and the UI receives actionable retry guidance.
++
++P50 exposes `cancelExport`, `whisperCancel` and `whisperUnload` on the existing Video Engine owner; no second timeline, persistence store or cloud service is introduced.
+ 
+ ## Quick validation
+ 
+@@ -38,13 +47,14 @@
+ node tests/p47/test_phase_p47_crc.cjs
+ node tests/p48/run-p48-tests.cjs
+ node tests/p49/run-p49-tests.cjs
++node tests/p50/run-p50-tests.cjs
+ ```
+ 
+-The static HTML audit checks 80 inline script blocks, 490 unique IDs and no external `<script src>` references. The P49 worker is a separate asset and must be deployed at `assets/canvio-whisper-worker.js` relative to `index.html`.
++The static HTML audit checks 80 inline script blocks, 493 unique IDs and no external `<script src>` references. The Whisper worker is a separate asset and must be deployed at `assets/canvio-whisper-worker.js` relative to `index.html`.
+ 
+ ## Release status and manual acceptance
+ 
+-P49 is a **local candidate**, not merged, deployed or production-certified. Static checks and Node source harnesses do not prove browser codec execution or a completed ASR inference. Chromium in the available environment was blocked before app boot (`ERR_BLOCKED_BY_ADMINISTRATOR`). Before release, run on an ordinary HTTPS origin and verify:
++P50 is a **local candidate**, not merged, deployed or production-certified. Static checks and Node source harnesses do not prove browser codec execution or a completed ASR inference, nor do they prove native render cancellation timing on every browser. Chromium in the available environment was blocked before app boot (`ERR_BLOCKED_BY_ADMINISTRATOR`). Before release, run on an ordinary HTTPS origin and verify:
+ 
+ - app boot and navigation with no uncaught errors;
+ - MP4/H.264 probe and complete real export on a browser that advertises AVC; reject/fallback behavior on a browser that does not;
+--- a/index.html
++++ b/index.html
+@@ -6,7 +6,7 @@
+ <meta charset="utf-8"/>
+ <meta content="width=device-width,initial-scale=1" name="viewport"/>
+ <meta name="description" content="CANVIO là nền tảng sáng tạo hợp nhất cho thiết kế, video, motion và website. Làm việc với dự án, tài nguyên và công cụ xuất bản trong một workspace local-first."/>
+-<title>CANVIO 23.3.60-r6 — Production Excellence · P42 Final Acceptance</title>
++<title>CANVIO 23.3.64-p50 — Production Controls</title>
+ <style>
+ /* ============================================================
+    CANVIO STUDIO 5.0 — Design tokens (bright, professional)
+@@ -1360,7 +1360,7 @@
+ <div class="head"><div><div class="eyebrow">CANVIO 11.0 · MULTITRACK VIDEO WORKSPACE</div><h1>Video Production Engine</h1><p>Dựng video nhiều track ngay trong trình duyệt: video, hình ảnh, âm thanh và phụ đề; xuất WebM hoặc MP4/H.264 nếu trình duyệt hỗ trợ.</p></div><div class="headActions"><span class="badgeSoft" id="vtStatus">Local browser engine</span></div></div>
+ <div class="card" style="margin-bottom:12px"><div class="engine-toolbar">
+ <button class="btn btn-primary sm" onclick="CV.engines.video.addFiles()">+ Thêm media</button><input accept="video/*,image/*,audio/*" hidden="" id="vtFiles" multiple="" onchange="CV.engines.video.importFiles(event)" type="file"/>
+-<button class="btn btn-soft sm" onclick="CV.engines.video.addText()">+ Track chữ</button><button class="btn btn-ghost sm" onclick="CV.engines.video.play()">▶ Phát</button><button class="btn btn-ghost sm" onclick="CV.engines.video.pause()">Ⅱ Dừng</button><button class="btn btn-soft sm" onclick="CV.engines.video.split()" title="Tách clip đang chọn tại playhead">✂ Tách</button><button class="btn btn-soft sm" onclick="CV.engines.video.crossfade(1)" title="Chồng clip đang chọn lên clip trước 1 giây; kiểu chuyển cảnh (mờ/trượt/zoom/quét) chọn trong Thuộc tính → Bộ lọc">⇋ Chuyển cảnh</button><button class="btn btn-ghost sm" onclick="CV.engines.video.srtImport()">⇧ SRT</button><button class="btn btn-ghost sm" onclick="CV.engines.video.srtExport()">⇩ SRT</button><button class="btn btn-ghost sm" onclick="CV.engines.video.vttImport()">⇧ VTT</button><button class="btn btn-ghost sm" onclick="CV.engines.video.vttExport()">⇩ VTT</button><button class="btn btn-ghost sm" onclick="CV.engines.video.runCaptionQC()" title="Kiểm tra thời lượng, chồng cue và tốc độ đọc">✓ QC phụ đề</button><button class="btn btn-soft sm" onclick="CV.engines.video.whisperCaption()" title="Whisper đa ngôn ngữ chạy cục bộ trong trình duyệt; cần tải model lần đầu">Whisper AI</button><button class="btn btn-ghost sm" onclick="CV.engines.video.edl()" title="Xuất EDL CMX3600 30 fps">⇩ EDL</button><button class="btn btn-soft sm" onclick="CV.engines.video.beatPrompt()" title="Cắt clip đang chọn theo BPM">♪ Cắt theo nhịp</button><button class="btn btn-soft sm" onclick="CV.engines.video.autoCutPrompt()" title="Phát hiện khoảng lặng của audio → cắt (tuỳ chọn xoá + dồn)">✂ AutoCut</button><button class="btn btn-soft sm" onclick="CV.engines.video.beatSyncPrompt()" title="Tự nhận nhịp từ audio rồi cắt hình theo nhịp">♪ Beat sync</button><button class="btn btn-ghost sm" onclick="CV.engines.video.undoAuto()" title="Hoàn tác tối đa 30 bước: tách, chuyển cảnh, Áp dụng, xoá, AutoCut, Beat sync, LUT">↶ Hoàn tác</button><button class="btn btn-ghost sm" onclick="CV.engines.video.redo()" title="Làm lại bước vừa hoàn tác">↷ Làm lại</button><button class="btn btn-ghost sm" onclick="CV.engines.video.save()">Lưu timeline</button><button class="btn btn-primary sm" onclick="CV.engines.video.exportWebM()">Xuất WebM</button><button class="btn btn-soft sm" onclick="CV.engines.video.exportMP4()" title="Chỉ hoạt động khi trình duyệt hỗ trợ ghi MP4/H.264">Xuất MP4/H.264</button>
++<button class="btn btn-soft sm" onclick="CV.engines.video.addText()">+ Track chữ</button><button class="btn btn-ghost sm" onclick="CV.engines.video.play()">▶ Phát</button><button class="btn btn-ghost sm" onclick="CV.engines.video.pause()">Ⅱ Dừng</button><button class="btn btn-soft sm" onclick="CV.engines.video.split()" title="Tách clip đang chọn tại playhead">✂ Tách</button><button class="btn btn-soft sm" onclick="CV.engines.video.crossfade(1)" title="Chồng clip đang chọn lên clip trước 1 giây; kiểu chuyển cảnh (mờ/trượt/zoom/quét) chọn trong Thuộc tính → Bộ lọc">⇋ Chuyển cảnh</button><button class="btn btn-ghost sm" onclick="CV.engines.video.srtImport()">⇧ SRT</button><button class="btn btn-ghost sm" onclick="CV.engines.video.srtExport()">⇩ SRT</button><button class="btn btn-ghost sm" onclick="CV.engines.video.vttImport()">⇧ VTT</button><button class="btn btn-ghost sm" onclick="CV.engines.video.vttExport()">⇩ VTT</button><button class="btn btn-ghost sm" onclick="CV.engines.video.runCaptionQC()" title="Kiểm tra thời lượng, chồng cue và tốc độ đọc">✓ QC phụ đề</button><button class="btn btn-soft sm" onclick="CV.engines.video.whisperCaption()" title="Whisper đa ngôn ngữ chạy cục bộ trong trình duyệt; cần tải model lần đầu">Whisper AI</button><button class="btn btn-ghost sm" id="vtWhisperCancel" onclick="CV.engines.video.whisperCancel()" disabled title="Hủy giải mã hoặc nhận dạng đang chạy">Hủy Whisper</button><button class="btn btn-ghost sm" id="vtWhisperUnload" onclick="CV.engines.video.whisperUnload()" disabled title="Giải phóng worker/model Whisper khỏi bộ nhớ">Giải phóng model</button><button class="btn btn-ghost sm" onclick="CV.engines.video.edl()" title="Xuất EDL CMX3600 30 fps">⇩ EDL</button><button class="btn btn-soft sm" onclick="CV.engines.video.beatPrompt()" title="Cắt clip đang chọn theo BPM">♪ Cắt theo nhịp</button><button class="btn btn-soft sm" onclick="CV.engines.video.autoCutPrompt()" title="Phát hiện khoảng lặng của audio → cắt (tuỳ chọn xoá + dồn)">✂ AutoCut</button><button class="btn btn-soft sm" onclick="CV.engines.video.beatSyncPrompt()" title="Tự nhận nhịp từ audio rồi cắt hình theo nhịp">♪ Beat sync</button><button class="btn btn-ghost sm" onclick="CV.engines.video.undoAuto()" title="Hoàn tác tối đa 30 bước: tách, chuyển cảnh, Áp dụng, xoá, AutoCut, Beat sync, LUT">↶ Hoàn tác</button><button class="btn btn-ghost sm" onclick="CV.engines.video.redo()" title="Làm lại bước vừa hoàn tác">↷ Làm lại</button><button class="btn btn-ghost sm" onclick="CV.engines.video.save()">Lưu timeline</button><button class="btn btn-primary sm" onclick="CV.engines.video.exportWebM()">Xuất WebM</button><button class="btn btn-soft sm" onclick="CV.engines.video.exportMP4()" title="Chỉ hoạt động khi trình duyệt hỗ trợ ghi MP4/H.264">Xuất MP4/H.264</button><button class="btn btn-ghost sm" id="vtExportCancel" onclick="CV.engines.video.cancelExport()" disabled title="Dừng render hiện tại và hủy file đầu ra">Hủy render</button>
+ </div><div class="tiny" id="vtMessage" style="margin-top:8px">Thêm video, ảnh hoặc âm thanh. Clip được xếp thành các track độc lập.</div></div>
+ <div class="grid g2" style="grid-template-columns:minmax(0,1.2fr) minmax(250px,.8fr);gap:12px">
+ <div class="card"><div class="cardTop"><h3>Preview</h3><span class="sub" id="vtTime">00:00 / 00:30</span></div><canvas height="540" id="vtCanvas" style="width:100%;background:#0b1220;border-radius:10px;display:block" width="960"></canvas><input id="vtScrub" max="30" min="0" oninput="CV.engines.video.seek(this.value)" step="0.1" style="width:100%;margin-top:10px" type="range" value="0"/></div>
+@@ -5179,7 +5179,8 @@
+     return {cueCount:cues.length,errorCount:issues.filter(function(x){return x.severity==='error'}).length,warningCount:issues.filter(function(x){return x.severity==='warning'}).length,issues:issues,clean:issues.length===0,heuristics:{maxLines:2,maxLineCharacters:42,maxReadingSpeed:20,minimumSuggestedDuration:.7}};
+   }
+   function vRunCaptionQC(){var r=vCaptionQC(),el=document.getElementById('vtMessage'),summary='Phụ đề: '+r.cueCount+' cue · '+r.errorCount+' lỗi cấu trúc · '+r.warningCount+' cảnh báo đọc/hiển thị.';if(!r.cueCount)summary='Chưa có cue phụ đề trên timeline.';if(el)el.textContent=summary+(r.issues.length?' '+r.issues.slice(0,4).map(function(x){return x.message}).join(' '):' Không phát hiện vấn đề theo bộ kiểm tra cơ bản.');toast(summary);return r}
+-  var vWhisperWorker=null,vWhisperPending={},vWhisperRequestId=0,vWhisperBusy=false;
++  var vWhisperWorker=null,vWhisperPending={},vWhisperRequestId=0,vWhisperBusy=false,vWhisperJobToken=0;
++  function vWhisperSyncControls(){var cancel=document.getElementById('vtWhisperCancel'),unload=document.getElementById('vtWhisperUnload');if(cancel)cancel.disabled=!vWhisperBusy;if(unload)unload.disabled=vWhisperBusy||!vWhisperWorker}
+   function vWhisperBuildCues(output,base,duration){
+     output=output&&typeof output==='object'?output:{};base=Math.max(0,Number(base)||0);duration=Math.max(.2,Number(duration)||.2);
+     var chunks=Array.isArray(output.chunks)?output.chunks:[],cues=[];
+@@ -5188,18 +5189,19 @@
+     return cues.slice(0,2000);
+   }
+   function vWhisperStatus(message){var st=document.getElementById('vtStatus');if(st)st.textContent=String(message||'Whisper local');}
++  function vWhisperRejectPending(error){Object.keys(vWhisperPending).forEach(function(k){var item=vWhisperPending[k];delete vWhisperPending[k];if(item&&item.timer)clearTimeout(item.timer);if(item&&item.reject)item.reject(error)})}
+   function vWhisperGetWorker(){
+     if(vWhisperWorker)return vWhisperWorker;
+     if(!window.Worker)throw new Error('Trình duyệt không hỗ trợ Web Worker.');
+     var url=new URL('assets/canvio-whisper-worker.js',document.baseURI);vWhisperWorker=new Worker(url,{type:'module'});
+-    vWhisperWorker.onmessage=function(event){var m=event.data||{},pending=vWhisperPending[m.id];if(!pending)return;if(m.type==='progress'||m.type==='status'){vWhisperStatus(m.message||'Đang nạp Whisper WASM…');return}delete vWhisperPending[m.id];if(m.type==='result')pending.resolve(m.output||{});else pending.reject(new Error(m.error||'Whisper không thể nhận dạng âm thanh.'))};
+-    vWhisperWorker.onerror=function(event){var error=new Error(event&&event.message||'Whisper worker gặp lỗi.');Object.keys(vWhisperPending).forEach(function(k){vWhisperPending[k].reject(error);delete vWhisperPending[k]});vWhisperWorker=null};
+-    vWhisperWorker.onmessageerror=function(){var error=new Error('Không đọc được dữ liệu trả về từ Whisper worker.');Object.keys(vWhisperPending).forEach(function(k){vWhisperPending[k].reject(error);delete vWhisperPending[k]})};
+-    return vWhisperWorker;
++    vWhisperWorker.onmessage=function(event){var m=event.data||{},pending=vWhisperPending[m.id];if(!pending)return;if(m.type==='progress'||m.type==='status'){vWhisperStatus(m.message||'Đang nạp Whisper WASM…');return}delete vWhisperPending[m.id];if(pending.timer)clearTimeout(pending.timer);if(m.type==='result')pending.resolve(m.output||{});else pending.reject(new Error(m.error||'Whisper không thể nhận dạng âm thanh.'));vWhisperSyncControls()};
++    vWhisperWorker.onerror=function(event){var error=new Error(event&&event.message||'Whisper worker gặp lỗi.');var worker=vWhisperWorker;vWhisperWorker=null;try{if(worker)worker.terminate()}catch(e){}vWhisperRejectPending(error);vWhisperSyncControls()};
++    vWhisperWorker.onmessageerror=function(){var error=new Error('Không đọc được dữ liệu trả về từ Whisper worker.');var worker=vWhisperWorker;vWhisperWorker=null;try{if(worker)worker.terminate()}catch(e){}vWhisperRejectPending(error);vWhisperSyncControls()};
++    vWhisperSyncControls();return vWhisperWorker;
+   }
+   function vWhisperRunWorker(samples,language){
+     var worker=vWhisperGetWorker(),id=++vWhisperRequestId,copy=samples instanceof Float32Array?samples:new Float32Array(samples);
+-    return new Promise(function(resolve,reject){vWhisperPending[id]={resolve:resolve,reject:reject};try{worker.postMessage({id:id,action:'transcribe',audio:copy.buffer,language:language||'vietnamese'},[copy.buffer])}catch(e){delete vWhisperPending[id];reject(e)}});
++    return new Promise(function(resolve,reject){var timer=setTimeout(function(){var item=vWhisperPending[id];if(!item)return;delete vWhisperPending[id];var active=vWhisperWorker;vWhisperWorker=null;try{if(active)active.terminate()}catch(e){}var error=new Error('Whisper quá thời gian chờ 15 phút; model/worker đã được giải phóng. Hãy thử audio ngắn hơn hoặc kiểm tra kết nối tải model.');vWhisperRejectPending(error);reject(error);vWhisperSyncControls()},900000);vWhisperPending[id]={resolve:resolve,reject:reject,timer:timer};try{worker.postMessage({id:id,action:'transcribe',audio:copy.buffer,language:language||'vietnamese'},[copy.buffer])}catch(e){clearTimeout(timer);delete vWhisperPending[id];reject(e)}});
+   }
+   async function vWhisperDecode(file){
+     var AudioCtx=window.AudioContext||window.webkitAudioContext,OfflineCtx=window.OfflineAudioContext||window.webkitOfflineAudioContext;if(!AudioCtx||!OfflineCtx)throw new Error('Trình duyệt thiếu AudioContext / OfflineAudioContext.');
+@@ -5214,9 +5216,11 @@
+     if(vWhisperBusy){toast('Whisper đang xử lý một tệp.');return false}
+     if(vTrackLocked(3)){toast('Track phụ đề đang khóa; hãy mở khóa trước khi tạo cue.');return false}
+     var input=document.createElement('input');input.type='file';input.accept='audio/*';input.onchange=async function(){var file=input.files&&input.files[0];input.value='';if(!file)return;if(file.size>100*1024*1024){toast('Whisper giới hạn file đầu vào tối đa 100 MB.');return}if(vTrackLocked(3)){toast('Track phụ đề đang khóa.');return}
+-      var base=Math.max(0,Number(videoState.time)||0),language='vietnamese';try{var choice=prompt('Ngôn ngữ nhận dạng: vietnamese / english / auto','vietnamese');if(choice===null)return;choice=String(choice).trim().toLowerCase();language=choice==='auto'?'auto':choice==='english'?'english':'vietnamese';vWhisperBusy=true;vWhisperStatus('Đang giải mã âm thanh cục bộ…');var decoded=await vWhisperDecode(file);vWhisperStatus('Đang tải runtime Whisper và model (lần đầu có thể lâu)…');var output=await vWhisperRunWorker(decoded.samples,language);var cues=vWhisperBuildCues(output,base,decoded.duration);if(!cues.length)throw new Error('Whisper không trả về cue có timestamp hoặc nội dung.');if(vTrackLocked(3))throw new Error('Track phụ đề đã bị khóa trong lúc xử lý; không ghi cue.');vPushUndo();cues.forEach(function(c){videoState.clips.push({id:U.uid('vt'),name:'Whisper caption',type:'text',text:c.text,start:c.start,duration:c.duration,track:3})});videoState.duration=Math.max(videoState.duration,30,...videoState.clips.map(function(c){return c.start+c.duration+1}));vSave();vRender();vDraw();var report=vCaptionQC();vWhisperStatus('Whisper hoàn tất · '+cues.length+' cue · '+(report.warningCount?'cần rà '+report.warningCount+' cảnh báo QC':'đã qua QC cơ bản'));toast('Đã tạo '+cues.length+' cue Whisper trên track phụ đề. Hãy rà lại nội dung và timing.')}catch(e){console.warn('Whisper local transcription failed',e);vWhisperStatus('Whisper chưa hoàn tất · '+(e.message||String(e)));toast('Không tạo được phụ đề: '+(e.message||String(e)))}finally{vWhisperBusy=false}};input.click();return true;
+-  }
+-  function vWhisperUnload(){if(vWhisperWorker){try{vWhisperWorker.terminate()}catch(e){}vWhisperWorker=null}Object.keys(vWhisperPending).forEach(function(k){vWhisperPending[k].reject(new Error('Whisper worker đã được đóng.'));delete vWhisperPending[k]});return true}
++      var job=++vWhisperJobToken,base=Math.max(0,Number(videoState.time)||0),language='vietnamese';try{var choice=prompt('Ngôn ngữ nhận dạng: vietnamese / english / auto','vietnamese');if(choice===null)return;choice=String(choice).trim().toLowerCase();language=choice==='auto'?'auto':choice==='english'?'english':'vietnamese';vWhisperBusy=true;vWhisperSyncControls();vWhisperStatus('Đang giải mã âm thanh cục bộ…');var decoded=await vWhisperDecode(file);if(job!==vWhisperJobToken)throw new Error('Đã hủy tác vụ Whisper.');vWhisperStatus('Đang tải runtime Whisper và model (lần đầu có thể lâu)…');var output=await vWhisperRunWorker(decoded.samples,language);if(job!==vWhisperJobToken)throw new Error('Đã hủy tác vụ Whisper.');var cues=vWhisperBuildCues(output,base,decoded.duration);if(!cues.length)throw new Error('Whisper không trả về cue có timestamp hoặc nội dung.');if(vTrackLocked(3))throw new Error('Track phụ đề đã bị khóa trong lúc xử lý; không ghi cue.');vPushUndo();cues.forEach(function(c){videoState.clips.push({id:U.uid('vt'),name:'Whisper caption',type:'text',text:c.text,start:c.start,duration:c.duration,track:3})});videoState.duration=Math.max(videoState.duration,30,...videoState.clips.map(function(c){return c.start+c.duration+1}));vSave();vRender();vDraw();var report=vCaptionQC();vWhisperStatus('Whisper hoàn tất · '+cues.length+' cue · '+(report.warningCount?'cần rà '+report.warningCount+' cảnh báo QC':'đã qua QC cơ bản'));toast('Đã tạo '+cues.length+' cue Whisper trên track phụ đề. Hãy rà lại nội dung và timing.')}catch(e){if(job===vWhisperJobToken){console.warn('Whisper local transcription failed',e);vWhisperStatus('Whisper chưa hoàn tất · '+(e.message||String(e)));toast('Không tạo được phụ đề: '+(e.message||String(e)))}}finally{vWhisperBusy=false;vWhisperSyncControls()}};input.click();return true;
++  }
++  function vWhisperCancel(){if(!vWhisperBusy&&!vWhisperWorker)return false;vWhisperJobToken++;var worker=vWhisperWorker;vWhisperWorker=null;try{if(worker)worker.terminate()}catch(e){}vWhisperRejectPending(new Error('Whisper đã bị người dùng hủy.'));vWhisperStatus('Đã yêu cầu hủy Whisper · tác vụ giải mã hiện tại sẽ dừng trước khi tạo phụ đề.');vWhisperSyncControls();return true}
++  function vWhisperUnload(){var wasActive=vWhisperBusy||!!vWhisperWorker;vWhisperCancel();vWhisperStatus(wasActive?'Đã hủy Whisper và giải phóng worker/model.':'Worker Whisper đã được giải phóng khỏi bộ nhớ.');vWhisperSyncControls();return true}
++  vWhisperSyncControls();
+   function vDownloadCaption(name,text,mime){var blob=new Blob([text],{type:mime}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url)},2000)}
+   function vVttExport(){var cues=videoState.clips.filter(function(c){return c.type==='text'}).sort(function(a,b){return a.start-b.start});if(!cues.length){toast('Chưa có track chữ/phụ đề để xuất WebVTT');return false}var out='WEBVTT\n\n'+cues.map(function(c){var lines=String(c.text||'').replace(/\r/g,'').split('\n').map(vVttEscape).join('\n');return vVttFmt(c.start)+' --> '+vVttFmt(c.start+c.duration)+'\n'+lines}).join('\n\n')+'\n';vDownloadCaption('canvio-captions.vtt',out,'text/vtt;charset=utf-8');toast('Đã xuất '+cues.length+' phụ đề WebVTT');return true}
+   function vVttImport(){var i=document.createElement('input');i.type='file';i.accept='.vtt,text/vtt,text/plain';i.onchange=function(){var f=i.files&&i.files[0];if(!f)return;if(f.size>2*1024*1024){toast('WebVTT tối đa 2 MB');return}if(vTrackLocked(3)){toast('Track chữ đang khóa; không nhập được phụ đề');return}var r=new FileReader();r.onload=function(){var arr=vVttParse(r.result);if(!arr.length){toast('Không đọc được cue WebVTT hợp lệ');return}vPushUndo();arr.forEach(function(x){videoState.clips.push({id:U.uid('vt'),name:'Caption',type:'text',text:x.text,start:x.start,duration:x.duration,track:3})});videoState.duration=Math.max(30,...videoState.clips.map(function(x){return x.start+x.duration+1}));vSave();vRender();vDraw();toast('Đã nhập '+arr.length+' cue WebVTT vào track chữ')};r.onerror=function(){toast('Không đọc được file WebVTT')};r.readAsText(f)};i.click()}
+@@ -5362,6 +5366,8 @@
+       return {blob:patched,fixed:true,reason:'duration-metadata-added',durationMs:durationMs};
+     }catch(e){return {blob:blob,fixed:false,reason:'repair-error: '+String(e&&e.message||e)}}
+   }
++  var vExportBusy=false,vExportCancelActive=null;
++  function vCancelExport(){if(typeof vExportCancelActive!=='function')return false;vExportCancelActive();return true}
+   function vExportMimeCandidates(format){
+     if(format==='mp4')return ['video/mp4;codecs="avc1.424028,mp4a.40.2"','video/mp4;codecs="avc1.42E01E,mp4a.40.2"','video/mp4;codecs=avc1.42E01E','video/mp4;codecs=avc1'];
+     return ['video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm'];
+@@ -5378,9 +5384,11 @@
+     var webm=vExportPickMime('webm',Recorder),mp4=vExportPickMime('mp4',Recorder),canvas=document.getElementById('vtCanvas');
+     return {mediaRecorder:!!Recorder,canvasCapture:!!(canvas&&canvas.captureStream),webmMime:webm,mp4Mime:mp4,h264Supported:!!mp4,mp4RequiresNativeH264:true,ffmpegFallback:false};
+   }
+-  function vExportMP4(){return vExport({format:'mp4'})}
++  function vExportWebM(){return vExport({format:'webm'}).catch(function(){return null})}
++  function vExportMP4(){return vExport({format:'mp4'}).catch(function(){return null})}
+   async function vExport(options){
+     options=options&&typeof options==='object'?options:{};
++    if(vExportBusy){toast('CANVIO đang render một video khác.');return null}
+     var format=options.format==='mp4'?'mp4':'webm',mime=options.mimeType||vExportPickMime(format,window.MediaRecorder);
+     if(!window.MediaRecorder){toast('Trình duyệt không hỗ trợ MediaRecorder');return null}
+     if(!mime){var message=format==='mp4'?'Trình duyệt này chưa xác nhận hỗ trợ MP4/H.264. Hãy dùng WebM.':'Trình duyệt chưa xác nhận hỗ trợ WebM.';var capStatus=document.getElementById('vtStatus');if(capStatus)capStatus.textContent=message;toast(message);return null}
+@@ -5389,10 +5397,11 @@
+     vPause();
+     var stream=null,__am=null,rec=null,chunks=[],duration=Math.max(.05,Number(videoState.duration)||0),oldTime=videoState.time,raf=0,settled=false,cancelled=false,abortHandler=null;
+     function stopTracks(){try{if(__am)__am.stop()}catch(e){}try{if(stream)stream.getTracks().forEach(function(t){try{t.stop()}catch(e){}})}catch(e){}if(raf)cancelAnimationFrame(raf);try{videoState.time=oldTime;vDraw()}catch(e){}}
++    vExportBusy=true;var cancelButton=document.getElementById('vtExportCancel');if(cancelButton)cancelButton.disabled=false;
+     return await new Promise(function(resolve,reject){
+       function finish(err,blob){
+-        if(settled)return;settled=true;stopTracks();if(options.signal&&abortHandler)try{options.signal.removeEventListener('abort',abortHandler)}catch(e){}
+-        if(err){reject(err);return}
++        if(settled)return;settled=true;vExportBusy=false;vExportCancelActive=null;if(cancelButton)cancelButton.disabled=true;stopTracks();if(options.signal&&abortHandler)try{options.signal.removeEventListener('abort',abortHandler)}catch(e){}
++        if(err){var errStatus=document.getElementById('vtStatus');if(errStatus)errStatus.textContent=err.message||String(err);toast(err.message||'Render thất bại.');reject(err);return}
+         try{
+           if(options.download!==false){
+             var url=URL.createObjectURL(blob),a=document.createElement('a');
+@@ -5409,6 +5418,7 @@
+         try{if(rec&&rec.state!=='inactive')rec.stop();else finish(new Error('Đã hủy render'))}
+         catch(e){finish(new Error('Đã hủy render'))}
+       }
++      vExportCancelActive=abort;
+       try{
+         stream=c.captureStream(30);
+         __am=window.CVAudioMix?CVAudioMix.attach(stream,videoState.clips.filter(vClipAudible),duration):null;
+@@ -5517,7 +5527,7 @@
+     deleteLayer:function(id){var a=this.getLayers(),i=a.findIndex(function(x){return x.id===id});if(i<0)return false;var n=layer.findOne(function(x){return x.getAttr&&x.getAttr('cvgUid')===id});if(n&&n.getAttr('cvgLocked'))return false;select(i);deleteSelected();designPushHistory();return true},
+     snapshotState:function(){return designCleanJSON()},restoreState:function(raw){try{var j=typeof raw==='string'?raw:JSON.stringify(raw);designRestoreHistory(j);designPushHistory();return true}catch(e){return false}},
+     undo:undoDesign,redo:redoDesign,renderLayers:renderDesignPanels
+-  },web:{init:webInit,save:webSave,load:webLoad,newPage:webNew,exportHTML:webExport,snapshotWebsite:function(){return editor?{html:editor.getHtml(),css:editor.getCss(),ready:true}:null},isReady:function(){return !!editor}},video:{init:vInit,addFiles:vAddFiles,importFiles:vImport,addText:vAddText,split:vSplit,edl:vEdl,edlText:vEdlText,beatCut:vBeatCut,beatPrompt:vBeatPrompt,autoCut:vAutoCut,autoCutPrompt:vAutoCutPrompt,beatDetect:vBeatDetect,beatSync:vBeatSync,beatSyncPrompt:vBeatSyncPrompt,undoAuto:vUndoAuto,undo:vUndoAuto,_state:function(){return videoState},commit:function(){vSave();vRender();vDraw()},save:vSave,redo:vRedo,hslReset:vHslReset,lutImport:vLutImport,lutClear:vLutClear,_pro:{srcOff:vSrcOff,spdAt:vSpdAt,lutPix:vLutPix,rippleList:vRippleList,pushUndo:vPushUndo,tests:vPro22Tests},_audio:{env:vAudEnv,silences:vAudSilences,tempo:vAudTempo},crossfade:vCrossfade,toggleTrack:vToggleTrack,trackState:function(track){return Object.assign({},vTrackState(track))},trackSettingsClean:vTrackSettingsClean,isClipLocked:vClipLocked,isClipVisible:vClipVisible,isClipAudible:vClipAudible,vttImport:vVttImport,vttExport:vVttExport,vttParse:vVttParse,vttFormat:vVttFmt,captionQC:vCaptionQC,runCaptionQC:vRunCaptionQC,whisperCaption:vWhisperCaption,whisperUnload:vWhisperUnload,whisperBuildCues:vWhisperBuildCues,exportCapabilities:vExportCapabilities,exportMP4:vExportMP4,motionAt:vMotionAt,splitMotion:vMotionSplit,cleanMotion:vMotionClean,motionEase:function(p,m,seg){return vMotionEase(Math.max(0,Math.min(1,Number(p)||0)),vMotionClean(m),seg||vMotionClean(m).from)},srtImport:vSrtImport,srtExport:vSrtExport,srtParse:vSrtParse,fxPreset:vFxPreset,fxCss:vFxCss,fxClean:vFxClean,addAsset:vAddAsset,hasMedia:function(id){return vGet(id).then(function(blob){return !!blob})},relinkMedia:vRelinkMedia,select:vSelect,apply:vApply,remove:vRemove,seek:vSeek,play:vPlay,pause:vPause,save:vSave,exportWebM:vExport,
++  },web:{init:webInit,save:webSave,load:webLoad,newPage:webNew,exportHTML:webExport,snapshotWebsite:function(){return editor?{html:editor.getHtml(),css:editor.getCss(),ready:true}:null},isReady:function(){return !!editor}},video:{init:vInit,addFiles:vAddFiles,importFiles:vImport,addText:vAddText,split:vSplit,edl:vEdl,edlText:vEdlText,beatCut:vBeatCut,beatPrompt:vBeatPrompt,autoCut:vAutoCut,autoCutPrompt:vAutoCutPrompt,beatDetect:vBeatDetect,beatSync:vBeatSync,beatSyncPrompt:vBeatSyncPrompt,undoAuto:vUndoAuto,undo:vUndoAuto,_state:function(){return videoState},commit:function(){vSave();vRender();vDraw()},save:vSave,redo:vRedo,hslReset:vHslReset,lutImport:vLutImport,lutClear:vLutClear,_pro:{srcOff:vSrcOff,spdAt:vSpdAt,lutPix:vLutPix,rippleList:vRippleList,pushUndo:vPushUndo,tests:vPro22Tests},_audio:{env:vAudEnv,silences:vAudSilences,tempo:vAudTempo},crossfade:vCrossfade,toggleTrack:vToggleTrack,trackState:function(track){return Object.assign({},vTrackState(track))},trackSettingsClean:vTrackSettingsClean,isClipLocked:vClipLocked,isClipVisible:vClipVisible,isClipAudible:vClipAudible,vttImport:vVttImport,vttExport:vVttExport,vttParse:vVttParse,vttFormat:vVttFmt,captionQC:vCaptionQC,runCaptionQC:vRunCaptionQC,whisperCaption:vWhisperCaption,whisperCancel:vWhisperCancel,whisperUnload:vWhisperUnload,whisperBuildCues:vWhisperBuildCues,exportCapabilities:vExportCapabilities,exportMP4:vExportMP4,cancelExport:vCancelExport,motionAt:vMotionAt,splitMotion:vMotionSplit,cleanMotion:vMotionClean,motionEase:function(p,m,seg){return vMotionEase(Math.max(0,Math.min(1,Number(p)||0)),vMotionClean(m),seg||vMotionClean(m).from)},srtImport:vSrtImport,srtExport:vSrtExport,srtParse:vSrtParse,fxPreset:vFxPreset,fxCss:vFxCss,fxClean:vFxClean,addAsset:vAddAsset,hasMedia:function(id){return vGet(id).then(function(blob){return !!blob})},relinkMedia:vRelinkMedia,select:vSelect,apply:vApply,remove:vRemove,seek:vSeek,play:vPlay,pause:vPause,save:vSave,exportWebM:vExportWebM,
+     getLayers:function(){return videoState.clips.map(function(c,i){return {id:c.id,name:c.name||c.type,type:c.type,visible:vClipVisible(c),locked:vClipLocked(c),index:i,selected:c.id===videoState.selected,track:c.track,duration:c.duration}})},
+     selectLayer:function(id){if(!videoState.clips.some(function(c){return c.id===id}))return false;vSelect(id);return true},
+     renameLayer:function(id,name){var c=videoState.clips.find(function(x){return x.id===id});if(!c||vClipLocked(c))return false;c.name=String(name||'Clip').slice(0,120);vSave();vRender();vDraw();return true},
+@@ -21285,8 +21295,8 @@
+  window.CVCoreReliability=P37;window.CVWebsiteAcceptance=P38;window.CVCreativeRoundTripQA=P39;window.CVResponsiveAccessibilityQA=P40;window.CVPerformanceDiagnostics=P41;window.CVProductionReleaseCandidate=P42;
+  window.CANVIO_P37_P42={version:'23.3.60-r6',modules:modules,mount:mount,runAll:async function(){for(const k of ['P37','P38','P39','P40','P41']){const result=modules[k].run();if(result&&typeof result.then==='function')await result;}render();return reports},tests:function(){var o={};Object.keys(modules).forEach(function(k){o[k]=modules[k].tests()});return o}};
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount();
+- var prev=window.CANVIO_BUILD||{};window.CANVIO_BUILD=Object.freeze(Object.assign({},prev,{version:'23.3.63-p49',base:'23.3.62-p48',candidate:'P49',features:(prev.features||[]).concat(['P37 Core Reliability: guarded Lô 23 export mount and runtime diagnostics','P38 Website & Hosting Acceptance evidence aggregation using existing P30/P31','P39 read-only Creative Engine snapshot serialization QA','P40 live DOM responsive/accessibility heuristic audit','P41 performance/resource/canvas diagnostics','P42 fail-closed Production Release Candidate gate','P31 final acceptance repair: bounded 8 MiB read and active-SPA-workspace heuristic audit','P42 WebM duration metadata repair for MediaRecorder WebM output; local EBML patch','P42 accessibility and storage diagnostics hardening','P47 Vector Forge typography controls: font weight, tracking and text anchor','P47 Video Engine custom cubic-bezier editor with live curve preview and input validation','P47 Website Motion Builder easing presets persisted to exported CSS variables','P48 Video Engine per-track visibility, lock and audio mute state persisted in the canonical timeline','P48 track-lock enforcement shared by Video Engine, Audio Studio, Audio Mixer, media relink and Unified Layers','P48 WebVTT caption import/export with timestamp validation and escaped cue text','P49 native MP4/H.264 export only when MediaRecorder confirms avc1/avc3 support','P49 subtitle preflight for invalid cues, overlaps, reading speed and line layout','P49 user-triggered Whisper multilingual ASR in module worker with local CPU/WASM inference and browser-cache model downloads'])}));
+- document.title='CANVIO 23.3.63-p49 — Video Export & Caption QA';setTimeout(function(){if(window.CANVIO_BUILD&&CANVIO_BUILD.version==='23.3.63-p49')document.title='CANVIO 23.3.63-p49 — Video Export & Caption QA'},9000);
++ var prev=window.CANVIO_BUILD||{};window.CANVIO_BUILD=Object.freeze(Object.assign({},prev,{version:'23.3.64-p50',base:'23.3.63-p49',candidate:'P50',features:(prev.features||[]).concat(['P37 Core Reliability: guarded Lô 23 export mount and runtime diagnostics','P38 Website & Hosting Acceptance evidence aggregation using existing P30/P31','P39 read-only Creative Engine snapshot serialization QA','P40 live DOM responsive/accessibility heuristic audit','P41 performance/resource/canvas diagnostics','P42 fail-closed Production Release Candidate gate','P31 final acceptance repair: bounded 8 MiB read and active-SPA-workspace heuristic audit','P42 WebM duration metadata repair for MediaRecorder WebM output; local EBML patch','P42 accessibility and storage diagnostics hardening','P47 Vector Forge typography controls: font weight, tracking and text anchor','P47 Video Engine custom cubic-bezier editor with live curve preview and input validation','P47 Website Motion Builder easing presets persisted to exported CSS variables','P48 Video Engine per-track visibility, lock and audio mute state persisted in the canonical timeline','P48 track-lock enforcement shared by Video Engine, Audio Studio, Audio Mixer, media relink and Unified Layers','P48 WebVTT caption import/export with timestamp validation and escaped cue text','P49 native MP4/H.264 export only when MediaRecorder confirms avc1/avc3 support','P49 subtitle preflight for invalid cues, overlaps, reading speed and line layout','P49 user-triggered Whisper multilingual ASR in module worker with local CPU/WASM inference and browser-cache model downloads','P50 interruptible Video Engine render with single-export guard, visible cancel control and cleanup','P50 Whisper job cancellation, pending-request cleanup, 15-minute watchdog and explicit worker/model unload control'])}));
++ document.title='CANVIO 23.3.64-p50 — Production Controls';setTimeout(function(){if(window.CANVIO_BUILD&&CANVIO_BUILD.version==='23.3.64-p50')document.title='CANVIO 23.3.64-p50 — Production Controls'},9000);
+ })();
+ 
+ </script>
+@@ -21416,7 +21426,7 @@
+ window.CVWebsiteMotionBuilder={mount:mountMotion,inject:addMotionRuntime,tests:function(){return {mounted:!!$('#canvio-web-motion'),runtimeWrapped:!!(window.CVWebsitePublishQC&&CVWebsitePublishQC.buildDocument&&CVWebsitePublishQC.buildDocument.__canvioMotionRuntime),reducedMotion:/prefers-reduced-motion/.test(motionStyle)}}};
+ window.CVAIProviderAdapter={call:callProvider,config:providerConfig,endpointFor:endpointFor};
+ window.CANVIOProjectBundle={exportZip:exportProjectZip,restoreZip:restoreProjectZip,restorePayload:restorePortablePayload,tests:function(){return {zip:!!window.CVZip,integrity:!!(window.CV11&&CV11.backupIntegrity),excludesSessionSecrets:true,includesLocalStorage:true,includesReadableIndexedDB:true,zipRestoreAvailable:typeof restoreProjectZip==='function',crcValidation:typeof readStoreZip==='function',schemaMetadata:true}}};if(window.CV11)CV11.restorePortablePayload=restorePortablePayload;
+-window.CANVIOPhaseSuite={version:'49.0.0',init:init,tests:function(){var r=tests(),v=window.CV&&CV.engines&&CV.engines.video;r.videoTrackControls=!!(v&&v.toggleTrack&&v.trackState&&v.isClipLocked&&v.isClipVisible&&v.isClipAudible);r.videoWebVTT=!!(v&&v.vttImport&&v.vttExport&&v.vttParse&&v.vttFormat);r.videoTrackStateInSnapshot=!!(v&&v._state&&v._state().tracks&&v.trackSettingsClean);r.videoNativeMP4H264=!!(v&&v.exportMP4&&v.exportCapabilities);r.videoCaptionPreflight=!!(v&&v.captionQC&&v.runCaptionQC);r.videoWhisperASR=!!(v&&v.whisperCaption&&v.whisperBuildCues&&v.whisperUnload);return r},exportProjectZip:exportProjectZip};
++window.CANVIOPhaseSuite={version:'50.0.0',init:init,tests:function(){var r=tests(),v=window.CV&&CV.engines&&CV.engines.video;r.videoTrackControls=!!(v&&v.toggleTrack&&v.trackState&&v.isClipLocked&&v.isClipVisible&&v.isClipAudible);r.videoWebVTT=!!(v&&v.vttImport&&v.vttExport&&v.vttParse&&v.vttFormat);r.videoTrackStateInSnapshot=!!(v&&v._state&&v._state().tracks&&v.trackSettingsClean);r.videoNativeMP4H264=!!(v&&v.exportMP4&&v.exportCapabilities);r.videoCaptionPreflight=!!(v&&v.captionQC&&v.runCaptionQC);r.videoWhisperASR=!!(v&&v.whisperCaption&&v.whisperBuildCues&&v.whisperUnload);r.videoWhisperCancellation=!!(v&&v.whisperCancel&&v.whisperUnload);r.videoExportCancellation=!!(v&&v.cancelExport);return r},exportProjectZip:exportProjectZip};
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
+ })();
+ </script>
+--- a/tests/p47/test_phase_p47.cjs
++++ b/tests/p47/test_phase_p47.cjs
+@@ -17,7 +17,7 @@
+ const allSuiteTests=sandbox.window.CANVIOPhaseSuite.tests();
+ // P47's regression fixture runs against newer candidates too. P48 runtime-only
+ // checks need a mounted app/browser and are exercised by tests/p48/run-p48-tests.cjs.
+-const newerRuntimeOnly=new Set(['videoTrackControls','videoWebVTT','videoTrackStateInSnapshot','videoNativeMP4H264','videoCaptionPreflight','videoWhisperASR']);
++const newerRuntimeOnly=new Set(['videoTrackControls','videoWebVTT','videoTrackStateInSnapshot','videoNativeMP4H264','videoCaptionPreflight','videoWhisperASR','videoWhisperCancellation','videoExportCancellation']);
+ const tests=Object.fromEntries(Object.entries(allSuiteTests).filter(([name])=>!newerRuntimeOnly.has(name)));
+ const injected=sandbox.window.CVWebsiteMotionBuilder.inject('<html><head></head><body><main data-canvio-motion="slide-up" style="--canvio-motion-easing:cubic-bezier(.2,.7,.2,1)">Hi</main></body></html>');
+ const css=injected.match(/<style id="canvio-motion-runtime">([\s\S]*?)<\/style>/)?.[1]||'';
+--- a/tests/p47/test_phase_p47_restore.cjs
++++ b/tests/p47/test_phase_p47_restore.cjs
+@@ -13,7 +13,7 @@
+ vm.createContext(sandbox);vm.runInContext(m[1],sandbox);
+ (async()=>{
+  const allSuiteTests=sandbox.window.CANVIOPhaseSuite.tests();
+- const newerRuntimeOnly=new Set(['videoTrackControls','videoWebVTT','videoTrackStateInSnapshot','videoNativeMP4H264','videoCaptionPreflight','videoWhisperASR']);
++ const newerRuntimeOnly=new Set(['videoTrackControls','videoWebVTT','videoTrackStateInSnapshot','videoNativeMP4H264','videoCaptionPreflight','videoWhisperASR','videoWhisperCancellation','videoExportCancellation']);
+  const p47SuiteTests=Object.fromEntries(Object.entries(allSuiteTests).filter(([name])=>!newerRuntimeOnly.has(name)));
+  const direct=await sandbox.window.CANVIOProjectBundle.restorePayload({format:'CANVIO_FULL_BACKUP',schema:2,localStorage:{'canvio:qa':'direct-ok','canvio:gemini_key':'secret'},indexedDB:[]});
+  const zipData=fs.readFileSync(require('path').join(__dirname, 'fixtures', 'restore-fixture.zip'));
+--- a/tests/p48/run-p48-tests.cjs
++++ b/tests/p48/run-p48-tests.cjs
+@@ -90,7 +90,7 @@
+ assert('track state exposed for other Video Engine tools', /trackState:function\(track\)\{return Object\.assign\(\{\},vTrackState\(track\)\)\}/.test(videoScript));
+ assert('Audio Studio preview respects hidden/muted audio track', /function previewAudio\(\)[\s\S]{0,300}trackCfg\.hidden\|\|trackCfg\.muted/.test(html));
+ assert('WebVTT import blocks locked caption track', /function vVttImport\(\)[\s\S]{0,400}vTrackLocked\(3\)/.test(videoScript));
+-assert('P48 lineage is preserved by the P49 candidate marker', /version:'23\.3\.63-p49',base:'23\.3\.62-p48',candidate:'P49'/.test(html));
+-assert('P48 PhaseSuite exposes runtime feature checks', /version:'49\.0\.0',init:init,tests:function\(\)[\s\S]{0,600}videoTrackControls/.test(html));
++assert('P48 lineage remains in the P49/P50 candidate chain', /version:'23\.3\.64-p50',base:'23\.3\.63-p49',candidate:'P50'/.test(html) || /version:'23\.3\.63-p49',base:'23\.3\.62-p48',candidate:'P49'/.test(html));
++assert('P48 PhaseSuite exposes runtime feature checks in successor candidate', /version:'50\.0\.0',init:init,tests:function\(\)[\s\S]{0,700}videoTrackControls/.test(html) || /version:'49\.0\.0',init:init,tests:function\(\)[\s\S]{0,600}videoTrackControls/.test(html));
+ 
+ console.log(`P48 PASS: 26 assertions`);
+--- a/tests/p49/run-p49-tests.cjs
++++ b/tests/p49/run-p49-tests.cjs
+@@ -91,7 +91,7 @@
+ const fallbackCue = api.vWhisperBuildCues({text:'Transcript without timestamp chunks'}, 3, 7);
+ assert('Whisper output without chunk timestamps remains one reviewable cue', fallbackCue.length === 1 && fallbackCue[0].start === 3 && fallbackCue[0].duration === 7);
+ assert('Whisper rejects malformed timestamps and empty chunks', api.vWhisperBuildCues({chunks:[{text:'bad',timestamp:[null,1]},{text:'',timestamp:[0,1]}]}, 0, 3).length === 0);
+-assert('P49 exposes user-triggered Whisper adapter and unload', /whisperCaption:vWhisperCaption,whisperUnload:vWhisperUnload,whisperBuildCues:vWhisperBuildCues/.test(videoScript));
++assert('P49 exposes user-triggered Whisper adapter and unload', /whisperCaption:vWhisperCaption,whisperCancel:vWhisperCancel,whisperUnload:vWhisperUnload,whisperBuildCues:vWhisperBuildCues/.test(videoScript));
+ const workerSource = fs.readFileSync(path.resolve(__dirname, '../../assets/canvio-whisper-worker.js'), 'utf8');
+ assert('Whisper worker pins Transformers.js runtime', /@huggingface\/transformers@3\.8\.1/.test(workerSource));
+ assert('Whisper worker selects multilingual q8 model on CPU/WASM default', /Xenova\/whisper-tiny/.test(workerSource) && /dtype:\s*'q8'/.test(workerSource) && !/device:\s*'webgpu'/.test(workerSource));
+@@ -99,6 +99,6 @@
+ assert('Whisper auto language leaves language unset for model detection', /message\.language\s*!==\s*'auto'/.test(workerSource) && /choice==='auto'\?'auto'/.test(videoScript));
+ assert('Whisper explicit Vietnamese and English choices are passed through', /options\.language\s*=\s*message\.language/.test(workerSource) && /choice==='english'\?'english'/.test(videoScript));
+ assert('Whisper worker does not transmit source audio to a remote ASR endpoint', !/fetch\s*\(/.test(workerSource) && !/XMLHttpRequest/.test(workerSource));
+-assert('P49 release marker and PhaseSuite are present', /version:'23\.3\.63-p49',base:'23\.3\.62-p48',candidate:'P49'/.test(html) && /version:'49\.0\.0'/.test(html));
++assert('P49 lineage and PhaseSuite are preserved in P49/P50 candidate', /version:'23\.3\.64-p50',base:'23\.3\.63-p49',candidate:'P50'/.test(html) && /version:'50\.0\.0'/.test(html) || /version:'23\.3\.63-p49',base:'23\.3\.62-p48',candidate:'P49'/.test(html) && /version:'49\.0\.0'/.test(html));
+ 
+ console.log('P49 PASS: 35 assertions');
+--- a/tests/p50/run-p50-tests.cjs
++++ b/tests/p50/run-p50-tests.cjs
+@@ -0,0 +1,149 @@
++'use strict';
++const fs = require('node:fs');
++const path = require('node:path');
++const vm = require('node:vm');
++
++const root = path.resolve(__dirname, '../..');
++const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
++const scripts = [...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script\s*>/gi)].map(m => m[1]);
++const videoScript = scripts.find(s => s.includes('function vWhisperSyncControls') && s.includes('function vExportMimeCandidates'));
++if (!videoScript) throw new Error('Could not locate P50 Video Engine script.');
++let passed = 0;
++function assert(name, condition, detail = '') {
++  if (!condition) throw new Error(`FAIL ${name}${detail ? `: ${detail}` : ''}`);
++  passed++;
++  console.log(`PASS ${name}`);
++}
++
++// Test the worker lifecycle from the actual source, with browser-only objects stubbed.
++const whisperStart = videoScript.indexOf('var vWhisperWorker=');
++const whisperEnd = videoScript.indexOf('function vDownloadCaption(', whisperStart);
++if (whisperStart < 0 || whisperEnd < 0) throw new Error('P50 Whisper lifecycle helpers not found.');
++const timerQueue = [];
++const clearQueue = [];
++const controlNodes = {
++  vtWhisperCancel: { disabled: true },
++  vtWhisperUnload: { disabled: true },
++  vtStatus: { textContent: '' }
++};
++let workerInstances = [];
++class WorkerMock {
++  constructor(url, options) { this.url = url; this.options = options; this.terminated = false; this.messages = []; workerInstances.push(this); }
++  postMessage(message, transfer) { this.messages.push({ message, transfer }); }
++  terminate() { this.terminated = true; }
++}
++const whisperCtx = {
++  console,
++  window: { Worker: WorkerMock },
++  document: { baseURI: 'https://example.test/app/', getElementById: id => controlNodes[id] || null },
++  Worker: WorkerMock,
++  URL,
++  Error,
++  Number, String, Math, Array, Object, Float32Array, Promise,
++  setTimeout(fn, ms) { const item = { fn, ms, cleared: false }; timerQueue.push(item); return item; },
++  clearTimeout(item) { if (item) { item.cleared = true; clearQueue.push(item); } },
++  toast: () => {},
++};
++vm.createContext(whisperCtx);
++vm.runInContext(`${videoScript.slice(whisperStart, whisperEnd)}\nglobalThis.__p50Whisper={vWhisperCancel,vWhisperUnload,vWhisperRunWorker,vWhisperGetWorker,vWhisperSyncControls,vWhisperRejectPending};`, whisperCtx);
++const whisper = whisperCtx.__p50Whisper;
++assert('Whisper cancel is a no-op when no job or worker exists', whisper.vWhisperCancel() === false);
++
++// Create an active request and ensure explicit cancellation terminates the worker and rejects pending work.
++let rejectionMessage = '';
++const fakeWorker = new WorkerMock(new URL('assets/canvio-whisper-worker.js', 'https://example.test/app/'), { type: 'module' });
++whisperCtx.vWhisperWorker = fakeWorker;
++whisperCtx.vWhisperBusy = true;
++whisperCtx.vWhisperPending[91] = { resolve: () => {}, reject: e => { rejectionMessage = e.message; }, timer: null };
++const beforeToken = whisperCtx.vWhisperJobToken;
++assert('Whisper cancellation reports an active job', whisper.vWhisperCancel() === true);
++assert('Whisper cancellation increments the stale-job token', whisperCtx.vWhisperJobToken === beforeToken + 1);
++assert('Whisper cancellation terminates the active module worker', fakeWorker.terminated === true && whisperCtx.vWhisperWorker === null);
++assert('Whisper cancellation rejects and clears pending requests', /hủy/i.test(rejectionMessage) && Object.keys(whisperCtx.vWhisperPending).length === 0);
++
++// Recreate worker through the real helper and exercise the watchdog without waiting 15 minutes.
++workerInstances = [];
++const request = whisper.vWhisperRunWorker(new Float32Array([0.1, -0.1]), 'auto');
++const spawned = workerInstances[0];
++assert('Whisper request uses a module worker with relative app asset URL', !!spawned && spawned.options.type === 'module' && /assets\/canvio-whisper-worker\.js$/.test(spawned.url.href));
++assert('Whisper request transfers its Float32Array buffer', spawned.messages.length === 1 && spawned.messages[0].transfer.length === 1);
++const watchdog = timerQueue[timerQueue.length - 1];
++assert('Whisper request installs a 15-minute watchdog', watchdog.ms === 900000 && Object.keys(whisperCtx.vWhisperPending).length === 1);
++let watchdogRejected = false;
++request.catch(e => { watchdogRejected = /15 phút/.test(e.message); });
++watchdog.fn();
++Promise.resolve().then(() => {
++  assert('Whisper watchdog terminates the worker after timeout', spawned.terminated === true && whisperCtx.vWhisperWorker === null);
++  assert('Whisper watchdog clears the pending request', Object.keys(whisperCtx.vWhisperPending).length === 0);
++  assert('Whisper watchdog rejects the request with actionable guidance', watchdogRejected);
++  const idleWorker = new WorkerMock(new URL('assets/canvio-whisper-worker.js', 'https://example.test/app/'), { type: 'module' });
++  whisperCtx.vWhisperWorker = idleWorker; whisperCtx.vWhisperBusy = false;
++  assert('Whisper model unload terminates an idle worker', whisper.vWhisperUnload() === true && idleWorker.terminated && whisperCtx.vWhisperWorker === null);
++  return Promise.resolve();
++}).then(async () => {
++  // Export cancellation helpers are extracted independently from the same source script.
++  const exportStart = videoScript.indexOf('var vExportBusy=false,vExportCancelActive=null;');
++  const exportEnd = videoScript.indexOf('/* CANVIO 10.0 Designer Core', exportStart);
++  if (exportStart < 0 || exportEnd < 0) throw new Error('P50 export helpers not found.');
++  const exportCtx = {
++    console,
++    window: { MediaRecorder: null },
++    document: { getElementById: () => null },
++    toast: () => {},
++    videoState: { clips: [], duration: 0, time: 0 },
++    Number, String, Math, Array, Object, Promise, Error,
++  };
++  vm.createContext(exportCtx);
++  vm.runInContext(`${videoScript.slice(exportStart, exportEnd)}\nglobalThis.__p50Export={vCancelExport,vExportPickMime,vExportCapabilities};`, exportCtx);
++  const exp = exportCtx.__p50Export;
++  assert('Export cancellation is a no-op when idle', exp.vCancelExport() === false);
++  let cancelled = 0;
++  exportCtx.vExportCancelActive = () => { cancelled++; };
++  assert('Export cancellation invokes the active recorder stop handler', exp.vCancelExport() === true && cancelled === 1);
++  exportCtx.vExportCancelActive = null;
++  exportCtx.vExportBusy = true;
++  assert('Single-export guard blocks overlapping renders', await exportCtx.vExport({ format: 'webm' }) === null);
++  assert('P50 Video Engine exposes export and Whisper cancellation APIs', /cancelExport:vCancelExport/.test(videoScript) && /whisperCancel:vWhisperCancel/.test(videoScript));
++  assert('P50 UI exposes cancel render, cancel Whisper and unload model controls', ['vtExportCancel', 'vtWhisperCancel', 'vtWhisperUnload'].every(id => html.includes(`id="${id}"`)));
++  assert('P50 guards cancel controls until their operations are active', /id="vtExportCancel"[^>]*disabled/.test(html) && /id="vtWhisperCancel"[^>]*disabled/.test(html) && /id="vtWhisperUnload"[^>]*disabled/.test(html));
++  assert('P50 single-export cleanup disables control after settlement', /vExportBusy=false;vExportCancelActive=null;if\(cancelButton\)cancelButton\.disabled=true/.test(videoScript));
++  assert('P50 Whisper cleanup clears watchdog timers and pending jobs', /function vWhisperRejectPending\(error\)[\s\S]*?clearTimeout\(item\.timer\)/.test(videoScript));
++  assert('P50 marker and PhaseSuite versions are aligned', /version:'23\.3\.64-p50',base:'23\.3\.63-p49',candidate:'P50'/.test(html) && /version:'50\.0\.0'/.test(html));
++
++  // Exercise the real export Promise and cleanup path with a deterministic MediaRecorder stub.
++  let recorder;
++  let stoppedTrack = false;
++  let rafCancelled = 0;
++  const cancelNode = { disabled: true };
++  const statusNode = { textContent: '' };
++  const captureTrack = { stop() { stoppedTrack = true; } };
++  class RecorderIntegrationMock {
++    constructor(stream, options) { this.stream = stream; this.mimeType = options.mimeType; this.state = 'inactive'; recorder = this; }
++    static isTypeSupported(type) { return type === 'video/webm;codecs=vp9'; }
++    start() { this.state = 'recording'; }
++    stop() { this.state = 'inactive'; if (this.onstop) this.onstop(); }
++  }
++  const canvasNode = { captureStream: () => ({ getTracks: () => [captureTrack] }) };
++  const integrationCtx = {
++    console, window: { MediaRecorder: RecorderIntegrationMock },
++    document: { getElementById: id => id === 'vtCanvas' ? canvasNode : id === 'vtExportCancel' ? cancelNode : id === 'vtStatus' ? statusNode : null },
++    toast: () => {},
++    videoState: { clips: [], duration: 5, time: 2 },
++    vPause: () => {}, vDraw: () => {},
++    performance: { now: () => 100 }, requestAnimationFrame: () => 77,
++    cancelAnimationFrame: () => { rafCancelled++; },
++    Number, String, Math, Array, Object, Promise, Error, Blob, URL, setTimeout, clearTimeout,
++  };
++  vm.createContext(integrationCtx);
++  vm.runInContext(`${videoScript.slice(exportStart, exportEnd)}\nglobalThis.__p50RunExport={vExport,vCancelExport};`, integrationCtx);
++  const activeExport = integrationCtx.__p50RunExport.vExport({ format: 'webm' });
++  assert('Export enables its cancel control only while render is active', cancelNode.disabled === false && recorder && recorder.state === 'recording');
++  assert('Export rejects a second concurrent render before creating another recorder', await integrationCtx.__p50RunExport.vExport({ format: 'webm' }) === null);
++  assert('User cancel routes to the active MediaRecorder stop handler', integrationCtx.__p50RunExport.vCancelExport() === true && recorder.state === 'inactive');
++  let cancelledExport = false;
++  try { await activeExport; } catch (e) { cancelledExport = /hủy render/i.test(e.message); }
++  assert('Cancelled export rejects without saving a file', cancelledExport && statusNode.textContent.includes('hủy render'));
++  assert('Cancelled export stops the capture track and cancels RAF', stoppedTrack && rafCancelled === 1);
++  assert('Cancelled export restores the previous playhead and disables cancel UI', integrationCtx.videoState.time === 2 && cancelNode.disabled === true && integrationCtx.vExportBusy === false);
++  console.log(`P50 PASS: ${passed} assertions`);
++}).catch(error => { console.error(error); process.exitCode = 1; });

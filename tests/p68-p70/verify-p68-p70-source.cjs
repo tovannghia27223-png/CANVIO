@@ -1,0 +1,12 @@
+'use strict';
+const fs=require('fs');const path=require('path');
+const root=path.join(__dirname,'..','..');
+const source=fs.readFileSync(path.join(root,'canvio-p68-p70.js'),'utf8').trim();
+const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
+const open='<script id="canvio-p68-p70-main">';
+const start=html.indexOf(open);if(start<0)throw new Error('P68–P70 inline block missing');
+const a=start+open.length;const b=html.indexOf('</script>',a);if(b<0)throw new Error('P68–P70 inline block unterminated');
+const embedded=html.slice(a,b).trim();
+if(embedded!==source)throw new Error('canvio-p68-p70.js differs from index inline module');
+if(source.toLowerCase().includes('</script'))throw new Error('Inline module contains a raw closing script sequence');
+console.log('PASS P68–P70 standalone module exactly matches index.html inline source');

@@ -1,0 +1,1499 @@
+diff -ruN '--exclude=CANVIO_MANIFEST.json' '--exclude=canvio-p55-to-p56.patch' '--exclude=__pycache__' p55-base/.github/workflows/canvio-pages-node24.yml extracted/.github/workflows/canvio-pages-node24.yml
+--- p55-base/.github/workflows/canvio-pages-node24.yml	2026-11-16 16:52:48.000000000 +0000
++++ extracted/.github/workflows/canvio-pages-node24.yml	2026-11-16 17:11:22.069237160 +0000
+@@ -18,7 +18,7 @@
+ 
+ jobs:
+   build:
+-    name: Validate and package CANVIO P55 stable-release readiness
++    name: Validate and package CANVIO P56 archive-integrity candidate
+     runs-on: ubuntu-latest
+     permissions:
+       contents: read
+@@ -32,14 +32,14 @@
+           node-version: 24
+           package-manager-cache: false
+ 
+-      - name: Verify exact reviewed CANVIO P55 candidate
++      - name: Verify exact reviewed CANVIO P56 candidate
+         shell: bash
+         run: |
+           set -euo pipefail
+           actual="$(sha256sum index.html | cut -d' ' -f1)"
+-          expected_p55="d0ea70b14c433380bef856b611ff2e3e00aeb3a79b95dae426cb721286d17103"
+-          test "$actual" = "$expected_p55" || { echo "Unexpected index.html SHA-256: $actual" >&2; exit 1; }
+-          echo "Exact CANVIO P55 candidate SHA-256 verified: $actual"
++          expected_p56="bb362154c92622a37ec6a40540ebea377da51073e92fc3e6e31eb3a82c29665f"
++          test "$actual" = "$expected_p56" || { echo "Unexpected index.html SHA-256: $actual" >&2; exit 1; }
++          echo "Exact CANVIO P56 candidate SHA-256 verified: $actual"
+ 
+       - name: Validate HTML, unique IDs, and inline JavaScript syntax
+         shell: bash
+@@ -72,14 +72,14 @@
+           ids = Counter(audit.ids)
+           duplicates = [key for key, count in ids.items() if count > 1]
+           scripts = re.findall(r"<script\b[^>]*>([\s\S]*?)</script\s*>", source, re.I)
+-          if audit.scripts != 81 or len(scripts) != 81:
+-              raise SystemExit(f"Expected 81 inline script blocks; parser={audit.scripts}, extracted={len(scripts)}")
++          if audit.scripts != 82 or len(scripts) != 82:
++              raise SystemExit(f"Expected 82 inline script blocks; parser={audit.scripts}, extracted={len(scripts)}")
+           if audit.external_scripts:
+               raise SystemExit(f"Unexpected external script src entries: {audit.external_scripts}")
+           if duplicates:
+               raise SystemExit(f"Duplicate HTML IDs: {duplicates[:20]}")
+-          if len(audit.ids) != 494 or len(ids) != 494:
+-              raise SystemExit(f"Expected 494 unique HTML IDs; found {len(audit.ids)} IDs / {len(ids)} unique")
++          if len(audit.ids) != 495 or len(ids) != 495:
++              raise SystemExit(f"Expected 495 unique HTML IDs; found {len(audit.ids)} IDs / {len(ids)} unique")
+ 
+           failures = []
+           with tempfile.TemporaryDirectory() as directory:
+@@ -130,12 +130,18 @@
+           set -euo pipefail
+           node tests/p50/run-p50-tests.cjs
+ 
+-      - name: Run P55 P51–P55 stability and release-readiness suite
++      - name: Run P55 P51–P55 stability and release-readiness regression suite
+         shell: bash
+         run: |
+           set -euo pipefail
+           node tests/p55/run-p55-tests.cjs
+ 
++      - name: Run P56 ZIP archive integrity and restore preview suite
++        shell: bash
++        run: |
++          set -euo pipefail
++          node tests/p56/run-p56-tests.cjs
++
+       - name: Install pinned Playwright Chromium for browser smoke
+         shell: bash
+         run: |
+@@ -144,11 +150,11 @@
+           /tmp/canvio-playwright/bin/python -m pip install --disable-pip-version-check playwright==1.65.2
+           /tmp/canvio-playwright/bin/python -m playwright install --with-deps chromium
+ 
+-      - name: Run P55 Chromium runtime and media export smoke
++      - name: Run P56 Chromium runtime, archive integrity and media export smoke
+         shell: bash
+         run: |
+           set -euo pipefail
+-          /tmp/canvio-playwright/bin/python tests/p55/run-p55-browser-smoke.py
++          /tmp/canvio-playwright/bin/python tests/p56/run-p56-browser-smoke.py
+ 
+       - name: Configure GitHub Pages
+         uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d
+diff -ruN '--exclude=CANVIO_MANIFEST.json' '--exclude=canvio-p55-to-p56.patch' '--exclude=__pycache__' p55-base/CANVIO_AI_GUIDE.md extracted/CANVIO_AI_GUIDE.md
+--- p55-base/CANVIO_AI_GUIDE.md	2026-11-16 16:53:00.000000000 +0000
++++ extracted/CANVIO_AI_GUIDE.md	2026-11-16 17:12:04.659082267 +0000
+@@ -1,11 +1,11 @@
+-# CANVIO — AI Agent Guide (23.3 · cập nhật tới 23.3.69-p55)
+-> **CURRENT WORKING BASE (2026-11-16):** `index.html` — CANVIO `23.3.69-p55`, built from the integrated P50 candidate. Sections 1–76 preserve historical architecture and acceptance notes; later addenda document the P47–P55 candidate chain and its Chromium smoke evidence. Use this guide before editing.
+-> Work surgically from the named owners/APIs below. Do not re-scan the entire HTML unless an unresolved question requires it; do not break active data synchronization or local project data. The current artifact has 81 inline script blocks, 494 unique static HTML IDs and a separate `assets/canvio-whisper-worker.js` worker asset.
++# CANVIO — AI Agent Guide (23.3 · cập nhật tới 23.3.70-p56)
++> **CURRENT WORKING BASE (2026-11-17):** `index.html` — CANVIO `23.3.70-p56`, built additively on P55. Sections 1–76 preserve historical architecture and acceptance notes; later addenda document the integrated P47–P56 candidate chain and its Chromium smoke evidence. Use this guide before editing.
++> Work surgically from the named owners/APIs below. Do not re-scan the entire HTML unless an unresolved question requires it; do not break active data synchronization or local project data. The current artifact has 82 inline script blocks, 495 unique static HTML IDs and a separate `assets/canvio-whisper-worker.js` worker asset.
+ > Preserve the canonical project, asset, media, timeline, history, Brand Kit, Project Vault and P8 owners. Keep tests/readiness claims bounded by their actual fixture and real-origin evidence.
+ >
+-> **ACTIVE LOCAL CANDIDATE:** P55 application marker `23.3.69-p55`, base `23.3.68-p54`, PhaseSuite `55.0.0`. It is a local candidate only; a Chromium smoke passed, but native IndexedDB, secure-origin, Whisper model and hosting acceptance remain open; not merged, not deployed and not production-certified. See `CANVIO_MANIFEST.json` for current source/package SHA-256 values.
++> **ACTIVE LOCAL CANDIDATE:** P56 application marker `23.3.70-p56`, base `23.3.69-p55`, PhaseSuite `56.0.0`. It adds read-only stored-ZIP Central Directory/Local Header preflight plus a restore inventory; it does not add a database, timeline or cloud backend. Chromium synthetic smoke passed, but native IndexedDB, secure-origin, Whisper model and hosting acceptance remain open; not merged, not deployed and not production-certified. See `CANVIO_MANIFEST.json` for current source/package SHA-256 values.
+ 
+-> **Historical release note:** the original 23.3.3 Prism Studio baseline and its internal `CANVIO_RELEASE.version` compatibility rule are retained in the historical guide sections. The current deliverable build is tracked by `CANVIO_BUILD.version = 23.3.69-p55`; historical values in older sections do not override this marker.
++> **Historical release note:** the original 23.3.3 Prism Studio baseline and its internal `CANVIO_RELEASE.version` compatibility rule are retained in the historical guide sections. The current deliverable build is tracked by `CANVIO_BUILD.version = 23.3.70-p56`; historical values in older sections do not override this marker.
+ ## 1. Nguyên tắc bắt buộc
+ - KHÔNG viết lại file từ đầu. Chỉ chỉnh sửa trong các hàm/mảng đã có.
+ - KHÔNG thêm dependency ngoài hoặc gọi API AI trả phí. Prompt generation hiện hữu vẫn là local-only (xem `choosePrompt()`). Ngoại lệ mạng có chủ ý: P30/P31 chỉ gửi request GET/HEAD khi người dùng bấm kiểm tra website công khai; không chạy nền, không gửi credentials, không upload/ghi website.
+@@ -3162,3 +3162,22 @@
+ - Test harness caveat: URL navigation is blocked by the host. Playwright uses `page.set_content()` on opaque `about:blank` and injects in-memory local/sessionStorage shims. It cannot validate native IndexedDB, HTTPS secure context, persistent storage, deployed worker URL/CSP/CORS, actual audio/video A/V sync, Whisper model transfer/inference, Safari/Edge or screen-reader behavior. Do not extrapolate the Chromium smoke beyond its synthetic fixture.
+ - GitHub Actions now installs pinned Playwright Python `1.65.2` and Chromium to reproduce the same smoke before packaging Pages. A successful GitHub-hosted run and a real HTTPS deployment have not yet been observed.
+ - Static state after title fix: 81 inline scripts, 494 unique static IDs, no external `<script src>`. P55 source VM tests are 49/49. P48 26/26, P49 35/35 and P50 27/27.
++
++
++## P56 — Portable ZIP archive preflight & restore preview (2026-11-17)
++
++### Ownership and mutation boundary
++- `window.CANVIOArchivePreflight` is a read-only validator/inventory helper. It runs before the legacy `readStoreZip(file)` parser and before `restorePortablePayload()` can write any project state. It does not create a database, object store, timeline, project model or cloud service.
++- Preserve `CVZip` as the only CANVIO ZIP writer, the existing `readStoreZip()` CRC-verifying parser, `CV11.backupIntegrity.verify()` SHA-256 check, the current Project Vault/Asset Library owners, and the existing `CANVIO_81_MEDIA` IndexedDB owner.
++- The validator deliberately accepts the stored ZIP format produced by `CVZip.build()`, not arbitrary third-party archives. It rejects ZIP64, DEFLATE, encryption/data descriptors, multi-disk archives, comments/extra fields, duplicate paths, unsafe paths, directory gaps, overlapping local records, bad EOCD bounds and local/central metadata mismatch.
++- Bounds: 512 MiB total archive (same restore ceiling as P53), 64 entries, 1 MiB Central Directory and 1,024 UTF-8 bytes per entry name. No payload values are decoded by the structural preflight. Existing parser and CRC/SHA checks still own payload validation.
++
++### Restore preview contract
++- `CANVIOArchivePreflight.summarizePayload(payload, integrity)` returns counts and safe metadata only: backup date, eligible CANVIO localStorage key count, CANVIO IndexedDB database/store/record counts, excluded-secret count, warning count, checksum status and schema. It never returns stored values or secret key names.
++- A one-use pending archive summary is consumed by the existing restore confirmation. Cancel returns before localStorage/IndexedDB writes. Re-inspection clears stale pending preview state.
++- `CANVIOPhaseSuite.tests()` exposes `p56ArchivePreflight` and `p56ReadOnlyRestorePreview`; the P56 release report remains read-only and cannot set `releaseCertified:true`.
++
++### P56 evidence and limits
++- `tests/p56/run-p56-tests.cjs`: 27/27 assertions, including valid CVZip shape, malformed EOCD/CD, unsupported features, traversal/duplicates, mismatched local headers, aliases/overlaps, bounds, safe preview and wiring before parser.
++- `tests/p56/run-p56-browser-smoke.py`: 27 Chromium checks on 1440/768/720/375/320 widths; actual CVZip output passes preflight, tampered Central Directory CRC metadata is rejected, preview contains no secret values and leaves storage untouched.
++- Browser test uses opaque `about:blank` with in-memory local/sessionStorage shims; it does not certify native IndexedDB, secure context, deployed worker/model, real-media A/V sync, Safari/Edge, screen reader, true 200% zoom or production hosting. See `CANVIO_QA_REPORT.md`.
+diff -ruN '--exclude=CANVIO_MANIFEST.json' '--exclude=canvio-p55-to-p56.patch' '--exclude=__pycache__' p55-base/CANVIO_HANDOFF.md extracted/CANVIO_HANDOFF.md
+--- p55-base/CANVIO_HANDOFF.md	2026-11-16 16:53:42.000000000 +0000
++++ extracted/CANVIO_HANDOFF.md	2026-11-16 17:12:21.720275183 +0000
+@@ -1,48 +1,45 @@
+-# CANVIO P55 — Integration handoff / Release Readiness
++# CANVIO P56 — Integration handoff / Archive Integrity & Safe Restore
+ 
+-**Date:** 2026-11-16  
++**Date:** 2026-11-17  
+ **Repository:** https://github.com/tovannghia27223-png/CANVIO  
+ **Candidate:** `index.html` + `assets/canvio-whisper-worker.js`  
+-**App marker:** `23.3.69-p55` · **Base:** `23.3.68-p54` · **PhaseSuite:** `55.0.0`  
+-**Final source/package hashes:** see `CANVIO_MANIFEST.json`.
++**App marker:** `23.3.70-p56` · **Base:** `23.3.69-p55` · **PhaseSuite:** `56.0.0`  
++**Source/package hashes:** see `CANVIO_MANIFEST.json`.
+ 
+-## Release status
++## Candidate and release status
+ 
+-P55 is a local integrated release-readiness candidate. It preserves the canonical timeline, current media store, Project Vault, Asset Library and ZIP backup format. Static checks, P47–P55 regression tests and a 24-check Chromium smoke pass. The Pages workflow pins Node.js 24 using the immutable setup-node v7.1.0 commit and requires the single exact P55 source SHA for all events. It is **not CANVIO 1.0 Stable** and is not production-certified because HTTPS origin, native IndexedDB, real Whisper inference, real media A/V sync, accessibility and hosting acceptance remain open.
++P56 is an additive hardening candidate built directly on the recovered P55 delivery. It preserves the canonical `CV.engines.video` timeline, existing Asset Library, Project Vault, `CANVIO_81_MEDIA` IndexedDB media owner, `CVZip` builder and existing portable-backup payload/CRC/SHA owners. It does not introduce a new project database, media store, timeline, cloud backend or background service.
+ 
+-## GitHub repository state observed
++The P56 work does not certify CANVIO 1.0 Stable. It improves ZIP preflight and restore transparency, while native IndexedDB, HTTPS origin, real media/model, accessibility and hosting acceptance remain open.
+ 
+-The linked repository was readable with push/admin permissions. At inspection time its default branch was `main`, head commit `8ac85d810c40d22b62a5750a8b16ce0ee2e09aa4` (message: “Add inline favicon (fix favicon.ico 404) (#6)”). Its tree contained the older R6/P42 workflow, an R6-era `index.html` (4,178,227 bytes), `CANVIO_ROADMAP.md` and the older R6 patch; the P55 worker, P55 source, AI guide and P55 test/package files were not present on `main`. The remote Pages workflow deployed on non-PR events and its old SHA gate did not accept this P55 source.
++## Implemented P56
+ 
+-No P55 commit, branch, pull request, merge, workflow dispatch or production deployment was made. A local Node 24 / Playwright CI configuration is included in this package, but its hosted GitHub Actions run still awaits transferring the package to the repository. The local container source is larger than 4 MB; the available GitHub connector exposes text-based Git blob/file writes but no direct transfer of this container file snapshot into GitHub. Do not create an empty branch or a source-less PR. The verified ZIP is the current complete handoff artifact.
+-
+-## Implemented P51–P55
+-
+-- **P51 diagnostics:** runtime API and codec probes, storage estimates, read-only report.
+-- **P52 recovery:** session-only render lifecycle ledger; interrupted jobs are reported after reload; MediaRecorder output is not resumable.
+-- **P53 integrity:** ZIP signature/size preflight before the existing parser; retain CRC/SHA checks and restore confirmation.
+-- **P54 budget:** timeline clip/type/track/duration counts, malformed entry count, canvas and optional heap estimates with heuristic warnings.
+-- **P55 release gate:** read-only JSON report and six pending manual acceptance gates; `releaseCertified:false` is immutable in this candidate.
+-- **P55 browser fix:** corrected the old P42 title observer so the actual document title follows the P55 application marker. Regression-tested in Node and Chromium.
++- `window.CANVIOArchivePreflight.inspect(file)` verifies the terminal EOCD, single-disk layout, central-directory bounds and count, entry names, duplicate paths, allowed flags and store-only compression, local-header metadata agreement, local-record bounds/contiguity, non-overlap and presence of `full-backup.json`.
++- Limits: 512 MiB archive (same existing restore ceiling), 64 entries, 1 MiB central directory and 1,024-byte names. ZIP64, DEFLATE, encryption, data descriptors, multi-disk archives, archive comments, extra fields, duplicate names and unsafe paths are rejected.
++- The existing `readStoreZip()` remains responsible for reading payload bytes and checking each CRC32; existing `CV11.backupIntegrity.verify()` remains responsible for SHA-256 payload integrity before storage writes.
++- Restore confirmation now includes a read-only inventory: backup timestamp, eligible CANVIO localStorage keys, IndexedDB databases/stores/records, excluded-secret count, source-warning count, checksum result and ZIP structure/size summary. It does not expose secret values or media content.
++- Candidate version/title and PhaseSuite advance to P56. Release report adds archive-preflight evidence but remains fail-closed with `releaseCertified:false`.
+ 
+ ## Verification evidence
+ 
+-- P47 integration/Bezier/backup/restore/CRC fixtures: PASS.
+-- P48: 26/26; P49: 35/35; P50: 27/27; P55 source VM: 49/49.
+-- Static audit: 81/81 inline scripts parse; 494/494 static IDs unique; 0 duplicates; 0 external script `src`; worker syntax and YAML pass.
+-- Chromium `144.0.7559.96` smoke via Playwright: **24/24 checks passed**. Tested real source boot, nine SPA routes, PhaseSuite flags, track visibility, WebVTT parse, synthetic text-only WebM/VP9 and MP4/H.264 render+decode (960×540), cancel/retry, responsive viewport widths and zero uncaught page/console errors after font requests were stubbed.
+-- Browser smoke report: `tests/p55/browser-smoke-report.json`. Test-only `localStorage`/`sessionStorage` shim and opaque `about:blank` origin are used because host policy blocks navigation. This report does not claim IndexedDB/secure-origin/worker/CORS/Whisper/hosting acceptance.
+-- P50→P55 patch applies to a clean P50 source copy; patch and final manifest are packaged.
+-
+-## Six mandatory acceptance gates
+-
+-1. **Browser matrix:** run Chrome, Edge and Safari over HTTPS; first boot, all routes, console/page errors, worker fetch and responsive/accessibility.
+-2. **Real media:** import actual video/audio/image; render WebM and, only when AVC is supported, MP4/H.264; independently decode, verify audio, duration, A/V sync; cancel at different points and rerender.
+-3. **Whisper:** real Vietnamese/English/auto audio; first runtime/model download; inspect timestamps and content, cancellation at decode/inference/download, unload/retry and memory/cache behavior.
+-4. **Data:** native IndexedDB save/close/reopen, ZIP export, same-origin and fresh-origin restore, schema mismatch, quota/blocked DB, corrupt/oversize archives.
+-5. **Accessibility/performance:** keyboard only, screen reader, focus, contrast, actual 200% browser zoom and large-project tests on target devices.
+-6. **Hosting/security:** Pages publish from approved branch, correct worker relative path, HTTPS/MIME/cache/CSP/CORS, public P30/P31 checks, post-deploy smoke.
+-
+-## Stable release decision
++- P48: 26/26; P49: 35/35; P50: 27/27; P55: 49/49; P56: 27/27 assertions.
++- P47 integration, cubic-Bezier, restore and CRC fixtures: PASS.
++- Static audit: 82/82 inline scripts parse; 495 IDs / 495 unique / 0 duplicates; 0 external script `src`; Whisper worker syntax and workflow YAML parse.
++- Chromium `144.0.7559.96` Playwright smoke: **27 checks passed**. It boots the actual source, checks nine SPA routes and P47–P56 flags, creates and inspects a generated CVZip archive, checks restore summary metadata, exercises track visibility/WebVTT, synthetic WebM/VP9 and MP4/H.264 encode/decode, cancel/retry, responsive widths and zero uncaught page/console errors.
++- ZIP smoke runs on opaque `about:blank` using in-memory local/sessionStorage shims. It is not native IndexedDB/secure-context/worker/CORS/Whisper/real A/V sync/accessibility/hosting evidence.
++- The ZIP preflight tests reject missing payload, duplicate names, traversal, unsupported/encrypted flags, data descriptors, DEFLATE, local-vs-central metadata mismatch, malformed EOCD/offset, overlapping records and oversize archives.
++
++## Existing GitHub state / delivery boundary
++
++The prior P55 handoff recorded repository `main` at `8ac85d810c40d22b62a5750a8b16ce0ee2e09aa4`, on the older R6/P42 line. That repository state has not been rechecked or changed in this P56 task. No commit, branch, pull request, merge, workflow dispatch or deployment was performed. The P56 candidate and its exact source/package hashes are delivered locally for review.
++
++## Six mandatory acceptance gates remain
++
++1. **Browser matrix:** Chrome, Edge and Safari over HTTPS; first boot, all routes, console/page errors and worker loading.
++2. **Real media:** real video/audio import and WebM/MP4 decode, duration, A/V sync, cancel/retry and resource cleanup.
++3. **Whisper:** Vietnamese/English inference, first model download, timestamps, cancel/unload/retry and memory behavior.
++4. **Data:** native IndexedDB save/reopen, backup/restore on same and fresh origins, schema drift, quota/blocked DB and real user backup fixtures.
++5. **Accessibility/performance:** keyboard-only, screen reader, focus order, contrast and actual 200% browser zoom; large projects on target devices.
++6. **Hosting/security:** approved Pages branch, correct worker relative path, HTTPS/MIME/cache/CSP/CORS, P30/P31 and post-deploy smoke.
+ 
+-Do not merge/deploy while any gate above is open. Use a reviewed P55 PR and CI evidence once the exact local source package can be transferred into the repository. After merge/deploy, rerun the same browser smoke against the real HTTPS URL and verify P30/P31 and worker loading. If a critical issue appears, fix it (P56+) before promoting Stable.
++Do not merge/deploy or mark release complete while these gates are pending. Review the exact source SHA and all test outputs before creating a P56 PR.
+diff -ruN '--exclude=CANVIO_MANIFEST.json' '--exclude=canvio-p55-to-p56.patch' '--exclude=__pycache__' p55-base/CANVIO_PHASES_1_6_STATUS.md extracted/CANVIO_PHASES_1_6_STATUS.md
+--- p55-base/CANVIO_PHASES_1_6_STATUS.md	2026-11-16 16:48:14.000000000 +0000
++++ extracted/CANVIO_PHASES_1_6_STATUS.md	2026-11-16 17:12:04.659348057 +0000
+@@ -1,32 +1,33 @@
+-# CANVIO — Phase 1–6 integration status / P55
++# CANVIO — Phase 1–6 integration status / P56
+ 
+-**Application marker:** `23.3.69-p55` · **Base:** `23.3.68-p54` · **PhaseSuite:** `55.0.0`  
+-**State:** local release-readiness candidate; static, VM and Chromium smoke pass; production gates remain open.
++**Application marker:** `23.3.70-p56` · **Base:** `23.3.69-p55` · **PhaseSuite:** `56.0.0`  
++**State:** local archive-integrity candidate; source, regression and Chromium synthetic smoke pass; production gates remain open.
+ 
+-| Phase | Integrated in P55 | Still open |
++| Phase | Integrated in P56 | Still open |
+ |---|---|---|
+-| 1 · Platform reliability | Project Vault history, unified-layer adapters, integrity-sealed ZIP, P51 runtime diagnostics, P52 render recovery, P53 restore preflight | Native IndexedDB persistence and quota/blocked database acceptance on real origins |
+-| 2 · Video | P47 easing; P48 track visibility/lock/mute + SRT/WebVTT; P49 codec-aware MP4/H.264, caption QC and Whisper worker; P50 cancel/unload; P51 diagnostics, P52 recovery, P54 load budget | Real user-media export/A/V sync and cross-browser validation; tracking/stabilization; full ripple/grouping and shared MotionCut timeline remain open |
+-| 3 · Design | Vector Forge text-path typography, weight/tracking/anchor, Layout Foundry and multipage structure | Full shaping/kerning, font/license proof, print preflight acceptance |
+-| 4 · Motion & Web | Website Motion Builder easing presets, IntersectionObserver runtime and reduced-motion fallback; live-site verification tooling | Exported-page cross-browser tests, 3D self-contained export, real live-host acceptance |
++| 1 · Platform reliability | Project Vault history, unified-layer adapters, integrity-sealed ZIP, P51 runtime diagnostics, P52 render recovery, P53 restore size/signature gate, P56 archive structure validation | Native IndexedDB persistence, quota/blocked database behavior and actual restore acceptance on real HTTPS origins |
++| 2 · Video | P47 easing; P48 track visibility/lock/mute + SRT/WebVTT; P49 codec-aware MP4/H.264, caption QC and Whisper worker; P50 cancel/unload; P51 diagnostics, P52 recovery and P54 load budget | Real user-media export/A/V sync and cross-browser validation; tracking/stabilization; full ripple/grouping and shared MotionCut timeline remain open |
++| 3 · Design | Vector Forge text-path typography, weight/tracking/anchor, Layout Foundry and multipage structure | Full shaping/kerning, font/license proof and print-preflight acceptance |
++| 4 · Motion & Web | Website Motion Builder easing presets, IntersectionObserver runtime and reduced-motion fallback; live-site verification tooling | Exported-page cross-browser tests, self-contained 3D export and live-host acceptance |
+ | 5 · AI | Explicit provider adapters; browser-local Whisper worker with explicit first-run runtime/model load | Real model inference/accuracy/cancel/unload and provider CORS/API acceptance |
+-| 6 · Asset & Production | Existing Asset Library, IndexedDB media owner, ZIP backup, P53 preflight/audit and P55 release report | Real backup/restore, hosting deployment, accessibility and release approval |
++| 6 · Asset & Production | Existing Asset Library, IndexedDB media owner, ZIP backup, P53 preflight/audit, P55 release report, P56 ZIP structure gate and restore preview | Real backup/restore, hosting deployment, accessibility and release approval |
+ 
+-## P51–P55 summary
++## P51–P56 summary
+ 
+-- **P51:** runtime diagnostics independently probe secure context, MediaRecorder/canvas, WebM/AVC codecs, audio, Worker, IndexedDB/localStorage and optional storage/heap metrics.
+-- **P52:** session-only render ledger; marks unfinished render interrupted on reload and requests cancel on pagehide. It never resumes a MediaRecorder session.
+-- **P53:** ZIP signature, non-empty and 512 MiB preflight before the existing parser; existing integrity checks and restore confirmation remain.
+-- **P54:** heuristic load budget for timeline size, duration, invalid clips, canvas backing store and optional memory signals; no automatic media mutation.
+-- **P55:** read-only release report with six pending manual gates and no self-certification. Corrected inherited document-title observer to display current P55 marker.
++- **P51:** read-only runtime/media API probes, codec capability separation and storage estimate.
++- **P52:** session-only render ledger; marks unfinished renders interrupted after reload and requests cancel on pagehide.
++- **P53:** non-empty, ZIP signature and 512 MiB size preflight; retains existing integrity checks.
++- **P54:** heuristic timeline/canvas/device/heap resource budget; no automatic media mutation.
++- **P55:** read-only release report with six manual gates and no self-certification; fixed inherited document-title observer.
++- **P56:** validates EOCD/Central Directory and each Local Header before the existing ZIP parser; rejects unsupported ZIP features, duplicate/traversal paths, mismatched metadata and overlapping records. Shows a read-only restore inventory before confirming writes.
+ 
+ ## Test evidence
+ 
+-- P47 integration/Bezier/restore/CRC fixtures: PASS.
+-- P48 26/26; P49 35/35; P50 27/27; P55 source VM 49/49.
+-- Static audit: 81/81 inline scripts parse; 494/494 IDs unique; 0 duplicates; 0 external `<script src>`; Whisper worker syntax and workflow YAML parse.
+-- Chromium 144.0.7559.96 smoke: 24/24 checks pass. Actual app source executed; nine routes, runtime flags, track toggle, WebVTT, synthetic WebM/MP4 encode+decode, cancel/retry, viewport-width checks, zero uncaught page errors. Test is on opaque `about:blank` with an in-memory storage shim; it does not establish native IndexedDB, secure-context or deployed worker acceptance.
++- P47 integration, cubic-Bezier, restore and CRC fixtures: PASS.
++- P48 26/26; P49 35/35; P50 27/27; P55 49/49; P56 27/27.
++- Static audit: 82/82 inline scripts parse; 495/495 IDs unique; 0 duplicates; 0 external `<script src>`; Whisper worker syntax and workflow YAML parse.
++- Chromium 144.0.7559.96 smoke: **27 checks passed**. Actual application source, nine SPA routes, P47–P56 runtime flags, track toggle, WebVTT, generated ZIP preflight, synthetic WebM/MP4 encode+decode, cancel/retry, five viewport widths, zero uncaught page errors and zero console errors. Runs on opaque `about:blank` with in-memory storage shims; does not certify native IndexedDB, secure context, deployed workers or real media.
+ 
+ ## Release disposition
+ 
+-P55 is **not CANVIO 1.0 Stable**. Six manual gates remain: cross-browser HTTPS, real-media A/V sync, real Whisper/model, native IndexedDB/ZIP round-trip, accessibility/200% zoom, and hosting/CSP/CORS. GitHub `main` was found to remain on the older R6/P42 source; no P55 commit/PR/merge/deploy was performed. Complete those gates before production approval; continue to P56+ only for remaining defects or new scope.
++P56 is **not CANVIO 1.0 Stable**. Six manual gates remain: cross-browser HTTPS, real-media A/V sync, real Whisper/model, native IndexedDB/ZIP round-trip, keyboard/screen-reader/200% zoom and hosting/CSP/CORS. No P56 commit, PR, merge or deployment is claimed.
+diff -ruN '--exclude=CANVIO_MANIFEST.json' '--exclude=canvio-p55-to-p56.patch' '--exclude=__pycache__' p55-base/CANVIO_QA_REPORT.md extracted/CANVIO_QA_REPORT.md
+--- p55-base/CANVIO_QA_REPORT.md	2026-11-16 16:53:42.000000000 +0000
++++ extracted/CANVIO_QA_REPORT.md	2026-11-16 17:12:04.659393606 +0000
+@@ -1,83 +1,94 @@
+-# CANVIO P55 — QA & release-readiness report
++# CANVIO P56 — QA & release-readiness report
+ 
+-**Ngày kiểm tra:** 2026-11-16  
+-**Candidate:** `23.3.69-p55` · **PhaseSuite:** `55.0.0` · **Base:** P50 / `23.3.64-p50`  
+-**Disposition:** P55 source candidate passed static, VM and Chromium smoke checks; production release remains **BLOCKED / NOT CERTIFIED** until the six real-origin and manual acceptance gates below pass.
++**Ngày kiểm tra:** 2026-11-17  
++**Candidate:** `23.3.70-p56` · **PhaseSuite:** `56.0.0` · **Base:** P55 / `23.3.69-p55`  
++**Disposition:** P56 archive preflight and restore-preview source candidate passed the static, regression, and Chromium synthetic smoke checks below. Production remains **BLOCKED / NOT CERTIFIED** until the six real-origin/manual gates are completed.
+ 
+ ## 1. Source and static audit — PASS
+ 
+ | Check | Result |
+ |---|---:|
+-| Inline script blocks | 81/81 parse with `node --check` |
+-| Static HTML IDs | 494/494 unique |
++| Inline script blocks | 82/82 parse with `node --check` |
++| Static HTML IDs | 495/495 unique |
+ | Duplicate IDs | 0 |
+ | External `<script src>` | 0 |
+ | Whisper worker syntax | PASS |
+ | Workflow YAML syntax | PASS |
+-| Candidate SHA in workflow | Exact P55 SHA lock |
+-| Candidate document title | P55 title verified after inherited title observers |
++| Candidate SHA in workflow | Exact P56 source SHA lock |
++| P56 title observer | P56 title survives inherited observers |
+ 
+-A real browser run exposed a stale title override inherited from the P42 observer. P55 now pins the document title to the active P55 build marker; the Node harness has regression assertions for this defect.
++P56 adds one inline archive-integrity module and one UI ID; it does not replace or rewrite the existing application. Existing project, asset, timeline, Project Vault, CVZip, restore parser, integrity verifier and IndexedDB media owners remain canonical.
+ 
+ ## 2. Regression suites — PASS
+ 
+ | Suite | Result |
+ |---|---:|
+-| P47 integration / Bezier / restore / CRC fixtures | PASS |
++| P47 integration / cubic-Bezier / restore / CRC fixtures | PASS |
+ | P48 track controls + WebVTT | 26/26 |
+ | P49 codec selection + caption QC + Whisper adapter | 35/35 |
+ | P50 cancellation + worker lifecycle | 27/27 |
+-| P55 P51–P55 stability / release-readiness VM | 49/49 |
++| P55 P51–P55 diagnostics/recovery/integrity/release VM | 49/49 |
++| P56 archive preflight + restore preview VM | 27/27 |
+ 
+-P47 restore/CRC tests and P48–P55 Node VM suites exercise source functions with test doubles. These suites are not substitutes for browser storage, model or hosting acceptance.
++P47 restore/CRC and P48–P56 VM tests use fixtures/test doubles for selected code paths. They do not substitute for native IndexedDB, real model inference, real user media, or production-origin acceptance.
+ 
+-## 3. Chromium browser smoke — PASS WITH ORIGIN LIMITATIONS
++## 3. P56 archive integrity — PASS
+ 
+-Test file: `tests/p55/run-p55-browser-smoke.py`  
+-Machine-readable output: `tests/p55/browser-smoke-report.json`  
+-Browser: Chromium `144.0.7559.96` via Playwright Python.
++`window.CANVIOArchivePreflight.inspect(file)` runs before the legacy ZIP parser. It checks the End of Central Directory (EOCD), single-disk entry counts, Central Directory bounds, exact offsets, stored-only compression and flags, UTF-8 safe unique paths, local-header/central-directory metadata agreement, contiguous non-overlapping local records, and mandatory `full-backup.json`.
+ 
+-**24/24 checks passed**, including:
++Bounds and accepted format:
+ 
+-- P55 build marker and document title survive the legacy title observers.
+-- Nine SPA routes mount: Home, Poster, Web, Video Engine, Assets, Motion, Insight, Export and Settings.
+-- P47–P55 PhaseSuite runtime flags all report true after Video Engine initialization; no duplicate runtime IDs.
+-- Track visibility toggles and restores; valid WebVTT cue parses.
+-- Real CANVIO Video Engine MediaRecorder output is produced and decoded by Chromium: WebM/VP9 and MP4/H.264, both at 960×540 with approximately 0.9 seconds of synthetic text-only timeline media.
+-- An in-flight WebM render can be cancelled; no output blob is returned; a subsequent render succeeds.
+-- No horizontal overflow at CSS viewport widths 1440, 768, 720, 375 and 320 px.
+-- No uncaught JavaScript page errors and no console errors after blocked font requests are stubbed.
+-- Release gate remains fail-closed; the about:blank test origin is explicitly reported as a blocker.
++- Maximum archive: 512 MiB; maximum 64 entries.
++- Central Directory: maximum 1 MiB; filename: maximum 1,024 UTF-8 bytes.
++- Accepts the stored ZIP shape emitted by the existing `CVZip.build()` only. ZIP64, DEFLATE, encryption/data descriptors, multi-disk layouts, comments/extra fields, duplicate entries, path traversal and record gaps/overlaps are rejected.
++- The structural pass does not decode project payload values. `readStoreZip()` remains the content parser and CRC32 verifier; `CV11.backupIntegrity.verify()` remains the SHA-256 integrity owner before data writes.
+ 
+-**Important harness boundary:** host policy blocks navigation to `file://`, localhost and other URLs with `ERR_BLOCKED_BY_ADMINISTRATOR`. The test therefore loads the real source using Playwright `page.set_content()` on opaque `about:blank` and injects an in-memory local/sessionStorage shim solely for this test. External font requests are stubbed. Consequently, this run proves real Chromium UI execution and synthetic MediaRecorder encode/decode, but does **not** prove native IndexedDB, secure-context behavior, worker loading from a deployed URL, persistent storage, network/CORS, real user media A/V sync, or normal font/CDN reachability. A 720 px viewport is only a narrow-layout proxy, not an actual browser 200% zoom test.
++The restore confirmation receives a read-only inventory: backup date, eligible CANVIO localStorage key count, CANVIO IndexedDB database/store/record counts, excluded-secret count, source warning count, checksum status and archive entry/size evidence. Secret values and secret key names are not rendered. Cancel returns before writes. P56 adds no database, object store, timeline or background service.
+ 
+-MP4/H.264 is conditional: the tested Chromium build exposed AVC and successfully encoded/decoded the synthetic test; other browsers/builds must independently pass `MediaRecorder.isTypeSupported()` and real encode/decode checks. WebM remains the general fallback.
++## 4. Chromium browser smoke — PASS WITH ORIGIN LIMITATIONS
+ 
+-## 4. GitHub Actions validation
++Test: `tests/p56/run-p56-browser-smoke.py`  
++Report: `tests/p56/browser-smoke-report.json`  
++Browser: Chromium `144.0.7559.96` via Playwright Python `1.65.2`.
+ 
+-`.github/workflows/canvio-pages-node24.yml` now:
++**27/27 checks passed**, including:
+ 
+-1. Requires the exact current P55 `index.html` SHA for every event; historical P47–P50 hashes are rejected by the P55 pipeline.
+-2. Pins Node.js 24 through immutable `actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1` (v7.1.0), then audits inline scripts, IDs, worker path and syntax.
+-3. Runs P47–P50 regression fixtures and P55 VM tests.
+-4. Installs pinned Playwright Python `1.65.2`, installs Chromium and runs the P55 browser/media smoke test before Pages packaging.
+-5. Deploys only on non-PR events and only after build succeeds and the exact P55 SHA gate passes.
++- P56 build marker and document title survive the inherited title observers.
++- Nine SPA routes mount; P47–P56 PhaseSuite flags are true after Video Engine initialization; no duplicate runtime IDs.
++- Real `CVZip.build()` stored archive passes the Central Directory and Local Header preflight; tampered Central Directory CRC metadata is rejected.
++- Restore preview counts eligible CANVIO data only, does not expose secret values, and preflight leaves storage unchanged.
++- Track visibility toggles and restores; a valid WebVTT cue parses.
++- Synthetic text-only timeline produces browser-decodable WebM/VP9 and MP4/H.264 at 960×540; render cancellation stops output and a retry succeeds.
++- No horizontal overflow at CSS viewport widths 1440, 768, 720, 375 and 320 px; zero uncaught page errors and zero console errors after blocked font requests are stubbed.
++- Release gate remains fail-closed; opaque `about:blank` is reported as a blocker and `releaseCertified` remains false.
+ 
+-The workflow has been parsed and statically inspected locally; its Node action is pinned to the verified v7.1.0 commit and its Playwright Python package is pinned to 1.65.2. A GitHub-hosted workflow run has **not** yet been observed for this local candidate.
++**Harness boundary:** host policy blocks navigation to `file://`, localhost and other URLs with `ERR_BLOCKED_BY_ADMINISTRATOR`. Playwright therefore loads the actual source using `page.set_content()` on opaque `about:blank` and injects in-memory local/sessionStorage shims. External font requests are stubbed. This run does **not** prove native IndexedDB, HTTPS/secure-context behavior, persistent storage, deployed worker/model downloads, CORS, real user-media A/V sync, screen-reader behavior, Safari/Edge or production hosting. The 720 px viewport is a narrow-layout proxy, not an actual browser 200% zoom test. Synthetic text-only MediaRecorder output is not a real-media acceptance test.
+ 
+-## 5. Six mandatory release gates — OPEN
++MP4/H.264 remains capability-gated; this Chromium build exposed AVC and successfully encoded/decoded the synthetic fixture. Other browsers and devices must independently probe the MIME and pass real encode/decode tests. WebM remains the general fallback.
++
++## 5. GitHub Actions validation
++
++`.github/workflows/canvio-pages-node24.yml`:
++
++1. Requires the exact P56 `index.html` SHA-256 for every event.
++2. Pins Node.js 24 through immutable `actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1` (v7.1.0), then audits 82 inline scripts, 495 unique IDs, worker path and syntax.
++3. Runs P47 fixtures, P48/P49/P50/P55 regression suites and P56 archive-preflight tests.
++4. Installs pinned Playwright Python `1.65.2`, installs Chromium and runs the P56 browser/archive/media smoke before Pages packaging.
++5. Deploys only on non-PR events after the build succeeds and the exact P56 SHA gate passes.
++
++The workflow has been updated and locally parsed. A GitHub-hosted Actions run for P56 has **not** been observed; no P56 branch, commit, PR, merge, workflow dispatch or deployment is claimed. The P55 handoff previously recorded an older R6/P42 `main` state, but that remote state was not re-queried during this P56 task.
++
++## 6. Six mandatory release gates — OPEN
+ 
+ | Gate | State | Evidence still required |
+ |---|---|---|
+ | Browser matrix | OPEN | Chrome, Edge and Safari on HTTPS; first boot, navigation, console and worker asset paths |
+-| Real-media export | PARTIAL | Import real video/audio/image, test duration, audio and A/V sync, MP4/WebM on supported devices, cancellation at different render stages |
++| Real-media export | PARTIAL | Import real video/audio/image; validate duration, audio and A/V sync, MP4/WebM on supported devices, cancellation at multiple stages |
+ | Whisper AI | OPEN | Real runtime/model download, Vietnamese/English/auto inference, timestamps, cancellation and unload/retry; inspect cache and memory |
+-| Project persistence | OPEN | Native IndexedDB create/save/close/reopen, ZIP backup, same-origin and fresh-origin restore, blocked/quota/corrupt/oversize cases |
++| Project persistence | OPEN | Native IndexedDB create/save/close/reopen, ZIP backup, same-origin and fresh-origin restore, quota/blocked/corrupt/oversize cases |
+ | Accessibility | OPEN | Keyboard-only, screen reader, focus order/visibility, contrast review and actual 200% browser zoom |
+ | Hosting / security | OPEN | Pages worker path, CSP/CORS, MIME/cache headers, HTTPS, published P30/P31 live checks and post-deploy smoke |
+ 
+-## 6. Production disposition
+-
+-P55 is **not CANVIO 1.0 Stable** and `releaseCertified` remains false by design. Do not treat the successful Chromium smoke as cross-browser, persistence, AI-model or production approval. The application currently remains a local candidate. GitHub `main` was inspected and remains on the older R6/P42 workflow/source line; no P55 branch, commit, PR, merge or deploy was created in this run.
++## 7. Production disposition
+ 
+-Resolve the six gates on ordinary HTTPS browsers and hosting. If a critical issue appears, fix it before release (P56+); do not waive a gate to preserve a version number.
++P56 is **not CANVIO 1.0 Stable**. `releaseCertified` remains false by design. Do not treat successful VM or opaque-origin Chromium checks as cross-browser, persistence, AI-model or production approval. P56 is a local delivery candidate only; the six gates above must pass on real HTTPS browsers and hosting before production approval.
+diff -ruN '--exclude=CANVIO_MANIFEST.json' '--exclude=canvio-p55-to-p56.patch' '--exclude=__pycache__' p55-base/CANVIO_ROADMAP.md extracted/CANVIO_ROADMAP.md
+--- p55-base/CANVIO_ROADMAP.md	2026-11-16 16:53:42.000000000 +0000
++++ extracted/CANVIO_ROADMAP.md	2026-11-16 17:10:24.390676508 +0000
+@@ -1,18 +1,18 @@
+-# CANVIO — Roadmap trạng thái tích hợp P55 (2026-11-16)
++# CANVIO — Roadmap trạng thái tích hợp P56 (2026-11-17)
+ 
+-> Đây là bản roadmap trạng thái cho candidate P55. “Đã tích hợp” mô tả code path hiện diện; không thay thế nghiệm thu trình duyệt, media thật, provider thật hoặc production. Không mở rộng feature giả để làm đẹp checklist.
++> Đây là bản roadmap trạng thái cho candidate P56. “Đã tích hợp” mô tả code path hiện diện; không thay thế nghiệm thu trình duyệt, media thật, provider thật hoặc production. Không mở rộng feature giả để làm đẹp checklist.
+ 
+ ## Tổng quan
+ 
+-- **Candidate:** `index.html` — `23.3.69-p55` application marker; PhaseSuite `55.0.0` (P51–P55 hardening on P50).
+-- **SHA-256:** See `CANVIO_MANIFEST.json` for the final P55 source SHA-256.
+-- **Trạng thái phát hành:** local candidate; chưa merge, chưa deploy, chưa production-certified.
++- **Candidate:** `index.html` — `23.3.70-p56` application marker; PhaseSuite `56.0.0` (P56 archive hardening on P55).
++- **SHA-256:** See `CANVIO_MANIFEST.json` for the final P56 source SHA-256.
++- **Trạng thái phát hành:** P56 local candidate; chưa merge, chưa deploy, chưa production-certified.
+ - **Nguyên tắc:** một canonical Video Engine timeline, một Asset Library, một Project Vault, một Unified Layers history owner; không cloud giả, không API key nhúng trong source, không request nền.
+ 
+-| Giai đoạn | Trạng thái P55 | Tóm tắt |
++| Giai đoạn | Trạng thái P56 | Tóm tắt |
+ |---|---|---|
+ | 1 · Nền tảng tin cậy | **Đã tích hợp một phần, cần nghiệm thu** | P44 history, Web/Portfolio adapters, MotionCut source handoff; chưa có một timeline native hợp nhất |
+-| 2 · Video | **P48 track controls/WebVTT + P49 codec-aware MP4/H.264, Whisper ASR, caption QC + P50 cancellation + P51–P55 diagnostics/recovery/resource budget; vẫn cần nghiệm thu** | Multi-track, lock/visibility/mute, cubic-bezier, SRT/WebVTT/EDL, WebM; tracking/stabilization, full ripple/grouping semantics và real export acceptance vẫn mở |
++| 2 · Video | **P48 track controls/WebVTT + P49 codec-aware MP4/H.264, Whisper ASR, caption QC + P50 cancellation + P51–P56 diagnostics/recovery/resource budget/archive validation; vẫn cần nghiệm thu** | Multi-track, lock/visibility/mute, cubic-bezier, SRT/WebVTT/EDL, WebM; tracking/stabilization, full ripple/grouping semantics và real export acceptance vẫn mở |
+ | 3 · Design | **Một phần đã có; P47 bổ sung typography controls** | SVG TextPath, weight/tracking/anchor, layout/multi-page; kerning/license/print còn mở |
+ | 4 · Motion & Web | **P47 bổ sung easing cho Website Motion** | Component motion, easing persistence/export CSS, IntersectionObserver, reduced-motion; 3D self-contained/live site còn mở |
+ | 5 · AI | **Adapter runtime một phần** | Gemini owner + OpenAI-compatible, Anthropic Messages và local endpoint; chưa có full image generation workflow |
+@@ -246,3 +246,19 @@
+ - Browser smoke: **24/24 PASS**, zero uncaught page errors, zero console errors after external font requests are stubbed. Evidence: `tests/p55/browser-smoke-report.json`.
+ - Origin limitations remain: host navigation policy blocks `file://` and localhost, so the browser test runs on opaque `about:blank` with a test-only local/sessionStorage shim. Native IndexedDB, secure context, deployed worker/model access, Whisper inference, real media A/V sync, accessibility and hosting remain pending.
+ - GitHub Actions has a pinned Playwright/Chromium smoke step. Local workflow YAML parses; a hosted Actions run remains unobserved.
++
++
++## P56 — Portable archive integrity and safe restore (2026-11-17)
++
++### Đã tích hợp
++- Read-only validator `window.CANVIOArchivePreflight.inspect(file)` runs before the existing P53 signature/size preflight, legacy ZIP parser and restore path. It validates the EOCD, single-disk count, Central Directory bounds/size, stored-only method, flags, safe unique paths, local-header agreement, offsets and contiguous local records.
++- Keeps the existing `CVZip.build()` writer, `readStoreZip()` parser, per-entry CRC32 check, `CV11.backupIntegrity.verify()` SHA-256 check and data owners unchanged. This is a strict CANVIO-format preflight, not general ZIP support.
++- The existing restore confirmation displays a read-only summary of backup date, eligible CANVIO localStorage key count, IndexedDB database/store/record counts, excluded-secret count, warning count, checksum and ZIP structural evidence. It does not display project values or secrets. Cancel leaves storage unchanged.
++- P56 adds no database/object store, no second timeline and no background service.
++
++### Kiểm chứng
++- P56 VM suite: 27/27; Chromium smoke: 27/27; P55 release/diagnostic VM: 49/49; P48/P49/P50 suites retained.
++- Real Chromium validates a generated `CVZip.build()` archive, rejects tampered Central Directory CRC metadata and confirms preview secrecy/storage immutability. The smoke origin is opaque `about:blank`, so it is not native IndexedDB or HTTPS acceptance.
++
++### Còn mở
++- Native IndexedDB save/restore and quota/blocked-database behavior; real-media A/V sync and cross-browser export; real Whisper inference/cancel/unload; keyboard/screen-reader/true 200% zoom; Pages/HTTPS/CSP/CORS and post-deploy checks. P56 is not CANVIO 1.0 Stable.
+diff -ruN '--exclude=CANVIO_MANIFEST.json' '--exclude=canvio-p55-to-p56.patch' '--exclude=__pycache__' p55-base/README.md extracted/README.md
+--- p55-base/README.md	2026-11-16 16:53:42.000000000 +0000
++++ extracted/README.md	2026-11-16 17:08:05.602145724 +0000
+@@ -1,42 +1,36 @@
+-# CANVIO P55 — Stable Release Readiness candidate
++# CANVIO P56 — Archive Integrity & Safe Restore candidate
+ 
+-This package integrates P51–P55 hardening on P50 and preserves the existing CANVIO architecture: one canonical `CV.engines.video` timeline, existing Asset Library and Project Vault owners, the existing `CANVIO_81_MEDIA` IndexedDB media owner, and the portable ZIP backup format. It does not add a second project database, second timeline, cloud backend or background service.
++P56 extends the P55 release-readiness candidate with a strict, read-only ZIP archive preflight and a content inventory shown before the existing restore confirmation. It preserves the existing CANVIO architecture: one canonical `CV.engines.video` timeline, existing Asset Library and Project Vault owners, the existing `CANVIO_81_MEDIA` IndexedDB media owner, and the existing portable ZIP backup format. It does not add a second project database, second timeline, cloud backend or background service.
+ 
+ ## Package map
+ 
+-- `index.html` — full CANVIO application source, application marker `23.3.69-p55`.
++- `index.html` — full CANVIO application source, application marker `23.3.70-p56`.
+ - `assets/canvio-whisper-worker.js` — explicit-action browser-local Whisper worker; publish beside `index.html` under `assets/`.
+-- `CANVIO_AI_GUIDE.md` — architecture, ownership rules and engineering addenda.
+-- `CANVIO_ROADMAP.md` — integrated phase and remaining product scope.
++- `CANVIO_AI_GUIDE.md` — architecture, ownership rules and P47–P56 engineering addenda.
++- `CANVIO_ROADMAP.md` — integrated phase status and remaining product scope.
+ - `CANVIO_HANDOFF.md` — integration handoff and manual acceptance plan.
+-- `CANVIO_QA_REPORT.md` — source, VM and real Chromium smoke evidence plus release blockers.
+-- `CANVIO_PHASES_1_6_STATUS.md` — phase 1–6 status.
+-- `.github/workflows/canvio-pages-node24.yml` — exact P55 source SHA gate, immutable `actions/setup-node` v7.1.0 pin with Node.js 24, source tests, Chromium smoke and GitHub Pages packaging.
+-- `tests/p47/`–`tests/p55/` — retained regression fixtures and candidate-specific tests.
+-- `patches/` — sequential reviewable patches through P55.
+-- `CANVIO_MANIFEST.json` — SHA-256 and byte manifest for all other packaged files.
++- `CANVIO_QA_REPORT.md` — source, regression and Chromium smoke evidence plus release blockers.
++- `CANVIO_PHASES_1_6_STATUS.md` — concise phase 1–6 status.
++- `.github/workflows/canvio-pages-node24.yml` — exact P56 source SHA gate, immutable Node.js 24 action pin, P47–P56 tests and Chromium smoke.
++- `tests/p47/`–`tests/p56/` — retained regression fixtures and candidate-specific test harnesses.
++- `patches/` — sequential, reviewable patches through P56.
++- `CANVIO_MANIFEST.json` — SHA-256 and byte manifest for the source, worker and every other packaged file.
+ 
+-## P51–P55 features
++## P56 · Portable ZIP structure preflight & restore preview
+ 
+-### P51 · Runtime/media diagnostics
++`window.CANVIOArchivePreflight.inspect(file)` checks the End of Central Directory, single-disk layout, entry count and directory bounds, entry names, duplicate paths, stored-only compression, flags, local-header/central-directory agreement, offsets, overlaps and the required `full-backup.json` entry. It is read-only and caps the archive at the existing 512 MiB restore limit, 64 entries, 1 MiB central directory and 1,024-byte names. The existing `readStoreZip()` remains the parser and still checks every entry CRC; `CV11.backupIntegrity.verify()` still verifies the payload SHA-256 before data writes.
+ 
+-The Video Engine header has **🧪 Kiểm tra P55**. Runtime diagnostics probe core browser APIs, WebM and AVC/H.264 MIME support, AudioContext, Worker, IndexedDB/localStorage and optional storage/heap estimates. It does not send requests or mutate the project. MP4/H.264 is optional; unsupported AVC does not disable WebM.
++Before the user confirms restore, CANVIO displays a compact inventory: backup date, accepted CANVIO localStorage keys, IndexedDB databases/stores/records, excluded-secret count, source-warning count, checksum state and ZIP entry/size evidence. It does not display secret values or enumerate media payload contents. Cancel leaves project storage unchanged.
+ 
+-### P52 · Render recovery
++The validator intentionally accepts only the stored ZIP shape produced by CANVIO `CVZip.build()`. ZIP64, DEFLATE, encrypted entries, data descriptors, multi-disk archives, ZIP comments, extra fields, path traversal and duplicate entries are rejected. This is not a general-purpose third-party ZIP reader.
+ 
+-A session-only ledger records render format, status, timestamps, elapsed duration and output bytes. An unfinished render becomes interrupted after reload/navigation; the application requests cancellation on pagehide. MediaRecorder output cannot resume after navigation and must be re-rendered.
++## P51–P55 features retained
+ 
+-### P53 · Backup/restore preflight
+-
+-ZIP restore checks file presence, signature and a 512 MiB in-memory safety ceiling before the existing parser runs. Existing CRC32, SHA-256, CANVIO namespace filtering and explicit confirmation remain. The current reader is not advertised as a general-purpose compressed ZIP reader.
+-
+-### P54 · Large-project resource budget
+-
+-`CANVIOPerformanceBudget.inspect()` summarizes clip counts/types/tracks, duration, malformed timeline entries, canvas backing-store estimate and optional device/heap signals. Warnings are heuristic and do not mutate, compress or delete project media.
+-
+-### P55 · Unified Release Readiness
+-
+-`CANVIOReleaseGate.run()` combines runtime, storage, timeline, backup, render-recovery and PhaseSuite evidence into a read-only JSON report. It never self-certifies: `releaseCertified:false`. Six manual gates remain pending: HTTPS browser matrix, real media/A/V sync, real Whisper inference, native IndexedDB/ZIP round-trip, accessibility/200% zoom and hosting/worker/CSP/CORS.
++- **P51:** read-only runtime/media capability diagnostics and storage estimate.
++- **P52:** session-scoped render lifecycle ledger, pagehide cancellation and interrupted-job detection; it does not resume MediaRecorder output.
++- **P53:** ZIP signature and 512 MiB size preflight, backup/restore audit and retained CRC/SHA integrity checks.
++- **P54:** heuristic timeline/canvas/device/heap budget; no automatic media mutation.
++- **P55:** unified read-only release report with six pending manual acceptance gates and `releaseCertified:false`.
+ 
+ ## Validation
+ 
+@@ -52,20 +46,19 @@
+ node tests/p49/run-p49-tests.cjs
+ node tests/p50/run-p50-tests.cjs
+ node tests/p55/run-p55-tests.cjs
++node tests/p56/run-p56-tests.cjs
+ ```
+ 
+-Optional real Chromium runtime smoke (Python 3.10+):
++Optional Chromium runtime smoke (Python 3.10+):
+ 
+ ```bash
+ python -m pip install playwright==1.65.2
+ python -m playwright install chromium
+-python tests/p55/run-p55-browser-smoke.py
++python tests/p56/run-p56-browser-smoke.py
+ ```
+ 
+ Set `CHROMIUM_EXECUTABLE_PATH` to use a specific installed Chromium/Chrome binary. The workflow pins Node.js 24 with `actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1`, installs Playwright 1.65.2 and its bundled Chromium automatically, then runs the browser smoke before packaging.
+ 
+-The P55 browser smoke runs the real source in Chromium, tests SPA routes, track controls, WebVTT, synthetic WebM/MP4 render/decode where AVC is supported, cancellation/retry and responsive widths. The current sandbox blocks URL navigation, so the test uses `page.set_content()` on opaque `about:blank` with an in-memory storage shim. It does **not** validate native IndexedDB, secure contexts, deployed worker/model loading, persistent storage or real media A/V sync. See `tests/p55/browser-smoke-report.json` and `CANVIO_QA_REPORT.md`.
+-
+ ## Release status
+ 
+-P55 has passed static source checks, Node/VM regression suites and a 24-check Chromium runtime smoke. It is **not** CANVIO 1.0 Stable, is not production-certified and has not been merged or deployed. The GitHub repository default branch `main` was checked and is still on the earlier R6/P42 source/workflow line; P55 remains a local candidate pending an actual HTTPS/browser/hosting acceptance path. Do not deploy until all six manual gates in `CANVIO_QA_REPORT.md` and `CANVIO_HANDOFF.md` are recorded as passed.
++P56 has passed the source-level/regression suites and a 27-check Chromium smoke using a test-only in-memory storage shim on opaque `about:blank`. That run exercises the P56 validator with a generated CANVIO ZIP, but does **not** prove native IndexedDB, a secure origin, deployed worker/model downloads, real user-media A/V sync, screen-reader behavior, Safari/Edge or production hosting. P56 remains a local candidate, not CANVIO 1.0 Stable; it has not been merged or deployed. All six manual release gates in `CANVIO_QA_REPORT.md` remain open.
+diff -ruN '--exclude=CANVIO_MANIFEST.json' '--exclude=canvio-p55-to-p56.patch' '--exclude=__pycache__' p55-base/index.html extracted/index.html
+--- p55-base/index.html	2026-11-16 16:41:50.000000000 +0000
++++ extracted/index.html	2026-11-16 17:07:29.341268215 +0000
+@@ -6,7 +6,7 @@
+ <meta charset="utf-8"/>
+ <meta content="width=device-width,initial-scale=1" name="viewport"/>
+ <meta name="description" content="CANVIO là nền tảng sáng tạo hợp nhất cho thiết kế, video, motion và website. Làm việc với dự án, tài nguyên và công cụ xuất bản trong một workspace local-first."/>
+-<title>CANVIO 23.3.69-p55 — Stable Release Readiness</title>
++<title>CANVIO 23.3.70-p56 — Archive Integrity &amp; Safe Restore</title>
+ <style>
+ /* ============================================================
+    CANVIO STUDIO 5.0 — Design tokens (bright, professional)
+@@ -19918,7 +19918,7 @@
+    if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount();
+  })();
+ 
+- var buildTitleForVersion=function(){var version=window.CANVIO_BUILD&&window.CANVIO_BUILD.version||'';return version==='23.3.69-p55'?'CANVIO 23.3.69-p55 — Stable Release Readiness':'CANVIO 23.3.60-r6 — Production Excellence · P42 Final Acceptance'};
++ var buildTitleForVersion=function(){var version=window.CANVIO_BUILD&&window.CANVIO_BUILD.version||'';return version==='23.3.70-p56'?'CANVIO 23.3.70-p56 — Archive Integrity & Safe Restore':version==='23.3.69-p55'?'CANVIO 23.3.69-p55 — Stable Release Readiness':'CANVIO 23.3.60-r6 — Production Excellence · P42 Final Acceptance'};
+  var syncBuildTitle=function(){var buildTitle=buildTitleForVersion();if(document.title!==buildTitle)document.title=buildTitle};
+  syncBuildTitle();
+  if(document.head&&typeof MutationObserver==='function'&&!window.__canvioBuildTitleObserver){
+@@ -21394,7 +21394,7 @@
+  var note=integrity.status==='verified'?'Checksum SHA-256 hợp lệ.':integrity.status==='legacy'?'Backup không có checksum (legacy).':'Không thể xác minh checksum trên trình duyệt này.';
+  var dataKeys=Object.keys(payload.localStorage).filter(function(k){return /^canvio/i.test(k)&&typeof payload.localStorage[k]==='string'&&!/api.?key|secret|token|password|gemini|github|gh_tok|oauth/i.test(k)});
+  var dbList=Array.isArray(payload.indexedDB)?payload.indexedDB:[];
+- if(!confirm('Khôi phục '+dataKeys.length+' localStorage keys và '+dbList.length+' IndexedDB database? Dữ liệu trùng khóa sẽ được ghi đè. '+note+' Nên sao lưu trạng thái hiện tại trước khi tiếp tục.'))return {cancelled:true,restoredKeys:0,restoredDatabases:0,warnings:[]};
++ var preview=window.CANVIOArchivePreflight&&typeof CANVIOArchivePreflight.summarizePayload==='function'?CANVIOArchivePreflight.summarizePayload(payload,integrity):null;var archivePreview=window.CANVIOArchivePreflight&&typeof CANVIOArchivePreflight.consumePendingPreview==='function'?CANVIOArchivePreflight.consumePendingPreview():null;var previewLines=['XEM TRƯỚC KHÔI PHỤC','• Ngày backup: '+(preview?preview.backupCreatedAt:'Không rõ'),'• localStorage CANVIO: '+(preview?preview.localStorageKeys:dataKeys.length)+' khóa','• IndexedDB: '+(preview?preview.indexedDBDatabases:dbList.length)+' database · '+(preview?preview.indexedDBStores:0)+' store · '+(preview?preview.indexedDBRecords:0)+' record','• Secret bị loại khỏi backup: '+(preview?preview.excludedSecretKeys:0)+' · cảnh báo nguồn: '+(preview?preview.sourceWarnings:0),'• Checksum: '+note];if(archivePreview)previewLines.push('• ZIP: '+archivePreview.entryCount+' entry · '+archivePreview.fileBytes+' bytes · central directory/local header hợp lệ');if(!confirm(previewLines.join('\n')+'\n\nTiếp tục ghi đè các khóa trùng và nhập dữ liệu CANVIO? Nên sao lưu trạng thái hiện tại trước khi tiếp tục.'))return {cancelled:true,restoredKeys:0,restoredDatabases:0,warnings:[]};
+  var restoredKeys=0,restoredDatabases=0,warnings=[];
+  for(var k of dataKeys){try{localStorage.setItem(k,payload.localStorage[k]);restoredKeys++}catch(e){warnings.push('localStorage '+k+': '+(e.message||String(e)))}}
+  for(var d of dbList){
+@@ -21419,7 +21419,7 @@
+  }
+  return {cancelled:false,restoredKeys:restoredKeys,restoredDatabases:restoredDatabases,warnings:warnings};
+ }
+-async function restoreProjectZip(file){if(window.CANVIOProjectIntegrity&&typeof CANVIOProjectIntegrity.preflightRestore==='function')await CANVIOProjectIntegrity.preflightRestore(file);var payload=await readStoreZip(file),result=await restorePortablePayload(payload);if(window.CANVIOProjectIntegrity&&typeof CANVIOProjectIntegrity.noteRestore==='function')CANVIOProjectIntegrity.noteRestore(result);if(!result.cancelled){var summary='Khôi phục xong: '+result.restoredKeys+' localStorage keys · '+result.restoredDatabases+' IndexedDB database.'+(result.warnings.length?' Cảnh báo: '+result.warnings.join(' | '):'');if(window.CV)CV.toast(summary);setTimeout(function(){location.reload()},900)}return result;}
++async function restoreProjectZip(file){var archivePreview=null;if(window.CANVIOArchivePreflight&&typeof CANVIOArchivePreflight.inspect==='function')archivePreview=await CANVIOArchivePreflight.inspect(file);if(window.CANVIOProjectIntegrity&&typeof CANVIOProjectIntegrity.preflightRestore==='function')await CANVIOProjectIntegrity.preflightRestore(file);var payload=await readStoreZip(file);if(archivePreview&&window.CANVIOArchivePreflight&&typeof CANVIOArchivePreflight.setPendingPreview==='function')CANVIOArchivePreflight.setPendingPreview(archivePreview);var result=await restorePortablePayload(payload);if(window.CANVIOProjectIntegrity&&typeof CANVIOProjectIntegrity.noteRestore==='function')CANVIOProjectIntegrity.noteRestore(result);if(!result.cancelled){var summary='Khôi phục xong: '+result.restoredKeys+' localStorage keys · '+result.restoredDatabases+' IndexedDB database.'+(result.warnings.length?' Cảnh báo: '+result.warnings.join(' | '):'');if(window.CV)CV.toast(summary);setTimeout(function(){location.reload()},900)}return result;}
+ 
+ function tests(){var urlOK=true;try{urlOK=endpointFor({provider:'local',endpoint:'http://localhost:11434/v1'})==='http://localhost:11434/v1/chat/completions'}catch(e){urlOK=false}var httpsOnly=false;try{endpointFor({provider:'openai',endpoint:'http://example.com/v1'})}catch(e){httpsOnly=true}var sample='<html><head></head><body><main data-canvio-motion="slide-up">Hi</main></body></html>',out=addMotionRuntime(sample);return {websiteMotionRuntimeInjected:out.indexOf('canvio-motion-runtime')>=0&&out.indexOf('prefers-reduced-motion')>=0,websiteMotionRuntimeIdempotent:addMotionRuntime(out)===out,websiteRuntimeHasRealScriptClose:/<script id="canvio-motion-runtime-js">[\s\S]*?<\/script>/.test(out),websiteMotionProgressiveEnhancement:motionStyle.indexOf('html.canvio-motion-ready')===0&&motionStyle.indexOf('@media(prefers-reduced-motion:reduce)')>=0,websiteMotionEasingVariable:motionStyle.indexOf('--canvio-motion-easing')>=0,videoCustomBezierMathAvailable:!!(window.CV&&CV.engines&&CV.engines.video&&typeof CV.engines.video.motionEase==='function'),localProviderEndpointResolved:urlOK,nonLocalHttpRejected:httpsOnly,providerCallsOnlyOnExplicitClick:true,providerKeysRemainSessionOnly:true,zipOwner:!!(window.CVZip&&typeof CVZip.build==='function'),backupIntegrityOwner:!!(window.CV11&&CV11.backupIntegrity&&CV11.backupIntegrity.seal),zipRestoreOwner:typeof restoreProjectZip==='function',idbSchemaMetadata:true,idbRestoreOpensWithoutVersionBump:true,noSecondVideoTimeline:!!(window.CV&&CV.engines&&CV.engines.video),webAndPortfolioVaultAdapters:!!(window.CVUnifiedLayers&&CVUnifiedLayers.editorIds().indexOf('webEngine')>=0&&CVUnifiedLayers.editorIds().indexOf('portfolioStudio')>=0)}}
+ function init(){mountMotion();mountProvider();wrapWebsiteExport();var zipButton=$('#canvioZipBackup');if(zipButton&&!zipButton.dataset.bound){zipButton.dataset.bound='1';zipButton.addEventListener('click',async function(){zipButton.disabled=true;try{var m=await exportProjectZip();if(window.CANVIOProjectIntegrity&&CANVIOProjectIntegrity.noteBackup)CANVIOProjectIntegrity.noteBackup(m);var st=$('#cv11ProviderStatus');if(st)st.textContent='Đã tạo ZIP backup · '+m.contains.indexedDBDatabases+' IndexedDB DB · '+m.contains.excludedSecretKeys+' secret key bị loại trừ. Xem manifest/warnings trong ZIP.';}catch(e){if(window.CV)CV.toast('Không đóng gói được ZIP: '+e.message)}finally{zipButton.disabled=false}})}var restoreButton=$('#canvioZipRestore'),restoreInput=$('#canvioZipRestoreInput');if(restoreButton&&restoreInput&&!restoreButton.dataset.bound){restoreButton.dataset.bound='1';restoreButton.addEventListener('click',function(){restoreInput.click()});restoreInput.addEventListener('change',async function(){var file=restoreInput.files&&restoreInput.files[0];restoreInput.value='';if(!file)return;restoreButton.disabled=true;try{await restoreProjectZip(file)}catch(e){if(window.CV)CV.toast('Khôi phục ZIP thất bại: '+(e.message||String(e)))}finally{restoreButton.disabled=false}})}if(!window.CANVIOPhaseSuite.retry){window.CANVIOPhaseSuite.retry=true;setTimeout(function(){mountMotion();mountProvider();wrapWebsiteExport()},1200)}}
+@@ -21526,15 +21526,15 @@
+  return true;
+ }
+ function renderReport(report){var panel=document.getElementById('canvioP55Panel'),status=document.getElementById('canvioP55Status'),list=document.getElementById('canvioP55Results');if(!panel||!status||!list)return;panel.hidden=false;status.textContent=report.status==='BLOCKED'?'BỊ CHẶN · Thiếu API bắt buộc': 'CANDIDATE · Cần nghiệm thu thủ công';status.setAttribute('data-status',report.status);list.textContent='';
+- var rows=[];rows.push('Runtime: '+report.runtime.summary.supported+' hỗ trợ · '+report.runtime.summary.unavailable+' không khả dụng · '+report.runtime.summary.requiredMissing+' API bắt buộc thiếu');rows.push('Storage: '+(report.storage.available&&report.storage.usagePercent!=null?report.storage.usagePercent+'% quota đã dùng':'không có quota estimate'));rows.push('Timeline: '+report.timeline.clipCount+' clip · '+report.timeline.warnings.length+' cảnh báo');rows.push('Backup: '+(report.backup.available?report.backup.localStorageKeys+' localStorage keys':'không đọc được'));rows.push('Render gần nhất: '+(report.recovery&&report.recovery.status||'chưa có lịch sử'));
++ var rows=[];rows.push('Runtime: '+report.runtime.summary.supported+' hỗ trợ · '+report.runtime.summary.unavailable+' không khả dụng · '+report.runtime.summary.requiredMissing+' API bắt buộc thiếu');rows.push('Storage: '+(report.storage.available&&report.storage.usagePercent!=null?report.storage.usagePercent+'% quota đã dùng':'không có quota estimate'));rows.push('Timeline: '+report.timeline.clipCount+' clip · '+report.timeline.warnings.length+' cảnh báo');rows.push('Backup: '+(report.backup.available?report.backup.localStorageKeys+' localStorage keys':'không đọc được'));rows.push('P56 ZIP: '+(report.archivePreflight&&report.archivePreflight.centralDirectoryVerified?'Central Directory + Local Header đã được kiểm tra':'chưa có bằng chứng preflight'));rows.push('Render gần nhất: '+(report.recovery&&report.recovery.status||'chưa có lịch sử'));
+  report.manualAcceptance.forEach(function(x){rows.push('CHƯA NGHIỆM THU · '+x.label)});if(report.failures.length)report.failures.forEach(function(x){rows.push('BLOCKER · '+x)});if(report.timeline.warnings.length)report.timeline.warnings.forEach(function(x){rows.push('CẢNH BÁO · '+x)});
+  rows.forEach(function(t){var li=document.createElement('li');li.textContent=t;list.appendChild(li)});
+ }
+-function downloadReport(report){var blob=new Blob([JSON.stringify(report,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='CANVIO_P55_RELEASE_READINESS_'+new Date().toISOString().replace(/[:.]/g,'-')+'.json';document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url)},30000);return true}
++function downloadReport(report){var blob=new Blob([JSON.stringify(report,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='CANVIO_P56_RELEASE_READINESS_'+new Date().toISOString().replace(/[:.]/g,'-')+'.json';document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url)},30000);return true}
+ function mount(){
+  var page=document.getElementById('page-videoEngine');if(!page||document.getElementById('canvioP55Run'))return false;
+- var actions=page.querySelector('.headActions');if(actions){var b=document.createElement('button');b.type='button';b.className='btn btn-soft sm';b.id='canvioP55Run';b.textContent='🧪 Kiểm tra P55';b.title='Chạy chẩn đoán runtime, timeline, backup và release gate';actions.appendChild(b)}
+- var toolbar=page.querySelector('.engine-toolbar');if(toolbar){var panel=document.createElement('section');panel.className='card';panel.id='canvioP55Panel';panel.hidden=true;panel.style.cssText='margin-top:10px;padding:12px;border:1px solid var(--line,#dbe3ef)';var h=document.createElement('div');h.className='cardTop';var title=document.createElement('h3');title.textContent='P55 · Release Readiness';var actionsRow=document.createElement('div');actionsRow.className='row';var dl=document.createElement('button');dl.type='button';dl.className='btn btn-ghost sm';dl.id='canvioP55Download';dl.textContent='Tải báo cáo JSON';var close=document.createElement('button');close.type='button';close.className='btn btn-ghost sm';close.textContent='Đóng';close.addEventListener('click',function(){panel.hidden=true});actionsRow.appendChild(dl);actionsRow.appendChild(close);h.appendChild(title);h.appendChild(actionsRow);var st=document.createElement('p');st.id='canvioP55Status';st.className='tiny';st.setAttribute('role','status');st.setAttribute('aria-live','polite');st.textContent='Chưa chạy chẩn đoán.';var ul=document.createElement('ul');ul.id='canvioP55Results';ul.className='tiny';ul.style.cssText='line-height:1.75;margin:8px 0 0;padding-left:20px';panel.appendChild(h);panel.appendChild(st);panel.appendChild(ul);var msg=document.getElementById('vtMessage');if(msg&&msg.parentNode)msg.parentNode.insertBefore(panel,msg.nextSibling);else toolbar.parentNode.insertBefore(panel,toolbar.nextSibling);
++ var actions=page.querySelector('.headActions');if(actions){var b=document.createElement('button');b.type='button';b.className='btn btn-soft sm';b.id='canvioP55Run';b.textContent='🧪 Kiểm tra P56';b.title='Chạy chẩn đoán runtime, timeline, ZIP restore và release gate';actions.appendChild(b)}
++ var toolbar=page.querySelector('.engine-toolbar');if(toolbar){var panel=document.createElement('section');panel.className='card';panel.id='canvioP55Panel';panel.hidden=true;panel.style.cssText='margin-top:10px;padding:12px;border:1px solid var(--line,#dbe3ef)';var h=document.createElement('div');h.className='cardTop';var title=document.createElement('h3');title.textContent='P56 · Archive Integrity & Safe Restore';var actionsRow=document.createElement('div');actionsRow.className='row';var dl=document.createElement('button');dl.type='button';dl.className='btn btn-ghost sm';dl.id='canvioP55Download';dl.textContent='Tải báo cáo JSON';var close=document.createElement('button');close.type='button';close.className='btn btn-ghost sm';close.textContent='Đóng';close.addEventListener('click',function(){panel.hidden=true});actionsRow.appendChild(dl);actionsRow.appendChild(close);h.appendChild(title);h.appendChild(actionsRow);var st=document.createElement('p');st.id='canvioP55Status';st.className='tiny';st.setAttribute('role','status');st.setAttribute('aria-live','polite');st.textContent='Chưa chạy chẩn đoán.';var ul=document.createElement('ul');ul.id='canvioP55Results';ul.className='tiny';ul.style.cssText='line-height:1.75;margin:8px 0 0;padding-left:20px';panel.appendChild(h);panel.appendChild(st);panel.appendChild(ul);var msg=document.getElementById('vtMessage');if(msg&&msg.parentNode)msg.parentNode.insertBefore(panel,msg.nextSibling);else toolbar.parentNode.insertBefore(panel,toolbar.nextSibling);
+   var latest=null;var run=document.getElementById('canvioP55Run');if(run)run.addEventListener('click',async function(){run.disabled=true;st.textContent='Đang kiểm tra khả năng trình duyệt và trạng thái local…';try{latest=await buildReleaseReport();renderReport(latest)}catch(e){st.textContent='Không hoàn tất chẩn đoán: '+String(e&&e.message||e)}finally{run.disabled=false}});dl.addEventListener('click',function(){if(!latest){st.textContent='Hãy chạy chẩn đoán trước.';return}downloadReport(latest)});
+  }
+  wrapExportRecovery();return true;
+@@ -21550,5 +21550,107 @@
+ })();
+ 
+ </script>
++<script id="canvio-p56-portable-archive-preflight">
++(function(){
++'use strict';
++if(window.CANVIOArchivePreflight)return;
++var MAX_FILE_BYTES=512*1024*1024,MAX_ENTRIES=64,MAX_DIRECTORY_BYTES=1024*1024,MAX_NAME_BYTES=1024;
++var pendingPreview=null,lastReport=null;
++function fail(message){throw new Error('P56 ZIP preflight: '+message)}
++function viewOf(bytes){return new DataView(bytes.buffer,bytes.byteOffset,bytes.byteLength)}
++function u16(v,o){return v.getUint16(o,true)}
++function u32(v,o){return v.getUint32(o,true)}
++async function readPart(file,start,length){
++ if(!Number.isSafeInteger(start)||!Number.isSafeInteger(length)||start<0||length<0||start+length>file.size)fail('Vùng đọc ZIP nằm ngoài giới hạn file.');
++ var part=file.slice(start,start+length);if(!part||typeof part.arrayBuffer!=='function')fail('Trình duyệt không hỗ trợ đọc lát cắt ZIP.');
++ var bytes=new Uint8Array(await part.arrayBuffer());if(bytes.byteLength!==length)fail('Đọc thiếu dữ liệu tại byte '+start+'.');return bytes;
++}
++function safeName(raw){
++ if(!raw||raw.length>MAX_NAME_BYTES)fail('Tên entry rỗng hoặc vượt 1024 byte.');
++ var name;try{name=new TextDecoder('utf-8',{fatal:true}).decode(raw)}catch(e){fail('Tên entry không phải UTF-8 hợp lệ.')}
++ if(!name||name.indexOf('\0')>=0||name.indexOf('\\')>=0||name.charAt(0)==='/'||/^[A-Za-z]:/.test(name))fail('Tên entry không an toàn.');
++ var segments=name.split('/');if(segments.some(function(x){return x==='..'||x==='.'||!x}))fail('Tên entry chứa đường dẫn bất thường.');
++ return name;
++}
++async function inspect(file){
++ lastReport=null;pendingPreview=null;
++ if(!file||typeof file.slice!=='function'||!Number.isFinite(Number(file.size)))fail('Không có file ZIP hợp lệ.');
++ var size=Number(file.size);if(size<22)fail('File quá nhỏ hoặc thiếu End of Central Directory.');
++ if(size>MAX_FILE_BYTES)fail('File vượt giới hạn 512 MiB.');
++ var tailStart=Math.max(0,size-65557),tail=await readPart(file,tailStart,size-tailStart),tv=viewOf(tail),eocd=-1;
++ for(var i=tail.length-22;i>=0;i--){
++  if(u32(tv,i)!==0x06054b50)continue;
++  var comment=u16(tv,i+20);if(tailStart+i+22+comment===size){eocd=i;break;}
++ }
++ if(eocd<0)fail('Không tìm thấy End of Central Directory hợp lệ ở cuối file.');
++ var disk=u16(tv,eocd+4),cdDisk=u16(tv,eocd+6),diskCount=u16(tv,eocd+8),totalCount=u16(tv,eocd+10),cdSize=u32(tv,eocd+12),cdOffset=u32(tv,eocd+16),commentLen=u16(tv,eocd+20),eocdAbsolute=tailStart+eocd;
++ if(disk!==0||cdDisk!==0||diskCount!==totalCount)fail('ZIP nhiều phân vùng không được hỗ trợ.');
++ if(totalCount===0xffff||cdSize===0xffffffff||cdOffset===0xffffffff)fail('ZIP64 không được hỗ trợ trong gói portable CANVIO.');
++ if(totalCount<1||totalCount>MAX_ENTRIES)fail('Số lượng entry phải nằm trong khoảng 1–'+MAX_ENTRIES+'.');
++ if(cdSize>MAX_DIRECTORY_BYTES)fail('Central directory vượt giới hạn 1 MiB.');
++ if(commentLen!==0)fail('ZIP comment không được hỗ trợ trong gói portable CANVIO.');
++ if(cdOffset+cdSize!==eocdAbsolute)fail('Central directory offset/size không khớp End of Central Directory.');
++ var central=await readPart(file,cdOffset,cdSize),cv=viewOf(central),pos=0,entries=[],seen=Object.create(null);
++ for(var n=0;n<totalCount;n++){
++  if(pos+46>central.length||u32(cv,pos)!==0x02014b50)fail('Central directory entry '+(n+1)+' không hợp lệ.');
++  var flags=u16(cv,pos+8),method=u16(cv,pos+10),crc=u32(cv,pos+16),compressed=u32(cv,pos+20),plain=u32(cv,pos+24),nameLen=u16(cv,pos+28),extraLen=u16(cv,pos+30),entryCommentLen=u16(cv,pos+32),diskStart=u16(cv,pos+34),localOffset=u32(cv,pos+42);
++  var recordLength=46+nameLen+extraLen+entryCommentLen;if(pos+recordLength>central.length)fail('Central directory entry bị cắt.');
++  if(nameLen<1||nameLen>MAX_NAME_BYTES)fail('Độ dài tên entry không hợp lệ.');
++  if(extraLen!==0||entryCommentLen!==0)fail('Extra field hoặc entry comment không được hỗ trợ.');
++  if(diskStart!==0)fail('Entry trỏ sang phân vùng ZIP khác.');
++  if((flags&~0x0800)!==0)fail('Entry dùng flag/encryption/data descriptor không được hỗ trợ.');
++  if(method!==0)fail('Chỉ chấp nhận ZIP store (compression method 0).');
++  if(compressed===0xffffffff||plain===0xffffffff||compressed!==plain)fail('Kích thước entry không hợp lệ hoặc ZIP64.');
++  var name=safeName(central.subarray(pos+46,pos+46+nameLen));
++  if(Object.prototype.hasOwnProperty.call(seen,name))fail('ZIP chứa tên entry trùng lặp: '+name);
++  seen[name]=true;
++  entries.push({name:name,size:plain,compressedSize:compressed,crc32:crc,flags:flags,method:method,localOffset:localOffset});
++  pos+=recordLength;
++ }
++ if(pos!==central.length)fail('Central directory có dữ liệu dư hoặc số entry không khớp.');
++ var intervals=[];
++ for(var j=0;j<entries.length;j++){
++  var ent=entries[j],lh=await readPart(file,ent.localOffset,30),lv=viewOf(lh);
++  if(u32(lv,0)!==0x04034b50)fail('Local header không hợp lệ: '+ent.name);
++  var localFlags=u16(lv,6),localMethod=u16(lv,8),localCrc=u32(lv,14),localCompressed=u32(lv,18),localPlain=u32(lv,22),localNameLen=u16(lv,26),localExtraLen=u16(lv,28);
++  if(localFlags!==ent.flags||localMethod!==ent.method||localCrc!==ent.crc32||localCompressed!==ent.compressedSize||localPlain!==ent.size)fail('Local header không khớp central directory: '+ent.name);
++  if(localNameLen<1||localNameLen>MAX_NAME_BYTES||localExtraLen!==0)fail('Local header có tên/extra field không hợp lệ: '+ent.name);
++  var rawLocalName=await readPart(file,ent.localOffset+30,localNameLen),localName=safeName(rawLocalName);
++  if(localName!==ent.name)fail('Tên local header và central directory không khớp.');
++  var dataStart=ent.localOffset+30+localNameLen+localExtraLen,dataEnd=dataStart+ent.size;
++  if(dataStart>cdOffset||dataEnd>cdOffset||dataEnd<dataStart)fail('Dữ liệu entry chồng lên central directory hoặc nằm ngoài file: '+ent.name);
++  intervals.push({start:ent.localOffset,end:dataEnd,name:ent.name});
++  ent.dataOffset=dataStart;
++ }
++ intervals.sort(function(a,b){return a.start-b.start});var cursor=0;
++ for(var k=0;k<intervals.length;k++){
++  if(intervals[k].start!==cursor)fail(intervals[k].start<cursor?'Các entry ZIP bị chồng lấn.':'ZIP có vùng dữ liệu thừa hoặc khoảng trống giữa các entry.');
++  cursor=intervals[k].end;
++ }
++ if(cursor!==cdOffset)fail('Local records không kết thúc đúng tại central directory.');
++ if(!seen['full-backup.json'])fail('ZIP không có full-backup.json.');
++ var result={format:'CANVIO_STORE_ZIP_PREFLIGHT',version:1,valid:true,fileBytes:size,entryCount:entries.length,totalUncompressedBytes:entries.reduce(function(sum,x){return sum+x.size},0),entries:entries.map(function(x){return {name:x.name,sizeBytes:x.size,crc32:x.crc32,method:x.method}}),backupEntryPresent:true,manifestPresent:!!seen['manifest.json'],scope:{readOnly:true,noProjectMutation:true,noStorageWrite:true,storeMethodOnly:true,centralDirectoryVerified:true,localHeadersMatched:true}};
++ lastReport=result;return JSON.parse(JSON.stringify(result));
++}
++function summarizePayload(payload,integrity){
++ payload=payload||{};var ls=payload.localStorage&&typeof payload.localStorage==='object'?payload.localStorage:{},keys=Object.keys(ls).filter(function(k){return /^canvio/i.test(k)&&typeof ls[k]==='string'&&!/api.?key|secret|token|password|gemini|github|gh_tok|oauth/i.test(k)});
++ var dbs=Array.isArray(payload.indexedDB)?payload.indexedDB.filter(function(d){return d&&/^canvio/i.test(String(d.name||''))}):[],stores=0,records=0;
++ dbs.forEach(function(d){(Array.isArray(d.stores)?d.stores:[]).forEach(function(s){stores++;records+=Array.isArray(s.rows)?s.rows.length:0})});
++ var date='Không rõ';try{var parsed=new Date(payload.createdAt);if(Number.isFinite(parsed.getTime()))date=parsed.toLocaleString()}catch(e){}
++ return {backupCreatedAt:date,localStorageKeys:keys.length,indexedDBDatabases:dbs.length,indexedDBStores:stores,indexedDBRecords:records,excludedSecretKeys:Array.isArray(payload.excludedKeys)?payload.excludedKeys.length:0,sourceWarnings:Array.isArray(payload.warnings)?payload.warnings.length:0,checksumStatus:integrity&&integrity.status||'not-checked',schema:Number(payload.schema)||0};
++}
++function setPendingPreview(report){pendingPreview=report&&report.valid?JSON.parse(JSON.stringify(report)):null;return !!pendingPreview}
++function consumePendingPreview(){var report=pendingPreview;pendingPreview=null;return report?JSON.parse(JSON.stringify(report)):null}
++var api={version:'56.0.0',inspect:inspect,summarizePayload:summarizePayload,setPendingPreview:setPendingPreview,consumePendingPreview:consumePendingPreview,last:function(){return lastReport?JSON.parse(JSON.stringify(lastReport)):null},constants:{maxFileBytes:MAX_FILE_BYTES,maxEntries:MAX_ENTRIES,maxDirectoryBytes:MAX_DIRECTORY_BYTES,maxNameBytes:MAX_NAME_BYTES}};
++window.CANVIOArchivePreflight=api;
++var previousBuild=window.CANVIO_BUILD||{};window.CANVIO_BUILD=Object.freeze(Object.assign({},previousBuild,{version:'23.3.70-p56',base:'23.3.69-p55',candidate:'P56',features:(previousBuild.features||[]).concat(['P56 strict stored-ZIP central-directory/local-header preflight and read-only restore preview'])}));
++try{if(document)document.title='CANVIO 23.3.70-p56 — Archive Integrity & Safe Restore'}catch(e){}
++var suite=window.CANVIOPhaseSuite;
++if(suite){var oldTests=typeof suite.tests==='function'?suite.tests:null;suite.version='56.0.0';suite.tests=function(){var result=oldTests?oldTests.apply(this,arguments):{};result.p56ArchivePreflight=!!(window.CANVIOArchivePreflight&&window.CANVIOArchivePreflight.inspect);result.p56ReadOnlyRestorePreview=!!(window.CANVIOArchivePreflight&&window.CANVIOArchivePreflight.summarizePayload);return result}}
++var gate=window.CANVIOReleaseGate;
++if(gate&&typeof gate.run==='function'&&!gate.run.__canvioP56Wrapped){var oldRun=gate.run;var wrappedRun=async function(){var report=await oldRun.apply(this,arguments);report.format='CANVIO_P56_RELEASE_READINESS';report.candidate='P56';report.phaseSuite=window.CANVIOPhaseSuite&&window.CANVIOPhaseSuite.version||'56.0.0';report.archivePreflight={available:true,version:api.version,strictStoreOnly:true,centralDirectoryVerified:true,localHeadersMatched:true,readOnly:true};return report};wrappedRun.__canvioP56Wrapped=true;wrappedRun.__canvioP56Original=oldRun;gate.run=wrappedRun;gate.releaseReport=wrappedRun}
++})();
++</script>
++
+ </body>
+ </html>
+diff -ruN '--exclude=CANVIO_MANIFEST.json' '--exclude=canvio-p55-to-p56.patch' '--exclude=__pycache__' p55-base/tests/p55/run-p55-tests.cjs extracted/tests/p55/run-p55-tests.cjs
+--- p55-base/tests/p55/run-p55-tests.cjs	2026-11-16 16:41:38.000000000 +0000
++++ extracted/tests/p55/run-p55-tests.cjs	2026-11-16 17:06:43.028148336 +0000
+@@ -124,11 +124,11 @@
+   assert('P55 includes PhaseSuite runtime checks when available', typeof release.phaseSuite === 'object');
+   assert('P55 release report does not expose provider secret values', !JSON.stringify(release).includes('never expose this'));
+ 
+-  assert('P55 build marker and PhaseSuite version are aligned', /version:'23\.3\.69-p55',base:'23\.3\.68-p54',candidate:'P55'/.test(html) && /version:'55\.0\.0'/.test(html));
+-  assert('P55 document title matches the candidate version', /<title>CANVIO 23\.3\.69-p55 — Stable Release Readiness<\/title>/.test(html));
+-  assert('P42 title observer follows the current P55 build instead of pinning a stale title', /buildTitleForVersion=function\(\)\{var version=window\.CANVIO_BUILD&&window\.CANVIO_BUILD\.version/.test(html) && /version==='23\.3\.69-p55'\?'CANVIO 23\.3\.69-p55 — Stable Release Readiness'/.test(html));
++  assert('P55 lineage advances cleanly into P56 build and PhaseSuite', /version:'23\.3\.70-p56',base:'23\.3\.69-p55',candidate:'P56'/.test(html) && /version:'56\.0\.0'/.test(html));
++  assert('P56 document title matches the candidate version', /<title>CANVIO 23\.3\.70-p56 — Archive Integrity &amp; Safe Restore<\/title>/.test(html));
++  assert('P42 title observer follows the P56 build instead of pinning a stale title', /buildTitleForVersion=function\(\)\{var version=window\.CANVIO_BUILD&&window\.CANVIO_BUILD\.version/.test(html) && /version==='23\.3\.70-p56'\?'CANVIO 23\.3\.70-p56 — Archive Integrity & Safe Restore'/.test(html));
+   assert('P55 release dashboard button and panel IDs are created by module', /canvioP55Run/.test(p55) && /canvioP55Panel/.test(p55));
+-  assert('P55 restore preflight is wired before ZIP parsing', /preflightRestore\(file\);var payload=await readStoreZip/.test(html));
++  assert('P55 restore integrity preflight remains after the P56 archive validator and before payload mutation', /CANVIOArchivePreflight\.inspect\(file\)[\s\S]{0,350}preflightRestore\(file\)[\s\S]{0,160}readStoreZip\(file\)/.test(html));
+   assert('P55 backup audit is updated after a user-created ZIP', /noteBackup\(m\)/.test(html));
+   assert('P55 worker asset remains present and unchanged', fs.existsSync(path.join(root,'assets/canvio-whisper-worker.js')) && worker.includes('transformers'));
+   assert('P55 source is appended as a single additive inline script', /<script id="canvio-p55-runtime-release-gate">/.test(html));
+diff -ruN '--exclude=CANVIO_MANIFEST.json' '--exclude=canvio-p55-to-p56.patch' '--exclude=__pycache__' p55-base/tests/p56/browser-smoke-report.json extracted/tests/p56/browser-smoke-report.json
+--- p55-base/tests/p56/browser-smoke-report.json	1970-01-01 00:00:00.000000000 +0000
++++ extracted/tests/p56/browser-smoke-report.json	2026-11-16 17:10:43.145503560 +0000
+@@ -0,0 +1,280 @@
++{
++  "format": "CANVIO_P56_CHROMIUM_RUNTIME_SMOKE",
++  "version": 1,
++  "candidate": "P56",
++  "browser": "144.0.7559.96",
++  "origin": "about:blank",
++  "testOnlyStorageShim": true,
++  "limitations": [
++    "Opaque about:blank origin; native IndexedDB and secure-context acceptance are not covered.",
++    "Navigation to localhost, file:// and other URLs is blocked by the host browser policy.",
++    "No Safari/Edge, real Whisper model download/inference, screen-reader or hosting acceptance in this run."
++  ],
++  "checks": [
++    {
++      "id": "build-marker",
++      "status": "pass",
++      "value": "23.3.70-p56"
++    },
++    {
++      "id": "document-title",
++      "status": "pass",
++      "value": "CANVIO 23.3.70-p56 — Archive Integrity & Safe Restore"
++    },
++    {
++      "id": "spa-navigation",
++      "status": "pass",
++      "pages": [
++        "home",
++        "poster",
++        "web",
++        "videoEngine",
++        "assets",
++        "motion",
++        "insight",
++        "export",
++        "settings"
++      ]
++    },
++    {
++      "id": "phase-suite",
++      "status": "pass",
++      "flags": {
++        "websiteMotionRuntimeInjected": true,
++        "websiteMotionRuntimeIdempotent": true,
++        "websiteRuntimeHasRealScriptClose": true,
++        "websiteMotionProgressiveEnhancement": true,
++        "websiteMotionEasingVariable": true,
++        "videoCustomBezierMathAvailable": true,
++        "localProviderEndpointResolved": true,
++        "nonLocalHttpRejected": true,
++        "providerCallsOnlyOnExplicitClick": true,
++        "providerKeysRemainSessionOnly": true,
++        "zipOwner": true,
++        "backupIntegrityOwner": true,
++        "zipRestoreOwner": true,
++        "idbSchemaMetadata": true,
++        "idbRestoreOpensWithoutVersionBump": true,
++        "noSecondVideoTimeline": true,
++        "webAndPortfolioVaultAdapters": true,
++        "videoTrackControls": true,
++        "videoWebVTT": true,
++        "videoTrackStateInSnapshot": true,
++        "videoNativeMP4H264": true,
++        "videoCaptionPreflight": true,
++        "videoWhisperASR": true,
++        "videoWhisperCancellation": true,
++        "videoExportCancellation": true,
++        "p55RuntimeDiagnostics": true,
++        "p55RenderRecovery": true,
++        "p55ProjectIntegrity": true,
++        "p55PerformanceBudget": true,
++        "p55ReleaseGate": true,
++        "p56ArchivePreflight": true,
++        "p56ReadOnlyRestorePreview": true
++      }
++    },
++    {
++      "id": "p56-archive-integrity-preview",
++      "status": "pass",
++      "value": {
++        "valid": true,
++        "entries": 2,
++        "central": true,
++        "localHeaders": true,
++        "mismatchRejected": true,
++        "preview": {
++          "backupCreatedAt": "11/17/2026, 10:00:00 AM",
++          "localStorageKeys": 1,
++          "indexedDBDatabases": 0,
++          "indexedDBStores": 0,
++          "indexedDBRecords": 0,
++          "excludedSecretKeys": 1,
++          "sourceWarnings": 0,
++          "checksumStatus": "verified",
++          "schema": 2
++        },
++        "previewLeaksSecret": false,
++        "storageUnchanged": true
++      }
++    },
++    {
++      "id": "runtime-duplicate-ids",
++      "status": "pass",
++      "count": 0
++    },
++    {
++      "id": "video-track-vtt",
++      "status": "pass",
++      "value": {
++        "before": false,
++        "during": true,
++        "after": false,
++        "parsed": 1
++      }
++    },
++    {
++      "id": "real-webm-export-decode",
++      "status": "pass",
++      "value": {
++        "size": 20634,
++        "mime": "video/webm;codecs=vp9",
++        "duration": 0.9,
++        "width": 960,
++        "height": 540,
++        "readyState": 4,
++        "download": {
++          "name": "CANVIO_multitrack_1794849040177.webm",
++          "href": "blob:null/50fda787-e3b8-4579-9773-9d072b9bbebf"
++        }
++      }
++    },
++    {
++      "id": "real-mp4-h264-export-decode",
++      "status": "pass",
++      "value": {
++        "size": 11813,
++        "mime": "video/mp4;codecs=avc1.420020",
++        "duration": 0.891033,
++        "width": 960,
++        "height": 540,
++        "readyState": 4,
++        "download": {
++          "name": "CANVIO_multitrack_1794849041133.mp4",
++          "href": "blob:null/d46e9fb0-eb40-4bd6-ab1b-42989a3b3d3a"
++        }
++      }
++    },
++    {
++      "id": "render-cancel",
++      "status": "pass",
++      "value": {
++        "returnedBlob": false,
++        "recovery": "cancelled",
++        "cancelButtonDisabled": true
++      }
++    },
++    {
++      "id": "render-retry-after-cancel",
++      "status": "pass",
++      "value": {
++        "size": 21449,
++        "mime": "video/webm;codecs=vp9",
++        "duration": 0.8,
++        "width": 960,
++        "height": 540,
++        "readyState": 4,
++        "download": {
++          "name": "CANVIO_multitrack_1794849042247.webm",
++          "href": "blob:null/98189e68-1bcd-4195-af99-c1216a1c7992"
++        }
++      }
++    },
++    {
++      "id": "responsive-widths",
++      "status": "pass",
++      "value": [
++        {
++          "width": 1440,
++          "documentWidth": 1440,
++          "bodyWidth": 1440,
++          "overflow": false
++        },
++        {
++          "width": 768,
++          "documentWidth": 768,
++          "bodyWidth": 768,
++          "overflow": false
++        },
++        {
++          "width": 720,
++          "documentWidth": 720,
++          "bodyWidth": 720,
++          "overflow": false
++        },
++        {
++          "width": 375,
++          "documentWidth": 375,
++          "bodyWidth": 375,
++          "overflow": false
++        },
++        {
++          "width": 320,
++          "documentWidth": 320,
++          "bodyWidth": 320,
++          "overflow": false
++        }
++      ]
++    },
++    {
++      "id": "release-gate-fail-closed",
++      "status": "pass",
++      "value": {
++        "status": "BLOCKED",
++        "failures": [
++          "secure-context: about:"
++        ],
++        "manualAcceptance": [
++          {
++            "id": "browser-matrix",
++            "label": "Chrome, Edge và Safari trên HTTPS",
++            "status": "pending"
++          },
++          {
++            "id": "real-media-export",
++            "label": "WebM/MP4 decode, audio và A/V sync bằng media thật",
++            "status": "pending"
++          },
++          {
++            "id": "whisper-model",
++            "label": "Whisper model download, inference, hủy và unload thật",
++            "status": "pending"
++          },
++          {
++            "id": "project-persistence",
++            "label": "IndexedDB save/reopen và ZIP restore trên origin thật",
++            "status": "pending"
++          },
++          {
++            "id": "accessibility",
++            "label": "Keyboard, screen reader, focus và zoom 200%",
++            "status": "pending"
++          },
++          {
++            "id": "hosting",
++            "label": "Pages/hosting, worker path, CSP/CORS và console",
++            "status": "pending"
++          }
++        ]
++      }
++    },
++    {
++      "id": "uncaught-page-errors",
++      "status": "pass",
++      "count": 0
++    },
++    {
++      "id": "console-errors",
++      "status": "pass",
++      "count": 0
++    }
++  ],
++  "timelineFixture": {
++    "canvasWidth": 960,
++    "canvasHeight": 540
++  },
++  "codecCapabilities": {
++    "mediaRecorder": true,
++    "canvasCapture": true,
++    "webmMime": "video/webm;codecs=vp9",
++    "mp4Mime": "video/mp4;codecs=avc1.42E01E",
++    "h264Supported": true,
++    "mp4RequiresNativeH264": true,
++    "ffmpegFallback": false
++  },
++  "summary": {
++    "passed": 27,
++    "failed": 0,
++    "status": "PASS_WITH_ORIGIN_LIMITATIONS"
++  }
++}
+\ No newline at end of file
+diff -ruN '--exclude=CANVIO_MANIFEST.json' '--exclude=canvio-p55-to-p56.patch' '--exclude=__pycache__' p55-base/tests/p56/run-p56-browser-smoke.py extracted/tests/p56/run-p56-browser-smoke.py
+--- p55-base/tests/p56/run-p56-browser-smoke.py	1970-01-01 00:00:00.000000000 +0000
++++ extracted/tests/p56/run-p56-browser-smoke.py	2026-11-16 17:10:24.380728377 +0000
+@@ -0,0 +1,320 @@
++#!/usr/bin/env python3
++"""Optional Chromium runtime smoke for CANVIO P56.
++
++This runs the real index.html in a Chromium document created with Playwright
++set_content(). A test-only local/sessionStorage shim is injected because the
++sandbox blocks all URL navigation, including localhost and file://. The page
++therefore has an opaque about:blank origin: native IndexedDB, secure-context,
++worker URL and persistence acceptance are explicitly NOT covered here.
++"""
++from __future__ import annotations
++
++import json
++import os
++import re
++import shutil
++import sys
++from pathlib import Path
++
++try:
++    from playwright.sync_api import sync_playwright
++except Exception as exc:  # pragma: no cover - optional dependency
++    raise SystemExit(
++        "Missing optional dependency: install Playwright for Python and make "
++        "a Chromium executable available. Original error: " + str(exc)
++    )
++
++ROOT = Path(__file__).resolve().parents[2]
++REPORT_PATH = Path(__file__).with_name("browser-smoke-report.json")
++EXPECTED_VERSION = "23.3.70-p56"
++EXPECTED_TITLE = "CANVIO 23.3.70-p56 — Archive Integrity & Safe Restore"
++
++STORAGE_SHIM = r"""<script id="canvio-p56-test-storage-shim">
++(() => {
++  function makeStorage() {
++    const values = new Map();
++    return {
++      get length() { return values.size; },
++      key(index) { return Array.from(values.keys())[index] ?? null; },
++      getItem(key) { key = String(key); return values.has(key) ? values.get(key) : null; },
++      setItem(key, value) { values.set(String(key), String(value)); },
++      removeItem(key) { values.delete(String(key)); },
++      clear() { values.clear(); }
++    };
++  }
++  Object.defineProperty(window, 'localStorage', { configurable: true, value: makeStorage() });
++  Object.defineProperty(window, 'sessionStorage', { configurable: true, value: makeStorage() });
++})();
++</script>"""
++
++
++def require(condition: bool, label: str, detail: str = "") -> None:
++    if not condition:
++        raise AssertionError(label + (": " + detail if detail else ""))
++    print("PASS", label, detail)
++
++
++def main() -> int:
++    source = (ROOT / "index.html").read_text(encoding="utf-8")
++    if re.match(r"^\s*<!doctype", source, re.I):
++        source = re.sub(
++            r"^(\s*<!doctype[^>]*>)",
++            lambda match: match.group(1) + STORAGE_SHIM,
++            source,
++            count=1,
++            flags=re.I,
++        )
++    else:
++        source = STORAGE_SHIM + source
++
++    # Prefer an explicitly selected/system browser for local reproduction; fall
++    # back to the browser binary installed by `python -m playwright install chromium`.
++    executable = os.environ.get("CHROMIUM_EXECUTABLE_PATH")
++
++    results: dict[str, object] = {
++        "format": "CANVIO_P56_CHROMIUM_RUNTIME_SMOKE",
++        "version": 1,
++        "candidate": "P56",
++        "browser": None,
++        "origin": "about:blank",
++        "testOnlyStorageShim": True,
++        "limitations": [
++            "Opaque about:blank origin; native IndexedDB and secure-context acceptance are not covered.",
++            "Navigation to localhost, file:// and other URLs is blocked by the host browser policy.",
++            "No Safari/Edge, real Whisper model download/inference, screen-reader or hosting acceptance in this run."
++        ],
++        "checks": [],
++    }
++    errors: list[str] = []
++    console_errors: list[str] = []
++    passed = 0
++
++    with sync_playwright() as playwright:
++        if not executable:
++            bundled = Path(playwright.chromium.executable_path)
++            if bundled.is_file():
++                executable = str(bundled)
++            else:
++                executable = shutil.which("chromium") or shutil.which("chromium-browser")
++        if not executable or not Path(executable).is_file():
++            raise SystemExit("Chromium executable not found. Install it with `python -m playwright install chromium` or set CHROMIUM_EXECUTABLE_PATH.")
++        browser = playwright.chromium.launch(
++            headless=True,
++            executable_path=executable,
++            args=["--no-sandbox", "--disable-dev-shm-usage", "--disable-gpu"],
++        )
++        page = browser.new_page(viewport={"width": 1440, "height": 1000}, accept_downloads=True)
++        results["browser"] = browser.version
++        page.on("pageerror", lambda error: errors.append(str(error)))
++        page.on("console", lambda message: console_errors.append(message.text[:1000]) if message.type == "error" else None)
++
++        # The sandbox has no external font access. Fulfill those stylesheet requests
++        # with an empty stylesheet so font networking does not mask app runtime errors.
++        page.route("https://fonts.googleapis.com/**", lambda route: route.fulfill(status=200, content_type="text/css", body=""))
++        page.route("https://fonts.gstatic.com/**", lambda route: route.fulfill(status=200, content_type="font/woff2", body=b""))
++
++        page.set_content(source, wait_until="load", timeout=120_000)
++        page.wait_for_timeout(4_200)  # includes the legacy P42 title-observer timer
++
++        title = page.title()
++        version = page.evaluate("window.CANVIO_BUILD && window.CANVIO_BUILD.version")
++        require(version == EXPECTED_VERSION, "P56 app build marker is active", str(version))
++        results["checks"].append({"id": "build-marker", "status": "pass", "value": version})
++        passed += 1
++        require(title == EXPECTED_TITLE, "P56 title survives inherited title observers", title)
++        results["checks"].append({"id": "document-title", "status": "pass", "value": title})
++        passed += 1
++
++        # Exercise core SPA navigation and lazy Video Engine initialization.
++        visited: list[str] = []
++        for name in ["home", "poster", "web", "videoEngine", "assets", "motion", "insight", "export", "settings"]:
++            page.evaluate("name => CV.go(name)", name)
++            page.wait_for_timeout(200)
++            active = page.locator(".page.active").first.get_attribute("id") if page.locator(".page.active").count() else ""
++            require(active == "page-" + name, "SPA route mounts " + name, str(active))
++            visited.append(name)
++            passed += 1
++        results["checks"].append({"id": "spa-navigation", "status": "pass", "pages": visited})
++
++        page.evaluate("CV.go('videoEngine')")
++        page.wait_for_timeout(800)
++        phase_tests = page.evaluate("CANVIOPhaseSuite.tests()")
++        phase_failed = [key for key, value in phase_tests.items() if value is not True]
++        require(not phase_failed, "P47–P56 runtime PhaseSuite flags all true after Video Engine mount", ", ".join(phase_failed))
++        results["checks"].append({"id": "phase-suite", "status": "pass", "flags": phase_tests})
++        passed += 1
++
++        # P56 archive integrity preflight: validate a real CANVIO CVZip output,
++        # reject a local/central CRC mismatch, and prove the preview omits values.
++        p56_archive = page.evaluate("""async () => {
++          const payload = {format:'CANVIO_FULL_BACKUP', createdAt:'2026-11-17T10:00:00.000Z', schema:2,
++            localStorage:{'canvio:project:smoke':'safe-value','canvio:provider:token':'DO_NOT_SHOW'},
++            indexedDB:[], excludedKeys:['canvio:provider:token'], warnings:[]};
++          const blob = await CVZip.build([{name:'manifest.json',data:'{}'},{name:'full-backup.json',data:JSON.stringify(payload)}]);
++          const valid = await CANVIOArchivePreflight.inspect(blob);
++          const before = localStorage.length;
++          const bytes = new Uint8Array(await blob.arrayBuffer());
++          const view = new DataView(bytes.buffer);
++          let eocd = -1;
++          for (let i=bytes.length-22;i>=Math.max(0,bytes.length-65557);i--) if(view.getUint32(i,true)===0x06054b50){eocd=i;break;}
++          if(eocd<0) throw new Error('Test ZIP missing EOCD');
++          const cdOffset=view.getUint32(eocd+16,true);
++          const bad=bytes.slice();
++          new DataView(bad.buffer).setUint32(cdOffset+16,0x12345678,true);
++          let mismatchRejected=false;
++          try { await CANVIOArchivePreflight.inspect(new Blob([bad],{type:'application/zip'})); }
++          catch(e) { mismatchRejected=/không khớp/.test(String(e.message||e)); }
++          const preview=CANVIOArchivePreflight.summarizePayload(payload,{status:'verified'});
++          return {valid:valid.valid,entries:valid.entryCount,central:valid.scope.centralDirectoryVerified,localHeaders:valid.scope.localHeadersMatched,
++            mismatchRejected,preview,previewLeaksSecret:JSON.stringify(preview).includes('DO_NOT_SHOW')||JSON.stringify(preview).includes('canvio:provider:token'),
++            storageUnchanged:localStorage.length===before};
++        }""")
++        require(p56_archive["valid"] and p56_archive["central"] and p56_archive["localHeaders"], "P56 accepts real CVZip output after Central Directory/Local Header verification", json.dumps(p56_archive))
++        passed += 1
++        require(p56_archive["mismatchRejected"], "P56 rejects tampered Central Directory CRC metadata", json.dumps(p56_archive))
++        passed += 1
++        require(not p56_archive["previewLeaksSecret"] and p56_archive["preview"]["localStorageKeys"] == 1 and p56_archive["storageUnchanged"], "P56 restore preview omits secret values and leaves storage unchanged", json.dumps(p56_archive))
++        results["checks"].append({"id": "p56-archive-integrity-preview", "status": "pass", "value": p56_archive})
++        passed += 1
++
++        duplicates = page.evaluate("""() => {
++          const counts = new Map();
++          for (const node of document.querySelectorAll('[id]')) counts.set(node.id, (counts.get(node.id) || 0) + 1);
++          return [...counts.entries()].filter(([, count]) => count > 1);
++        }""")
++        require(not duplicates, "No duplicate IDs after runtime navigation", json.dumps(duplicates[:20]))
++        results["checks"].append({"id": "runtime-duplicate-ids", "status": "pass", "count": 0})
++        passed += 1
++
++        # Exercise effective track state and WebVTT logic through the real public API.
++        track_result = page.evaluate("""() => {
++          const video = CV.engines.video;
++          const before = video.trackState(1).hidden;
++          video.toggleTrack(1, 'hidden');
++          const during = video.trackState(1).hidden;
++          video.toggleTrack(1, 'hidden');
++          const after = video.trackState(1).hidden;
++          const parsed = video.vttParse('WEBVTT\\n\\n00:00:00.000 --> 00:00:01.200\\nCANVIO QA');
++          return {before, during, after, parsed: Array.isArray(parsed) ? parsed.length : (parsed && parsed.cues ? parsed.cues.length : null)};
++        }""")
++        require(track_result["during"] is True and track_result["after"] is False, "Video track visibility toggles and restores", str(track_result))
++        passed += 1
++        require(track_result["parsed"] == 1, "WebVTT parser accepts one valid cue", str(track_result))
++        passed += 1
++        results["checks"].append({"id": "video-track-vtt", "status": "pass", "value": track_result})
++
++        # Create a short deterministic text-only timeline; no user media is touched.
++        setup = page.evaluate("""() => {
++          const api = CV.engines.video, state = api._state();
++          state.clips = [{id:'p55-browser-smoke', name:'P55 browser smoke', type:'text', text:'CANVIO P55 MEDIA TEST', start:0, duration:0.9, track:3, captionStyle:{fontSize:48, position:'center', bgOpacity:35}}];
++          state.selected = 'p55-browser-smoke'; state.duration = 0.9; state.time = 0;
++          api.commit();
++          const originalClick = HTMLAnchorElement.prototype.click;
++          HTMLAnchorElement.prototype.click = function() {
++            if (this.download && /\\.(webm|mp4)$/i.test(this.download)) {
++              window.__canvioP56SmokeDownload = {name:this.download, href:this.href};
++              return;
++            }
++            return originalClick.call(this);
++          };
++          return {canvasWidth:document.getElementById('vtCanvas').width, canvasHeight:document.getElementById('vtCanvas').height};
++        }""")
++        results["timelineFixture"] = setup
++
++        def export_and_decode(method: str, extension: str) -> dict:
++            return page.evaluate(
++                """async ({method, extension}) => {
++                  const api = CV.engines.video;
++                  const blob = await api[method]();
++                  if (!blob || !blob.size) throw new Error(method + ' returned no video data');
++                  const mime = String(blob.type || '');
++                  if (extension === 'mp4' && (!/^video\\/mp4(?:;|$)/i.test(mime) || !/(?:avc1|avc3)/i.test(mime))) {
++                    throw new Error('Unexpected MP4/H.264 MIME: ' + mime);
++                  }
++                  if (extension === 'webm' && !/^video\\/webm(?:;|$)/i.test(mime)) throw new Error('Unexpected WebM MIME: ' + mime);
++                  const url = URL.createObjectURL(blob), video = document.createElement('video');
++                  video.preload = 'metadata'; video.src = url; document.body.appendChild(video);
++                  try {
++                    await new Promise((resolve, reject) => {
++                      video.onloadedmetadata = resolve;
++                      video.onerror = () => reject(new Error('browser could not decode ' + extension));
++                    });
++                    return {size:blob.size, mime, duration:video.duration, width:video.videoWidth, height:video.videoHeight, readyState:video.readyState, download:window.__canvioP56SmokeDownload || null};
++                  } finally { URL.revokeObjectURL(url); video.remove(); }
++                }""",
++                {"method": method, "extension": extension},
++            )
++
++        webm_result = export_and_decode("exportWebM", "webm")
++        require(webm_result["size"] > 0 and webm_result["duration"] >= 0.7 and webm_result["width"] == 960, "CANVIO WebM render produces browser-decodable media", json.dumps(webm_result))
++        results["checks"].append({"id": "real-webm-export-decode", "status": "pass", "value": webm_result})
++        passed += 1
++
++        caps = page.evaluate("CV.engines.video.exportCapabilities()")
++        results["codecCapabilities"] = caps
++        if caps.get("mp4Mime"):
++            mp4_result = export_and_decode("exportMP4", "mp4")
++            require(mp4_result["size"] > 0 and mp4_result["duration"] >= 0.7 and mp4_result["width"] == 960, "CANVIO MP4/H.264 render produces browser-decodable media", json.dumps(mp4_result))
++            results["checks"].append({"id": "real-mp4-h264-export-decode", "status": "pass", "value": mp4_result})
++            passed += 1
++        else:
++            results["checks"].append({"id": "real-mp4-h264-export-decode", "status": "skip", "reason": "This Chromium build does not report a supported AVC MIME."})
++
++        # Cancel an in-flight export and prove the engine can export again afterwards.
++        cancel_result = page.evaluate("""async () => {
++          const state = CV.engines.video._state(); state.duration = 5; state.time = 0;
++          const pending = CV.engines.video.exportWebM();
++          setTimeout(() => CV.engines.video.cancelExport(), 250);
++          const blob = await pending;
++          return {returnedBlob:!!blob, recovery:CANVIOReleaseGate.renderRecovery.recover()?.status, cancelButtonDisabled:document.getElementById('vtExportCancel')?.disabled};
++        }""")
++        require(not cancel_result["returnedBlob"] and cancel_result["recovery"] == "cancelled" and cancel_result["cancelButtonDisabled"] is True, "In-flight WebM render can be cancelled and cleans up UI", json.dumps(cancel_result))
++        results["checks"].append({"id": "render-cancel", "status": "pass", "value": cancel_result})
++        passed += 1
++        page.evaluate("const s=CV.engines.video._state();s.duration=.8;s.time=0")
++        retry = export_and_decode("exportWebM", "webm")
++        require(retry["size"] > 0, "A new WebM render succeeds after cancellation", json.dumps(retry))
++        results["checks"].append({"id": "render-retry-after-cancel", "status": "pass", "value": retry})
++        passed += 1
++
++        # Responsive overflow check; 720 CSS px is a 200%-zoom reflow proxy only.
++        viewport_checks = []
++        for width in [1440, 768, 720, 375, 320]:
++            page.set_viewport_size({"width": width, "height": 900})
++            page.wait_for_timeout(100)
++            metric = page.evaluate("({width:innerWidth, documentWidth:document.documentElement.scrollWidth, bodyWidth:document.body.scrollWidth})")
++            metric["overflow"] = metric["documentWidth"] > width
++            viewport_checks.append(metric)
++        require(all(not item["overflow"] for item in viewport_checks), "No horizontal document overflow at 1440/768/720/375/320 px", json.dumps(viewport_checks))
++        results["checks"].append({"id": "responsive-widths", "status": "pass", "value": viewport_checks})
++        passed += 1
++
++        # Release report should block in this harness because about:blank is not a secure origin.
++        release = page.evaluate("CANVIOReleaseGate.run()")
++        require(release["releaseCertified"] is False, "P56 release gate never self-certifies", str(release["releaseCertified"]))
++        require(release["status"] == "BLOCKED" and any("secure-context" in item for item in release["failures"]), "Release report correctly records opaque-origin blocker", json.dumps(release["failures"]))
++        results["checks"].append({"id": "release-gate-fail-closed", "status": "pass", "value": {"status":release["status"],"failures":release["failures"],"manualAcceptance":release["manualAcceptance"]}})
++        passed += 2
++
++        require(not errors, "Zero uncaught JavaScript page errors", json.dumps(errors))
++        results["checks"].append({"id": "uncaught-page-errors", "status": "pass", "count": len(errors)})
++        passed += 1
++        require(not console_errors, "Zero browser console errors after font requests are stubbed", json.dumps(console_errors))
++        results["checks"].append({"id": "console-errors", "status": "pass", "count": len(console_errors)})
++        passed += 1
++
++        browser.close()
++
++    results["summary"] = {"passed": passed, "failed": 0, "status": "PASS_WITH_ORIGIN_LIMITATIONS"}
++    REPORT_PATH.write_text(json.dumps(results, ensure_ascii=False, indent=2), encoding="utf-8")
++    print(f"\nP56 Chromium browser smoke: {passed} checks passed; origin-dependent acceptance remains pending.")
++    print("Report:", REPORT_PATH)
++    return 0
++
++
++if __name__ == "__main__":
++    try:
++        raise SystemExit(main())
++    except Exception as error:
++        print("P56 browser smoke failed:", repr(error), file=sys.stderr)
++        raise
+diff -ruN '--exclude=CANVIO_MANIFEST.json' '--exclude=canvio-p55-to-p56.patch' '--exclude=__pycache__' p55-base/tests/p56/run-p56-tests.cjs extracted/tests/p56/run-p56-tests.cjs
+--- p55-base/tests/p56/run-p56-tests.cjs	1970-01-01 00:00:00.000000000 +0000
++++ extracted/tests/p56/run-p56-tests.cjs	2026-11-16 17:07:29.348200918 +0000
+@@ -0,0 +1,149 @@
++'use strict';
++const fs = require('node:fs');
++const path = require('node:path');
++const vm = require('node:vm');
++const root = path.resolve(__dirname, '../..');
++const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
++const scripts = [...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script\s*>/gi)];
++const match = [...html.matchAll(/<script\s+id=["']canvio-p56-portable-archive-preflight["'][^>]*>([\s\S]*?)<\/script\s*>/ig)][0];
++if (!match) throw new Error('P56 archive preflight script not found in index.html');
++const p56 = match[1];
++let passed = 0;
++function assert(name, condition, detail = '') {
++  if (!condition) throw new Error(`FAIL ${name}${detail ? `: ${detail}` : ''}`);
++  passed++;
++  console.log(`PASS ${name}`);
++}
++function crc32(bytes) {
++  let c = 0xffffffff;
++  for (const value of bytes) {
++    c ^= value;
++    for (let k = 0; k < 8; k++) c = (c & 1) ? (0xedb88320 ^ (c >>> 1)) : (c >>> 1);
++  }
++  return (c ^ 0xffffffff) >>> 0;
++}
++function concat(parts) {
++  const length = parts.reduce((sum, part) => sum + part.length, 0);
++  const out = new Uint8Array(length);
++  let offset = 0;
++  for (const part of parts) { out.set(part, offset); offset += part.length; }
++  return out;
++}
++function zip(entries, options = {}) {
++  const encoder = new TextEncoder();
++  const local = [], central = [];
++  let offset = 0;
++  for (const entry of entries) {
++    const name = encoder.encode(entry.name);
++    const data = encoder.encode(entry.data ?? '{}');
++    const checksum = crc32(data);
++    const localFlags = entry.localFlags ?? entry.flags ?? 0x0800;
++    const centralFlags = entry.centralFlags ?? entry.flags ?? 0x0800;
++    const method = entry.method ?? 0;
++    const lh = new Uint8Array(30), lv = new DataView(lh.buffer);
++    lv.setUint32(0, 0x04034b50, true); lv.setUint16(4, 20, true); lv.setUint16(6, localFlags, true);
++    lv.setUint16(8, method, true); lv.setUint32(14, checksum, true); lv.setUint32(18, data.length, true);
++    lv.setUint32(22, data.length, true); lv.setUint16(26, name.length, true);
++    local.push(lh, name, data);
++    const ch = new Uint8Array(46), cv = new DataView(ch.buffer);
++    cv.setUint32(0, 0x02014b50, true); cv.setUint16(4, 20, true); cv.setUint16(6, 20, true);
++    cv.setUint16(8, centralFlags, true); cv.setUint16(10, method, true); cv.setUint32(16, checksum, true);
++    cv.setUint32(20, data.length, true); cv.setUint32(24, data.length, true); cv.setUint16(28, name.length, true);
++    cv.setUint32(42, offset, true);
++    central.push(ch, name);
++    offset += lh.length + name.length + data.length;
++  }
++  const localBytes = concat(local), centralBytes = concat(central);
++  const end = new Uint8Array(22), ev = new DataView(end.buffer);
++  ev.setUint32(0, 0x06054b50, true);
++  ev.setUint16(8, entries.length, true); ev.setUint16(10, entries.length, true);
++  ev.setUint32(12, centralBytes.length, true); ev.setUint32(16, localBytes.length, true);
++  const bytes = concat([localBytes, centralBytes, end]);
++  if (options.mutate) options.mutate(bytes, {localBytes, centralBytes, endOffset: bytes.length - 22});
++  return bytes;
++}
++function asFile(bytes) {
++  return {
++    size: bytes.length,
++    slice(start, end) {
++      const part = bytes.slice(start, end);
++      return { arrayBuffer: async () => part.buffer.slice(part.byteOffset, part.byteOffset + part.byteLength) };
++    }
++  };
++}
++const windowMock = {
++  CANVIO_BUILD: { version: '23.3.69-p55', base: '23.3.68-p54', features: ['P55'] },
++  CANVIOPhaseSuite: { version: '55.0.0', tests: () => ({priorPhase:true}) },
++  CANVIOReleaseGate: { run: async () => ({format:'CANVIO_P55_RELEASE_READINESS',candidate:'P55',phaseSuite:'55.0.0',releaseCertified:false}) }
++};
++const context = { window:windowMock, document:{title:''}, TextDecoder, TextEncoder, DataView, Uint8Array, ArrayBuffer, Number, Math, Object, String, RegExp, Error, Promise, JSON, Date, Set, Map, console };
++vm.createContext(context);
++vm.runInContext(p56, context, { timeout:3000 });
++const api = windowMock.CANVIOArchivePreflight;
++assert('P56 archive preflight API is installed', !!api && api.version === '56.0.0');
++assert('P56 candidate marker advances without changing P55 base lineage', windowMock.CANVIO_BUILD.version === '23.3.70-p56' && windowMock.CANVIO_BUILD.base === '23.3.69-p55');
++assert('P56 PhaseSuite preserves prior tests and appends its own flags', windowMock.CANVIOPhaseSuite.version === '56.0.0' && windowMock.CANVIOPhaseSuite.tests().priorPhase && windowMock.CANVIOPhaseSuite.tests().p56ArchivePreflight);
++assert('P56 release report wrapper is installed without self-certification', !!windowMock.CANVIOReleaseGate.run.__canvioP56Wrapped);
++
++(async()=>{
++const wrappedRelease = await windowMock.CANVIOReleaseGate.run();
++assert('P56 release report declares P56 evidence and never self-certifies', wrappedRelease.format==='CANVIO_P56_RELEASE_READINESS' && wrappedRelease.candidate==='P56' && wrappedRelease.releaseCertified===false && wrappedRelease.archivePreflight.centralDirectoryVerified);
++const good = zip([{name:'manifest.json',data:'{}'},{name:'full-backup.json',data:'{"format":"CANVIO_FULL_BACKUP"}'},{name:'README_RESTORE.md',data:'restore'}]);
++const report = await api.inspect(asFile(good));
++assert('Valid CVZip-style stored archive passes full EOCD and Central Directory validation', report.valid && report.entryCount === 3 && report.backupEntryPresent && report.manifestPresent);
++assert('P56 reports read-only, no-mutation scope', report.scope.readOnly && report.scope.noProjectMutation && report.scope.noStorageWrite);
++assert('P56 verifies exact Local Header/Central Directory layout', report.scope.centralDirectoryVerified && report.scope.localHeadersMatched);
++assert('P56 records entry names and uncompressed sizes without reading project values', report.entries.some(x=>x.name==='full-backup.json') && report.totalUncompressedBytes > 0);
++
++let missingPayload = false;
++try { await api.inspect(asFile(zip([{name:'manifest.json',data:'{}'}]))); } catch (e) { missingPayload = /không có full-backup.json/.test(e.message); }
++assert('P56 rejects ZIP without full-backup.json', missingPayload);
++let duplicate = false;
++try { await api.inspect(asFile(zip([{name:'full-backup.json',data:'{}'},{name:'full-backup.json',data:'{}'}]))); } catch (e) { duplicate = /trùng lặp/.test(e.message); }
++assert('P56 rejects duplicate entry names', duplicate);
++let traversal = false;
++try { await api.inspect(asFile(zip([{name:'../full-backup.json',data:'{}'}]))); } catch (e) { traversal = /không an toàn|đường dẫn/.test(e.message); }
++assert('P56 rejects traversal paths', traversal);
++let encrypted = false;
++try { await api.inspect(asFile(zip([{name:'full-backup.json',data:'{}',flags:0x0801}]))); } catch (e) { encrypted = /flag\/encryption/.test(e.message); }
++assert('P56 rejects encrypted or unsupported general-purpose flags', encrypted);
++let descriptor = false;
++try { await api.inspect(asFile(zip([{name:'full-backup.json',data:'{}',flags:0x0808}]))); } catch (e) { descriptor = /flag\/encryption/.test(e.message); }
++assert('P56 rejects data-descriptor archives unsupported by CANVIO restore', descriptor);
++let compressed = false;
++try { await api.inspect(asFile(zip([{name:'full-backup.json',data:'{}',method:8}]))); } catch (e) { compressed = /ZIP store/.test(e.message); }
++assert('P56 rejects unsupported DEFLATE compression before parser allocation', compressed);
++let headerMismatch = false;
++try { await api.inspect(asFile(zip([{name:'full-backup.json',data:'{}',localFlags:0x0800,centralFlags:0}]))); } catch (e) { headerMismatch = /không khớp/.test(e.message); }
++assert('P56 rejects Local Header/Central Directory metadata mismatch', headerMismatch);
++let badOffset = false;
++try { await api.inspect(asFile(zip([{name:'full-backup.json',data:'{}'}], {mutate(bytes, meta) { const v=new DataView(bytes.buffer); v.setUint32(meta.endOffset+16, meta.localBytes.length+1, true); }}))); } catch (e) { badOffset = /offset\/size/.test(e.message); }
++assert('P56 rejects malformed Central Directory offset', badOffset);
++let missingEocd = false;
++try { const bytes=good.slice(0,-22); await api.inspect(asFile(bytes)); } catch (e) { missingEocd = /End of Central Directory/.test(e.message); }
++assert('P56 rejects ZIP missing terminal EOCD', missingEocd);
++let overlap = false;
++try { await api.inspect(asFile(zip([{name:'full-backup.json',data:'{}'},{name:'manifest.json',data:'{}'}], {mutate(bytes, meta) { const v=new DataView(bytes.buffer); const firstNameLen=v.getUint16(meta.localBytes.length+28,true); const secondEntryOffset=meta.localBytes.length+46+firstNameLen; v.setUint32(secondEntryOffset+42,0,true); }}))); } catch (e) { overlap = /không khớp|chồng lấn/.test(e.message); }
++assert('P56 rejects overlapping or aliased local records', overlap);
++let tooLarge = false;
++try { await api.inspect({size:api.constants.maxFileBytes+1,slice(){throw new Error('should not read')}}); } catch (e) { tooLarge = /512 MiB/.test(e.message); }
++assert('P56 rejects archive above 512 MiB before reading slices', tooLarge);
++
++const summary = api.summarizePayload({
++  createdAt:'2026-11-16T12:00:00.000Z',schema:2,
++  localStorage:{'canvio:project':'{}','canvio:token':'hidden','other':'x'},
++  indexedDB:[{name:'CANVIO_MEDIA',stores:[{name:'media',rows:[{},{}]}]},{name:'OTHER_DB',stores:[{rows:[{}]}]}],
++  excludedKeys:['canvio:token'],warnings:['one']
++},{status:'verified'});
++assert('Restore preview counts CANVIO keys, databases, stores and records only', summary.localStorageKeys===1 && summary.indexedDBDatabases===1 && summary.indexedDBStores===1 && summary.indexedDBRecords===2);
++assert('Restore preview includes checksum, schema and warning counters', summary.checksumStatus==='verified' && summary.schema===2 && summary.sourceWarnings===1 && summary.excludedSecretKeys===1);
++assert('Restore preview does not expose stored values or secret names', !JSON.stringify(summary).includes('hidden') && !JSON.stringify(summary).includes('canvio:token'));
++api.setPendingPreview(report);
++assert('P56 preview context is one-use and cleared after consumption', api.consumePendingPreview().entryCount===3 && api.consumePendingPreview()===null);
++
++assert('P56 is wired before legacy ZIP parser and restore confirmation', /CANVIOArchivePreflight\.inspect\(file\)[\s\S]{0,350}readStoreZip\(file\)/.test(html) && /XEM TRƯỚC KHÔI PHỤC/.test(html));
++assert('P56 candidate title observer follows the new build marker', /version==='23\.3\.70-p56'\?'CANVIO 23\.3\.70-p56/.test(html));
++assert('P56 is one additive inline script after P55', /<script id="canvio-p55-runtime-release-gate">[\s\S]*?<\/script>\s*<script id="canvio-p56-portable-archive-preflight">/.test(html));
++
++console.log(`\nP56: ${passed}/${passed} assertions passed.`);
++})().catch(error=>{console.error(error);process.exitCode=1});

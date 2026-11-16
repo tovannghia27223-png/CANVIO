@@ -1,0 +1,2757 @@
+diff --git a/.github/workflows/canvio-pages-node24.yml b/.github/workflows/canvio-pages-node24.yml
+index a7a9a5b..74b604c 100644
+--- a/.github/workflows/canvio-pages-node24.yml
++++ b/.github/workflows/canvio-pages-node24.yml
+@@ -1,4 +1,4 @@
+-name: CANVIO GitHub Pages (Node 24)
++name: CANVIO GitHub Pages P62 (Node 24)
+ 
+ on:
+   pull_request:
+@@ -18,7 +18,7 @@ concurrency:
+ 
+ jobs:
+   build:
+-    name: Validate and package CANVIO P56 archive-integrity candidate
++    name: Validate and package CANVIO P62 Phase 1 reliability candidate
+     runs-on: ubuntu-latest
+     permissions:
+       contents: read
+@@ -32,14 +32,14 @@ jobs:
+           node-version: 24
+           package-manager-cache: false
+ 
+-      - name: Verify exact reviewed CANVIO P56 candidate
++      - name: Verify exact reviewed CANVIO P62 candidate
+         shell: bash
+         run: |
+           set -euo pipefail
+           actual="$(sha256sum index.html | cut -d' ' -f1)"
+-          expected_p56="bb362154c92622a37ec6a40540ebea377da51073e92fc3e6e31eb3a82c29665f"
+-          test "$actual" = "$expected_p56" || { echo "Unexpected index.html SHA-256: $actual" >&2; exit 1; }
+-          echo "Exact CANVIO P56 candidate SHA-256 verified: $actual"
++          expected_p62="9e36a7b4cc0a3ac11e9c8522ba77bf75c8ce0882d10d07e8a9b678bafd2830ae"
++          test "$actual" = "$expected_p62" || { echo "Unexpected index.html SHA-256: $actual" >&2; exit 1; }
++          echo "Exact CANVIO P62 candidate SHA-256 verified: $actual"
+ 
+       - name: Validate HTML, unique IDs, and inline JavaScript syntax
+         shell: bash
+@@ -72,14 +72,14 @@ jobs:
+           ids = Counter(audit.ids)
+           duplicates = [key for key, count in ids.items() if count > 1]
+           scripts = re.findall(r"<script\b[^>]*>([\s\S]*?)</script\s*>", source, re.I)
+-          if audit.scripts != 82 or len(scripts) != 82:
+-              raise SystemExit(f"Expected 82 inline script blocks; parser={audit.scripts}, extracted={len(scripts)}")
++          if audit.scripts != 89 or len(scripts) != 89:
++              raise SystemExit(f"Expected 89 inline script blocks; parser={audit.scripts}, extracted={len(scripts)}")
+           if audit.external_scripts:
+               raise SystemExit(f"Unexpected external script src entries: {audit.external_scripts}")
+           if duplicates:
+               raise SystemExit(f"Duplicate HTML IDs: {duplicates[:20]}")
+-          if len(audit.ids) != 495 or len(ids) != 495:
+-              raise SystemExit(f"Expected 495 unique HTML IDs; found {len(audit.ids)} IDs / {len(ids)} unique")
++          if len(audit.ids) != 502 or len(ids) != 502:
++              raise SystemExit(f"Expected 502 unique HTML IDs; found {len(audit.ids)} IDs / {len(ids)} unique")
+ 
+           failures = []
+           with tempfile.TemporaryDirectory() as directory:
+@@ -142,6 +142,12 @@ jobs:
+           set -euo pipefail
+           node tests/p56/run-p56-tests.cjs
+ 
++      - name: Run P57–P62 Phase 1 persistence, media, AI, accessibility and release-gate suite
++        shell: bash
++        run: |
++          set -euo pipefail
++          node tests/p57/run-p57-tests.cjs
++
+       - name: Install pinned Playwright Chromium for browser smoke
+         shell: bash
+         run: |
+@@ -150,11 +156,11 @@ jobs:
+           /tmp/canvio-playwright/bin/python -m pip install --disable-pip-version-check playwright==1.65.2
+           /tmp/canvio-playwright/bin/python -m playwright install --with-deps chromium
+ 
+-      - name: Run P56 Chromium runtime, archive integrity and media export smoke
++      - name: Run P62 Phase 1 Chromium runtime, archive, media and release-gate smoke
+         shell: bash
+         run: |
+           set -euo pipefail
+-          /tmp/canvio-playwright/bin/python tests/p56/run-p56-browser-smoke.py
++          /tmp/canvio-playwright/bin/python tests/p62/run-p62-browser-smoke.py
+ 
+       - name: Configure GitHub Pages
+         uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d
+@@ -166,7 +172,7 @@ jobs:
+ 
+   deploy:
+     name: Deploy to GitHub Pages
+-    if: github.event_name != 'pull_request'
++    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+     environment:
+       name: github-pages
+       url: ${{ steps.deployment.outputs.page_url }}
+diff --git a/CANVIO_AI_GUIDE.md b/CANVIO_AI_GUIDE.md
+index 07ab5d1..f7a8abb 100644
+--- a/CANVIO_AI_GUIDE.md
++++ b/CANVIO_AI_GUIDE.md
+@@ -1,11 +1,11 @@
+-# CANVIO — AI Agent Guide (23.3 · cập nhật tới 23.3.70-p56)
+-> **CURRENT WORKING BASE (2026-11-17):** `index.html` — CANVIO `23.3.70-p56`, built additively on P55. Sections 1–76 preserve historical architecture and acceptance notes; later addenda document the integrated P47–P56 candidate chain and its Chromium smoke evidence. Use this guide before editing.
+-> Work surgically from the named owners/APIs below. Do not re-scan the entire HTML unless an unresolved question requires it; do not break active data synchronization or local project data. The current artifact has 82 inline script blocks, 495 unique static HTML IDs and a separate `assets/canvio-whisper-worker.js` worker asset.
++# CANVIO — AI Agent Guide (23.3 · cập nhật tới 23.3.76-p62)
++> **CURRENT WORKING BASE (2026-11-17):** `index.html` — CANVIO `23.3.76-p62`, built additively on P56. Historical sections preserve architecture and acceptance notes; P47–P62 addenda document the integrated source chain and bounded test evidence. Use this guide before editing.
++> Work surgically from the named owners/APIs below. Do not re-scan the entire HTML unless an unresolved question requires it; do not break active data synchronization or local project data. The current artifact has 89 inline script blocks, 502 unique static HTML IDs and a separate `assets/canvio-whisper-worker.js` worker asset.
+ > Preserve the canonical project, asset, media, timeline, history, Brand Kit, Project Vault and P8 owners. Keep tests/readiness claims bounded by their actual fixture and real-origin evidence.
+ >
+-> **ACTIVE LOCAL CANDIDATE:** P56 application marker `23.3.70-p56`, base `23.3.69-p55`, PhaseSuite `56.0.0`. It adds read-only stored-ZIP Central Directory/Local Header preflight plus a restore inventory; it does not add a database, timeline or cloud backend. Chromium synthetic smoke passed, but native IndexedDB, secure-origin, Whisper model and hosting acceptance remain open; not merged, not deployed and not production-certified. See `CANVIO_MANIFEST.json` for current source/package SHA-256 values.
++> **ACTIVE LOCAL CANDIDATE:** P62 application marker `23.3.76-p62`, base `23.3.70-p56`, PhaseSuite `62.0.0`. It adds P57–P62 native persistence diagnostics, export file acceptance, Whisper worker hardening, accessibility screening, hosting/security audit and a fail-closed release candidate report. The existing databases, timeline and backup owners remain unchanged. Real HTTPS/browser/media/model/storage/accessibility/hosting acceptance remain open; not merged, not deployed and not production-certified. See `CANVIO_MANIFEST.json` for current source/package SHA-256 values.
+ 
+-> **Historical release note:** the original 23.3.3 Prism Studio baseline and its internal `CANVIO_RELEASE.version` compatibility rule are retained in the historical guide sections. The current deliverable build is tracked by `CANVIO_BUILD.version = 23.3.70-p56`; historical values in older sections do not override this marker.
++> **Historical release note:** the original 23.3.3 Prism Studio baseline and its internal `CANVIO_RELEASE.version` compatibility rule are retained in the historical guide sections. The current deliverable build is tracked by `CANVIO_BUILD.version = 23.3.76-p62`; historical values in older sections do not override this marker.
+ ## 1. Nguyên tắc bắt buộc
+ - KHÔNG viết lại file từ đầu. Chỉ chỉnh sửa trong các hàm/mảng đã có.
+ - KHÔNG thêm dependency ngoài hoặc gọi API AI trả phí. Prompt generation hiện hữu vẫn là local-only (xem `choosePrompt()`). Ngoại lệ mạng có chủ ý: P30/P31 chỉ gửi request GET/HEAD khi người dùng bấm kiểm tra website công khai; không chạy nền, không gửi credentials, không upload/ghi website.
+@@ -3181,3 +3181,51 @@ P55 is the planned stable-release readiness candidate, **not CANVIO 1.0 Stable**
+ - `tests/p56/run-p56-tests.cjs`: 27/27 assertions, including valid CVZip shape, malformed EOCD/CD, unsupported features, traversal/duplicates, mismatched local headers, aliases/overlaps, bounds, safe preview and wiring before parser.
+ - `tests/p56/run-p56-browser-smoke.py`: 27 Chromium checks on 1440/768/720/375/320 widths; actual CVZip output passes preflight, tampered Central Directory CRC metadata is rejected, preview contains no secret values and leaves storage untouched.
+ - Browser test uses opaque `about:blank` with in-memory local/sessionStorage shims; it does not certify native IndexedDB, secure context, deployed worker/model, real-media A/V sync, Safari/Edge, screen reader, true 200% zoom or production hosting. See `CANVIO_QA_REPORT.md`.
++
++# P57–P62 Engineering Addendum — Phase 1 Platform Reliability & Release Candidate
++
++> **Active candidate:** `23.3.76-p62` · base `23.3.70-p56` · `CANVIOPhaseSuite.version = 62.0.0`. Additive modules only; preserve the canonical Video Engine timeline, Project Vault, Asset Library, `CVZip`, existing restore parser and `CANVIO_81_MEDIA` IndexedDB owner.
++
++## P57 — Native persistence audit
++
++- `window.CANVIOPersistenceAudit.inspect()` reads the existing `CANVIO_81_MEDIA` database, `media` object store, record count, StorageManager estimate and persistent-storage status. It opens the database without specifying a version; if the database is missing, it aborts the implicit create/upgrade rather than manufacturing a second empty store.
++- `roundTrip()` is available only from an explicit UI action. It writes a random, temporary Blob sentinel through `add()`, reads it back, verifies id/size/MIME and deletes the sentinel in the same read-write transaction. It never overwrites a user media ID and never changes the schema.
++- `requestPersistence()` calls `navigator.storage.persist()` only after a user click and reports the browser decision. A grant is not a backup and does not eliminate quota or device-loss risk.
++- This code path is a native-browser diagnostic, not evidence that every Project Vault, Portfolio, Web or video project has passed save/close/reopen. Those remain real-origin checks.
++
++## P58 — Exported media acceptance
++
++- `window.CANVIOExportAcceptance.inspectFile(file)` reads only a user-selected MP4/WebM using a temporary object URL and browser video element. It checks extension/MIME consistency, non-empty size, finite duration, frame dimensions and the browser `canplay` decode-readiness event; it revokes the URL and does not upload or store the file.
++- The report explicitly sets `avSyncCertified:false`. A metadata/canplay result cannot establish real audio-video sync, full-file integrity, long-render stability, or cross-browser support. Existing Video Engine codec selection, MediaRecorder MIME verification and cancellation owner remain unchanged.
++
++## P59 — Whisper worker acceptance and input hardening
++
++- `window.CANVIOWhisperAcceptance.inspectWorker()` explicitly fetches only the same-origin worker asset after the user requests the check. It verifies pinned Transformers.js `3.8.1`, `Xenova/whisper-tiny`, local ASR pipeline markers and reports whether the worker file can be reached. It does not download model weights or run inference.
++- Worker rejects malformed/empty ArrayBuffers, audio longer than 8 minutes at 16 kHz and unsupported language values (Vietnamese, English, auto only); it validates the returned object/text shape before reporting a result. The existing page-side file cap, job token, cancel/terminate, 15-minute watchdog and explicit unload remain in force.
++- First use still requires network access for runtime/model assets. This does not claim offline-first behavior or validate recognition accuracy.
++
++## P60 — DOM accessibility screening
++
++- `window.CANVIOAccessibilityAudit.inspect(root)` counts visible interactive controls, accessible-name gaps, missing image alt attributes, landmarks, headings and named dialogs. It returns a bounded list of findings and does not change the document.
++- This is a triage tool only. It is not a WCAG audit and cannot certify keyboard-only operation, screen-reader announcements, focus behavior, contrast or true 200% zoom/reflow.
++
++## P61 — Hosting and security audit
++
++- `window.CANVIOHostingSecurityAudit.inspect()` reports secure-context/protocol state, same-origin relative worker URL, external script sources, HTTP mixed-content references and CSP meta presence.
++- Browser DOM cannot confirm HTTP response headers, server CSP, CORS, HSTS, MIME/cache headers or GitHub Pages deployment. CANVIO contains inline scripts and user-triggered runtime/model downloads; do not add a restrictive CSP until the full dependency and nonce/hash policy is reviewed.
++- GitHub Pages deployment is restricted to successful pushes on `main`; pull requests and manual workflow dispatch run validation but do not deploy.
++
++## P62 — Fail-closed Phase 1 release candidate
++
++- `window.CANVIOPhase1ReleaseGate.run()` aggregates implementation flags, the preceding P55/P56 release report and six mandatory real-world gates. It always returns `releaseCertified:false` and `BLOCKED_PENDING_REAL_WORLD_ACCEPTANCE` while any gate is open.
++- The Video Engine dashboard exposes the six-phase-one tools only as explicit user actions. Storage probes, output file inspection and worker fetching are not performed automatically on app boot.
++
++## P57–P62 validation scope and limitations
++
++- `tests/p57/run-p57-tests.cjs`: 15/15 source-VM assertions across P57–P62 APIs, fake IndexedDB sentinel cleanup, file metadata acceptance, worker provenance, accessibility screening, host checks and fail-closed reporting.
++- Static audit target: 89/89 inline scripts parse; 502/502 static HTML IDs unique; no external `<script src>` references; worker syntax checked.
++- P47–P56 regression suites remain required and are run unchanged except marker/title assertions that now recognize P62 as the final artifact.
++- Chromium smoke uses an opaque origin and in-memory local/sessionStorage shims. It does not certify native IndexedDB, persistent storage, deployed worker/model, real media A/V sync, browser matrix, screen reader or server headers. Manual release gates stay OPEN until tested on production-like HTTPS origin.
++
++**Release disposition:** P62 is the integrated Phase 1 implementation candidate, not CANVIO 1.0 Stable. Do not merge/deploy or self-certify from source/VM/synthetic-only evidence.
++
+diff --git a/CANVIO_HANDOFF.md b/CANVIO_HANDOFF.md
+index e3f4f90..46010bc 100644
+--- a/CANVIO_HANDOFF.md
++++ b/CANVIO_HANDOFF.md
+@@ -1,45 +1,77 @@
+-# CANVIO P56 — Integration handoff / Archive Integrity & Safe Restore
++# CANVIO P62 — Phase 1 Integration Handoff / Reliability & Release Candidate
+ 
+ **Date:** 2026-11-17  
+ **Repository:** https://github.com/tovannghia27223-png/CANVIO  
+ **Candidate:** `index.html` + `assets/canvio-whisper-worker.js`  
+-**App marker:** `23.3.70-p56` · **Base:** `23.3.69-p55` · **PhaseSuite:** `56.0.0`  
++**App marker:** `23.3.76-p62` · **Base:** `23.3.70-p56` · **PhaseSuite:** `62.0.0`  
+ **Source/package hashes:** see `CANVIO_MANIFEST.json`.
+ 
+ ## Candidate and release status
+ 
+-P56 is an additive hardening candidate built directly on the recovered P55 delivery. It preserves the canonical `CV.engines.video` timeline, existing Asset Library, Project Vault, `CANVIO_81_MEDIA` IndexedDB media owner, `CVZip` builder and existing portable-backup payload/CRC/SHA owners. It does not introduce a new project database, media store, timeline, cloud backend or background service.
++P62 is the completed local implementation candidate for roadmap chặng 1 (P57–P62), built on the recovered P56 package. It preserves one canonical `CV.engines.video` timeline, the existing Project Vault and Asset Library owners, `CANVIO_81_MEDIA` IndexedDB v1 / `media` object store, `CVZip`, `readStoreZip()` and existing CRC/SHA backup-integrity owners. No second database, media store, timeline, cloud backend or background service is introduced.
+ 
+-The P56 work does not certify CANVIO 1.0 Stable. It improves ZIP preflight and restore transparency, while native IndexedDB, HTTPS origin, real media/model, accessibility and hosting acceptance remain open.
++P62 is **not CANVIO 1.0 Stable**. Source and regression tests pass, and a Chromium synthetic smoke passes 32/32 checks. Six gates requiring HTTPS/browser matrix, real media, real Whisper model inference, native persistence/restore, accessibility and deployed hosting remain open. The P62 code intentionally cannot self-certify.
+ 
+-## Implemented P56
++## P56 base retained
+ 
+-- `window.CANVIOArchivePreflight.inspect(file)` verifies the terminal EOCD, single-disk layout, central-directory bounds and count, entry names, duplicate paths, allowed flags and store-only compression, local-header metadata agreement, local-record bounds/contiguity, non-overlap and presence of `full-backup.json`.
+-- Limits: 512 MiB archive (same existing restore ceiling), 64 entries, 1 MiB central directory and 1,024-byte names. ZIP64, DEFLATE, encryption, data descriptors, multi-disk archives, archive comments, extra fields, duplicate names and unsafe paths are rejected.
+-- The existing `readStoreZip()` remains responsible for reading payload bytes and checking each CRC32; existing `CV11.backupIntegrity.verify()` remains responsible for SHA-256 payload integrity before storage writes.
+-- Restore confirmation now includes a read-only inventory: backup timestamp, eligible CANVIO localStorage keys, IndexedDB databases/stores/records, excluded-secret count, source-warning count, checksum result and ZIP structure/size summary. It does not expose secret values or media content.
+-- Candidate version/title and PhaseSuite advance to P56. Release report adds archive-preflight evidence but remains fail-closed with `releaseCertified:false`.
++- `CANVIOArchivePreflight.inspect(file)` checks EOCD, single-disk layout, Central Directory bounds/count, duplicate/traversal paths, allowed flags, stored-only compression, Local Header/Central Directory agreement, record bounds/overlaps and required `full-backup.json`.
++- The existing `readStoreZip()` continues reading entry payloads and verifying CRC32; `CV11.backupIntegrity.verify()` continues validating payload SHA-256 before writes.
++- Restore preview lists non-secret inventory metadata and does not mutate storage. It is not a general-purpose ZIP reader; ZIP64, DEFLATE, encryption, data descriptors, multi-disk, comments and extra fields remain unsupported.
++
++## Implemented P57–P62
++
++### P57 · Native Persistence & Project Recovery
++
++- `CANVIOPersistenceAudit.inspect()` opens the existing `CANVIO_81_MEDIA` database without a version argument, reports the current `media` store, record count, storage estimate and persistent-storage state.
++- A missing database triggers an aborted implicit creation instead of silently creating a new DB. No version upgrade or new object store is performed.
++- Explicit `roundTrip()` uses a unique temporary Blob sentinel with add/get/delete in the existing store and verifies the returned metadata. User media records are not overwritten.
++- `requestPersistence()` runs only after explicit user action. Browser approval is not treated as a backup or guarantee of quota.
++
++### P58 · Professional Media Export Acceptance
++
++- `CANVIOExportAcceptance.inspectFile(file)` accepts a user-selected MP4/WebM, validates MIME/extension/size, loads metadata and waits for browser `canplay` using a temporary object URL.
++- It is local-only and does not upload the file or write it into project storage. It verifies decode-readiness only; it does not establish full file integrity, real audio/video sync or cross-browser export correctness.
++
++### P59 · Whisper AI Safeguards
++
++- The UI offers a user-triggered same-origin worker provenance check, without automatically downloading the model or starting inference.
++- Worker validates `ArrayBuffer`, non-empty samples, a maximum eight minutes at 16 kHz, language allowlist and response shape. Pinned Transformers.js/model provenance remains explicit.
++- Actual model download/inference, Vietnamese/English accuracy, cancel during live inference/download, unload memory behavior and retry require a real browser acceptance run.
++
++### P60 · Accessibility Screening
++
++- Bounded, read-only DOM audit checks accessible names, image alt, landmarks, headings and dialog labels. The smoke page reported 32 findings/candidates for manual review.
++- This is not 32 confirmed WCAG failures and not a conformance claim. Keyboard-only, screen reader, focus order, contrast and true 200% zoom are still open.
++
++### P61 · Hosting & Security
++
++- Read-only audit checks secure context, relative same-origin worker target, external script references and mixed-content URLs.
++- Server response headers cannot be proven from DOM inspection. CSP, CORS, MIME, cache, HSTS and Referrer-Policy require deployed HTTP(S) verification.
++- Pages workflow deploys only successful pushes to `main`. Pull requests and manual dispatch validate/package without deployment.
++
++### P62 · Phase 1 Release Candidate Gate
++
++- `CANVIOPhase1ReleaseGate.run()` aggregates phase implementation flags, inherited P55/P56 status and six real-world gates.
++- It keeps `releaseCertified:false` and `BLOCKED_PENDING_REAL_WORLD_ACCEPTANCE` while any gate is open; no self-certification path is provided.
+ 
+ ## Verification evidence
+ 
+-- P48: 26/26; P49: 35/35; P50: 27/27; P55: 49/49; P56: 27/27 assertions.
+ - P47 integration, cubic-Bezier, restore and CRC fixtures: PASS.
+-- Static audit: 82/82 inline scripts parse; 495 IDs / 495 unique / 0 duplicates; 0 external script `src`; Whisper worker syntax and workflow YAML parse.
+-- Chromium `144.0.7559.96` Playwright smoke: **27 checks passed**. It boots the actual source, checks nine SPA routes and P47–P56 flags, creates and inspects a generated CVZip archive, checks restore summary metadata, exercises track visibility/WebVTT, synthetic WebM/VP9 and MP4/H.264 encode/decode, cancel/retry, responsive widths and zero uncaught page/console errors.
+-- ZIP smoke runs on opaque `about:blank` using in-memory local/sessionStorage shims. It is not native IndexedDB/secure-context/worker/CORS/Whisper/real A/V sync/accessibility/hosting evidence.
+-- The ZIP preflight tests reject missing payload, duplicate names, traversal, unsupported/encrypted flags, data descriptors, DEFLATE, local-vs-central metadata mismatch, malformed EOCD/offset, overlapping records and oversize archives.
+-
+-## Existing GitHub state / delivery boundary
++- P48: 26/26; P49: 35/35; P50: 27/27; P55: 49/49; P56: 27/27; P57–P62 combined source VM: 15/15.
++- Static audit: 89/89 inline scripts parse; 502/502 static IDs unique; zero duplicate IDs; zero external `<script src>`; Whisper worker syntax and workflow YAML parse.
++- Chromium `144.0.7559.96` Playwright smoke: **32/32 checks passed**. It boots actual P62 source, mounts nine SPA routes, verifies phase flags, runs archive preflight/restore-preview fixtures, tests synthetic WebM/MP4 generation and decode-readiness, cancel/retry, track visibility, WebVTT and responsive widths, with zero uncaught page errors and zero console errors.
++- Browser smoke is on opaque `about:blank` with test-only in-memory local/sessionStorage shims because this environment blocks local/HTTP(S) navigation. It does not prove native IndexedDB, secure context, deployed worker/model, real user-media A/V sync, real Whisper inference, Safari/Edge, screen-reader behavior, true 200% zoom or production headers.
++- Hosted GitHub Actions has not been run/observed for this P62 source. Local workflow YAML parses.
+ 
+-The prior P55 handoff recorded repository `main` at `8ac85d810c40d22b62a5750a8b16ce0ee2e09aa4`, on the older R6/P42 line. That repository state has not been rechecked or changed in this P56 task. No commit, branch, pull request, merge, workflow dispatch or deployment was performed. The P56 candidate and its exact source/package hashes are delivered locally for review.
++## Six mandatory acceptance gates remain OPEN
+ 
+-## Six mandatory acceptance gates remain
++1. **Browser matrix:** Chrome, Edge and Safari on HTTPS; routes, console, CSP and worker load.
++2. **Real media:** user video/audio export, full decode, duration, A/V sync, cancel/retry and resource cleanup.
++3. **Whisper:** first model download, Vietnamese/English/auto inference, timestamps, cancel/unload/retry and memory behavior.
++4. **Data:** native IndexedDB save/reopen, ZIP restore on same and fresh origins, quota, blocked DB, schema drift and real backups.
++5. **Accessibility:** keyboard-only, screen reader, focus order, contrast and actual 200% browser zoom.
++6. **Hosting/security:** GitHub Pages deployment, worker path, CSP/CORS/MIME/cache/HSTS/Referrer-Policy and post-deploy smoke.
+ 
+-1. **Browser matrix:** Chrome, Edge and Safari over HTTPS; first boot, all routes, console/page errors and worker loading.
+-2. **Real media:** real video/audio import and WebM/MP4 decode, duration, A/V sync, cancel/retry and resource cleanup.
+-3. **Whisper:** Vietnamese/English inference, first model download, timestamps, cancel/unload/retry and memory behavior.
+-4. **Data:** native IndexedDB save/reopen, backup/restore on same and fresh origins, schema drift, quota/blocked DB and real user backup fixtures.
+-5. **Accessibility/performance:** keyboard-only, screen reader, focus order, contrast and actual 200% browser zoom; large projects on target devices.
+-6. **Hosting/security:** approved Pages branch, correct worker relative path, HTTPS/MIME/cache/CSP/CORS, P30/P31 and post-deploy smoke.
++## Existing GitHub state / delivery boundary
+ 
+-Do not merge/deploy or mark release complete while these gates are pending. Review the exact source SHA and all test outputs before creating a P56 PR.
++The prior P55 handoff recorded repository `main` at `8ac85d810c40d22b62a5750a8b16ce0ee2e09aa4`, on the older R6/P42 line. That remote state has not been re-queried or changed during this P57–P62 task. No P62 commit, branch, pull request, merge, workflow dispatch or deployment was performed. The exact local source and package SHA-256 values are recorded in the manifest; review them before any remote publication.
+diff --git a/CANVIO_PHASES_1_6_STATUS.md b/CANVIO_PHASES_1_6_STATUS.md
+index 18fc3d2..a6c1720 100644
+--- a/CANVIO_PHASES_1_6_STATUS.md
++++ b/CANVIO_PHASES_1_6_STATUS.md
+@@ -1,33 +1,34 @@
+-# CANVIO — Phase 1–6 integration status / P56
++# CANVIO — Phase 1–6 integration status / P62
+ 
+-**Application marker:** `23.3.70-p56` · **Base:** `23.3.69-p55` · **PhaseSuite:** `56.0.0`  
+-**State:** local archive-integrity candidate; source, regression and Chromium synthetic smoke pass; production gates remain open.
++**Application marker:** `23.3.76-p62` · **Base:** `23.3.70-p56` · **PhaseSuite:** `62.0.0`  
++**State:** P57–P62 Phase 1 implementation candidate; source/regression and synthetic Chromium checks pass; six real-world gates remain open.
+ 
+-| Phase | Integrated in P56 | Still open |
++| Phase | Integrated in P62 | Still open |
+ |---|---|---|
+-| 1 · Platform reliability | Project Vault history, unified-layer adapters, integrity-sealed ZIP, P51 runtime diagnostics, P52 render recovery, P53 restore size/signature gate, P56 archive structure validation | Native IndexedDB persistence, quota/blocked database behavior and actual restore acceptance on real HTTPS origins |
+-| 2 · Video | P47 easing; P48 track visibility/lock/mute + SRT/WebVTT; P49 codec-aware MP4/H.264, caption QC and Whisper worker; P50 cancel/unload; P51 diagnostics, P52 recovery and P54 load budget | Real user-media export/A/V sync and cross-browser validation; tracking/stabilization; full ripple/grouping and shared MotionCut timeline remain open |
++| 1 · Platform reliability | Project Vault history, integrity-sealed ZIP, P51 runtime diagnostics, P52 render recovery, P53 restore preflight, P56 ZIP structure/restore preview, P57 native-persistence audit and sentinel, P60–P62 release diagnostics | Native IndexedDB and same/fresh-origin restore on real HTTPS, quota/blocked DB, manual accessibility and hosting acceptance |
++| 2 · Video | P47 easing; P48 track visibility/lock/mute + SRT/WebVTT; P49 codec-aware export, caption QC and Whisper adapter; P50 cancellation/unload; P54 load budget; P58 selected-file decode-readiness; P59 worker safeguards | Real user-media A/V sync, browser matrix, tracking/stabilization, full ripple/grouping and shared MotionCut timeline |
+ | 3 · Design | Vector Forge text-path typography, weight/tracking/anchor, Layout Foundry and multipage structure | Full shaping/kerning, font/license proof and print-preflight acceptance |
+-| 4 · Motion & Web | Website Motion Builder easing presets, IntersectionObserver runtime and reduced-motion fallback; live-site verification tooling | Exported-page cross-browser tests, self-contained 3D export and live-host acceptance |
+-| 5 · AI | Explicit provider adapters; browser-local Whisper worker with explicit first-run runtime/model load | Real model inference/accuracy/cancel/unload and provider CORS/API acceptance |
+-| 6 · Asset & Production | Existing Asset Library, IndexedDB media owner, ZIP backup, P53 preflight/audit, P55 release report, P56 ZIP structure gate and restore preview | Real backup/restore, hosting deployment, accessibility and release approval |
++| 4 · Motion & Web | Website Motion Builder easing presets, IntersectionObserver runtime and reduced-motion fallback | Exported-page cross-browser tests, self-contained 3D export and live-host acceptance |
++| 5 · AI | Explicit provider adapters; browser-local Whisper worker with explicit first-run runtime/model load and P59 input safeguards | Real model inference/accuracy/cancel/unload and provider CORS/API acceptance |
++| 6 · Asset & Production | Existing Asset Library, Project Vault, IndexedDB media owner, ZIP backup, CRC/SHA, P53 preflight, P56 archive structure gate/preview and P57–P62 diagnostics | Real backup/restore, production hosting, accessibility and release approval |
+ 
+-## P51–P56 summary
++## P57–P62 summary
+ 
+-- **P51:** read-only runtime/media API probes, codec capability separation and storage estimate.
+-- **P52:** session-only render ledger; marks unfinished renders interrupted after reload and requests cancel on pagehide.
+-- **P53:** non-empty, ZIP signature and 512 MiB size preflight; retains existing integrity checks.
+-- **P54:** heuristic timeline/canvas/device/heap resource budget; no automatic media mutation.
+-- **P55:** read-only release report with six manual gates and no self-certification; fixed inherited document-title observer.
+-- **P56:** validates EOCD/Central Directory and each Local Header before the existing ZIP parser; rejects unsupported ZIP features, duplicate/traversal paths, mismatched metadata and overlapping records. Shows a read-only restore inventory before confirming writes.
++- **P57:** read-only audit of existing `CANVIO_81_MEDIA` v1 / `media` store; explicit temporary Blob add/read/delete sentinel; no schema upgrade or second database. Storage persistence request is user-triggered.
++- **P58:** user-selected MP4/WebM MIME, extension, size, metadata and browser `canplay` acceptance. No upload or A/V sync certification.
++- **P59:** explicit worker provenance check and worker-side sample/language/result validation; no model inference claim.
++- **P60:** bounded, read-only DOM accessibility triage. The smoke page reports 32 review candidates; this is not a WCAG failure count or conformance verdict.
++- **P61:** secure-context, worker-origin and mixed-content screening; server response headers remain unverified until live deployment.
++- **P62:** integrated fail-closed Phase 1 report with six manual gates and immutable `releaseCertified:false`.
+ 
+ ## Test evidence
+ 
+ - P47 integration, cubic-Bezier, restore and CRC fixtures: PASS.
+-- P48 26/26; P49 35/35; P50 27/27; P55 49/49; P56 27/27.
+-- Static audit: 82/82 inline scripts parse; 495/495 IDs unique; 0 duplicates; 0 external `<script src>`; Whisper worker syntax and workflow YAML parse.
+-- Chromium 144.0.7559.96 smoke: **27 checks passed**. Actual application source, nine SPA routes, P47–P56 runtime flags, track toggle, WebVTT, generated ZIP preflight, synthetic WebM/MP4 encode+decode, cancel/retry, five viewport widths, zero uncaught page errors and zero console errors. Runs on opaque `about:blank` with in-memory storage shims; does not certify native IndexedDB, secure context, deployed workers or real media.
++- P48 26/26; P49 35/35; P50 27/27; P55 49/49; P56 27/27; P57–P62 combined 15/15.
++- Static audit: 89/89 inline scripts parse; 502/502 static IDs unique; 0 duplicates; 0 external `<script src>`; Whisper worker syntax and workflow YAML parse.
++- Chromium 144.0.7559.96 smoke: **32/32 checks passed**. Nine SPA routes, P47–P62 runtime flags, ZIP preflight/preview, synthetic WebM/MP4 encode+decode-readiness, cancellation/retry, track toggle, WebVTT, five viewport widths, zero uncaught page errors and zero console errors.
++- Smoke uses opaque `about:blank` and in-memory storage shims. It does not certify native IndexedDB, secure context, deployed worker/model, real A/V sync, Whisper inference, Safari/Edge, screen reader, true 200% zoom or production headers.
+ 
+ ## Release disposition
+ 
+-P56 is **not CANVIO 1.0 Stable**. Six manual gates remain: cross-browser HTTPS, real-media A/V sync, real Whisper/model, native IndexedDB/ZIP round-trip, keyboard/screen-reader/200% zoom and hosting/CSP/CORS. No P56 commit, PR, merge or deployment is claimed.
++P62 is **not CANVIO 1.0 Stable**. Six gates remain open: cross-browser HTTPS, real media A/V sync/export, real Whisper inference, native IndexedDB/project save and same/fresh-origin restore, keyboard/screen-reader/200% zoom, and production hosting/CSP/CORS/MIME/headers. No P62 commit, PR, merge or deployment is claimed.
+diff --git a/CANVIO_QA_REPORT.md b/CANVIO_QA_REPORT.md
+index 7fb239b..962a57a 100644
+--- a/CANVIO_QA_REPORT.md
++++ b/CANVIO_QA_REPORT.md
+@@ -1,94 +1,75 @@
+-# CANVIO P56 — QA & release-readiness report
++# CANVIO P62 — Phase 1 Reliability & Release Candidate QA
+ 
+-**Ngày kiểm tra:** 2026-11-17  
+-**Candidate:** `23.3.70-p56` · **PhaseSuite:** `56.0.0` · **Base:** P55 / `23.3.69-p55`  
+-**Disposition:** P56 archive preflight and restore-preview source candidate passed the static, regression, and Chromium synthetic smoke checks below. Production remains **BLOCKED / NOT CERTIFIED** until the six real-origin/manual gates are completed.
++**Date:** 2026-11-17  
++**Candidate:** `23.3.76-p62` · **PhaseSuite:** `62.0.0` · **Base:** P56 / `23.3.70-p56`  
++**Disposition:** P57–P62 source implementation and regression checks pass; production remains **BLOCKED / NOT CERTIFIED** pending six real-world acceptance gates.
+ 
+-## 1. Source and static audit — PASS
++## 1. Architecture / mutation boundary
++
++P57–P62 are additive. Existing `CV.engines.video` remains the only canonical Video Engine timeline. Existing Project Vault, Asset Library, `CVZip`, `readStoreZip()`, CRC/SHA verifier and `CANVIO_81_MEDIA` IndexedDB v1 / `media` object store remain their current owners. No second project DB, media DB, object store, timeline, cloud backend or background sync service is added.
++
++## 2. Static checks
+ 
+ | Check | Result |
+ |---|---:|
+-| Inline script blocks | 82/82 parse with `node --check` |
+-| Static HTML IDs | 495/495 unique |
++| Inline script syntax | 89/89 PASS |
++| Static HTML IDs | 502/502 unique |
+ | Duplicate IDs | 0 |
+ | External `<script src>` | 0 |
+ | Whisper worker syntax | PASS |
+-| Workflow YAML syntax | PASS |
+-| Candidate SHA in workflow | Exact P56 source SHA lock |
+-| P56 title observer | P56 title survives inherited observers |
++| Workflow YAML parse | PASS |
++| Candidate marker/title | P62 / `23.3.76-p62` |
+ 
+-P56 adds one inline archive-integrity module and one UI ID; it does not replace or rewrite the existing application. Existing project, asset, timeline, Project Vault, CVZip, restore parser, integrity verifier and IndexedDB media owners remain canonical.
++Static counts use the HTML parser, which does not count markup-looking text inside JavaScript strings/templates as actual HTML elements.
+ 
+-## 2. Regression suites — PASS
++## 3. Regression evidence
+ 
+ | Suite | Result |
+ |---|---:|
+-| P47 integration / cubic-Bezier / restore / CRC fixtures | PASS |
+-| P48 track controls + WebVTT | 26/26 |
+-| P49 codec selection + caption QC + Whisper adapter | 35/35 |
+-| P50 cancellation + worker lifecycle | 27/27 |
+-| P55 P51–P55 diagnostics/recovery/integrity/release VM | 49/49 |
+-| P56 archive preflight + restore preview VM | 27/27 |
+-
+-P47 restore/CRC and P48–P56 VM tests use fixtures/test doubles for selected code paths. They do not substitute for native IndexedDB, real model inference, real user media, or production-origin acceptance.
+-
+-## 3. P56 archive integrity — PASS
+-
+-`window.CANVIOArchivePreflight.inspect(file)` runs before the legacy ZIP parser. It checks the End of Central Directory (EOCD), single-disk entry counts, Central Directory bounds, exact offsets, stored-only compression and flags, UTF-8 safe unique paths, local-header/central-directory metadata agreement, contiguous non-overlapping local records, and mandatory `full-backup.json`.
+-
+-Bounds and accepted format:
+-
+-- Maximum archive: 512 MiB; maximum 64 entries.
+-- Central Directory: maximum 1 MiB; filename: maximum 1,024 UTF-8 bytes.
+-- Accepts the stored ZIP shape emitted by the existing `CVZip.build()` only. ZIP64, DEFLATE, encryption/data descriptors, multi-disk layouts, comments/extra fields, duplicate entries, path traversal and record gaps/overlaps are rejected.
+-- The structural pass does not decode project payload values. `readStoreZip()` remains the content parser and CRC32 verifier; `CV11.backupIntegrity.verify()` remains the SHA-256 integrity owner before data writes.
+-
+-The restore confirmation receives a read-only inventory: backup date, eligible CANVIO localStorage key count, CANVIO IndexedDB database/store/record counts, excluded-secret count, source warning count, checksum status and archive entry/size evidence. Secret values and secret key names are not rendered. Cancel returns before writes. P56 adds no database, object store, timeline or background service.
++| P47 integration / Bezier / restore / CRC fixtures | PASS |
++| P48 | 26/26 |
++| P49 | 35/35 |
++| P50 | 27/27 |
++| P55 P51–P55 stability/release | 49/49 |
++| P56 ZIP preflight/restore preview | 27/27 |
++| P57–P62 combined source VM | 15/15 |
+ 
+-## 4. Chromium browser smoke — PASS WITH ORIGIN LIMITATIONS
++P57–P62 VM tests use controlled IndexedDB/video metadata doubles. They verify code paths and fail-closed behavior, not native persistence or real user media.
+ 
+-Test: `tests/p56/run-p56-browser-smoke.py`  
+-Report: `tests/p56/browser-smoke-report.json`  
+-Browser: Chromium `144.0.7559.96` via Playwright Python `1.65.2`.
++## 4. P57–P62 implementation
+ 
+-**27/27 checks passed**, including:
++- **P57:** read-only audit of existing `CANVIO_81_MEDIA`, store count, StorageManager estimate and persistent status. Explicit Blob sentinel add/read/delete proof uses the existing store. Missing DB is not auto-created; no version upgrade.
++- **P58:** selected MP4/WebM MIME/extension/size, metadata and `canplay` checks using a temporary object URL. No upload or project storage write; no A/V sync claim.
++- **P59:** explicit same-origin worker fetch/provenance check; worker bounds samples to eight minutes at 16 kHz and validates language and response shape. Diagnostic does not start model inference.
++- **P60:** bounded read-only DOM accessibility triage. Smoke run recorded 32 findings/candidates for review; they are not confirmed WCAG violations or a conformance score.
++- **P61:** secure-context, worker-origin, external-script and mixed-content screening. Server response headers deliberately remain unverified.
++- **P62:** integrated read-only release report with six OPEN gates and `releaseCertified:false`.
+ 
+-- P56 build marker and document title survive the inherited title observers.
+-- Nine SPA routes mount; P47–P56 PhaseSuite flags are true after Video Engine initialization; no duplicate runtime IDs.
+-- Real `CVZip.build()` stored archive passes the Central Directory and Local Header preflight; tampered Central Directory CRC metadata is rejected.
+-- Restore preview counts eligible CANVIO data only, does not expose secret values, and preflight leaves storage unchanged.
+-- Track visibility toggles and restores; a valid WebVTT cue parses.
+-- Synthetic text-only timeline produces browser-decodable WebM/VP9 and MP4/H.264 at 960×540; render cancellation stops output and a retry succeeds.
+-- No horizontal overflow at CSS viewport widths 1440, 768, 720, 375 and 320 px; zero uncaught page errors and zero console errors after blocked font requests are stubbed.
+-- Release gate remains fail-closed; opaque `about:blank` is reported as a blocker and `releaseCertified` remains false.
++## 5. Chromium smoke
+ 
+-**Harness boundary:** host policy blocks navigation to `file://`, localhost and other URLs with `ERR_BLOCKED_BY_ADMINISTRATOR`. Playwright therefore loads the actual source using `page.set_content()` on opaque `about:blank` and injects in-memory local/sessionStorage shims. External font requests are stubbed. This run does **not** prove native IndexedDB, HTTPS/secure-context behavior, persistent storage, deployed worker/model downloads, CORS, real user-media A/V sync, screen-reader behavior, Safari/Edge or production hosting. The 720 px viewport is a narrow-layout proxy, not an actual browser 200% zoom test. Synthetic text-only MediaRecorder output is not a real-media acceptance test.
++`tests/p62/run-p62-browser-smoke.py` loads the actual P62 source in Chromium 144.0.7559.96 through Playwright. Host navigation policy blocks local/HTTP(S) URLs, so the harness uses opaque `about:blank` and test-only in-memory local/sessionStorage shims.
+ 
+-MP4/H.264 remains capability-gated; this Chromium build exposed AVC and successfully encoded/decoded the synthetic fixture. Other browsers and devices must independently probe the MIME and pass real encode/decode tests. WebM remains the general fallback.
++**Result: 32/32 checks PASS.** It checks app boot, nine SPA routes, P47–P62 PhaseSuite flags, P57–P62 API wiring, P56 archive validation and restore-preview secrecy/no-mutation, track visibility, WebVTT, synthetic WebM/MP4 generation and browser decode-readiness, cancellation/retry, five viewport widths, and zero uncaught page/console errors.
+ 
+-## 5. GitHub Actions validation
++**Not covered:** native IndexedDB, actual persistent storage, secure context, deployed worker/model access, real media A/V sync, real Whisper inference, Safari/Edge, keyboard/screen-reader behavior, true 200% zoom, hosted Actions or server response headers. Synthetic video output is not real user-media acceptance.
+ 
+-`.github/workflows/canvio-pages-node24.yml`:
++## 6. Workflow / hosting
+ 
+-1. Requires the exact P56 `index.html` SHA-256 for every event.
+-2. Pins Node.js 24 through immutable `actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1` (v7.1.0), then audits 82 inline scripts, 495 unique IDs, worker path and syntax.
+-3. Runs P47 fixtures, P48/P49/P50/P55 regression suites and P56 archive-preflight tests.
+-4. Installs pinned Playwright Python `1.65.2`, installs Chromium and runs the P56 browser/archive/media smoke before Pages packaging.
+-5. Deploys only on non-PR events after the build succeeds and the exact P56 SHA gate passes.
++The Pages workflow pins Node.js 24 and Playwright, validates the exact P62 `index.html` SHA-256, runs P47–P62 regressions and P62 Chromium smoke. Deployment is limited to a successful push on `main`; pull requests and `workflow_dispatch` validate/package but do not deploy. Workflow YAML parses locally; a hosted Actions run and deployed Pages URL have not been observed.
+ 
+-The workflow has been updated and locally parsed. A GitHub-hosted Actions run for P56 has **not** been observed; no P56 branch, commit, PR, merge, workflow dispatch or deployment is claimed. The P55 handoff previously recorded an older R6/P42 `main` state, but that remote state was not re-queried during this P56 task.
++No commit, branch, PR, merge, dispatch or deployment is claimed. Remote repository state has not been re-queried during this candidate build.
+ 
+-## 6. Six mandatory release gates — OPEN
++## 7. Mandatory gates — OPEN
+ 
+-| Gate | State | Evidence still required |
++| Gate | Status | Required evidence |
+ |---|---|---|
+-| Browser matrix | OPEN | Chrome, Edge and Safari on HTTPS; first boot, navigation, console and worker asset paths |
+-| Real-media export | PARTIAL | Import real video/audio/image; validate duration, audio and A/V sync, MP4/WebM on supported devices, cancellation at multiple stages |
+-| Whisper AI | OPEN | Real runtime/model download, Vietnamese/English/auto inference, timestamps, cancellation and unload/retry; inspect cache and memory |
+-| Project persistence | OPEN | Native IndexedDB create/save/close/reopen, ZIP backup, same-origin and fresh-origin restore, quota/blocked/corrupt/oversize cases |
+-| Accessibility | OPEN | Keyboard-only, screen reader, focus order/visibility, contrast review and actual 200% browser zoom |
+-| Hosting / security | OPEN | Pages worker path, CSP/CORS, MIME/cache headers, HTTPS, published P30/P31 live checks and post-deploy smoke |
++| Chrome / Edge / Safari HTTPS matrix | OPEN | Boot/routes/console/worker on each browser and secure origin |
++| Real media export | OPEN | User video + audio; metadata, full decode, duration, A/V sync and cancel/retry |
++| Whisper inference | OPEN | Real model download, Vietnamese/English/auto, cue review, cancel/unload/retry |
++| Native persistence | OPEN | Native IDB save/close/reopen, ZIP same-origin and fresh-origin restore, quota/blocked/corrupt/oversize |
++| Accessibility | OPEN | Keyboard-only, screen reader, focus, contrast and true 200% zoom |
++| Hosting/security | OPEN | GitHub Pages deployment, CSP/CORS/MIME/cache/HSTS/Referrer-Policy and post-deploy checks |
+ 
+-## 7. Production disposition
++## 8. Release disposition
+ 
+-P56 is **not CANVIO 1.0 Stable**. `releaseCertified` remains false by design. Do not treat successful VM or opaque-origin Chromium checks as cross-browser, persistence, AI-model or production approval. P56 is a local delivery candidate only; the six gates above must pass on real HTTPS browsers and hosting before production approval.
++P62 is the integrated Phase 1 implementation candidate, not CANVIO 1.0 Stable. `releaseCertified` remains false by design. Source/VM/synthetic-only success must not be described as production acceptance.
+diff --git a/CANVIO_ROADMAP.md b/CANVIO_ROADMAP.md
+index 374d244..377b703 100644
+--- a/CANVIO_ROADMAP.md
++++ b/CANVIO_ROADMAP.md
+@@ -1,18 +1,18 @@
+-# CANVIO — Roadmap trạng thái tích hợp P56 (2026-11-17)
++# CANVIO — Roadmap trạng thái tích hợp P62 (2026-11-17)
+ 
+-> Đây là bản roadmap trạng thái cho candidate P56. “Đã tích hợp” mô tả code path hiện diện; không thay thế nghiệm thu trình duyệt, media thật, provider thật hoặc production. Không mở rộng feature giả để làm đẹp checklist.
++> Đây là bản roadmap trạng thái cho candidate P62. “Đã tích hợp” mô tả code path hiện diện; không thay thế nghiệm thu trình duyệt, media thật, provider thật hoặc production. Không mở rộng feature giả để làm đẹp checklist.
+ 
+ ## Tổng quan
+ 
+-- **Candidate:** `index.html` — `23.3.70-p56` application marker; PhaseSuite `56.0.0` (P56 archive hardening on P55).
+-- **SHA-256:** See `CANVIO_MANIFEST.json` for the final P56 source SHA-256.
+-- **Trạng thái phát hành:** P56 local candidate; chưa merge, chưa deploy, chưa production-certified.
++- **Candidate:** `index.html` — `23.3.76-p62` application marker; PhaseSuite `62.0.0` (P57–P62 Phase 1 implementation on P56).
++- **SHA-256:** See `CANVIO_MANIFEST.json` for the final P62 source SHA-256 and package file hashes.
++- **Trạng thái phát hành:** P62 local candidate; P57–P62 code đã tích hợp và source/regression test pass; sáu cổng nghiệm thu thật còn OPEN. Chưa merge/deploy/production-certified.
+ - **Nguyên tắc:** một canonical Video Engine timeline, một Asset Library, một Project Vault, một Unified Layers history owner; không cloud giả, không API key nhúng trong source, không request nền.
+ 
+-| Giai đoạn | Trạng thái P56 | Tóm tắt |
++| Giai đoạn | Trạng thái P62 | Tóm tắt |
+ |---|---|---|
+-| 1 · Nền tảng tin cậy | **Đã tích hợp một phần, cần nghiệm thu** | P44 history, Web/Portfolio adapters, MotionCut source handoff; chưa có một timeline native hợp nhất |
+-| 2 · Video | **P48 track controls/WebVTT + P49 codec-aware MP4/H.264, Whisper ASR, caption QC + P50 cancellation + P51–P56 diagnostics/recovery/resource budget/archive validation; vẫn cần nghiệm thu** | Multi-track, lock/visibility/mute, cubic-bezier, SRT/WebVTT/EDL, WebM; tracking/stabilization, full ripple/grouping semantics và real export acceptance vẫn mở |
++| 1 · Nền tảng tin cậy | **P57–P62 đã tích hợp; cần nghiệm thu thật** | Native persistence audit/sentinel, export media acceptance, Whisper safeguards, accessibility triage, hosting/security checks và fail-closed RC gate; không thay đổi các data owner hiện hữu |
++| 2 · Video | **P48 track controls/WebVTT + P49 codec-aware MP4/H.264, Whisper ASR, caption QC + P50 cancellation + P51–P62 diagnostics/recovery/archive validation, native persistence probe, export file acceptance, Whisper hardening, accessibility/hosting audit; vẫn cần nghiệm thu thật** | Multi-track, lock/visibility/mute, cubic-bezier, SRT/WebVTT/EDL, WebM; tracking/stabilization, full ripple/grouping semantics và real export acceptance vẫn mở |
+ | 3 · Design | **Một phần đã có; P47 bổ sung typography controls** | SVG TextPath, weight/tracking/anchor, layout/multi-page; kerning/license/print còn mở |
+ | 4 · Motion & Web | **P47 bổ sung easing cho Website Motion** | Component motion, easing persistence/export CSS, IntersectionObserver, reduced-motion; 3D self-contained/live site còn mở |
+ | 5 · AI | **Adapter runtime một phần** | Gemini owner + OpenAI-compatible, Anthropic Messages và local endpoint; chưa có full image generation workflow |
+@@ -262,3 +262,36 @@ Không giả lập real-time collaboration, cloud persistence, provider proxy ho
+ 
+ ### Còn mở
+ - Native IndexedDB save/restore and quota/blocked-database behavior; real-media A/V sync and cross-browser export; real Whisper inference/cancel/unload; keyboard/screen-reader/true 200% zoom; Pages/HTTPS/CSP/CORS and post-deploy checks. P56 is not CANVIO 1.0 Stable.
++
++
++## P57–P62 — Chặng 1: Platform Reliability & Release Candidate (2026-11-17)
++
++### P57 · Native Persistence & Project Recovery diagnostics
++- Added explicit read-only audit of the existing `CANVIO_81_MEDIA` database/store, record count, quota estimate and persistent-storage status.
++- Added explicit temporary Blob add/read/delete round-trip using a unique sentinel ID. It refuses to create a missing database or upgrade schema; no user media record is overwritten.
++- `navigator.storage.persist()` is called only after an explicit user action. Grant status is reported, not treated as backup.
++
++### P58 · Professional Media Export acceptance
++- Added user-selected MP4/WebM metadata and local browser `canplay` decode-readiness check; validates MIME/extension consistency, duration and dimensions, then revokes the object URL.
++- Does not upload/store the selected file and does not claim full file integrity, A/V sync or cross-browser acceptance. Existing engine export path remains authoritative.
++
++### P59 · Whisper AI production safeguards
++- Added same-origin worker provenance check (user-triggered, no model download/inference) and hard limits in worker: 8-minute 16 kHz maximum, language allowlist, ArrayBuffer validation and response-shape validation.
++- Existing Whisper model/runtime is still downloaded on first use; real Vietnamese/English model inference remains OPEN.
++
++### P60 · Accessibility screening
++- Added DOM screening for accessible names, image alt, landmarks, headings and dialog names. It is read-only and bounded to 200 findings.
++- WCAG, screen reader, keyboard-only and true 200% zoom are still OPEN.
++
++### P61 · Hosting & Security
++- Added origin/secure-context, same-origin worker URL, external script and mixed-content screening. Server HTTP headers cannot be proven from DOM; require deployed inspection.
++- Pages deploy workflow is push-to-main only; PR and manual dispatch validate without deploying.
++
++### P62 · Phase 1 Release Candidate Gate
++- Added aggregate report and dashboard. It always reports `releaseCertified:false` while six manual gates remain open.
++- Candidate marker: `23.3.76-p62`, base `23.3.70-p56`, PhaseSuite `62.0.0`.
++
++### Chặng 1 evidence
++- P57–P62 source VM suite: 15/15 assertions.
++- P47–P56 regression suites plus P57–P62 source VM and Chromium smoke run against the P62 artifact.
++- P62 Chromium smoke: 32/32 checks on a synthetic/opaque origin; P60 DOM triage reports 32 review candidates; manual gates (HTTPS matrix, real media A/V sync, Whisper inference, native data round-trip, accessibility, hosting/CSP/CORS) remain OPEN. P62 is not CANVIO 1.0 Stable.
+diff --git a/README.md b/README.md
+index efa2554..fb6864b 100644
+--- a/README.md
++++ b/README.md
+@@ -1,40 +1,52 @@
+-# CANVIO P56 — Archive Integrity & Safe Restore candidate
++# CANVIO P62 — Phase 1 Reliability & Release Candidate
+ 
+-P56 extends the P55 release-readiness candidate with a strict, read-only ZIP archive preflight and a content inventory shown before the existing restore confirmation. It preserves the existing CANVIO architecture: one canonical `CV.engines.video` timeline, existing Asset Library and Project Vault owners, the existing `CANVIO_81_MEDIA` IndexedDB media owner, and the existing portable ZIP backup format. It does not add a second project database, second timeline, cloud backend or background service.
++P62 integrates the complete first reliability tranche, P57–P62, on the recovered and verified P56 application source (`23.3.70-p56`). It preserves the established architecture: one canonical `CV.engines.video` timeline, the existing Project Vault and Asset Library owners, the existing `CANVIO_81_MEDIA` IndexedDB v1 / `media` store, and the existing ZIP backup/restore pipeline. No second project database, media store, timeline, cloud backend or background sync service is introduced.
++
++P62 is a local release-candidate implementation, **not CANVIO 1.0 Stable**. Source, regression and synthetic Chromium checks pass; six acceptance gates requiring real origins, devices, media, model inference, accessibility review and hosting evidence remain open.
+ 
+ ## Package map
+ 
+-- `index.html` — full CANVIO application source, application marker `23.3.70-p56`.
+-- `assets/canvio-whisper-worker.js` — explicit-action browser-local Whisper worker; publish beside `index.html` under `assets/`.
+-- `CANVIO_AI_GUIDE.md` — architecture, ownership rules and P47–P56 engineering addenda.
++- `index.html` — complete application source, marker `23.3.76-p62`, PhaseSuite `62.0.0`.
++- `assets/canvio-whisper-worker.js` — explicit-action browser-local Whisper worker; Transformers.js `3.8.1`, `Xenova/whisper-tiny` q8; maximum 8 minutes of 16 kHz input.
++- `CANVIO_AI_GUIDE.md` — architecture ownership, implementation constraints and P47–P62 addenda.
+ - `CANVIO_ROADMAP.md` — integrated phase status and remaining product scope.
+-- `CANVIO_HANDOFF.md` — integration handoff and manual acceptance plan.
+-- `CANVIO_QA_REPORT.md` — source, regression and Chromium smoke evidence plus release blockers.
+-- `CANVIO_PHASES_1_6_STATUS.md` — concise phase 1–6 status.
+-- `.github/workflows/canvio-pages-node24.yml` — exact P56 source SHA gate, immutable Node.js 24 action pin, P47–P56 tests and Chromium smoke.
+-- `tests/p47/`–`tests/p56/` — retained regression fixtures and candidate-specific test harnesses.
+-- `patches/` — sequential, reviewable patches through P56.
+-- `CANVIO_MANIFEST.json` — SHA-256 and byte manifest for the source, worker and every other packaged file.
++- `CANVIO_PHASES_1_6_STATUS.md` — concise phases 1–6 status.
++- `CANVIO_HANDOFF.md` — source lineage, implementation and acceptance plan.
++- `CANVIO_QA_REPORT.md` — static, regression and Chromium evidence with limitations.
++- `.github/workflows/canvio-pages-node24.yml` — exact P62 source SHA gate, Node.js 24, regression suites, Playwright Chromium smoke and push-to-main-only deployment.
++- `tests/p47/`–`tests/p62/` — retained regression fixtures, source VM harnesses and browser smoke report.
++- `patches/` — reviewable source patches through P62, including P56→P62 integration patch.
++- `CANVIO_MANIFEST.json` — SHA-256 and byte manifest for every packaged file except the manifest itself.
++
++## P57–P62 implementation
++
++### P57 · Native persistence & project recovery diagnostics
++
++`window.CANVIOPersistenceAudit` inspects the existing `CANVIO_81_MEDIA` database and `media` store without requesting a version upgrade. Its explicitly triggered Blob sentinel test verifies add/read/delete against the existing store. If the database does not exist, inspection aborts the implicit create rather than creating a new empty database. Storage estimate and `navigator.storage.persist()` decision are shown separately; a persistence grant is not represented as a backup.
++
++### P58 · Exported media acceptance
++
++`window.CANVIOExportAcceptance.inspectFile(file)` checks a user-selected MP4/WebM file's MIME/extension, size, duration, dimensions and browser `canplay` readiness through a temporary object URL. The file is not uploaded or saved into project storage. This is a decode-readiness check, not proof of audio/video synchronization, complete file integrity or cross-browser export compatibility.
+ 
+-## P56 · Portable ZIP structure preflight & restore preview
++### P59 · Whisper safeguards
+ 
+-`window.CANVIOArchivePreflight.inspect(file)` checks the End of Central Directory, single-disk layout, entry count and directory bounds, entry names, duplicate paths, stored-only compression, flags, local-header/central-directory agreement, offsets, overlaps and the required `full-backup.json` entry. It is read-only and caps the archive at the existing 512 MiB restore limit, 64 entries, 1 MiB central directory and 1,024-byte names. The existing `readStoreZip()` remains the parser and still checks every entry CRC; `CV11.backupIntegrity.verify()` still verifies the payload SHA-256 before data writes.
++The diagnostic fetches the worker only after an explicit user action and checks its pinned runtime/model provenance; it does not download model weights or run inference. The worker validates ArrayBuffer input, non-empty samples, an eight-minute maximum at 16 kHz, supported language values and response shape. Real Vietnamese/English inference, cancellation during real model downloads/inference and memory reclamation remain open acceptance work.
+ 
+-Before the user confirms restore, CANVIO displays a compact inventory: backup date, accepted CANVIO localStorage keys, IndexedDB databases/stores/records, excluded-secret count, source-warning count, checksum state and ZIP entry/size evidence. It does not display secret values or enumerate media payload contents. Cancel leaves project storage unchanged.
++### P60 · Accessibility screening
+ 
+-The validator intentionally accepts only the stored ZIP shape produced by CANVIO `CVZip.build()`. ZIP64, DEFLATE, encrypted entries, data descriptors, multi-disk archives, ZIP comments, extra fields, path traversal and duplicate entries are rejected. This is not a general-purpose third-party ZIP reader.
++A bounded, read-only DOM triage scans accessible names, image alt text, landmarks, heading structure and dialog names. Findings are capped for display and are not a WCAG conformance result. Keyboard-only operation, screen-reader behavior, focus order, contrast and true 200% browser zoom require manual testing.
+ 
+-## P51–P55 features retained
++### P61 · Hosting & security screening
+ 
+-- **P51:** read-only runtime/media capability diagnostics and storage estimate.
+-- **P52:** session-scoped render lifecycle ledger, pagehide cancellation and interrupted-job detection; it does not resume MediaRecorder output.
+-- **P53:** ZIP signature and 512 MiB size preflight, backup/restore audit and retained CRC/SHA integrity checks.
+-- **P54:** heuristic timeline/canvas/device/heap budget; no automatic media mutation.
+-- **P55:** unified read-only release report with six pending manual acceptance gates and `releaseCertified:false`.
++A read-only report checks secure-context state, same-origin worker path, external script references and mixed-content references. Server response headers (CSP, CORS, MIME, cache, HSTS and Referrer-Policy) cannot be verified from the page DOM and must be inspected after deployment. The workflow deploys only a successful push to `main`; pull requests and manual dispatch validate/package but do not deploy.
++
++### P62 · Phase 1 release gate
++
++A unified dashboard/report aggregates implementation flags and six mandatory real-world acceptance gates. It is fail-closed and keeps `releaseCertified:false`; this candidate has no self-certification route.
+ 
+ ## Validation
+ 
+-From the package root:
++Run from the package root with Node.js and Python installed:
+ 
+ ```bash
+ node --check assets/canvio-whisper-worker.js
+@@ -47,18 +59,35 @@ node tests/p49/run-p49-tests.cjs
+ node tests/p50/run-p50-tests.cjs
+ node tests/p55/run-p55-tests.cjs
+ node tests/p56/run-p56-tests.cjs
++node tests/p57/run-p57-tests.cjs
+ ```
+ 
+-Optional Chromium runtime smoke (Python 3.10+):
++Optional Chromium browser smoke (Python 3.10+):
+ 
+ ```bash
+ python -m pip install playwright==1.65.2
+ python -m playwright install chromium
+-python tests/p56/run-p56-browser-smoke.py
++python tests/p62/run-p62-browser-smoke.py
+ ```
+ 
+-Set `CHROMIUM_EXECUTABLE_PATH` to use a specific installed Chromium/Chrome binary. The workflow pins Node.js 24 with `actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1`, installs Playwright 1.65.2 and its bundled Chromium automatically, then runs the browser smoke before packaging.
++Set `CHROMIUM_EXECUTABLE_PATH` to use a specific installed Chromium/Chrome binary. GitHub Actions pins Node.js 24 using the immutable `actions/setup-node` v7.1.0 commit and Playwright 1.65.2.
++
++## Current verification
++
++- P47 integration, cubic-Bezier, restore and CRC fixtures: PASS.
++- P48: 26/26; P49: 35/35; P50: 27/27; P55: 49/49; P56: 27/27; P57–P62 combined source VM: 15/15.
++- Static audit: 89/89 inline scripts parse; 502/502 static IDs are unique; zero duplicate IDs and zero external `<script src>`; worker syntax and workflow YAML parse.
++- Chromium 144.0.7559.96 smoke: **32/32 checks pass**. It runs the actual application source using Playwright on opaque `about:blank` with test-only in-memory local/session storage shims. It exercises nine SPA routes, PhaseSuite flags, archive preflight/restore preview, synthetic WebM/MP4 generation and decode-readiness, cancel/retry, track visibility, WebVTT and five viewport widths.
++- The browser smoke does **not** establish native IndexedDB, persistent storage, secure context, deployed worker/model access, real user-media A/V sync, real Whisper inference, Safari/Edge, screen-reader operation, actual 200% zoom, hosted Actions or production HTTP headers.
++- The P60 automated DOM triage reported 32 findings on the smoke page. These are candidates for manual review, not confirmed WCAG failures.
++
++## Six mandatory acceptance gates — OPEN
+ 
+-## Release status
++1. Chrome, Edge and Safari over HTTPS, including worker loading and full route/console checks.
++2. Real user video/audio export: complete decode, duration, A/V sync, cancel/retry and resource cleanup.
++3. Actual Whisper model download and Vietnamese/English/auto inference, timestamps, cancellation, unload and retry.
++4. Native IndexedDB save/close/reopen and ZIP restore on same and fresh origins; quota, blocked DB, schema drift and corrupt/oversize files.
++5. Keyboard-only use, screen reader, focus order, contrast and true 200% browser zoom.
++6. Deployed hosting verification: Pages, worker path, CSP/CORS/MIME/cache/HSTS/Referrer-Policy and post-deploy smoke.
+ 
+-P56 has passed the source-level/regression suites and a 27-check Chromium smoke using a test-only in-memory storage shim on opaque `about:blank`. That run exercises the P56 validator with a generated CANVIO ZIP, but does **not** prove native IndexedDB, a secure origin, deployed worker/model downloads, real user-media A/V sync, screen-reader behavior, Safari/Edge or production hosting. P56 remains a local candidate, not CANVIO 1.0 Stable; it has not been merged or deployed. All six manual release gates in `CANVIO_QA_REPORT.md` remain open.
++**Release disposition:** P62 is the integrated Phase 1 implementation candidate, not CANVIO 1.0 Stable. It has not been committed, merged or deployed. Do not mark the release complete until all six gates have recorded evidence.
+diff --git a/assets/canvio-whisper-worker.js b/assets/canvio-whisper-worker.js
+index b33a3c1..83c8a11 100644
+--- a/assets/canvio-whisper-worker.js
++++ b/assets/canvio-whisper-worker.js
+@@ -1,9 +1,11 @@
+-/* CANVIO P49 — user-triggered, browser-local Whisper ASR worker.
++/* CANVIO P59 — hardened user-triggered, browser-local Whisper ASR worker.
+  * Runtime is pinned to Transformers.js 3.8.1. The first run downloads the
+  * runtime and model weights; Transformers.js stores model files in browser cache.
+  * Audio samples are transferred from the page and are never sent to an ASR API.
+  */
+ let transcriberPromise = null;
++const MAX_AUDIO_SAMPLES = 480 * 16000;
++const ALLOWED_LANGUAGES = new Set(['vietnamese', 'english', 'auto']);
+ 
+ function report(id, type, message, extra = {}) {
+   self.postMessage({ id, type, message, ...extra });
+@@ -48,6 +50,9 @@ self.addEventListener('message', async (event) => {
+     if (!(message.audio instanceof ArrayBuffer)) throw new Error('Dữ liệu waveform không hợp lệ.');
+     const samples = new Float32Array(message.audio);
+     if (!samples.length) throw new Error('Audio không có sample.');
++    if (samples.length > MAX_AUDIO_SAMPLES) throw new Error('Audio vượt giới hạn 8 phút ở 16 kHz.');
++    const language = message.language == null ? 'auto' : String(message.language).toLowerCase();
++    if (!ALLOWED_LANGUAGES.has(language)) throw new Error('Ngôn ngữ Whisper không nằm trong danh sách hỗ trợ.');
+     const transcriber = await getTranscriber(id);
+     report(id, 'status', 'Whisper đang nhận dạng audio trên thiết bị…');
+     const options = {
+@@ -60,6 +65,9 @@ self.addEventListener('message', async (event) => {
+     // Do not replace the explicit `auto` choice with the Vietnamese default.
+     if (message.language && message.language !== 'auto') options.language = message.language;
+     const output = await transcriber(samples, options);
++    if (!output || typeof output !== 'object' || typeof output.text !== 'string') {
++      throw new Error('Whisper không trả về cấu trúc kết quả hợp lệ.');
++    }
+     report(id, 'result', 'Hoàn tất', { output });
+   } catch (error) {
+     report(id, 'error', '', { error: String(error && error.message ? error.message : error) });
+diff --git a/index.html b/index.html
+index 8c78411..5fca2cf 100644
+--- a/index.html
++++ b/index.html
+@@ -6,7 +6,7 @@
+ <meta charset="utf-8"/>
+ <meta content="width=device-width,initial-scale=1" name="viewport"/>
+ <meta name="description" content="CANVIO là nền tảng sáng tạo hợp nhất cho thiết kế, video, motion và website. Làm việc với dự án, tài nguyên và công cụ xuất bản trong một workspace local-first."/>
+-<title>CANVIO 23.3.70-p56 — Archive Integrity &amp; Safe Restore</title>
++<title>CANVIO 23.3.76-p62 — Phase 1 Release Candidate</title>
+ <style>
+ /* ============================================================
+    CANVIO STUDIO 5.0 — Design tokens (bright, professional)
+@@ -19918,7 +19918,7 @@ window.CANVIO_BUILD=Object.freeze({version:'23.3.9',base:'23.3.8',feature:'Profe
+    if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount();
+  })();
+ 
+- var buildTitleForVersion=function(){var version=window.CANVIO_BUILD&&window.CANVIO_BUILD.version||'';return version==='23.3.70-p56'?'CANVIO 23.3.70-p56 — Archive Integrity & Safe Restore':version==='23.3.69-p55'?'CANVIO 23.3.69-p55 — Stable Release Readiness':'CANVIO 23.3.60-r6 — Production Excellence · P42 Final Acceptance'};
++ var buildTitleForVersion=function(){var version=window.CANVIO_BUILD&&window.CANVIO_BUILD.version||'';return version==='23.3.76-p62'?'CANVIO 23.3.76-p62 — Phase 1 Release Candidate':version==='23.3.70-p56'?'CANVIO 23.3.70-p56 — Archive Integrity & Safe Restore':version==='23.3.69-p55'?'CANVIO 23.3.69-p55 — Stable Release Readiness':'CANVIO 23.3.60-r6 — Production Excellence · P42 Final Acceptance'};
+  var syncBuildTitle=function(){var buildTitle=buildTitleForVersion();if(document.title!==buildTitle)document.title=buildTitle};
+  syncBuildTitle();
+  if(document.head&&typeof MutationObserver==='function'&&!window.__canvioBuildTitleObserver){
+@@ -21652,5 +21652,601 @@ if(gate&&typeof gate.run==='function'&&!gate.run.__canvioP56Wrapped){var oldRun=
+ })();
+ </script>
+ 
++<script id="canvio-p57-native-persistence-audit">
++/* CANVIO P57 — Native persistence diagnostics. Additive; never changes DB schema. */
++(function () {
++  'use strict';
++  var DB_NAME = 'CANVIO_81_MEDIA';
++  var STORE_NAME = 'media';
++  var lastReport = null;
++
++  function storageInfo() {
++    var storage = navigator && navigator.storage;
++    return Promise.all([
++      storage && typeof storage.estimate === 'function'
++        ? Promise.resolve(storage.estimate()).catch(function () { return null; })
++        : Promise.resolve(null),
++      storage && typeof storage.persisted === 'function'
++        ? Promise.resolve(storage.persisted()).catch(function () { return null; })
++        : Promise.resolve(null)
++    ]).then(function (values) {
++      var estimate = values[0];
++      return {
++        usage: estimate && Number.isFinite(estimate.usage) ? estimate.usage : null,
++        quota: estimate && Number.isFinite(estimate.quota) ? estimate.quota : null,
++        persisted: typeof values[1] === 'boolean' ? values[1] : null
++      };
++    });
++  }
++
++  function openExistingDatabase() {
++    return new Promise(function (resolve, reject) {
++      if (!window.indexedDB) return reject(new Error('IndexedDB không khả dụng trong context này.'));
++      var request;
++      var createdByProbe = false;
++      try { request = window.indexedDB.open(DB_NAME); }
++      catch (error) { reject(error); return; }
++      request.onupgradeneeded = function () {
++        // Opening a missing database without a version would create it. Abort that
++        // upgrade so this diagnostic can never manufacture a replacement store.
++        createdByProbe = true;
++        try { request.transaction.abort(); } catch (error) {}
++      };
++      request.onsuccess = function () {
++        var db = request.result;
++        if (createdByProbe) {
++          try { db.close(); } catch (error) {}
++          reject(new Error('Không tìm thấy kho media đã tồn tại; không tạo database mới.'));
++          return;
++        }
++        db.onversionchange = function () { try { db.close(); } catch (error) {} };
++        if (!db.objectStoreNames || !db.objectStoreNames.contains(STORE_NAME)) {
++          try { db.close(); } catch (error) {}
++          reject(new Error('Database hiện có nhưng thiếu object store media; không tự nâng schema.'));
++          return;
++        }
++        resolve(db);
++      };
++      request.onerror = function () {
++        reject(request.error || new Error(createdByProbe ? 'Database media chưa tồn tại.' : 'Không mở được database media.'));
++      };
++      request.onblocked = function () { reject(new Error('Database đang bị khóa bởi tab khác. Đóng các tab CANVIO khác rồi thử lại.')); };
++    });
++  }
++
++  function inspect() {
++    return Promise.all([storageInfo(), Promise.resolve().then(openExistingDatabase).then(function (db) {
++      return new Promise(function (resolve, reject) {
++        var tx;
++        try { tx = db.transaction(STORE_NAME, 'readonly'); }
++        catch (error) { db.close(); reject(error); return; }
++        var countRequest;
++        try { countRequest = tx.objectStore(STORE_NAME).count(); }
++        catch (error) { db.close(); reject(error); return; }
++        countRequest.onsuccess = function () {
++          resolve({ database: DB_NAME, version: db.version, store: STORE_NAME, mediaRecords: countRequest.result });
++        };
++        countRequest.onerror = function () { reject(countRequest.error || new Error('Không đếm được media records.')); };
++        tx.oncomplete = function () { try { db.close(); } catch (error) {} };
++        tx.onerror = tx.onabort = function () { try { db.close(); } catch (error) {} };
++      });
++    }).catch(function (error) { return { database: DB_NAME, available: false, error: error.message || String(error) }; })]).then(function (parts) {
++      var storage = parts[0], db = parts[1];
++      var report = {
++        candidate: window.CANVIO_BUILD && window.CANVIO_BUILD.version || 'unknown',
++        secureContext: !!(window.isSecureContext),
++        indexedDB: !!window.indexedDB,
++        database: db.database,
++        databaseAvailable: db.available !== false,
++        databaseVersion: db.version || null,
++        objectStore: db.store || null,
++        mediaRecords: Number.isFinite(db.mediaRecords) ? db.mediaRecords : null,
++        storageUsageBytes: storage.usage,
++        storageQuotaBytes: storage.quota,
++        storagePersisted: storage.persisted,
++        scope: { readOnly: true, schemaChanged: false, mediaWritten: false }
++      };
++      if (db.error) report.databaseError = db.error;
++      lastReport = report;
++      return JSON.parse(JSON.stringify(report));
++    });
++  }
++
++  function roundTrip() {
++    return openExistingDatabase().then(function (db) {
++      return new Promise(function (resolve, reject) {
++        var id = '__canvio_p57_probe_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 10);
++        var probe = new Blob(['CANVIO-P57-PERSISTENCE-PROBE'], { type: 'text/plain' });
++        var verified = false;
++        var cleaned = false;
++        var tx;
++        try {
++          tx = db.transaction(STORE_NAME, 'readwrite');
++          var store = tx.objectStore(STORE_NAME);
++          store.add({ id: id, blob: probe });
++          var request = store.get(id);
++          request.onsuccess = function () {
++            var row = request.result;
++            verified = !!(row && row.id === id && row.blob && row.blob.size === probe.size && row.blob.type === probe.type);
++            if (!verified) { try { tx.abort(); } catch (error) {} return; }
++            store.delete(id);
++            cleaned = true;
++          };
++          request.onerror = function () { try { tx.abort(); } catch (error) {} };
++        } catch (error) { db.close(); reject(error); return; }
++        tx.oncomplete = function () {
++          db.close();
++          resolve({ ok: verified && cleaned, verified: verified, cleanupScheduled: cleaned, scope: { temporaryRecordOnly: true, userMediaOverwritten: false, schemaChanged: false } });
++        };
++        tx.onerror = tx.onabort = function () {
++          var error = tx.error || new Error('Giao dịch kiểm tra IndexedDB bị hủy.');
++          db.close();
++          reject(error);
++        };
++      });
++    });
++  }
++
++  function requestPersistence() {
++    var storage = navigator && navigator.storage;
++    if (!storage || typeof storage.persist !== 'function') {
++      return Promise.resolve({ supported: false, granted: false, message: 'Trình duyệt không cung cấp StorageManager.persist().' });
++    }
++    return Promise.resolve().then(function () { return storage.persist(); }).then(function (granted) {
++      return { supported: true, granted: granted === true, message: granted ? 'Trình duyệt đã cấp persistent storage.' : 'Trình duyệt không cấp persistent storage; dữ liệu vẫn theo chính sách quota/eviction của trình duyệt.' };
++    }).catch(function (error) {
++      return { supported: true, granted: false, message: error && error.message || 'Không yêu cầu được persistent storage.' };
++    });
++  }
++
++  window.CANVIOPersistenceAudit = {
++    version: '57.0.0',
++    inspect: inspect,
++    roundTrip: roundTrip,
++    requestPersistence: requestPersistence,
++    last: function () { return lastReport ? JSON.parse(JSON.stringify(lastReport)) : null; },
++    owner: { database: DB_NAME, store: STORE_NAME, schemaVersion: 1 }
++  };
++
++  var suite = window.CANVIOPhaseSuite;
++  if (suite) {
++    var previousTests = suite.tests;
++    suite.version = '57.0.0';
++    suite.tests = function () {
++      var result = previousTests ? previousTests.apply(this, arguments) : {};
++      result.p57NativePersistenceAudit = !!(window.CANVIOPersistenceAudit && window.CANVIOPersistenceAudit.inspect);
++      result.p57SafeRoundTrip = !!(window.CANVIOPersistenceAudit && window.CANVIOPersistenceAudit.roundTrip);
++      return result;
++    };
++  }
++})();
++
++</script>
++<script id="canvio-p58-media-export-acceptance">
++/* CANVIO P58 — Read-only validation of a user-selected exported media file. */
++(function () {
++  'use strict';
++  var lastReport = null;
++  function inspectFile(file, options) {
++    options = options || {};
++    if (!file || !Number.isFinite(Number(file.size)) || Number(file.size) <= 0) return Promise.reject(new Error('Tệp xuất rỗng hoặc không hợp lệ.'));
++    if (Number(file.size) > 2 * 1024 * 1024 * 1024) return Promise.reject(new Error('Tệp vượt giới hạn kiểm tra 2 GiB của trình duyệt.'));
++    var name = String(file.name || 'exported-media').toLowerCase();
++    var type = String(file.type || '').toLowerCase().split(';')[0].trim();
++    var extension = /\.mp4$/.test(name) ? 'mp4' : /\.webm$/.test(name) ? 'webm' : '';
++    if (type && type !== 'video/mp4' && type !== 'video/webm') return Promise.reject(new Error('Chỉ kiểm tra được file video MP4 hoặc WebM.'));
++    if (!extension && type === 'video/mp4') extension = 'mp4';
++    if (!extension && type === 'video/webm') extension = 'webm';
++    if (!extension) return Promise.reject(new Error('Không xác định được định dạng MP4/WebM từ tên hoặc MIME.'));
++    if (type && ((extension === 'mp4' && type !== 'video/mp4') || (extension === 'webm' && type !== 'video/webm'))) return Promise.reject(new Error('Phần mở rộng và MIME của file không khớp.'));
++    if (!window.URL || typeof URL.createObjectURL !== 'function') return Promise.reject(new Error('Object URL không khả dụng để kiểm tra file.'));
++    return new Promise(function (resolve, reject) {
++      var video = document.createElement('video');
++      var url = URL.createObjectURL(file);
++      var settled = false;
++      var timer = setTimeout(function () { finish(new Error('Hết thời gian chờ trình duyệt đọc metadata/decode file.')); }, Number(options.timeoutMs) > 0 ? Math.min(Number(options.timeoutMs), 30000) : 15000);
++      function cleanup() {
++        clearTimeout(timer);
++        try { video.pause(); } catch (error) {}
++        try { video.removeAttribute('src'); video.load(); } catch (error) {}
++        try { URL.revokeObjectURL(url); } catch (error) {}
++      }
++      function finish(error) {
++        if (settled) return;
++        settled = true;
++        if (error) { cleanup(); reject(error); return; }
++        var report = {
++          format: extension,
++          mime: type || 'browser-detected',
++          bytes: Number(file.size),
++          durationSeconds: Number(video.duration),
++          width: Number(video.videoWidth),
++          height: Number(video.videoHeight),
++          metadataReadable: true,
++          decodeReadiness: true,
++          scope: { sourceFileOnly: true, upload: false, storageMutation: false, avSyncCertified: false }
++        };
++        cleanup();
++        lastReport = report;
++        resolve(JSON.parse(JSON.stringify(report)));
++      }
++      video.preload = 'auto';
++      video.muted = true;
++      video.playsInline = true;
++      video.onloadedmetadata = function () {
++        if (!Number.isFinite(video.duration) || video.duration <= 0 || video.videoWidth <= 0 || video.videoHeight <= 0) {
++          finish(new Error('Metadata video không hợp lệ: thiếu thời lượng hoặc kích thước khung hình.'));
++          return;
++        }
++        // `canplay` is a local browser decode-readiness signal, not a complete
++        // frame-by-frame or audio/video synchronization certification.
++      };
++      video.oncanplay = function () { finish(null); };
++      video.onerror = function () { finish(new Error('Trình duyệt không giải mã được file đã chọn.')); };
++      try { video.src = url; video.load(); } catch (error) { finish(error); }
++    });
++  }
++  function capabilities() {
++    var api = window.CV && CV.engines && CV.engines.video;
++    var value = api && typeof api.exportCapabilities === 'function' ? api.exportCapabilities() : null;
++    return { browser: value || null, mp4IsOptional: true, requiredRealMediaAcceptance: true };
++  }
++  window.CANVIOExportAcceptance = {
++    version: '58.0.0',
++    inspectFile: inspectFile,
++    capabilities: capabilities,
++    last: function () { return lastReport ? JSON.parse(JSON.stringify(lastReport)) : null; }
++  };
++  var suite = window.CANVIOPhaseSuite;
++  if (suite) {
++    var previousTests = suite.tests; suite.version = '58.0.0';
++    suite.tests = function () {
++      var result = previousTests ? previousTests.apply(this, arguments) : {};
++      result.p58ExportAcceptance = !!(window.CANVIOExportAcceptance && window.CANVIOExportAcceptance.inspectFile);
++      return result;
++    };
++  }
++})();
++
++</script>
++<script id="canvio-p59-whisper-runtime-acceptance">
++/* CANVIO P59 — Whisper worker provenance and privacy diagnostics. No model request is made here. */
++(function () {
++  'use strict';
++  var WORKER_PATH = 'assets/canvio-whisper-worker.js';
++  var lastReport = null;
++  function inspectWorker() {
++    if (typeof fetch !== 'function' || !window.URL) return Promise.resolve({ available: false, checked: false, modelInferenceTested: false, reason: 'Fetch/URL không khả dụng trong context này.' });
++    var url;
++    try { url = new URL(WORKER_PATH, document.baseURI); }
++    catch (error) { return Promise.resolve({ available: false, checked: false, modelInferenceTested: false, reason: 'Không phân giải được worker URL từ origin hiện tại.' }); }
++    if (window.location && url.origin !== window.location.origin) return Promise.resolve({ available: false, checked: false, modelInferenceTested: false, reason: 'Worker URL không cùng origin với ứng dụng.' });
++    return fetch(url.href, { method: 'GET', credentials: 'same-origin', cache: 'no-store' }).then(function (response) {
++      if (!response.ok) throw new Error('HTTP ' + response.status + ' khi tải worker.');
++      return response.text().then(function (source) {
++        var report = {
++          available: true,
++          checked: true,
++          status: response.status,
++          contentType: response.headers && response.headers.get ? response.headers.get('content-type') : null,
++          sameOrigin: true,
++          transformersVersionPinned: /transformers@3\.8\.1/.test(source),
++          modelPinned: /Xenova\/whisper-tiny/.test(source),
++          browserLocalInference: /automatic-speech-recognition/.test(source),
++          remoteAsrEndpointAbsent: !/(?:api\.openai\.com\/v1\/audio|speech-to-text\s*:\s*http)/i.test(source),
++          sourceBytes: new Blob([source]).size,
++          modelInferenceTested: false
++        };
++        lastReport = report;
++        return JSON.parse(JSON.stringify(report));
++      });
++    }).catch(function (error) {
++      var report = { available: false, checked: true, sameOrigin: true, error: error.message || String(error), modelInferenceTested: false };
++      lastReport = report;
++      return report;
++    });
++  }
++  window.CANVIOWhisperAcceptance = {
++    version: '59.0.0',
++    workerPath: WORKER_PATH,
++    inspectWorker: inspectWorker,
++    limits: { maxInputBytes: 100 * 1024 * 1024, maxDurationSeconds: 480, languages: ['vietnamese', 'english', 'auto'] },
++    last: function () { return lastReport ? JSON.parse(JSON.stringify(lastReport)) : null; }
++  };
++  var suite = window.CANVIOPhaseSuite;
++  if (suite) {
++    var previousTests = suite.tests; suite.version = '59.0.0';
++    suite.tests = function () {
++      var result = previousTests ? previousTests.apply(this, arguments) : {};
++      result.p59WhisperWorkerAcceptance = !!(window.CANVIOWhisperAcceptance && window.CANVIOWhisperAcceptance.inspectWorker);
++      return result;
++    };
++  }
++})();
++
++</script>
++<script id="canvio-p60-accessibility-screening">
++/* CANVIO P60 — In-app accessibility screening; it is not a WCAG certification. */
++(function () {
++  'use strict';
++  var lastReport = null;
++  function visible(node) {
++    var current = node;
++    while (current && current !== document) {
++      if (current.hidden || (current.getAttribute && current.getAttribute('aria-hidden') === 'true')) return false;
++      var style = window.getComputedStyle ? window.getComputedStyle(current) : null;
++      if (style && (style.display === 'none' || style.visibility === 'hidden')) return false;
++      current = current.parentElement;
++    }
++    return !!node;
++  }
++  function hasName(node) {
++    var aria = (node.getAttribute('aria-label') || '').trim();
++    var labelled = (node.getAttribute('aria-labelledby') || '').trim();
++    var title = (node.getAttribute('title') || '').trim();
++    var text = (node.innerText || node.textContent || '').replace(/\s+/g, ' ').trim();
++    if (aria || title || text) return true;
++    if (labelled && document.getElementById(labelled)) return true;
++    if (node.id && document.querySelector && document.querySelector('label[for="' + String(node.id).replace(/"/g, '\\"') + '"]')) return true;
++    return !!(node.closest && node.closest('label'));
++  }
++  function inspect(root) {
++    root = root || document;
++    var issues = [], totalIssues = 0, counts = { controls: 0, unnamedControls: 0, images: 0, imagesMissingAlt: 0, landmarks: 0, headings: 0, dialogs: 0, dialogsMissingName: 0, buttonsMissingType: 0 };
++    function add(code, node, detail) {
++      totalIssues++;
++      if (issues.length < 200) issues.push({ code: code, tag: node && node.tagName ? node.tagName.toLowerCase() : '', id: node && node.id || '', detail: detail });
++    }
++    var controls = root.querySelectorAll ? root.querySelectorAll('button,a[href],input,select,textarea,[role="button"],[role="link"],[tabindex]:not([tabindex="-1"])') : [];
++    Array.prototype.forEach.call(controls, function (node) {
++      if (!visible(node)) return;
++      counts.controls++;
++      if (!hasName(node)) { counts.unnamedControls++; add('control-name-missing', node, 'Thiếu tên truy cập bằng text, label hoặc ARIA.'); }
++      if (node.tagName && node.tagName.toLowerCase() === 'button' && node.form && !node.hasAttribute('type')) { counts.buttonsMissingType++; add('button-type-missing', node, 'Nên khai báo type="button" hoặc type="submit".'); }
++    });
++    var images = root.querySelectorAll ? root.querySelectorAll('img') : [];
++    Array.prototype.forEach.call(images, function (node) {
++      counts.images++;
++      if (!node.hasAttribute('alt')) { counts.imagesMissingAlt++; add('image-alt-missing', node, 'Ảnh cần alt mô tả hoặc alt="" nếu trang trí.'); }
++    });
++    var landmarks = root.querySelectorAll ? root.querySelectorAll('main,nav,header,footer,aside,[role="main"],[role="navigation"],[role="region"]') : [];
++    counts.landmarks = landmarks.length;
++    var headings = root.querySelectorAll ? root.querySelectorAll('h1,h2,h3,h4,h5,h6') : [];
++    counts.headings = headings.length;
++    var dialogs = root.querySelectorAll ? root.querySelectorAll('[role="dialog"],[aria-modal="true"]') : [];
++    counts.dialogs = dialogs.length;
++    Array.prototype.forEach.call(dialogs, function (node) {
++      if (!hasName(node)) { counts.dialogsMissingName++; add('dialog-name-missing', node, 'Dialog cần accessible name.'); }
++    });
++    var report = {
++      version: '60.0.0',
++      counts: counts,
++      issueCount: totalIssues,
++      capturedIssues: issues.length,
++      issues: issues,
++      truncated: totalIssues > issues.length,
++      scope: { automatedScreeningOnly: true, wcagCertified: false, true200PercentZoomTested: false, screenReaderTested: false }
++    };
++    lastReport = report;
++    return JSON.parse(JSON.stringify(report));
++  }
++  window.CANVIOAccessibilityAudit = { version: '60.0.0', inspect: inspect, last: function () { return lastReport ? JSON.parse(JSON.stringify(lastReport)) : null; } };
++  var suite = window.CANVIOPhaseSuite;
++  if (suite) {
++    var previousTests = suite.tests; suite.version = '60.0.0';
++    suite.tests = function () {
++      var result = previousTests ? previousTests.apply(this, arguments) : {};
++      result.p60AccessibilityScreening = !!(window.CANVIOAccessibilityAudit && window.CANVIOAccessibilityAudit.inspect);
++      return result;
++    };
++  }
++})();
++
++</script>
++<script id="canvio-p61-hosting-security-audit">
++/* CANVIO P61 — Read-only deployment/security readiness checks. */
++(function () {
++  'use strict';
++  var lastReport = null;
++  function inspect() {
++    var location = window.location || { protocol: 'about:', origin: 'null' };
++    var base = document.baseURI || (location.href || 'about:blank');
++    var worker;
++    try { worker = new URL('assets/canvio-whisper-worker.js', base); }
++    catch (error) { worker = null; }
++    var scripts = document.querySelectorAll ? Array.prototype.slice.call(document.querySelectorAll('script[src]')).map(function (node) { return node.src; }) : [];
++    var media = document.querySelectorAll ? Array.prototype.slice.call(document.querySelectorAll('[src],[href]')).filter(function (node) { var value = node.getAttribute('src') || node.getAttribute('href') || ''; return /^http:\/\//i.test(value); }).length : 0;
++    var cspMeta = document.querySelector ? document.querySelector('meta[http-equiv="Content-Security-Policy" i]') : null;
++    var secure = !!window.isSecureContext;
++    var sameOriginWorker = !!(worker && location.origin && worker.origin === location.origin);
++    var report = {
++      version: '61.0.0',
++      origin: location.origin || null,
++      protocol: location.protocol || null,
++      secureContext: secure,
++      secureTransport: location.protocol === 'https:' || (location.hostname === 'localhost' || location.hostname === '127.0.0.1'),
++      workerUrl: worker && worker.href || null,
++      workerSameOrigin: sameOriginWorker,
++      externalScriptSources: scripts,
++      externalScriptCount: scripts.length,
++      mixedContentReferenceCount: media,
++      cspMetaPresent: !!cspMeta,
++      serverSecurityHeadersVerified: false,
++      scope: { readOnly: true, networkProbe: false, headersRequireServerInspection: true, cspRequiresDependencyReview: true },
++      warnings: []
++    };
++    if (!secure) report.warnings.push('Context chưa được xác nhận là secure context HTTPS.');
++    if (!sameOriginWorker) report.warnings.push('Worker chưa được chứng minh nằm cùng origin; kiểm tra đường dẫn sau deploy.');
++    if (media) report.warnings.push('Có tham chiếu HTTP có nguy cơ mixed content.');
++    if (!cspMeta) report.warnings.push('Không thấy CSP meta; HTTP response headers vẫn phải kiểm tra tại hosting.');
++    report.warnings.push('Không thể xác nhận CSP/CORS/MIME/HSTS/Referrer-Policy bằng DOM; cần kiểm tra response headers thật.');
++    report.warnings.push('CANVIO có inline scripts và tải model/runtime theo yêu cầu; không áp CSP nghiêm ngặt trước khi lập dependency/hash/nonce allowlist.');
++    lastReport = report;
++    return JSON.parse(JSON.stringify(report));
++  }
++  window.CANVIOHostingSecurityAudit = { version: '61.0.0', inspect: inspect, last: function () { return lastReport ? JSON.parse(JSON.stringify(lastReport)) : null; } };
++  var suite = window.CANVIOPhaseSuite;
++  if (suite) {
++    var previousTests = suite.tests; suite.version = '61.0.0';
++    suite.tests = function () {
++      var result = previousTests ? previousTests.apply(this, arguments) : {};
++      result.p61HostingSecurityScreening = !!(window.CANVIOHostingSecurityAudit && window.CANVIOHostingSecurityAudit.inspect);
++      return result;
++    };
++  }
++})();
++
++</script>
++<script id="canvio-p62-phase1-release-gate">
++/* CANVIO P62 — Phase 1 release candidate gate. It is intentionally fail-closed. */
++(function () {
++  'use strict';
++  var GATES = [
++    { id: 'browser-matrix', label: 'Chrome / Edge / Safari trên HTTPS', status: 'OPEN', evidence: 'Cần kiểm tra first boot, navigation, console và worker trên từng browser thật.' },
++    { id: 'real-media-export', label: 'Media export thực và đồng bộ A/V', status: 'OPEN', evidence: 'Cần file video/audio thật, decode, duration, A/V sync và cancellation ở nhiều thời điểm.' },
++    { id: 'whisper-inference', label: 'Whisper model inference thật', status: 'OPEN', evidence: 'Cần tải runtime/model, chạy Vietnamese/English/auto, timestamp, cancel, unload và retry.' },
++    { id: 'native-persistence', label: 'IndexedDB native và backup/restore', status: 'OPEN', evidence: 'Cần save/close/reopen, ZIP same-origin/fresh-origin, quota, blocked, corrupt và oversize.' },
++    { id: 'accessibility', label: 'Keyboard, screen reader và 200% zoom', status: 'OPEN', evidence: 'Cần nghiệm thu thủ công bằng screen reader và browser zoom thực.' },
++    { id: 'hosting-security', label: 'Hosting, HTTPS, CSP, CORS và headers', status: 'OPEN', evidence: 'Cần deployment thật, response headers, worker/model paths và post-deploy smoke.' }
++  ];
++  async function run() {
++    var prior = window.CANVIOReleaseGate && typeof window.CANVIOReleaseGate.run === 'function'
++      ? await window.CANVIOReleaseGate.run() : null;
++    var phaseTests = window.CANVIOPhaseSuite && typeof window.CANVIOPhaseSuite.tests === 'function'
++      ? window.CANVIOPhaseSuite.tests() : {};
++    var persistence = window.CANVIOPersistenceAudit;
++    var report = {
++      format: 'CANVIO_PHASE1_RELEASE_CANDIDATE',
++      candidate: 'P62',
++      build: window.CANVIO_BUILD && window.CANVIO_BUILD.version || 'unknown',
++      phaseSuite: window.CANVIOPhaseSuite && window.CANVIOPhaseSuite.version || '62.0.0',
++      generatedAt: new Date().toISOString(),
++      implementation: {
++        P57: !!persistence,
++        P58: !!window.CANVIOExportAcceptance,
++        P59: !!window.CANVIOWhisperAcceptance,
++        P60: !!window.CANVIOAccessibilityAudit,
++        P61: !!window.CANVIOHostingSecurityAudit,
++        P62: true
++      },
++      runtimeFeatureFlags: phaseTests,
++      priorReleaseGate: prior ? { candidate: prior.candidate || null, status: prior.status || null, releaseCertified: prior.releaseCertified === true } : null,
++      manualGates: GATES.map(function (gate) { return Object.assign({}, gate); }),
++      releaseCertified: false,
++      status: 'BLOCKED_PENDING_REAL_WORLD_ACCEPTANCE',
++      limitations: [
++        'Local source/VM and synthetic browser tests do not certify native storage or data recovery.',
++        'Synthetic MediaRecorder output does not certify real user-media A/V synchronization.',
++        'Worker asset inspection does not execute Whisper inference.',
++        'DOM accessibility screening does not replace WCAG, screen-reader or true 200% zoom review.',
++        'DOM checks cannot prove server response headers or a successful deployed Pages workflow.'
++      ]
++    };
++    return JSON.parse(JSON.stringify(report));
++  }
++  window.CANVIOPhase1ReleaseGate = { version: '62.0.0', run: run, gates: function () { return GATES.map(function (x) { return Object.assign({}, x); }); } };
++  var oldBuild = window.CANVIO_BUILD || {};
++  window.CANVIO_BUILD = Object.freeze(Object.assign({}, oldBuild, {
++    version: '23.3.76-p62', base: '23.3.70-p56', candidate: 'P62',
++    features: (oldBuild.features || []).concat([
++      'P57 native IndexedDB persistence audit and safe sentinel round-trip',
++      'P58 local exported-media metadata/decode-readiness acceptance',
++      'P59 Whisper worker provenance/privacy/runtime input hardening',
++      'P60 DOM accessibility screening with explicit manual limitations',
++      'P61 hosting/security environment audit',
++      'P62 fail-closed Phase 1 release candidate gate'
++    ])
++  }));
++  try { document.title = 'CANVIO 23.3.76-p62 — Phase 1 Release Candidate'; } catch (error) {}
++
++  var suite = window.CANVIOPhaseSuite;
++  if (suite) {
++    var previousTests = suite.tests; suite.version = '62.0.0';
++    suite.tests = function () {
++      var result = previousTests ? previousTests.apply(this, arguments) : {};
++      result.p62Phase1ReleaseGate = !!(window.CANVIOPhase1ReleaseGate && window.CANVIOPhase1ReleaseGate.run);
++      return result;
++    };
++  }
++})();
++
++</script>
++<script id="canvio-p62-phase1-dashboard">
++/* CANVIO P57–P62 — user-triggered Phase 1 acceptance panel. */
++(function () {
++  'use strict';
++  function el(tag, attrs, text) {
++    var node = document.createElement(tag);
++    Object.keys(attrs || {}).forEach(function (key) {
++      if (key === 'className') node.className = attrs[key];
++      else if (key === 'style') node.style.cssText = attrs[key];
++      else node.setAttribute(key, attrs[key]);
++    });
++    if (text != null) node.textContent = text;
++    return node;
++  }
++  function mount() {
++    var page = document.getElementById('page-videoEngine');
++    if (!page || document.getElementById('cv-phase1-acceptance')) return;
++    var anchor = page.querySelector('.engine-toolbar');
++    if (!anchor || !anchor.parentNode) return;
++    var panel = el('section', { id: 'cv-phase1-acceptance', className: 'card', style: 'margin:12px 0;border:1px solid var(--line,#dbe3ee);' });
++    panel.setAttribute('aria-labelledby', 'cv-phase1-heading');
++    panel.innerHTML = '<div class="cardTop"><div><h3 id="cv-phase1-heading">Chặng 1 · Release Acceptance (P57–P62)</h3><span class="sub">Các phép kiểm tra chỉ chạy khi bạn chủ động bấm; không tự gửi media lên server.</span></div><span class="badgeSoft">P62 candidate</span></div>' +
++      '<div style="display:flex;flex-wrap:wrap;gap:8px;margin:10px 0">' +
++      '<button type="button" class="btn btn-soft sm" id="cv-p57-inspect">P57 · Kiểm tra IndexedDB</button>' +
++      '<button type="button" class="btn btn-soft sm" id="cv-p57-roundtrip">P57 · Test ghi/đọc/xóa</button>' +
++      '<button type="button" class="btn btn-ghost sm" id="cv-p57-persist">P57 · Xin persistent storage</button>' +
++      '<button type="button" class="btn btn-soft sm" id="cv-p58-file">P58 · Kiểm tra file xuất</button>' +
++      '<button type="button" class="btn btn-soft sm" id="cv-p59-worker">P59 · Kiểm tra Whisper worker</button>' +
++      '<button type="button" class="btn btn-soft sm" id="cv-p60-a11y">P60 · Kiểm tra accessibility</button>' +
++      '<button type="button" class="btn btn-soft sm" id="cv-p61-host">P61 · Kiểm tra hosting/security</button>' +
++      '<button type="button" class="btn btn-primary sm" id="cv-p62-report">P62 · Báo cáo nghiệm thu</button>' +
++      '</div><input id="cv-p58-file-input" type="file" accept="video/mp4,video/webm,.mp4,.webm" hidden aria-label="Chọn file MP4 hoặc WebM đã xuất để kiểm tra"><p id="cv-phase1-status" role="status" aria-live="polite" class="tiny">Chưa chạy kiểm tra. P57 chỉ làm việc với database media hiện có; P58 chỉ đọc file bạn chọn.</p><pre id="cv-phase1-output" tabindex="0" style="max-height:260px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;background:var(--surface-2,#f6f8fb);padding:10px;border-radius:8px;font:11px/1.55 ui-monospace,monospace">P62 chưa tạo báo cáo.</pre>';
++    anchor.parentNode.parentNode.insertBefore(panel, anchor.parentNode.nextSibling);
++    var status = panel.querySelector('#cv-phase1-status');
++    var output = panel.querySelector('#cv-phase1-output');
++    function show(label, value) {
++      status.textContent = label;
++      output.textContent = typeof value === 'string' ? value : JSON.stringify(value, null, 2);
++    }
++    panel.querySelector('#cv-p57-inspect').addEventListener('click', function () {
++      window.CANVIOPersistenceAudit.inspect().then(function (r) { show('P57 · Kiểm tra chỉ đọc hoàn tất.', r); }).catch(function (e) { show('P57 · Kiểm tra thất bại.', { error: e.message || String(e) }); });
++    });
++    panel.querySelector('#cv-p57-roundtrip').addEventListener('click', function () {
++      if (!window.confirm('CANVIO sẽ ghi một Blob kiểm tra tạm vào object store media hiện có, đọc lại rồi xóa trong cùng giao dịch. Không ghi đè media của bạn. Tiếp tục?')) return;
++      window.CANVIOPersistenceAudit.roundTrip().then(function (r) { show('P57 · Giao dịch thử nghiệm đã hoàn tất.', r); }).catch(function (e) { show('P57 · Giao dịch thử nghiệm thất bại.', { error: e.message || String(e), keepOriginalMedia: true }); });
++    });
++    panel.querySelector('#cv-p57-persist').addEventListener('click', function () {
++      window.CANVIOPersistenceAudit.requestPersistence().then(function (r) { show('P57 · Kết quả yêu cầu persistent storage.', r); });
++    });
++    panel.querySelector('#cv-p58-file').addEventListener('click', function () { panel.querySelector('#cv-p58-file-input').click(); });
++    panel.querySelector('#cv-p58-file-input').addEventListener('change', function (event) {
++      var file = event.target.files && event.target.files[0]; event.target.value = '';
++      if (!file) return;
++      show('P58 · Đang đọc metadata và kiểm tra decode-readiness cục bộ…', 'Không tải file lên và không lưu vào dự án.');
++      window.CANVIOExportAcceptance.inspectFile(file).then(function (r) { show('P58 · Metadata/decode-readiness đã đọc được. Đây chưa phải xác nhận A/V sync.', r); }).catch(function (e) { show('P58 · File không qua kiểm tra.', { error: e.message || String(e) }); });
++    });
++    panel.querySelector('#cv-p59-worker').addEventListener('click', function () {
++      show('P59 · Đang kiểm tra worker cùng origin; không tải model và không gửi audio…', '');
++      window.CANVIOWhisperAcceptance.inspectWorker().then(function (r) { show('P59 · Worker asset check.', r); });
++    });
++    panel.querySelector('#cv-p60-a11y').addEventListener('click', function () {
++      show('P60 · Sàng lọc DOM hoàn tất; cần kiểm tra screen reader/zoom thủ công.', window.CANVIOAccessibilityAudit.inspect(document));
++    });
++    panel.querySelector('#cv-p61-host').addEventListener('click', function () {
++      show('P61 · Kiểm tra môi trường hosting (DOM-only). Server headers vẫn cần xác minh riêng.', window.CANVIOHostingSecurityAudit.inspect());
++    });
++    panel.querySelector('#cv-p62-report').addEventListener('click', function () {
++      show('P62 · Đang tổng hợp trạng thái release; báo cáo không tự chứng nhận Stable…', '');
++      window.CANVIOPhase1ReleaseGate.run().then(function (r) { show('P62 · Báo cáo nghiệm thu được tạo. Trạng thái production vẫn fail-closed.', r); }).catch(function (e) { show('P62 · Không tạo được báo cáo.', { error: e.message || String(e), releaseCertified: false }); });
++    });
++  }
++  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mount, { once: true });
++  else mount();
++})();
++
++</script>
++
+ </body>
+ </html>
+diff --git a/tests/p55/run-p55-tests.cjs b/tests/p55/run-p55-tests.cjs
+index c5e563e..d0932bc 100644
+--- a/tests/p55/run-p55-tests.cjs
++++ b/tests/p55/run-p55-tests.cjs
+@@ -125,8 +125,8 @@ assert('P51 never claims MP4 support from WebM support', diag.codecs.mp4H264 ===
+   assert('P55 release report does not expose provider secret values', !JSON.stringify(release).includes('never expose this'));
+ 
+   assert('P55 lineage advances cleanly into P56 build and PhaseSuite', /version:'23\.3\.70-p56',base:'23\.3\.69-p55',candidate:'P56'/.test(html) && /version:'56\.0\.0'/.test(html));
+-  assert('P56 document title matches the candidate version', /<title>CANVIO 23\.3\.70-p56 — Archive Integrity &amp; Safe Restore<\/title>/.test(html));
+-  assert('P42 title observer follows the P56 build instead of pinning a stale title', /buildTitleForVersion=function\(\)\{var version=window\.CANVIO_BUILD&&window\.CANVIO_BUILD\.version/.test(html) && /version==='23\.3\.70-p56'\?'CANVIO 23\.3\.70-p56 — Archive Integrity & Safe Restore'/.test(html));
++  assert('P62 document title matches the current candidate version', /<title>CANVIO 23\.3\.76-p62 — Phase 1 Release Candidate<\/title>/.test(html));
++  assert('P42 title observer follows P62/P56 builds instead of pinning a stale title', /buildTitleForVersion=function\(\)\{var version=window\.CANVIO_BUILD&&window\.CANVIO_BUILD\.version/.test(html) && /version==='23\.3\.76-p62'\?'CANVIO 23\.3\.76-p62 — Phase 1 Release Candidate':version==='23\.3\.70-p56'/.test(html));
+   assert('P55 release dashboard button and panel IDs are created by module', /canvioP55Run/.test(p55) && /canvioP55Panel/.test(p55));
+   assert('P55 restore integrity preflight remains after the P56 archive validator and before payload mutation', /CANVIOArchivePreflight\.inspect\(file\)[\s\S]{0,350}preflightRestore\(file\)[\s\S]{0,160}readStoreZip\(file\)/.test(html));
+   assert('P55 backup audit is updated after a user-created ZIP', /noteBackup\(m\)/.test(html));
+diff --git a/tests/p57/p57-native-persistence.js b/tests/p57/p57-native-persistence.js
+new file mode 100644
+index 0000000..bd081d1
+--- /dev/null
++++ b/tests/p57/p57-native-persistence.js
+@@ -0,0 +1,167 @@
++/* CANVIO P57 — Native persistence diagnostics. Additive; never changes DB schema. */
++(function () {
++  'use strict';
++  var DB_NAME = 'CANVIO_81_MEDIA';
++  var STORE_NAME = 'media';
++  var lastReport = null;
++
++  function storageInfo() {
++    var storage = navigator && navigator.storage;
++    return Promise.all([
++      storage && typeof storage.estimate === 'function'
++        ? Promise.resolve(storage.estimate()).catch(function () { return null; })
++        : Promise.resolve(null),
++      storage && typeof storage.persisted === 'function'
++        ? Promise.resolve(storage.persisted()).catch(function () { return null; })
++        : Promise.resolve(null)
++    ]).then(function (values) {
++      var estimate = values[0];
++      return {
++        usage: estimate && Number.isFinite(estimate.usage) ? estimate.usage : null,
++        quota: estimate && Number.isFinite(estimate.quota) ? estimate.quota : null,
++        persisted: typeof values[1] === 'boolean' ? values[1] : null
++      };
++    });
++  }
++
++  function openExistingDatabase() {
++    return new Promise(function (resolve, reject) {
++      if (!window.indexedDB) return reject(new Error('IndexedDB không khả dụng trong context này.'));
++      var request;
++      var createdByProbe = false;
++      try { request = window.indexedDB.open(DB_NAME); }
++      catch (error) { reject(error); return; }
++      request.onupgradeneeded = function () {
++        // Opening a missing database without a version would create it. Abort that
++        // upgrade so this diagnostic can never manufacture a replacement store.
++        createdByProbe = true;
++        try { request.transaction.abort(); } catch (error) {}
++      };
++      request.onsuccess = function () {
++        var db = request.result;
++        if (createdByProbe) {
++          try { db.close(); } catch (error) {}
++          reject(new Error('Không tìm thấy kho media đã tồn tại; không tạo database mới.'));
++          return;
++        }
++        db.onversionchange = function () { try { db.close(); } catch (error) {} };
++        if (!db.objectStoreNames || !db.objectStoreNames.contains(STORE_NAME)) {
++          try { db.close(); } catch (error) {}
++          reject(new Error('Database hiện có nhưng thiếu object store media; không tự nâng schema.'));
++          return;
++        }
++        resolve(db);
++      };
++      request.onerror = function () {
++        reject(request.error || new Error(createdByProbe ? 'Database media chưa tồn tại.' : 'Không mở được database media.'));
++      };
++      request.onblocked = function () { reject(new Error('Database đang bị khóa bởi tab khác. Đóng các tab CANVIO khác rồi thử lại.')); };
++    });
++  }
++
++  function inspect() {
++    return Promise.all([storageInfo(), Promise.resolve().then(openExistingDatabase).then(function (db) {
++      return new Promise(function (resolve, reject) {
++        var tx;
++        try { tx = db.transaction(STORE_NAME, 'readonly'); }
++        catch (error) { db.close(); reject(error); return; }
++        var countRequest;
++        try { countRequest = tx.objectStore(STORE_NAME).count(); }
++        catch (error) { db.close(); reject(error); return; }
++        countRequest.onsuccess = function () {
++          resolve({ database: DB_NAME, version: db.version, store: STORE_NAME, mediaRecords: countRequest.result });
++        };
++        countRequest.onerror = function () { reject(countRequest.error || new Error('Không đếm được media records.')); };
++        tx.oncomplete = function () { try { db.close(); } catch (error) {} };
++        tx.onerror = tx.onabort = function () { try { db.close(); } catch (error) {} };
++      });
++    }).catch(function (error) { return { database: DB_NAME, available: false, error: error.message || String(error) }; })]).then(function (parts) {
++      var storage = parts[0], db = parts[1];
++      var report = {
++        candidate: window.CANVIO_BUILD && window.CANVIO_BUILD.version || 'unknown',
++        secureContext: !!(window.isSecureContext),
++        indexedDB: !!window.indexedDB,
++        database: db.database,
++        databaseAvailable: db.available !== false,
++        databaseVersion: db.version || null,
++        objectStore: db.store || null,
++        mediaRecords: Number.isFinite(db.mediaRecords) ? db.mediaRecords : null,
++        storageUsageBytes: storage.usage,
++        storageQuotaBytes: storage.quota,
++        storagePersisted: storage.persisted,
++        scope: { readOnly: true, schemaChanged: false, mediaWritten: false }
++      };
++      if (db.error) report.databaseError = db.error;
++      lastReport = report;
++      return JSON.parse(JSON.stringify(report));
++    });
++  }
++
++  function roundTrip() {
++    return openExistingDatabase().then(function (db) {
++      return new Promise(function (resolve, reject) {
++        var id = '__canvio_p57_probe_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 10);
++        var probe = new Blob(['CANVIO-P57-PERSISTENCE-PROBE'], { type: 'text/plain' });
++        var verified = false;
++        var cleaned = false;
++        var tx;
++        try {
++          tx = db.transaction(STORE_NAME, 'readwrite');
++          var store = tx.objectStore(STORE_NAME);
++          store.add({ id: id, blob: probe });
++          var request = store.get(id);
++          request.onsuccess = function () {
++            var row = request.result;
++            verified = !!(row && row.id === id && row.blob && row.blob.size === probe.size && row.blob.type === probe.type);
++            if (!verified) { try { tx.abort(); } catch (error) {} return; }
++            store.delete(id);
++            cleaned = true;
++          };
++          request.onerror = function () { try { tx.abort(); } catch (error) {} };
++        } catch (error) { db.close(); reject(error); return; }
++        tx.oncomplete = function () {
++          db.close();
++          resolve({ ok: verified && cleaned, verified: verified, cleanupScheduled: cleaned, scope: { temporaryRecordOnly: true, userMediaOverwritten: false, schemaChanged: false } });
++        };
++        tx.onerror = tx.onabort = function () {
++          var error = tx.error || new Error('Giao dịch kiểm tra IndexedDB bị hủy.');
++          db.close();
++          reject(error);
++        };
++      });
++    });
++  }
++
++  function requestPersistence() {
++    var storage = navigator && navigator.storage;
++    if (!storage || typeof storage.persist !== 'function') {
++      return Promise.resolve({ supported: false, granted: false, message: 'Trình duyệt không cung cấp StorageManager.persist().' });
++    }
++    return Promise.resolve().then(function () { return storage.persist(); }).then(function (granted) {
++      return { supported: true, granted: granted === true, message: granted ? 'Trình duyệt đã cấp persistent storage.' : 'Trình duyệt không cấp persistent storage; dữ liệu vẫn theo chính sách quota/eviction của trình duyệt.' };
++    }).catch(function (error) {
++      return { supported: true, granted: false, message: error && error.message || 'Không yêu cầu được persistent storage.' };
++    });
++  }
++
++  window.CANVIOPersistenceAudit = {
++    version: '57.0.0',
++    inspect: inspect,
++    roundTrip: roundTrip,
++    requestPersistence: requestPersistence,
++    last: function () { return lastReport ? JSON.parse(JSON.stringify(lastReport)) : null; },
++    owner: { database: DB_NAME, store: STORE_NAME, schemaVersion: 1 }
++  };
++
++  var suite = window.CANVIOPhaseSuite;
++  if (suite) {
++    var previousTests = suite.tests;
++    suite.version = '57.0.0';
++    suite.tests = function () {
++      var result = previousTests ? previousTests.apply(this, arguments) : {};
++      result.p57NativePersistenceAudit = !!(window.CANVIOPersistenceAudit && window.CANVIOPersistenceAudit.inspect);
++      result.p57SafeRoundTrip = !!(window.CANVIOPersistenceAudit && window.CANVIOPersistenceAudit.roundTrip);
++      return result;
++    };
++  }
++})();
+diff --git a/tests/p57/run-p57-tests.cjs b/tests/p57/run-p57-tests.cjs
+new file mode 100644
+index 0000000..bd8b055
+--- /dev/null
++++ b/tests/p57/run-p57-tests.cjs
+@@ -0,0 +1,84 @@
++'use strict';
++const fs = require('node:fs');
++const path = require('node:path');
++const vm = require('node:vm');
++const root = path.resolve(__dirname, '../..');
++const passed = [];
++function assert(name, ok) { if (!ok) throw new Error('FAIL ' + name); passed.push(name); console.log('PASS ' + name); }
++
++class FakeDB {
++  constructor() { this.version = 1; this.rows = new Map(); this.objectStoreNames = { contains: (name) => name === 'media' }; }
++  close() { this.closed = true; }
++  transaction(name, mode) {
++    const db = this; const tx = { error: null, oncomplete: null, onerror: null, onabort: null };
++    const store = {
++      add(row) { if (db.rows.has(row.id)) throw new Error('ConstraintError'); db.rows.set(row.id, row); },
++      put(row) { db.rows.set(row.id, row); },
++      get(id) { const req = { result: null, onsuccess: null, onerror: null }; queueMicrotask(() => { req.result = db.rows.get(id); if (req.onsuccess) req.onsuccess(); queueMicrotask(() => tx.oncomplete && tx.oncomplete()); }); return req; },
++      delete(id) { db.rows.delete(id); }
++    };
++    if (mode === 'readonly') store.count = () => { const req = { result: db.rows.size, onsuccess: null }; queueMicrotask(() => { if (req.onsuccess) req.onsuccess(); queueMicrotask(() => tx.oncomplete && tx.oncomplete()); }); return req; };
++    tx.objectStore = (n) => { if (n !== 'media') throw new Error('NotFoundError'); return store; };
++    return tx;
++  }
++}
++const db = new FakeDB();
++const indexedDB = { open(name) { const req = { result: null, transaction: null }; queueMicrotask(() => { req.result = db; if (req.onsuccess) req.onsuccess(); }); return req; } };
++const document = {
++  title: 'P56', baseURI: 'https://canvio.example/', readyState: 'complete',
++  getElementById: () => null, querySelector: () => null, querySelectorAll: () => [],
++  createElement(tag) {
++    if (tag !== 'video') return {};
++    const v = { duration: 12.5, videoWidth: 1920, videoHeight: 1080, readyState: 3, pause(){}, removeAttribute(){}, load(){}, set src(value) { this._src=value; queueMicrotask(() => { this.onloadedmetadata && this.onloadedmetadata(); this.oncanplay && this.oncanplay(); }); }, get src(){return this._src;} };
++    return v;
++  }
++};
++const navigator = { storage: { estimate: async () => ({usage:1234,quota:99999}), persisted: async () => false, persist: async () => true } };
++const window = {
++  CANVIO_BUILD: {version:'23.3.70-p56',base:'23.3.69-p55',features:[]},
++  CANVIOPhaseSuite: {version:'56.0.0',tests:()=>({priorPhase:true})},
++  CANVIOReleaseGate: {run:async()=>({candidate:'P56',status:'NEEDS_MANUAL_ACCEPTANCE',releaseCertified:false})},
++  indexedDB, isSecureContext:true,
++  location:{protocol:'https:',hostname:'canvio.example',origin:'https://canvio.example',href:'https://canvio.example/'},
++  URL: {createObjectURL:()=> 'blob:fake', revokeObjectURL:()=>{}},
++  confirm:()=>true
++};
++class TestURL extends URL { static createObjectURL(){ return 'blob:fake'; } static revokeObjectURL(){} }
++const context = {window,document,navigator,indexedDB,URL:TestURL,Blob,TextEncoder,TextDecoder,ArrayBuffer,Uint8Array,DataView,Number,Math,Object,String,RegExp,Error,Promise,JSON,Date,Set,Map,console,setTimeout,clearTimeout,fetch:async()=>({ok:true,status:200,headers:{get:()=> 'text/javascript'},text:async()=>"transformers@3.8.1 Xenova/whisper-tiny automatic-speech-recognition"})};
++vm.createContext(context);
++const files = [
++  'tests/p57/p57-native-persistence.js','tests/p58/p58-media-export-acceptance.js',
++  'tests/p59/p59-whisper-runtime-acceptance.js','tests/p60/p60-accessibility-audit.js',
++  'tests/p61/p61-hosting-security-audit.js','tests/p62/p62-release-candidate-gate.js'
++];
++for (const file of files) vm.runInContext(fs.readFileSync(path.join(root,file),'utf8'),context,{filename:file,timeout:3000});
++(async()=>{
++  const storage = await window.CANVIOPersistenceAudit.inspect();
++  assert('P57 opens existing CANVIO_81_MEDIA without schema upgrade', storage.databaseAvailable && storage.database==='CANVIO_81_MEDIA' && storage.databaseVersion===1 && storage.objectStore==='media');
++  assert('P57 inspection is read-only and reports quota/persistence separately', storage.scope.readOnly && storage.scope.schemaChanged===false && storage.scope.mediaWritten===false && storage.storageUsageBytes===1234 && storage.storagePersisted===false);
++  const round = await window.CANVIOPersistenceAudit.roundTrip();
++  assert('P57 temporary Blob write/read/delete round-trip is verified', round.ok && round.verified && round.cleanupScheduled && db.rows.size===0);
++  const persist = await window.CANVIOPersistenceAudit.requestPersistence();
++  assert('P57 persistent storage request is explicit and reports browser decision', persist.supported && persist.granted);
++  const mediaFile = new Blob(['synthetic-test'], {type:'video/webm'}); Object.defineProperty(mediaFile,'name',{value:'delivery.webm'});
++  const media = await window.CANVIOExportAcceptance.inspectFile(mediaFile);
++  assert('P58 validates selected WebM metadata and browser decode-readiness without upload', media.format==='webm' && media.durationSeconds===12.5 && media.width===1920 && media.scope.upload===false && media.scope.avSyncCertified===false);
++  let badType=false; const badFile = new Blob(['x'], {type:'application/octet-stream'}); Object.defineProperty(badFile,'name',{value:'x.exe'}); try { await window.CANVIOExportAcceptance.inspectFile(badFile); } catch(e) { badType=/MP4 hoặc WebM/.test(e.message); }
++  assert('P58 rejects unsupported or ambiguous file formats',badType);
++  const worker = await window.CANVIOWhisperAcceptance.inspectWorker();
++  assert('P59 worker check verifies pinned runtime/model without running inference',worker.checked && worker.available && worker.transformersVersionPinned && worker.modelPinned && worker.modelInferenceTested===false);
++  const fakeNode = (tag, attrs={}, text='') => ({tagName:tag.toUpperCase(),id:attrs.id||'',innerText:text,textContent:text,hidden:false,getAttribute:(k)=>attrs[k]||null,hasAttribute:(k)=>Object.prototype.hasOwnProperty.call(attrs,k),closest:()=>null});
++  const a11yRoot = {querySelectorAll(selector){if(selector==='button,a[href],input,select,textarea,[role="button"],[role="link"],[tabindex]:not([tabindex="-1"])')return [fakeNode('button',{},'')];if(selector==='img')return [fakeNode('img',{},'')];if(selector==='main,nav,header,footer,aside,[role="main"],[role="navigation"],[role="region"]')return [fakeNode('main')];if(selector==='h1,h2,h3,h4,h5,h6')return [fakeNode('h1',{},'Title')];if(selector==='[role="dialog"],[aria-modal="true"]')return [];return [];}};
++  const a11y = window.CANVIOAccessibilityAudit.inspect(a11yRoot);
++  assert('P60 accessibility scan flags unnamed controls and missing image alt', a11y.counts.unnamedControls===1 && a11y.counts.imagesMissingAlt===1 && a11y.scope.wcagCertified===false);
++  const host = window.CANVIOHostingSecurityAudit.inspect();
++  assert('P61 hosting audit detects secure transport and same-origin worker target', host.secureTransport && host.workerSameOrigin && host.scope.headersRequireServerInspection===true);
++  assert('P61 explicitly leaves server headers for live-origin verification', host.serverSecurityHeadersVerified===false && host.warnings.length>0);
++  const report = await window.CANVIOPhase1ReleaseGate.run();
++  assert('P62 aggregates all six implementations and keeps release fail-closed', Object.values(report.implementation).every(Boolean) && report.candidate==='P62' && report.releaseCertified===false && report.status==='BLOCKED_PENDING_REAL_WORLD_ACCEPTANCE');
++  assert('P62 preserves six mandatory real-world acceptance gates', report.manualGates.length===6 && report.manualGates.every(x=>x.status==='OPEN'));
++  assert('PhaseSuite advances to P62 and preserves previous phase flags', window.CANVIOPhaseSuite.version==='62.0.0' && window.CANVIOPhaseSuite.tests().priorPhase && window.CANVIOPhaseSuite.tests().p62Phase1ReleaseGate);
++  assert('Build/title marker advances to 23.3.76-p62', window.CANVIO_BUILD.version==='23.3.76-p62' && document.title==='CANVIO 23.3.76-p62 — Phase 1 Release Candidate');
++  assert('P57 never upgrades an unknown DB and P62 never self-certifies', window.CANVIOPersistenceAudit.owner.schemaVersion===1 && report.releaseCertified===false);
++  console.log(`\nP57–P62 PASS: ${passed.length}/${passed.length} assertions passed.`);
++})().catch(error=>{console.error(error);process.exitCode=1;});
+diff --git a/tests/p58/p58-media-export-acceptance.js b/tests/p58/p58-media-export-acceptance.js
+new file mode 100644
+index 0000000..322d326
+--- /dev/null
++++ b/tests/p58/p58-media-export-acceptance.js
+@@ -0,0 +1,84 @@
++/* CANVIO P58 — Read-only validation of a user-selected exported media file. */
++(function () {
++  'use strict';
++  var lastReport = null;
++  function inspectFile(file, options) {
++    options = options || {};
++    if (!file || !Number.isFinite(Number(file.size)) || Number(file.size) <= 0) return Promise.reject(new Error('Tệp xuất rỗng hoặc không hợp lệ.'));
++    if (Number(file.size) > 2 * 1024 * 1024 * 1024) return Promise.reject(new Error('Tệp vượt giới hạn kiểm tra 2 GiB của trình duyệt.'));
++    var name = String(file.name || 'exported-media').toLowerCase();
++    var type = String(file.type || '').toLowerCase().split(';')[0].trim();
++    var extension = /\.mp4$/.test(name) ? 'mp4' : /\.webm$/.test(name) ? 'webm' : '';
++    if (type && type !== 'video/mp4' && type !== 'video/webm') return Promise.reject(new Error('Chỉ kiểm tra được file video MP4 hoặc WebM.'));
++    if (!extension && type === 'video/mp4') extension = 'mp4';
++    if (!extension && type === 'video/webm') extension = 'webm';
++    if (!extension) return Promise.reject(new Error('Không xác định được định dạng MP4/WebM từ tên hoặc MIME.'));
++    if (type && ((extension === 'mp4' && type !== 'video/mp4') || (extension === 'webm' && type !== 'video/webm'))) return Promise.reject(new Error('Phần mở rộng và MIME của file không khớp.'));
++    if (!window.URL || typeof URL.createObjectURL !== 'function') return Promise.reject(new Error('Object URL không khả dụng để kiểm tra file.'));
++    return new Promise(function (resolve, reject) {
++      var video = document.createElement('video');
++      var url = URL.createObjectURL(file);
++      var settled = false;
++      var timer = setTimeout(function () { finish(new Error('Hết thời gian chờ trình duyệt đọc metadata/decode file.')); }, Number(options.timeoutMs) > 0 ? Math.min(Number(options.timeoutMs), 30000) : 15000);
++      function cleanup() {
++        clearTimeout(timer);
++        try { video.pause(); } catch (error) {}
++        try { video.removeAttribute('src'); video.load(); } catch (error) {}
++        try { URL.revokeObjectURL(url); } catch (error) {}
++      }
++      function finish(error) {
++        if (settled) return;
++        settled = true;
++        if (error) { cleanup(); reject(error); return; }
++        var report = {
++          format: extension,
++          mime: type || 'browser-detected',
++          bytes: Number(file.size),
++          durationSeconds: Number(video.duration),
++          width: Number(video.videoWidth),
++          height: Number(video.videoHeight),
++          metadataReadable: true,
++          decodeReadiness: true,
++          scope: { sourceFileOnly: true, upload: false, storageMutation: false, avSyncCertified: false }
++        };
++        cleanup();
++        lastReport = report;
++        resolve(JSON.parse(JSON.stringify(report)));
++      }
++      video.preload = 'auto';
++      video.muted = true;
++      video.playsInline = true;
++      video.onloadedmetadata = function () {
++        if (!Number.isFinite(video.duration) || video.duration <= 0 || video.videoWidth <= 0 || video.videoHeight <= 0) {
++          finish(new Error('Metadata video không hợp lệ: thiếu thời lượng hoặc kích thước khung hình.'));
++          return;
++        }
++        // `canplay` is a local browser decode-readiness signal, not a complete
++        // frame-by-frame or audio/video synchronization certification.
++      };
++      video.oncanplay = function () { finish(null); };
++      video.onerror = function () { finish(new Error('Trình duyệt không giải mã được file đã chọn.')); };
++      try { video.src = url; video.load(); } catch (error) { finish(error); }
++    });
++  }
++  function capabilities() {
++    var api = window.CV && CV.engines && CV.engines.video;
++    var value = api && typeof api.exportCapabilities === 'function' ? api.exportCapabilities() : null;
++    return { browser: value || null, mp4IsOptional: true, requiredRealMediaAcceptance: true };
++  }
++  window.CANVIOExportAcceptance = {
++    version: '58.0.0',
++    inspectFile: inspectFile,
++    capabilities: capabilities,
++    last: function () { return lastReport ? JSON.parse(JSON.stringify(lastReport)) : null; }
++  };
++  var suite = window.CANVIOPhaseSuite;
++  if (suite) {
++    var previousTests = suite.tests; suite.version = '58.0.0';
++    suite.tests = function () {
++      var result = previousTests ? previousTests.apply(this, arguments) : {};
++      result.p58ExportAcceptance = !!(window.CANVIOExportAcceptance && window.CANVIOExportAcceptance.inspectFile);
++      return result;
++    };
++  }
++})();
+diff --git a/tests/p59/p59-whisper-runtime-acceptance.js b/tests/p59/p59-whisper-runtime-acceptance.js
+new file mode 100644
+index 0000000..7a48675
+--- /dev/null
++++ b/tests/p59/p59-whisper-runtime-acceptance.js
+@@ -0,0 +1,53 @@
++/* CANVIO P59 — Whisper worker provenance and privacy diagnostics. No model request is made here. */
++(function () {
++  'use strict';
++  var WORKER_PATH = 'assets/canvio-whisper-worker.js';
++  var lastReport = null;
++  function inspectWorker() {
++    if (typeof fetch !== 'function' || !window.URL) return Promise.resolve({ available: false, checked: false, modelInferenceTested: false, reason: 'Fetch/URL không khả dụng trong context này.' });
++    var url;
++    try { url = new URL(WORKER_PATH, document.baseURI); }
++    catch (error) { return Promise.resolve({ available: false, checked: false, modelInferenceTested: false, reason: 'Không phân giải được worker URL từ origin hiện tại.' }); }
++    if (window.location && url.origin !== window.location.origin) return Promise.resolve({ available: false, checked: false, modelInferenceTested: false, reason: 'Worker URL không cùng origin với ứng dụng.' });
++    return fetch(url.href, { method: 'GET', credentials: 'same-origin', cache: 'no-store' }).then(function (response) {
++      if (!response.ok) throw new Error('HTTP ' + response.status + ' khi tải worker.');
++      return response.text().then(function (source) {
++        var report = {
++          available: true,
++          checked: true,
++          status: response.status,
++          contentType: response.headers && response.headers.get ? response.headers.get('content-type') : null,
++          sameOrigin: true,
++          transformersVersionPinned: /transformers@3\.8\.1/.test(source),
++          modelPinned: /Xenova\/whisper-tiny/.test(source),
++          browserLocalInference: /automatic-speech-recognition/.test(source),
++          remoteAsrEndpointAbsent: !/(?:api\.openai\.com\/v1\/audio|speech-to-text\s*:\s*http)/i.test(source),
++          sourceBytes: new Blob([source]).size,
++          modelInferenceTested: false
++        };
++        lastReport = report;
++        return JSON.parse(JSON.stringify(report));
++      });
++    }).catch(function (error) {
++      var report = { available: false, checked: true, sameOrigin: true, error: error.message || String(error), modelInferenceTested: false };
++      lastReport = report;
++      return report;
++    });
++  }
++  window.CANVIOWhisperAcceptance = {
++    version: '59.0.0',
++    workerPath: WORKER_PATH,
++    inspectWorker: inspectWorker,
++    limits: { maxInputBytes: 100 * 1024 * 1024, maxDurationSeconds: 480, languages: ['vietnamese', 'english', 'auto'] },
++    last: function () { return lastReport ? JSON.parse(JSON.stringify(lastReport)) : null; }
++  };
++  var suite = window.CANVIOPhaseSuite;
++  if (suite) {
++    var previousTests = suite.tests; suite.version = '59.0.0';
++    suite.tests = function () {
++      var result = previousTests ? previousTests.apply(this, arguments) : {};
++      result.p59WhisperWorkerAcceptance = !!(window.CANVIOWhisperAcceptance && window.CANVIOWhisperAcceptance.inspectWorker);
++      return result;
++    };
++  }
++})();
+diff --git a/tests/p60/p60-accessibility-audit.js b/tests/p60/p60-accessibility-audit.js
+new file mode 100644
+index 0000000..be75650
+--- /dev/null
++++ b/tests/p60/p60-accessibility-audit.js
+@@ -0,0 +1,75 @@
++/* CANVIO P60 — In-app accessibility screening; it is not a WCAG certification. */
++(function () {
++  'use strict';
++  var lastReport = null;
++  function visible(node) {
++    var current = node;
++    while (current && current !== document) {
++      if (current.hidden || (current.getAttribute && current.getAttribute('aria-hidden') === 'true')) return false;
++      var style = window.getComputedStyle ? window.getComputedStyle(current) : null;
++      if (style && (style.display === 'none' || style.visibility === 'hidden')) return false;
++      current = current.parentElement;
++    }
++    return !!node;
++  }
++  function hasName(node) {
++    var aria = (node.getAttribute('aria-label') || '').trim();
++    var labelled = (node.getAttribute('aria-labelledby') || '').trim();
++    var title = (node.getAttribute('title') || '').trim();
++    var text = (node.innerText || node.textContent || '').replace(/\s+/g, ' ').trim();
++    if (aria || title || text) return true;
++    if (labelled && document.getElementById(labelled)) return true;
++    if (node.id && document.querySelector && document.querySelector('label[for="' + String(node.id).replace(/"/g, '\\"') + '"]')) return true;
++    return !!(node.closest && node.closest('label'));
++  }
++  function inspect(root) {
++    root = root || document;
++    var issues = [], totalIssues = 0, counts = { controls: 0, unnamedControls: 0, images: 0, imagesMissingAlt: 0, landmarks: 0, headings: 0, dialogs: 0, dialogsMissingName: 0, buttonsMissingType: 0 };
++    function add(code, node, detail) {
++      totalIssues++;
++      if (issues.length < 200) issues.push({ code: code, tag: node && node.tagName ? node.tagName.toLowerCase() : '', id: node && node.id || '', detail: detail });
++    }
++    var controls = root.querySelectorAll ? root.querySelectorAll('button,a[href],input,select,textarea,[role="button"],[role="link"],[tabindex]:not([tabindex="-1"])') : [];
++    Array.prototype.forEach.call(controls, function (node) {
++      if (!visible(node)) return;
++      counts.controls++;
++      if (!hasName(node)) { counts.unnamedControls++; add('control-name-missing', node, 'Thiếu tên truy cập bằng text, label hoặc ARIA.'); }
++      if (node.tagName && node.tagName.toLowerCase() === 'button' && node.form && !node.hasAttribute('type')) { counts.buttonsMissingType++; add('button-type-missing', node, 'Nên khai báo type="button" hoặc type="submit".'); }
++    });
++    var images = root.querySelectorAll ? root.querySelectorAll('img') : [];
++    Array.prototype.forEach.call(images, function (node) {
++      counts.images++;
++      if (!node.hasAttribute('alt')) { counts.imagesMissingAlt++; add('image-alt-missing', node, 'Ảnh cần alt mô tả hoặc alt="" nếu trang trí.'); }
++    });
++    var landmarks = root.querySelectorAll ? root.querySelectorAll('main,nav,header,footer,aside,[role="main"],[role="navigation"],[role="region"]') : [];
++    counts.landmarks = landmarks.length;
++    var headings = root.querySelectorAll ? root.querySelectorAll('h1,h2,h3,h4,h5,h6') : [];
++    counts.headings = headings.length;
++    var dialogs = root.querySelectorAll ? root.querySelectorAll('[role="dialog"],[aria-modal="true"]') : [];
++    counts.dialogs = dialogs.length;
++    Array.prototype.forEach.call(dialogs, function (node) {
++      if (!hasName(node)) { counts.dialogsMissingName++; add('dialog-name-missing', node, 'Dialog cần accessible name.'); }
++    });
++    var report = {
++      version: '60.0.0',
++      counts: counts,
++      issueCount: totalIssues,
++      capturedIssues: issues.length,
++      issues: issues,
++      truncated: totalIssues > issues.length,
++      scope: { automatedScreeningOnly: true, wcagCertified: false, true200PercentZoomTested: false, screenReaderTested: false }
++    };
++    lastReport = report;
++    return JSON.parse(JSON.stringify(report));
++  }
++  window.CANVIOAccessibilityAudit = { version: '60.0.0', inspect: inspect, last: function () { return lastReport ? JSON.parse(JSON.stringify(lastReport)) : null; } };
++  var suite = window.CANVIOPhaseSuite;
++  if (suite) {
++    var previousTests = suite.tests; suite.version = '60.0.0';
++    suite.tests = function () {
++      var result = previousTests ? previousTests.apply(this, arguments) : {};
++      result.p60AccessibilityScreening = !!(window.CANVIOAccessibilityAudit && window.CANVIOAccessibilityAudit.inspect);
++      return result;
++    };
++  }
++})();
+diff --git a/tests/p61/p61-hosting-security-audit.js b/tests/p61/p61-hosting-security-audit.js
+new file mode 100644
+index 0000000..e521936
+--- /dev/null
++++ b/tests/p61/p61-hosting-security-audit.js
+@@ -0,0 +1,51 @@
++/* CANVIO P61 — Read-only deployment/security readiness checks. */
++(function () {
++  'use strict';
++  var lastReport = null;
++  function inspect() {
++    var location = window.location || { protocol: 'about:', origin: 'null' };
++    var base = document.baseURI || (location.href || 'about:blank');
++    var worker;
++    try { worker = new URL('assets/canvio-whisper-worker.js', base); }
++    catch (error) { worker = null; }
++    var scripts = document.querySelectorAll ? Array.prototype.slice.call(document.querySelectorAll('script[src]')).map(function (node) { return node.src; }) : [];
++    var media = document.querySelectorAll ? Array.prototype.slice.call(document.querySelectorAll('[src],[href]')).filter(function (node) { var value = node.getAttribute('src') || node.getAttribute('href') || ''; return /^http:\/\//i.test(value); }).length : 0;
++    var cspMeta = document.querySelector ? document.querySelector('meta[http-equiv="Content-Security-Policy" i]') : null;
++    var secure = !!window.isSecureContext;
++    var sameOriginWorker = !!(worker && location.origin && worker.origin === location.origin);
++    var report = {
++      version: '61.0.0',
++      origin: location.origin || null,
++      protocol: location.protocol || null,
++      secureContext: secure,
++      secureTransport: location.protocol === 'https:' || (location.hostname === 'localhost' || location.hostname === '127.0.0.1'),
++      workerUrl: worker && worker.href || null,
++      workerSameOrigin: sameOriginWorker,
++      externalScriptSources: scripts,
++      externalScriptCount: scripts.length,
++      mixedContentReferenceCount: media,
++      cspMetaPresent: !!cspMeta,
++      serverSecurityHeadersVerified: false,
++      scope: { readOnly: true, networkProbe: false, headersRequireServerInspection: true, cspRequiresDependencyReview: true },
++      warnings: []
++    };
++    if (!secure) report.warnings.push('Context chưa được xác nhận là secure context HTTPS.');
++    if (!sameOriginWorker) report.warnings.push('Worker chưa được chứng minh nằm cùng origin; kiểm tra đường dẫn sau deploy.');
++    if (media) report.warnings.push('Có tham chiếu HTTP có nguy cơ mixed content.');
++    if (!cspMeta) report.warnings.push('Không thấy CSP meta; HTTP response headers vẫn phải kiểm tra tại hosting.');
++    report.warnings.push('Không thể xác nhận CSP/CORS/MIME/HSTS/Referrer-Policy bằng DOM; cần kiểm tra response headers thật.');
++    report.warnings.push('CANVIO có inline scripts và tải model/runtime theo yêu cầu; không áp CSP nghiêm ngặt trước khi lập dependency/hash/nonce allowlist.');
++    lastReport = report;
++    return JSON.parse(JSON.stringify(report));
++  }
++  window.CANVIOHostingSecurityAudit = { version: '61.0.0', inspect: inspect, last: function () { return lastReport ? JSON.parse(JSON.stringify(lastReport)) : null; } };
++  var suite = window.CANVIOPhaseSuite;
++  if (suite) {
++    var previousTests = suite.tests; suite.version = '61.0.0';
++    suite.tests = function () {
++      var result = previousTests ? previousTests.apply(this, arguments) : {};
++      result.p61HostingSecurityScreening = !!(window.CANVIOHostingSecurityAudit && window.CANVIOHostingSecurityAudit.inspect);
++      return result;
++    };
++  }
++})();
+diff --git a/tests/p62/browser-smoke-report.json b/tests/p62/browser-smoke-report.json
+new file mode 100644
+index 0000000..3923e87
+--- /dev/null
++++ b/tests/p62/browser-smoke-report.json
+@@ -0,0 +1,344 @@
++{
++  "format": "CANVIO_P62_CHROMIUM_RUNTIME_SMOKE",
++  "version": 1,
++  "candidate": "P62",
++  "browser": "144.0.7559.96",
++  "origin": "about:blank",
++  "testOnlyStorageShim": true,
++  "limitations": [
++    "Opaque about:blank origin; native IndexedDB and secure-context acceptance are not covered.",
++    "Navigation to localhost, file:// and other URLs is blocked by the host browser policy.",
++    "No Safari/Edge, real Whisper model download/inference, screen-reader or hosting acceptance in this run."
++  ],
++  "checks": [
++    {
++      "id": "build-marker",
++      "status": "pass",
++      "value": "23.3.76-p62"
++    },
++    {
++      "id": "document-title",
++      "status": "pass",
++      "value": "CANVIO 23.3.76-p62 — Phase 1 Release Candidate"
++    },
++    {
++      "id": "spa-navigation",
++      "status": "pass",
++      "pages": [
++        "home",
++        "poster",
++        "web",
++        "videoEngine",
++        "assets",
++        "motion",
++        "insight",
++        "export",
++        "settings"
++      ]
++    },
++    {
++      "id": "phase-suite",
++      "status": "pass",
++      "flags": {
++        "websiteMotionRuntimeInjected": true,
++        "websiteMotionRuntimeIdempotent": true,
++        "websiteRuntimeHasRealScriptClose": true,
++        "websiteMotionProgressiveEnhancement": true,
++        "websiteMotionEasingVariable": true,
++        "videoCustomBezierMathAvailable": true,
++        "localProviderEndpointResolved": true,
++        "nonLocalHttpRejected": true,
++        "providerCallsOnlyOnExplicitClick": true,
++        "providerKeysRemainSessionOnly": true,
++        "zipOwner": true,
++        "backupIntegrityOwner": true,
++        "zipRestoreOwner": true,
++        "idbSchemaMetadata": true,
++        "idbRestoreOpensWithoutVersionBump": true,
++        "noSecondVideoTimeline": true,
++        "webAndPortfolioVaultAdapters": true,
++        "videoTrackControls": true,
++        "videoWebVTT": true,
++        "videoTrackStateInSnapshot": true,
++        "videoNativeMP4H264": true,
++        "videoCaptionPreflight": true,
++        "videoWhisperASR": true,
++        "videoWhisperCancellation": true,
++        "videoExportCancellation": true,
++        "p55RuntimeDiagnostics": true,
++        "p55RenderRecovery": true,
++        "p55ProjectIntegrity": true,
++        "p55PerformanceBudget": true,
++        "p55ReleaseGate": true,
++        "p56ArchivePreflight": true,
++        "p56ReadOnlyRestorePreview": true,
++        "p57NativePersistenceAudit": true,
++        "p57SafeRoundTrip": true,
++        "p58ExportAcceptance": true,
++        "p59WhisperWorkerAcceptance": true,
++        "p60AccessibilityScreening": true,
++        "p61HostingSecurityScreening": true,
++        "p62Phase1ReleaseGate": true
++      }
++    },
++    {
++      "id": "phase1-p57-p62-apis",
++      "status": "pass",
++      "value": {
++        "p57": {
++          "api": true,
++          "databaseAvailable": false,
++          "readOnly": true,
++          "schemaChanged": false
++        },
++        "p58": true,
++        "p59": {
++          "api": true,
++          "workerChecked": false,
++          "inferenceNotClaimed": true
++        },
++        "p60": {
++          "api": true,
++          "issueCount": 32,
++          "wcagCertified": false
++        },
++        "p61": {
++          "api": true,
++          "serverHeadersVerified": false
++        },
++        "p62": {
++          "candidate": "P62",
++          "implementation": {
++            "P57": true,
++            "P58": true,
++            "P59": true,
++            "P60": true,
++            "P61": true,
++            "P62": true
++          },
++          "gateCount": 6,
++          "releaseCertified": false,
++          "status": "BLOCKED_PENDING_REAL_WORLD_ACCEPTANCE"
++        },
++        "dashboard": true
++      }
++    },
++    {
++      "id": "p56-archive-integrity-preview",
++      "status": "pass",
++      "value": {
++        "valid": true,
++        "entries": 2,
++        "central": true,
++        "localHeaders": true,
++        "mismatchRejected": true,
++        "preview": {
++          "backupCreatedAt": "11/17/2026, 10:00:00 AM",
++          "localStorageKeys": 1,
++          "indexedDBDatabases": 0,
++          "indexedDBStores": 0,
++          "indexedDBRecords": 0,
++          "excludedSecretKeys": 1,
++          "sourceWarnings": 0,
++          "checksumStatus": "verified",
++          "schema": 2
++        },
++        "previewLeaksSecret": false,
++        "storageUnchanged": true
++      }
++    },
++    {
++      "id": "runtime-duplicate-ids",
++      "status": "pass",
++      "count": 0
++    },
++    {
++      "id": "video-track-vtt",
++      "status": "pass",
++      "value": {
++        "before": false,
++        "during": true,
++        "after": false,
++        "parsed": 1
++      }
++    },
++    {
++      "id": "real-webm-export-decode",
++      "status": "pass",
++      "value": {
++        "size": 20302,
++        "mime": "video/webm;codecs=vp9",
++        "duration": 0.9,
++        "width": 960,
++        "height": 540,
++        "readyState": 4,
++        "p58": {
++          "metadataReadable": true,
++          "decodeReadiness": true,
++          "avSyncCertified": false
++        },
++        "download": {
++          "name": "CANVIO_multitrack_1794849933860.webm",
++          "href": "blob:null/d5e2ca6a-b61c-48ed-b296-3aa045a257ee"
++        }
++      }
++    },
++    {
++      "id": "real-mp4-h264-export-decode",
++      "status": "pass",
++      "value": {
++        "size": 11845,
++        "mime": "video/mp4;codecs=avc1.420020",
++        "duration": 0.883033,
++        "width": 960,
++        "height": 540,
++        "readyState": 4,
++        "p58": {
++          "metadataReadable": true,
++          "decodeReadiness": true,
++          "avSyncCertified": false
++        },
++        "download": {
++          "name": "CANVIO_multitrack_1794849934846.mp4",
++          "href": "blob:null/db4a867a-150a-49f0-a233-1f2b58a609b4"
++        }
++      }
++    },
++    {
++      "id": "render-cancel",
++      "status": "pass",
++      "value": {
++        "returnedBlob": false,
++        "recovery": "cancelled",
++        "cancelButtonDisabled": true
++      }
++    },
++    {
++      "id": "render-retry-after-cancel",
++      "status": "pass",
++      "value": {
++        "size": 19100,
++        "mime": "video/webm;codecs=vp9",
++        "duration": 0.8,
++        "width": 960,
++        "height": 540,
++        "readyState": 4,
++        "p58": {
++          "metadataReadable": true,
++          "decodeReadiness": true,
++          "avSyncCertified": false
++        },
++        "download": {
++          "name": "CANVIO_multitrack_1794849935975.webm",
++          "href": "blob:null/4a53801c-4b16-454a-98de-cde34eccbf83"
++        }
++      }
++    },
++    {
++      "id": "responsive-widths",
++      "status": "pass",
++      "value": [
++        {
++          "width": 1440,
++          "documentWidth": 1440,
++          "bodyWidth": 1440,
++          "overflow": false
++        },
++        {
++          "width": 768,
++          "documentWidth": 768,
++          "bodyWidth": 768,
++          "overflow": false
++        },
++        {
++          "width": 720,
++          "documentWidth": 720,
++          "bodyWidth": 720,
++          "overflow": false
++        },
++        {
++          "width": 375,
++          "documentWidth": 375,
++          "bodyWidth": 375,
++          "overflow": false
++        },
++        {
++          "width": 320,
++          "documentWidth": 320,
++          "bodyWidth": 320,
++          "overflow": false
++        }
++      ]
++    },
++    {
++      "id": "release-gate-fail-closed",
++      "status": "pass",
++      "value": {
++        "status": "BLOCKED",
++        "failures": [
++          "secure-context: about:"
++        ],
++        "manualAcceptance": [
++          {
++            "id": "browser-matrix",
++            "label": "Chrome, Edge và Safari trên HTTPS",
++            "status": "pending"
++          },
++          {
++            "id": "real-media-export",
++            "label": "WebM/MP4 decode, audio và A/V sync bằng media thật",
++            "status": "pending"
++          },
++          {
++            "id": "whisper-model",
++            "label": "Whisper model download, inference, hủy và unload thật",
++            "status": "pending"
++          },
++          {
++            "id": "project-persistence",
++            "label": "IndexedDB save/reopen và ZIP restore trên origin thật",
++            "status": "pending"
++          },
++          {
++            "id": "accessibility",
++            "label": "Keyboard, screen reader, focus và zoom 200%",
++            "status": "pending"
++          },
++          {
++            "id": "hosting",
++            "label": "Pages/hosting, worker path, CSP/CORS và console",
++            "status": "pending"
++          }
++        ]
++      }
++    },
++    {
++      "id": "uncaught-page-errors",
++      "status": "pass",
++      "count": 0
++    },
++    {
++      "id": "console-errors",
++      "status": "pass",
++      "count": 0
++    }
++  ],
++  "timelineFixture": {
++    "canvasWidth": 960,
++    "canvasHeight": 540
++  },
++  "codecCapabilities": {
++    "mediaRecorder": true,
++    "canvasCapture": true,
++    "webmMime": "video/webm;codecs=vp9",
++    "mp4Mime": "video/mp4;codecs=avc1.42E01E",
++    "h264Supported": true,
++    "mp4RequiresNativeH264": true,
++    "ffmpegFallback": false
++  },
++  "summary": {
++    "passed": 32,
++    "failed": 0,
++    "status": "PASS_WITH_ORIGIN_LIMITATIONS"
++  }
++}
+\ No newline at end of file
+diff --git a/tests/p62/p62-phase1-dashboard.js b/tests/p62/p62-phase1-dashboard.js
+new file mode 100644
+index 0000000..e8bddee
+--- /dev/null
++++ b/tests/p62/p62-phase1-dashboard.js
+@@ -0,0 +1,73 @@
++/* CANVIO P57–P62 — user-triggered Phase 1 acceptance panel. */
++(function () {
++  'use strict';
++  function el(tag, attrs, text) {
++    var node = document.createElement(tag);
++    Object.keys(attrs || {}).forEach(function (key) {
++      if (key === 'className') node.className = attrs[key];
++      else if (key === 'style') node.style.cssText = attrs[key];
++      else node.setAttribute(key, attrs[key]);
++    });
++    if (text != null) node.textContent = text;
++    return node;
++  }
++  function mount() {
++    var page = document.getElementById('page-videoEngine');
++    if (!page || document.getElementById('cv-phase1-acceptance')) return;
++    var anchor = page.querySelector('.engine-toolbar');
++    if (!anchor || !anchor.parentNode) return;
++    var panel = el('section', { id: 'cv-phase1-acceptance', className: 'card', style: 'margin:12px 0;border:1px solid var(--line,#dbe3ee);' });
++    panel.setAttribute('aria-labelledby', 'cv-phase1-heading');
++    panel.innerHTML = '<div class="cardTop"><div><h3 id="cv-phase1-heading">Chặng 1 · Release Acceptance (P57–P62)</h3><span class="sub">Các phép kiểm tra chỉ chạy khi bạn chủ động bấm; không tự gửi media lên server.</span></div><span class="badgeSoft">P62 candidate</span></div>' +
++      '<div style="display:flex;flex-wrap:wrap;gap:8px;margin:10px 0">' +
++      '<button type="button" class="btn btn-soft sm" id="cv-p57-inspect">P57 · Kiểm tra IndexedDB</button>' +
++      '<button type="button" class="btn btn-soft sm" id="cv-p57-roundtrip">P57 · Test ghi/đọc/xóa</button>' +
++      '<button type="button" class="btn btn-ghost sm" id="cv-p57-persist">P57 · Xin persistent storage</button>' +
++      '<button type="button" class="btn btn-soft sm" id="cv-p58-file">P58 · Kiểm tra file xuất</button>' +
++      '<button type="button" class="btn btn-soft sm" id="cv-p59-worker">P59 · Kiểm tra Whisper worker</button>' +
++      '<button type="button" class="btn btn-soft sm" id="cv-p60-a11y">P60 · Kiểm tra accessibility</button>' +
++      '<button type="button" class="btn btn-soft sm" id="cv-p61-host">P61 · Kiểm tra hosting/security</button>' +
++      '<button type="button" class="btn btn-primary sm" id="cv-p62-report">P62 · Báo cáo nghiệm thu</button>' +
++      '</div><input id="cv-p58-file-input" type="file" accept="video/mp4,video/webm,.mp4,.webm" hidden aria-label="Chọn file MP4 hoặc WebM đã xuất để kiểm tra"><p id="cv-phase1-status" role="status" aria-live="polite" class="tiny">Chưa chạy kiểm tra. P57 chỉ làm việc với database media hiện có; P58 chỉ đọc file bạn chọn.</p><pre id="cv-phase1-output" tabindex="0" style="max-height:260px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;background:var(--surface-2,#f6f8fb);padding:10px;border-radius:8px;font:11px/1.55 ui-monospace,monospace">P62 chưa tạo báo cáo.</pre>';
++    anchor.parentNode.parentNode.insertBefore(panel, anchor.parentNode.nextSibling);
++    var status = panel.querySelector('#cv-phase1-status');
++    var output = panel.querySelector('#cv-phase1-output');
++    function show(label, value) {
++      status.textContent = label;
++      output.textContent = typeof value === 'string' ? value : JSON.stringify(value, null, 2);
++    }
++    panel.querySelector('#cv-p57-inspect').addEventListener('click', function () {
++      window.CANVIOPersistenceAudit.inspect().then(function (r) { show('P57 · Kiểm tra chỉ đọc hoàn tất.', r); }).catch(function (e) { show('P57 · Kiểm tra thất bại.', { error: e.message || String(e) }); });
++    });
++    panel.querySelector('#cv-p57-roundtrip').addEventListener('click', function () {
++      if (!window.confirm('CANVIO sẽ ghi một Blob kiểm tra tạm vào object store media hiện có, đọc lại rồi xóa trong cùng giao dịch. Không ghi đè media của bạn. Tiếp tục?')) return;
++      window.CANVIOPersistenceAudit.roundTrip().then(function (r) { show('P57 · Giao dịch thử nghiệm đã hoàn tất.', r); }).catch(function (e) { show('P57 · Giao dịch thử nghiệm thất bại.', { error: e.message || String(e), keepOriginalMedia: true }); });
++    });
++    panel.querySelector('#cv-p57-persist').addEventListener('click', function () {
++      window.CANVIOPersistenceAudit.requestPersistence().then(function (r) { show('P57 · Kết quả yêu cầu persistent storage.', r); });
++    });
++    panel.querySelector('#cv-p58-file').addEventListener('click', function () { panel.querySelector('#cv-p58-file-input').click(); });
++    panel.querySelector('#cv-p58-file-input').addEventListener('change', function (event) {
++      var file = event.target.files && event.target.files[0]; event.target.value = '';
++      if (!file) return;
++      show('P58 · Đang đọc metadata và kiểm tra decode-readiness cục bộ…', 'Không tải file lên và không lưu vào dự án.');
++      window.CANVIOExportAcceptance.inspectFile(file).then(function (r) { show('P58 · Metadata/decode-readiness đã đọc được. Đây chưa phải xác nhận A/V sync.', r); }).catch(function (e) { show('P58 · File không qua kiểm tra.', { error: e.message || String(e) }); });
++    });
++    panel.querySelector('#cv-p59-worker').addEventListener('click', function () {
++      show('P59 · Đang kiểm tra worker cùng origin; không tải model và không gửi audio…', '');
++      window.CANVIOWhisperAcceptance.inspectWorker().then(function (r) { show('P59 · Worker asset check.', r); });
++    });
++    panel.querySelector('#cv-p60-a11y').addEventListener('click', function () {
++      show('P60 · Sàng lọc DOM hoàn tất; cần kiểm tra screen reader/zoom thủ công.', window.CANVIOAccessibilityAudit.inspect(document));
++    });
++    panel.querySelector('#cv-p61-host').addEventListener('click', function () {
++      show('P61 · Kiểm tra môi trường hosting (DOM-only). Server headers vẫn cần xác minh riêng.', window.CANVIOHostingSecurityAudit.inspect());
++    });
++    panel.querySelector('#cv-p62-report').addEventListener('click', function () {
++      show('P62 · Đang tổng hợp trạng thái release; báo cáo không tự chứng nhận Stable…', '');
++      window.CANVIOPhase1ReleaseGate.run().then(function (r) { show('P62 · Báo cáo nghiệm thu được tạo. Trạng thái production vẫn fail-closed.', r); }).catch(function (e) { show('P62 · Không tạo được báo cáo.', { error: e.message || String(e), releaseCertified: false }); });
++    });
++  }
++  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mount, { once: true });
++  else mount();
++})();
+diff --git a/tests/p62/p62-release-candidate-gate.js b/tests/p62/p62-release-candidate-gate.js
+new file mode 100644
+index 0000000..e26bac0
+--- /dev/null
++++ b/tests/p62/p62-release-candidate-gate.js
+@@ -0,0 +1,71 @@
++/* CANVIO P62 — Phase 1 release candidate gate. It is intentionally fail-closed. */
++(function () {
++  'use strict';
++  var GATES = [
++    { id: 'browser-matrix', label: 'Chrome / Edge / Safari trên HTTPS', status: 'OPEN', evidence: 'Cần kiểm tra first boot, navigation, console và worker trên từng browser thật.' },
++    { id: 'real-media-export', label: 'Media export thực và đồng bộ A/V', status: 'OPEN', evidence: 'Cần file video/audio thật, decode, duration, A/V sync và cancellation ở nhiều thời điểm.' },
++    { id: 'whisper-inference', label: 'Whisper model inference thật', status: 'OPEN', evidence: 'Cần tải runtime/model, chạy Vietnamese/English/auto, timestamp, cancel, unload và retry.' },
++    { id: 'native-persistence', label: 'IndexedDB native và backup/restore', status: 'OPEN', evidence: 'Cần save/close/reopen, ZIP same-origin/fresh-origin, quota, blocked, corrupt và oversize.' },
++    { id: 'accessibility', label: 'Keyboard, screen reader và 200% zoom', status: 'OPEN', evidence: 'Cần nghiệm thu thủ công bằng screen reader và browser zoom thực.' },
++    { id: 'hosting-security', label: 'Hosting, HTTPS, CSP, CORS và headers', status: 'OPEN', evidence: 'Cần deployment thật, response headers, worker/model paths và post-deploy smoke.' }
++  ];
++  async function run() {
++    var prior = window.CANVIOReleaseGate && typeof window.CANVIOReleaseGate.run === 'function'
++      ? await window.CANVIOReleaseGate.run() : null;
++    var phaseTests = window.CANVIOPhaseSuite && typeof window.CANVIOPhaseSuite.tests === 'function'
++      ? window.CANVIOPhaseSuite.tests() : {};
++    var persistence = window.CANVIOPersistenceAudit;
++    var report = {
++      format: 'CANVIO_PHASE1_RELEASE_CANDIDATE',
++      candidate: 'P62',
++      build: window.CANVIO_BUILD && window.CANVIO_BUILD.version || 'unknown',
++      phaseSuite: window.CANVIOPhaseSuite && window.CANVIOPhaseSuite.version || '62.0.0',
++      generatedAt: new Date().toISOString(),
++      implementation: {
++        P57: !!persistence,
++        P58: !!window.CANVIOExportAcceptance,
++        P59: !!window.CANVIOWhisperAcceptance,
++        P60: !!window.CANVIOAccessibilityAudit,
++        P61: !!window.CANVIOHostingSecurityAudit,
++        P62: true
++      },
++      runtimeFeatureFlags: phaseTests,
++      priorReleaseGate: prior ? { candidate: prior.candidate || null, status: prior.status || null, releaseCertified: prior.releaseCertified === true } : null,
++      manualGates: GATES.map(function (gate) { return Object.assign({}, gate); }),
++      releaseCertified: false,
++      status: 'BLOCKED_PENDING_REAL_WORLD_ACCEPTANCE',
++      limitations: [
++        'Local source/VM and synthetic browser tests do not certify native storage or data recovery.',
++        'Synthetic MediaRecorder output does not certify real user-media A/V synchronization.',
++        'Worker asset inspection does not execute Whisper inference.',
++        'DOM accessibility screening does not replace WCAG, screen-reader or true 200% zoom review.',
++        'DOM checks cannot prove server response headers or a successful deployed Pages workflow.'
++      ]
++    };
++    return JSON.parse(JSON.stringify(report));
++  }
++  window.CANVIOPhase1ReleaseGate = { version: '62.0.0', run: run, gates: function () { return GATES.map(function (x) { return Object.assign({}, x); }); } };
++  var oldBuild = window.CANVIO_BUILD || {};
++  window.CANVIO_BUILD = Object.freeze(Object.assign({}, oldBuild, {
++    version: '23.3.76-p62', base: '23.3.70-p56', candidate: 'P62',
++    features: (oldBuild.features || []).concat([
++      'P57 native IndexedDB persistence audit and safe sentinel round-trip',
++      'P58 local exported-media metadata/decode-readiness acceptance',
++      'P59 Whisper worker provenance/privacy/runtime input hardening',
++      'P60 DOM accessibility screening with explicit manual limitations',
++      'P61 hosting/security environment audit',
++      'P62 fail-closed Phase 1 release candidate gate'
++    ])
++  }));
++  try { document.title = 'CANVIO 23.3.76-p62 — Phase 1 Release Candidate'; } catch (error) {}
++
++  var suite = window.CANVIOPhaseSuite;
++  if (suite) {
++    var previousTests = suite.tests; suite.version = '62.0.0';
++    suite.tests = function () {
++      var result = previousTests ? previousTests.apply(this, arguments) : {};
++      result.p62Phase1ReleaseGate = !!(window.CANVIOPhase1ReleaseGate && window.CANVIOPhase1ReleaseGate.run);
++      return result;
++    };
++  }
++})();
+diff --git a/tests/p62/run-p62-browser-smoke.py b/tests/p62/run-p62-browser-smoke.py
+new file mode 100755
+index 0000000..c679a63
+--- /dev/null
++++ b/tests/p62/run-p62-browser-smoke.py
+@@ -0,0 +1,350 @@
++#!/usr/bin/env python3
++"""Optional Chromium runtime smoke for CANVIO P62 Phase 1 candidate.
++
++This runs the real index.html in a Chromium document created with Playwright
++set_content(). A test-only local/sessionStorage shim is injected because the
++sandbox blocks all URL navigation, including localhost and file://. The page
++therefore has an opaque about:blank origin: native IndexedDB, secure-context,
++worker URL and persistence acceptance are explicitly NOT covered here.
++"""
++from __future__ import annotations
++
++import json
++import os
++import re
++import shutil
++import sys
++from pathlib import Path
++
++try:
++    from playwright.sync_api import sync_playwright
++except Exception as exc:  # pragma: no cover - optional dependency
++    raise SystemExit(
++        "Missing optional dependency: install Playwright for Python and make "
++        "a Chromium executable available. Original error: " + str(exc)
++    )
++
++ROOT = Path(__file__).resolve().parents[2]
++REPORT_PATH = Path(__file__).with_name("browser-smoke-report.json")
++EXPECTED_VERSION = "23.3.76-p62"
++EXPECTED_TITLE = "CANVIO 23.3.76-p62 — Phase 1 Release Candidate"
++
++STORAGE_SHIM = r"""<script id="canvio-p56-test-storage-shim">
++(() => {
++  function makeStorage() {
++    const values = new Map();
++    return {
++      get length() { return values.size; },
++      key(index) { return Array.from(values.keys())[index] ?? null; },
++      getItem(key) { key = String(key); return values.has(key) ? values.get(key) : null; },
++      setItem(key, value) { values.set(String(key), String(value)); },
++      removeItem(key) { values.delete(String(key)); },
++      clear() { values.clear(); }
++    };
++  }
++  Object.defineProperty(window, 'localStorage', { configurable: true, value: makeStorage() });
++  Object.defineProperty(window, 'sessionStorage', { configurable: true, value: makeStorage() });
++})();
++</script>"""
++
++
++def require(condition: bool, label: str, detail: str = "") -> None:
++    if not condition:
++        raise AssertionError(label + (": " + detail if detail else ""))
++    print("PASS", label, detail)
++
++
++def main() -> int:
++    source = (ROOT / "index.html").read_text(encoding="utf-8")
++    if re.match(r"^\s*<!doctype", source, re.I):
++        source = re.sub(
++            r"^(\s*<!doctype[^>]*>)",
++            lambda match: match.group(1) + STORAGE_SHIM,
++            source,
++            count=1,
++            flags=re.I,
++        )
++    else:
++        source = STORAGE_SHIM + source
++
++    # Prefer an explicitly selected/system browser for local reproduction; fall
++    # back to the browser binary installed by `python -m playwright install chromium`.
++    executable = os.environ.get("CHROMIUM_EXECUTABLE_PATH")
++
++    results: dict[str, object] = {
++        "format": "CANVIO_P62_CHROMIUM_RUNTIME_SMOKE",
++        "version": 1,
++        "candidate": "P62",
++        "browser": None,
++        "origin": "about:blank",
++        "testOnlyStorageShim": True,
++        "limitations": [
++            "Opaque about:blank origin; native IndexedDB and secure-context acceptance are not covered.",
++            "Navigation to localhost, file:// and other URLs is blocked by the host browser policy.",
++            "No Safari/Edge, real Whisper model download/inference, screen-reader or hosting acceptance in this run."
++        ],
++        "checks": [],
++    }
++    errors: list[str] = []
++    console_errors: list[str] = []
++    passed = 0
++
++    with sync_playwright() as playwright:
++        if not executable:
++            bundled = Path(playwright.chromium.executable_path)
++            if bundled.is_file():
++                executable = str(bundled)
++            else:
++                executable = shutil.which("chromium") or shutil.which("chromium-browser")
++        if not executable or not Path(executable).is_file():
++            raise SystemExit("Chromium executable not found. Install it with `python -m playwright install chromium` or set CHROMIUM_EXECUTABLE_PATH.")
++        browser = playwright.chromium.launch(
++            headless=True,
++            executable_path=executable,
++            args=["--no-sandbox", "--disable-dev-shm-usage", "--disable-gpu"],
++        )
++        page = browser.new_page(viewport={"width": 1440, "height": 1000}, accept_downloads=True)
++        results["browser"] = browser.version
++        page.on("pageerror", lambda error: errors.append(str(error)))
++        page.on("console", lambda message: console_errors.append(message.text[:1000]) if message.type == "error" else None)
++
++        # The sandbox has no external font access. Fulfill those stylesheet requests
++        # with an empty stylesheet so font networking does not mask app runtime errors.
++        page.route("https://fonts.googleapis.com/**", lambda route: route.fulfill(status=200, content_type="text/css", body=""))
++        page.route("https://fonts.gstatic.com/**", lambda route: route.fulfill(status=200, content_type="font/woff2", body=b""))
++
++        page.set_content(source, wait_until="load", timeout=120_000)
++        page.wait_for_timeout(4_200)  # includes the legacy P42 title-observer timer
++
++        title = page.title()
++        version = page.evaluate("window.CANVIO_BUILD && window.CANVIO_BUILD.version")
++        require(version == EXPECTED_VERSION, "P62 app build marker is active", str(version))
++        results["checks"].append({"id": "build-marker", "status": "pass", "value": version})
++        passed += 1
++        require(title == EXPECTED_TITLE, "P62 title survives inherited title observers", title)
++        results["checks"].append({"id": "document-title", "status": "pass", "value": title})
++        passed += 1
++
++        # Exercise core SPA navigation and lazy Video Engine initialization.
++        visited: list[str] = []
++        for name in ["home", "poster", "web", "videoEngine", "assets", "motion", "insight", "export", "settings"]:
++            page.evaluate("name => CV.go(name)", name)
++            page.wait_for_timeout(200)
++            active = page.locator(".page.active").first.get_attribute("id") if page.locator(".page.active").count() else ""
++            require(active == "page-" + name, "SPA route mounts " + name, str(active))
++            visited.append(name)
++            passed += 1
++        results["checks"].append({"id": "spa-navigation", "status": "pass", "pages": visited})
++
++        page.evaluate("CV.go('videoEngine')")
++        page.wait_for_timeout(800)
++        phase_tests = page.evaluate("CANVIOPhaseSuite.tests()")
++        phase_failed = [key for key, value in phase_tests.items() if value is not True]
++        require(not phase_failed, "P47–P62 runtime PhaseSuite flags all true after Video Engine mount", ", ".join(phase_failed))
++        results["checks"].append({"id": "phase-suite", "status": "pass", "flags": phase_tests})
++        passed += 1
++
++        phase1 = page.evaluate("""async () => {
++          const storage = await CANVIOPersistenceAudit.inspect();
++          const a11y = CANVIOAccessibilityAudit.inspect(document);
++          const hosting = CANVIOHostingSecurityAudit.inspect();
++          const worker = await CANVIOWhisperAcceptance.inspectWorker();
++          const gate = await CANVIOPhase1ReleaseGate.run();
++          return {
++            p57: {api:true, databaseAvailable:storage.databaseAvailable, readOnly:storage.scope.readOnly, schemaChanged:storage.scope.schemaChanged},
++            p58: !!CANVIOExportAcceptance.inspectFile,
++            p59: {api:true, workerChecked:worker.checked, inferenceNotClaimed:worker.modelInferenceTested===false},
++            p60: {api:true, issueCount:a11y.issueCount, wcagCertified:a11y.scope.wcagCertified},
++            p61: {api:true, serverHeadersVerified:hosting.serverSecurityHeadersVerified},
++            p62: {candidate:gate.candidate, implementation:gate.implementation, gateCount:gate.manualGates.length, releaseCertified:gate.releaseCertified, status:gate.status},
++            dashboard:!!document.getElementById('cv-phase1-acceptance')
++          };
++        }""")
++        require(phase1["p57"]["api"] and phase1["p57"]["readOnly"] and phase1["p57"]["schemaChanged"] is False, "P57 storage audit runs read-only without schema migration", json.dumps(phase1))
++        passed += 1
++        require(phase1["p58"] and phase1["p59"]["api"] and phase1["p59"]["inferenceNotClaimed"], "P58 export acceptance and P59 Whisper worker diagnostics are wired", json.dumps(phase1))
++        passed += 1
++        require(phase1["p60"]["api"] and phase1["p60"]["wcagCertified"] is False and phase1["p61"]["api"] and phase1["p61"]["serverHeadersVerified"] is False, "P60/P61 screening APIs preserve manual-audit boundaries", json.dumps(phase1))
++        passed += 1
++        require(phase1["p62"]["candidate"] == "P62" and phase1["p62"]["gateCount"] == 6 and phase1["p62"]["releaseCertified"] is False and phase1["dashboard"], "P62 dashboard/report remains fail-closed with six manual gates", json.dumps(phase1))
++        results["checks"].append({"id":"phase1-p57-p62-apis","status":"pass","value":phase1})
++        passed += 1
++
++        # P56 archive integrity preflight (retained): validate a real CANVIO CVZip output,
++        # reject a local/central CRC mismatch, and prove the preview omits values.
++        p56_archive = page.evaluate("""async () => {
++          const payload = {format:'CANVIO_FULL_BACKUP', createdAt:'2026-11-17T10:00:00.000Z', schema:2,
++            localStorage:{'canvio:project:smoke':'safe-value','canvio:provider:token':'DO_NOT_SHOW'},
++            indexedDB:[], excludedKeys:['canvio:provider:token'], warnings:[]};
++          const blob = await CVZip.build([{name:'manifest.json',data:'{}'},{name:'full-backup.json',data:JSON.stringify(payload)}]);
++          const valid = await CANVIOArchivePreflight.inspect(blob);
++          const before = localStorage.length;
++          const bytes = new Uint8Array(await blob.arrayBuffer());
++          const view = new DataView(bytes.buffer);
++          let eocd = -1;
++          for (let i=bytes.length-22;i>=Math.max(0,bytes.length-65557);i--) if(view.getUint32(i,true)===0x06054b50){eocd=i;break;}
++          if(eocd<0) throw new Error('Test ZIP missing EOCD');
++          const cdOffset=view.getUint32(eocd+16,true);
++          const bad=bytes.slice();
++          new DataView(bad.buffer).setUint32(cdOffset+16,0x12345678,true);
++          let mismatchRejected=false;
++          try { await CANVIOArchivePreflight.inspect(new Blob([bad],{type:'application/zip'})); }
++          catch(e) { mismatchRejected=/không khớp/.test(String(e.message||e)); }
++          const preview=CANVIOArchivePreflight.summarizePayload(payload,{status:'verified'});
++          return {valid:valid.valid,entries:valid.entryCount,central:valid.scope.centralDirectoryVerified,localHeaders:valid.scope.localHeadersMatched,
++            mismatchRejected,preview,previewLeaksSecret:JSON.stringify(preview).includes('DO_NOT_SHOW')||JSON.stringify(preview).includes('canvio:provider:token'),
++            storageUnchanged:localStorage.length===before};
++        }""")
++        require(p56_archive["valid"] and p56_archive["central"] and p56_archive["localHeaders"], "P56 accepts real CVZip output after Central Directory/Local Header verification", json.dumps(p56_archive))
++        passed += 1
++        require(p56_archive["mismatchRejected"], "P56 rejects tampered Central Directory CRC metadata", json.dumps(p56_archive))
++        passed += 1
++        require(not p56_archive["previewLeaksSecret"] and p56_archive["preview"]["localStorageKeys"] == 1 and p56_archive["storageUnchanged"], "P56 restore preview omits secret values and leaves storage unchanged", json.dumps(p56_archive))
++        results["checks"].append({"id": "p56-archive-integrity-preview", "status": "pass", "value": p56_archive})
++        passed += 1
++
++        duplicates = page.evaluate("""() => {
++          const counts = new Map();
++          for (const node of document.querySelectorAll('[id]')) counts.set(node.id, (counts.get(node.id) || 0) + 1);
++          return [...counts.entries()].filter(([, count]) => count > 1);
++        }""")
++        require(not duplicates, "No duplicate IDs after runtime navigation", json.dumps(duplicates[:20]))
++        results["checks"].append({"id": "runtime-duplicate-ids", "status": "pass", "count": 0})
++        passed += 1
++
++        # Exercise effective track state and WebVTT logic through the real public API.
++        track_result = page.evaluate("""() => {
++          const video = CV.engines.video;
++          const before = video.trackState(1).hidden;
++          video.toggleTrack(1, 'hidden');
++          const during = video.trackState(1).hidden;
++          video.toggleTrack(1, 'hidden');
++          const after = video.trackState(1).hidden;
++          const parsed = video.vttParse('WEBVTT\\n\\n00:00:00.000 --> 00:00:01.200\\nCANVIO QA');
++          return {before, during, after, parsed: Array.isArray(parsed) ? parsed.length : (parsed && parsed.cues ? parsed.cues.length : null)};
++        }""")
++        require(track_result["during"] is True and track_result["after"] is False, "Video track visibility toggles and restores", str(track_result))
++        passed += 1
++        require(track_result["parsed"] == 1, "WebVTT parser accepts one valid cue", str(track_result))
++        passed += 1
++        results["checks"].append({"id": "video-track-vtt", "status": "pass", "value": track_result})
++
++        # Create a short deterministic text-only timeline; no user media is touched.
++        setup = page.evaluate("""() => {
++          const api = CV.engines.video, state = api._state();
++          state.clips = [{id:'p62-browser-smoke', name:'P62 browser smoke', type:'text', text:'CANVIO P55 MEDIA TEST', start:0, duration:0.9, track:3, captionStyle:{fontSize:48, position:'center', bgOpacity:35}}];
++          state.selected = 'p62-browser-smoke'; state.duration = 0.9; state.time = 0;
++          api.commit();
++          const originalClick = HTMLAnchorElement.prototype.click;
++          HTMLAnchorElement.prototype.click = function() {
++            if (this.download && /\\.(webm|mp4)$/i.test(this.download)) {
++              window.__canvioP56SmokeDownload = {name:this.download, href:this.href};
++              return;
++            }
++            return originalClick.call(this);
++          };
++          return {canvasWidth:document.getElementById('vtCanvas').width, canvasHeight:document.getElementById('vtCanvas').height};
++        }""")
++        results["timelineFixture"] = setup
++
++        def export_and_decode(method: str, extension: str) -> dict:
++            return page.evaluate(
++                """async ({method, extension}) => {
++                  const api = CV.engines.video;
++                  const blob = await api[method]();
++                  if (!blob || !blob.size) throw new Error(method + ' returned no video data');
++                  const mime = String(blob.type || '');
++                  if (extension === 'mp4' && (!/^video\\/mp4(?:;|$)/i.test(mime) || !/(?:avc1|avc3)/i.test(mime))) {
++                    throw new Error('Unexpected MP4/H.264 MIME: ' + mime);
++                  }
++                  if (extension === 'webm' && !/^video\\/webm(?:;|$)/i.test(mime)) throw new Error('Unexpected WebM MIME: ' + mime);
++                  const url = URL.createObjectURL(blob), video = document.createElement('video');
++                  video.preload = 'metadata'; video.src = url; document.body.appendChild(video);
++                  try {
++                    await new Promise((resolve, reject) => {
++                      video.onloadedmetadata = resolve;
++                      video.onerror = () => reject(new Error('browser could not decode ' + extension));
++                    });
++                    const selected = new File([blob], 'canvio-smoke.' + extension, {type:mime});
++                    const accepted = await CANVIOExportAcceptance.inspectFile(selected, {timeoutMs:10000});
++                    return {size:blob.size, mime, duration:video.duration, width:video.videoWidth, height:video.videoHeight, readyState:video.readyState, p58:{metadataReadable:accepted.metadataReadable,decodeReadiness:accepted.decodeReadiness,avSyncCertified:accepted.scope.avSyncCertified}, download:window.__canvioP56SmokeDownload || null};
++                  } finally { URL.revokeObjectURL(url); video.remove(); }
++                }""",
++                {"method": method, "extension": extension},
++            )
++
++        webm_result = export_and_decode("exportWebM", "webm")
++        require(webm_result["size"] > 0 and webm_result["duration"] >= 0.7 and webm_result["width"] == 960, "CANVIO WebM render produces browser-decodable media", json.dumps(webm_result))
++        results["checks"].append({"id": "real-webm-export-decode", "status": "pass", "value": webm_result})
++        passed += 1
++        require(webm_result.get("p58", {}).get("metadataReadable") and webm_result.get("p58", {}).get("decodeReadiness") and webm_result.get("p58", {}).get("avSyncCertified") is False, "P58 independently reads metadata/decode-readiness of the generated file", json.dumps(webm_result.get("p58")))
++        passed += 1
++
++        caps = page.evaluate("CV.engines.video.exportCapabilities()")
++        results["codecCapabilities"] = caps
++        if caps.get("mp4Mime"):
++            mp4_result = export_and_decode("exportMP4", "mp4")
++            require(mp4_result["size"] > 0 and mp4_result["duration"] >= 0.7 and mp4_result["width"] == 960, "CANVIO MP4/H.264 render produces browser-decodable media", json.dumps(mp4_result))
++            results["checks"].append({"id": "real-mp4-h264-export-decode", "status": "pass", "value": mp4_result})
++            passed += 1
++        else:
++            results["checks"].append({"id": "real-mp4-h264-export-decode", "status": "skip", "reason": "This Chromium build does not report a supported AVC MIME."})
++
++        # Cancel an in-flight export and prove the engine can export again afterwards.
++        cancel_result = page.evaluate("""async () => {
++          const state = CV.engines.video._state(); state.duration = 5; state.time = 0;
++          const pending = CV.engines.video.exportWebM();
++          setTimeout(() => CV.engines.video.cancelExport(), 250);
++          const blob = await pending;
++          return {returnedBlob:!!blob, recovery:CANVIOReleaseGate.renderRecovery.recover()?.status, cancelButtonDisabled:document.getElementById('vtExportCancel')?.disabled};
++        }""")
++        require(not cancel_result["returnedBlob"] and cancel_result["recovery"] == "cancelled" and cancel_result["cancelButtonDisabled"] is True, "In-flight WebM render can be cancelled and cleans up UI", json.dumps(cancel_result))
++        results["checks"].append({"id": "render-cancel", "status": "pass", "value": cancel_result})
++        passed += 1
++        page.evaluate("const s=CV.engines.video._state();s.duration=.8;s.time=0")
++        retry = export_and_decode("exportWebM", "webm")
++        require(retry["size"] > 0, "A new WebM render succeeds after cancellation", json.dumps(retry))
++        results["checks"].append({"id": "render-retry-after-cancel", "status": "pass", "value": retry})
++        passed += 1
++
++        # Responsive overflow check; 720 CSS px is a 200%-zoom reflow proxy only.
++        viewport_checks = []
++        for width in [1440, 768, 720, 375, 320]:
++            page.set_viewport_size({"width": width, "height": 900})
++            page.wait_for_timeout(100)
++            metric = page.evaluate("({width:innerWidth, documentWidth:document.documentElement.scrollWidth, bodyWidth:document.body.scrollWidth})")
++            metric["overflow"] = metric["documentWidth"] > width
++            viewport_checks.append(metric)
++        require(all(not item["overflow"] for item in viewport_checks), "No horizontal document overflow at 1440/768/720/375/320 px", json.dumps(viewport_checks))
++        results["checks"].append({"id": "responsive-widths", "status": "pass", "value": viewport_checks})
++        passed += 1
++
++        # Release report should block in this harness because about:blank is not a secure origin.
++        release = page.evaluate("CANVIOReleaseGate.run()")
++        require(release["releaseCertified"] is False, "P56 inherited release gate never self-certifies", str(release["releaseCertified"]))
++        require(release["status"] == "BLOCKED" and any("secure-context" in item for item in release["failures"]), "Release report correctly records opaque-origin blocker", json.dumps(release["failures"]))
++        results["checks"].append({"id": "release-gate-fail-closed", "status": "pass", "value": {"status":release["status"],"failures":release["failures"],"manualAcceptance":release["manualAcceptance"]}})
++        passed += 2
++
++        require(not errors, "Zero uncaught JavaScript page errors", json.dumps(errors))
++        results["checks"].append({"id": "uncaught-page-errors", "status": "pass", "count": len(errors)})
++        passed += 1
++        require(not console_errors, "Zero browser console errors after font requests are stubbed", json.dumps(console_errors))
++        results["checks"].append({"id": "console-errors", "status": "pass", "count": len(console_errors)})
++        passed += 1
++
++        browser.close()
++
++    results["summary"] = {"passed": passed, "failed": 0, "status": "PASS_WITH_ORIGIN_LIMITATIONS"}
++    REPORT_PATH.write_text(json.dumps(results, ensure_ascii=False, indent=2), encoding="utf-8")
++    print(f"\nP62 Chromium browser smoke: {passed} checks passed; origin-dependent acceptance remains pending.")
++    print("Report:", REPORT_PATH)
++    return 0
++
++
++if __name__ == "__main__":
++    try:
++        raise SystemExit(main())
++    except Exception as error:
++        print("P56 browser smoke failed:", repr(error), file=sys.stderr)
++        raise

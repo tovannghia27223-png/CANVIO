@@ -1,0 +1,101 @@
+{
+  "format": "CANVIO_P68_P70_CHROMIUM_SMOKE",
+  "candidate": "P70",
+  "version": "23.3.84-p70",
+  "browser": "157.0.8103.0",
+  "origin": "about:blank",
+  "testOnlyStorageShim": true,
+  "limitations": [
+    "Opaque about:blank; native IndexedDB/HTTPS are not covered.",
+    "OBJ offline viewer smoke is an in-memory document, not a clean-machine offline acceptance test.",
+    "No Chrome/Edge/Safari matrix, real project restore, real A/V sync, Whisper inference, WCAG review or deployed hosting certificate."
+  ],
+  "summary": {
+    "pass": 16,
+    "fail": 0
+  },
+  "checks": [
+    {
+      "id": "P70 build marker active",
+      "status": "pass",
+      "detail": "23.3.84-p70"
+    },
+    {
+      "id": "P70 document title survives legacy observers",
+      "status": "pass",
+      "detail": "CANVIO 23.3.84-p70 — Stable Release Candidate"
+    },
+    {
+      "id": "P68–P70 control panel mounted in Video Engine",
+      "status": "pass",
+      "detail": ""
+    },
+    {
+      "id": "P47–P70 PhaseSuite flags all true",
+      "status": "pass",
+      "detail": "{}"
+    },
+    {
+      "id": "P68/P69/P70 APIs exposed",
+      "status": "pass",
+      "detail": "{\"p68\": true, \"p69\": true, \"p70\": true, \"build\": \"23.3.84-p70\", \"phase\": \"70.0.0\"}"
+    },
+    {
+      "id": "P68 packages real tetra OBJ geometry",
+      "status": "pass",
+      "detail": "{\"format\": \"CANVIO_P68_OFFLINE_3D_PREFLIGHT\", \"status\": \"PASS\", \"checks\": [{\"id\": \"single-html-document\", \"ok\": true}, {\"id\": \"no-external-script\", \"ok\": true}, {\"id\": \"no-external-stylesheet\", \"ok\": true}, {\"id\": \"no-network-api\", \"ok\": true}, {\"id\": \"embedded-geometry\", \"ok\": true}, {\"id\": \"offline-controls\", \"ok\": true}], \"pass\": 6, \"fail\": 0, \"bytes\": 5199, \"singleFile\": true, \"externalRuntime\": false, \"geometryOnly\": true, \"noTextures\": true, \"noMaterials\": true}"
+    },
+    {
+      "id": "P68 viewer package embeds geometry and forbids external runtime",
+      "status": "pass",
+      "detail": ""
+    },
+    {
+      "id": "P69 audit + P70 release gate remain read-only and fail-closed",
+      "status": "pass",
+      "detail": "{\"nodes\": 13466, \"readOnly\": true, \"totals\": {\"canvasBackingBytes\": 14493600, \"imageDecodedEstimateBytes\": 12480000, \"videoSurfaceEstimateBytes\": 0, \"combinedSurfaceEstimateBytes\": 26973600}, \"resourceCount\": 0, \"phase1\": {\"status\": \"AVAILABLE_ASYNC_GATE_NOT_AUTORUN\", \"available\": true, \"invoked\": false, \"releaseCertified\": false}, \"phase2\": {\"status\": \"IMPLEMENTATION_READY_PENDING_MANUAL_ACCEPTANCE\", \"releaseCertified\": false, \"summary\": {\"pass\": 32, \"fail\": 0}}, \"gates\": 14, \"pending\": 14, \"status\": \"BLOCKED_PENDING_REAL_WORLD_ACCEPTANCE\", \"certified\": false}"
+    },
+    {
+      "id": "P70 summary does not auto-run asynchronous Phase 1 media probe",
+      "status": "pass",
+      "detail": ""
+    },
+    {
+      "id": "P69 browser frame sampler runs",
+      "status": "pass",
+      "detail": "{\"supported\": true, \"durationMs\": 314.99999999999636, \"frames\": 19, \"averageFps\": 60.31746031746102, \"medianFrameMs\": 16.700000000000728, \"over33ms\": 0, \"over50ms\": 0, \"heuristicOnly\": true, \"noProjectMutation\": true}"
+    },
+    {
+      "id": "Offline viewer renders mesh to canvas",
+      "status": "pass",
+      "detail": "{'w': 1024, 'h': 706}, nonblank pixels=11632"
+    },
+    {
+      "id": "Offline viewer wireframe control works",
+      "status": "pass",
+      "detail": ""
+    },
+    {
+      "id": "Offline viewer runs without errors or network requests",
+      "status": "pass",
+      "detail": "{\"errors\": [], \"requests\": []}"
+    },
+    {
+      "id": "P70 panel has no horizontal overflow at 375px",
+      "status": "pass",
+      "detail": ""
+    },
+    {
+      "id": "No uncaught application page errors",
+      "status": "pass",
+      "detail": "[]"
+    },
+    {
+      "id": "No console errors in app boot/smoke",
+      "status": "pass",
+      "detail": "[]"
+    }
+  ],
+  "releaseCertified": false,
+  "releaseStatus": "BLOCKED_PENDING_REAL_WORLD_ACCEPTANCE"
+}

@@ -1,0 +1,279 @@
+--- a/index.html
++++ b/index.html
+@@ -1357,14 +1357,14 @@
+ <div class="card" style="margin-top:12px"><div class="cardTop"><h3>Workflow thống nhất</h3><span class="sub">Một dự án · Nhiều Studio · Không nhân bản dữ liệu</span></div><div class="ch-flow"><div><i>1</i><b>Plan</b><small>Creative Hub / ShotCraft</small></div><div><i>2</i><b>Prepare</b><small>AI / Image / Audio</small></div><div><i>3</i><b>Edit</b><small>CapCut Engine</small></div><div><i>4</i><b>Refine</b><small>Motion / Brand / Assets</small></div><div><i>5</i><b>Deliver</b><small>Export Center</small></div></div></div>
+ </section>
+ <section class="page" id="page-videoEngine">
+-<div class="head"><div><div class="eyebrow">CANVIO 11.0 · MULTITRACK VIDEO WORKSPACE</div><h1>Video Production Engine</h1><p>Dựng video nhiều track ngay trong trình duyệt: video, hình ảnh và chữ; căn thời gian, xem trước và xuất WebM.</p></div><div class="headActions"><span class="badgeSoft" id="vtStatus">Local browser engine</span></div></div>
++<div class="head"><div><div class="eyebrow">CANVIO 11.0 · MULTITRACK VIDEO WORKSPACE</div><h1>Video Production Engine</h1><p>Dựng video nhiều track ngay trong trình duyệt: video, hình ảnh, âm thanh và phụ đề; xuất WebM hoặc MP4/H.264 nếu trình duyệt hỗ trợ.</p></div><div class="headActions"><span class="badgeSoft" id="vtStatus">Local browser engine</span></div></div>
+ <div class="card" style="margin-bottom:12px"><div class="engine-toolbar">
+ <button class="btn btn-primary sm" onclick="CV.engines.video.addFiles()">+ Thêm media</button><input accept="video/*,image/*,audio/*" hidden="" id="vtFiles" multiple="" onchange="CV.engines.video.importFiles(event)" type="file"/>
+-<button class="btn btn-soft sm" onclick="CV.engines.video.addText()">+ Track chữ</button><button class="btn btn-ghost sm" onclick="CV.engines.video.play()">▶ Phát</button><button class="btn btn-ghost sm" onclick="CV.engines.video.pause()">Ⅱ Dừng</button><button class="btn btn-soft sm" onclick="CV.engines.video.split()" title="Tách clip đang chọn tại playhead">✂ Tách</button><button class="btn btn-soft sm" onclick="CV.engines.video.crossfade(1)" title="Chồng clip đang chọn lên clip trước 1 giây; kiểu chuyển cảnh (mờ/trượt/zoom/quét) chọn trong Thuộc tính → Bộ lọc">⇋ Chuyển cảnh</button><button class="btn btn-ghost sm" onclick="CV.engines.video.srtImport()">⇧ SRT</button><button class="btn btn-ghost sm" onclick="CV.engines.video.srtExport()">⇩ SRT</button><button class="btn btn-ghost sm" onclick="CV.engines.video.vttImport()">⇧ VTT</button><button class="btn btn-ghost sm" onclick="CV.engines.video.vttExport()">⇩ VTT</button><button class="btn btn-ghost sm" onclick="CV.engines.video.edl()" title="Xuất EDL CMX3600 30 fps">⇩ EDL</button><button class="btn btn-soft sm" onclick="CV.engines.video.beatPrompt()" title="Cắt clip đang chọn theo BPM">♪ Cắt theo nhịp</button><button class="btn btn-soft sm" onclick="CV.engines.video.autoCutPrompt()" title="Phát hiện khoảng lặng của audio → cắt (tuỳ chọn xoá + dồn)">✂ AutoCut</button><button class="btn btn-soft sm" onclick="CV.engines.video.beatSyncPrompt()" title="Tự nhận nhịp từ audio rồi cắt hình theo nhịp">♪ Beat sync</button><button class="btn btn-ghost sm" onclick="CV.engines.video.undoAuto()" title="Hoàn tác tối đa 30 bước: tách, chuyển cảnh, Áp dụng, xoá, AutoCut, Beat sync, LUT">↶ Hoàn tác</button><button class="btn btn-ghost sm" onclick="CV.engines.video.redo()" title="Làm lại bước vừa hoàn tác">↷ Làm lại</button><button class="btn btn-ghost sm" onclick="CV.engines.video.save()">Lưu timeline</button><button class="btn btn-primary sm" onclick="CV.engines.video.exportWebM()">Xuất WebM</button>
++<button class="btn btn-soft sm" onclick="CV.engines.video.addText()">+ Track chữ</button><button class="btn btn-ghost sm" onclick="CV.engines.video.play()">▶ Phát</button><button class="btn btn-ghost sm" onclick="CV.engines.video.pause()">Ⅱ Dừng</button><button class="btn btn-soft sm" onclick="CV.engines.video.split()" title="Tách clip đang chọn tại playhead">✂ Tách</button><button class="btn btn-soft sm" onclick="CV.engines.video.crossfade(1)" title="Chồng clip đang chọn lên clip trước 1 giây; kiểu chuyển cảnh (mờ/trượt/zoom/quét) chọn trong Thuộc tính → Bộ lọc">⇋ Chuyển cảnh</button><button class="btn btn-ghost sm" onclick="CV.engines.video.srtImport()">⇧ SRT</button><button class="btn btn-ghost sm" onclick="CV.engines.video.srtExport()">⇩ SRT</button><button class="btn btn-ghost sm" onclick="CV.engines.video.vttImport()">⇧ VTT</button><button class="btn btn-ghost sm" onclick="CV.engines.video.vttExport()">⇩ VTT</button><button class="btn btn-ghost sm" onclick="CV.engines.video.runCaptionQC()" title="Kiểm tra thời lượng, chồng cue và tốc độ đọc">✓ QC phụ đề</button><button class="btn btn-soft sm" onclick="CV.engines.video.whisperCaption()" title="Whisper đa ngôn ngữ chạy cục bộ trong trình duyệt; cần tải model lần đầu">Whisper AI</button><button class="btn btn-ghost sm" onclick="CV.engines.video.edl()" title="Xuất EDL CMX3600 30 fps">⇩ EDL</button><button class="btn btn-soft sm" onclick="CV.engines.video.beatPrompt()" title="Cắt clip đang chọn theo BPM">♪ Cắt theo nhịp</button><button class="btn btn-soft sm" onclick="CV.engines.video.autoCutPrompt()" title="Phát hiện khoảng lặng của audio → cắt (tuỳ chọn xoá + dồn)">✂ AutoCut</button><button class="btn btn-soft sm" onclick="CV.engines.video.beatSyncPrompt()" title="Tự nhận nhịp từ audio rồi cắt hình theo nhịp">♪ Beat sync</button><button class="btn btn-ghost sm" onclick="CV.engines.video.undoAuto()" title="Hoàn tác tối đa 30 bước: tách, chuyển cảnh, Áp dụng, xoá, AutoCut, Beat sync, LUT">↶ Hoàn tác</button><button class="btn btn-ghost sm" onclick="CV.engines.video.redo()" title="Làm lại bước vừa hoàn tác">↷ Làm lại</button><button class="btn btn-ghost sm" onclick="CV.engines.video.save()">Lưu timeline</button><button class="btn btn-primary sm" onclick="CV.engines.video.exportWebM()">Xuất WebM</button><button class="btn btn-soft sm" onclick="CV.engines.video.exportMP4()" title="Chỉ hoạt động khi trình duyệt hỗ trợ ghi MP4/H.264">Xuất MP4/H.264</button>
+ </div><div class="tiny" id="vtMessage" style="margin-top:8px">Thêm video, ảnh hoặc âm thanh. Clip được xếp thành các track độc lập.</div></div>
+ <div class="grid g2" style="grid-template-columns:minmax(0,1.2fr) minmax(250px,.8fr);gap:12px">
+ <div class="card"><div class="cardTop"><h3>Preview</h3><span class="sub" id="vtTime">00:00 / 00:30</span></div><canvas height="540" id="vtCanvas" style="width:100%;background:#0b1220;border-radius:10px;display:block" width="960"></canvas><input id="vtScrub" max="30" min="0" oninput="CV.engines.video.seek(this.value)" step="0.1" style="width:100%;margin-top:10px" type="range" value="0"/></div>
+-<div class="card"><div class="cardTop"><h3>Clip properties</h3><span class="sub">Chọn clip trên timeline</span></div><div class="tiny" id="vtProps">Chưa chọn clip.</div><div class="engine-note" style="margin-top:12px">Ảnh/video được lưu bằng IndexedDB trong trình duyệt; timeline metadata lưu cục bộ. Export hiện hỗ trợ WebM bằng MediaRecorder. Track audio có thể được quản lý và sắp xếp trên timeline; bản render xuất hình ảnh/chữ và trộn track AUDIO vào file WebM (âm thanh gốc của clip video vẫn tắt tiếng).</div></div>
++<div class="card"><div class="cardTop"><h3>Clip properties</h3><span class="sub">Chọn clip trên timeline</span></div><div class="tiny" id="vtProps">Chưa chọn clip.</div><div class="engine-note" style="margin-top:12px">Ảnh/video được lưu bằng IndexedDB trong trình duyệt; timeline metadata lưu cục bộ. Export mặc định là WebM; MP4/H.264 chỉ bật khi MediaRecorder xác nhận đúng codec avc1/avc3. Track audio được trộn vào stream xuất; audio gốc của clip video vẫn tắt tiếng. Kiểm tra codec hiển thị ở trạng thái đầu trang.</div></div>
+ </div>
+ <div class="card" style="margin-top:12px"><div class="cardTop"><h3>Multitrack timeline</h3><span class="sub" id="vtDuration">30 giây</span></div><div class="stack" id="vtTimeline" style="gap:8px;overflow-x:auto"></div></div>
+ <div class="grid g2" style="margin-top:12px"><div class="card"><div class="cardTop"><h3>Asset Library</h3><span class="sub">Dùng chung CANVIO Assets</span></div><div class="assetGrid" id="vtAssetPicker"></div></div><div class="card"><div class="cardTop"><h3>External editor</h3><span class="sub">Optional</span></div><p class="tiny" style="line-height:1.8">Khi cần các thao tác nâng cao như trim chuyên sâu, hiệu chỉnh màu hoặc chuyển mã MP4, bạn có thể mở Reframe. Đây là ứng dụng riêng, không phải lõi nhúng trong CANVIO.</p><a class="btn btn-soft" href="https://reframe-os.netlify.app/" rel="noopener noreferrer" target="_blank">Mở Reframe ↗</a></div></div>
+@@ -5060,7 +5060,7 @@
+   function vClipAudible(c){return !!(c&&c.type==='audio'&&c.el&&!c.hidden&&!vTrackState(c.track).hidden&&!vTrackState(c.track).muted)}
+   function vToggleTrack(track,action){track=Number(track);if([1,2,3,4].indexOf(track)<0||['hidden','locked','muted'].indexOf(action)<0||(action==='muted'&&track!==2))return false;var cfg=vTrackState(track);vPushUndo();cfg[action]=!cfg[action];vSave();vRender();vDraw();var msg=action==='hidden'?(cfg.hidden?'Đã ẩn track':'Đã hiện track'):action==='locked'?(cfg.locked?'Đã khóa track':'Đã mở khóa track'):(cfg.muted?'Đã tắt tiếng track audio':'Đã bật tiếng track audio');toast(msg);return true}
+   function vTrackTest(){var clean=vTrackSettingsClean({1:{hidden:1,locked:true},2:{muted:true,locked:true},3:{hidden:true,extra:'ignored'},4:{muted:true}});var prior=videoState.tracks;videoState.tracks=clean;var checks={trackSettingsStrict:clean[1].hidden===false&&clean[1].locked===true&&clean[2].muted===true&&clean[3].hidden===true&&clean[4].muted===false,trackLockSemantics:vClipLocked({track:2})&& !vClipLocked({track:3}),trackVisibilitySemantics:!vClipVisible({track:3})&&vClipVisible({track:1}),audioMuteSemantics:!vClipAudible({type:'audio',track:2,el:{}})};videoState.tracks=prior;return checks}
+-  function vInit(){var c=document.getElementById('vtCanvas');if(!c)return;vOpenDB().then(function(){if(!videoState.loaded){vLoad();videoState.loaded=true}vRender();vDraw();vAssetPicker()}).catch(function(e){console.warn(e);vRender()})}
++  function vInit(){var c=document.getElementById('vtCanvas');if(!c)return;var caps=vExportCapabilities(),headStatus=document.getElementById('vtStatus');if(headStatus)headStatus.textContent='WebM '+(caps.webmMime?'sẵn sàng':'không hỗ trợ')+' · MP4/H.264 '+(caps.mp4Mime?'sẵn sàng':'không khả dụng trên trình duyệt này');vOpenDB().then(function(){if(!videoState.loaded){vLoad();videoState.loaded=true}vRender();vDraw();vAssetPicker()}).catch(function(e){console.warn(e);vRender()})}
+   function vOpenDB(){return new Promise(function(resolve,reject){if(!window.indexedDB){resolve(null);return}var q=indexedDB.open('CANVIO_81_MEDIA',1);q.onupgradeneeded=function(){if(!q.result.objectStoreNames.contains('media'))q.result.createObjectStore('media',{keyPath:'id'})};q.onsuccess=function(){videoState.db=q.result;resolve(q.result)};q.onerror=function(){reject(q.error||new Error("CANVIO: không tải/đọc được tài nguyên"))}})}
+   function vPut(id,file){return new Promise(function(resolve,reject){if(!videoState.db){resolve(false);return}var tx;try{tx=videoState.db.transaction('media','readwrite');tx.objectStore('media').put({id:id,blob:file})}catch(e){reject(e);return}tx.oncomplete=function(){resolve(true)};tx.onerror=function(){reject(tx.error||new Error('Không lưu được media vào IndexedDB'))}})}
+   /* P16 · restore a missing media record under the same id. Existing records are never overwritten. */
+@@ -5159,6 +5159,64 @@
+   function vVttEscape(value){return String(value==null?'':value).replace(/\u0000/g,'').replace(/-->/g,'→').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+   function vVttParse(txt){var lines=String(txt==null?'':txt).replace(/^\uFEFF/,'').replace(/\r/g,'').split('\n'),out=[],i=0;if(!/^WEBVTT(?:\s|$)/.test((lines[0]||'').trim()))return out;while(i<lines.length){var line=(lines[i]||'').trim();if(!line){i++;continue}if(/^WEBVTT(?:\s|$)/.test(line)){i++;continue}if(/^(NOTE|STYLE|REGION)(?:\s|$)/.test(line)){while(i<lines.length&&(lines[i]||'').trim())i++;continue}var timingIndex=line.indexOf('-->')>=0?i:(i+1<lines.length&&(lines[i+1]||'').indexOf('-->')>=0?i+1:-1);if(timingIndex<0){i++;continue}var timing=(lines[timingIndex]||'').trim(),m=/^(.+?)\s+-->\s+(.+?)(?:\s+.*)?$/.exec(timing);if(!m){i=timingIndex+1;continue}var start=vVttTime(m[1]),end=vVttTime(m[2]);i=timingIndex+1;var cue=[];while(i<lines.length&&(lines[i]||'').trim()){cue.push(lines[i]);i++}var text=vVttText(cue.join('\n'));if(Number.isFinite(start)&&Number.isFinite(end)&&end-start>=.2&&text)out.push({start:start,duration:end-start,text:text});if(out.length>=2000)break}return out}
+   function vVttTests(){var sample='\uFEFFWEBVTT\n\nNOTE exported by test\nignored\n\nintro\n00:00:01.250 --> 00:00:03.500 align:start position:50%\n<b>Hello</b><br>world &amp; all\n\n00:59.000 --> 01:02.000\nLast cue\n\nSTYLE\n::cue { color: white }\n';var a=vVttParse(sample),bad=vVttParse('WEBVTT\n\n00:02.000 --> 00:01.000\nBad\n\n00:03.000 --> 00:04.000\n\n'),round=a.length===2&&a[0].start===1.25&&a[0].duration===2.25&&a[0].text==='Hello\nworld & all'&&a[1].start===59&&a[1].duration===3;return {webvttHeaderRequired:vVttParse('00:00:01.000 --> 00:00:02.000\nNo header').length===0,webvttCueSettingsAndId:round,webvttMalformedCuesRejected:bad.length===0,webvttTimeFormat:vVttFmt(3661.234)==='01:01:01.234',webvttTextEscaping:vVttEscape('A & B <C> -->')==='A &amp; B &lt;C&gt; →',webvttInvalidMinuteRejected:!Number.isFinite(vVttTime('00:60.000'))&& !Number.isFinite(vVttTime('00:00:60.000'))}}
++  function vCaptionQC(){
++    var cues=videoState.clips.filter(function(c){return c&&c.type==='text'}).slice().sort(function(a,b){return (Number(a.start)||0)-(Number(b.start)||0)}),issues=[],furthestEnd=-1,furthestIndex=0;
++    function add(severity,code,index,message){issues.push({severity:severity,code:code,cue:index+1,message:message})}
++    cues.forEach(function(c,i){
++      var start=Number(c.start),duration=Number(c.duration),text=String(c.text||'').replace(/\r/g,'').trim(),lines=text?text.split('\n'):[];
++      if(!Number.isFinite(start)||start<0)add('error','invalid-start',i,'Cue '+(i+1)+': thời điểm bắt đầu không hợp lệ.');
++      if(!Number.isFinite(duration)||duration<=0)add('error','invalid-duration',i,'Cue '+(i+1)+': thời lượng không hợp lệ.');
++      if(!text)add('error','empty-text',i,'Cue '+(i+1)+': nội dung đang trống.');
++      if(Number.isFinite(start)&&Number.isFinite(duration)&&duration>0){
++        if(duration<.7)add('warning','short-duration',i,'Cue '+(i+1)+': thời lượng dưới 0,7 giây.');
++        var cps=text.length/duration;if(text&&cps>20)add('warning','reading-speed',i,'Cue '+(i+1)+': tốc độ đọc trên 20 ký tự/giây ('+cps.toFixed(1)+').');
++        if(start<furthestEnd-.05)add('warning','overlap',i,'Cue '+(i+1)+' chồng thời gian với cue '+furthestIndex+'.');
++        if(start+duration>furthestEnd){furthestEnd=start+duration;furthestIndex=i+1;}
++      }
++      if(lines.length>2)add('warning','too-many-lines',i,'Cue '+(i+1)+': có hơn 2 dòng.');
++      if(lines.some(function(line){return line.length>42}))add('warning','long-line',i,'Cue '+(i+1)+': có dòng dài hơn 42 ký tự.');
++    });
++    return {cueCount:cues.length,errorCount:issues.filter(function(x){return x.severity==='error'}).length,warningCount:issues.filter(function(x){return x.severity==='warning'}).length,issues:issues,clean:issues.length===0,heuristics:{maxLines:2,maxLineCharacters:42,maxReadingSpeed:20,minimumSuggestedDuration:.7}};
++  }
++  function vRunCaptionQC(){var r=vCaptionQC(),el=document.getElementById('vtMessage'),summary='Phụ đề: '+r.cueCount+' cue · '+r.errorCount+' lỗi cấu trúc · '+r.warningCount+' cảnh báo đọc/hiển thị.';if(!r.cueCount)summary='Chưa có cue phụ đề trên timeline.';if(el)el.textContent=summary+(r.issues.length?' '+r.issues.slice(0,4).map(function(x){return x.message}).join(' '):' Không phát hiện vấn đề theo bộ kiểm tra cơ bản.');toast(summary);return r}
++  var vWhisperWorker=null,vWhisperPending={},vWhisperRequestId=0,vWhisperBusy=false;
++  function vWhisperBuildCues(output,base,duration){
++    output=output&&typeof output==='object'?output:{};base=Math.max(0,Number(base)||0);duration=Math.max(.2,Number(duration)||.2);
++    var chunks=Array.isArray(output.chunks)?output.chunks:[],cues=[];
++    chunks.forEach(function(part){var ts=part&&part.timestamp,text=String(part&&part.text||'').trim();if(!text||!Array.isArray(ts)||ts.length<2||ts[0]==null||ts[1]==null)return;var a=Number(ts[0]),b=Number(ts[1]);if(!Number.isFinite(a)||!Number.isFinite(b)||b-a<.2)return;a=Math.max(0,Math.min(duration,a));b=Math.max(a+.2,Math.min(duration,b));if(b-a>=.2)cues.push({start:base+a,duration:b-a,text:text.slice(0,2000)})});
++    if(!cues.length&&String(output.text||'').trim())cues.push({start:base,duration:duration,text:String(output.text).trim().slice(0,2000)});
++    return cues.slice(0,2000);
++  }
++  function vWhisperStatus(message){var st=document.getElementById('vtStatus');if(st)st.textContent=String(message||'Whisper local');}
++  function vWhisperGetWorker(){
++    if(vWhisperWorker)return vWhisperWorker;
++    if(!window.Worker)throw new Error('Trình duyệt không hỗ trợ Web Worker.');
++    var url=new URL('assets/canvio-whisper-worker.js',document.baseURI);vWhisperWorker=new Worker(url,{type:'module'});
++    vWhisperWorker.onmessage=function(event){var m=event.data||{},pending=vWhisperPending[m.id];if(!pending)return;if(m.type==='progress'||m.type==='status'){vWhisperStatus(m.message||'Đang nạp Whisper WASM…');return}delete vWhisperPending[m.id];if(m.type==='result')pending.resolve(m.output||{});else pending.reject(new Error(m.error||'Whisper không thể nhận dạng âm thanh.'))};
++    vWhisperWorker.onerror=function(event){var error=new Error(event&&event.message||'Whisper worker gặp lỗi.');Object.keys(vWhisperPending).forEach(function(k){vWhisperPending[k].reject(error);delete vWhisperPending[k]});vWhisperWorker=null};
++    vWhisperWorker.onmessageerror=function(){var error=new Error('Không đọc được dữ liệu trả về từ Whisper worker.');Object.keys(vWhisperPending).forEach(function(k){vWhisperPending[k].reject(error);delete vWhisperPending[k]})};
++    return vWhisperWorker;
++  }
++  function vWhisperRunWorker(samples,language){
++    var worker=vWhisperGetWorker(),id=++vWhisperRequestId,copy=samples instanceof Float32Array?samples:new Float32Array(samples);
++    return new Promise(function(resolve,reject){vWhisperPending[id]={resolve:resolve,reject:reject};try{worker.postMessage({id:id,action:'transcribe',audio:copy.buffer,language:language||'vietnamese'},[copy.buffer])}catch(e){delete vWhisperPending[id];reject(e)}});
++  }
++  async function vWhisperDecode(file){
++    var AudioCtx=window.AudioContext||window.webkitAudioContext,OfflineCtx=window.OfflineAudioContext||window.webkitOfflineAudioContext;if(!AudioCtx||!OfflineCtx)throw new Error('Trình duyệt thiếu AudioContext / OfflineAudioContext.');
++    var inputContext=new AudioCtx(),buffer;try{buffer=await inputContext.decodeAudioData(await file.arrayBuffer())}finally{try{await inputContext.close()}catch(e){}}
++    if(!buffer||!Number.isFinite(buffer.duration)||buffer.duration<=0)throw new Error('Không giải mã được file âm thanh.');
++    if(buffer.duration>480)throw new Error('Bản Whisper nhỏ hiện giới hạn audio tối đa 8 phút mỗi lần để tránh tràn RAM.');
++    var length=Math.ceil(buffer.duration*16000),offline=new OfflineCtx(1,length,16000),mono=offline.createBuffer(1,buffer.length,buffer.sampleRate),dest=mono.getChannelData(0),channels=Math.min(2,buffer.numberOfChannels||1),ch0=buffer.getChannelData(0),ch1=channels>1?buffer.getChannelData(1):null;
++    for(var i=0;i<dest.length;i++)dest[i]=channels>1?(ch0[i]+ch1[i])*.5:ch0[i];
++    var source=offline.createBufferSource();source.buffer=mono;source.connect(offline.destination);source.start(0);var rendered=await offline.startRendering();return {samples:rendered.getChannelData(0).slice(),duration:buffer.duration};
++  }
++  function vWhisperCaption(){
++    if(vWhisperBusy){toast('Whisper đang xử lý một tệp.');return false}
++    if(vTrackLocked(3)){toast('Track phụ đề đang khóa; hãy mở khóa trước khi tạo cue.');return false}
++    var input=document.createElement('input');input.type='file';input.accept='audio/*';input.onchange=async function(){var file=input.files&&input.files[0];input.value='';if(!file)return;if(file.size>100*1024*1024){toast('Whisper giới hạn file đầu vào tối đa 100 MB.');return}if(vTrackLocked(3)){toast('Track phụ đề đang khóa.');return}
++      var base=Math.max(0,Number(videoState.time)||0),language='vietnamese';try{var choice=prompt('Ngôn ngữ nhận dạng: vietnamese / english / auto','vietnamese');if(choice===null)return;choice=String(choice).trim().toLowerCase();language=choice==='auto'?'auto':choice==='english'?'english':'vietnamese';vWhisperBusy=true;vWhisperStatus('Đang giải mã âm thanh cục bộ…');var decoded=await vWhisperDecode(file);vWhisperStatus('Đang tải runtime Whisper và model (lần đầu có thể lâu)…');var output=await vWhisperRunWorker(decoded.samples,language);var cues=vWhisperBuildCues(output,base,decoded.duration);if(!cues.length)throw new Error('Whisper không trả về cue có timestamp hoặc nội dung.');if(vTrackLocked(3))throw new Error('Track phụ đề đã bị khóa trong lúc xử lý; không ghi cue.');vPushUndo();cues.forEach(function(c){videoState.clips.push({id:U.uid('vt'),name:'Whisper caption',type:'text',text:c.text,start:c.start,duration:c.duration,track:3})});videoState.duration=Math.max(videoState.duration,30,...videoState.clips.map(function(c){return c.start+c.duration+1}));vSave();vRender();vDraw();var report=vCaptionQC();vWhisperStatus('Whisper hoàn tất · '+cues.length+' cue · '+(report.warningCount?'cần rà '+report.warningCount+' cảnh báo QC':'đã qua QC cơ bản'));toast('Đã tạo '+cues.length+' cue Whisper trên track phụ đề. Hãy rà lại nội dung và timing.')}catch(e){console.warn('Whisper local transcription failed',e);vWhisperStatus('Whisper chưa hoàn tất · '+(e.message||String(e)));toast('Không tạo được phụ đề: '+(e.message||String(e)))}finally{vWhisperBusy=false}};input.click();return true;
++  }
++  function vWhisperUnload(){if(vWhisperWorker){try{vWhisperWorker.terminate()}catch(e){}vWhisperWorker=null}Object.keys(vWhisperPending).forEach(function(k){vWhisperPending[k].reject(new Error('Whisper worker đã được đóng.'));delete vWhisperPending[k]});return true}
+   function vDownloadCaption(name,text,mime){var blob=new Blob([text],{type:mime}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url)},2000)}
+   function vVttExport(){var cues=videoState.clips.filter(function(c){return c.type==='text'}).sort(function(a,b){return a.start-b.start});if(!cues.length){toast('Chưa có track chữ/phụ đề để xuất WebVTT');return false}var out='WEBVTT\n\n'+cues.map(function(c){var lines=String(c.text||'').replace(/\r/g,'').split('\n').map(vVttEscape).join('\n');return vVttFmt(c.start)+' --> '+vVttFmt(c.start+c.duration)+'\n'+lines}).join('\n\n')+'\n';vDownloadCaption('canvio-captions.vtt',out,'text/vtt;charset=utf-8');toast('Đã xuất '+cues.length+' phụ đề WebVTT');return true}
+   function vVttImport(){var i=document.createElement('input');i.type='file';i.accept='.vtt,text/vtt,text/plain';i.onchange=function(){var f=i.files&&i.files[0];if(!f)return;if(f.size>2*1024*1024){toast('WebVTT tối đa 2 MB');return}if(vTrackLocked(3)){toast('Track chữ đang khóa; không nhập được phụ đề');return}var r=new FileReader();r.onload=function(){var arr=vVttParse(r.result);if(!arr.length){toast('Không đọc được cue WebVTT hợp lệ');return}vPushUndo();arr.forEach(function(x){videoState.clips.push({id:U.uid('vt'),name:'Caption',type:'text',text:x.text,start:x.start,duration:x.duration,track:3})});videoState.duration=Math.max(30,...videoState.clips.map(function(x){return x.start+x.duration+1}));vSave();vRender();vDraw();toast('Đã nhập '+arr.length+' cue WebVTT vào track chữ')};r.onerror=function(){toast('Không đọc được file WebVTT')};r.readAsText(f)};i.click()}
+@@ -5304,9 +5362,28 @@
+       return {blob:patched,fixed:true,reason:'duration-metadata-added',durationMs:durationMs};
+     }catch(e){return {blob:blob,fixed:false,reason:'repair-error: '+String(e&&e.message||e)}}
+   }
++  function vExportMimeCandidates(format){
++    if(format==='mp4')return ['video/mp4;codecs="avc1.424028,mp4a.40.2"','video/mp4;codecs="avc1.42E01E,mp4a.40.2"','video/mp4;codecs=avc1.42E01E','video/mp4;codecs=avc1'];
++    return ['video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm'];
++  }
++  function vExportPickMime(format,Recorder){
++    if(!Recorder)return null;
++    var candidates=vExportMimeCandidates(format),i;
++    if(typeof Recorder.isTypeSupported!=='function')return format==='webm'?'video/webm':null;
++    for(i=0;i<candidates.length;i++){try{if(Recorder.isTypeSupported(candidates[i]))return candidates[i]}catch(e){}}
++    return null;
++  }
++  function vExportCapabilities(Recorder){
++    Recorder=Recorder||window.MediaRecorder;
++    var webm=vExportPickMime('webm',Recorder),mp4=vExportPickMime('mp4',Recorder),canvas=document.getElementById('vtCanvas');
++    return {mediaRecorder:!!Recorder,canvasCapture:!!(canvas&&canvas.captureStream),webmMime:webm,mp4Mime:mp4,h264Supported:!!mp4,mp4RequiresNativeH264:true,ffmpegFallback:false};
++  }
++  function vExportMP4(){return vExport({format:'mp4'})}
+   async function vExport(options){
+     options=options&&typeof options==='object'?options:{};
++    var format=options.format==='mp4'?'mp4':'webm',mime=options.mimeType||vExportPickMime(format,window.MediaRecorder);
+     if(!window.MediaRecorder){toast('Trình duyệt không hỗ trợ MediaRecorder');return null}
++    if(!mime){var message=format==='mp4'?'Trình duyệt này chưa xác nhận hỗ trợ MP4/H.264. Hãy dùng WebM.':'Trình duyệt chưa xác nhận hỗ trợ WebM.';var capStatus=document.getElementById('vtStatus');if(capStatus)capStatus.textContent=message;toast(message);return null}
+     var c=document.getElementById('vtCanvas');if(!c){toast('Không tìm thấy canvas Video Engine');return null}
+     if(!c.captureStream){toast('Canvas captureStream không được hỗ trợ');return null}
+     vPause();
+@@ -5319,10 +5396,10 @@
+         try{
+           if(options.download!==false){
+             var url=URL.createObjectURL(blob),a=document.createElement('a');
+-            a.href=url;a.download=String(options.filename||('CANVIO_multitrack_'+Date.now()+'.webm')).replace(/[\\/:*?"<>|]+/g,'_');
++            a.href=url;a.download=String(options.filename||('CANVIO_multitrack_'+Date.now()+'.'+format)).replace(/[\\/:*?"<>|]+/g,'_');
+             document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url)},60000);
+           }
+-          var st=document.getElementById('vtStatus');if(st)st.textContent='Đã xuất WebM · '+(blob.size/1048576).toFixed(1)+' MB';
++          var st=document.getElementById('vtStatus');if(st)st.textContent='Đã xuất '+(format==='mp4'?'MP4/H.264':'WebM')+' · '+(blob.size/1048576).toFixed(1)+' MB';
+           if(typeof options.onComplete==='function')try{options.onComplete(blob)}catch(e){}
+           resolve(blob);
+         }catch(e){reject(e)}
+@@ -5335,27 +5412,33 @@
+       try{
+         stream=c.captureStream(30);
+         __am=window.CVAudioMix?CVAudioMix.attach(stream,videoState.clips.filter(vClipAudible),duration):null;
+-        var mime=['video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm'].find(function(x){return MediaRecorder.isTypeSupported(x)})||'video/webm';
+-        rec=new MediaRecorder(stream,{mimeType:mime});
++        rec=new window.MediaRecorder(stream,{mimeType:mime});
+         rec.ondataavailable=function(e){if(e.data&&e.data.size)chunks.push(e.data)};
+         rec.onerror=function(e){finish(new Error('MediaRecorder lỗi: '+((e&&e.error&&e.error.message)||'không xác định')))};
+         rec.onstop=async function(){
+-          var blob=new Blob(chunks,{type:rec.mimeType||'video/webm'});
++          var actualMime=rec.mimeType||mime;
+           if(cancelled){finish(new Error('Đã hủy render'));return}
++          if(format==='mp4'&&(!/^video\/mp4(?:;|$)/i.test(actualMime)||!/(?:avc1|avc3)/i.test(actualMime))){finish(new Error('MediaRecorder không trả về MIME MP4/H.264 như đã yêu cầu; file không được lưu để tránh sai đuôi.'));return}
++          var blob=new Blob(chunks,{type:actualMime});
+           if(!blob.size){finish(new Error('Render không tạo được dữ liệu video'));return}
+-          var repaired=await vFixWebmDurationMetadata(blob,duration*1000);
+-          videoState.lastWebMMetadata={fixed:!!repaired.fixed,reason:repaired.reason||'',durationMs:duration*1000,rawBytes:blob.size,finalBytes:repaired.blob.size};
+-          if(!repaired.fixed&&repaired.reason!=='duration-already-present'){
+-            var note=' · duration metadata chưa sửa được ('+repaired.reason+')';
+-            var statusEl=document.getElementById('vtStatus');if(statusEl)statusEl.textContent='Đã xuất WebM · '+(repaired.blob.size/1048576).toFixed(1)+' MB'+note;
++          if(format==='webm'){
++            var repaired=await vFixWebmDurationMetadata(blob,duration*1000);
++            videoState.lastWebMMetadata={fixed:!!repaired.fixed,reason:repaired.reason||'',durationMs:duration*1000,rawBytes:blob.size,finalBytes:repaired.blob.size};
++            if(!repaired.fixed&&repaired.reason!=='duration-already-present'){
++              var note=' · duration metadata chưa sửa được ('+repaired.reason+')';
++              var statusEl=document.getElementById('vtStatus');if(statusEl)statusEl.textContent='Đã xuất WebM · '+(repaired.blob.size/1048576).toFixed(1)+' MB'+note;
++            }
++            finish(null,repaired.blob||blob);
++          }else{
++            videoState.lastExport={format:'mp4',mimeType:actualMime,bytes:blob.size,duration:duration};
++            finish(null,blob);
+           }
+-          finish(null,repaired.blob||blob);
+         };
+         if(options.signal){
+           if(options.signal.aborted){abort();return}
+           abortHandler=abort;options.signal.addEventListener('abort',abortHandler,{once:true});
+         }
+-        var st=document.getElementById('vtStatus');if(st)st.textContent='Đang render '+duration.toFixed(2)+' giây…';
++        var st=document.getElementById('vtStatus');if(st)st.textContent='Đang render '+(format==='mp4'?'MP4/H.264':'WebM')+' · '+duration.toFixed(2)+' giây…';
+         rec.start(250);if(__am)__am.start();
+         var start=performance.now(),lastProgress=-1;
+         function frame(now){
+@@ -5434,7 +5517,7 @@
+     deleteLayer:function(id){var a=this.getLayers(),i=a.findIndex(function(x){return x.id===id});if(i<0)return false;var n=layer.findOne(function(x){return x.getAttr&&x.getAttr('cvgUid')===id});if(n&&n.getAttr('cvgLocked'))return false;select(i);deleteSelected();designPushHistory();return true},
+     snapshotState:function(){return designCleanJSON()},restoreState:function(raw){try{var j=typeof raw==='string'?raw:JSON.stringify(raw);designRestoreHistory(j);designPushHistory();return true}catch(e){return false}},
+     undo:undoDesign,redo:redoDesign,renderLayers:renderDesignPanels
+-  },web:{init:webInit,save:webSave,load:webLoad,newPage:webNew,exportHTML:webExport,snapshotWebsite:function(){return editor?{html:editor.getHtml(),css:editor.getCss(),ready:true}:null},isReady:function(){return !!editor}},video:{init:vInit,addFiles:vAddFiles,importFiles:vImport,addText:vAddText,split:vSplit,edl:vEdl,edlText:vEdlText,beatCut:vBeatCut,beatPrompt:vBeatPrompt,autoCut:vAutoCut,autoCutPrompt:vAutoCutPrompt,beatDetect:vBeatDetect,beatSync:vBeatSync,beatSyncPrompt:vBeatSyncPrompt,undoAuto:vUndoAuto,undo:vUndoAuto,_state:function(){return videoState},commit:function(){vSave();vRender();vDraw()},save:vSave,redo:vRedo,hslReset:vHslReset,lutImport:vLutImport,lutClear:vLutClear,_pro:{srcOff:vSrcOff,spdAt:vSpdAt,lutPix:vLutPix,rippleList:vRippleList,pushUndo:vPushUndo,tests:vPro22Tests},_audio:{env:vAudEnv,silences:vAudSilences,tempo:vAudTempo},crossfade:vCrossfade,toggleTrack:vToggleTrack,trackState:function(track){return Object.assign({},vTrackState(track))},trackSettingsClean:vTrackSettingsClean,isClipLocked:vClipLocked,isClipVisible:vClipVisible,isClipAudible:vClipAudible,vttImport:vVttImport,vttExport:vVttExport,vttParse:vVttParse,vttFormat:vVttFmt,motionAt:vMotionAt,splitMotion:vMotionSplit,cleanMotion:vMotionClean,motionEase:function(p,m,seg){return vMotionEase(Math.max(0,Math.min(1,Number(p)||0)),vMotionClean(m),seg||vMotionClean(m).from)},srtImport:vSrtImport,srtExport:vSrtExport,srtParse:vSrtParse,fxPreset:vFxPreset,fxCss:vFxCss,fxClean:vFxClean,addAsset:vAddAsset,hasMedia:function(id){return vGet(id).then(function(blob){return !!blob})},relinkMedia:vRelinkMedia,select:vSelect,apply:vApply,remove:vRemove,seek:vSeek,play:vPlay,pause:vPause,save:vSave,exportWebM:vExport,
++  },web:{init:webInit,save:webSave,load:webLoad,newPage:webNew,exportHTML:webExport,snapshotWebsite:function(){return editor?{html:editor.getHtml(),css:editor.getCss(),ready:true}:null},isReady:function(){return !!editor}},video:{init:vInit,addFiles:vAddFiles,importFiles:vImport,addText:vAddText,split:vSplit,edl:vEdl,edlText:vEdlText,beatCut:vBeatCut,beatPrompt:vBeatPrompt,autoCut:vAutoCut,autoCutPrompt:vAutoCutPrompt,beatDetect:vBeatDetect,beatSync:vBeatSync,beatSyncPrompt:vBeatSyncPrompt,undoAuto:vUndoAuto,undo:vUndoAuto,_state:function(){return videoState},commit:function(){vSave();vRender();vDraw()},save:vSave,redo:vRedo,hslReset:vHslReset,lutImport:vLutImport,lutClear:vLutClear,_pro:{srcOff:vSrcOff,spdAt:vSpdAt,lutPix:vLutPix,rippleList:vRippleList,pushUndo:vPushUndo,tests:vPro22Tests},_audio:{env:vAudEnv,silences:vAudSilences,tempo:vAudTempo},crossfade:vCrossfade,toggleTrack:vToggleTrack,trackState:function(track){return Object.assign({},vTrackState(track))},trackSettingsClean:vTrackSettingsClean,isClipLocked:vClipLocked,isClipVisible:vClipVisible,isClipAudible:vClipAudible,vttImport:vVttImport,vttExport:vVttExport,vttParse:vVttParse,vttFormat:vVttFmt,captionQC:vCaptionQC,runCaptionQC:vRunCaptionQC,whisperCaption:vWhisperCaption,whisperUnload:vWhisperUnload,whisperBuildCues:vWhisperBuildCues,exportCapabilities:vExportCapabilities,exportMP4:vExportMP4,motionAt:vMotionAt,splitMotion:vMotionSplit,cleanMotion:vMotionClean,motionEase:function(p,m,seg){return vMotionEase(Math.max(0,Math.min(1,Number(p)||0)),vMotionClean(m),seg||vMotionClean(m).from)},srtImport:vSrtImport,srtExport:vSrtExport,srtParse:vSrtParse,fxPreset:vFxPreset,fxCss:vFxCss,fxClean:vFxClean,addAsset:vAddAsset,hasMedia:function(id){return vGet(id).then(function(blob){return !!blob})},relinkMedia:vRelinkMedia,select:vSelect,apply:vApply,remove:vRemove,seek:vSeek,play:vPlay,pause:vPause,save:vSave,exportWebM:vExport,
+     getLayers:function(){return videoState.clips.map(function(c,i){return {id:c.id,name:c.name||c.type,type:c.type,visible:vClipVisible(c),locked:vClipLocked(c),index:i,selected:c.id===videoState.selected,track:c.track,duration:c.duration}})},
+     selectLayer:function(id){if(!videoState.clips.some(function(c){return c.id===id}))return false;vSelect(id);return true},
+     renameLayer:function(id,name){var c=videoState.clips.find(function(x){return x.id===id});if(!c||vClipLocked(c))return false;c.name=String(name||'Clip').slice(0,120);vSave();vRender();vDraw();return true},
+@@ -21202,8 +21285,8 @@
+  window.CVCoreReliability=P37;window.CVWebsiteAcceptance=P38;window.CVCreativeRoundTripQA=P39;window.CVResponsiveAccessibilityQA=P40;window.CVPerformanceDiagnostics=P41;window.CVProductionReleaseCandidate=P42;
+  window.CANVIO_P37_P42={version:'23.3.60-r6',modules:modules,mount:mount,runAll:async function(){for(const k of ['P37','P38','P39','P40','P41']){const result=modules[k].run();if(result&&typeof result.then==='function')await result;}render();return reports},tests:function(){var o={};Object.keys(modules).forEach(function(k){o[k]=modules[k].tests()});return o}};
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount();
+- var prev=window.CANVIO_BUILD||{};window.CANVIO_BUILD=Object.freeze(Object.assign({},prev,{version:'23.3.62-p48',base:'23.3.61-p47',candidate:'P48',features:(prev.features||[]).concat(['P37 Core Reliability: guarded Lô 23 export mount and runtime diagnostics','P38 Website & Hosting Acceptance evidence aggregation using existing P30/P31','P39 read-only Creative Engine snapshot serialization QA','P40 live DOM responsive/accessibility heuristic audit','P41 performance/resource/canvas diagnostics','P42 fail-closed Production Release Candidate gate','P31 final acceptance repair: bounded 8 MiB read and active-SPA-workspace heuristic audit','P42 WebM duration metadata repair for MediaRecorder WebM output; local EBML patch','P42 accessibility and storage diagnostics hardening','P47 Vector Forge typography controls: font weight, tracking and text anchor','P47 Video Engine custom cubic-bezier editor with live curve preview and input validation','P47 Website Motion Builder easing presets persisted to exported CSS variables','P48 Video Engine per-track visibility, lock and audio mute state persisted in the canonical timeline','P48 track-lock enforcement shared by Video Engine, Audio Studio, Audio Mixer, media relink and Unified Layers','P48 WebVTT caption import/export with timestamp validation and escaped cue text'])}));
+- document.title='CANVIO 23.3.62-p48 — Video Track & Subtitle Reliability';setTimeout(function(){if(window.CANVIO_BUILD&&CANVIO_BUILD.version==='23.3.62-p48')document.title='CANVIO 23.3.62-p48 — Video Track & Subtitle Reliability'},9000);
++ var prev=window.CANVIO_BUILD||{};window.CANVIO_BUILD=Object.freeze(Object.assign({},prev,{version:'23.3.63-p49',base:'23.3.62-p48',candidate:'P49',features:(prev.features||[]).concat(['P37 Core Reliability: guarded Lô 23 export mount and runtime diagnostics','P38 Website & Hosting Acceptance evidence aggregation using existing P30/P31','P39 read-only Creative Engine snapshot serialization QA','P40 live DOM responsive/accessibility heuristic audit','P41 performance/resource/canvas diagnostics','P42 fail-closed Production Release Candidate gate','P31 final acceptance repair: bounded 8 MiB read and active-SPA-workspace heuristic audit','P42 WebM duration metadata repair for MediaRecorder WebM output; local EBML patch','P42 accessibility and storage diagnostics hardening','P47 Vector Forge typography controls: font weight, tracking and text anchor','P47 Video Engine custom cubic-bezier editor with live curve preview and input validation','P47 Website Motion Builder easing presets persisted to exported CSS variables','P48 Video Engine per-track visibility, lock and audio mute state persisted in the canonical timeline','P48 track-lock enforcement shared by Video Engine, Audio Studio, Audio Mixer, media relink and Unified Layers','P48 WebVTT caption import/export with timestamp validation and escaped cue text','P49 native MP4/H.264 export only when MediaRecorder confirms avc1/avc3 support','P49 subtitle preflight for invalid cues, overlaps, reading speed and line layout','P49 user-triggered Whisper multilingual ASR in module worker with local CPU/WASM inference and browser-cache model downloads'])}));
++ document.title='CANVIO 23.3.63-p49 — Video Export & Caption QA';setTimeout(function(){if(window.CANVIO_BUILD&&CANVIO_BUILD.version==='23.3.63-p49')document.title='CANVIO 23.3.63-p49 — Video Export & Caption QA'},9000);
+ })();
+ 
+ </script>
+@@ -21333,7 +21416,7 @@
+ window.CVWebsiteMotionBuilder={mount:mountMotion,inject:addMotionRuntime,tests:function(){return {mounted:!!$('#canvio-web-motion'),runtimeWrapped:!!(window.CVWebsitePublishQC&&CVWebsitePublishQC.buildDocument&&CVWebsitePublishQC.buildDocument.__canvioMotionRuntime),reducedMotion:/prefers-reduced-motion/.test(motionStyle)}}};
+ window.CVAIProviderAdapter={call:callProvider,config:providerConfig,endpointFor:endpointFor};
+ window.CANVIOProjectBundle={exportZip:exportProjectZip,restoreZip:restoreProjectZip,restorePayload:restorePortablePayload,tests:function(){return {zip:!!window.CVZip,integrity:!!(window.CV11&&CV11.backupIntegrity),excludesSessionSecrets:true,includesLocalStorage:true,includesReadableIndexedDB:true,zipRestoreAvailable:typeof restoreProjectZip==='function',crcValidation:typeof readStoreZip==='function',schemaMetadata:true}}};if(window.CV11)CV11.restorePortablePayload=restorePortablePayload;
+-window.CANVIOPhaseSuite={version:'48.0.0',init:init,tests:function(){var r=tests(),v=window.CV&&CV.engines&&CV.engines.video;r.videoTrackControls=!!(v&&v.toggleTrack&&v.trackState&&v.isClipLocked&&v.isClipVisible&&v.isClipAudible);r.videoWebVTT=!!(v&&v.vttImport&&v.vttExport&&v.vttParse&&v.vttFormat);r.videoTrackStateInSnapshot=!!(v&&v._state&&v._state().tracks&&v.trackSettingsClean);return r},exportProjectZip:exportProjectZip};
++window.CANVIOPhaseSuite={version:'49.0.0',init:init,tests:function(){var r=tests(),v=window.CV&&CV.engines&&CV.engines.video;r.videoTrackControls=!!(v&&v.toggleTrack&&v.trackState&&v.isClipLocked&&v.isClipVisible&&v.isClipAudible);r.videoWebVTT=!!(v&&v.vttImport&&v.vttExport&&v.vttParse&&v.vttFormat);r.videoTrackStateInSnapshot=!!(v&&v._state&&v._state().tracks&&v.trackSettingsClean);r.videoNativeMP4H264=!!(v&&v.exportMP4&&v.exportCapabilities);r.videoCaptionPreflight=!!(v&&v.captionQC&&v.runCaptionQC);r.videoWhisperASR=!!(v&&v.whisperCaption&&v.whisperBuildCues&&v.whisperUnload);return r},exportProjectZip:exportProjectZip};
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
+ })();
+ </script>
+--- /dev/null
++++ b/assets/canvio-whisper-worker.js
+@@ -0,0 +1,67 @@
++/* CANVIO P49 — user-triggered, browser-local Whisper ASR worker.
++ * Runtime is pinned to Transformers.js 3.8.1. The first run downloads the
++ * runtime and model weights; Transformers.js stores model files in browser cache.
++ * Audio samples are transferred from the page and are never sent to an ASR API.
++ */
++let transcriberPromise = null;
++
++function report(id, type, message, extra = {}) {
++  self.postMessage({ id, type, message, ...extra });
++}
++
++async function getTranscriber(id) {
++  if (!transcriberPromise) {
++    transcriberPromise = (async () => {
++      report(id, 'status', 'Đang nạp Transformers.js 3.8.1…');
++      const transformers = await import('https://esm.sh/@huggingface/transformers@3.8.1');
++      if (transformers.env) {
++        transformers.env.useBrowserCache = true;
++        transformers.env.allowRemoteModels = true;
++      }
++      report(id, 'status', 'Đang tải model Whisper multilingual (q8)…');
++      return transformers.pipeline(
++        'automatic-speech-recognition',
++        'Xenova/whisper-tiny',
++        {
++          dtype: 'q8',
++          progress_callback: (info) => {
++            const status = info && info.status ? String(info.status) : 'loading';
++            const file = info && info.file ? String(info.file).split('/').pop() : '';
++            const pct = Number.isFinite(Number(info && info.progress)) ? Number(info.progress).toFixed(0) + '%' : '';
++            report(id, 'progress', 'Whisper · ' + status + (file ? ' · ' + file : '') + (pct ? ' · ' + pct : ''));
++          },
++        },
++      );
++    })().catch((error) => {
++      transcriberPromise = null;
++      throw error;
++    });
++  }
++  return transcriberPromise;
++}
++
++self.addEventListener('message', async (event) => {
++  const message = event.data || {};
++  if (message.action !== 'transcribe') return;
++  const id = message.id;
++  try {
++    if (!(message.audio instanceof ArrayBuffer)) throw new Error('Dữ liệu waveform không hợp lệ.');
++    const samples = new Float32Array(message.audio);
++    if (!samples.length) throw new Error('Audio không có sample.');
++    const transcriber = await getTranscriber(id);
++    report(id, 'status', 'Whisper đang nhận dạng audio trên thiết bị…');
++    const options = {
++      return_timestamps: true,
++      chunk_length_s: 30,
++      stride_length_s: 5,
++      task: 'transcribe',
++    };
++    // Whisper detects the spoken language when no `language` option is supplied.
++    // Do not replace the explicit `auto` choice with the Vietnamese default.
++    if (message.language && message.language !== 'auto') options.language = message.language;
++    const output = await transcriber(samples, options);
++    report(id, 'result', 'Hoàn tất', { output });
++  } catch (error) {
++    report(id, 'error', '', { error: String(error && error.message ? error.message : error) });
++  }
++});

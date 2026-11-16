@@ -1,0 +1,14 @@
+'use strict';
+const fs = require('fs');
+const assert = require('assert');
+const html = fs.readFileSync('index.html','utf8');
+const moduleSource = fs.readFileSync('canvio-p63-p67.js','utf8').trim();
+const marker = '<script id=\"canvio-p63-p67-main\">';
+const start = html.lastIndexOf(marker);
+assert(start >= 0, 'embedded P63-P67 module script exists');
+const bodyStart = html.indexOf('>', start) + 1;
+const end = html.indexOf('</script>', bodyStart);
+assert(end > bodyStart, 'embedded module has a closing script tag');
+assert.strictEqual(html.slice(bodyStart,end).trim(), moduleSource, 'standalone source and inline script must be byte-for-byte synchronized');
+assert(html.includes('23.3.81-p67'), 'P67 marker exists');
+console.log('PASS P63-P67 source copy sync and P67 candidate marker');

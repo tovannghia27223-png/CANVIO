@@ -1,0 +1,566 @@
+{
+  "format": "CANVIO_P63_P70_INHERITED_CHROMIUM_RUNTIME_SMOKE",
+  "version": 1,
+  "candidate": "P70",
+  "browser": "159.0.8154.6",
+  "origin": "about:blank",
+  "testOnlyStorageShim": true,
+  "limitations": [
+    "Opaque about:blank origin; native IndexedDB and secure-context acceptance are not covered.",
+    "Navigation to localhost, file:// and other URLs is blocked by the host browser policy.",
+    "No Safari/Edge, real Whisper model download/inference, screen-reader or hosting acceptance in this run."
+  ],
+  "checks": [
+    {
+      "id": "build-marker",
+      "status": "pass",
+      "value": "23.3.84-p70"
+    },
+    {
+      "id": "document-title",
+      "status": "pass",
+      "value": "CANVIO 23.3.84-p70 — Stable Release Candidate"
+    },
+    {
+      "id": "spa-navigation",
+      "status": "pass",
+      "pages": [
+        "home",
+        "poster",
+        "web",
+        "videoEngine",
+        "assets",
+        "motion",
+        "insight",
+        "export",
+        "settings"
+      ]
+    },
+    {
+      "id": "phase-suite",
+      "status": "pass",
+      "flags": {
+        "websiteMotionRuntimeInjected": true,
+        "websiteMotionRuntimeIdempotent": true,
+        "websiteRuntimeHasRealScriptClose": true,
+        "websiteMotionProgressiveEnhancement": true,
+        "websiteMotionEasingVariable": true,
+        "videoCustomBezierMathAvailable": true,
+        "localProviderEndpointResolved": true,
+        "nonLocalHttpRejected": true,
+        "providerCallsOnlyOnExplicitClick": true,
+        "providerKeysRemainSessionOnly": true,
+        "zipOwner": true,
+        "backupIntegrityOwner": true,
+        "zipRestoreOwner": true,
+        "idbSchemaMetadata": true,
+        "idbRestoreOpensWithoutVersionBump": true,
+        "noSecondVideoTimeline": true,
+        "webAndPortfolioVaultAdapters": true,
+        "videoTrackControls": true,
+        "videoWebVTT": true,
+        "videoTrackStateInSnapshot": true,
+        "videoNativeMP4H264": true,
+        "videoCaptionPreflight": true,
+        "videoWhisperASR": true,
+        "videoWhisperCancellation": true,
+        "videoExportCancellation": true,
+        "p55RuntimeDiagnostics": true,
+        "p55RenderRecovery": true,
+        "p55ProjectIntegrity": true,
+        "p55PerformanceBudget": true,
+        "p55ReleaseGate": true,
+        "p56ArchivePreflight": true,
+        "p56ReadOnlyRestorePreview": true,
+        "p57NativePersistenceAudit": true,
+        "p57SafeRoundTrip": true,
+        "p58ExportAcceptance": true,
+        "p59WhisperWorkerAcceptance": true,
+        "p60AccessibilityScreening": true,
+        "p61HostingSecurityScreening": true,
+        "p62Phase1ReleaseGate": true,
+        "p63UnifiedTimeline": true,
+        "p64AdvancedTimelineEditing": true,
+        "p65MotionTracking": true,
+        "p66AICreativeAssetWorkflow": true,
+        "p67PrintProduction": true,
+        "p68Offline3DPackaging": true,
+        "p69SystemOptimization": true,
+        "p70StableReleaseGate": true
+      }
+    },
+    {
+      "id": "phase1-p57-p62-apis",
+      "status": "pass",
+      "value": {
+        "p57": {
+          "api": true,
+          "databaseAvailable": false,
+          "readOnly": true,
+          "schemaChanged": false
+        },
+        "p58": true,
+        "p59": {
+          "api": true,
+          "workerChecked": false,
+          "inferenceNotClaimed": true
+        },
+        "p60": {
+          "api": true,
+          "issueCount": 32,
+          "wcagCertified": false
+        },
+        "p61": {
+          "api": true,
+          "serverHeadersVerified": false
+        },
+        "p62": {
+          "candidate": "P62",
+          "implementation": {
+            "P57": true,
+            "P58": true,
+            "P59": true,
+            "P60": true,
+            "P61": true,
+            "P62": true
+          },
+          "gateCount": 6,
+          "releaseCertified": false,
+          "status": "BLOCKED_PENDING_REAL_WORLD_ACCEPTANCE"
+        },
+        "dashboard": true
+      }
+    },
+    {
+      "id": "p56-archive-integrity-preview",
+      "status": "pass",
+      "value": {
+        "valid": true,
+        "entries": 2,
+        "central": true,
+        "localHeaders": true,
+        "mismatchRejected": true,
+        "preview": {
+          "backupCreatedAt": "11/17/2026, 10:00:00 AM",
+          "localStorageKeys": 1,
+          "indexedDBDatabases": 0,
+          "indexedDBStores": 0,
+          "indexedDBRecords": 0,
+          "excludedSecretKeys": 1,
+          "sourceWarnings": 0,
+          "checksumStatus": "verified",
+          "schema": 2
+        },
+        "previewLeaksSecret": false,
+        "storageUnchanged": true
+      }
+    },
+    {
+      "id": "runtime-duplicate-ids",
+      "status": "pass",
+      "count": 0
+    },
+    {
+      "id": "video-track-vtt",
+      "status": "pass",
+      "value": {
+        "before": false,
+        "during": true,
+        "after": false,
+        "parsed": 1
+      }
+    },
+    {
+      "id": "real-webm-export-decode",
+      "status": "pass",
+      "value": {
+        "size": 18668,
+        "mime": "video/webm;codecs=vp9",
+        "duration": 0.9,
+        "width": 960,
+        "height": 540,
+        "readyState": 4,
+        "p58": {
+          "metadataReadable": true,
+          "decodeReadiness": true,
+          "avSyncCertified": false
+        },
+        "download": {
+          "name": "CANVIO_multitrack_1794857643799.webm",
+          "href": "blob:null/a40bec34-3df8-4d2b-b649-bbea53f16791"
+        }
+      }
+    },
+    {
+      "id": "real-mp4-h264-export-decode",
+      "status": "pass",
+      "value": {
+        "size": 12689,
+        "mime": "video/mp4;codecs=avc1.420020",
+        "duration": 0.872967,
+        "width": 960,
+        "height": 540,
+        "readyState": 4,
+        "p58": {
+          "metadataReadable": true,
+          "decodeReadiness": true,
+          "avSyncCertified": false
+        },
+        "download": {
+          "name": "CANVIO_multitrack_1794857644745.mp4",
+          "href": "blob:null/32e3f639-696d-4c85-a86d-fdd20f786e39"
+        }
+      }
+    },
+    {
+      "id": "render-cancel",
+      "status": "pass",
+      "value": {
+        "returnedBlob": false,
+        "recovery": "cancelled",
+        "cancelButtonDisabled": true
+      }
+    },
+    {
+      "id": "render-retry-after-cancel",
+      "status": "pass",
+      "value": {
+        "size": 18157,
+        "mime": "video/webm;codecs=vp9",
+        "duration": 0.8,
+        "width": 960,
+        "height": 540,
+        "readyState": 4,
+        "p58": {
+          "metadataReadable": true,
+          "decodeReadiness": true,
+          "avSyncCertified": false
+        },
+        "download": {
+          "name": "CANVIO_multitrack_1794857645831.webm",
+          "href": "blob:null/38ae5ec8-8c6e-442a-a0b5-a1dd19ec9f79"
+        }
+      }
+    },
+    {
+      "id": "p63-p64-canonical-timeline",
+      "status": "pass",
+      "value": {
+        "inspect": {
+          "format": "CANVIO_UNIFIED_TIMELINE_INSPECTION",
+          "version": 1,
+          "canonicalOwner": "CV.engines.video._state()",
+          "canonicalAvailable": true,
+          "canonicalClipCount": 3,
+          "canonicalDuration": 8,
+          "clipCounts": {
+            "video": 0,
+            "image": 0,
+            "audio": 0,
+            "text": 3,
+            "other": 0
+          },
+          "trackCounts": {
+            "3": 3
+          },
+          "maxClipEnd": 6,
+          "sourceEditors": {
+            "motionCut": {
+              "available": true,
+              "stagedClips": 0
+            },
+            "motionLab": {
+              "available": true,
+              "stagedObjects": 0
+            },
+            "shapeAnimation": {
+              "available": true,
+              "stagedLayers": 1
+            }
+          },
+          "mutationBoundary": {
+            "canonicalTimelineOnly": true,
+            "sourceEditorsRemainSeparateUntilExplicitTransfer": true,
+            "noSecondTimelineCreated": true,
+            "noNewStore": true
+          },
+          "limitations": [
+            "MotionCut and Motion Lab retain their existing editor-local working state until the user explicitly transfers/render-imports them.",
+            "Media transfer uses existing Video Engine import and Shape Animation bridge APIs; it is not a transparent cross-editor live-sync system."
+          ]
+        },
+        "validation": {
+          "format": "CANVIO_UNIFIED_TIMELINE_VALIDATION",
+          "rows": [
+            {
+              "id": "canonical-video-owner",
+              "ok": true,
+              "detail": "CV.engines.video là owner và commit API hiện hữu."
+            },
+            {
+              "id": "unique-clip-identifiers",
+              "ok": true,
+              "detail": "Không có ID clip rỗng hoặc trùng trong timeline canonical."
+            },
+            {
+              "id": "finite-clip-timing",
+              "ok": true,
+              "detail": "Start/duration phải hữu hạn; duration tối thiểu 0,2 giây."
+            },
+            {
+              "id": "existing-source-bridges",
+              "ok": true,
+              "detail": "Sử dụng bridge MotionCut và Shape Animation có sẵn."
+            }
+          ],
+          "pass": 4,
+          "fail": 0,
+          "noSecondTimeline": true
+        },
+        "grouped": {
+          "ok": true,
+          "groupId": "vtgroup-mwjnwfcu-bo1ziat03i",
+          "count": 2,
+          "name": "P67 smoke group"
+        },
+        "moved": {
+          "ok": true,
+          "moved": 2,
+          "delta": 0.5
+        },
+        "duplicate": {
+          "ok": true,
+          "duplicated": 2,
+          "ids": [
+            "vtclip-mwjnwfcw-f3105kgmeq",
+            "vtclip-mwjnwfcx-182j2ia8bt"
+          ],
+          "mediaReferencesReused": true
+        },
+        "snap": {
+          "value": 5,
+          "snapped": true,
+          "target": {
+            "value": 5,
+            "source": "clip-start",
+            "id": "p67-c"
+          },
+          "delta": -0.019999999999999574
+        },
+        "blocked": {
+          "ok": false,
+          "reason": "locked-clips-would-be-affected",
+          "blockedIds": [
+            "p67-a",
+            "p67-b",
+            "p67-c",
+            "vtclip-mwjnwfcw-f3105kgmeq",
+            "vtclip-mwjnwfcx-182j2ia8bt"
+          ]
+        },
+        "mounted": true,
+        "previousLock": false
+      }
+    },
+    {
+      "id": "p65-local-tracking",
+      "status": "pass",
+      "value": {
+        "samples": 3,
+        "points": [
+          [
+            30,
+            30
+          ],
+          [
+            33,
+            32
+          ],
+          [
+            36,
+            34
+          ]
+        ],
+        "localOnly": true,
+        "applied": {
+          "ok": true,
+          "clipId": "p67-track",
+          "mode": "stabilize",
+          "keyframes": 3,
+          "averageConfidence": 1,
+          "localOnly": true,
+          "noModel": true
+        },
+        "keyframes": 3,
+        "api": true
+      }
+    },
+    {
+      "id": "p66-ai-asset-workflow",
+      "status": "pass",
+      "value": {
+        "promptHasBrief": true,
+        "sanitized": true,
+        "imported": true,
+        "provenance": true,
+        "vectorLayers": 1
+      }
+    },
+    {
+      "id": "p67-print-production",
+      "status": "pass",
+      "value": {
+        "master": {
+          "ok": true,
+          "pages": 1,
+          "headerApplied": true,
+          "footerApplied": true,
+          "folioApplied": true,
+          "owner": "CVNativeEngines.layout.restoreState",
+          "noNewStore": true
+        },
+        "type": {
+          "ok": true,
+          "fontFamily": "Arial",
+          "fontAvailable": true,
+          "letterSpacingPx": 0.2,
+          "kerning": true,
+          "ligatures": true,
+          "shapingOwner": "browser CSS text layout",
+          "fontEmbedded": false,
+          "outlined": false
+        },
+        "report": {
+          "status": "REVIEW_REQUIRED",
+          "pages": 1,
+          "pass": 7,
+          "warn": 1,
+          "fail": 0
+        },
+        "html": true,
+        "layoutPanel": true
+      }
+    },
+    {
+      "id": "phase2-release-candidate-gate",
+      "status": "pass",
+      "value": {
+        "candidate": "P67",
+        "releaseCertified": false,
+        "manualGates": [
+          "Real multi-track project round-trip and MotionCut source transfer",
+          "Ripple edit/group/snap/undo/redo on locked and unlocked user projects",
+          "Motion tracking on representative real footage and visual stabilization review",
+          "User-selected AI provider output, asset import and licensing provenance",
+          "Typography/font fallback, layout pagination, physical bleed and printer PDF workflow"
+        ]
+      }
+    },
+    {
+      "id": "responsive-widths",
+      "status": "pass",
+      "value": [
+        {
+          "width": 1440,
+          "documentWidth": 1440,
+          "bodyWidth": 1440,
+          "overflow": false
+        },
+        {
+          "width": 768,
+          "documentWidth": 768,
+          "bodyWidth": 768,
+          "overflow": false
+        },
+        {
+          "width": 720,
+          "documentWidth": 720,
+          "bodyWidth": 720,
+          "overflow": false
+        },
+        {
+          "width": 375,
+          "documentWidth": 375,
+          "bodyWidth": 375,
+          "overflow": false
+        },
+        {
+          "width": 320,
+          "documentWidth": 320,
+          "bodyWidth": 320,
+          "overflow": false
+        }
+      ]
+    },
+    {
+      "id": "release-gate-fail-closed",
+      "status": "pass",
+      "value": {
+        "status": "BLOCKED",
+        "failures": [
+          "secure-context: about:"
+        ],
+        "manualAcceptance": [
+          {
+            "id": "browser-matrix",
+            "label": "Chrome, Edge và Safari trên HTTPS",
+            "status": "pending"
+          },
+          {
+            "id": "real-media-export",
+            "label": "WebM/MP4 decode, audio và A/V sync bằng media thật",
+            "status": "pending"
+          },
+          {
+            "id": "whisper-model",
+            "label": "Whisper model download, inference, hủy và unload thật",
+            "status": "pending"
+          },
+          {
+            "id": "project-persistence",
+            "label": "IndexedDB save/reopen và ZIP restore trên origin thật",
+            "status": "pending"
+          },
+          {
+            "id": "accessibility",
+            "label": "Keyboard, screen reader, focus và zoom 200%",
+            "status": "pending"
+          },
+          {
+            "id": "hosting",
+            "label": "Pages/hosting, worker path, CSP/CORS và console",
+            "status": "pending"
+          }
+        ]
+      }
+    },
+    {
+      "id": "uncaught-page-errors",
+      "status": "pass",
+      "count": 0
+    },
+    {
+      "id": "console-errors",
+      "status": "pass",
+      "count": 0
+    }
+  ],
+  "timelineFixture": {
+    "canvasWidth": 960,
+    "canvasHeight": 540
+  },
+  "codecCapabilities": {
+    "mediaRecorder": true,
+    "canvasCapture": true,
+    "webmMime": "video/webm;codecs=vp9",
+    "mp4Mime": "video/mp4;codecs=avc1.42E01E",
+    "h264Supported": true,
+    "mp4RequiresNativeH264": true,
+    "ffmpegFallback": false
+  },
+  "summary": {
+    "passed": 43,
+    "failed": 0,
+    "status": "PASS_WITH_ORIGIN_LIMITATIONS"
+  }
+}
