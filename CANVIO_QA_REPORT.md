@@ -83,8 +83,15 @@ P69's canvas/image/video bytes are estimates based on surface dimensions. Resour
 
 ## 8. CI / delivery
 
-Workflow pins Node.js 24 and Actions by immutable commit, verifies the exact P70 `index.html` SHA, audits scripts/IDs, runs retained regressions and both Chromium smoke suites. GitHub Pages deploy remains restricted to successful pushes on `main`; PR and manual dispatch validate but do not deploy. A hosted Actions run, repository transfer and Pages deployment have not been observed.
+The hosted workflow pins Node.js 24 and Actions by immutable commit, verifies the exact P70 `index.html` SHA, audits scripts/IDs, runs retained regressions and both Chromium smoke suites.
+
+- PR [#8](https://github.com/tovannghia27223-png/CANVIO/pull/8) was merged into `main` (merge commit `917792742d1a8e3b13307162eebb5bc3cbe20e40`).
+- Main release workflow [run #44](https://github.com/tovannghia27223-png/CANVIO/actions/runs/43940471456) completed successfully with all 22 workflow steps successful, including P47–P70 automated regressions, inherited Chromium 43/43, P68–P70 Chromium 16/16, and source promotion.
+- The exact P70 source tree was promoted by commit [`8606375`](https://github.com/tovannghia27223-png/CANVIO/commit/8606375ed2671099b7b2f1713138109eec905088).
+- GitHub Pages deployment [run #87](https://github.com/tovannghia27223-png/CANVIO/actions/runs/43940759013) completed successfully for the promoted `main` commit.
+
+The green workflow/deployment result confirms the hosted pipeline completed. It does not establish real-browser runtime acceptance, real media/Whisper behavior, accessibility, production security headers or the other manual gates listed above. Those remain open pending evidence on the target environment.
 
 ## 9. Final disposition
 
-P70 is a local CANVIO 1.0 Stable Release Candidate. `window.CANVIOStableRelease.inspect().releaseCertified` remains `false` by design. Complete and review all fourteen gates before production approval. No commit, PR, merge, hosted workflow or production deployment is claimed.
+P70 is the CANVIO 1.0 Stable Release Candidate integrated on `main` and deployed through the successful GitHub Pages workflow described above. `window.CANVIOStableRelease.inspect().releaseCertified` remains `false` by design. Fourteen manual gates remain open. Do not label the product CANVIO 1.0 Stable or production-certified until those gates are evidenced, reviewed and approved.

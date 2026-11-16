@@ -1,7 +1,7 @@
 # CANVIO P70 — CANVIO 1.0 Stable Release Candidate
 
 **Application:** `23.3.84-p70` · **PhaseSuite:** `70.0.0` · **Base:** P67 / `23.3.81-p67`  
-**Disposition:** P68–P70 final milestone is implemented locally and passes source plus Chromium smoke tests. Fourteen real-world acceptance gates remain open. This is **not CANVIO 1.0 Stable**.
+**Disposition:** P68–P70 is merged into GitHub `main`, promoted as the P70 source candidate and deployed through a successful GitHub Pages workflow. Automated source and Chromium smoke tests pass. Fourteen real-world acceptance gates remain open. This is **not CANVIO 1.0 Stable** or production-certified.
 
 P70 is additive on P67. It preserves the existing canonical `CV.engines.video` timeline, Project Vault, Asset Library, Layout Foundry, `CANVIO_81_MEDIA` media owner, `CVZip` backup/restore and all previous engine owners. It adds no second project database, no second timeline, no cloud backend and no background service.
 
@@ -42,4 +42,12 @@ P70 is additive on P67. It preserves the existing canonical `CV.engines.video` t
 
 Fourteen gates remain open: HTTPS/browser matrix, native persistence and cross-origin restore, real A/V sync, Whisper inference, WCAG/accessibility, hosting security headers, timeline user-project acceptance, real footage tracking, AI provider/licensing, font/print workflow, clean-machine offline 3D, target-device performance, rollback and production observability.
 
-No GitHub commit, PR, merge, hosted Actions run or Pages deployment is claimed.
+## Hosted delivery
+
+- Pull request [#8](https://github.com/tovannghia27223-png/CANVIO/pull/8) was merged into `main` at `2026-11-16T19:32:54Z`; merge commit: `917792742d1a8e3b13307162eebb5bc3cbe20e40`.
+- The Node.js 24 release workflow [run #44](https://github.com/tovannghia27223-png/CANVIO/actions/runs/43940471456) completed successfully. All 22 workflow steps completed, including source integrity, static audit, P47–P70 regressions, Chromium browser smoke and promotion.
+- The validated P70 source tree was promoted onto `main` by commit [`8606375`](https://github.com/tovannghia27223-png/CANVIO/commit/8606375ed2671099b7b2f1713138109eec905088).
+- GitHub Pages deployment [run #87](https://github.com/tovannghia27223-png/CANVIO/actions/runs/43940759013) completed successfully for that promoted commit.
+- The repository delivery contains 57 manifested package files, including the full `index.html`, architecture guide, roadmap, handoff, QA/status reports, standalone modules, worker, patches and regression suites.
+
+A successful hosted deployment is evidence that the GitHub Actions/Pages deployment pipeline completed. It does **not** substitute for the fourteen manual production-acceptance gates below, nor certify the deployed experience across real browsers, devices, media and user projects. P70 remains a Stable Release Candidate, not CANVIO 1.0 Stable.

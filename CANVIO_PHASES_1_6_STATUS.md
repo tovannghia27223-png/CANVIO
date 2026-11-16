@@ -25,4 +25,4 @@
 
 ## Final release disposition
 
-P70 is a local CANVIO 1.0 Stable Release Candidate and **not production-certified**. Fourteen manual gates remain open in `CANVIO_QA_REPORT.md`. No P70 commit/PR/merge/Pages deployment has been made or observed.
+P70 is integrated on GitHub `main` and the GitHub Pages deployment workflow completed successfully. The source merge is `917792742d1a8e3b13307162eebb5bc3cbe20e40`; final source promotion is `8606375ed2671099b7b2f1713138109eec905088`. Main CI [run #44](https://github.com/tovannghia27223-png/CANVIO/actions/runs/43940471456) and Pages [run #87](https://github.com/tovannghia27223-png/CANVIO/actions/runs/43940759013) both succeeded. P70 remains a Stable Release Candidate and **not production-certified**. Fourteen manual real-world gates remain open in `CANVIO_QA_REPORT.md`; deployment success does not close them.

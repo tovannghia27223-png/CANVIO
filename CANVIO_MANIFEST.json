@@ -22,18 +22,18 @@
     },
     {
       "path": "CANVIO_HANDOFF.md",
-      "bytes": 4413,
-      "sha256": "f9bc899a1063ea018769b33dab142ace68311fef68aa5c925774e074a7b7e11e"
+      "bytes": 5501,
+      "sha256": "09c8186362192914afba727c33975e4d389957e8235640c55c27750f87b61c2b"
     },
     {
       "path": "CANVIO_PHASES_1_6_STATUS.md",
-      "bytes": 3228,
-      "sha256": "c5957d97cd4f22c0bdd5564d56ed5de613312d48a7eabfdcb0a94aabb668f2f9"
+      "bytes": 3632,
+      "sha256": "336b0ede122a14f570c71aee2368567727f5104ec171bac76cf20f189f999e53"
     },
     {
       "path": "CANVIO_QA_REPORT.md",
-      "bytes": 5999,
-      "sha256": "8c202a4f23f7c7275571bb03bcfb730fdf1d6257abafdc9c69677f3f335650e7"
+      "bytes": 6969,
+      "sha256": "da88e628713234f6943f4f707c13c8568680a4ed250743717fdcf0c2801cd562"
     },
     {
       "path": "CANVIO_ROADMAP.md",
@@ -42,8 +42,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 3812,
-      "sha256": "4027195bfbc6ebe564edce2388e63c873425b317c5bebdb2775e0ce976a264ee"
+      "bytes": 5213,
+      "sha256": "c7741b60adc2a81af451da1b1e808e8d6ef10076092b81d3979527d64b58e390"
     },
     {
       "path": "assets/canvio-whisper-worker.js",
