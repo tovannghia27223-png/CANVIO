@@ -162,7 +162,9 @@ jobs:
                 });
                 const legacyInspection={
                   P8:summarizeGlobal(window.CVProfessionalQC),
-                  P36:summarizeGlobal(window.CVProductionReleaseGate)
+                  P36:summarizeGlobal(window.CVProductionReleaseGate),
+                  P30:summarizeGlobal(window.CVLiveWebsiteVerification),
+                  P31:summarizeGlobal(window.CVLiveSiteQualityAudit)
                 };
                 const P38source=api.modules.P38&&typeof api.modules.P38.run==="function"?api.modules.P38.run.toString().slice(0,8000):null;
                 const testFlags=api.tests();
@@ -176,6 +178,10 @@ jobs:
                 }):null;
                 return {
                   keys,testFlags,legacyInspection,P38source,
+                  P30P31Methods:{
+                    P30:legacyInspection.P30,
+                    P31:legacyInspection.P31
+                  },
                   reports:Object.fromEntries(required.slice(0,5).map(k=>[k,clean(reports&&reports[k])])),
                   release:clean(release||(reports&&reports.P42))
                 };
