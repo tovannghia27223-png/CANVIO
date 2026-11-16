@@ -1,4 +1,4 @@
-name: CANVIO GitHub Pages (Node 24)
+name: CANVIO GitHub Pages P70 (Node 24)
 
 on:
   pull_request:
@@ -18,37 +18,46 @@ concurrency:
 
 jobs:
   build:
-    name: Validate and package CANVIO P42 R6
+    name: Validate and package CANVIO P70 Stable Release candidate
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
 
-      - name: Verify or apply reviewed CANVIO R6 patch
+
+      - name: Restore the complete reviewed P70 delivery bundle
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -d .canvio/p70/bundle
+          test -n "$(find .canvio/p70/bundle -maxdepth 1 -name 'part-*.b64' -print -quit)"
+          cat .canvio/p70/bundle/part-*.b64 | base64 --decode > /tmp/canvio-p70-delivery.zip
+          unzip -t /tmp/canvio-p70-delivery.zip
+          mkdir -p /tmp/canvio-p70-delivery
+          unzip -q /tmp/canvio-p70-delivery.zip -d /tmp/canvio-p70-delivery
+          test -s /tmp/canvio-p70-delivery/index.html
+          cp .github/workflows/canvio-pages-node24.yml /tmp/canvio-p70-bootstrap.yml
+          cp -a /tmp/canvio-p70-delivery/. ./
+          mkdir -p .github/workflows
+          cp /tmp/canvio-p70-bootstrap.yml .github/workflows/canvio-pages-node24.yml
+          echo "P70 package extracted; canonical source is now in the workspace."
+
+      - name: Set up Node.js 24
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          node-version: 24
+          package-manager-cache: false
+
+      - name: Verify exact reviewed CANVIO P70 candidate
         shell: bash
         run: |
           set -euo pipefail
           actual="$(sha256sum index.html | cut -d' ' -f1)"
-          expected_r5="ed4a39f149151ee849416423c544a005fe0e4cf2f01b1c84027395a2c078a2b5"
-          expected_r6_p43="423f98b5008ae618667af66bf9b2f3645bce262dd1fc887f2a02575ef3ee0f63"
-          expected_r6_base="11d1ba5394ee315e97909fba5efd99adc09a412227a443c94a3e3fdddbfed9dd"
-          expected_r6="b778f7817aa522b29b7c82757ab97551d4052a5348d5496d01ae340d9a90bc5c"
-
-          if [ "$actual" = "$expected_r5" ]; then
-            git apply --check --unidiff-zero patches/canvio-p42-r6.patch
-            git apply --unidiff-zero patches/canvio-p42-r6.patch
-            actual="$(sha256sum index.html | cut -d' ' -f1)"
-          elif [ "$actual" = "$expected_r6" ] || [ "$actual" = "$expected_r6_p43" ] || [ "$actual" = "$expected_r6_base" ]; then
-            echo "R6 is already present; patch application safely skipped."
-          else
-            echo "Unexpected index.html SHA-256: $actual" >&2
-            exit 1
-          fi
-
-          test "$actual" = "$expected_r6" || test "$actual" = "$expected_r6_p43" || test "$actual" = "$expected_r6_base"
-          echo "CANVIO R6 SHA-256 verified: $actual"
+          expected_p70="73e97aeb4b538f7e7c828ac740084113574db671206a1a1db0f19a45fb22d45c"
+          test "$actual" = "$expected_p70" || { echo "Unexpected index.html SHA-256: $actual" >&2; exit 1; }
+          echo "Exact CANVIO P70 candidate SHA-256 verified: $actual"
 
       - name: Validate HTML, unique IDs, and inline JavaScript syntax
         shell: bash
@@ -81,12 +90,14 @@ jobs:
           ids = Counter(audit.ids)
           duplicates = [key for key, count in ids.items() if count > 1]
           scripts = re.findall(r"<script\b[^>]*>([\s\S]*?)</script\s*>", source, re.I)
-          if audit.scripts != 79 or len(scripts) != 79:
-              raise SystemExit(f"Expected 79 inline script blocks; parser={audit.scripts}, extracted={len(scripts)}")
+          if audit.scripts != 91 or len(scripts) != 91:
+              raise SystemExit(f"Expected 91 inline script blocks; parser={audit.scripts}, extracted={len(scripts)}")
           if audit.external_scripts:
               raise SystemExit(f"Unexpected external script src entries: {audit.external_scripts}")
           if duplicates:
               raise SystemExit(f"Duplicate HTML IDs: {duplicates[:20]}")
+          if len(audit.ids) != 504 or len(ids) != 504:
+              raise SystemExit(f"Expected 504 unique HTML IDs; found {len(audit.ids)} IDs / {len(ids)} unique")
 
           failures = []
           with tempfile.TemporaryDirectory() as directory:
@@ -103,8 +114,115 @@ jobs:
           print(f"PASS: {audit.scripts} inline scripts; 0 external script src; {len(audit.ids)} IDs / {len(ids)} unique / 0 duplicates; Node syntax {len(scripts)}/{len(scripts)}.")
           PY
 
-          mkdir -p _site
+          mkdir -p _site/assets
           cp index.html _site/index.html
+          test -f assets/canvio-whisper-worker.js
+          cp assets/canvio-whisper-worker.js _site/assets/canvio-whisper-worker.js
+          node --check assets/canvio-whisper-worker.js
+
+      - name: Run P47 integration and backup fixtures
+        shell: bash
+        run: |
+          set -euo pipefail
+          node tests/p47/test_phase_p47.cjs
+          node tests/p47/test_p47_bezier.cjs
+          node tests/p47/test_phase_p47_restore.cjs
+          node tests/p47/test_phase_p47_crc.cjs
+
+      - name: Run P48 track controls and WebVTT regression suite
+        shell: bash
+        run: |
+          set -euo pipefail
+          node tests/p48/run-p48-tests.cjs
+
+
+      - name: Run P49 video export, subtitle QC and Whisper adapter suite
+        shell: bash
+        run: |
+          set -euo pipefail
+          node tests/p49/run-p49-tests.cjs
+
+      - name: Run P50 production-control lifecycle regression suite
+        shell: bash
+        run: |
+          set -euo pipefail
+          node tests/p50/run-p50-tests.cjs
+
+      - name: Run P55 P51–P55 stability and release-readiness regression suite
+        shell: bash
+        run: |
+          set -euo pipefail
+          node tests/p55/run-p55-tests.cjs
+
+      - name: Run P56 ZIP archive integrity and restore preview suite
+        shell: bash
+        run: |
+          set -euo pipefail
+          node tests/p56/run-p56-tests.cjs
+
+      - name: Run P57–P62 Phase 1 persistence, media, AI, accessibility and release-gate suite
+        shell: bash
+        run: |
+          set -euo pipefail
+          node tests/p57/run-p57-tests.cjs
+
+      - name: Verify P63–P67 integrated source and standalone module stay synchronized
+        shell: bash
+        run: |
+          set -euo pipefail
+          node tests/p63-p67/verify-p63-p67-source.cjs
+          node --check canvio-p63-p67.js
+
+      - name: Run P63–P67 creative production source VM regression suite
+        shell: bash
+        run: |
+          set -euo pipefail
+          node tests/p63-p67/run-p63-p67-tests.cjs
+
+      - name: Verify and test P68–P70 offline 3D, system optimization and stable release gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          node tests/p68-p70/verify-p68-p70-source.cjs
+          node --check canvio-p68-p70.js
+          node tests/p68-p70/run-p68-p70-tests.cjs
+
+      - name: Install pinned Playwright Chromium for browser smoke
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m venv /tmp/canvio-playwright
+          /tmp/canvio-playwright/bin/python -m pip install --disable-pip-version-check playwright==1.65.2
+          /tmp/canvio-playwright/bin/python -m playwright install --with-deps chromium
+
+      - name: Run inherited P63–P67 Chromium regression against the P70 build
+        shell: bash
+        run: |
+          set -euo pipefail
+          /tmp/canvio-playwright/bin/python tests/p63-p67/run-p63-p67-browser-smoke.py
+
+      - name: Run P68–P70 offline viewer, performance audit and P70 release-gate Chromium smoke
+        shell: bash
+        run: |
+          set -euo pipefail
+          /tmp/canvio-playwright/bin/python tests/p68-p70/run-p68-p70-browser-smoke.py
+
+
+      - name: Promote the validated P70 source tree onto main
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          rm -rf .canvio/p70/bundle
+          git add -A
+          if git diff --cached --quiet; then
+            echo "P70 source tree is already committed on main."
+          else
+            git commit -m "P70: promote fully validated CANVIO 1.0 candidate source"
+            git push origin HEAD:main
+          fi
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d
@@ -116,9 +234,7 @@ jobs:
 
   deploy:
     name: Deploy to GitHub Pages
-    # Pages Source was confirmed as GitHub Actions in the repository settings.
-    # Pull requests never deploy; only a merged main push or manual dispatch can publish.
-    if: github.event_name != 'pull_request'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
