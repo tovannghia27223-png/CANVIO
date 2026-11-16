@@ -173,7 +173,7 @@ jobs:
                   return [k,{
                     type:typeof obj,
                     keys:obj&&typeof obj==="object"?Object.keys(obj).slice(0,40):[],
-                    runSource:obj&&typeof obj.run==="function"?obj.run.toString().slice(0,4000):null,
+                    runSource:obj&&typeof obj.run==="function"?obj.run.toString().slice(0,14000):null,
                     testsSource:obj&&typeof obj.tests==="function"?obj.tests.toString().slice(0,3000):null
                   }];
                 }));
@@ -207,7 +207,10 @@ jobs:
                   keys,testFlags,legacyInspection,P38source,relatedGlobals,relatedMethods,
                   liveEvidence:{
                     P30:clean(liveP30),P31:clean(liveP31),P38:clean(liveP38),
-                    P8:clean(legacyP8),P36:clean(legacyP36)
+                    P8:clean(legacyP8),P36:clean(legacyP36),
+                    SystemQA:window.CANVIOSystemQA&&typeof CANVIOSystemQA.last==="function"?clean(CANVIOSystemQA.last()):null,
+                    OpsDiagnostics:window.CANVIOOpsIntelligence&&typeof CANVIOOpsIntelligence.diagnostics==="function"?CANVIOOpsIntelligence.diagnostics():null,
+                    VideoEngineTests:window.CV&&CV.engines&&CV.engines.video&&typeof CV.engines.video.tests==="function"?CV.engines.video.tests():null
                   },
                   reports:Object.fromEntries(required.slice(0,5).map(k=>[k,clean(reports&&reports[k])])),
                   release:clean(release||(reports&&reports.P42))
