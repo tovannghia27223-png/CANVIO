@@ -31,18 +31,21 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test -d .canvio/p70/bundle
-          test -n "$(find .canvio/p70/bundle -maxdepth 1 -name 'part-*.b64' -print -quit)"
-          cat .canvio/p70/bundle/part-*.b64 | base64 --decode > /tmp/canvio-p70-delivery.zip
-          unzip -t /tmp/canvio-p70-delivery.zip
-          mkdir -p /tmp/canvio-p70-delivery
-          unzip -q /tmp/canvio-p70-delivery.zip -d /tmp/canvio-p70-delivery
-          test -s /tmp/canvio-p70-delivery/index.html
-          cp .github/workflows/canvio-pages-node24.yml /tmp/canvio-p70-bootstrap.yml
-          cp -a /tmp/canvio-p70-delivery/. ./
-          mkdir -p .github/workflows
-          cp /tmp/canvio-p70-bootstrap.yml .github/workflows/canvio-pages-node24.yml
-          echo "P70 package extracted; canonical source is now in the workspace."
+          if test -d .canvio/p70/bundle && test -n "$(find .canvio/p70/bundle -maxdepth 1 -name 'part-*.b64' -print -quit)"; then
+            cat .canvio/p70/bundle/part-*.b64 | base64 --decode > /tmp/canvio-p70-delivery.zip
+            unzip -t /tmp/canvio-p70-delivery.zip
+            mkdir -p /tmp/canvio-p70-delivery
+            unzip -q /tmp/canvio-p70-delivery.zip -d /tmp/canvio-p70-delivery
+            test -s /tmp/canvio-p70-delivery/index.html
+            cp .github/workflows/canvio-pages-node24.yml /tmp/canvio-p70-bootstrap.yml
+            cp -a /tmp/canvio-p70-delivery/. ./
+            mkdir -p .github/workflows
+            cp /tmp/canvio-p70-bootstrap.yml .github/workflows/canvio-pages-node24.yml
+            echo "P70 package extracted; canonical source is now in the workspace."
+          else
+            test -s index.html
+            echo "P70 source already restored; validating committed source tree."
+          fi
 
       - name: Set up Node.js 24
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
