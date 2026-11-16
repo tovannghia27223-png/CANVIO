@@ -78,7 +78,7 @@ jobs:
           audit.feed(source)
           ids = Counter(audit.ids)
           duplicates = [key for key, count in ids.items() if count > 1]
-          scripts = re.findall(r"<script\b[^>]*>([\s\\S]*?)</script\s*>", source, re.I)
+          scripts = re.findall(r"<script\b[^>]*>([\s\S]*?)</script\s*>", source, re.I)
           if audit.scripts != 79 or len(scripts) != 79:
               raise SystemExit(f"Expected 79 inline script blocks; parser={audit.scripts}, extracted={len(scripts)}")
           if audit.external_scripts:
