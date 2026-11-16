@@ -63,7 +63,7 @@
     {
       "id": "P69 browser frame sampler runs",
       "status": "pass",
-      "detail": "{\"supported\": true, \"durationMs\": 314.99999999999636, \"frames\": 19, \"averageFps\": 60.31746031746102, \"medianFrameMs\": 16.700000000000728, \"over33ms\": 0, \"over50ms\": 0, \"heuristicOnly\": true, \"noProjectMutation\": true}"
+      "detail": "{\"supported\": true, \"durationMs\": 303.30000000001746, \"frames\": 19, \"averageFps\": 62.64424662050414, \"medianFrameMs\": 16.69999999999891, \"over33ms\": 0, \"over50ms\": 0, \"heuristicOnly\": true, \"noProjectMutation\": true}"
     },
     {
       "id": "Offline viewer renders mesh to canvas",
