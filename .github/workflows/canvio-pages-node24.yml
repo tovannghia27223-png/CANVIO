@@ -26,19 +26,27 @@ jobs:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
 
-      - name: Apply reviewed CANVIO R6 patch
+      - name: Verify or apply reviewed CANVIO R6 patch
         shell: bash
         run: |
           set -euo pipefail
           actual="$(sha256sum index.html | cut -d' ' -f1)"
-          expected="ed4a39f149151ee849416423c544a005fe0e4cf2f01b1c84027395a2c078a2b5"
-          test "$actual" = "$expected"
-          git apply --check --unidiff-zero patches/canvio-p42-r6.patch
-          git apply --unidiff-zero patches/canvio-p42-r6.patch
-          actual_r6="$(sha256sum index.html | cut -d' ' -f1)"
+          expected_r5="ed4a39f149151ee849416423c544a005fe0e4cf2f01b1c84027395a2c078a2b5"
           expected_r6="11d1ba5394ee315e97909fba5efd99adc09a412227a443c94a3e3fdddbfed9dd"
-          test "$actual_r6" = "$expected_r6"
-          echo "CANVIO R6 SHA-256 verified: $actual_r6"
+
+          if [ "$actual" = "$expected_r5" ]; then
+            git apply --check --unidiff-zero patches/canvio-p42-r6.patch
+            git apply --unidiff-zero patches/canvio-p42-r6.patch
+            actual="$(sha256sum index.html | cut -d' ' -f1)"
+          elif [ "$actual" = "$expected_r6" ]; then
+            echo "R6 is already present; patch application safely skipped."
+          else
+            echo "Unexpected index.html SHA-256: $actual" >&2
+            exit 1
+          fi
+
+          test "$actual" = "$expected_r6"
+          echo "CANVIO R6 SHA-256 verified: $actual"
 
       - name: Validate HTML, unique IDs, and inline JavaScript syntax
         shell: bash
@@ -70,7 +78,7 @@ jobs:
           audit.feed(source)
           ids = Counter(audit.ids)
           duplicates = [key for key, count in ids.items() if count > 1]
-          scripts = re.findall(r"<script\b[^>]*>([\s\S]*?)</script\s*>", source, re.I)
+          scripts = re.findall(r"<script\\b[^>]*>([\\s\\S]*?)</script\\s*>", source, re.I)
           if audit.scripts != 79 or len(scripts) != 79:
               raise SystemExit(f"Expected 79 inline script blocks; parser={audit.scripts}, extracted={len(scripts)}")
           if audit.external_scripts:
@@ -88,7 +96,7 @@ jobs:
                       failures.append((index, result.stderr))
           if failures:
               for index, error in failures:
-                  print(f"Inline script {index} failed:\n{error}", file=sys.stderr)
+                  print(f"Inline script {index} failed:\\n{error}", file=sys.stderr)
               raise SystemExit(f"{len(failures)} inline JavaScript syntax error(s)")
           print(f"PASS: {audit.scripts} inline scripts; 0 external script src; {len(audit.ids)} IDs / {len(ids)} unique / 0 duplicates; Node syntax {len(scripts)}/{len(scripts)}.")
           PY
