@@ -26,19 +26,27 @@ jobs:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
 
-      - name: Apply reviewed CANVIO R6 patch
+      - name: Verify or apply reviewed CANVIO R6 patch
         shell: bash
         run: |
           set -euo pipefail
           actual="$(sha256sum index.html | cut -d' ' -f1)"
-          expected="ed4a39f149151ee849416423c544a005fe0e4cf2f01b1c84027395a2c078a2b5"
-          test "$actual" = "$expected"
-          git apply --check --unidiff-zero patches/canvio-p42-r6.patch
-          git apply --unidiff-zero patches/canvio-p42-r6.patch
-          actual_r6="$(sha256sum index.html | cut -d' ' -f1)"
+          expected_r5="ed4a39f149151ee849416423c544a005fe0e4cf2f01b1c84027395a2c078a2b5"
           expected_r6="11d1ba5394ee315e97909fba5efd99adc09a412227a443c94a3e3fdddbfed9dd"
-          test "$actual_r6" = "$expected_r6"
-          echo "CANVIO R6 SHA-256 verified: $actual_r6"
+
+          if [ "$actual" = "$expected_r5" ]; then
+            git apply --check --unidiff-zero patches/canvio-p42-r6.patch
+            git apply --unidiff-zero patches/canvio-p42-r6.patch
+            actual="$(sha256sum index.html | cut -d' ' -f1)"
+          elif [ "$actual" = "$expected_r6" ]; then
+            echo "R6 is already present; patch application safely skipped."
+          else
+            echo "Unexpected index.html SHA-256: $actual" >&2
+            exit 1
+          fi
+
+          test "$actual" = "$expected_r6"
+          echo "CANVIO R6 SHA-256 verified: $actual"
 
       - name: Validate HTML, unique IDs, and inline JavaScript syntax
         shell: bash
