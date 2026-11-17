@@ -75,3 +75,11 @@ A successful hosted deployment is evidence that the GitHub Actions/Pages deploym
 - Workflow [#47](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44110607967): validation/package and deployment jobs succeeded; all listed steps passed, including retained P47–P70 suites and both Chromium smoke suites.
 - Current promoted `main`: [`93d4840`](https://github.com/tovannghia27223-png/CANVIO/commit/93d484037ca8a00f49cd07e44e702f03964e0b4e). Pages deployment [#93](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44110828590) succeeded. Run [#92](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44110606281) also succeeded for the validated docs commit.
 - The 14 real-world acceptance gates remain open; no production certification is claimed.
+
+
+## Latest hosted verification — run #50 (2026-11-17)
+
+- Node.js 24 workflow [#50](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44113215411) passed validation/package and deployment jobs. All P47–P70 regression suites and both Chromium smoke suites passed.
+- Exact outcomes: P48 26/26; P49 35/35; P50 27/27; P55 49/49; P56 27/27; P57–P62 15/15; P63–P67 18/18; P68–P70 16/16; inherited Chromium 43/43; P68–P70 Chromium 16/16.
+- Manifest verification: 57 entries, all SHA-256 hashes and byte counts verified. Current promoted `main`: `b1c0ecf8e080beafc5f96f357efbbcaddad1444c`. Pages [#98](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44113545232) succeeded.
+- Browser reports are retained as workflow artifacts, not auto-committed. The workflow only pushes the manifest when a real tracked file checksum changes. Fourteen real-world acceptance gates remain open.

@@ -36,3 +36,8 @@ The latest verified hosted pipeline is Node.js 24 workflow #46 and Pages deploym
 ## Latest evidence refresh — run #47 (2026-11-17)
 
 Workflow #47 and Pages #92/#93 completed successfully. Current `main` is `93d484037ca8a00f49cd07e44e702f03964e0b4e`. Automated P47–P70 checks remain green. The candidate stays `23.3.84-p70`; fourteen P70 real-world acceptance gates remain OPEN. This was a documentation/evidence update only; application modules and data owners did not change.
+
+
+## Latest evidence refresh — run #50 (2026-11-17)
+
+Node.js 24 workflow #50 completed successfully for the P70 candidate and Pages deployment. All automated P47–P70 regression suites passed; inherited Chromium smoke passed 43/43 and P68–P70 smoke passed 16/16. Static audit remains 91/91 inline scripts and 504/504 unique IDs. All 57 manifest entries were verified. The current promoted `main` commit is `b1c0ecf8e080beafc5f96f357efbbcaddad1444c`; Pages #98 succeeded. This does not close the fourteen real-world gates or change the `23.3.84-p70` candidate disposition.

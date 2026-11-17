@@ -111,3 +111,12 @@ P70 is the CANVIO 1.0 Stable Release Candidate integrated on `main` and deployed
 - Current `main` is [`93d4840`](https://github.com/tovannghia27223-png/CANVIO/commit/93d484037ca8a00f49cd07e44e702f03964e0b4e). GitHub Pages [run #93](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44110828590) completed successfully for this promoted commit.
 - Pages [run #92](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44110606281) also completed successfully for the workflow-validated documentation commit. Application version remains `23.3.84-p70`.
 - Fourteen real-world acceptance gates remain OPEN. Workflow success does not certify native persistence, real A/V sync, real Whisper inference, WCAG acceptance, production headers or target-device/project acceptance.
+
+
+### 2026-11-17 — Latest hosted verification (run #50)
+
+- CANVIO Node.js 24 workflow [run #50](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44113215411) completed successfully. Build and deploy jobs both passed. P47 fixtures; P48 26/26; P49 35/35; P50 27/27; P55 49/49; P56 27/27; P57–P62 15/15; P63–P67 18/18; and P68–P70 16/16 all passed.
+- Chromium smoke: inherited P63–P67 43/43; P68–P70 16/16. Static audit: 91/91 inline scripts parse; 504/504 IDs unique; zero duplicate IDs or external script sources.
+- The workflow verified all 57 manifest entries, including SHA-256 and byte counts. Main promotion is `b1c0ecf8e080beafc5f96f357efbbcaddad1444c`; GitHub Pages deployment [run #98](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44113545232) succeeded for that promoted `main`.
+- Browser regression reports are now uploaded as GitHub Actions artifacts; the tracked reports are restored before manifest calculation. Only a changed manifest can be committed by the workflow, so smoke output does not create repeated source commits.
+- Fourteen real-world acceptance gates remain OPEN. P70 remains a Stable Release Candidate, not production-certified.

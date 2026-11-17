@@ -3330,3 +3330,22 @@ P55 is the planned stable-release readiness candidate, **not CANVIO 1.0 Stable**
 
 ## Manifest
 - SHA-256 and byte counts for the five updated Markdown documents are refreshed in `CANVIO_MANIFEST.json`. The manifest remains a 57-file delivery package.
+
+
+# P70 Hosted Verification and CI Stability Addendum — run #50 (2026-11-17)
+
+## Verified test and delivery state
+- CANVIO workflow [#50](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44113215411) on Node.js 24 completed successfully. Build/validation and Pages deployment jobs passed.
+- P48 26/26; P49 35/35; P50 27/27; P55 49/49; P56 27/27; P57–P62 15/15; P63–P67 18/18; P68–P70 16/16. P47 integration/Bezier/restore/CRC fixtures passed.
+- Chromium smoke: inherited P63–P67 43/43; P68–P70 16/16. Static checks: 91/91 inline scripts parse; 504/504 static IDs unique; zero duplicates or external script `src`.
+- Workflow #50 refreshed and verified all 57 manifest entries with SHA-256 and byte counts. Pages deployment [#98](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44113545232) succeeded for promoted `main` head `b1c0ecf8e080beafc5f96f357efbbcaddad1444c`.
+
+## CI workflow ownership and mutation boundary
+- Browser smoke JSON is uploaded as a run-scoped GitHub Actions artifact (30-day retention). The two tracked JSON report files are restored to their committed versions before the manifest is recalculated.
+- The workflow no longer commits generated browser reports or promotes the entire test workspace. It commits only `CANVIO_MANIFEST.json` when the checksum/byte-count refresh detects a real tracked-file change, preventing report-driven commit loops and limiting CI write scope.
+- Manifest refresh uses Node.js `crypto` and verifies all listed entries after writing. GitHub Pages publishes the validated `_site` built from committed application files.
+
+## App map, synchronization and release limits
+- Application marker remains `23.3.84-p70`, PhaseSuite remains `70.0.0`. P63–P67 and P68–P70 standalone modules remain checked byte-for-byte against embedded scripts; canonical Video Engine, Project Vault, Asset Library, Layout Foundry, `CANVIO_81_MEDIA` and `CVZip` ownership is unchanged.
+- Fourteen real-world release gates remain OPEN: HTTPS/browser matrix, native persistence, real media A/V, actual Whisper inference, accessibility, response headers, real timeline/project, tracking footage, AI/provider licensing, typography/print, clean-machine offline 3D, target-device performance, cross-origin recovery and rollback/observability.
+- CI and simulated smoke are not a substitute for target-environment evidence. P70 remains a Stable Release Candidate, not CANVIO 1.0 Stable or production-certified.

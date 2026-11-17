@@ -363,3 +363,11 @@ Không giả lập real-time collaboration, cloud persistence, provider proxy ho
 - Workflow-validated commit: `0217c253b36a145b979397cafa785fdd5232ec3d`. Current promoted `main`: [`93d4840`](https://github.com/tovannghia27223-png/CANVIO/commit/93d484037ca8a00f49cd07e44e702f03964e0b4e).
 - Pages [#92](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44110606281) and final promoted deployment [#93](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44110828590) succeeded.
 - P47–P70 automated suites and Chromium smokes remain green. Fourteen real-world release gates remain OPEN; the RC disposition is unchanged.
+
+
+## Latest hosted verification — run #50 (2026-11-17)
+
+- Workflow [#50](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44113215411) and Pages deployment [#98](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44113545232) completed successfully.
+- P47–P70 automated regression suites passed; Chromium: P63–P67 43/43, P68–P70 16/16. Manifest: 57/57 file hashes and byte counts verified.
+- Generated browser smoke reports are uploaded as run artifacts, not committed to `main`. Only the manifest is committed when checksums of tracked files change.
+- Fourteen manual production gates remain OPEN. P70 stays a Stable Release Candidate.

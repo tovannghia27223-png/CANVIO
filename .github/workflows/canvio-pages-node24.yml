@@ -211,7 +211,23 @@ jobs:
           /tmp/canvio-playwright/bin/python tests/p68-p70/run-p68-p70-browser-smoke.py
 
 
-      - name: Refresh and verify the delivery manifest after browser smoke
+      - name: Upload browser regression evidence
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
+        with:
+          name: canvio-p70-browser-evidence-${{ github.run_number }}
+          path: |
+            tests/p63-p67/browser-smoke-report.json
+            tests/p68-p70/browser-smoke-report.json
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Restore tracked browser report fixtures after artifact upload
+        shell: bash
+        run: |
+          set -euo pipefail
+          git restore --source=HEAD --worktree --staged -- tests/p63-p67/browser-smoke-report.json tests/p68-p70/browser-smoke-report.json
+
+      - name: Refresh and verify the delivery manifest
         shell: bash
         run: |
           set -euo pipefail
@@ -221,54 +237,47 @@ jobs:
           const crypto = require('node:crypto');
           const manifestPath = 'CANVIO_MANIFEST.json';
           const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
-          if (manifest.format !== 'CANVIO_DELIVERY_MANIFEST' || manifest.hashAlgorithm !== 'SHA-256' || !Array.isArray(manifest.files)) {
-            throw new Error('Unsupported CANVIO delivery manifest format');
-          }
+          if (manifest.format !== 'CANVIO_DELIVERY_MANIFEST' || manifest.hashAlgorithm !== 'SHA-256' || !Array.isArray(manifest.files)) throw new Error('Unsupported CANVIO delivery manifest format');
           const seen = new Set();
           for (const entry of manifest.files) {
-            if (!entry || typeof entry.path !== 'string' || !entry.path || seen.has(entry.path)) {
-              throw new Error('Invalid or duplicate manifest path: ' + (entry && entry.path));
-            }
+            if (!entry || typeof entry.path !== 'string' || !entry.path || seen.has(entry.path)) throw new Error('Invalid or duplicate manifest path');
             seen.add(entry.path);
-            if (path.isAbsolute(entry.path) || entry.path.split(/[\\/]/).includes('..')) {
-              throw new Error('Manifest path escapes repository: ' + entry.path);
-            }
-            const fullPath = path.join(process.cwd(), entry.path);
-            const stat = fs.statSync(fullPath);
-            if (!stat.isFile()) throw new Error('Manifest path is not a file: ' + entry.path);
-            const bytes = fs.readFileSync(fullPath);
-            entry.bytes = bytes.byteLength;
-            entry.sha256 = crypto.createHash('sha256').update(bytes).digest('hex');
+            if (path.isAbsolute(entry.path) || entry.path.split(/[\\/]/).includes('..')) throw new Error('Manifest path escapes repository: ' + entry.path);
+            const file = fs.readFileSync(path.join(process.cwd(), entry.path));
+            entry.bytes = file.byteLength;
+            entry.sha256 = crypto.createHash('sha256').update(file).digest('hex');
           }
           manifest.fileCount = manifest.files.length;
-          manifest.generatedAt = new Date().toISOString().slice(0, 10);
-          fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + '\n', 'utf8');
-          const verified = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
-          for (const entry of verified.files) {
-            const bytes = fs.readFileSync(path.join(process.cwd(), entry.path));
-            const actual = crypto.createHash('sha256').update(bytes).digest('hex');
-            if (bytes.byteLength !== entry.bytes || actual !== entry.sha256) {
-              throw new Error('Manifest verification failed after write: ' + entry.path);
-            }
+          fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + '\\n', 'utf8');
+          const check = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+          for (const entry of check.files) {
+            const file = fs.readFileSync(path.join(process.cwd(), entry.path));
+            if (file.byteLength !== entry.bytes || crypto.createHash('sha256').update(file).digest('hex') !== entry.sha256) throw new Error('Manifest verification failed: ' + entry.path);
           }
-          console.log('PASS: manifest entries=' + verified.files.length + '; SHA-256 and byte counts verified for every listed file.');
+          console.log('PASS: manifest entries=' + check.files.length + '; all SHA-256 hashes and byte counts verified.');
           NODE
 
-      - name: Promote the validated P70 source tree onto main
+      - name: Commit manifest changes only
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         shell: bash
         run: |
           set -euo pipefail
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          rm -rf .canvio/p70/bundle
-          git add -A
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add CANVIO_MANIFEST.json
           if git diff --cached --quiet; then
-            echo "P70 source tree is already committed on main."
-          else
-            git commit -m "P70: promote fully validated CANVIO 1.0 candidate source"
-            git push origin HEAD:main
+            echo 'Manifest already matches all committed files; no follow-up commit required.'
+            exit 0
           fi
+          git commit -m 'ci: refresh CANVIO manifest checksums'
+          for attempt in 1 2 3; do
+            git fetch origin main
+            git rebase origin/main
+            if git push origin HEAD:main; then exit 0; fi
+            echo "Manifest push attempt ${attempt} did not complete; retrying after fetch/rebase."
+          done
+          echo 'Unable to push refreshed manifest after three attempts.' >&2
+          exit 1
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d
