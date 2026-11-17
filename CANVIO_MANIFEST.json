@@ -258,7 +258,7 @@
     {
       "path": "tests/p63-p67/browser-smoke-report.json",
       "bytes": 15397,
-      "sha256": "c6ef50f25c4fcec2bca4288182d12189bd06a298026bfe37cb4d7fbbc69550f5"
+      "sha256": "3c79bee90115881f802475e6966910b8a9126ea53089ac1b2e8ab4aa6ab8fa10"
     },
     {
       "path": "tests/p63-p67/run-p63-p67-browser-smoke.py",
@@ -278,7 +278,7 @@
     {
       "path": "tests/p68-p70/browser-smoke-report.json",
       "bytes": 4118,
-      "sha256": "15c8f528d071a6963058d5f3aef8eaef0eab589570b6121c01653e0a2ad21fe5"
+      "sha256": "5d0c4777230773f83fb48f31d20900acf478029fb6160dfd29754f2970d66615"
     },
     {
       "path": "tests/p68-p70/run-p68-p70-browser-smoke.py",
