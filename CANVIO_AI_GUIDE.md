@@ -3285,3 +3285,27 @@ P55 is the planned stable-release readiness candidate, **not CANVIO 1.0 Stable**
 - Source VM: **15/15**; Chromium smoke: **16/16**; inherited P63–P67 browser regression: **43/43**; P63–P67 source VM: **18/18**. Static audit: **91/91** inline scripts parse; **504/504** static IDs unique; zero duplicate IDs and zero external `<script src>`.
 - Browser smoke uses opaque `about:blank` with test-only storage shims. The OBJ viewer smoke renders an embedded fixture in Chromium but does not replace clean-machine offline acceptance. Phase 1 and Phase 2 manual gates remain open.
 - **P70 is a Stable Release Candidate, not CANVIO 1.0 Stable.** Do not change `releaseCertified:false` without reviewed evidence for every required gate. No commit, PR, merge or deployment is implied by local test success.
+
+
+# P70 Hosted Verification Refresh — 2026-11-17
+
+## Verified repository state
+- The current GitHub `main` head is `3e6be7e2653a1f5d999ece355236a6bf4e8738e5`; application marker remains `23.3.84-p70` and PhaseSuite remains `70.0.0`.
+- CANVIO Node.js 24 workflow [run #46](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44104323930) completed successfully. Its validation/package job and Pages deployment job both report success. All listed validation steps completed, including exact candidate SHA verification, static checks, P47–P70 regression suites and two Chromium smoke suites.
+- The workflow validated the candidate at head `d14096255e16dfad4ce70260914c837f4bd7dd5c`; the resulting current `main` promotion is the head above.
+- GitHub Pages [run #91](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44104556386) completed successfully for current `main`.
+
+## Changed files and data ownership
+- This refresh changes documentation/evidence only: QA report, handoff, phase status, roadmap, this AI Guide and the delivery manifest hashes/byte counts.
+- No application modules, data owners, schemas, persistence stores, API adapters, timeline owner, media paths or synchronization flows were changed.
+- Application version and manifest candidate stay `23.3.84-p70`; no functional version increment is claimed.
+
+## Validation status and remaining limits
+- Automated P47–P70 regressions and the two Chromium smoke suites passed in workflow #46. The workflow also completed source integrity, static audit and Node.js 24 validation steps.
+- The fourteen P70 real-world acceptance gates remain OPEN. In particular, CI/synthetic tests do not certify native IndexedDB across restarts, real media A/V sync, deployed Whisper inference, keyboard/screen-reader/200% zoom WCAG review, production HTTP headers, real project round-trip, target-device performance, cross-origin recovery or operational rollback/observability.
+- No gate was marked PASS without target-environment evidence. P70 remains a Stable Release Candidate, not CANVIO 1.0 Stable or production-certified.
+
+## Synchronization and manifest
+- Standalone P63–P67 and P68–P70 modules remain byte-for-byte synchronized with their embedded copies as checked by workflow #46.
+- No synchronization flow or application data map changed in this refresh.
+- SHA-256 and byte counts for the five updated Markdown documents are refreshed in `CANVIO_MANIFEST.json`; the manifest still represents 57 packaged files.

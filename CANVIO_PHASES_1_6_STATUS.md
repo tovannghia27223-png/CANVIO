@@ -25,4 +25,9 @@
 
 ## Final release disposition
 
-P70 is integrated on GitHub `main` and the GitHub Pages deployment workflow completed successfully. The source merge is `917792742d1a8e3b13307162eebb5bc3cbe20e40`; final source promotion is `8606375ed2671099b7b2f1713138109eec905088`. Main CI [run #44](https://github.com/tovannghia27223-png/CANVIO/actions/runs/43940471456) and Pages [run #87](https://github.com/tovannghia27223-png/CANVIO/actions/runs/43940759013) both succeeded. P70 remains a Stable Release Candidate and **not production-certified**. Fourteen manual real-world gates remain open in `CANVIO_QA_REPORT.md`; deployment success does not close them.
+P70 is integrated on GitHub `main` and the GitHub Pages deployment workflow completed successfully. Current main head is `3e6be7e2653a1f5d999ece355236a6bf4e8738e5`. Node.js 24 workflow [run #46](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44104323930) completed successfully, with both validation/package and Pages deployment jobs successful. GitHub Pages [run #91](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44104556386) completed successfully for that main head. P70 remains a Stable Release Candidate and **not production-certified**. Fourteen manual real-world gates remain open in `CANVIO_QA_REPORT.md`; deployment success does not close them.
+
+
+## Latest evidence refresh — 2026-11-17
+
+The latest verified hosted pipeline is Node.js 24 workflow #46 and Pages deployment #91. Automated P47–P70 regressions and the two Chromium smoke suites completed successfully. This is a documentation/evidence refresh; application source and candidate version remain `23.3.84-p70`. All fourteen P70 real-world gates remain OPEN. No manual gate was closed based solely on synthetic or CI evidence.

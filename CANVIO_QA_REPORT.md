@@ -86,12 +86,20 @@ P69's canvas/image/video bytes are estimates based on surface dimensions. Resour
 The hosted workflow pins Node.js 24 and Actions by immutable commit, verifies the exact P70 `index.html` SHA, audits scripts/IDs, runs retained regressions and both Chromium smoke suites.
 
 - PR [#8](https://github.com/tovannghia27223-png/CANVIO/pull/8) was merged into `main` (merge commit `917792742d1a8e3b13307162eebb5bc3cbe20e40`).
-- Main release workflow [run #44](https://github.com/tovannghia27223-png/CANVIO/actions/runs/43940471456) completed successfully with all 22 workflow steps successful, including P47–P70 automated regressions, inherited Chromium 43/43, P68–P70 Chromium 16/16, and source promotion.
-- The exact P70 source tree was promoted by commit [`8606375`](https://github.com/tovannghia27223-png/CANVIO/commit/8606375ed2671099b7b2f1713138109eec905088).
-- GitHub Pages deployment [run #87](https://github.com/tovannghia27223-png/CANVIO/actions/runs/43940759013) completed successfully for the promoted `main` commit.
+- Main release workflow [run #46](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44104323930) completed successfully for validation and deployment jobs, including P47–P70 automated regressions, inherited Chromium 43/43, P68–P70 Chromium 16/16, and source promotion.
+- Workflow #46 validated candidate head `d14096255e16dfad4ce70260914c837f4bd7dd5c`; the current `main` head is [`3e6be7e`](https://github.com/tovannghia27223-png/CANVIO/commit/3e6be7e2653a1f5d999ece355236a6bf4e8738e5).
+- GitHub Pages deployment [run #91](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44104556386) completed successfully for the current `main` commit.
 
 The green workflow/deployment result confirms the hosted pipeline completed. It does not establish real-browser runtime acceptance, real media/Whisper behavior, accessibility, production security headers or the other manual gates listed above. Those remain open pending evidence on the target environment.
 
 ## 9. Final disposition
 
 P70 is the CANVIO 1.0 Stable Release Candidate integrated on `main` and deployed through the successful GitHub Pages workflow described above. `window.CANVIOStableRelease.inspect().releaseCertified` remains `false` by design. Fourteen manual gates remain open. Do not label the product CANVIO 1.0 Stable or production-certified until those gates are evidenced, reviewed and approved.
+
+
+### 2026-11-17 — Latest hosted verification
+
+- CANVIO Node.js 24 workflow [run #46](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44104323930) completed successfully for validation and deployment jobs. The validation job completed every listed step, including exact P70 source verification, retained regression suites, both Chromium smoke suites and source promotion.
+- Workflow #46 validated the candidate at head SHA `d14096255e16dfad4ce70260914c837f4bd7dd5c`. The current `main` head is [`3e6be7e`](https://github.com/tovannghia27223-png/CANVIO/commit/3e6be7e2653a1f5d999ece355236a6bf4e8738e5).
+- GitHub Pages [run #91](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44104556386) completed successfully for that current `main` head.
+- This updates hosted pipeline evidence only. It does not close any of the fourteen real-world acceptance gates or certify CANVIO 1.0 Stable.

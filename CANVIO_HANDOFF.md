@@ -54,9 +54,17 @@ P70 is additive on P67. Keep `CV.engines.video` as the canonical timeline; reuse
 ## Hosted delivery record
 
 - Pull request [#8](https://github.com/tovannghia27223-png/CANVIO/pull/8) was merged into `main` at `2026-11-16T19:32:54Z`; merge commit: `917792742d1a8e3b13307162eebb5bc3cbe20e40`.
-- The Node.js 24 release workflow [run #44](https://github.com/tovannghia27223-png/CANVIO/actions/runs/43940471456) completed successfully. All 22 workflow steps completed, including source integrity, static audit, P47–P70 regressions, Chromium browser smoke and promotion.
-- The validated P70 source tree was promoted onto `main` by commit [`8606375`](https://github.com/tovannghia27223-png/CANVIO/commit/8606375ed2671099b7b2f1713138109eec905088).
-- GitHub Pages deployment [run #87](https://github.com/tovannghia27223-png/CANVIO/actions/runs/43940759013) completed successfully for that promoted commit.
+- The Node.js 24 release workflow [run #46](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44104323930) completed successfully. The validation/package and Pages deployment jobs both succeeded; all listed validation steps completed, including source integrity, static audit, P47–P70 regressions and both Chromium smoke suites.
+- Workflow #46 validated candidate head `d14096255e16dfad4ce70260914c837f4bd7dd5c`; the current promoted `main` head is [`3e6be7e`](https://github.com/tovannghia27223-png/CANVIO/commit/3e6be7e2653a1f5d999ece355236a6bf4e8738e5).
+- GitHub Pages deployment [run #91](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44104556386) completed successfully for current `main`.
 - The repository delivery contains 57 manifested package files, including the full `index.html`, architecture guide, roadmap, handoff, QA/status reports, standalone modules, worker, patches and regression suites.
 
 A successful hosted deployment is evidence that the GitHub Actions/Pages deployment pipeline completed. It does **not** substitute for the fourteen manual production-acceptance gates below, nor certify the deployed experience across real browsers, devices, media and user projects. P70 remains a Stable Release Candidate, not CANVIO 1.0 Stable.
+
+
+## Latest hosted verification — 2026-11-17
+
+- CANVIO Node.js 24 workflow [run #46](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44104323930) completed successfully. Both validation/package and Pages deployment jobs report success; all listed validation steps completed, including P47–P70 regressions and both Chromium smoke suites.
+- The workflow validated candidate head `d14096255e16dfad4ce70260914c837f4bd7dd5c`; the current promoted `main` head is [`3e6be7e`](https://github.com/tovannghia27223-png/CANVIO/commit/3e6be7e2653a1f5d999ece355236a6bf4e8738e5).
+- GitHub Pages [run #91](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44104556386) completed successfully for current `main`.
+- The fourteen manual acceptance gates remain open. These workflow results do not certify native persistence, real A/V sync, real Whisper inference, WCAG conformance, production headers or device/project acceptance.
