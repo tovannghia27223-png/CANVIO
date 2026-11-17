@@ -54,17 +54,24 @@ P70 is additive on P67. Keep `CV.engines.video` as the canonical timeline; reuse
 ## Hosted delivery record
 
 - Pull request [#8](https://github.com/tovannghia27223-png/CANVIO/pull/8) was merged into `main` at `2026-11-16T19:32:54Z`; merge commit: `917792742d1a8e3b13307162eebb5bc3cbe20e40`.
-- The Node.js 24 release workflow [run #46](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44104323930) completed successfully. The validation/package and Pages deployment jobs both succeeded; all listed validation steps completed, including source integrity, static audit, P47–P70 regressions and both Chromium smoke suites.
-- Workflow #46 validated candidate head `d14096255e16dfad4ce70260914c837f4bd7dd5c`; the current promoted `main` head is [`3e6be7e`](https://github.com/tovannghia27223-png/CANVIO/commit/3e6be7e2653a1f5d999ece355236a6bf4e8738e5).
-- GitHub Pages deployment [run #91](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44104556386) completed successfully for current `main`.
+- The Node.js 24 release workflow [run #47](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44110607967) completed successfully. Both validation/package and Pages deployment jobs succeeded; all listed validation, regression and Chromium smoke steps passed.
+- Workflow #47 validated commit `0217c253b36a145b979397cafa785fdd5232ec3d`; promotion produced current `main` head [`93d4840`](https://github.com/tovannghia27223-png/CANVIO/commit/93d484037ca8a00f49cd07e44e702f03964e0b4e).
+- GitHub Pages [run #92](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44110606281) succeeded for the validated commit; final deployment [run #93](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44110828590) succeeded for current `main`.
 - The repository delivery contains 57 manifested package files, including the full `index.html`, architecture guide, roadmap, handoff, QA/status reports, standalone modules, worker, patches and regression suites.
 
 A successful hosted deployment is evidence that the GitHub Actions/Pages deployment pipeline completed. It does **not** substitute for the fourteen manual production-acceptance gates below, nor certify the deployed experience across real browsers, devices, media and user projects. P70 remains a Stable Release Candidate, not CANVIO 1.0 Stable.
 
 
-## Latest hosted verification — 2026-11-17
+## Previous hosted verification — run #46 (2026-11-17)
 
 - CANVIO Node.js 24 workflow [run #46](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44104323930) completed successfully. Both validation/package and Pages deployment jobs report success; all listed validation steps completed, including P47–P70 regressions and both Chromium smoke suites.
 - The workflow validated candidate head `d14096255e16dfad4ce70260914c837f4bd7dd5c`; the current promoted `main` head is [`3e6be7e`](https://github.com/tovannghia27223-png/CANVIO/commit/3e6be7e2653a1f5d999ece355236a6bf4e8738e5).
 - GitHub Pages [run #91](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44104556386) completed successfully for current `main`.
 - The fourteen manual acceptance gates remain open. These workflow results do not certify native persistence, real A/V sync, real Whisper inference, WCAG conformance, production headers or device/project acceptance.
+
+
+## Latest hosted verification — run #47 (2026-11-17)
+
+- Workflow [#47](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44110607967): validation/package and deployment jobs succeeded; all listed steps passed, including retained P47–P70 suites and both Chromium smoke suites.
+- Current promoted `main`: [`93d4840`](https://github.com/tovannghia27223-png/CANVIO/commit/93d484037ca8a00f49cd07e44e702f03964e0b4e). Pages deployment [#93](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44110828590) succeeded. Run [#92](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44110606281) also succeeded for the validated docs commit.
+- The 14 real-world acceptance gates remain open; no production certification is claimed.

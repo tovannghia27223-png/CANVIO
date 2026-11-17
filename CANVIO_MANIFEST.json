@@ -17,28 +17,28 @@
     },
     {
       "path": "CANVIO_AI_GUIDE.md",
-      "bytes": 326204,
-      "sha256": "a8e432627cf94a573269c4126a05252dbb8761b5deff4f8028f4c3de114b8cb5"
+      "bytes": 328700,
+      "sha256": "f280320113c4431a1a7e6bb2d4790481654dfce96e52330ebbf8ddf91c472f8f"
     },
     {
       "path": "CANVIO_HANDOFF.md",
-      "bytes": 6548,
-      "sha256": "8e5b1cd0284f12da29ce2a76383bafe4f03f14349a3bb8cbbd14bde5ef7164ca"
+      "bytes": 7344,
+      "sha256": "6933b7dfb067395e58e5e737346ef921699609136aa7a7e106d6a4819c44090a"
     },
     {
       "path": "CANVIO_PHASES_1_6_STATUS.md",
-      "bytes": 4140,
-      "sha256": "74174bebc3b4bdbfb28d45409f8bebd77a5f16a3b4afe456f0e4050f89bfeb9a"
+      "bytes": 4529,
+      "sha256": "fba516d2973dcb7045e12b92012253ae53e7901accc99030d333beb2bdddc60b"
     },
     {
       "path": "CANVIO_QA_REPORT.md",
-      "bytes": 7932,
-      "sha256": "8b7753264662388b5f6ffac13a8ee5db05b3fc2b85de77a97e2faecff5cfbd31"
+      "bytes": 9025,
+      "sha256": "379fe993b38c344ef624c2e493db1936eaf8436b66c2571e2e7fb48944f516fd"
     },
     {
       "path": "CANVIO_ROADMAP.md",
-      "bytes": 34162,
-      "sha256": "6c6f0011174629d18fb35b8756133fb65136ce9655186da71c28c4416d96bd3e"
+      "bytes": 34962,
+      "sha256": "e9aedb0a859e14b4691af85c7feb72811b42de4b675360323f1da9d76652e0cf"
     },
     {
       "path": "README.md",

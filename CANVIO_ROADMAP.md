@@ -349,9 +349,17 @@ Không giả lập real-time collaboration, cloud persistence, provider proxy ho
 **Final disposition:** P70 is a local CANVIO 1.0 Stable Release Candidate only. Do not label production Stable until all fourteen gate evidence items are reviewed and attached. No GitHub commit, PR, merge, hosted Actions run or deployment is claimed.
 
 
-## Latest hosted verification — 2026-11-17
+## Previous hosted verification — run #46 (2026-11-17)
 
 - Node.js 24 workflow [#46](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44104323930): validation/package and Pages deployment jobs both completed successfully; all listed validation steps passed.
 - Candidate workflow head: `d14096255e16dfad4ce70260914c837f4bd7dd5c`. Current `main` head after promotion: [`3e6be7e`](https://github.com/tovannghia27223-png/CANVIO/commit/3e6be7e2653a1f5d999ece355236a6bf4e8738e5).
 - GitHub Pages [#91](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44104556386) completed successfully for current `main`.
 - P47–P70 automated tests and Chromium smoke suites remain green. Fourteen manual acceptance gates remain OPEN; this refresh does not change the P70 release disposition.
+
+
+## Latest hosted verification — run #47 (2026-11-17)
+
+- Node.js 24 workflow [#47](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44110607967): validation/package and deployment jobs succeeded; all listed steps passed.
+- Workflow-validated commit: `0217c253b36a145b979397cafa785fdd5232ec3d`. Current promoted `main`: [`93d4840`](https://github.com/tovannghia27223-png/CANVIO/commit/93d484037ca8a00f49cd07e44e702f03964e0b4e).
+- Pages [#92](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44110606281) and final promoted deployment [#93](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44110828590) succeeded.
+- P47–P70 automated suites and Chromium smokes remain green. Fourteen real-world release gates remain OPEN; the RC disposition is unchanged.

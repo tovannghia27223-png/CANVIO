@@ -25,9 +25,14 @@
 
 ## Final release disposition
 
-P70 is integrated on GitHub `main` and the GitHub Pages deployment workflow completed successfully. Current main head is `3e6be7e2653a1f5d999ece355236a6bf4e8738e5`. Node.js 24 workflow [run #46](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44104323930) completed successfully, with both validation/package and Pages deployment jobs successful. GitHub Pages [run #91](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44104556386) completed successfully for that main head. P70 remains a Stable Release Candidate and **not production-certified**. Fourteen manual real-world gates remain open in `CANVIO_QA_REPORT.md`; deployment success does not close them.
+P70 is integrated on GitHub `main` and the GitHub Pages deployment workflow completed successfully. Current main head is `93d484037ca8a00f49cd07e44e702f03964e0b4e`. Node.js 24 workflow [run #47](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44110607967) completed successfully; validation/package and deployment jobs both passed. GitHub Pages [run #93](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44110828590) completed successfully for the current promoted main head. P70 remains a Stable Release Candidate and **not production-certified**. Fourteen manual real-world gates remain open; deployment success does not close them.
 
 
-## Latest evidence refresh — 2026-11-17
+## Previous evidence refresh — run #46 (2026-11-17)
 
 The latest verified hosted pipeline is Node.js 24 workflow #46 and Pages deployment #91. Automated P47–P70 regressions and the two Chromium smoke suites completed successfully. This is a documentation/evidence refresh; application source and candidate version remain `23.3.84-p70`. All fourteen P70 real-world gates remain OPEN. No manual gate was closed based solely on synthetic or CI evidence.
+
+
+## Latest evidence refresh — run #47 (2026-11-17)
+
+Workflow #47 and Pages #92/#93 completed successfully. Current `main` is `93d484037ca8a00f49cd07e44e702f03964e0b4e`. Automated P47–P70 checks remain green. The candidate stays `23.3.84-p70`; fourteen P70 real-world acceptance gates remain OPEN. This was a documentation/evidence update only; application modules and data owners did not change.
