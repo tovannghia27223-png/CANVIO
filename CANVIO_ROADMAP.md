@@ -6,7 +6,7 @@
 
 - **Candidate:** `index.html` — `23.3.84-p70` application marker; PhaseSuite `70.0.0` (P68–P70 final milestone implementation on P67).
 - **SHA-256:** See `CANVIO_MANIFEST.json` for final P70 source and package hashes.
-- **Trạng thái phát hành:** P70 local Stable Release Candidate; P47–P70 source/regression/Chromium synthetic smoke pass; fourteen real-world gates remain OPEN. Not CANVIO 1.0 Stable; no merge/deploy/production certification.
+- **Trạng thái phát hành:** P70 (`23.3.84-p70`) is integrated on GitHub `main` and the GitHub Pages deployment completed successfully. P47–P70 source/regression/Chromium synthetic smoke pass; fourteen real-world acceptance gates remain OPEN. It remains a Stable Release Candidate, not CANVIO 1.0 Stable or production-certified.
 - **Nguyên tắc:** một canonical Video Engine timeline, một Asset Library, một Project Vault, một Unified Layers history owner; không cloud giả, không API key nhúng trong source, không request nền.
 
 | Giai đoạn | Trạng thái P70 | Tóm tắt |
