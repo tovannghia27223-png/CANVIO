@@ -288,14 +288,18 @@ jobs:
             echo 'Manifest already matches all committed files; no follow-up commit required.'
             exit 0
           fi
-          git commit -m 'ci: refresh CANVIO manifest checksums'
+          git commit -m 'ci: refresh CANVIO validated source and manifest'
+          # All intended source changes are committed above. Clear only any
+          # post-commit tracked modifications produced by tooling before rebase.
+          git reset --hard HEAD
           for attempt in 1 2 3; do
             git fetch origin main
             git rebase origin/main
             if git push origin HEAD:main; then exit 0; fi
-            echo "Manifest push attempt ${attempt} did not complete; retrying after fetch/rebase."
+            echo "Source promotion attempt ${attempt} did not complete; retrying after fetch/rebase."
+            git reset --hard HEAD
           done
-          echo 'Unable to push refreshed manifest after three attempts.' >&2
+          echo 'Unable to push validated source after three attempts.' >&2
           exit 1
 
       - name: Configure GitHub Pages
