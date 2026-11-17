@@ -62,6 +62,12 @@ jobs:
           test "$actual" = "$expected_p70" || { echo "Unexpected index.html SHA-256: $actual" >&2; exit 1; }
           echo "Exact CANVIO P70 candidate SHA-256 verified: $actual"
 
+      - name: Apply reviewed P70 source overrides
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/apply-p70-overrides.cjs
+
       - name: Validate HTML, unique IDs, and inline JavaScript syntax
         shell: bash
         run: |
@@ -238,6 +244,19 @@ jobs:
           const manifestPath = 'CANVIO_MANIFEST.json';
           const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
           if (manifest.format !== 'CANVIO_DELIVERY_MANIFEST' || manifest.hashAlgorithm !== 'SHA-256' || !Array.isArray(manifest.files)) throw new Error('Unsupported CANVIO delivery manifest format');
+          const supplementalInputs = [
+            '.canvio/p70/overrides/p57-native-persistence.js',
+            '.canvio/p70/overrides/p57-run-tests.cjs',
+            '.canvio/p70/overrides/p60-accessibility-audit.js',
+            '.canvio/p70/overrides/p68-p70-tests.cjs',
+            '.canvio/p70/overrides/canvio-p68-p70.js',
+            'scripts/apply-p70-overrides.cjs'
+          ];
+          for (const filePath of supplementalInputs) {
+            if (!manifest.files.some(entry => entry.path === filePath)) {
+              manifest.files.push({ path: filePath, bytes: 0, sha256: '' });
+            }
+          }
           const seen = new Set();
           for (const entry of manifest.files) {
             if (!entry || typeof entry.path !== 'string' || !entry.path || seen.has(entry.path)) throw new Error('Invalid or duplicate manifest path');
@@ -257,14 +276,14 @@ jobs:
           console.log('PASS: manifest entries=' + check.files.length + '; all SHA-256 hashes and byte counts verified.');
           NODE
 
-      - name: Commit manifest changes only
+      - name: Commit validated P70 source and manifest changes
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         shell: bash
         run: |
           set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add CANVIO_MANIFEST.json
+          git add index.html tests/p57/p57-native-persistence.js tests/p57/run-p57-tests.cjs tests/p60/p60-accessibility-audit.js tests/p68-p70/run-p68-p70-tests.cjs canvio-p68-p70.js CANVIO_MANIFEST.json
           if git diff --cached --quiet; then
             echo 'Manifest already matches all committed files; no follow-up commit required.'
             exit 0
