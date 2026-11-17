@@ -283,7 +283,7 @@ jobs:
           set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add index.html tests/p57/p57-native-persistence.js tests/p57/run-p57-tests.cjs tests/p60/p60-accessibility-audit.js tests/p68-p70/run-p68-p70-tests.cjs canvio-p68-p70.js CANVIO_MANIFEST.json
+          git add index.html tests/p57/p57-native-persistence.js tests/p57/run-p57-tests.cjs tests/p60/p60-accessibility-audit.js tests/p68-p70/run-p68-p70-tests.cjs canvio-p68-p70.js CANVIO_MANIFEST.json scripts/apply-p70-overrides.cjs .canvio/p70/overrides/
           if git diff --cached --quiet; then
             echo 'Manifest already matches all committed files; no follow-up commit required.'
             exit 0
