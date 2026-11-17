@@ -211,6 +211,49 @@ jobs:
           /tmp/canvio-playwright/bin/python tests/p68-p70/run-p68-p70-browser-smoke.py
 
 
+      - name: Refresh and verify the delivery manifest after browser smoke
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs = require('node:fs');
+          const path = require('node:path');
+          const crypto = require('node:crypto');
+          const manifestPath = 'CANVIO_MANIFEST.json';
+          const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+          if (manifest.format !== 'CANVIO_DELIVERY_MANIFEST' || manifest.hashAlgorithm !== 'SHA-256' || !Array.isArray(manifest.files)) {
+            throw new Error('Unsupported CANVIO delivery manifest format');
+          }
+          const seen = new Set();
+          for (const entry of manifest.files) {
+            if (!entry || typeof entry.path !== 'string' || !entry.path || seen.has(entry.path)) {
+              throw new Error('Invalid or duplicate manifest path: ' + (entry && entry.path));
+            }
+            seen.add(entry.path);
+            if (path.isAbsolute(entry.path) || entry.path.split(/[\\/]/).includes('..')) {
+              throw new Error('Manifest path escapes repository: ' + entry.path);
+            }
+            const fullPath = path.join(process.cwd(), entry.path);
+            const stat = fs.statSync(fullPath);
+            if (!stat.isFile()) throw new Error('Manifest path is not a file: ' + entry.path);
+            const bytes = fs.readFileSync(fullPath);
+            entry.bytes = bytes.byteLength;
+            entry.sha256 = crypto.createHash('sha256').update(bytes).digest('hex');
+          }
+          manifest.fileCount = manifest.files.length;
+          manifest.generatedAt = new Date().toISOString().slice(0, 10);
+          fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + '\n', 'utf8');
+          const verified = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+          for (const entry of verified.files) {
+            const bytes = fs.readFileSync(path.join(process.cwd(), entry.path));
+            const actual = crypto.createHash('sha256').update(bytes).digest('hex');
+            if (bytes.byteLength !== entry.bytes || actual !== entry.sha256) {
+              throw new Error('Manifest verification failed after write: ' + entry.path);
+            }
+          }
+          console.log('PASS: manifest entries=' + verified.files.length + '; SHA-256 and byte counts verified for every listed file.');
+          NODE
+
       - name: Promote the validated P70 source tree onto main
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         shell: bash

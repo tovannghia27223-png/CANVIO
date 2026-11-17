@@ -12,8 +12,8 @@
   "files": [
     {
       "path": ".github/workflows/canvio-pages-node24.yml",
-      "bytes": 7839,
-      "sha256": "333229521f7e90dda45e43d80c23fa4f46405606dc428d63e07608cad23e2eae"
+      "bytes": 11996,
+      "sha256": "db48dcdb67737633494e5ef9376d91830a02e3cc885361d2f60dd8b9c708c454"
     },
     {
       "path": "CANVIO_AI_GUIDE.md",
@@ -257,8 +257,8 @@
     },
     {
       "path": "tests/p63-p67/browser-smoke-report.json",
-      "bytes": 15398,
-      "sha256": "30381748bdd33377ec26104384a7ccbd6a622e4045faa7875a5105e951333b1d"
+      "bytes": 15397,
+      "sha256": "c6ef50f25c4fcec2bca4288182d12189bd06a298026bfe37cb4d7fbbc69550f5"
     },
     {
       "path": "tests/p63-p67/run-p63-p67-browser-smoke.py",
@@ -277,8 +277,8 @@
     },
     {
       "path": "tests/p68-p70/browser-smoke-report.json",
-      "bytes": 4119,
-      "sha256": "57bfb57d639c5374ede464c3f0122d58e705fdde684ae5e05c646119c06a3f9b"
+      "bytes": 4118,
+      "sha256": "15c8f528d071a6963058d5f3aef8eaef0eab589570b6121c01653e0a2ad21fe5"
     },
     {
       "path": "tests/p68-p70/run-p68-p70-browser-smoke.py",
