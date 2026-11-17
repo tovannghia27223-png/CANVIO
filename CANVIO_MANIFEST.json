@@ -12,33 +12,33 @@
   "files": [
     {
       "path": ".github/workflows/canvio-pages-node24.yml",
-      "bytes": 11996,
-      "sha256": "db48dcdb67737633494e5ef9376d91830a02e3cc885361d2f60dd8b9c708c454"
+      "bytes": 12492,
+      "sha256": "a9ea3454ea79bafa6d4771a3084a80be07dfc044251cf778d7ba516f592937fe"
     },
     {
       "path": "CANVIO_AI_GUIDE.md",
-      "bytes": 328700,
-      "sha256": "f280320113c4431a1a7e6bb2d4790481654dfce96e52330ebbf8ddf91c472f8f"
+      "bytes": 331164,
+      "sha256": "ff9e708c733ee7b14662c4e91d6834adce86133948ccc15b36cea9b78e1f7e97"
     },
     {
       "path": "CANVIO_HANDOFF.md",
-      "bytes": 7344,
-      "sha256": "6933b7dfb067395e58e5e737346ef921699609136aa7a7e106d6a4819c44090a"
+      "bytes": 8247,
+      "sha256": "147469ca919622607c569a5c7781c8cfa8a72d82a90cb0c94719229e67f9fa42"
     },
     {
       "path": "CANVIO_PHASES_1_6_STATUS.md",
-      "bytes": 4529,
-      "sha256": "fba516d2973dcb7045e12b92012253ae53e7901accc99030d333beb2bdddc60b"
+      "bytes": 5106,
+      "sha256": "c72f230d7310d77b86cac3ff6d471988e53ba6358523b2c9a2076667e76e3dab"
     },
     {
       "path": "CANVIO_QA_REPORT.md",
-      "bytes": 9025,
-      "sha256": "379fe993b38c344ef624c2e493db1936eaf8436b66c2571e2e7fb48944f516fd"
+      "bytes": 10218,
+      "sha256": "87a3a0701a732015fbe5c5b9c6f5d5a614991c03def1fae6b043430e804e9a1c"
     },
     {
       "path": "CANVIO_ROADMAP.md",
-      "bytes": 34962,
-      "sha256": "e9aedb0a859e14b4691af85c7feb72811b42de4b675360323f1da9d76652e0cf"
+      "bytes": 35625,
+      "sha256": "1bab27cbbb36dd7745e2a1c7523b2b0e822a268ca339dfcb321c1d7fe122dbe1"
     },
     {
       "path": "README.md",
