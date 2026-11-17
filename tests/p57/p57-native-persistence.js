@@ -29,8 +29,14 @@
       if (!window.indexedDB) return reject(new Error('IndexedDB không khả dụng trong context này.'));
       var request;
       var createdByProbe = false;
+      var settled = false;
+      function fail(error) {
+        if (settled) return;
+        settled = true;
+        reject(error);
+      }
       try { request = window.indexedDB.open(DB_NAME); }
-      catch (error) { reject(error); return; }
+      catch (error) { fail(error); return; }
       request.onupgradeneeded = function () {
         // Opening a missing database without a version would create it. Abort that
         // upgrade so this diagnostic can never manufacture a replacement store.
@@ -39,41 +45,62 @@
       };
       request.onsuccess = function () {
         var db = request.result;
+        // A request may succeed after an earlier "blocked" event rejected the
+        // promise. Close that late connection instead of leaking an open handle.
+        if (settled) {
+          try { db.close(); } catch (error) {}
+          return;
+        }
         if (createdByProbe) {
           try { db.close(); } catch (error) {}
-          reject(new Error('Không tìm thấy kho media đã tồn tại; không tạo database mới.'));
+          fail(new Error('Không tìm thấy kho media đã tồn tại; không tạo database mới.'));
+          return;
+        }
+        if (!db.objectStoreNames || !db.objectStoreNames.contains(STORE_NAME)) {
+          try { db.close(); } catch (error) {}
+          fail(new Error('Database hiện có nhưng thiếu object store media; không tự nâng schema.'));
           return;
         }
         db.onversionchange = function () { try { db.close(); } catch (error) {} };
-        if (!db.objectStoreNames || !db.objectStoreNames.contains(STORE_NAME)) {
-          try { db.close(); } catch (error) {}
-          reject(new Error('Database hiện có nhưng thiếu object store media; không tự nâng schema.'));
-          return;
-        }
+        settled = true;
         resolve(db);
       };
       request.onerror = function () {
-        reject(request.error || new Error(createdByProbe ? 'Database media chưa tồn tại.' : 'Không mở được database media.'));
+        fail(request.error || new Error(createdByProbe ? 'Database media chưa tồn tại.' : 'Không mở được database media.'));
       };
-      request.onblocked = function () { reject(new Error('Database đang bị khóa bởi tab khác. Đóng các tab CANVIO khác rồi thử lại.')); };
+      request.onblocked = function () {
+        fail(new Error('Database đang bị khóa bởi tab khác. Đóng các tab CANVIO khác rồi thử lại.'));
+      };
     });
   }
 
   function inspect() {
     return Promise.all([storageInfo(), Promise.resolve().then(openExistingDatabase).then(function (db) {
       return new Promise(function (resolve, reject) {
-        var tx;
+        var tx, countRequest, counted = false, count = null, settled = false;
+        function finish(error) {
+          if (settled) return;
+          settled = true;
+          try { db.close(); } catch (closeError) {}
+          if (error) { reject(error); return; }
+          if (!counted) { reject(new Error('Giao dịch kiểm tra IndexedDB kết thúc mà không có kết quả đếm.')); return; }
+          resolve({ database: DB_NAME, version: db.version, store: STORE_NAME, mediaRecords: count });
+        }
         try { tx = db.transaction(STORE_NAME, 'readonly'); }
-        catch (error) { db.close(); reject(error); return; }
-        var countRequest;
+        catch (error) { finish(error); return; }
         try { countRequest = tx.objectStore(STORE_NAME).count(); }
-        catch (error) { db.close(); reject(error); return; }
+        catch (error) { try { tx.abort(); } catch (abortError) {} finish(error); return; }
         countRequest.onsuccess = function () {
-          resolve({ database: DB_NAME, version: db.version, store: STORE_NAME, mediaRecords: countRequest.result });
+          count = countRequest.result;
+          counted = true;
         };
-        countRequest.onerror = function () { reject(countRequest.error || new Error('Không đếm được media records.')); };
-        tx.oncomplete = function () { try { db.close(); } catch (error) {} };
-        tx.onerror = tx.onabort = function () { try { db.close(); } catch (error) {} };
+        countRequest.onerror = function () {
+          finish(countRequest.error || new Error('Không đếm được media records.'));
+        };
+        tx.oncomplete = function () { finish(null); };
+        tx.onerror = tx.onabort = function () {
+          finish(tx.error || new Error('Giao dịch kiểm tra IndexedDB bị lỗi hoặc bị hủy.'));
+        };
       });
     }).catch(function (error) { return { database: DB_NAME, available: false, error: error.message || String(error) }; })]).then(function (parts) {
       var storage = parts[0], db = parts[1];

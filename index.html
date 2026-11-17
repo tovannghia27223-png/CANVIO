@@ -21684,8 +21684,14 @@ if(gate&&typeof gate.run==='function'&&!gate.run.__canvioP56Wrapped){var oldRun=
       if (!window.indexedDB) return reject(new Error('IndexedDB không khả dụng trong context này.'));
       var request;
       var createdByProbe = false;
+      var settled = false;
+      function fail(error) {
+        if (settled) return;
+        settled = true;
+        reject(error);
+      }
       try { request = window.indexedDB.open(DB_NAME); }
-      catch (error) { reject(error); return; }
+      catch (error) { fail(error); return; }
       request.onupgradeneeded = function () {
         // Opening a missing database without a version would create it. Abort that
         // upgrade so this diagnostic can never manufacture a replacement store.
@@ -21694,41 +21700,62 @@ if(gate&&typeof gate.run==='function'&&!gate.run.__canvioP56Wrapped){var oldRun=
       };
       request.onsuccess = function () {
         var db = request.result;
+        // A request may succeed after an earlier "blocked" event rejected the
+        // promise. Close that late connection instead of leaking an open handle.
+        if (settled) {
+          try { db.close(); } catch (error) {}
+          return;
+        }
         if (createdByProbe) {
           try { db.close(); } catch (error) {}
-          reject(new Error('Không tìm thấy kho media đã tồn tại; không tạo database mới.'));
+          fail(new Error('Không tìm thấy kho media đã tồn tại; không tạo database mới.'));
+          return;
+        }
+        if (!db.objectStoreNames || !db.objectStoreNames.contains(STORE_NAME)) {
+          try { db.close(); } catch (error) {}
+          fail(new Error('Database hiện có nhưng thiếu object store media; không tự nâng schema.'));
           return;
         }
         db.onversionchange = function () { try { db.close(); } catch (error) {} };
-        if (!db.objectStoreNames || !db.objectStoreNames.contains(STORE_NAME)) {
-          try { db.close(); } catch (error) {}
-          reject(new Error('Database hiện có nhưng thiếu object store media; không tự nâng schema.'));
-          return;
-        }
+        settled = true;
         resolve(db);
       };
       request.onerror = function () {
-        reject(request.error || new Error(createdByProbe ? 'Database media chưa tồn tại.' : 'Không mở được database media.'));
+        fail(request.error || new Error(createdByProbe ? 'Database media chưa tồn tại.' : 'Không mở được database media.'));
       };
-      request.onblocked = function () { reject(new Error('Database đang bị khóa bởi tab khác. Đóng các tab CANVIO khác rồi thử lại.')); };
+      request.onblocked = function () {
+        fail(new Error('Database đang bị khóa bởi tab khác. Đóng các tab CANVIO khác rồi thử lại.'));
+      };
     });
   }
 
   function inspect() {
     return Promise.all([storageInfo(), Promise.resolve().then(openExistingDatabase).then(function (db) {
       return new Promise(function (resolve, reject) {
-        var tx;
+        var tx, countRequest, counted = false, count = null, settled = false;
+        function finish(error) {
+          if (settled) return;
+          settled = true;
+          try { db.close(); } catch (closeError) {}
+          if (error) { reject(error); return; }
+          if (!counted) { reject(new Error('Giao dịch kiểm tra IndexedDB kết thúc mà không có kết quả đếm.')); return; }
+          resolve({ database: DB_NAME, version: db.version, store: STORE_NAME, mediaRecords: count });
+        }
         try { tx = db.transaction(STORE_NAME, 'readonly'); }
-        catch (error) { db.close(); reject(error); return; }
-        var countRequest;
+        catch (error) { finish(error); return; }
         try { countRequest = tx.objectStore(STORE_NAME).count(); }
-        catch (error) { db.close(); reject(error); return; }
+        catch (error) { try { tx.abort(); } catch (abortError) {} finish(error); return; }
         countRequest.onsuccess = function () {
-          resolve({ database: DB_NAME, version: db.version, store: STORE_NAME, mediaRecords: countRequest.result });
+          count = countRequest.result;
+          counted = true;
         };
-        countRequest.onerror = function () { reject(countRequest.error || new Error('Không đếm được media records.')); };
-        tx.oncomplete = function () { try { db.close(); } catch (error) {} };
-        tx.onerror = tx.onabort = function () { try { db.close(); } catch (error) {} };
+        countRequest.onerror = function () {
+          finish(countRequest.error || new Error('Không đếm được media records.'));
+        };
+        tx.oncomplete = function () { finish(null); };
+        tx.onerror = tx.onabort = function () {
+          finish(tx.error || new Error('Giao dịch kiểm tra IndexedDB bị lỗi hoặc bị hủy.'));
+        };
       });
     }).catch(function (error) { return { database: DB_NAME, available: false, error: error.message || String(error) }; })]).then(function (parts) {
       var storage = parts[0], db = parts[1];
@@ -21820,7 +21847,6 @@ if(gate&&typeof gate.run==='function'&&!gate.run.__canvioP56Wrapped){var oldRun=
     };
   }
 })();
-
 </script>
 <script id="canvio-p58-media-export-acceptance">
 /* CANVIO P58 — Read-only validation of a user-selected exported media file. */
@@ -21975,19 +22001,41 @@ if(gate&&typeof gate.run==='function'&&!gate.run.__canvioP56Wrapped){var oldRun=
     while (current && current !== document) {
       if (current.hidden || (current.getAttribute && current.getAttribute('aria-hidden') === 'true')) return false;
       var style = window.getComputedStyle ? window.getComputedStyle(current) : null;
-      if (style && (style.display === 'none' || style.visibility === 'hidden')) return false;
+      if (style && (style.display === 'none' || style.visibility === 'hidden' || style.visibility === 'collapse')) return false;
       current = current.parentElement;
     }
     return !!node;
   }
+  function referencedName(ids) {
+    if (!ids || typeof document.getElementById !== 'function') return '';
+    return String(ids).trim().split(/\s+/).map(function (id) {
+      var target = document.getElementById(id);
+      return target ? String(target.innerText || target.textContent || '').replace(/\s+/g, ' ').trim() : '';
+    }).filter(Boolean).join(' ').trim();
+  }
   function hasName(node) {
+    // aria-labelledby accepts a whitespace-separated list of ID references.
+    if (referencedName(node.getAttribute('aria-labelledby'))) return true;
     var aria = (node.getAttribute('aria-label') || '').trim();
-    var labelled = (node.getAttribute('aria-labelledby') || '').trim();
+    if (aria) return true;
     var title = (node.getAttribute('title') || '').trim();
     var text = (node.innerText || node.textContent || '').replace(/\s+/g, ' ').trim();
-    if (aria || title || text) return true;
-    if (labelled && document.getElementById(labelled)) return true;
-    if (node.id && document.querySelector && document.querySelector('label[for="' + String(node.id).replace(/"/g, '\\"') + '"]')) return true;
+    if (title || text) return true;
+    // Native label association is safer than interpolating arbitrary IDs into selectors.
+    if (node.labels && node.labels.length) {
+      for (var i = 0; i < node.labels.length; i++) {
+        var labelText = (node.labels[i].innerText || node.labels[i].textContent || '').replace(/\s+/g, ' ').trim();
+        if (labelText) return true;
+      }
+    }
+    if (node.id && document.querySelectorAll) {
+      var labels = document.querySelectorAll('label[for]');
+      for (var j = 0; j < labels.length; j++) {
+        if (String(labels[j].getAttribute('for') || '') !== String(node.id)) continue;
+        var explicitText = (labels[j].innerText || labels[j].textContent || '').replace(/\s+/g, ' ').trim();
+        if (explicitText) return true;
+      }
+    }
     return !!(node.closest && node.closest('label'));
   }
   function inspect(root) {
@@ -22041,7 +22089,6 @@ if(gate&&typeof gate.run==='function'&&!gate.run.__canvioP56Wrapped){var oldRun=
     };
   }
 })();
-
 </script>
 <script id="canvio-p61-hosting-security-audit">
 /* CANVIO P61 — Read-only deployment/security readiness checks. */
@@ -22789,7 +22836,7 @@ if(gate&&typeof gate.run==='function'&&!gate.run.__canvioP56Wrapped){var oldRun=
       if (text.length > MAX_SOURCE_CHARS) throw new Error('OBJ vượt giới hạn 5 MiB văn bản.');
       var vertices = [], faces = 0, triangles = [], ignored = { normals: 0, texcoords: 0, materials: 0, groups: 0, other: 0 }, lines = text.split(/\r?\n/);
       for (var li = 0; li < lines.length; li++) {
-        var line = lines[li].trim();
+        var line = lines[li].split('#')[0].trim();
         if (!line || line.charAt(0) === '#') continue;
         var parts = line.split(/\s+/), kind = parts[0];
         if (kind === 'v') {

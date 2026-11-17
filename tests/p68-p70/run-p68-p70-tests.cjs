@@ -66,6 +66,11 @@ const OBJ = [
     assert.equal(P68.parseOBJ(negative).triangleCount, 2);
   });
 
+  await test('P68 accepts trailing comments after OBJ vertex and face records', () => {
+    const commented = OBJ.replace('v -1 -1 0','v -1 -1 0 # lower-left').replace('f 1/1/1 2/1/1 3/1/1 4/1/1','f 1/1/1 2/1/1 3/1/1 4/1/1 # panel face');
+    assert.equal(P68.parseOBJ(commented).triangleCount, 2);
+  });
+
   await test('P68 rejects missing, zero and out-of-range face indices', () => {
     assert.throws(() => P68.parseOBJ(''), /trống/);
     assert.throws(() => P68.parseOBJ('v 0 0 0\nv 1 0 0\nv 0 1 0\nf 1 0 3'), /không hợp lệ/);
