@@ -174,7 +174,7 @@
       "id": "real-webm-export-decode",
       "status": "pass",
       "value": {
-        "size": 18178,
+        "size": 17982,
         "mime": "video/webm;codecs=vp9",
         "duration": 0.9,
         "width": 960,
@@ -186,8 +186,8 @@
           "avSyncCertified": false
         },
         "download": {
-          "name": "CANVIO_multitrack_1794928057701.webm",
-          "href": "blob:null/934d4fff-f68f-448f-8098-73bce9be4a9a"
+          "name": "CANVIO_multitrack_1794928616449.webm",
+          "href": "blob:null/a1babd38-0447-4bf5-bb43-c49d2a76eec8"
         }
       }
     },
@@ -195,9 +195,9 @@
       "id": "real-mp4-h264-export-decode",
       "status": "pass",
       "value": {
-        "size": 12660,
+        "size": 12557,
         "mime": "video/mp4;codecs=avc1.420020",
-        "duration": 0.898633,
+        "duration": 0.884933,
         "width": 960,
         "height": 540,
         "readyState": 4,
@@ -207,8 +207,8 @@
           "avSyncCertified": false
         },
         "download": {
-          "name": "CANVIO_multitrack_1794928058661.mp4",
-          "href": "blob:null/e42526c8-7485-497b-90b4-e27a8f24c484"
+          "name": "CANVIO_multitrack_1794928617394.mp4",
+          "href": "blob:null/2a0e55e1-e80c-4274-b4d7-6b8983e30734"
         }
       }
     },
@@ -225,7 +225,7 @@
       "id": "render-retry-after-cancel",
       "status": "pass",
       "value": {
-        "size": 17380,
+        "size": 18115,
         "mime": "video/webm;codecs=vp9",
         "duration": 0.8,
         "width": 960,
@@ -237,8 +237,8 @@
           "avSyncCertified": false
         },
         "download": {
-          "name": "CANVIO_multitrack_1794928059751.webm",
-          "href": "blob:null/3ea4e12a-7cd0-481a-a699-2146b14631a9"
+          "name": "CANVIO_multitrack_1794928618484.webm",
+          "href": "blob:null/f2cc714c-dabc-4057-aa8d-5d5cb03699b0"
         }
       }
     },
@@ -319,7 +319,7 @@
         },
         "grouped": {
           "ok": true,
-          "groupId": "vtgroup-mwkttn3c-qpo56ktyhz",
+          "groupId": "vtgroup-mwku5m7h-wkw8z5fhhz",
           "count": 2,
           "name": "P67 smoke group"
         },
@@ -332,8 +332,8 @@
           "ok": true,
           "duplicated": 2,
           "ids": [
-            "vtclip-mwkttn3e-cmczj0lszd",
-            "vtclip-mwkttn3e-sks5qy6v2g"
+            "vtclip-mwku5m7j-62la3xcnh2",
+            "vtclip-mwku5m7j-06smw5bs3b"
           ],
           "mediaReferencesReused": true
         },
@@ -354,8 +354,8 @@
             "p67-a",
             "p67-b",
             "p67-c",
-            "vtclip-mwkttn3e-cmczj0lszd",
-            "vtclip-mwkttn3e-sks5qy6v2g"
+            "vtclip-mwku5m7j-62la3xcnh2",
+            "vtclip-mwku5m7j-06smw5bs3b"
           ]
         },
         "mounted": true,
