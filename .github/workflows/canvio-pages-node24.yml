@@ -248,7 +248,7 @@ jobs:
             entry.sha256 = crypto.createHash('sha256').update(file).digest('hex');
           }
           manifest.fileCount = manifest.files.length;
-          fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + '\\n', 'utf8');
+          fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + '\n', 'utf8');
           const check = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
           for (const entry of check.files) {
             const file = fs.readFileSync(path.join(process.cwd(), entry.path));
