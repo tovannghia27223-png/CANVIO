@@ -14,7 +14,7 @@ def png_chunk(kind,payload):
 
 def motion_png_frames(width=320,height=240,count=90):
     """Deterministic textured PNG sequence with a moving, trackable checker target."""
-    signature=b'\\x89PNG\\r\\n\\x1a\\n'
+    signature=b'\x89PNG\r\n\x1a\n'
     header=struct.pack('>IIBBBBB',width,height,8,2,0,0,0)
     for frame in range(count):
         left=8+(frame*3)%(width-56)
