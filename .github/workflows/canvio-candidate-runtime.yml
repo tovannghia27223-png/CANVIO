@@ -53,9 +53,9 @@ jobs:
             if(html.includes('23.3.108-p85-studio-r2')) throw new Error('Legacy candidate version marker remains');
             if(!html.includes('<title>CANVIO 23.3.111 — GitHub Runtime Verified Candidate</title>')) throw new Error('Candidate document title was not updated');
             const p60Source=fs.readFileSync('tests/p60/p60-accessibility-audit.js','utf8').trim();
-            const p60Tag=/(<script\\b(?=[^>]*\\bid=["']canvio-p60-accessibility-screening["'])[^>]*>)[\\s\\S]*?(<\\/script\\s*>)/i;
+            const p60Tag=/(<script\b(?=[^>]*\bid=["']canvio-p60-accessibility-screening["'])[^>]*>)[\s\S]*?(<\/script\s*>)/i;
             if(!p60Tag.test(html)) throw new Error('P60 accessibility module is missing from candidate index');
-            html=html.replace(p60Tag,(_,open,close)=>open+'\\n'+p60Source+'\\n'+close);
+            html=html.replace(p60Tag,(_,open,close)=>open+'\n'+p60Source+'\n'+close);
             fs.writeFileSync('index.html',html,'utf8');
             console.log('Restored and version-pinned complete index.html');
           NODE
