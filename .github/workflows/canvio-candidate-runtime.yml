@@ -62,10 +62,21 @@ jobs:
             echo "Using committed CANVIO candidate index."
           fi
 
-      - name: Install native test utilities
+      - name: Verify native test utilities
+        shell: bash
         run: |
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends ffmpeg zip unzip
+          set -euo pipefail
+          missing=()
+          for tool in ffmpeg zip unzip; do
+            command -v "$tool" >/dev/null 2>&1 || missing+=("$tool")
+          done
+          if (("${#missing[@]}" > 0)); then
+            sudo apt-get update
+            sudo apt-get install -y --no-install-recommends "${missing[@]}"
+          fi
+          ffmpeg -version | head -n 1
+          zip -v | head -n 1
+          unzip -v | head -n 1
 
       - name: Validate vendor provisioning scripts
         run: |
