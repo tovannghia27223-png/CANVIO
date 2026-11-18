@@ -1,0 +1,19 @@
+{
+  "suite": "CANVIO_23.3.111_INTEGRATED_SOURCE_CONTRACTS",
+  "passed": 8,
+  "total": 8,
+  "checks": {
+    "Integrated P74/P81, P85, P102/P105/P107 and P70 module owners are present exactly once": true,
+    "P74/P81 uses pinned local r187 runtime and strict vendor manifest SHA verification": true,
+    "P85 owner is lazy, same-origin, SHA-pinned and disposes GPU/OpenCV/player resources": true,
+    "P102/P105/P80 workers use self-hosted Transformers.js and local ONNX WASM": true,
+    "P107 portable bundle is a strict three-file CRC-checked ZIP with rollback on partial import": true,
+    "P97–P101 local Video Editor UX module is extracted and its workflow boundaries are explicit": true,
+    "P70 remains fail-closed and enumerates fourteen manual acceptance gates": true,
+    "Candidate index includes the three local worker paths, no external script tags, and P85/Three panels": true
+  },
+  "modelInferenceExecuted": false,
+  "physicalGpuExecuted": false,
+  "twoDeviceSyncExecuted": false,
+  "p70ReleaseCertified": false
+}

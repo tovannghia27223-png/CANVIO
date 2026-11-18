@@ -3367,3 +3367,13 @@ Phạm vi: nhánh ứng viên `canvio/23-3-111-github-runtime-ci`; không thay t
 - Run #45: [GitHub Actions](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44306334901) — P47–P70 regression PASS; integrated source contracts PASS; P107 ZIP round-trip 6/6 PASS. Browser stage phát hiện lỗi thụt lề trong harness Python, không phải lỗi assertion của P107.
 - Run #46: [GitHub Actions](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44306542913) — chạy lại hosted browser acceptance sau khi sửa indentation; trạng thái cần xác nhận từ kết quả cuối cùng.
 - Không tuyên bố GPU vật lý, đồng bộ cloud/hai thiết bị hoặc production acceptance khi chưa có bằng chứng tương ứng.
+
+## 111. CANVIO 23.3.111 hosted runtime integration
+
+- Candidate source is reconstructed from 20 ordered source chunks and verified against the 23.3.108 source SHA-256 before version/title is advanced to 23.3.111.
+- P74/P81 runtime provisioning is pinned to Three.js r187, Draco, Meshopt and Basis/KTX2 local same-origin decoder assets; all generated files are checked against the Three vendor manifest.
+- P85 provisioning pins Three.js, postprocessing, WebGPU path tracer, OpenCV.js, dotLottie, Rive and Transformers.js/ONNX WASM. The vendor script builds in staging and verifies its manifest before activation.
+- P80/P102/P105 workers import the self-hosted Transformers.js runtime; model weights remain first-use downloads from declared model repositories after explicit user action. No API key or paid inference service is used.
+- P107 portable preset archive uses the existing Asset Library owner; it does not claim cloud Project Vault or physical multi-device synchronization.
+- See tests/hosted reports and CANVIO_MANIFEST.json for machine-readable evidence.
+- P70 remains fail-closed until all fourteen real-world acceptance gates have separately reviewed evidence. Headless Chromium/SwiftShader is software rendering, not physical GPU certification.

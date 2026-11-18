@@ -138,3 +138,7 @@ Phạm vi: nhánh ứng viên `canvio/23-3-111-github-runtime-ci`; không thay t
 - Run #45: [GitHub Actions](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44306334901) — P47–P70 regression PASS; integrated source contracts PASS; P107 ZIP round-trip 6/6 PASS. Browser stage phát hiện lỗi thụt lề trong harness Python, không phải lỗi assertion của P107.
 - Run #46: [GitHub Actions](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44306542913) — chạy lại hosted browser acceptance sau khi sửa indentation; trạng thái cần xác nhận từ kết quả cuối cùng.
 - Không tuyên bố GPU vật lý, đồng bộ cloud/hai thiết bị hoặc production acceptance khi chưa có bằng chứng tương ứng.
+
+## Hosted runtime verification — CANVIO 23.3.111
+
+The GitHub-hosted Node 24 runner provisions same-origin Three.js r187 and P85 runtimes, verifies every vendored file against SHA-256 manifests, checks extracted module/worker syntax, runs P47–P70 regressions, validates P107 ZIP import rollback and runs Chromium against a same-origin HTTP origin. Browser inference checks execute actual P80 Whisper Tiny, P102 ORMBG and P105 Depth Anything ONNX WASM workers using synthetic test data; this verifies execution plumbing, not accuracy on real user data. SwiftShader is software, not a physical GPU. Real two-device Project Vault synchronization is not claimed. P70 remains releaseCertified:false with fourteen manual acceptance gates open.

@@ -101,3 +101,7 @@ Phạm vi: nhánh ứng viên `canvio/23-3-111-github-runtime-ci`; không thay t
 - Run #45: [GitHub Actions](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44306334901) — P47–P70 regression PASS; integrated source contracts PASS; P107 ZIP round-trip 6/6 PASS. Browser stage phát hiện lỗi thụt lề trong harness Python, không phải lỗi assertion của P107.
 - Run #46: [GitHub Actions](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44306542913) — chạy lại hosted browser acceptance sau khi sửa indentation; trạng thái cần xác nhận từ kết quả cuối cùng.
 - Không tuyên bố GPU vật lý, đồng bộ cloud/hai thiết bị hoặc production acceptance khi chưa có bằng chứng tương ứng.
+
+## CANVIO 23.3.111 hosted runtime handoff
+
+The candidate is built and verified by the hosted runtime workflow. Runtime vendor binaries are pinned and same-origin; model weights stay outside git and download only when a user runs the feature. Review hosted reports before promotion. Main-branch Pages auto-deploy is disabled; deployment remains manual and requires a certified P70 manifest. This version does not claim physical GPU, two-device Project Vault sync or Stable release acceptance.

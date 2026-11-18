@@ -1,0 +1,16 @@
+{
+  "suite": "CANVIO_P107_PORTABLE_PRESET_ROUNDTRIP",
+  "passed": 6,
+  "total": 6,
+  "checks": {
+    "P107 parses exact three-file STORE ZIP and retains zero strength": true,
+    "P107 accepts independent v2 source/depth dimensions": true,
+    "P107 rejects encrypted and data-descriptor ZIP": true,
+    "P107 rejects compressed entries, traversal, extra and CRC corruption": true,
+    "P107 imports portable source/depth files into Asset Library with rollback-safe metadata": true,
+    "P107 rolls back both newly-created assets after second Asset Library write fails": true
+  },
+  "independentBrowserContext": false,
+  "physicalSecondDevice": false,
+  "cloudProjectVaultSync": false
+}

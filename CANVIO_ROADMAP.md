@@ -389,3 +389,10 @@ Phạm vi: nhánh ứng viên `canvio/23-3-111-github-runtime-ci`; không thay t
 - Run #45: [GitHub Actions](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44306334901) — P47–P70 regression PASS; integrated source contracts PASS; P107 ZIP round-trip 6/6 PASS. Browser stage phát hiện lỗi thụt lề trong harness Python, không phải lỗi assertion của P107.
 - Run #46: [GitHub Actions](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44306542913) — chạy lại hosted browser acceptance sau khi sửa indentation; trạng thái cần xác nhận từ kết quả cuối cùng.
 - Không tuyên bố GPU vật lý, đồng bộ cloud/hai thiết bị hoặc production acceptance khi chưa có bằng chứng tương ứng.
+
+## 23.3.111 — Hosted runtime and release continuation
+
+- Vendor and test local Three.js r187, Draco, Meshopt, KTX2/Basis, PostFX, OpenCV, dotLottie, Rive and Transformers.js/ONNX WASM on the GitHub-hosted runner.
+- Run true model inference smoke for Whisper, ORMBG and Depth Anything after explicit test invocation; keep model weights outside the repository and disclose first-use network requirements.
+- Retain P107 as portable export/import through the canonical Asset Library. Cloud sync/Project Vault is not implemented without a secure backend; physical two-device acceptance remains separate.
+- Keep P70 fail-closed; physical GPU, target-device performance, real footage/audio quality, production HTTPS/security headers, print workflow, accessibility review, and rollback/observability need separately recorded evidence.
