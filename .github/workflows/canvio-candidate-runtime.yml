@@ -67,16 +67,14 @@ jobs:
         run: |
           set -euo pipefail
           missing=()
-          for tool in ffmpeg zip unzip; do
+          for tool in zip; do
             command -v "$tool" >/dev/null 2>&1 || missing+=("$tool")
           done
           if (("${#missing[@]}" > 0)); then
             sudo apt-get update
             sudo apt-get install -y --no-install-recommends "${missing[@]}"
           fi
-          ffmpeg -version | sed -n '1p'
           zip -v | sed -n '1p'
-          unzip -v | sed -n '1p'
 
       - name: Validate vendor provisioning scripts
         run: |
