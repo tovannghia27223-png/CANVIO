@@ -43,7 +43,7 @@ copy_license "$NODE_MODULES/three-gpu-pathtracer/LICENSE" "THREE-GPU-PATHTRACER-
 copy_license "$NODE_MODULES/postprocessing/LICENSE.md" "POSTPROCESSING-ZLIB.txt"
 copy_license "$NODE_MODULES/@techstark/opencv-js/LICENSE" "OPENCV-APACHE-2.0.txt"
 copy_license "$DOT/LICENSE" "DOTLOTTIE-MIT.txt"
-RIVE_LICENSE="$(find "$RIVE" -maxdepth 3 -type f \\( -iname 'LICENSE' -o -iname 'LICENSE.md' -o -iname 'LICENSE.txt' -o -iname 'COPYING' \\) -print -quit)"
+RIVE_LICENSE="$(find "$RIVE" -maxdepth 3 -type f \( -iname 'LICENSE' -o -iname 'LICENSE.md' -o -iname 'LICENSE.txt' -o -iname 'COPYING' \) -print -quit)"
 if test -n "$RIVE_LICENSE"; then
   cp "$RIVE_LICENSE" "$STAGE/licenses/RIVE-LICENSE.txt"
 else
@@ -53,7 +53,7 @@ else
       cat > "$STAGE/licenses/RIVE-MIT.txt" <<'RIVE_MIT'
 MIT License
 
-Copyright (c) Rive
+Copyright (c) 2020-2021 Rive
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -67,7 +67,11 @@ copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 RIVE_MIT
       ;;
     *)
