@@ -60,10 +60,6 @@ jobs:
             const p60Tag=/(<script\b(?=[^>]*\bid=["']canvio-p60-accessibility-screening["'])[^>]*>)[\s\S]*?(<\/script\s*>)/i;
             if(!p60Tag.test(html)) throw new Error('P60 accessibility module is missing from candidate index');
             html=html.replace(p60Tag,(_,open,close)=>open+'\n'+p60Source+'\n'+close);
-            const p68Old="var line = lines[li].trim();\n        if (!line || line.charAt(0) === '#') continue;";
-            const p68New="var line = lines[li];\n        var commentAt = line.indexOf('#');\n        if (commentAt >= 0) line = line.slice(0, commentAt);\n        line = line.trim();\n        if (!line) continue;";
-            if(!html.includes(p68Old)) throw new Error('P68 OBJ line parser anchor not found');
-            html=html.replace(p68Old,p68New);
             const p68Source=fs.readFileSync('canvio-p68-p70.js','utf8').trim();
             const p68Tag=/(<script\\b(?=[^>]*\\bid=["']canvio-p68-p70-main["'])[^>]*>)[\\s\\S]*?(<\\/script\\s*>)/i;
             if(!p68Tag.test(html)) throw new Error('P68-P70 module is missing from candidate index');
