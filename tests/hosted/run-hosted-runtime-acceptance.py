@@ -2,13 +2,35 @@
 """Hosted, same-origin runtime acceptance: Three.js r187, P85 runtimes and real ONNX inference."""
 from __future__ import annotations
 import base64
-import functools, http.server, json, os, socketserver, struct, threading, subprocess
+import functools, http.server, json, os, socketserver, struct, threading, subprocess, zlib
 from pathlib import Path
 from playwright.sync_api import sync_playwright
 
 ROOT=Path(__file__).resolve().parents[2]
 REPORT=Path(__file__).with_name('hosted-runtime-report.json')
 checks={}; details={}; errors=[]; requests=[]
+def png_chunk(kind,payload):
+    return struct.pack('>I',len(payload))+kind+payload+struct.pack('>I',zlib.crc32(kind+payload)&0xffffffff)
+
+def motion_png_frames(width=320,height=240,count=90):
+    """Deterministic textured PNG sequence with a moving, trackable checker target."""
+    signature=b'\\x89PNG\\r\\n\\x1a\\n'
+    header=struct.pack('>IIBBBBB',width,height,8,2,0,0,0)
+    for frame in range(count):
+        left=8+(frame*3)%(width-56)
+        raw=bytearray()
+        for y in range(height):
+            raw.append(0)
+            for x in range(width):
+                checker=((x//8)^(y//8))&1
+                shade=(x*3+y*7)%28
+                red,green,blue=24+checker*30+shade,42+checker*34+shade,66+checker*38+shade
+                if left<=x<left+48 and 80<=y<128:
+                    target=((x//6+y//6)&1)
+                    red,green,blue=(220,185,48) if target else (65,115,225)
+                raw.extend((red,green,blue))
+        yield signature+png_chunk(b'IHDR',header)+png_chunk(b'IDAT',zlib.compress(raw,1))+png_chunk(b'IEND',b'')
+
 def record(name,ok,detail=None):
     checks[name]=bool(ok)
     if detail is not None: details[name]=detail
@@ -79,14 +101,16 @@ def main():
         page.wait_for_function("document.querySelector('#p85-postfx-status')?.textContent.includes('Đã render')")
         record('P85 PostFX produces live GLB preview',True,page.locator('#p85-postfx-status').inner_text())
         record('P106 software-WebGL context exists (not physical GPU)',page.evaluate("!!document.createElement('canvas').getContext('webgl2')"),'ANGLE SwiftShader software renderer')
-        # Build a deterministic finite-duration, textured WebM with Playwright's pinned FFmpeg.
-        # This avoids MediaRecorder blobs with zero/unknown duration in headless Chromium.
+        # Encode deterministic PNG frames through FFmpeg's enabled image2pipe demuxer.
+        # The pinned Playwright FFmpeg build intentionally excludes lavfi, so no lavfi filters
+        # or external codecs are assumed. A moving checker target provides stable LK features.
         ffmpeg=Path.home()/'.cache/ms-playwright/ffmpeg-1013/ffmpeg-linux'
         if not ffmpeg.is_file(): raise RuntimeError('Pinned Playwright FFmpeg binary is missing; cannot create video fixture')
         video_path=Path('/tmp/canvio-motion-smoke.webm')
-        mux=subprocess.run([str(ffmpeg),'-y','-f','lavfi','-i','testsrc2=size=320x240:rate=15:duration=8','-vf',"drawbox=x='mod(t*90,280)':y=92:w=40:h=40:color=white:t=fill",'-c:v','libvpx','-deadline','realtime','-cpu-used','8','-b:v','400k','-pix_fmt','yuv420p','-an','-t','8','-map_metadata','-1','-f','webm',str(video_path)],capture_output=True,text=True)
+        frame_stream=b''.join(motion_png_frames())
+        mux=subprocess.run([str(ffmpeg),'-y','-f','image2pipe','-vcodec','png','-framerate','15','-i','pipe:0','-frames:v','90','-c:v','libvpx-vp9','-deadline','realtime','-cpu-used','8','-b:v','400k','-pix_fmt','yuv420p','-an','-map_metadata','-1','-f','webm',str(video_path)],input=frame_stream,capture_output=True)
         if mux.returncode or not video_path.is_file() or video_path.stat().st_size<1024:
-            raise RuntimeError('Could not create deterministic finite-duration WebM fixture: '+(mux.stderr or '')[-1600:])
+            raise RuntimeError('Could not create deterministic finite-duration WebM fixture: '+(mux.stderr or b'').decode('utf-8','replace')[-1600:])
         page.locator('#p85-video').set_input_files(str(video_path))
         track=page.evaluate("""async()=>{const s=window.CANVIOP85Suite;const r=await s.startOpticalFlow();await new Promise(resolve=>setTimeout(resolve,700));const status=document.querySelector('#p85-cv-status')?.textContent||'';const match=status.match(/LK optical flow · (?:khởi tạo lại )?(\\d+) điểm/);const points=match?Number(match[1]):0;const result={started:!!r,duration:r.duration,dimensions:[r.width,r.height],status,points,loaded:s.inspect().openCvLoaded};s.stopOpticalFlow();return result;}""")
         record('P85 OpenCV Lucas-Kanade processes real points on local video frames',track['started'] and track['dimensions']==[320,240] and track['points']>0 and 'OpenCV.js LK optical flow' in track['status'],track)
