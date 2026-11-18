@@ -101,13 +101,13 @@ def main():
         ffmpeg=Path.home()/'.cache/ms-playwright/ffmpeg-1013/ffmpeg-linux'
         if not ffmpeg.is_file(): raise RuntimeError('Pinned Playwright FFmpeg binary is missing; cannot finalize WebM duration metadata')
         finalized=Path('/tmp/canvio-motion-smoke-finalized.webm')
-        mux=subprocess.run([str(ffmpeg),'-y','-i',str(video_path),'-c','copy','-map_metadata','-1','-f','webm',str(finalized)],capture_output=True,text=True)
+        mux=subprocess.run([str(ffmpeg),'-y','-stream_loop','4','-i',str(video_path),'-c','copy','-t','8','-map_metadata','-1','-f','webm',str(finalized)],capture_output=True,text=True)
         if mux.returncode or not finalized.is_file() or finalized.stat().st_size<1024:
             raise RuntimeError('Could not finalize synthetic WebM duration metadata: '+(mux.stderr or '')[-1600:])
         video_path=finalized
         page.locator('#p85-video').set_input_files(str(video_path))
-        track=page.evaluate("""async()=>{const s=window.CANVIOP85Suite;const before=s.inspect();const r=await s.startOpticalFlow();await new Promise(resolve=>setTimeout(resolve,1200));const status=document.querySelector('#p85-cv-status')?.textContent||'';s.stopOpticalFlow();return {started:!!r,dimensions:[r.width,r.height],status,loaded:s.inspect().openCvLoaded};}""")
-        record('P85 OpenCV Lucas-Kanade processes local video frames',track['started'] and track['dimensions']==[320,240] and 'OpenCV.js LK optical flow' in track['status'],track)
+        track=page.evaluate("""async()=>{const s=window.CANVIOP85Suite;const r=await s.startOpticalFlow();await new Promise(resolve=>setTimeout(resolve,700));const status=document.querySelector('#p85-cv-status')?.textContent||'';const match=status.match(/LK optical flow · (?:khởi tạo lại )?(\\d+) điểm/);const points=match?Number(match[1]):0;const result={started:!!r,duration:r.duration,dimensions:[r.width,r.height],status,points,loaded:s.inspect().openCvLoaded};s.stopOpticalFlow();return result;}""")
+        record('P85 OpenCV Lucas-Kanade processes real points on local video frames',track['started'] and track['dimensions']==[320,240] and track['points']>0 and 'OpenCV.js LK optical flow' in track['status'],track)
         # Real ORMBG and Depth Anything ONNX WASM inference through the shipped workers.
         infer=page.evaluate("""async()=>{
           function makePng(){const c=document.createElement('canvas');c.width=256;c.height=256;const x=c.getContext('2d');const g=x.createLinearGradient(0,0,256,256);g.addColorStop(0,'#173b61');g.addColorStop(1,'#e6b56e');x.fillStyle=g;x.fillRect(0,0,256,256);x.fillStyle='#d94d43';x.beginPath();x.arc(128,120,60,0,Math.PI*2);x.fill();return new Promise(r=>c.toBlob(r,'image/png')); }
