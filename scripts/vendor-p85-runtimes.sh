@@ -43,17 +43,17 @@ copy_license "$NODE_MODULES/three-gpu-pathtracer/LICENSE" "THREE-GPU-PATHTRACER-
 copy_license "$NODE_MODULES/postprocessing/LICENSE.md" "POSTPROCESSING-ZLIB.txt"
 copy_license "$NODE_MODULES/@techstark/opencv-js/LICENSE" "OPENCV-APACHE-2.0.txt"
 copy_license "$DOT/LICENSE" "DOTLOTTIE-MIT.txt"
-if test -s "$RIVE/LICENSE" || test -s "$RIVE/LICENSE.md" || test -s "$RIVE/LICENSE.txt"; then
-  RIVE_LICENSE="$(find "$RIVE" -maxdepth 1 -type f \( -iname 'LICENSE' -o -iname 'LICENSE.md' -o -iname 'LICENSE.txt' \) -print -quit)"
-  test -n "$RIVE_LICENSE"
-  cp "$RIVE_LICENSE" "$STAGE/licenses/RIVE-MIT.txt"
+RIVE_LICENSE="$(find "$RIVE" -maxdepth 3 -type f \\( -iname 'LICENSE' -o -iname 'LICENSE.md' -o -iname 'LICENSE.txt' -o -iname 'COPYING' \\) -print -quit)"
+if test -n "$RIVE_LICENSE"; then
+  cp "$RIVE_LICENSE" "$STAGE/licenses/RIVE-LICENSE.txt"
 else
   RIVE_LICENSE_ID="$(node -e "const p=require(process.argv[1]);process.stdout.write(String(p.license||''))" "$RIVE/package.json")"
-  test "$RIVE_LICENSE_ID" = "MIT" || { echo "Rive package does not declare MIT and ships no license text" >&2; exit 1; }
-  cat > "$STAGE/licenses/RIVE-MIT.txt" <<'RIVE_MIT'
+  case "$RIVE_LICENSE_ID" in
+    MIT)
+      cat > "$STAGE/licenses/RIVE-MIT.txt" <<'RIVE_MIT'
 MIT License
 
-Copyright (c) 2020-2021 Rive
+Copyright (c) Rive
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -67,12 +67,14 @@ copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
 RIVE_MIT
+      ;;
+    *)
+      echo "Cannot verify Rive license text or SPDX identifier: $RIVE_LICENSE_ID" >&2
+      exit 1
+      ;;
+  esac
 fi
 copy_license "$TRANSFORMERS/LICENSE" "TRANSFORMERS-APACHE-2.0.txt"
 cat > "$STAGE/P85-VENDOR-NOTICE.md" <<NOTICE
