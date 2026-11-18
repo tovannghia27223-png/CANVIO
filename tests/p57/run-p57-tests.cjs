@@ -128,7 +128,6 @@ for (const file of files) vm.runInContext(fs.readFileSync(path.join(root,file),'
   // The fake request deliberately dispatches its late success in a subsequent task.
   // Wait for that event rather than depending on a single event-loop turn.
   for (let attempt=0; attempt<25 && !db.closed; attempt++) await new Promise(resolve => setTimeout(resolve, 2));
-  console.log('P57 blocked-open diagnostic:', JSON.stringify({databaseAvailable:blocked.databaseAvailable,databaseError:blocked.databaseError,dbClosed:db.closed}));
   assert('P57 closes a late IndexedDB connection after a blocked-open rejection', blocked.databaseAvailable===false && /bị khóa/.test(blocked.databaseError) && db.closed===true);
   console.log(`\nP57–P62 PASS: ${passed.length}/${passed.length} assertions passed.`);
 })().catch(error=>{console.error(error);process.exitCode=1;});
