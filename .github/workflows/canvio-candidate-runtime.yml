@@ -213,7 +213,18 @@ jobs:
           /tmp/canvio-playwright/bin/python -m pip install --disable-pip-version-check playwright==1.65.2
           /tmp/canvio-playwright/bin/python -m playwright install --with-deps chromium
 
-      - name: Generate Draco and Meshopt compressed GLB fixtures
+      - name: Install KTX-Software toktx (for the KTX2 fixture)
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/ktx && cd /tmp/ktx
+          gh release download --repo KhronosGroup/KTX-Software --pattern 'KTX-Software-*-Linux-x86_64.deb' --clobber
+          ls -la; sudo dpkg -i KTX-Software-*-Linux-x86_64.deb || sudo apt-get -f install -y
+          toktx --version
+
+      - name: Generate Draco, Meshopt and KTX2 compressed GLB fixtures
         shell: bash
         run: |
           set -euo pipefail
