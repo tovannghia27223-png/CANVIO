@@ -52,6 +52,10 @@ jobs:
             html=html.replaceAll('<title>CANVIO 23.3.108 — Creative Runtime Lab · P85</title>','<title>CANVIO 23.3.111 — GitHub Runtime Verified Candidate</title>');
             if(html.includes('23.3.108-p85-studio-r2')) throw new Error('Legacy candidate version marker remains');
             if(!html.includes('<title>CANVIO 23.3.111 — GitHub Runtime Verified Candidate</title>')) throw new Error('Candidate document title was not updated');
+            const p57Source=fs.readFileSync('tests/p57/p57-native-persistence.js','utf8').trim();
+            const p57Tag=/(<script\b(?=[^>]*\bid=["']canvio-p57-native-persistence-audit["'])[^>]*>)[\s\S]*?(<\/script\s*>)/i;
+            if(!p57Tag.test(html)) throw new Error('P57 native persistence module is missing from candidate index');
+            html=html.replace(p57Tag,(_,open,close)=>open+'\n'+p57Source+'\n'+close);
             const p60Source=fs.readFileSync('tests/p60/p60-accessibility-audit.js','utf8').trim();
             const p60Tag=/(<script\b(?=[^>]*\bid=["']canvio-p60-accessibility-screening["'])[^>]*>)[\s\S]*?(<\/script\s*>)/i;
             if(!p60Tag.test(html)) throw new Error('P60 accessibility module is missing from candidate index');
