@@ -34,6 +34,11 @@ test('P107 portable bundle is a strict three-file CRC-checked ZIP with rollback 
  for(const token of ['function exportPresetBundle','function importPresetBundle','function parsePresetZip','CRC32','central directory','source.png','depth.png','rollback','strength'])assert.ok(p107.includes(token),token);
  assert.ok(p107.includes('noNewStore')||p107.includes('noSecondTimeline'));
 });
+const p97=read('canvio-p97-p101.js');
+test('P97–P101 local Video Editor UX module is extracted and its workflow boundaries are explicit',()=>{
+ for(const token of ['P97 · Deterministic local command planner','P98 · Working tools and shortcuts','P99 · Estimated word captions','P100 · Transcript cue editing','P101 · Detailed export UI','p97NoProviderCall','p99EstimatedAlignmentDisclosed','p100RipplePlannerReused','p101MP4CapabilityAware'])assert.ok(p97.includes(token),token);
+ assert.equal((html.match(/CANVIO P97–P101 · Video Editor UX & local AI Director/g)||[]).length,1);
+});
 const p70=read('canvio-p68-p70.js');
 test('P70 remains fail-closed and enumerates fourteen manual acceptance gates',()=>{
  assert.ok(p70.includes('PENDING_MANUAL_EVIDENCE'));assert.ok(p70.includes('releaseCertified: false'));
