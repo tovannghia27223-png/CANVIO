@@ -43,7 +43,37 @@ copy_license "$NODE_MODULES/three-gpu-pathtracer/LICENSE" "THREE-GPU-PATHTRACER-
 copy_license "$NODE_MODULES/postprocessing/LICENSE.md" "POSTPROCESSING-ZLIB.txt"
 copy_license "$NODE_MODULES/@techstark/opencv-js/LICENSE" "OPENCV-APACHE-2.0.txt"
 copy_license "$DOT/LICENSE" "DOTLOTTIE-MIT.txt"
-copy_license "$RIVE/LICENSE" "RIVE-MIT.txt"
+if test -s "$RIVE/LICENSE" || test -s "$RIVE/LICENSE.md" || test -s "$RIVE/LICENSE.txt"; then
+  RIVE_LICENSE="$(find "$RIVE" -maxdepth 1 -type f \( -iname 'LICENSE' -o -iname 'LICENSE.md' -o -iname 'LICENSE.txt' \) -print -quit)"
+  test -n "$RIVE_LICENSE"
+  cp "$RIVE_LICENSE" "$STAGE/licenses/RIVE-MIT.txt"
+else
+  RIVE_LICENSE_ID="$(node -e "const p=require(process.argv[1]);process.stdout.write(String(p.license||''))" "$RIVE/package.json")"
+  test "$RIVE_LICENSE_ID" = "MIT" || { echo "Rive package does not declare MIT and ships no license text" >&2; exit 1; }
+  cat > "$STAGE/licenses/RIVE-MIT.txt" <<'RIVE_MIT'
+MIT License
+
+Copyright (c) 2020-2021 Rive
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+RIVE_MIT
+fi
 copy_license "$TRANSFORMERS/LICENSE" "TRANSFORMERS-APACHE-2.0.txt"
 cat > "$STAGE/P85-VENDOR-NOTICE.md" <<NOTICE
 # CANVIO P85 local runtime notice
