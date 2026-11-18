@@ -1,34 +1,53 @@
-# Retired automatic legacy Pages workflow.
-# Kept manual-only as an emergency fallback; the Node 24 workflow is primary.
-name: Legacy Pages fallback (manual only)
+# Retired legacy Pages workflow; manual-only and fail-closed on the same P70 evidence.
+name: Legacy Pages fallback (P70 certification required)
 
 on:
   workflow_dispatch:
+    inputs:
+      deploy_candidate:
+        description: Deploy only after all fourteen P70 gates are certified
+        required: true
+        type: boolean
+        default: false
 
 permissions:
   contents: read
   pages: write
   id-token: write
 
-concurrency:
-  group: pages-legacy-manual
-  cancel-in-progress: false
-
 jobs:
+  gate:
+    runs-on: ubuntu-24.04
+    outputs:
+      certified: ${{ steps.check.outputs.certified }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - id: check
+        shell: bash
+        run: |
+          node <<'NODE'
+          const fs=require('node:fs'),m=JSON.parse(fs.readFileSync('CANVIO_MANIFEST.json','utf8')),g=m.p70ManualGates||{},e=Array.isArray(m.manualGateEvidence)?m.manualGateEvidence:[];
+          const ok=m.releaseCertified===true&&m.releaseStatus==='CERTIFIED'&&g.total===14&&g.pending===0&&g.passed===14&&e.length===14&&e.every(x=>x&&x.reviewed===true&&x.evidence);
+          fs.appendFileSync(process.env.GITHUB_OUTPUT,'certified='+(ok?'true':'false')+'\n');
+          if(!ok)console.log('BLOCKED: missing reviewed P70 production evidence for one or more manual gates.');
+          NODE
+
   deploy:
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.deploy_candidate == true && needs.gate.outputs.certified == 'true' }}
+    needs: gate
+    runs-on: ubuntu-24.04
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-      - name: Configure GitHub Pages
-        uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d
+      - run: |
+          mkdir -p _site
+          cp index.html _site/index.html
+          cp -a assets _site/assets
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9
         with:
-          path: .
-      - name: Deploy Pages
-        id: deployment
+          path: _site
+      - id: deployment
         uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346

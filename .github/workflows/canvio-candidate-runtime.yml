@@ -1,0 +1,359 @@
+name: CANVIO 23.3.111 — hosted runtime and integration verification
+
+on:
+  push:
+    branches:
+      - canvio/23-3-111-github-runtime-ci
+      - main
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+concurrency:
+  group: canvio-runtime-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 300
+    steps:
+      - name: Checkout candidate
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js 24
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          node-version: 24
+          package-manager-cache: false
+
+      - name: Restore complete candidate index from verified chunks
+        shell: bash
+        run: |
+          set -euo pipefail
+          if test -s .canvio/candidate/index/part-001.txt; then
+            cat .canvio/candidate/index/part-*.txt > /tmp/canvio-index-original.html
+            test "$(wc -c < /tmp/canvio-index-original.html)" -eq 4921610
+            actual="$(sha256sum /tmp/canvio-index-original.html | cut -d' ' -f1)"
+            expected="1736457b13aa9db40d847ea065ea521328d247709664dde6b1d3781088869b82"
+            test "$actual" = "$expected" || { echo "Candidate index checksum mismatch: $actual" >&2; exit 1; }
+            node <<'NODE'
+            const fs=require('node:fs');
+            let html=fs.readFileSync('/tmp/canvio-index-original.html','utf8');
+            if(!html.includes('23.3.108-p85-studio-r2')) throw new Error('Unexpected candidate source version marker');
+            html=html.replaceAll('23.3.108-p85-studio-r2','23.3.111-github-runtime-ci');
+            html=html.replaceAll('CANVIO 23.3.108 — Creative Runtime Lab · P85 Runtime Hardening r2','CANVIO 23.3.111 — GitHub Runtime Verified Candidate');
+            html=html.replaceAll('<title>CANVIO 23.3.108 — Creative Runtime Lab · P85</title>','<title>CANVIO 23.3.111 — GitHub Runtime Verified Candidate</title>');
+            if(html.includes('23.3.108-p85-studio-r2')) throw new Error('Legacy candidate version marker remains');
+            if(!html.includes('<title>CANVIO 23.3.111 — GitHub Runtime Verified Candidate</title>')) throw new Error('Candidate document title was not updated');
+            const p57Source=fs.readFileSync('tests/p57/p57-native-persistence.js','utf8').trim();
+            const p57Tag=/(<script\b(?=[^>]*\bid=["']canvio-p57-native-persistence-audit["'])[^>]*>)[\s\S]*?(<\/script\s*>)/i;
+            if(!p57Tag.test(html)) throw new Error('P57 native persistence module is missing from candidate index');
+            html=html.replace(p57Tag,(_,open,close)=>open+'\n'+p57Source+'\n'+close);
+            const p60Source=fs.readFileSync('tests/p60/p60-accessibility-audit.js','utf8').trim();
+            const p60Tag=/(<script\b(?=[^>]*\bid=["']canvio-p60-accessibility-screening["'])[^>]*>)[\s\S]*?(<\/script\s*>)/i;
+            if(!p60Tag.test(html)) throw new Error('P60 accessibility module is missing from candidate index');
+            html=html.replace(p60Tag,(_,open,close)=>open+'\n'+p60Source+'\n'+close);
+            const p68Source=fs.readFileSync('canvio-p68-p70.js','utf8').trim();
+            const p68Tag=/(<script\b(?=[^>]*\bid=["']canvio-p68-p70-main["'])[^>]*>)[\s\S]*?(<\/script\s*>)/i;
+            if(!p68Tag.test(html)) throw new Error('P68-P70 module is missing from candidate index');
+            html=html.replace(p68Tag,(_,open,close)=>open+'\n'+p68Source+'\n'+close);
+            fs.writeFileSync('index.html',html,'utf8');
+            console.log('Restored and version-pinned complete index.html');
+          NODE
+            rm -rf .canvio/candidate/index
+          else
+            test -s index.html
+            grep -q '23.3.111-github-runtime-ci' index.html || { echo "No staged candidate chunks or pinned 23.3.111 index found." >&2; exit 1; }
+            echo "Using committed CANVIO candidate index."
+          fi
+
+      - name: Verify native test utilities
+        shell: bash
+        run: |
+          set -euo pipefail
+          missing=()
+          for tool in zip; do
+            command -v "$tool" >/dev/null 2>&1 || missing+=("$tool")
+          done
+          if (("${#missing[@]}" > 0)); then
+            sudo apt-get update
+            sudo apt-get install -y --no-install-recommends "${missing[@]}"
+          fi
+          zip -v | sed -n '1p'
+
+      - name: Validate vendor provisioning scripts
+        run: |
+          set -euo pipefail
+          bash -n scripts/activate-vendor-tree.sh scripts/vendor-three-r187.sh scripts/vendor-p85-runtimes.sh
+          test -s scripts/p85-renderers.entry.mjs
+          test -s scripts/p85-opencv.entry.mjs
+
+      - name: Provision pinned Three.js r187, Draco, Meshopt and KTX2 runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! test -s assets/three/THREE-VENDOR-MANIFEST.json; then bash scripts/vendor-three-r187.sh; fi
+          test -s assets/three/THREE-VENDOR-MANIFEST.json
+          test -s assets/three/build/three.module.js
+          test -s assets/three/examples/jsm/loaders/DRACOLoader.js
+          test -s assets/three/examples/jsm/loaders/KTX2Loader.js
+          test -s assets/three/examples/jsm/libs/meshopt_decoder.module.js
+          test -s assets/three/examples/jsm/libs/draco/gltf/draco_decoder.wasm
+          test -s assets/three/examples/jsm/libs/basis/basis_transcoder.wasm
+          node <<'NODE'
+          const fs=require('node:fs'),crypto=require('node:crypto'),path=require('node:path');
+          const root='assets/three',m=JSON.parse(fs.readFileSync(root+'/THREE-VENDOR-MANIFEST.json','utf8'));
+          if(m.format!=='CANVIO_THREE_VENDOR_MANIFEST'||m.revision!=='r187'||!Array.isArray(m.files)||!m.files.length)throw new Error('Three vendor manifest invalid');
+          for(const e of m.files){const b=fs.readFileSync(path.join(root,e.path));if(b.length!==e.bytes||crypto.createHash('sha256').update(b).digest('hex')!==e.sha256)throw new Error('Three SHA mismatch: '+e.path);}
+          console.log('Three.js r187 manifest SHA verified:',m.files.length,'files');
+          NODE
+
+      - name: Provision pinned P85 PostFX, OpenCV, dotLottie, Rive, Transformers and ONNX WASM runtimes
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! test -s assets/p85/P85-VENDOR-MANIFEST.json; then bash scripts/vendor-p85-runtimes.sh; fi
+          test -s assets/p85/P85-VENDOR-MANIFEST.json
+          test -s assets/p85/p85-renderers.js
+          test -s assets/p85/opencv/opencv.js
+          test -s assets/p85/dotlottie/index.js
+          test -s assets/p85/dotlottie/dotlottie-player.wasm
+          test -s assets/p85/rive/rive.js
+          test -s assets/p85/rive/rive.wasm
+          test -s assets/p85/transformers/transformers.min.js
+          test -n "$(find assets/p85/transformers -maxdepth 1 -name 'ort-wasm*.wasm' -print -quit)"
+          node <<'NODE'
+          const fs=require('node:fs'),crypto=require('node:crypto'),path=require('node:path');
+          const root='assets/p85',m=JSON.parse(fs.readFileSync(root+'/P85-VENDOR-MANIFEST.json','utf8'));
+          if(m.format!=='CANVIO_P85_VENDOR_MANIFEST'||!Array.isArray(m.files)||!m.files.length)throw new Error('P85 vendor manifest invalid');
+          for(const e of m.files){const b=fs.readFileSync(path.join(root,e.path));if(b.length!==e.bytes||crypto.createHash('sha256').update(b).digest('hex')!==e.sha256)throw new Error('P85 SHA mismatch: '+e.path);}
+          console.log('P85 vendor manifest SHA verified:',m.files.length,'files');
+          NODE
+
+      - name: Extract and syntax-check integrated modules and workers
+        run: |
+          set -euo pipefail
+          node scripts/extract-integrated-modules.mjs
+          for file in canvio-p74-p81-three-viewer.js canvio-p85-studio.js canvio-p102-background-removal.js canvio-p105-p107-depth-parallax.js canvio-p68-p70.js canvio-p72-glb-viewer.js canvio-p73-offline-site.js canvio-p82-p84-vector-pdf.js canvio-p87-cv-docx.js canvio-p90-p96.js canvio-p97-p101.js canvio-p104.js assets/canvio-rmbg-worker.js assets/canvio-depth-worker.js assets/canvio-whisper-worker.js; do node --check "$file"; done
+
+      - name: Audit complete HTML and all inline JavaScript
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from html.parser import HTMLParser
+          from collections import Counter
+          from pathlib import Path
+          import re, subprocess, tempfile, sys
+          source=Path('index.html').read_text(encoding='utf-8')
+          class Audit(HTMLParser):
+              def __init__(self): super().__init__(); self.ids=[]; self.scripts=0; self.external=[]
+              def handle_starttag(self,tag,attrs):
+                  attrs=dict(attrs)
+                  if attrs.get('id'): self.ids.append(attrs['id'])
+                  if tag.lower()=='script':
+                      self.scripts+=1
+                      if attrs.get('src'): self.external.append(attrs['src'])
+          audit=Audit(); audit.feed(source)
+          counts=Counter(audit.ids); duplicate=[k for k,v in counts.items() if v>1]
+          blocks=re.findall(r'<script\b[^>]*>([\s\S]*?)</script\s*>',source,re.I)
+          if duplicate: raise SystemExit('Duplicate HTML IDs: '+repr(duplicate[:20]))
+          if audit.external: raise SystemExit('Unexpected external script src: '+repr(audit.external))
+          if audit.scripts!=len(blocks): raise SystemExit('HTML parser/script extractor count mismatch')
+          failures=[]
+          with tempfile.TemporaryDirectory() as tmp:
+              for i,script in enumerate(blocks):
+                  p=Path(tmp)/f'inline-{i}.js'; p.write_text(script,encoding='utf-8')
+                  x=subprocess.run(['node','--check',str(p)],capture_output=True,text=True)
+                  if x.returncode: failures.append((i,x.stderr))
+          if failures:
+              for i,e in failures: print('inline script',i,e,file=sys.stderr)
+              raise SystemExit(f'{len(failures)} inline script syntax errors')
+          print(f'PASS: {audit.scripts} inline scripts; {len(counts)} unique IDs; zero duplicates; no external script tags.')
+          PY
+
+      - name: Run P47–P70 established regression suites
+        shell: bash
+        run: |
+          set -euo pipefail
+          node tests/p47/test_phase_p47.cjs
+          node tests/p47/test_p47_bezier.cjs
+          node tests/p47/test_phase_p47_restore.cjs
+          node tests/p47/test_phase_p47_crc.cjs
+          node tests/p48/run-p48-tests.cjs
+          node tests/p49/run-p49-tests.cjs
+          node tests/p50/run-p50-tests.cjs
+          node tests/p55/run-p55-tests.cjs
+          node tests/p56/run-p56-tests.cjs
+          node tests/p57/run-p57-tests.cjs
+          node tests/p63-p67/verify-p63-p67-source.cjs
+          node tests/p63-p67/run-p63-p67-tests.cjs
+          node tests/p68-p70/verify-p68-p70-source.cjs
+          node tests/p68-p70/run-p68-p70-tests.cjs
+
+      - name: Run integrated source contracts and real P107 ZIP round-trip tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          node tests/hosted/integrated-source-contracts.cjs
+          node tests/hosted/p107-portable-roundtrip.cjs
+
+      - name: Install Chromium and Playwright for hosted runtime acceptance
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m venv /tmp/canvio-playwright
+          /tmp/canvio-playwright/bin/python -m pip install --disable-pip-version-check playwright==1.65.2
+          /tmp/canvio-playwright/bin/python -m playwright install --with-deps chromium
+
+      - name: Execute same-origin GLB, P85, ONNX model and worker browser acceptance
+        shell: bash
+        run: |
+          set -euo pipefail
+          /tmp/canvio-playwright/bin/python tests/hosted/run-hosted-runtime-acceptance.py
+
+      - name: Refresh Guide, Roadmap, QA, Acceptance Matrix and Manifest
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! grep -q '## 111. CANVIO 23.3.111 hosted runtime integration' CANVIO_AI_GUIDE.md; then
+            cat >> CANVIO_AI_GUIDE.md <<'GUIDE'
+
+          ## 111. CANVIO 23.3.111 hosted runtime integration
+
+          - Candidate source is reconstructed from 20 ordered source chunks and verified against the 23.3.108 source SHA-256 before version/title is advanced to 23.3.111.
+          - P74/P81 runtime provisioning is pinned to Three.js r187, Draco, Meshopt and Basis/KTX2 local same-origin decoder assets; all generated files are checked against the Three vendor manifest.
+          - P85 provisioning pins Three.js, postprocessing, WebGPU path tracer, OpenCV.js, dotLottie, Rive and Transformers.js/ONNX WASM. The vendor script builds in staging and verifies its manifest before activation.
+          - P80/P102/P105 workers import the self-hosted Transformers.js runtime; model weights remain first-use downloads from declared model repositories after explicit user action. No API key or paid inference service is used.
+          - P107 portable preset archive uses the existing Asset Library owner; it does not claim cloud Project Vault or physical multi-device synchronization.
+          - See tests/hosted reports and CANVIO_MANIFEST.json for machine-readable evidence.
+          - P70 remains fail-closed until all fourteen real-world acceptance gates have separately reviewed evidence. Headless Chromium/SwiftShader is software rendering, not physical GPU certification.
+          GUIDE
+          fi
+          if ! grep -q 'Hosted runtime verification — CANVIO 23.3.111' CANVIO_QA_REPORT.md; then
+            cat >> CANVIO_QA_REPORT.md <<'QA'
+
+          ## Hosted runtime verification — CANVIO 23.3.111
+
+          The GitHub-hosted Node 24 runner provisions same-origin Three.js r187 and P85 runtimes, verifies every vendored file against SHA-256 manifests, checks extracted module/worker syntax, runs P47–P70 regressions, validates P107 ZIP import rollback and runs Chromium against a same-origin HTTP origin. Browser inference checks execute actual P80 Whisper Tiny, P102 ORMBG and P105 Depth Anything ONNX WASM workers using synthetic test data; this verifies execution plumbing, not accuracy on real user data. SwiftShader is software, not a physical GPU. Real two-device Project Vault synchronization is not claimed. P70 remains releaseCertified:false with fourteen manual acceptance gates open.
+          QA
+          fi
+          if ! grep -q '23.3.111 — Hosted runtime and release continuation' CANVIO_ROADMAP.md; then
+            cat >> CANVIO_ROADMAP.md <<'ROADMAP'
+
+          ## 23.3.111 — Hosted runtime and release continuation
+
+          - Vendor and test local Three.js r187, Draco, Meshopt, KTX2/Basis, PostFX, OpenCV, dotLottie, Rive and Transformers.js/ONNX WASM on the GitHub-hosted runner.
+          - Run true model inference smoke for Whisper, ORMBG and Depth Anything after explicit test invocation; keep model weights outside the repository and disclose first-use network requirements.
+          - Retain P107 as portable export/import through the canonical Asset Library. Cloud sync/Project Vault is not implemented without a secure backend; physical two-device acceptance remains separate.
+          - Keep P70 fail-closed; physical GPU, target-device performance, real footage/audio quality, production HTTPS/security headers, print workflow, accessibility review, and rollback/observability need separately recorded evidence.
+          ROADMAP
+          fi
+          cat > CANVIO_FINAL_ACCEPTANCE_MATRIX.md <<'MATRIX'
+          # CANVIO 23.3.111 final acceptance matrix
+
+          | Gate | Automated evidence | Current acceptance boundary |
+          |---|---|---|
+          | P74/P81 Three.js r187/Draco/Meshopt/KTX2 | Vendor manifest SHA + hosted GLB load | Compression fixtures must pass hosted runner before marking decoder acceptance |
+          | P85 PostFX/OpenCV/dotLottie/Rive | P85 vendor manifest, WASM initialization, PostFX render, optical-flow clip | Experimental WebGPU Path Tracing; player runtime, not animation authoring |
+          | P80/P102/P105 inference | Hosted model inference reports | Synthetic inputs prove pipeline execution only, not model accuracy |
+          | P106 rendering | Chromium WebGL/SwiftShader | Software GPU only; physical GPU and target-device performance remain open |
+          | P107 portability | ZIP CRC, independent Asset Library import and rollback tests | No cloud Project Vault sync or physical two-device acceptance claimed |
+          | P70 Stable release | Fourteen fail-closed manual gates | releaseCertified:false until every gate has reviewed production evidence |
+
+          ## Required manual gates
+          1. HTTPS and supported browser matrix on deployed origin.
+          2. Native IndexedDB persistence, restore and quota behavior.
+          3. Real media recording/export A/V synchronization.
+          4. Whisper inference and transcription quality on representative labelled Vietnamese/English audio.
+          5. Keyboard, screen-reader and 200% reflow accessibility review.
+          6. Production CSP/CORS/COOP/COEP, worker MIME and security headers.
+          7. Real multi-track project timeline round-trip, undo/redo and recovery.
+          8. Real footage tracking and stabilization quality review.
+          9. User-selected AI provider output, licensing and provenance review.
+          10. Typography, font fallback, pagination, bleed and physical print/PDF review.
+          11. Offline OBJ package opened on a clean disconnected machine.
+          12. Physical target-device GPU/VRAM, performance and long-render testing.
+          13. Cross-origin backup/restore and independent-device recovery.
+          14. Rollback, release observability, alerting and production incident drill.
+          MATRIX
+          if ! grep -q 'CANVIO 23.3.111 hosted runtime handoff' CANVIO_HANDOFF.md; then
+            cat >> CANVIO_HANDOFF.md <<'HANDOFF'
+
+          ## CANVIO 23.3.111 hosted runtime handoff
+
+          The candidate is built and verified by the hosted runtime workflow. Runtime vendor binaries are pinned and same-origin; model weights stay outside git and download only when a user runs the feature. Review hosted reports before promotion. Main-branch Pages auto-deploy is disabled; deployment remains manual and requires a certified P70 manifest. This version does not claim physical GPU, two-device Project Vault sync or Stable release acceptance.
+          HANDOFF
+          fi
+          cat > CANVIO_PATCH_NOTES.md <<'PATCH'
+          # CANVIO 23.3.111 patch notes
+
+          - Added GitHub-hosted build and acceptance for candidate source restoration, pinned vendor runtimes, module extraction, source contracts and runtime inference.
+          - Added local same-origin runtime packages and SHA-256 manifests for Three.js r187, Draco, Meshopt, Basis/KTX2, PostFX, OpenCV, dotLottie, Rive, Transformers.js and ONNX WASM.
+          - Corrected P80/P102/P105 workers to import the local Transformers.js runtime and preserve the application message contracts.
+          - Added portable P107 parser/import/rollback tests and explicit documentation that Project Vault cloud sync is not implemented.
+          - Stable release remains fail-closed at P70; no physical GPU or two-device certification is implied.
+          PATCH
+          node <<'NODE'
+          const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
+          const files=[];
+          function walk(dir){
+            for(const e of fs.readdirSync(dir,{withFileTypes:true})){
+              if(['.git','node_modules','.canvio','dist'].includes(e.name))continue;
+              const p=path.join(dir,e.name);
+              if(e.isDirectory())walk(p);
+              else if(p!=='CANVIO_MANIFEST.json'){
+                const b=fs.readFileSync(p);files.push({path:p.split(path.sep).join('/'),bytes:b.length,sha256:crypto.createHash('sha256').update(b).digest('hex')});
+              }
+            }
+          }
+          walk('.');files.sort((a,b)=>a.path.localeCompare(b.path));
+          const index=files.find(x=>x.path==='index.html');
+          const manifest={format:'CANVIO_DELIVERY_MANIFEST',schemaVersion:2,candidate:'23.3.111-github-runtime-ci',generatedAt:new Date().toISOString(),hashAlgorithm:'SHA-256',indexSha256:index.sha256,indexBytes:index.bytes,fileCount:files.length,releaseCertified:false,releaseStatus:'BLOCKED_PENDING_REAL_WORLD_ACCEPTANCE',p70ManualGates:{total:14,pending:14,passed:0},files};
+          fs.writeFileSync('CANVIO_MANIFEST.json',JSON.stringify(manifest,null,2)+'\n');
+          console.log('Manifest refreshed:',files.length,'files; index SHA-256:',index.sha256);
+          NODE
+
+      - name: Package full source handoff and runtime evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          zip -qr dist/CANVIO_23.3.111_GITHUB_RUNTIME_VERIFIED_SOURCE_2026-11-18.zip . -x '.git/*' 'dist/*' '.canvio/candidate/*' 'node_modules/*'
+          sha256sum dist/CANVIO_23.3.111_GITHUB_RUNTIME_VERIFIED_SOURCE_2026-11-18.zip > dist/CANVIO_23.3.111_GITHUB_RUNTIME_VERIFIED_SOURCE_2026-11-18.zip.sha256
+
+      - name: Upload candidate package and acceptance evidence
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
+        with:
+          name: CANVIO-23.3.111-GITHUB-RUNTIME-VERIFIED-${{ github.run_number }}
+          path: |
+            dist/CANVIO_23.3.111_GITHUB_RUNTIME_VERIFIED_SOURCE_2026-11-18.zip
+            dist/CANVIO_23.3.111_GITHUB_RUNTIME_VERIFIED_SOURCE_2026-11-18.zip.sha256
+            CANVIO_MANIFEST.json
+            tests/hosted/*.json
+            assets/three/THREE-VENDOR-MANIFEST.json
+            assets/p85/P85-VENDOR-MANIFEST.json
+            assets/three/THREE-VENDOR-NOTICE.md
+            assets/p85/P85-VENDOR-NOTICE.md
+            assets/p85/licenses/**
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Commit complete verified candidate to the working branch
+        if: ${{ github.event_name == 'push' && !contains(github.event.head_commit.message, '[skip ci]') }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          if git diff --cached --quiet; then echo "No generated candidate changes to commit."; exit 0; fi
+          git commit -m "build: commit verified CANVIO 23.3.111 runtimes and QA [skip ci]"
+          git push origin "HEAD:${GITHUB_REF_NAME}"

@@ -3349,3 +3349,31 @@ P55 is the planned stable-release readiness candidate, **not CANVIO 1.0 Stable**
 - Application marker remains `23.3.84-p70`, PhaseSuite remains `70.0.0`. P63–P67 and P68–P70 standalone modules remain checked byte-for-byte against embedded scripts; canonical Video Engine, Project Vault, Asset Library, Layout Foundry, `CANVIO_81_MEDIA` and `CVZip` ownership is unchanged.
 - Fourteen real-world release gates remain OPEN: HTTPS/browser matrix, native persistence, real media A/V, actual Whisper inference, accessibility, response headers, real timeline/project, tracking footage, AI/provider licensing, typography/print, clean-machine offline 3D, target-device performance, cross-origin recovery and rollback/observability.
 - CI and simulated smoke are not a substitute for target-environment evidence. P70 remains a Stable Release Candidate, not CANVIO 1.0 Stable or production-certified.
+
+
+## Báo cáo tích hợp Slideshow / Depth AI / 2.5D / Preset — 2026-11-18
+
+Phạm vi: nhánh ứng viên `canvio/23-3-111-github-runtime-ci`; không thay thế trạng thái production/main.
+
+| Hạng mục | Tích hợp trong mã nguồn | Kiểm thử đã xác nhận | Trạng thái / giới hạn |
+|---|---|---|---|
+| Slideshow / Ken Burns (P104) | Chọn ảnh từ Asset Library; tạo clip ảnh trong Video Engine canonical; keyframe zoom/pan có seed ổn định; fade; một lần Undo; giới hạn 24 ảnh, 5 MiB/ảnh, 40 MiB/lượt. | Có 16 local assertions trong `CANVIOKenBurnsSuite.tests()`; chưa có kết quả chạy riêng trong hosted browser ở run này. | Đã tích hợp mã. Chuyển động là 2D; GIF dùng frame đầu; khung xuất hiện khóa 16:9; chưa xác nhận nghiệm thu với media/dự án thực. |
+| P105 Depth Anything AI | Worker riêng `assets/canvio-depth-worker.js`; Depth Anything V2 Small ONNX; user-triggered; backend WebGPU → WASM q8; runtime Transformers.js/ONNX WASM self-hosted; giới hạn ảnh 1 MP; ghi ảnh nguồn và depth map vào Asset Library. | Source-contract P105/P102 worker check PASS trong hosted run #45. Hosted browser real ONNX inference đang được chạy lại ở run #46. | Đã tích hợp mã; chưa kết luận inference thực tế cho đến khi run #46 hoàn tất. Model weights được tải khi người dùng chủ động bấm chạy; không tự tải lúc boot. |
+| P106 2.5D Parallax | WebGL depth-displacement shader dùng ảnh nguồn + depth map; preview, điều chỉnh strength/duration, xuất WebM vào Video Engine; fallback Ken Burns 2D khi WebGL không sẵn sàng. | Source-contract tích hợp PASS trong run #45. | Đã tích hợp mã. Software WebGL/SwiftShader không chứng minh GPU vật lý; chưa nghiệm thu trên thiết bị/GPU mục tiêu. Fallback 2D không được ghi nhận là 2.5D. |
+| P107 Asset Preset / chuyển preset | ZIP portable gồm đúng `manifest.json`, `source.png`, `depth.png`; kiểm tra CRC32, PNG chunks/dimensions, ZIP STORE, path traversal/encryption/extra entries; import vào Asset Library hiện có; rollback asset mới nếu ghi asset thứ hai thất bại. | Hosted Node round-trip PASS 6/6 trong run #45: parse ZIP, giữ strength=0, dimensions độc lập, reject ZIP sai, import Asset Library, rollback khi lỗi ghi. | Portable file transfer đã kiểm thử. Không có cloud sync/Project Vault server sync; chuyển sang thiết bị khác bằng xuất ZIP rồi nhập thủ công. |
+
+### Bằng chứng hosted gần nhất
+
+- Run #45: [GitHub Actions](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44306334901) — P47–P70 regression PASS; integrated source contracts PASS; P107 ZIP round-trip 6/6 PASS. Browser stage phát hiện lỗi thụt lề trong harness Python, không phải lỗi assertion của P107.
+- Run #46: [GitHub Actions](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44306542913) — chạy lại hosted browser acceptance sau khi sửa indentation; trạng thái cần xác nhận từ kết quả cuối cùng.
+- Không tuyên bố GPU vật lý, đồng bộ cloud/hai thiết bị hoặc production acceptance khi chưa có bằng chứng tương ứng.
+
+## 111. CANVIO 23.3.111 hosted runtime integration
+
+- Candidate source is reconstructed from 20 ordered source chunks and verified against the 23.3.108 source SHA-256 before version/title is advanced to 23.3.111.
+- P74/P81 runtime provisioning is pinned to Three.js r187, Draco, Meshopt and Basis/KTX2 local same-origin decoder assets; all generated files are checked against the Three vendor manifest.
+- P85 provisioning pins Three.js, postprocessing, WebGPU path tracer, OpenCV.js, dotLottie, Rive and Transformers.js/ONNX WASM. The vendor script builds in staging and verifies its manifest before activation.
+- P80/P102/P105 workers import the self-hosted Transformers.js runtime; model weights remain first-use downloads from declared model repositories after explicit user action. No API key or paid inference service is used.
+- P107 portable preset archive uses the existing Asset Library owner; it does not claim cloud Project Vault or physical multi-device synchronization.
+- See tests/hosted reports and CANVIO_MANIFEST.json for machine-readable evidence.
+- P70 remains fail-closed until all fourteen real-world acceptance gates have separately reviewed evidence. Headless Chromium/SwiftShader is software rendering, not physical GPU certification.

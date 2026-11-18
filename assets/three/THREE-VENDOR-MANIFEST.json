@@ -1,0 +1,153 @@
+{
+  "format": "CANVIO_THREE_VENDOR_MANIFEST",
+  "revision": "r187",
+  "commit": "7e89746a687bb88271253698fa108b1dd59825d0",
+  "license": "MIT plus upstream decoder notices",
+  "files": [
+    {
+      "path": "build/three.core.js",
+      "bytes": 1474799,
+      "sha256": "613e370f76638fdef83926642bf256dc9615684922de1ce1f63a8583e5d78578"
+    },
+    {
+      "path": "build/three.module.js",
+      "bytes": 658900,
+      "sha256": "104f56145899722094556490d787aae0617cc2fc3382f31df02d724ea1aee341"
+    },
+    {
+      "path": "examples/jsm/controls/OrbitControls.js",
+      "bytes": 40943,
+      "sha256": "c7980ea949c527a829cf7416afa8f4dcf50aff31079685e6827d188d3635cc34"
+    },
+    {
+      "path": "examples/jsm/libs/basis/basis_transcoder.js",
+      "bytes": 57529,
+      "sha256": "8478b5b6d6b74e7d3082b89f6417321d8d1dc0307f2b30d4484bb11b441696a1"
+    },
+    {
+      "path": "examples/jsm/libs/basis/basis_transcoder.wasm",
+      "bytes": 527333,
+      "sha256": "6cf17dc889352c42e9acf8897107978d127005fe3386c36a0e3845e27967630a"
+    },
+    {
+      "path": "examples/jsm/libs/basis/README.md",
+      "bytes": 1388,
+      "sha256": "a578df416c1e0852e9c36a1cf91b4d28d91a251294f87ce610a3bc7ca4df15e0"
+    },
+    {
+      "path": "examples/jsm/libs/draco/draco_decoder.js",
+      "bytes": 719410,
+      "sha256": "30e4d486fa020737af10e3c56197693e5b904bdc05b8bfa5d7b06751dec6da04"
+    },
+    {
+      "path": "examples/jsm/libs/draco/draco_decoder.wasm",
+      "bytes": 285747,
+      "sha256": "c55a594e8ffd18426d36b27fea9618af3df5e173640a3e56d46f09d76f0574f2"
+    },
+    {
+      "path": "examples/jsm/libs/draco/draco_wasm_wrapper.js",
+      "bytes": 58763,
+      "sha256": "e8049906ef3f8f75d3456c22a3f31bfdfe5b5b5bd09ccdec613b9e9a49d554d8"
+    },
+    {
+      "path": "examples/jsm/libs/draco/gltf/draco_decoder.js",
+      "bytes": 512465,
+      "sha256": "8625489da79a805f4f2a7d511c3e52d8b4085608a9d2a4d5f4f9de5db0aea04f"
+    },
+    {
+      "path": "examples/jsm/libs/draco/gltf/draco_decoder.wasm",
+      "bytes": 192420,
+      "sha256": "a680d927bed9cb864ddbd63521868891af2bfbe755092761b4837487618df8ac"
+    },
+    {
+      "path": "examples/jsm/libs/draco/gltf/draco_wasm_wrapper.js",
+      "bytes": 58456,
+      "sha256": "8bb2952d2ba7d67e1414f8df819410cb0434a666be53f671fff75f68843d76f6"
+    },
+    {
+      "path": "examples/jsm/libs/draco/README.md",
+      "bytes": 1395,
+      "sha256": "839850a67c93f6b26d3cc038a45bd8289e3cfdf15531e69339e8eb1282b4eb76"
+    },
+    {
+      "path": "examples/jsm/libs/ktx-parse.module.js",
+      "bytes": 19932,
+      "sha256": "f40c491f6c44dde511268121f778a0050e73b1a15fd844c1ae2c78c73213eafc"
+    },
+    {
+      "path": "examples/jsm/libs/meshopt_decoder.module.js",
+      "bytes": 29256,
+      "sha256": "d428e73a000057c6c94bfcedc3412d0c2dc14ca8800e88553aab05113ad2bf19"
+    },
+    {
+      "path": "examples/jsm/libs/zstddec.module.js",
+      "bytes": 39754,
+      "sha256": "5cbf818e842628a4464e748594a6deae18ceddda3c2f541e7b3a0ff5fc7611e2"
+    },
+    {
+      "path": "examples/jsm/loaders/DRACOLoader.js",
+      "bytes": 19180,
+      "sha256": "b560effb507cb74b9645ea570ed95b923e4becb105af350ba06e08b8a46bb17e"
+    },
+    {
+      "path": "examples/jsm/loaders/GLTFLoader.js",
+      "bytes": 119886,
+      "sha256": "008ec07cc51409a175fe6f9e24d9998a97069e1de0a42298cd9fdad93bf2bc22"
+    },
+    {
+      "path": "examples/jsm/loaders/KTX2Loader.js",
+      "bytes": 37538,
+      "sha256": "970f9774285b3651f9aba5cd7c19437a4926d1ce1e86fefc7a256714188c4e5b"
+    },
+    {
+      "path": "examples/jsm/math/ColorSpaces.js",
+      "bytes": 4315,
+      "sha256": "f2f73ec9d4ba7831cf618ae93739896471701e2c4cbb6d8bc693b3e937e5ad8f"
+    },
+    {
+      "path": "examples/jsm/utils/BufferGeometryUtils.js",
+      "bytes": 39178,
+      "sha256": "fa8b3930d2c5bc6366516c636dee51fedcaecf51bfd3c245b350bda655fe194b"
+    },
+    {
+      "path": "examples/jsm/utils/SkeletonUtils.js",
+      "bytes": 11560,
+      "sha256": "9e53f7de94e1a632b88113536c1c404e243dac973bad2e8e6d514ff49b569e65"
+    },
+    {
+      "path": "examples/jsm/utils/WorkerPool.js",
+      "bytes": 3110,
+      "sha256": "5ac7095fd566bc9ae48376055fd66edf27cb9ebbf9e1269dc206bfd4933ae9eb"
+    },
+    {
+      "path": "LICENSE",
+      "bytes": 1081,
+      "sha256": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc"
+    },
+    {
+      "path": "licenses/BASIS-UNIVERSAL-LICENSE-APACHE-2.0.txt",
+      "bytes": 11347,
+      "sha256": "065fcf48d6af21c0b75e23be5ed5753aee75c892e1c2cf178fa6736305614a5c"
+    },
+    {
+      "path": "licenses/DRACO-LICENSE-APACHE-2.0.txt",
+      "bytes": 13898,
+      "sha256": "d3709b0fb4b8a94bbb1d02b8a2e484f258b0d9c5c5a01f940391f3fe662cd1a4"
+    },
+    {
+      "path": "licenses/MESHOPT-LICENSE-MIT.txt",
+      "bytes": 1079,
+      "sha256": "f03037ca7bad1e3eb7f4a63fa6084a8baabd5ba30d3c239a9a7f35705d873e26"
+    },
+    {
+      "path": "licenses/THREE-LICENSE-MIT.txt",
+      "bytes": 1081,
+      "sha256": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc"
+    },
+    {
+      "path": "THREE-VENDOR-NOTICE.md",
+      "bytes": 502,
+      "sha256": "e1ef5c7687c0c8249130cb04a2abb6811b1372f48d596ce29be6db420c341d12"
+    }
+  ]
+}

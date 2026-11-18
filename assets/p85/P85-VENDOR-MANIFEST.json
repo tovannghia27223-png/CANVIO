@@ -1,0 +1,162 @@
+{
+  "format": "CANVIO_P85_VENDOR_MANIFEST",
+  "schemaVersion": 1,
+  "generatedAt": "2026-11-18T14:51:30.651Z",
+  "packages": {
+    "three": {
+      "version": "0.187.0",
+      "license": "MIT"
+    },
+    "threeMeshBvh": {
+      "version": "0.9.18",
+      "license": "MIT"
+    },
+    "threeGpuPathtracer": {
+      "version": "0.0.28",
+      "license": "MIT",
+      "requiresWebGPU": true,
+      "experimental": true
+    },
+    "postprocessing": {
+      "version": "6.39.6",
+      "license": "Zlib"
+    },
+    "opencv": {
+      "version": "5.0.0-release.1",
+      "license": "Apache-2.0"
+    },
+    "dotLottie": {
+      "version": "0.83.2",
+      "license": "MIT"
+    },
+    "rive": {
+      "version": "2.51.0",
+      "license": "MIT"
+    },
+    "transformers": {
+      "version": "3.8.1",
+      "license": "Apache-2.0",
+      "modelsDownloaded": false
+    },
+    "esbuild": {
+      "version": "0.28.2"
+    }
+  },
+  "files": [
+    {
+      "path": "AI-MODEL-NOTICES.md",
+      "bytes": 764,
+      "sha256": "fcb6e2618caa514b2968a3624883ff5064a0e4f1a223d204022bc7525dbf6fde"
+    },
+    {
+      "path": "dotlottie/dotlottie-player.wasm",
+      "bytes": 1225695,
+      "sha256": "70c460be2e3723737823562727526eda36d4f115b947d0c24a11715951d752f8"
+    },
+    {
+      "path": "dotlottie/dotlottie.worker.js",
+      "bytes": 75539,
+      "sha256": "41b742223bcc09b0bdc957326c86eec7e6b4fae0f2cfb227c2c66ae58a2a4d38"
+    },
+    {
+      "path": "dotlottie/index.js",
+      "bytes": 160976,
+      "sha256": "3e1acc55a1a28f267142e5040b1b0e0f543d448aa7342ed528b1a2f039bd9789"
+    },
+    {
+      "path": "licenses/DOTLOTTIE-MIT.txt",
+      "bytes": 1072,
+      "sha256": "779cec663b3c6590082566f2a000170d7a4d1a4bfc6f954e61efa4adddc652a8"
+    },
+    {
+      "path": "licenses/OPENCV-APACHE-2.0.txt",
+      "bytes": 11357,
+      "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+    },
+    {
+      "path": "licenses/POSTPROCESSING-ZLIB.txt",
+      "bytes": 858,
+      "sha256": "b7650918449bd5fb011ce30ce0e5bcda27aa9639db1fb3aef8c67c32945237f2"
+    },
+    {
+      "path": "licenses/RIVE-MIT.txt",
+      "bytes": 1066,
+      "sha256": "8a1efa755d19446b51a18e1c15f6308728da0b36283c4d38050698ad6954b69a"
+    },
+    {
+      "path": "licenses/THREE-GPU-PATHTRACER-MIT.txt",
+      "bytes": 1072,
+      "sha256": "2df239f3787d174fbd6ead7bc4c748bee526564aa2e67315afcae47e15552e00"
+    },
+    {
+      "path": "licenses/THREE-MESH-BVH-MIT.txt",
+      "bytes": 1072,
+      "sha256": "b106ef6198a9862ed2b5b873e944ecf3583c631a84a7462d400ecc1910ce7fee"
+    },
+    {
+      "path": "licenses/THREE-MIT.txt",
+      "bytes": 1081,
+      "sha256": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc"
+    },
+    {
+      "path": "licenses/TRANSFORMERS-APACHE-2.0.txt",
+      "bytes": 11358,
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+    },
+    {
+      "path": "opencv/opencv.js",
+      "bytes": 17553655,
+      "sha256": "e6fbe9867d0bb8019e33d56593ffa1840be09e0bf39d3fe69da135f700cf24f6"
+    },
+    {
+      "path": "p85-renderers.js",
+      "bytes": 1777657,
+      "sha256": "c8ca5a7f2c81a78ae74bdb83a537d320c3b1c6465fe51a58205da47c5f68116e"
+    },
+    {
+      "path": "P85-VENDOR-NOTICE.md",
+      "bytes": 659,
+      "sha256": "2be964ea0163b2094ce53a580d016612814382ba952c7ffd01c4c7981ae9a259"
+    },
+    {
+      "path": "rive/rive_fallback.wasm",
+      "bytes": 2332017,
+      "sha256": "e3a948613ddd62b519c7be1c5177c6fa8790232b040fba033035f1a8ba0703eb"
+    },
+    {
+      "path": "rive/rive.js",
+      "bytes": 694461,
+      "sha256": "52100627630b170466238c1d05436e8a8c9885026595e4817c83f62e5e8d223b"
+    },
+    {
+      "path": "rive/rive.wasm",
+      "bytes": 2304240,
+      "sha256": "eec3d4923cd94db67c6e0188d285908500626fa0b6ef1e32c2a7ee29c4f3928b"
+    },
+    {
+      "path": "transformers/ort-wasm-simd-threaded.jsep.mjs",
+      "bytes": 44484,
+      "sha256": "08fb86ec433c78bfb032c5d84a68b8e8e5a8d81268fa39e24314179a5767a5b9"
+    },
+    {
+      "path": "transformers/ort-wasm-simd-threaded.jsep.wasm",
+      "bytes": 21596019,
+      "sha256": "c46655e8a94afc45338d4cb2b840475f88e5012d524509916e505079c00bfa39"
+    },
+    {
+      "path": "transformers/ort-wasm-simd-threaded.mjs",
+      "bytes": 20856,
+      "sha256": "43c25054b6b9ac000f786c65545ff83a45f871e0e310e8c2f4d48a363bb66db4"
+    },
+    {
+      "path": "transformers/ort-wasm-simd-threaded.wasm",
+      "bytes": 11133407,
+      "sha256": "f061472c6e77d6d50d079aacdc0ff9b63fee287ddd2cbf46cf62438d3891de2b"
+    },
+    {
+      "path": "transformers/transformers.min.js",
+      "bytes": 888173,
+      "sha256": "aa5002b70e789798da263f5f99c62bd3e8fcd0c119258a493c40c180648365fa"
+    }
+  ]
+}

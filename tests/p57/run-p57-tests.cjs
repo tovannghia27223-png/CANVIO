@@ -76,7 +76,7 @@ const window = {
   confirm:()=>true
 };
 class TestURL extends URL { static createObjectURL(){ return 'blob:fake'; } static revokeObjectURL(){} }
-const context = {window,document,navigator,indexedDB,URL:TestURL,Blob,TextEncoder,TextDecoder,ArrayBuffer,Uint8Array,DataView,Number,Math,Object,String,RegExp,Error,Promise,JSON,Date,Set,Map,console,setTimeout,clearTimeout,fetch:async()=>({ok:true,status:200,headers:{get:()=> 'text/javascript'},text:async()=>"transformers@3.8.1 Xenova/whisper-tiny automatic-speech-recognition"})};
+const context = {window,document,navigator,indexedDB,URL:TestURL,Blob,TextEncoder,TextDecoder,ArrayBuffer,Uint8Array,DataView,Number,Math,Object,String,RegExp,Error,Promise,JSON,Date,Set,Map,console,setTimeout,clearTimeout,fetch:async()=>({ok:true,status:200,headers:{get:()=> 'text/javascript'},text:async()=>"Transformers.js 3.8.1 ./p85/transformers/transformers.min.js Xenova/whisper-tiny automatic-speech-recognition"})};
 vm.createContext(context);
 const files = [
   'tests/p57/p57-native-persistence.js','tests/p58/p58-media-export-acceptance.js',
@@ -125,7 +125,9 @@ for (const file of files) vm.runInContext(fs.readFileSync(path.join(root,file),'
   blockNextOpen = true;
   db.closed = false;
   const blocked = await window.CANVIOPersistenceAudit.inspect();
-  await new Promise(resolve => setTimeout(resolve, 0));
+  // The fake request deliberately dispatches its late success in a subsequent task.
+  // Wait for that event rather than depending on a single event-loop turn.
+  for (let attempt=0; attempt<25 && !db.closed; attempt++) await new Promise(resolve => setTimeout(resolve, 2));
   assert('P57 closes a late IndexedDB connection after a blocked-open rejection', blocked.databaseAvailable===false && /bị khóa/.test(blocked.databaseError) && db.closed===true);
   console.log(`\nP57–P62 PASS: ${passed.length}/${passed.length} assertions passed.`);
 })().catch(error=>{console.error(error);process.exitCode=1;});
