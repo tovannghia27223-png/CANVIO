@@ -2,35 +2,13 @@
 """Hosted, same-origin runtime acceptance: Three.js r187, P85 runtimes and real ONNX inference."""
 from __future__ import annotations
 import base64
-import functools, http.server, json, os, socketserver, struct, threading, subprocess, zlib
+import functools, http.server, json, os, socketserver, struct, threading, subprocess
 from pathlib import Path
 from playwright.sync_api import sync_playwright
 
 ROOT=Path(__file__).resolve().parents[2]
 REPORT=Path(__file__).with_name('hosted-runtime-report.json')
 checks={}; details={}; errors=[]; requests=[]
-def png_chunk(kind,payload):
-    return struct.pack('>I',len(payload))+kind+payload+struct.pack('>I',zlib.crc32(kind+payload)&0xffffffff)
-
-def motion_png_frames(width=320,height=240,count=90):
-    """Deterministic textured PNG sequence with a moving, trackable checker target."""
-    signature=b'\x89PNG\r\n\x1a\n'
-    header=struct.pack('>IIBBBBB',width,height,8,2,0,0,0)
-    for frame in range(count):
-        left=8+(frame*3)%(width-56)
-        raw=bytearray()
-        for y in range(height):
-            raw.append(0)
-            for x in range(width):
-                checker=((x//8)^(y//8))&1
-                shade=(x*3+y*7)%28
-                red,green,blue=24+checker*30+shade,42+checker*34+shade,66+checker*38+shade
-                if left<=x<left+48 and 80<=y<128:
-                    target=((x//6+y//6)&1)
-                    red,green,blue=(220,185,48) if target else (65,115,225)
-                raw.extend((red,green,blue))
-        yield signature+png_chunk(b'IHDR',header)+png_chunk(b'IDAT',zlib.compress(raw,1))+png_chunk(b'IEND',b'')
-
 def record(name,ok,detail=None):
     checks[name]=bool(ok)
     if detail is not None: details[name]=detail
@@ -101,14 +79,36 @@ def main():
         page.wait_for_function("document.querySelector('#p85-postfx-status')?.textContent.includes('Đã render')")
         record('P85 PostFX produces live GLB preview',True,page.locator('#p85-postfx-status').inner_text())
         record('P106 software-WebGL context exists (not physical GPU)',page.evaluate("!!document.createElement('canvas').getContext('webgl2')"),'ANGLE SwiftShader software renderer')
-        # Encode deterministic PNG frames through FFmpeg's enabled image2pipe demuxer.
-        # The pinned Playwright FFmpeg build intentionally excludes lavfi, so no lavfi filters
-        # or external codecs are assumed. A moving checker target provides stable LK features.
+        # Generate deterministic JPEG frames in Chromium's Canvas and pipe MJPEG to FFmpeg.
+        # The pinned Playwright FFmpeg build enables the MJPEG decoder but intentionally omits PNG.
+        video_frames=page.evaluate("""async()=>{
+          const canvas=document.createElement('canvas');canvas.width=320;canvas.height=240;
+          const ctx=canvas.getContext('2d'),frames=[];
+          for(let frame=0;frame<90;frame++){
+            ctx.fillStyle='#18283c';ctx.fillRect(0,0,320,240);
+            for(let y=0;y<240;y+=24)for(let x=0;x<320;x+=24){
+              ctx.fillStyle=(((x/24|0)^(y/24|0))&1)?'#476078':'#24394f';
+              ctx.fillRect(x,y,20,20);
+            }
+            const left=8+(frame*3)%264;
+            for(let y=0;y<48;y+=8)for(let x=0;x<48;x+=8){
+              ctx.fillStyle=(((x/8|0)^(y/8|0))&1)?'#e3b936':'#4173e1';
+              ctx.fillRect(left+x,80+y,8,8);
+            }
+            const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/jpeg',0.9));
+            if(!blob)throw new Error('Chromium could not encode the MJPEG fixture frame');
+            const bytes=new Uint8Array(await blob.arrayBuffer());let binary='';
+            for(let i=0;i<bytes.length;i+=32768)binary+=String.fromCharCode(...bytes.subarray(i,i+32768));
+            frames.push(btoa(binary));
+          }
+          return frames;
+        }""")
+        if len(video_frames)!=90: raise RuntimeError('Expected 90 deterministic JPEG frames')
+        frame_stream=b''.join(base64.b64decode(frame) for frame in video_frames)
         ffmpeg=Path.home()/'.cache/ms-playwright/ffmpeg-1013/ffmpeg-linux'
         if not ffmpeg.is_file(): raise RuntimeError('Pinned Playwright FFmpeg binary is missing; cannot create video fixture')
         video_path=Path('/tmp/canvio-motion-smoke.webm')
-        frame_stream=b''.join(motion_png_frames())
-        mux=subprocess.run([str(ffmpeg),'-y','-f','image2pipe','-vcodec','png','-framerate','15','-i','pipe:0','-frames:v','90','-c:v','libvpx-vp9','-deadline','realtime','-cpu-used','8','-b:v','400k','-pix_fmt','yuv420p','-an','-map_metadata','-1','-f','webm',str(video_path)],input=frame_stream,capture_output=True)
+        mux=subprocess.run([str(ffmpeg),'-y','-f','image2pipe','-vcodec','mjpeg','-framerate','15','-i','pipe:0','-frames:v','90','-c:v','libvpx-vp9','-deadline','realtime','-cpu-used','8','-b:v','400k','-pix_fmt','yuv420p','-an','-map_metadata','-1','-f','webm',str(video_path)],input=frame_stream,capture_output=True)
         if mux.returncode or not video_path.is_file() or video_path.stat().st_size<1024:
             raise RuntimeError('Could not create deterministic finite-duration WebM fixture: '+(mux.stderr or b'').decode('utf-8','replace')[-1600:])
         page.locator('#p85-video').set_input_files(str(video_path))
