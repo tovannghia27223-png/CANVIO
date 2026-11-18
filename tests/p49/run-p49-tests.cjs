@@ -91,7 +91,8 @@ assert('Whisper chunk timestamps map to timeline offset', whisperCues.length ===
 const fallbackCue = api.vWhisperBuildCues({text:'Transcript without timestamp chunks'}, 3, 7);
 assert('Whisper output without chunk timestamps remains one reviewable cue', fallbackCue.length === 1 && fallbackCue[0].start === 3 && fallbackCue[0].duration === 7);
 assert('Whisper rejects malformed timestamps and empty chunks', api.vWhisperBuildCues({chunks:[{text:'bad',timestamp:[null,1]},{text:'',timestamp:[0,1]}]}, 0, 3).length === 0);
-assert('P49 exposes user-triggered Whisper adapter and unload', /whisperCaption:vWhisperCaption,whisperCancel:vWhisperCancel,whisperUnload:vWhisperUnload,whisperBuildCues:vWhisperBuildCues/.test(videoScript));
+assert('P49 exposes user-triggered Whisper adapter and unload', /whisperCaption:vWhisperCaption,whisperCancel:vWhisperCancel,whisperUnload:vWhisperUnload/.test(videoScript) && /whisperBuildCues:vWhisperBuildCues/.test(videoScript));
+assert('P49 exposes Whisper runtime diagnostics without requiring property adjacency', /whisperRuntime:function\(\)/.test(videoScript));
 const workerSource = fs.readFileSync(path.resolve(__dirname, '../../assets/canvio-whisper-worker.js'), 'utf8');
 assert('Whisper worker pins Transformers.js runtime', /@huggingface\/transformers@3\.8\.1/.test(workerSource));
 assert('Whisper worker selects multilingual q8 model on CPU/WASM default', /Xenova\/whisper-tiny/.test(workerSource) && /dtype:\s*'q8'/.test(workerSource) && !/device:\s*'webgpu'/.test(workerSource));
