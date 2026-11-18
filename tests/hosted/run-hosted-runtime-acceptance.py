@@ -64,6 +64,28 @@ def main():
         page.wait_for_function("document.querySelector('#cv74-status')?.textContent.includes('Đã tải GLB')",timeout=180000)
         p74=page.evaluate("() => ({tests:window.CANVIOThreeGLBViewerP74.tests(),report:JSON.parse(document.querySelector('#cv74-report').textContent),webgl2:!!document.querySelector('#cv74-canvas').getContext('webgl2')})")
         record('P74/P81 loads real r187 GLB viewer with local decoders',p74['tests'].get('vendorManifestVerified') and p74['tests'].get('threeModuleLoaded') and p74['tests'].get('dracoModuleLoaded') and p74['tests'].get('meshoptDecoderReady') and p74['tests'].get('ktx2ModuleLoaded') and p74['webgl2'],p74['report'])
+        # Compressed GLB decode (Draco + Meshopt) with fixtures generated in CI. KTX2/Basis texture decode is NOT covered.
+        fx=os.environ.get('CANVIO_GLB_FIXTURES')
+        for kind,ext in (('draco','KHR_draco_mesh_compression'),('meshopt','EXT_meshopt_compression')):
+            path=Path(fx)/(kind+'.glb') if fx else None
+            if not path or not path.exists():
+                record(f'P74/P81 compressed {kind} GLB decodes in real r187 viewer',False,'fixture missing: set CANVIO_GLB_FIXTURES'); continue
+            try:
+                data=path.read_bytes()
+                if ext.encode() not in data: raise AssertionError('fixture lacks '+ext)
+                page.evaluate("() => { document.querySelector('#cv74-status').textContent=''; }")
+                page.locator('#cv72-file').set_input_files({'name':kind+'.glb','mimeType':'model/gltf-binary','buffer':data})
+                page.locator('#cv74-load').evaluate('(el) => el.click()')
+                page.wait_for_function("document.querySelector('#cv74-status')?.textContent.includes('Đã tải GLB')",timeout=120000)
+                rep=page.evaluate("() => document.querySelector('#cv74-report').textContent")
+                record(f'P74/P81 compressed {kind} GLB decodes in real r187 viewer',True,{'bytes':len(data),'extension':ext,'report':rep[:600]})
+            except Exception as e:
+                record(f'P74/P81 compressed {kind} GLB decodes in real r187 viewer',False,{'error':str(e)[:400],'status':page.evaluate("() => document.querySelector('#cv74-status')?.textContent")})
+        # Restore the small baseline GLB so later P85 steps run on the same input as before this check.
+        page.evaluate("() => { document.querySelector('#cv74-status').textContent=''; }")
+        page.locator('#cv72-file').set_input_files({'name':'canvio-hosted-smoke.glb','mimeType':'model/gltf-binary','buffer':glb_fixture()})
+        page.locator('#cv74-load').evaluate('(el) => el.click()')
+        page.wait_for_function("document.querySelector('#cv74-status')?.textContent.includes('Đã tải GLB')",timeout=120000)
         p85=page.evaluate("""async()=>{
           const s=window.CANVIOP85Suite;
           const paths=['p85-renderers.js','opencv/opencv.js','dotlottie/index.js','dotlottie/dotlottie-player.wasm','rive/rive.js','rive/rive.wasm','transformers/transformers.min.js'];
