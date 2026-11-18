@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Hosted, same-origin runtime acceptance: Three.js r187, P85 runtimes and real ONNX inference."""
 from __future__ import annotations
+import base64
 import functools, http.server, json, os, socketserver, struct, threading
 from pathlib import Path
 from playwright.sync_api import sync_playwright
