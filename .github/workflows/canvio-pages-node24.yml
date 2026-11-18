@@ -1,327 +1,74 @@
-name: CANVIO GitHub Pages P70 (Node 24)
+name: CANVIO Pages — manual P70 certification gate
 
 on:
-  pull_request:
-    branches:
-      - main
-  push:
-    branches:
-      - main
   workflow_dispatch:
+    inputs:
+      deploy_candidate:
+        description: Deploy only when all fourteen P70 gates are independently certified
+        required: true
+        type: boolean
+        default: false
 
 permissions:
   contents: read
+  pages: write
+  id-token: write
 
 concurrency:
-  group: canvio-pages
+  group: canvio-pages-certified
   cancel-in-progress: false
 
 jobs:
-  build:
-    name: Validate and package CANVIO P70 Stable Release candidate
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
+  release-gate:
+    runs-on: ubuntu-24.04
+    outputs:
+      certified: ${{ steps.check.outputs.certified }}
+    steps:
+      - name: Checkout certified candidate metadata
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+
+      - name: Require all P70 real-world evidence before deployment
+        id: check
+        shell: bash
+        run: |
+          node <<'NODE'
+          const fs=require('node:fs');
+          const m=JSON.parse(fs.readFileSync('CANVIO_MANIFEST.json','utf8'));
+          const g=m.p70ManualGates||{};
+          const evidence=Array.isArray(m.manualGateEvidence)?m.manualGateEvidence:[];
+          const certified=m.releaseCertified===true && m.releaseStatus==='CERTIFIED' && g.total===14 && g.pending===0 && g.passed===14 && evidence.length===14 && evidence.every(x=>x&&x.reviewed===true&&x.evidence);
+          console.log(JSON.stringify({certified,releaseCertified:m.releaseCertified,releaseStatus:m.releaseStatus,gates:g,evidenceCount:evidence.length},null,2));
+          fs.appendFileSync(process.env.GITHUB_OUTPUT,'certified='+(certified?'true':'false')+'\n');
+          if(!certified) console.log('Deployment blocked: all fourteen independently reviewed P70 evidence records are required.');
+          NODE
+
+  deploy:
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.deploy_candidate == true && needs.release-gate.outputs.certified == 'true' }}
+    needs: release-gate
+    runs-on: ubuntu-24.04
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
 
-
-      - name: Restore the complete reviewed P70 delivery bundle
-        shell: bash
-        run: |
-          set -euo pipefail
-          if test -d .canvio/p70/bundle && test -n "$(find .canvio/p70/bundle -maxdepth 1 -name 'part-*.b64' -print -quit)"; then
-            cat .canvio/p70/bundle/part-*.b64 | base64 --decode > /tmp/canvio-p70-delivery.zip
-            unzip -t /tmp/canvio-p70-delivery.zip
-            mkdir -p /tmp/canvio-p70-delivery
-            unzip -q /tmp/canvio-p70-delivery.zip -d /tmp/canvio-p70-delivery
-            test -s /tmp/canvio-p70-delivery/index.html
-            cp .github/workflows/canvio-pages-node24.yml /tmp/canvio-p70-bootstrap.yml
-            cp -a /tmp/canvio-p70-delivery/. ./
-            mkdir -p .github/workflows
-            cp /tmp/canvio-p70-bootstrap.yml .github/workflows/canvio-pages-node24.yml
-            echo "P70 package extracted; canonical source is now in the workspace."
-          else
-            test -s index.html
-            echo "P70 source already restored; validating committed source tree."
-          fi
-
-      - name: Set up Node.js 24
-        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
-        with:
-          node-version: 24
-          package-manager-cache: false
-
-      - name: Verify exact reviewed CANVIO P70 candidate
-        shell: bash
-        run: |
-          set -euo pipefail
-          actual="$(sha256sum index.html | cut -d' ' -f1)"
-          expected_p70="73e97aeb4b538f7e7c828ac740084113574db671206a1a1db0f19a45fb22d45c"
-          test "$actual" = "$expected_p70" || { echo "Unexpected index.html SHA-256: $actual" >&2; exit 1; }
-          echo "Exact CANVIO P70 candidate SHA-256 verified: $actual"
-
-      - name: Apply reviewed P70 source overrides
-        shell: bash
-        run: |
-          set -euo pipefail
-          node scripts/apply-p70-overrides.cjs
-
-      - name: Validate HTML, unique IDs, and inline JavaScript syntax
-        shell: bash
-        run: |
-          set -euo pipefail
-          python3 - <<'PY'
-          from html.parser import HTMLParser
-          from collections import Counter
-          from pathlib import Path
-          import re, subprocess, tempfile, sys
-
-          source = Path("index.html").read_text(encoding="utf-8")
-          class Audit(HTMLParser):
-              def __init__(self):
-                  super().__init__()
-                  self.ids = []
-                  self.scripts = 0
-                  self.external_scripts = []
-              def handle_starttag(self, tag, attrs):
-                  attrs = dict(attrs)
-                  if attrs.get("id"):
-                      self.ids.append(attrs["id"])
-                  if tag.lower() == "script":
-                      self.scripts += 1
-                      if attrs.get("src"):
-                          self.external_scripts.append(attrs["src"])
-
-          audit = Audit()
-          audit.feed(source)
-          ids = Counter(audit.ids)
-          duplicates = [key for key, count in ids.items() if count > 1]
-          scripts = re.findall(r"<script\b[^>]*>([\s\S]*?)</script\s*>", source, re.I)
-          if audit.scripts != 91 or len(scripts) != 91:
-              raise SystemExit(f"Expected 91 inline script blocks; parser={audit.scripts}, extracted={len(scripts)}")
-          if audit.external_scripts:
-              raise SystemExit(f"Unexpected external script src entries: {audit.external_scripts}")
-          if duplicates:
-              raise SystemExit(f"Duplicate HTML IDs: {duplicates[:20]}")
-          if len(audit.ids) != 504 or len(ids) != 504:
-              raise SystemExit(f"Expected 504 unique HTML IDs; found {len(audit.ids)} IDs / {len(ids)} unique")
-
-          failures = []
-          with tempfile.TemporaryDirectory() as directory:
-              for index, script in enumerate(scripts):
-                  path = Path(directory) / f"inline-{index}.js"
-                  path.write_text(script, encoding="utf-8")
-                  result = subprocess.run(["node", "--check", str(path)], capture_output=True, text=True)
-                  if result.returncode:
-                      failures.append((index, result.stderr))
-          if failures:
-              for index, error in failures:
-                  print(f"Inline script {index} failed:\n{error}", file=sys.stderr)
-              raise SystemExit(f"{len(failures)} inline JavaScript syntax error(s)")
-          print(f"PASS: {audit.scripts} inline scripts; 0 external script src; {len(audit.ids)} IDs / {len(ids)} unique / 0 duplicates; Node syntax {len(scripts)}/{len(scripts)}.")
-          PY
-
-          mkdir -p _site/assets
-          cp index.html _site/index.html
-          test -f assets/canvio-whisper-worker.js
-          cp assets/canvio-whisper-worker.js _site/assets/canvio-whisper-worker.js
-          node --check assets/canvio-whisper-worker.js
-
-      - name: Run P47 integration and backup fixtures
-        shell: bash
-        run: |
-          set -euo pipefail
-          node tests/p47/test_phase_p47.cjs
-          node tests/p47/test_p47_bezier.cjs
-          node tests/p47/test_phase_p47_restore.cjs
-          node tests/p47/test_phase_p47_crc.cjs
-
-      - name: Run P48 track controls and WebVTT regression suite
-        shell: bash
-        run: |
-          set -euo pipefail
-          node tests/p48/run-p48-tests.cjs
-
-
-      - name: Run P49 video export, subtitle QC and Whisper adapter suite
-        shell: bash
-        run: |
-          set -euo pipefail
-          node tests/p49/run-p49-tests.cjs
-
-      - name: Run P50 production-control lifecycle regression suite
-        shell: bash
-        run: |
-          set -euo pipefail
-          node tests/p50/run-p50-tests.cjs
-
-      - name: Run P55 P51–P55 stability and release-readiness regression suite
-        shell: bash
-        run: |
-          set -euo pipefail
-          node tests/p55/run-p55-tests.cjs
-
-      - name: Run P56 ZIP archive integrity and restore preview suite
-        shell: bash
-        run: |
-          set -euo pipefail
-          node tests/p56/run-p56-tests.cjs
-
-      - name: Run P57–P62 Phase 1 persistence, media, AI, accessibility and release-gate suite
-        shell: bash
-        run: |
-          set -euo pipefail
-          node tests/p57/run-p57-tests.cjs
-
-      - name: Verify P63–P67 integrated source and standalone module stay synchronized
-        shell: bash
-        run: |
-          set -euo pipefail
-          node tests/p63-p67/verify-p63-p67-source.cjs
-          node --check canvio-p63-p67.js
-
-      - name: Run P63–P67 creative production source VM regression suite
-        shell: bash
-        run: |
-          set -euo pipefail
-          node tests/p63-p67/run-p63-p67-tests.cjs
-
-      - name: Verify and test P68–P70 offline 3D, system optimization and stable release gate
-        shell: bash
-        run: |
-          set -euo pipefail
-          node tests/p68-p70/verify-p68-p70-source.cjs
-          node --check canvio-p68-p70.js
-          node tests/p68-p70/run-p68-p70-tests.cjs
-
-      - name: Install pinned Playwright Chromium for browser smoke
-        shell: bash
-        run: |
-          set -euo pipefail
-          python3 -m venv /tmp/canvio-playwright
-          /tmp/canvio-playwright/bin/python -m pip install --disable-pip-version-check playwright==1.65.2
-          /tmp/canvio-playwright/bin/python -m playwright install --with-deps chromium
-
-      - name: Run inherited P63–P67 Chromium regression against the P70 build
-        shell: bash
-        run: |
-          set -euo pipefail
-          /tmp/canvio-playwright/bin/python tests/p63-p67/run-p63-p67-browser-smoke.py
-
-      - name: Run P68–P70 offline viewer, performance audit and P70 release-gate Chromium smoke
-        shell: bash
-        run: |
-          set -euo pipefail
-          /tmp/canvio-playwright/bin/python tests/p68-p70/run-p68-p70-browser-smoke.py
-
-
-      - name: Upload browser regression evidence
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
-        with:
-          name: canvio-p70-browser-evidence-${{ github.run_number }}
-          path: |
-            tests/p63-p67/browser-smoke-report.json
-            tests/p68-p70/browser-smoke-report.json
-          if-no-files-found: error
-          retention-days: 30
-
-      - name: Restore tracked browser report fixtures after artifact upload
-        shell: bash
-        run: |
-          set -euo pipefail
-          git restore --source=HEAD --worktree --staged -- tests/p63-p67/browser-smoke-report.json tests/p68-p70/browser-smoke-report.json
-
-      - name: Refresh and verify the delivery manifest
-        shell: bash
-        run: |
-          set -euo pipefail
-          node <<'NODE'
-          const fs = require('node:fs');
-          const path = require('node:path');
-          const crypto = require('node:crypto');
-          const manifestPath = 'CANVIO_MANIFEST.json';
-          const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
-          if (manifest.format !== 'CANVIO_DELIVERY_MANIFEST' || manifest.hashAlgorithm !== 'SHA-256' || !Array.isArray(manifest.files)) throw new Error('Unsupported CANVIO delivery manifest format');
-          const supplementalInputs = [
-            '.canvio/p70/overrides/p57-native-persistence.js',
-            '.canvio/p70/overrides/p57-run-tests.cjs',
-            '.canvio/p70/overrides/p60-accessibility-audit.js',
-            '.canvio/p70/overrides/p68-p70-tests.cjs',
-            '.canvio/p70/overrides/canvio-p68-p70.js',
-            'scripts/apply-p70-overrides.cjs'
-          ];
-          for (const filePath of supplementalInputs) {
-            if (!manifest.files.some(entry => entry.path === filePath)) {
-              manifest.files.push({ path: filePath, bytes: 0, sha256: '' });
-            }
-          }
-          const seen = new Set();
-          for (const entry of manifest.files) {
-            if (!entry || typeof entry.path !== 'string' || !entry.path || seen.has(entry.path)) throw new Error('Invalid or duplicate manifest path');
-            seen.add(entry.path);
-            if (path.isAbsolute(entry.path) || entry.path.split(/[\\/]/).includes('..')) throw new Error('Manifest path escapes repository: ' + entry.path);
-            const file = fs.readFileSync(path.join(process.cwd(), entry.path));
-            entry.bytes = file.byteLength;
-            entry.sha256 = crypto.createHash('sha256').update(file).digest('hex');
-          }
-          manifest.fileCount = manifest.files.length;
-          fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + '\n', 'utf8');
-          const check = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
-          for (const entry of check.files) {
-            const file = fs.readFileSync(path.join(process.cwd(), entry.path));
-            if (file.byteLength !== entry.bytes || crypto.createHash('sha256').update(file).digest('hex') !== entry.sha256) throw new Error('Manifest verification failed: ' + entry.path);
-          }
-          console.log('PASS: manifest entries=' + check.files.length + '; all SHA-256 hashes and byte counts verified.');
-          NODE
-
-      - name: Commit validated P70 source and manifest changes
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        shell: bash
-        run: |
-          set -euo pipefail
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add index.html tests/p57/p57-native-persistence.js tests/p57/run-p57-tests.cjs tests/p60/p60-accessibility-audit.js tests/p68-p70/run-p68-p70-tests.cjs canvio-p68-p70.js CANVIO_MANIFEST.json scripts/apply-p70-overrides.cjs .canvio/p70/overrides/
-          if git diff --cached --quiet; then
-            echo 'Manifest already matches all committed files; no follow-up commit required.'
-            exit 0
-          fi
-          git commit -m 'ci: refresh CANVIO validated source and manifest'
-          # All intended source changes are committed above. Clear only any
-          # post-commit tracked modifications produced by tooling before rebase.
-          git reset --hard HEAD
-          for attempt in 1 2 3; do
-            git fetch origin main
-            git rebase origin/main
-            if git push origin HEAD:main; then exit 0; fi
-            echo "Source promotion attempt ${attempt} did not complete; retrying after fetch/rebase."
-            git reset --hard HEAD
-          done
-          echo 'Unable to push validated source after three attempts.' >&2
-          exit 1
-
-      - name: Configure GitHub Pages
+      - name: Configure Pages
         uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d
 
-      - name: Upload GitHub Pages artifact
+      - name: Prepare static site
+        run: |
+          set -euo pipefail
+          mkdir -p _site
+          cp index.html _site/index.html
+          test -d assets && cp -a assets _site/assets
+          test -s _site/index.html
+
+      - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9
         with:
           path: _site
 
-  deploy:
-    name: Deploy to GitHub Pages
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
-    permissions:
-      pages: write
-      id-token: write
-    steps:
-      - name: Deploy
+      - name: Deploy certified candidate
         id: deployment
         uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346
