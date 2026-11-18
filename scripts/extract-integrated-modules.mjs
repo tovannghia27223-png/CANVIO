@@ -25,10 +25,10 @@ for(const [id,file] of modules){
    match=[null,candidates[0][2]];
   }else{
    const escaped=id.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
-   const re=new RegExp('<script\\\\b(?=[^>]*\\\\bid=["\\\\\\']'+escaped+'["\\\\\\'])[^>]*>([\\\\s\\\\S]*?)<\\\\/script\\\\s*>','i');
+   const re=new RegExp('<script\\b(?=[^>]*\\bid=["\\\']'+escaped+'["\\\'])[^>]*>([\\s\\S]*?)<\\/script\\s*>','i');
    match=html.match(re);
   }
   if(!match||!match[1].trim())throw new Error('Missing/empty integrated module: '+id);
-  fs.writeFileSync(path.join(root,file),match[1].trim()+'\\n');
+  fs.writeFileSync(path.join(root,file),match[1].trim()+'\n');
 }
 console.log('Extracted '+modules.length+' integrated source modules from index.html');
