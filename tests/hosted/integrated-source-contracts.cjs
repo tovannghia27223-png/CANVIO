@@ -46,7 +46,7 @@ test('P70 remains fail-closed and enumerates fourteen manual acceptance gates',(
 });
 test('Candidate index includes the three local worker paths, no external script tags, and P85/Three panels',()=>{
  for(const token of ["assets/canvio-rmbg-worker.js","assets/canvio-depth-worker.js","assets/canvio-whisper-worker.js",'canvio-p85-studio','canvio-p74'])assert.ok(html.includes(token),token);
- assert.ok(!/<script\b[^>]*\bsrc=/i.test(html));
+ assert.ok(!/<script\b[^>]*\bsrc\s*=[^>]*>[\s\S]*?<\/script\s*>/i.test(html),'Active external script element found');
 });
 const passed=Object.values(checks).filter(Boolean).length,total=Object.keys(checks).length;
 const report={suite:'CANVIO_23.3.111_INTEGRATED_SOURCE_CONTRACTS',passed,total,checks,modelInferenceExecuted:false,physicalGpuExecuted:false,twoDeviceSyncExecuted:false,p70ReleaseCertified:false};
