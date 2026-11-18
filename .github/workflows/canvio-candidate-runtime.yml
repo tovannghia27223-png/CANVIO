@@ -74,9 +74,9 @@ jobs:
             sudo apt-get update
             sudo apt-get install -y --no-install-recommends "${missing[@]}"
           fi
-          ffmpeg -version | head -n 1
-          zip -v | head -n 1
-          unzip -v | head -n 1
+          ffmpeg -version | sed -n '1p'
+          zip -v | sed -n '1p'
+          unzip -v | sed -n '1p'
 
       - name: Validate vendor provisioning scripts
         run: |
