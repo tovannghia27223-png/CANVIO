@@ -213,10 +213,19 @@ jobs:
           /tmp/canvio-playwright/bin/python -m pip install --disable-pip-version-check playwright==1.65.2
           /tmp/canvio-playwright/bin/python -m playwright install --with-deps chromium
 
+      - name: Generate Draco and Meshopt compressed GLB fixtures
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/glbfx && cp tests/hosted/make-compressed-glb-fixtures.mjs /tmp/glbfx/
+          cd /tmp/glbfx && npm init -y >/dev/null && npm install --no-audit --no-fund @gltf-transform/core @gltf-transform/extensions @gltf-transform/functions draco3dgltf meshoptimizer
+          node make-compressed-glb-fixtures.mjs /tmp/glbfx/out
+
       - name: Execute same-origin GLB, P85, ONNX model and worker browser acceptance
         shell: bash
         run: |
           set -euo pipefail
+          export CANVIO_GLB_FIXTURES=/tmp/glbfx/out
           /tmp/canvio-playwright/bin/python tests/hosted/run-hosted-runtime-acceptance.py
 
       - name: Refresh Guide, Roadmap, QA, Acceptance Matrix and Manifest
