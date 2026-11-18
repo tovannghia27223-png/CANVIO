@@ -2,7 +2,7 @@
 """Hosted, same-origin runtime acceptance: Three.js r187, P85 runtimes and real ONNX inference."""
 from __future__ import annotations
 import base64
-import functools, http.server, json, os, socketserver, struct, threading
+import functools, http.server, json, os, socketserver, struct, threading, subprocess
 from pathlib import Path
 from playwright.sync_api import sync_playwright
 
@@ -96,6 +96,15 @@ def main():
         video_path=Path('/tmp/canvio-motion-smoke.webm')
         video_path.write_bytes(base64.b64decode(video_data['base64']))
         if video_data['size']<1024:raise RuntimeError('Browser-generated WebM fixture is unexpectedly small')
+        # Chromium MediaRecorder WebM may omit a finite Duration element. Re-mux
+        # with Playwright's pinned FFmpeg so the fixture carries real duration metadata.
+        ffmpeg=Path.home()/'.cache/ms-playwright/ffmpeg-1013/ffmpeg-linux'
+        if not ffmpeg.is_file(): raise RuntimeError('Pinned Playwright FFmpeg binary is missing; cannot finalize WebM duration metadata')
+        finalized=Path('/tmp/canvio-motion-smoke-finalized.webm')
+        mux=subprocess.run([str(ffmpeg),'-y','-i',str(video_path),'-c','copy','-map_metadata','-1','-f','webm',str(finalized)],capture_output=True,text=True)
+        if mux.returncode or not finalized.is_file() or finalized.stat().st_size<1024:
+            raise RuntimeError('Could not finalize synthetic WebM duration metadata: '+(mux.stderr or '')[-1600:])
+        video_path=finalized
         page.locator('#p85-video').set_input_files(str(video_path))
         track=page.evaluate("""async()=>{const s=window.CANVIOP85Suite;const before=s.inspect();const r=await s.startOpticalFlow();await new Promise(resolve=>setTimeout(resolve,1200));const status=document.querySelector('#p85-cv-status')?.textContent||'';s.stopOpticalFlow();return {started:!!r,dimensions:[r.width,r.height],status,loaded:s.inspect().openCvLoaded};}""")
         record('P85 OpenCV Lucas-Kanade processes local video frames',track['started'] and track['dimensions']==[320,240] and 'OpenCV.js LK optical flow' in track['status'],track)
