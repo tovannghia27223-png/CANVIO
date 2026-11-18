@@ -21,6 +21,6 @@ for(const [id,file] of modules){
  const re=new RegExp('<script\\b(?=[^>]*\\bid=["\\\']'+escaped+'["\\\'])[^>]*>([\\s\\S]*?)<\\/script\\s*>','i');
  const match=html.match(re);
  if(!match||!match[1].trim())throw new Error('Missing/empty integrated module: '+id);
- fs.writeFileSync(path.join(root,file),match[1].trim()+'\\n');
+ fs.writeFileSync(path.join(root,file),match[1].trim()+'\n');
 }
 console.log('Extracted '+modules.length+' integrated source modules from index.html');
