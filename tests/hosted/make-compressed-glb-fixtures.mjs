@@ -69,6 +69,7 @@ function texturedDoc() {
   execFileSync('toktx', ['--t2', '--encode', 'uastc', '--zcmp', '18', '--genmipmap', path.join(tmp, 'out.ktx2'), path.join(tmp, 'in.png')], { stdio: 'inherit' });
   const tex = doc.createTexture('grad').setImage(new Uint8Array(fs.readFileSync(path.join(tmp, 'out.ktx2')))).setMimeType('image/ktx2');
   prim.setMaterial(doc.createMaterial('m').setBaseColorTexture(tex));
+  doc.createExtension(KHRTextureBasisu).setRequired(true);
   return doc;
 }
 
