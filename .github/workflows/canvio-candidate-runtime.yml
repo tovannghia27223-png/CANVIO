@@ -61,9 +61,9 @@ jobs:
             if(!p60Tag.test(html)) throw new Error('P60 accessibility module is missing from candidate index');
             html=html.replace(p60Tag,(_,open,close)=>open+'\n'+p60Source+'\n'+close);
             const p68Source=fs.readFileSync('canvio-p68-p70.js','utf8').trim();
-            const p68Tag=/(<script\\b(?=[^>]*\\bid=["']canvio-p68-p70-main["'])[^>]*>)[\\s\\S]*?(<\\/script\\s*>)/i;
+            const p68Tag=/(<script\b(?=[^>]*\bid=["']canvio-p68-p70-main["'])[^>]*>)[\s\S]*?(<\/script\s*>)/i;
             if(!p68Tag.test(html)) throw new Error('P68-P70 module is missing from candidate index');
-            html=html.replace(p68Tag,(_,open,close)=>open+'\\n'+p68Source+'\\n'+close);
+            html=html.replace(p68Tag,(_,open,close)=>open+'\n'+p68Source+'\n'+close);
             fs.writeFileSync('index.html',html,'utf8');
             console.log('Restored and version-pinned complete index.html');
           NODE
