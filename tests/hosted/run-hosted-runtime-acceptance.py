@@ -76,10 +76,10 @@ def main():
         }""")
         record('P85 PostFX/WebGPU bundle, OpenCV WASM, dotLottie WASM and Rive WASM initialize',p85['renderer'] and p85['opencv'] and p85['dotlottie'] and p85['rive'],{renderer:p85['renderer'],opencv:p85['opencv'],dotlottie:p85['dotlottie'],rive:p85['rive']})
         page.locator('#p85-postfx-open').click()
-         page.wait_for_function("document.querySelector('#p85-postfx-status')?.textContent.includes('Đã render')")
-         record('P85 PostFX produces live GLB preview',True,page.locator('#p85-postfx-status').inner_text())
-         record('P106 software-WebGL context exists (not physical GPU)',page.evaluate("!!document.createElement('canvas').getContext('webgl2')"),'ANGLE SwiftShader software renderer')
-         # Real OpenCV Lucas-Kanade tracking on a synthetic 2-second motion clip.
+        page.wait_for_function("document.querySelector('#p85-postfx-status')?.textContent.includes('Đã render')")
+        record('P85 PostFX produces live GLB preview',True,page.locator('#p85-postfx-status').inner_text())
+        record('P106 software-WebGL context exists (not physical GPU)',page.evaluate("!!document.createElement('canvas').getContext('webgl2')"),'ANGLE SwiftShader software renderer')
+        # Real OpenCV Lucas-Kanade tracking on a synthetic 2-second motion clip.
         # Generate a short local WebM in Chromium itself; no external ffmpeg binary needed.
         video_data=page.evaluate("""async()=>{
           const canvas=document.createElement('canvas');canvas.width=320;canvas.height=240;
@@ -96,9 +96,9 @@ def main():
         video_path=Path('/tmp/canvio-motion-smoke.webm')
         video_path.write_bytes(base64.b64decode(video_data['base64']))
         if video_data['size']<1024:raise RuntimeError('Browser-generated WebM fixture is unexpectedly small')
-         page.locator('#p85-video').set_input_files(str(video_path))
-         track=page.evaluate("""async()=>{const s=window.CANVIOP85Suite;const before=s.inspect();const r=await s.startOpticalFlow();await new Promise(resolve=>setTimeout(resolve,1200));const status=document.querySelector('#p85-cv-status')?.textContent||'';s.stopOpticalFlow();return {started:!!r,dimensions:[r.width,r.height],status,loaded:s.inspect().openCvLoaded};}""")
-         record('P85 OpenCV Lucas-Kanade processes local video frames',track['started'] and track['dimensions']==[320,240] and 'OpenCV.js LK optical flow' in track['status'],track)
+        page.locator('#p85-video').set_input_files(str(video_path))
+        track=page.evaluate("""async()=>{const s=window.CANVIOP85Suite;const before=s.inspect();const r=await s.startOpticalFlow();await new Promise(resolve=>setTimeout(resolve,1200));const status=document.querySelector('#p85-cv-status')?.textContent||'';s.stopOpticalFlow();return {started:!!r,dimensions:[r.width,r.height],status,loaded:s.inspect().openCvLoaded};}""")
+        record('P85 OpenCV Lucas-Kanade processes local video frames',track['started'] and track['dimensions']==[320,240] and 'OpenCV.js LK optical flow' in track['status'],track)
         # Real ORMBG and Depth Anything ONNX WASM inference through the shipped workers.
         infer=page.evaluate("""async()=>{
           function makePng(){const c=document.createElement('canvas');c.width=256;c.height=256;const x=c.getContext('2d');const g=x.createLinearGradient(0,0,256,256);g.addColorStop(0,'#173b61');g.addColorStop(1,'#e6b56e');x.fillStyle=g;x.fillRect(0,0,256,256);x.fillStyle='#d94d43';x.beginPath();x.arc(128,120,60,0,Math.PI*2);x.fill();return new Promise(r=>c.toBlob(r,'image/png')); }
