@@ -68,7 +68,7 @@ const p85FeatureFallback = String.raw`  function detectGoodFeatures(cv, gray, ma
 const p85Anchor = '  async function startOpticalFlow() {';
 if (!html.includes(p85Anchor)) throw new Error('P85 tracking function not found; refusing unverified feature patch');
 if (html.includes('function detectGoodFeatures(cv, gray, maxCorners')) throw new Error('P85 feature fallback already exists; refusing duplicate insertion');
-html = html.replace(p85Anchor, p85FeatureFallback + '\\n' + p85Anchor);
+html = html.replace(p85Anchor, p85FeatureFallback + '\n' + p85Anchor);
 const p85Replacements = [
   ['cv.goodFeaturesToTrack(t.prevGray, t.prevPts, 160, 0.01, 7);', 't.prevPts = detectGoodFeatures(cv, t.prevGray, 160, 0.01, 7);'],
   ['cv.goodFeaturesToTrack(t.prevGray, t.prevPts = new cv.Mat(), 160, 0.01, 7);', 'if (t.prevPts) t.prevPts.delete(); t.prevPts = detectGoodFeatures(cv, t.prevGray, 160, 0.01, 7);'],
@@ -79,7 +79,7 @@ for (const [before, after] of p85Replacements) {
   if (count !== 1) throw new Error('Expected one P85 API call to replace, found ' + count + ': ' + before);
   html = html.replace(before, after);
 }
-if ((html.match(/cv\\.goodFeaturesToTrack\\(/g) || []).length !== 1) throw new Error('Unexpected goodFeaturesToTrack invocation remains outside the guarded compatibility path');
+if ((html.match(/cv\.goodFeaturesToTrack\(/g) || []).length !== 1) throw new Error('Unexpected goodFeaturesToTrack invocation remains outside the guarded compatibility path');
 fs.writeFileSync(path.join(root,'index.html'),html,'utf8');
 
 const modules=[
