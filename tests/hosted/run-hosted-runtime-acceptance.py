@@ -74,7 +74,7 @@ def main():
           const rive=await s.ensureRive();
           return {renderer:!!renderer.createPostProcessingPreview&&!!renderer.createWebGPUPathTracingPreview,opencv:!!cv.Mat,dotlottie:!!DotLottie.preload,rive:!!rive.Rive,report:s.inspect()};
         }""")
-        record('P85 PostFX/WebGPU bundle, OpenCV WASM, dotLottie WASM and Rive WASM initialize',p85['renderer'] and p85['opencv'] and p85['dotlottie'] and p85['rive'],{renderer:p85['renderer'],opencv:p85['opencv'],dotlottie:p85['dotlottie'],rive:p85['rive']})
+        record('P85 PostFX/WebGPU bundle, OpenCV WASM, dotLottie WASM and Rive WASM initialize',p85['renderer'] and p85['opencv'] and p85['dotlottie'] and p85['rive'],{'renderer':p85['renderer'],'opencv':p85['opencv'],'dotlottie':p85['dotlottie'],'rive':p85['rive']})
         page.locator('#p85-postfx-open').click()
         page.wait_for_function("document.querySelector('#p85-postfx-status')?.textContent.includes('Đã render')")
         record('P85 PostFX produces live GLB preview',True,page.locator('#p85-postfx-status').inner_text())
