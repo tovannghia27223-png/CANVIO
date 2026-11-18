@@ -2,7 +2,7 @@
   "format": "CANVIO_DELIVERY_MANIFEST",
   "schemaVersion": 2,
   "candidate": "23.3.111-github-runtime-ci",
-  "generatedAt": "2026-11-18T14:59:10.431Z",
+  "generatedAt": "2026-11-18T20:29:21.360Z",
   "hashAlgorithm": "SHA-256",
   "indexSha256": "227353c4f90c478940cbdf1ffed1250c2513b612db351e32050a426dd035f629",
   "indexBytes": 4926230,
@@ -522,8 +522,8 @@
     },
     {
       "path": "scripts/extract-integrated-modules.mjs",
-      "bytes": 6447,
-      "sha256": "9a06abb2aab0e1e5ad055b3512e88d7c14a808f73e6692201451568bbc78049f"
+      "bytes": 6411,
+      "sha256": "b34cafea64cbea875875744a711aba7c76d920fdadcf49ef3837b7f8d8e39879"
     },
     {
       "path": "scripts/p85-opencv.entry.mjs",
@@ -547,8 +547,8 @@
     },
     {
       "path": "tests/hosted/hosted-runtime-report.json",
-      "bytes": 25084,
-      "sha256": "9042155547351a1ebcb09ab1f9b3c812009cc57224b8be5c515c722865603a9d"
+      "bytes": 25096,
+      "sha256": "9e45400293ca042578b240f8da55d7e1a41a4f184e304338bb4ef48ec8da36e7"
     },
     {
       "path": "tests/hosted/integrated-source-contracts.cjs",
