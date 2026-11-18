@@ -49,7 +49,9 @@ jobs:
             if(!html.includes('23.3.108-p85-studio-r2')) throw new Error('Unexpected candidate source version marker');
             html=html.replaceAll('23.3.108-p85-studio-r2','23.3.111-github-runtime-ci');
             html=html.replaceAll('CANVIO 23.3.108 — Creative Runtime Lab · P85 Runtime Hardening r2','CANVIO 23.3.111 — GitHub Runtime Verified Candidate');
+            html=html.replaceAll('<title>CANVIO 23.3.108 — Creative Runtime Lab · P85</title>','<title>CANVIO 23.3.111 — GitHub Runtime Verified Candidate</title>');
             if(html.includes('23.3.108-p85-studio-r2')) throw new Error('Legacy candidate version marker remains');
+            if(!html.includes('<title>CANVIO 23.3.111 — GitHub Runtime Verified Candidate</title>')) throw new Error('Candidate document title was not updated');
             fs.writeFileSync('index.html',html,'utf8');
             console.log('Restored and version-pinned complete index.html');
           NODE
