@@ -94,7 +94,8 @@ assert('Whisper rejects malformed timestamps and empty chunks', api.vWhisperBuil
 assert('P49 exposes user-triggered Whisper adapter and unload', /whisperCaption:vWhisperCaption,whisperCancel:vWhisperCancel,whisperUnload:vWhisperUnload/.test(videoScript) && /whisperBuildCues:vWhisperBuildCues/.test(videoScript));
 assert('P49 exposes Whisper runtime diagnostics without requiring property adjacency', /whisperRuntime:function\(\)/.test(videoScript));
 const workerSource = fs.readFileSync(path.resolve(__dirname, '../../assets/canvio-whisper-worker.js'), 'utf8');
-assert('Whisper worker pins Transformers.js runtime', /@huggingface\/transformers@3\.8\.1/.test(workerSource));
+const p85VendorScript = fs.readFileSync(path.resolve(__dirname, '../../scripts/vendor-p85-runtimes.sh'), 'utf8');
+assert('Whisper worker imports same-origin local Transformers.js and vendor pins v3.8.1', /from ['"]\.\/p85\/transformers\/transformers\.min\.js['"]/.test(workerSource) && /TRANSFORMERS_VERSION="3\.8\.1"/.test(p85VendorScript) && /@huggingface\/transformers@\$TRANSFORMERS_VERSION/.test(p85VendorScript));
 assert('Whisper worker selects multilingual q8 model on CPU/WASM default', /Xenova\/whisper-tiny/.test(workerSource) && /dtype:\s*'q8'/.test(workerSource) && !/device:\s*'webgpu'/.test(workerSource));
 assert('Whisper worker requests timestamped chunks', /return_timestamps:\s*true/.test(workerSource) && /chunk_length_s:\s*30/.test(workerSource));
 assert('Whisper auto language leaves language unset for model detection', /message\.language\s*!==\s*'auto'/.test(workerSource) && /choice==='auto'\?'auto'/.test(videoScript));
