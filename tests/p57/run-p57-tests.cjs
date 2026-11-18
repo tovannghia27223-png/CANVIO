@@ -76,7 +76,7 @@ const window = {
   confirm:()=>true
 };
 class TestURL extends URL { static createObjectURL(){ return 'blob:fake'; } static revokeObjectURL(){} }
-const context = {window,document,navigator,indexedDB,URL:TestURL,Blob,TextEncoder,TextDecoder,ArrayBuffer,Uint8Array,DataView,Number,Math,Object,String,RegExp,Error,Promise,JSON,Date,Set,Map,console,setTimeout,clearTimeout,fetch:async()=>({ok:true,status:200,headers:{get:()=> 'text/javascript'},text:async()=>"transformers@3.8.1 Xenova/whisper-tiny automatic-speech-recognition"})};
+const context = {window,document,navigator,indexedDB,URL:TestURL,Blob,TextEncoder,TextDecoder,ArrayBuffer,Uint8Array,DataView,Number,Math,Object,String,RegExp,Error,Promise,JSON,Date,Set,Map,console,setTimeout,clearTimeout,fetch:async()=>({ok:true,status:200,headers:{get:()=> 'text/javascript'},text:async()=>"Transformers.js 3.8.1 ./p85/transformers/transformers.min.js Xenova/whisper-tiny automatic-speech-recognition"})};
 vm.createContext(context);
 const files = [
   'tests/p57/p57-native-persistence.js','tests/p58/p58-media-export-acceptance.js',
