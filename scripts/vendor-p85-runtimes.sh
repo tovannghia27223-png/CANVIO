@@ -1,0 +1,76 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT="$(cd "$(dirname "\${BASH_SOURCE[0]}")/.." && pwd)"
+TMP="$(mktemp -d)"
+DEST="$ROOT/assets/p85"
+STAGE="$ROOT/assets/.p85-staging-$$"
+cleanup(){ rm -rf "$TMP" "$STAGE"; }
+trap cleanup EXIT
+THREE_VERSION="0.187.0"; BVH_VERSION="0.9.18"; PATHTRACER_VERSION="0.0.28"; POSTPROCESSING_VERSION="6.39.6"
+OPENCV_VERSION="5.0.0-release.1"; DOTLOTTIE_VERSION="0.83.2"; RIVE_VERSION="2.51.0"; ESBUILD_VERSION="0.28.2"; TRANSFORMERS_VERSION="3.8.1"
+mkdir -p "$TMP/npm"
+npm install --prefix "$TMP/npm" --no-save --no-package-lock --ignore-scripts --no-audit --no-fund \
+ "three@$THREE_VERSION" "three-mesh-bvh@$BVH_VERSION" "three-gpu-pathtracer@$PATHTRACER_VERSION" \
+ "postprocessing@$POSTPROCESSING_VERSION" "@techstark/opencv-js@$OPENCV_VERSION" \
+ "@lottiefiles/dotlottie-web@$DOTLOTTIE_VERSION" "@rive-app/canvas@$RIVE_VERSION" \
+ "@huggingface/transformers@$TRANSFORMERS_VERSION" "esbuild@$ESBUILD_VERSION"
+if test -s "$DEST/AI-MODEL-NOTICES.md"; then cp "$DEST/AI-MODEL-NOTICES.md" "$TMP/AI-MODEL-NOTICES.md"; fi
+rm -rf "$STAGE"; mkdir -p "$STAGE/opencv" "$STAGE/dotlottie" "$STAGE/rive" "$STAGE/transformers" "$STAGE/licenses"
+if test -s "$TMP/AI-MODEL-NOTICES.md"; then cp "$TMP/AI-MODEL-NOTICES.md" "$STAGE/AI-MODEL-NOTICES.md"; fi
+NODE_MODULES="$TMP/npm/node_modules"
+"$NODE_MODULES/.bin/esbuild" "$ROOT/scripts/p85-renderers.entry.mjs" --bundle --format=esm --platform=browser --target=es2022 --minify --outfile="$STAGE/p85-renderers.js" --legal-comments=none
+"$NODE_MODULES/.bin/esbuild" "$ROOT/scripts/p85-opencv.entry.mjs" --bundle --format=esm --platform=browser --target=es2022 --minify --outfile="$STAGE/opencv/opencv.js" --legal-comments=inline
+test "$(wc -c < "$STAGE/opencv/opencv.js")" -gt 1000000
+DOT="$NODE_MODULES/@lottiefiles/dotlottie-web"
+test -s "$DOT/dist/index.js"; test -s "$DOT/dist/dotlottie-player.wasm"
+"$NODE_MODULES/.bin/esbuild" "$DOT/dist/index.js" --bundle --format=esm --platform=browser --target=es2022 --minify --outfile="$STAGE/dotlottie/index.js" --legal-comments=inline
+cp "$DOT/dist/dotlottie-player.wasm" "$STAGE/dotlottie/"
+if test -s "$DOT/dist/dotlottie.worker.js"; then cp "$DOT/dist/dotlottie.worker.js" "$STAGE/dotlottie/"; fi
+RIVE="$NODE_MODULES/@rive-app/canvas"
+test -s "$RIVE/rive.js"; test -s "$RIVE/rive.wasm"; cp "$RIVE/rive.js" "$STAGE/rive/"; cp "$RIVE/rive.wasm" "$STAGE/rive/"
+if test -s "$RIVE/rive_fallback.wasm"; then cp "$RIVE/rive_fallback.wasm" "$STAGE/rive/"; fi
+TRANSFORMERS="$NODE_MODULES/@huggingface/transformers"
+test -s "$TRANSFORMERS/dist/transformers.min.js"; cp "$TRANSFORMERS/dist/transformers.min.js" "$STAGE/transformers/transformers.min.js"
+for f in "$TRANSFORMERS"/dist/ort-wasm* "$NODE_MODULES/onnxruntime-web/dist"/ort-wasm*; do test -s "$f" || continue; cp "$f" "$STAGE/transformers/"; done
+test -n "$(find "$STAGE/transformers" -maxdepth 1 -type f -name 'ort-wasm*.wasm' -print -quit)"
+test -n "$(find "$STAGE/transformers" -maxdepth 1 -type f -name 'ort-wasm*.mjs' -print -quit)"
+copy_license(){ local src="$1" dest="$2"; if test -s "$src"; then cp "$src" "$STAGE/licenses/$dest"; else echo "Missing license: $src" >&2; exit 1; fi; }
+copy_license "$NODE_MODULES/three/LICENSE" "THREE-MIT.txt"
+copy_license "$NODE_MODULES/three-mesh-bvh/LICENSE" "THREE-MESH-BVH-MIT.txt"
+copy_license "$NODE_MODULES/three-gpu-pathtracer/LICENSE" "THREE-GPU-PATHTRACER-MIT.txt"
+copy_license "$NODE_MODULES/postprocessing/LICENSE.md" "POSTPROCESSING-ZLIB.txt"
+copy_license "$NODE_MODULES/@techstark/opencv-js/LICENSE" "OPENCV-APACHE-2.0.txt"
+copy_license "$DOT/LICENSE" "DOTLOTTIE-MIT.txt"
+copy_license "$RIVE/LICENSE" "RIVE-MIT.txt"
+copy_license "$TRANSFORMERS/LICENSE" "TRANSFORMERS-APACHE-2.0.txt"
+cat > "$STAGE/P85-VENDOR-NOTICE.md" <<NOTICE
+# CANVIO P85 local runtime notice
+All runtimes are local and lazy-loaded after user action. No CDN fallback.
+| Component | Version | License |
+|---|---:|---|
+| Three.js | $THREE_VERSION | MIT |
+| three-mesh-bvh | $BVH_VERSION | MIT |
+| three-gpu-pathtracer | $PATHTRACER_VERSION | MIT |
+| postprocessing | $POSTPROCESSING_VERSION | Zlib |
+| OpenCV.js | $OPENCV_VERSION | Apache-2.0 |
+| dotLottie | $DOTLOTTIE_VERSION | MIT |
+| Rive Canvas | $RIVE_VERSION | MIT |
+| Transformers.js | $TRANSFORMERS_VERSION | Apache-2.0 |
+Model weights remain explicit first-use downloads from Apache-2.0 model repositories. WebGPU path tracing is experimental. Rive is a runtime/player and does not bypass upstream free-plan attribution or export limits.
+NOTICE
+node - "$STAGE" "$THREE_VERSION" "$BVH_VERSION" "$PATHTRACER_VERSION" "$POSTPROCESSING_VERSION" "$OPENCV_VERSION" "$DOTLOTTIE_VERSION" "$RIVE_VERSION" "$ESBUILD_VERSION" "$TRANSFORMERS_VERSION" <<'NODE'
+const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
+const [root,three,bvh,tracer,post,opencv,dotlottie,rive,esbuild,transformers]=process.argv.slice(2),files=[];
+function walk(dir){for(const ent of fs.readdirSync(dir,{withFileTypes:true})){const abs=path.join(dir,ent.name);if(ent.isDirectory())walk(abs);else if(ent.name!=='P85-VENDOR-MANIFEST.json'){const buf=fs.readFileSync(abs);files.push({path:path.relative(root,abs).split(path.sep).join('/'),bytes:buf.length,sha256:crypto.createHash('sha256').update(buf).digest('hex')});}}}
+walk(root);files.sort((a,b)=>a.path.localeCompare(b.path));
+const manifest={format:'CANVIO_P85_VENDOR_MANIFEST',schemaVersion:1,generatedAt:new Date().toISOString(),packages:{three:{version:three,license:'MIT'},threeMeshBvh:{version:bvh,license:'MIT'},threeGpuPathtracer:{version:tracer,license:'MIT',requiresWebGPU:true,experimental:true},postprocessing:{version:post,license:'Zlib'},opencv:{version:opencv,license:'Apache-2.0'},dotLottie:{version:dotlottie,license:'MIT'},rive:{version:rive,license:'MIT'},transformers:{version:transformers,license:'Apache-2.0',modelsDownloaded:false},esbuild:{version:esbuild}},files};
+fs.writeFileSync(path.join(root,'P85-VENDOR-MANIFEST.json'),JSON.stringify(manifest,null,2)+'\n');
+console.log('P85 local runtimes provisioned: '+files.length+' files; '+files.reduce((n,x)=>n+x.bytes,0)+' bytes');
+NODE
+node - "$STAGE/P85-VENDOR-MANIFEST.json" <<'NODE'
+const fs=require('node:fs'),crypto=require('node:crypto'),path=require('node:path');
+const file=process.argv[2],manifest=JSON.parse(fs.readFileSync(file,'utf8')),root=path.dirname(file);
+for(const e of manifest.files){const b=fs.readFileSync(path.join(root,e.path));if(b.length!==e.bytes||crypto.createHash('sha256').update(b).digest('hex')!==e.sha256)throw new Error('P85 manifest mismatch: '+e.path);}
+console.log('P85 vendor manifest SHA-256 verified: '+manifest.files.length+' files');
+NODE
+bash "$ROOT/scripts/activate-vendor-tree.sh" "$STAGE" "$DEST"
