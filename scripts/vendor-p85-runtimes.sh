@@ -4,7 +4,7 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 TMP="$(mktemp -d)"
 DEST="$ROOT/assets/p85"
 STAGE="$ROOT/assets/.p85-staging-$$"
-cleanup(){ rm -rf "$TMP" "$STAGE"; }
+cleanup(){ if test -L "$ROOT/node_modules" && test "$(readlink "$ROOT/node_modules")" = "$TMP/npm/node_modules"; then rm "$ROOT/node_modules"; fi; rm -rf "$TMP" "$STAGE"; }
 trap cleanup EXIT
 THREE_VERSION="0.187.0"; BVH_VERSION="0.9.18"; PATHTRACER_VERSION="0.0.28"; POSTPROCESSING_VERSION="6.39.6"
 OPENCV_VERSION="5.0.0-release.1"; DOTLOTTIE_VERSION="0.83.2"; RIVE_VERSION="2.51.0"; ESBUILD_VERSION="0.28.2"; TRANSFORMERS_VERSION="3.8.1"
@@ -18,6 +18,8 @@ if test -s "$DEST/AI-MODEL-NOTICES.md"; then cp "$DEST/AI-MODEL-NOTICES.md" "$TM
 rm -rf "$STAGE"; mkdir -p "$STAGE/opencv" "$STAGE/dotlottie" "$STAGE/rive" "$STAGE/transformers" "$STAGE/licenses"
 if test -s "$TMP/AI-MODEL-NOTICES.md"; then cp "$TMP/AI-MODEL-NOTICES.md" "$STAGE/AI-MODEL-NOTICES.md"; fi
 NODE_MODULES="$TMP/npm/node_modules"
+if test -e "$ROOT/node_modules" || test -L "$ROOT/node_modules"; then echo "Refusing to overwrite existing $ROOT/node_modules" >&2; exit 1; fi
+ln -s "$NODE_MODULES" "$ROOT/node_modules"
 "$NODE_MODULES/.bin/esbuild" "$ROOT/scripts/p85-renderers.entry.mjs" --bundle --format=esm --platform=browser --target=es2022 --minify --outfile="$STAGE/p85-renderers.js" --legal-comments=none
 "$NODE_MODULES/.bin/esbuild" "$ROOT/scripts/p85-opencv.entry.mjs" --bundle --format=esm --platform=browser --target=es2022 --minify --outfile="$STAGE/opencv/opencv.js" --legal-comments=inline
 test "$(wc -c < "$STAGE/opencv/opencv.js")" -gt 1000000
