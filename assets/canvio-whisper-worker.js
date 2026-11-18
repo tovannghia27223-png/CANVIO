@@ -1,6 +1,6 @@
 /* CANVIO P59 — hardened user-triggered, browser-local Whisper ASR worker.
- * Runtime is pinned to Transformers.js 3.8.1. The first run downloads the
- * runtime and model weights; Transformers.js stores model files in browser cache.
+ * Runtime and ONNX Runtime WASM are provisioned same-origin by the P85 vendor build.
+ * The first run downloads only the selected model weights; browser cache is best-effort.
  * Audio samples are transferred from the page and are never sent to an ASR API.
  */
 let transcriberPromise = null;
@@ -15,10 +15,14 @@ async function getTranscriber(id) {
   if (!transcriberPromise) {
     transcriberPromise = (async () => {
       report(id, 'status', 'Đang nạp Transformers.js 3.8.1…');
-      const transformers = await import('https://esm.sh/@huggingface/transformers@3.8.1');
+      const transformers = await import('./p85/transformers/transformers.min.js');
       if (transformers.env) {
         transformers.env.useBrowserCache = true;
         transformers.env.allowRemoteModels = true;
+        if (transformers.env.backends && transformers.env.backends.onnx && transformers.env.backends.onnx.wasm) {
+          transformers.env.backends.onnx.wasm.wasmPaths = new URL('./p85/transformers/', self.location.href).href;
+          transformers.env.backends.onnx.wasm.numThreads = 1;
+        }
       }
       report(id, 'status', 'Đang tải model Whisper multilingual (q8)…');
       return transformers.pipeline(

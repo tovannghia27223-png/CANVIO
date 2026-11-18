@@ -1,0 +1,19 @@
+{
+  "candidate": "23.3.108-p85-studio-r2",
+  "inline_scripts": "111/111 PASS",
+  "html_ids": "525/525 unique",
+  "duplicate_ids": 0,
+  "external_script_src": 0,
+  "startup_remote_font_stylesheets": 0,
+  "startup_remote_font_preconnects": 0,
+  "startup_remote_font_css_imports": 0,
+  "runtime_font_loading": "only after explicit user action",
+  "standalone_modules_synchronized": "21/21",
+  "worker_syntax": {
+    "assets/canvio-whisper-worker.js": "PASS",
+    "assets/canvio-rmbg-worker.js": "PASS",
+    "assets/canvio-depth-worker.js": "PASS"
+  },
+  "runtime_model_inference": "NOT RUN",
+  "source_bytes": 4921610
+}

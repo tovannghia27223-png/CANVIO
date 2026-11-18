@@ -7,41 +7,19 @@
     while (current && current !== document) {
       if (current.hidden || (current.getAttribute && current.getAttribute('aria-hidden') === 'true')) return false;
       var style = window.getComputedStyle ? window.getComputedStyle(current) : null;
-      if (style && (style.display === 'none' || style.visibility === 'hidden' || style.visibility === 'collapse')) return false;
+      if (style && (style.display === 'none' || style.visibility === 'hidden')) return false;
       current = current.parentElement;
     }
     return !!node;
   }
-  function referencedName(ids) {
-    if (!ids || typeof document.getElementById !== 'function') return '';
-    return String(ids).trim().split(/\s+/).map(function (id) {
-      var target = document.getElementById(id);
-      return target ? String(target.innerText || target.textContent || '').replace(/\s+/g, ' ').trim() : '';
-    }).filter(Boolean).join(' ').trim();
-  }
   function hasName(node) {
-    // aria-labelledby accepts a whitespace-separated list of ID references.
-    if (referencedName(node.getAttribute('aria-labelledby'))) return true;
     var aria = (node.getAttribute('aria-label') || '').trim();
-    if (aria) return true;
+    var labelled = (node.getAttribute('aria-labelledby') || '').trim();
     var title = (node.getAttribute('title') || '').trim();
     var text = (node.innerText || node.textContent || '').replace(/\s+/g, ' ').trim();
-    if (title || text) return true;
-    // Native label association is safer than interpolating arbitrary IDs into selectors.
-    if (node.labels && node.labels.length) {
-      for (var i = 0; i < node.labels.length; i++) {
-        var labelText = (node.labels[i].innerText || node.labels[i].textContent || '').replace(/\s+/g, ' ').trim();
-        if (labelText) return true;
-      }
-    }
-    if (node.id && document.querySelectorAll) {
-      var labels = document.querySelectorAll('label[for]');
-      for (var j = 0; j < labels.length; j++) {
-        if (String(labels[j].getAttribute('for') || '') !== String(node.id)) continue;
-        var explicitText = (labels[j].innerText || labels[j].textContent || '').replace(/\s+/g, ' ').trim();
-        if (explicitText) return true;
-      }
-    }
+    if (aria || title || text) return true;
+    if (labelled && document.getElementById(labelled)) return true;
+    if (node.id && document.querySelector && document.querySelector('label[for="' + String(node.id).replace(/"/g, '\\"') + '"]')) return true;
     return !!(node.closest && node.closest('label'));
   }
   function inspect(root) {

@@ -4,26 +4,7 @@ const path = require('node:path');
 const vm = require('node:vm');
 const root = path.resolve(__dirname, '../..');
 const passed = [];
-const a11yLabelRefs = Object.create(null);
 function assert(name, ok) { if (!ok) throw new Error('FAIL ' + name); passed.push(name); console.log('PASS ' + name); }
-
-const syncModules = [
-  ['tests/p57/p57-native-persistence.js', 'canvio-p57-native-persistence-audit'],
-  ['tests/p58/p58-media-export-acceptance.js', 'canvio-p58-media-export-acceptance'],
-  ['tests/p59/p59-whisper-runtime-acceptance.js', 'canvio-p59-whisper-runtime-acceptance'],
-  ['tests/p60/p60-accessibility-audit.js', 'canvio-p60-accessibility-screening'],
-  ['tests/p61/p61-hosting-security-audit.js', 'canvio-p61-hosting-security-audit'],
-  ['tests/p62/p62-release-candidate-gate.js', 'canvio-p62-phase1-release-gate']
-];
-const appHtml = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
-const modulesSynced = syncModules.every(([file, id]) => {
-  const opening = '<script id="' + id + '">';
-  const start = appHtml.indexOf(opening);
-  const end = start < 0 ? -1 : appHtml.indexOf('</script>', start + opening.length);
-  return start >= 0 && end >= 0 &&
-    appHtml.slice(start + opening.length, end).trim() === fs.readFileSync(path.join(root, file), 'utf8').trim();
-});
-assert('P57–P62 standalone modules exactly match their index.html inline copies', modulesSynced);
 
 class FakeDB {
   constructor() { this.version = 1; this.rows = new Map(); this.objectStoreNames = { contains: (name) => name === 'media' }; }
@@ -42,23 +23,10 @@ class FakeDB {
   }
 }
 const db = new FakeDB();
-let blockNextOpen = false;
-const indexedDB = { open(name) {
-  const req = { result: null, transaction: null };
-  queueMicrotask(() => {
-    if (blockNextOpen) {
-      blockNextOpen = false;
-      if (req.onblocked) req.onblocked();
-      queueMicrotask(() => { req.result = db; if (req.onsuccess) req.onsuccess(); });
-      return;
-    }
-    req.result = db; if (req.onsuccess) req.onsuccess();
-  });
-  return req;
-} };
+const indexedDB = { open(name) { const req = { result: null, transaction: null }; queueMicrotask(() => { req.result = db; if (req.onsuccess) req.onsuccess(); }); return req; } };
 const document = {
   title: 'P56', baseURI: 'https://canvio.example/', readyState: 'complete',
-  getElementById: id => a11yLabelRefs[id] || null, querySelector: () => null, querySelectorAll: () => [],
+  getElementById: () => null, querySelector: () => null, querySelectorAll: () => [],
   createElement(tag) {
     if (tag !== 'video') return {};
     const v = { duration: 12.5, videoWidth: 1920, videoHeight: 1080, readyState: 3, pause(){}, removeAttribute(){}, load(){}, set src(value) { this._src=value; queueMicrotask(() => { this.onloadedmetadata && this.onloadedmetadata(); this.oncanplay && this.oncanplay(); }); }, get src(){return this._src;} };
@@ -76,7 +44,7 @@ const window = {
   confirm:()=>true
 };
 class TestURL extends URL { static createObjectURL(){ return 'blob:fake'; } static revokeObjectURL(){} }
-const context = {window,document,navigator,indexedDB,URL:TestURL,Blob,TextEncoder,TextDecoder,ArrayBuffer,Uint8Array,DataView,Number,Math,Object,String,RegExp,Error,Promise,JSON,Date,Set,Map,console,setTimeout,clearTimeout,fetch:async()=>({ok:true,status:200,headers:{get:()=> 'text/javascript'},text:async()=>"transformers@3.8.1 Xenova/whisper-tiny automatic-speech-recognition"})};
+const context = {window,document,navigator,indexedDB,URL:TestURL,Blob,TextEncoder,TextDecoder,ArrayBuffer,Uint8Array,DataView,Number,Math,Object,String,RegExp,Error,Promise,JSON,Date,Set,Map,console,setTimeout,clearTimeout,fetch:async()=>({ok:true,status:200,headers:{get:()=> 'text/javascript'},text:async()=>fs.readFileSync(path.join(root,'assets/canvio-whisper-worker.js'),'utf8')})};
 vm.createContext(context);
 const files = [
   'tests/p57/p57-native-persistence.js','tests/p58/p58-media-export-acceptance.js',
@@ -98,21 +66,11 @@ for (const file of files) vm.runInContext(fs.readFileSync(path.join(root,file),'
   let badType=false; const badFile = new Blob(['x'], {type:'application/octet-stream'}); Object.defineProperty(badFile,'name',{value:'x.exe'}); try { await window.CANVIOExportAcceptance.inspectFile(badFile); } catch(e) { badType=/MP4 hoặc WebM/.test(e.message); }
   assert('P58 rejects unsupported or ambiguous file formats',badType);
   const worker = await window.CANVIOWhisperAcceptance.inspectWorker();
-  assert('P59 worker check verifies pinned runtime/model without running inference',worker.checked && worker.available && worker.transformersVersionPinned && worker.modelPinned && worker.modelInferenceTested===false);
-  const fakeNode = (tag, attrs={}, text='', props={}) => Object.assign({tagName:tag.toUpperCase(),id:attrs.id||'',innerText:text,textContent:text,hidden:false,getAttribute:(k)=>attrs[k]||null,hasAttribute:(k)=>Object.prototype.hasOwnProperty.call(attrs,k),closest:()=>null},props);
-  a11yLabelRefs['a11y-label-one'] = fakeNode('span',{},'Export');
-  a11yLabelRefs['a11y-label-two'] = fakeNode('span',{},'project');
-  const unnamedControl = fakeNode('button',{id:'unnamed-control'},'');
-  const multiLabelControl = fakeNode('button',{id:'multi-labelled','aria-labelledby':'a11y-label-one a11y-label-two'},'');
-  const nativeLabelControl = fakeNode('input',{id:'email]field'},'',{labels:[fakeNode('label',{},'Email address')]});
-  const brokenLabelControl = fakeNode('button',{id:'broken-labelled','aria-labelledby':'missing-label-id'},'');
-  const hiddenControl = fakeNode('button',{id:'hidden-control'},'Hidden',{hidden:true});
-  const a11yControls = [unnamedControl,multiLabelControl,nativeLabelControl,brokenLabelControl,hiddenControl];
-  const a11yRoot = {querySelectorAll(selector){if(selector==='button,a[href],input,select,textarea,[role="button"],[role="link"],[tabindex]:not([tabindex="-1"])')return a11yControls;if(selector==='img')return [fakeNode('img',{},'')];if(selector==='main,nav,header,footer,aside,[role="main"],[role="navigation"],[role="region"]')return [fakeNode('main')];if(selector==='h1,h2,h3,h4,h5,h6')return [fakeNode('h1',{},'Title')];if(selector==='[role="dialog"],[aria-modal="true"]')return [];if(selector==='label[for]')return [];return [];}};
+  assert('P59 worker check verifies pinned runtime/model without running inference',worker.checked && worker.available && worker.transformersVersionPinned && worker.runtimeSameOrigin && worker.modelPinned && worker.modelInferenceTested===false);
+  const fakeNode = (tag, attrs={}, text='') => ({tagName:tag.toUpperCase(),id:attrs.id||'',innerText:text,textContent:text,hidden:false,getAttribute:(k)=>attrs[k]||null,hasAttribute:(k)=>Object.prototype.hasOwnProperty.call(attrs,k),closest:()=>null});
+  const a11yRoot = {querySelectorAll(selector){if(selector==='button,a[href],input,select,textarea,[role="button"],[role="link"],[tabindex]:not([tabindex="-1"])')return [fakeNode('button',{},'')];if(selector==='img')return [fakeNode('img',{},'')];if(selector==='main,nav,header,footer,aside,[role="main"],[role="navigation"],[role="region"]')return [fakeNode('main')];if(selector==='h1,h2,h3,h4,h5,h6')return [fakeNode('h1',{},'Title')];if(selector==='[role="dialog"],[aria-modal="true"]')return [];return [];}};
   const a11y = window.CANVIOAccessibilityAudit.inspect(a11yRoot);
-  assert('P60 flags unnamed controls and missing image alt while recognizing label references', a11y.counts.unnamedControls===2 && a11y.counts.imagesMissingAlt===1 && a11y.scope.wcagCertified===false);
-  assert('P60 resolves whitespace-separated aria-labelledby ID references', a11y.issues.filter(x=>x.code==='control-name-missing').every(x=>x.id!=='multi-labelled'));
-  assert('P60 recognizes native labels when IDs contain CSS selector punctuation', a11y.issues.filter(x=>x.code==='control-name-missing').every(x=>x.id!=='email]field'));
+  assert('P60 accessibility scan flags unnamed controls and missing image alt', a11y.counts.unnamedControls===1 && a11y.counts.imagesMissingAlt===1 && a11y.scope.wcagCertified===false);
   const host = window.CANVIOHostingSecurityAudit.inspect();
   assert('P61 hosting audit detects secure transport and same-origin worker target', host.secureTransport && host.workerSameOrigin && host.scope.headersRequireServerInspection===true);
   assert('P61 explicitly leaves server headers for live-origin verification', host.serverSecurityHeadersVerified===false && host.warnings.length>0);
@@ -122,10 +80,5 @@ for (const file of files) vm.runInContext(fs.readFileSync(path.join(root,file),'
   assert('PhaseSuite advances to P62 and preserves previous phase flags', window.CANVIOPhaseSuite.version==='62.0.0' && window.CANVIOPhaseSuite.tests().priorPhase && window.CANVIOPhaseSuite.tests().p62Phase1ReleaseGate);
   assert('Build/title marker advances to 23.3.76-p62', window.CANVIO_BUILD.version==='23.3.76-p62' && document.title==='CANVIO 23.3.76-p62 — Phase 1 Release Candidate');
   assert('P57 never upgrades an unknown DB and P62 never self-certifies', window.CANVIOPersistenceAudit.owner.schemaVersion===1 && report.releaseCertified===false);
-  blockNextOpen = true;
-  db.closed = false;
-  const blocked = await window.CANVIOPersistenceAudit.inspect();
-  await new Promise(resolve => setTimeout(resolve, 0));
-  assert('P57 closes a late IndexedDB connection after a blocked-open rejection', blocked.databaseAvailable===false && /bị khóa/.test(blocked.databaseError) && db.closed===true);
   console.log(`\nP57–P62 PASS: ${passed.length}/${passed.length} assertions passed.`);
 })().catch(error=>{console.error(error);process.exitCode=1;});

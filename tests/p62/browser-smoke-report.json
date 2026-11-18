@@ -2,7 +2,7 @@
   "format": "CANVIO_P62_CHROMIUM_RUNTIME_SMOKE",
   "version": 1,
   "candidate": "P62",
-  "browser": "144.0.7559.96",
+  "browser": "153.0.8010.12",
   "origin": "about:blank",
   "testOnlyStorageShim": true,
   "limitations": [
@@ -14,12 +14,12 @@
     {
       "id": "build-marker",
       "status": "pass",
-      "value": "23.3.76-p62"
+      "value": "23.3.108-p85-studio-r2"
     },
     {
       "id": "document-title",
       "status": "pass",
-      "value": "CANVIO 23.3.76-p62 — Phase 1 Release Candidate"
+      "value": "CANVIO 23.3.108 — Creative Runtime Lab · P85 Runtime Hardening r2"
     },
     {
       "id": "spa-navigation",
@@ -78,7 +78,15 @@
         "p59WhisperWorkerAcceptance": true,
         "p60AccessibilityScreening": true,
         "p61HostingSecurityScreening": true,
-        "p62Phase1ReleaseGate": true
+        "p62Phase1ReleaseGate": true,
+        "p63UnifiedTimeline": true,
+        "p64AdvancedTimelineEditing": true,
+        "p65MotionTracking": true,
+        "p66AICreativeAssetWorkflow": true,
+        "p67PrintProduction": true,
+        "p68Offline3DPackaging": true,
+        "p69SystemOptimization": true,
+        "p70StableReleaseGate": true
       }
     },
     {
@@ -99,7 +107,7 @@
         },
         "p60": {
           "api": true,
-          "issueCount": 32,
+          "issueCount": 34,
           "wcagCertified": false
         },
         "p61": {
@@ -133,7 +141,7 @@
         "localHeaders": true,
         "mismatchRejected": true,
         "preview": {
-          "backupCreatedAt": "11/17/2026, 10:00:00 AM",
+          "backupCreatedAt": "11/17/2026, 5:00:00 PM",
           "localStorageKeys": 1,
           "indexedDBDatabases": 0,
           "indexedDBStores": 0,
@@ -166,7 +174,7 @@
       "id": "real-webm-export-decode",
       "status": "pass",
       "value": {
-        "size": 20302,
+        "size": 18618,
         "mime": "video/webm;codecs=vp9",
         "duration": 0.9,
         "width": 960,
@@ -178,8 +186,8 @@
           "avSyncCertified": false
         },
         "download": {
-          "name": "CANVIO_multitrack_1794849933860.webm",
-          "href": "blob:null/d5e2ca6a-b61c-48ed-b296-3aa045a257ee"
+          "name": "CANVIO_multitrack_1795015371104.webm",
+          "href": "blob:null/f31c328f-10f4-4fdc-a6b7-7882e8795a95"
         }
       }
     },
@@ -187,9 +195,9 @@
       "id": "real-mp4-h264-export-decode",
       "status": "pass",
       "value": {
-        "size": 11845,
+        "size": 12567,
         "mime": "video/mp4;codecs=avc1.420020",
-        "duration": 0.883033,
+        "duration": 0.889867,
         "width": 960,
         "height": 540,
         "readyState": 4,
@@ -199,8 +207,8 @@
           "avSyncCertified": false
         },
         "download": {
-          "name": "CANVIO_multitrack_1794849934846.mp4",
-          "href": "blob:null/db4a867a-150a-49f0-a233-1f2b58a609b4"
+          "name": "CANVIO_multitrack_1795015372104.mp4",
+          "href": "blob:null/e9ee673d-3f64-438f-b46b-c1192f99676b"
         }
       }
     },
@@ -217,7 +225,7 @@
       "id": "render-retry-after-cancel",
       "status": "pass",
       "value": {
-        "size": 19100,
+        "size": 18174,
         "mime": "video/webm;codecs=vp9",
         "duration": 0.8,
         "width": 960,
@@ -229,8 +237,8 @@
           "avSyncCertified": false
         },
         "download": {
-          "name": "CANVIO_multitrack_1794849935975.webm",
-          "href": "blob:null/4a53801c-4b16-454a-98de-cde34eccbf83"
+          "name": "CANVIO_multitrack_1795015373263.webm",
+          "href": "blob:null/6c28e90e-de32-43d0-a5f1-6f0aa311939a"
         }
       }
     },
@@ -334,7 +342,11 @@
     "mp4Mime": "video/mp4;codecs=avc1.42E01E",
     "h264Supported": true,
     "mp4RequiresNativeH264": true,
-    "ffmpegFallback": false
+    "ffmpegFallback": false,
+    "webCodecsAvailable": false,
+    "webCodecsMuxer": "CANVIO_ISOBMFF_AVC_1TRACK",
+    "webCodecsMP4Scope": "silent-image-text-timeline-only",
+    "mp4Supported": true
   },
   "summary": {
     "passed": 32,

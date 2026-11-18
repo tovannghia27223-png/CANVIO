@@ -1,0 +1,27 @@
+{
+  "LibreOffice": "LibreOffice 25.2.3.2 520(Build:2); Writer + Impress UNO",
+  "P87_DOCX_Writer_roundtrip": {
+    "opened": true,
+    "edited": true,
+    "saved": true,
+    "reopened": true,
+    "markerPreserved": true,
+    "vietnamesePreserved": true,
+    "textLength": 665
+  },
+  "P88_PPTX_Impress_roundtrip": {
+    "opened": true,
+    "edited": true,
+    "saved": true,
+    "reopened": true,
+    "markerPreserved": true,
+    "originalVietnameseTitlePreserved": true,
+    "slideCount": 1,
+    "textShapes": 2
+  },
+  "status": "PASS_LIBREOFFICE_OPEN_EDIT_SAVE_REOPEN_ONLY",
+  "post_save_zip_crc": {
+    "CANVIO_P87_roundtrip.docx": "PASS",
+    "CANVIO_P88_roundtrip.pptx": "PASS"
+  }
+}

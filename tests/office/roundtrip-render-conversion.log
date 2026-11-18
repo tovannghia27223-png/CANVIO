@@ -1,0 +1,2 @@
+convert /mnt/data/canvio_work/tests/office/roundtrip/CANVIO_P87_roundtrip.docx as a Writer document -> /mnt/data/canvio_work/tests/office/roundtrip-render/CANVIO_P87_roundtrip.pdf using filter : writer_pdf_Export
+convert /mnt/data/canvio_work/tests/office/roundtrip/CANVIO_P88_roundtrip.pptx as a Impress document -> /mnt/data/canvio_work/tests/office/roundtrip-render/CANVIO_P88_roundtrip.pdf using filter : impress_pdf_Export

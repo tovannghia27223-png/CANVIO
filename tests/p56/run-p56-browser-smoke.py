@@ -26,8 +26,8 @@ except Exception as exc:  # pragma: no cover - optional dependency
 
 ROOT = Path(__file__).resolve().parents[2]
 REPORT_PATH = Path(__file__).with_name("browser-smoke-report.json")
-EXPECTED_VERSION = "23.3.70-p56"
-EXPECTED_TITLE = "CANVIO 23.3.70-p56 — Archive Integrity & Safe Restore"
+EXPECTED_VERSION = "23.3.108-p85-studio-r2"
+EXPECTED_TITLE = "CANVIO 23.3.108 — Creative Runtime Lab · P85 Runtime Hardening r2"
 
 STORAGE_SHIM = r"""<script id="canvio-p56-test-storage-shim">
 (() => {

@@ -1,0 +1,97 @@
+{
+  "suite": "CANVIO_P106_DEPTH_RENDER_EXPORT_AND_P107_ZIP_ROUNDTRIP",
+  "candidate": "23.3.108-p85-studio-r2",
+  "passed": 14,
+  "total": 14,
+  "checks": [
+    {
+      "id": "P105/P106 panel mounted",
+      "status": "pass",
+      "detail": ""
+    },
+    {
+      "id": "depth worker invoked only after user action",
+      "status": "pass",
+      "detail": "1"
+    },
+    {
+      "id": "P106 WebGL depth shader selected",
+      "status": "pass",
+      "detail": "Depth map đã tạo: 96×64 · wasm-q8 · đã lưu ảnh nguồn và depth map vào Asset Library. · preview WebGL depth parallax."
+    },
+    {
+      "id": "P106 WebGL draw produced visible pixels",
+      "status": "pass",
+      "detail": "{\"uniqueColors\": 525, \"nonzeroPixels\": 291600, \"renderer\": \"WebKit WebGL\"}"
+    },
+    {
+      "id": "P106 preview button labels the actual renderer mode",
+      "status": "pass",
+      "detail": "Xem trước 2.5D"
+    },
+    {
+      "id": "preview and export actions enabled after depth processing",
+      "status": "pass",
+      "detail": ""
+    },
+    {
+      "id": "P106 preview animation changes rendered pixels over time",
+      "status": "pass",
+      "detail": "{\"before\": 469170666, \"after\": 385008759, \"mode\": \"webgl\"}"
+    },
+    {
+      "id": "preset metadata save preserves zero strength",
+      "status": "pass",
+      "detail": ""
+    },
+    {
+      "id": "P107 actual browser export creates exact three-file ZIP",
+      "status": "pass",
+      "detail": "{\"entries\": [\"depth.png\", \"manifest.json\", \"source.png\"], \"crc\": true, \"bytes\": 2710}"
+    },
+    {
+      "id": "P107 browser import restores independent dimensions and zero-strength metadata",
+      "status": "pass",
+      "detail": "{\"imported\": {\"count\": 4, \"source\": true, \"depth\": true, \"strength\": 0, \"width\": 96, \"height\": 64, \"sourceWidth\": 160, \"sourceHeight\": 100, \"depthWidth\": 96, \"depthHeight\": 64}, \"status\": \"\\u0110\\u00e3 nh\\u1eadp preset ZIP v\\u00e0o Asset Library \\u00b7 96\\u00d764. Ch\\u1ecdn N\\u1ea1p preset \\u0111\\u1ec3 preview.\"}"
+    },
+    {
+      "id": "P107 ZIP transfers into a fresh isolated browser client with source/depth metadata intact",
+      "status": "pass",
+      "detail": "{\"imported\": {\"count\": 2, \"source\": true, \"depth\": true, \"strength\": 0, \"sourceWidth\": 160, \"sourceHeight\": 100, \"depthWidth\": 96, \"depthHeight\": 64}, \"status\": \"\\u0110\\u00e3 nh\\u1eadp preset ZIP v\\u00e0o Asset Library \\u00b7 96\\u00d764. Ch\\u1ecdn N\\u1ea1p preset \\u0111\\u1ec3 preview.\"}"
+    },
+    {
+      "id": "P106 exports real WebM media to Asset Library and Video Engine with truthful renderer label",
+      "status": "pass",
+      "detail": "{\"asset\": true, \"mime\": \"video/webm;codecs=vp9\", \"size\": 8777, \"name\": \"CANVIO_2.5D_1795015475415.webm\", \"status\": \"\\u0110\\u00e3 xu\\u1ea5t 0.01 MiB WebM (2.5D depth parallax) v\\u00e0 l\\u01b0u v\\u00e0o Asset Library \\u00b7 \\u0111\\u00e3 g\\u1eedi media v\\u00e0o Video Engine.\", \"videoEngine\": true}"
+    },
+    {
+      "id": "no uncaught page errors",
+      "status": "pass",
+      "detail": "[]"
+    },
+    {
+      "id": "no console errors",
+      "status": "pass",
+      "detail": "[]"
+    }
+  ],
+  "browser": "157.0.8103.78",
+  "headless": true,
+  "origin": "about:blank",
+  "renderer": "WebKit WebGL",
+  "renderBackend": "ANGLE_SWIFTSHADER_SOFTWARE_WEBGL (forced test backend)",
+  "webglAvailable": true,
+  "depthWorker": "synthetic deterministic gradient; no model inference",
+  "p106WebglShaderAccepted": true,
+  "fallbackAccepted": false,
+  "physicalGpuExecuted": false,
+  "realDepthAnythingInferenceExecuted": false,
+  "p107ActualSameBrowserZipRoundtrip": true,
+  "p107IsolatedSecondClientRoundtrip": true,
+  "physicalTwoDeviceRoundtripExecuted": false,
+  "limitations": [
+    "Opaque about:blank and test-only storage shims.",
+    "Synthetic depth output validates wiring and fallback, not model quality.",
+    "Software SwiftShader is not a physical GPU; hosted origin and two-device round-trip remain open."
+  ]
+}

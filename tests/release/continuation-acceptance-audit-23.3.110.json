@@ -1,0 +1,51 @@
+{
+  "candidate": "23.3.110-p70-real-acceptance-audit-r1",
+  "base_candidate": "23.3.109-p85-vendor-atomic-r1",
+  "date": "2026-11-18",
+  "scope": "verification refresh; no app runtime or UI source changed",
+  "network": {
+    "npm_registry_dns": "FAIL_EAI_AGAIN",
+    "github_dns": "FAIL_EAI_AGAIN",
+    "npm_cache": "12KB; no usable package cache"
+  },
+  "runtime_provisioning": {
+    "three_r187_draco_meshopt_ktx2": "BLOCKED_NOT_DOWNLOADED",
+    "p85_postfx_opencv_dotlottie_rive": "BLOCKED_NOT_DOWNLOADED",
+    "transformers_onnx_wasm": "BLOCKED_NOT_DOWNLOADED",
+    "reason": "No resolvable network route to GitHub/npm in execution environment; no preinstalled runtime binaries found."
+  },
+  "tests": {
+    "P74_P81_source_contract": "18/18 PASS",
+    "P85_source_contract": "13/13 PASS",
+    "P102_P105_worker_contract": "19/19 PASS",
+    "P107_zip_security_contract": "14/14 PASS",
+    "static_audit": "111/111 scripts; 525 unique IDs; 21/21 modules; 3/3 workers PASS",
+    "P74_P81_vendor_browser_smoke": "NOT RUN: vendor manifest absent",
+    "P85_actual_vendor_runtime_smoke": "BLOCKED: P85 vendor manifest absent",
+    "P102_P105_model_inference": "NOT RUN: runtime and weights absent",
+    "P106_physical_gpu": "NOT TESTED",
+    "P107_physical_two_device_and_project_vault": "NOT TESTED"
+  },
+  "P70": {
+    "open_gates": 14,
+    "releaseCertified": false,
+    "status": "BLOCKED",
+    "gates": [
+      "HTTPS browser matrix",
+      "Native IndexedDB persistence round-trip",
+      "Real media export and A/V sync",
+      "Whisper real inference",
+      "Accessibility review",
+      "Hosting/security headers",
+      "Real production timeline project",
+      "Real footage tracking/stabilization",
+      "Real AI provider/provenance/licensing",
+      "Typography and print/prepress",
+      "Offline 3D on clean machine",
+      "Performance on target hardware",
+      "Cross-origin backup/restore",
+      "Release rollback and observability"
+    ]
+  },
+  "truthful_disposition": "LOCAL_SOURCE_CONTRACTS_PASS; RUNTIME_AND_PHYSICAL_ACCEPTANCE_BLOCKED; NOT_STABLE; NOT_DEPLOYED"
+}

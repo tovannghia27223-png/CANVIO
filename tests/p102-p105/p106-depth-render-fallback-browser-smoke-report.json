@@ -1,0 +1,97 @@
+{
+  "suite": "CANVIO_P106_DEPTH_RENDER_EXPORT_AND_P107_ZIP_ROUNDTRIP",
+  "candidate": "23.3.108-p85-studio-r2",
+  "passed": 14,
+  "total": 14,
+  "checks": [
+    {
+      "id": "P105/P106 panel mounted",
+      "status": "pass",
+      "detail": ""
+    },
+    {
+      "id": "depth worker invoked only after user action",
+      "status": "pass",
+      "detail": "1"
+    },
+    {
+      "id": "P106 reports explicit 2D fallback rather than claiming 2.5D",
+      "status": "pass",
+      "detail": "Depth map đã tạo: 96×64 · wasm-q8 · đã lưu ảnh nguồn và depth map vào Asset Library. · thiết bị thiếu WebGL: dùng fallback Ken Burns 2D, không phải 2.5D depth."
+    },
+    {
+      "id": "P106 2D fallback produces visible varied pixels",
+      "status": "pass",
+      "detail": "{\"uniqueColors\": 298, \"nonzeroPixels\": 291600}"
+    },
+    {
+      "id": "P106 preview button labels the actual renderer mode",
+      "status": "pass",
+      "detail": "Xem trước Ken Burns 2D"
+    },
+    {
+      "id": "preview and export actions enabled after depth processing",
+      "status": "pass",
+      "detail": ""
+    },
+    {
+      "id": "P106 preview animation changes rendered pixels over time",
+      "status": "pass",
+      "detail": "{\"before\": 2515753134, \"after\": 4179923996, \"mode\": \"2d-fallback\"}"
+    },
+    {
+      "id": "preset metadata save preserves zero strength",
+      "status": "pass",
+      "detail": ""
+    },
+    {
+      "id": "P107 actual browser export creates exact three-file ZIP",
+      "status": "pass",
+      "detail": "{\"entries\": [\"depth.png\", \"manifest.json\", \"source.png\"], \"crc\": true, \"bytes\": 2710}"
+    },
+    {
+      "id": "P107 browser import restores independent dimensions and zero-strength metadata",
+      "status": "pass",
+      "detail": "{\"imported\": {\"count\": 4, \"source\": true, \"depth\": true, \"strength\": 0, \"width\": 96, \"height\": 64, \"sourceWidth\": 160, \"sourceHeight\": 100, \"depthWidth\": 96, \"depthHeight\": 64}, \"status\": \"\\u0110\\u00e3 nh\\u1eadp preset ZIP v\\u00e0o Asset Library \\u00b7 96\\u00d764. Ch\\u1ecdn N\\u1ea1p preset \\u0111\\u1ec3 preview.\"}"
+    },
+    {
+      "id": "P107 ZIP transfers into a fresh isolated browser client with source/depth metadata intact",
+      "status": "pass",
+      "detail": "{\"imported\": {\"count\": 2, \"source\": true, \"depth\": true, \"strength\": 0, \"sourceWidth\": 160, \"sourceHeight\": 100, \"depthWidth\": 96, \"depthHeight\": 64}, \"status\": \"\\u0110\\u00e3 nh\\u1eadp preset ZIP v\\u00e0o Asset Library \\u00b7 96\\u00d764. Ch\\u1ecdn N\\u1ea1p preset \\u0111\\u1ec3 preview.\"}"
+    },
+    {
+      "id": "P106 exports real WebM media to Asset Library and Video Engine with truthful renderer label",
+      "status": "pass",
+      "detail": "{\"asset\": true, \"mime\": \"video/webm;codecs=vp9\", \"size\": 283780, \"name\": \"CANVIO_2.5D_1794991451163.webm\", \"status\": \"\\u0110\\u00e3 xu\\u1ea5t 0.27 MiB WebM (Ken Burns 2D fallback) v\\u00e0 l\\u01b0u v\\u00e0o Asset Library \\u00b7 \\u0111\\u00e3 g\\u1eedi media v\\u00e0o Video Engine.\", \"videoEngine\": true}"
+    },
+    {
+      "id": "no uncaught page errors",
+      "status": "pass",
+      "detail": "[]"
+    },
+    {
+      "id": "no console errors",
+      "status": "pass",
+      "detail": "[]"
+    }
+  ],
+  "browser": "144.0.7559.96",
+  "headless": true,
+  "origin": "about:blank",
+  "renderer": "2d-fallback",
+  "renderBackend": "2D_CANVAS_FALLBACK",
+  "webglAvailable": false,
+  "depthWorker": "synthetic deterministic gradient; no model inference",
+  "p106WebglShaderAccepted": false,
+  "fallbackAccepted": true,
+  "physicalGpuExecuted": false,
+  "realDepthAnythingInferenceExecuted": false,
+  "p107ActualSameBrowserZipRoundtrip": true,
+  "p107IsolatedSecondClientRoundtrip": true,
+  "physicalTwoDeviceRoundtripExecuted": false,
+  "limitations": [
+    "Opaque about:blank and test-only storage shims.",
+    "Synthetic depth output validates wiring and fallback, not model quality.",
+    "Software SwiftShader is not a physical GPU; hosted origin and two-device round-trip remain open."
+  ]
+}

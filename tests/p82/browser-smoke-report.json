@@ -1,0 +1,165 @@
+{
+  "format": "CANVIO_P82_P84_VECTOR_PDF_CHROMIUM_PDF_RENDER_SMOKE",
+  "candidate": "23.3.108-p85-studio-r2",
+  "browser": "Chromium",
+  "origin": "about:blank + test base URL",
+  "font": "Noto Sans Regular TTF / OFL 1.1",
+  "pdf_bytes": 539376,
+  "pages": 2,
+  "pdf_text_selectable": true,
+  "embedded_font_program": true,
+  "vector_drawings_page_1": 3,
+  "images_page_1": 1,
+  "passed": 28,
+  "total": 28,
+  "status": "PASS_SYNTHETIC_CHROMIUM_PDFIUM_POPPLER_VALIDATION",
+  "checks": [
+    {
+      "id": "CANVIO Poster/Slides owners boot",
+      "status": "pass",
+      "detail": ""
+    },
+    {
+      "id": "P82 build marker",
+      "status": "pass",
+      "detail": "23.3.108-p85-studio-r2"
+    },
+    {
+      "id": "P82 candidate title",
+      "status": "pass",
+      "detail": "CANVIO 23.3.108 — Creative Runtime Lab · P85 Runtime Hardening r2"
+    },
+    {
+      "id": "P82 vector PDF module installed inline",
+      "status": "pass",
+      "detail": ""
+    },
+    {
+      "id": "P82 candidate title",
+      "status": "pass",
+      "detail": "CANVIO 23.3.108 — Creative Runtime Lab · P85 Runtime Hardening r2"
+    },
+    {
+      "id": "P82 vector PDF action mounted in existing Poster toolbar",
+      "status": "pass",
+      "detail": ""
+    },
+    {
+      "id": "P82 PDF vector action available in Ctrl+K command palette",
+      "status": "pass",
+      "detail": ""
+    },
+    {
+      "id": "P82 preserves local/no-new-store/no-dependency policy",
+      "status": "pass",
+      "detail": ""
+    },
+    {
+      "id": "P82 multi-page export reads canonical CVPages owner",
+      "status": "pass",
+      "detail": ""
+    },
+    {
+      "id": "P82 TTF parses and Vietnamese glyph coverage passes",
+      "status": "pass",
+      "detail": "{\"moduleVersion\": \"82.1.0\", \"ownerUsesExistingPoster\": true, \"ownerUsesExistingPages\": true, \"usesExistingSvgRenderer\": true, \"unicodeSample\": \"Tiếng Việt CANVIO ă â ê ô ơ ư đ Đ Ắ Ộ ỹ\", \"fontLoaded\": true, \"vietnameseGlyphCoverage\": true, \"embeddedFontLicenseBundled\": true, \"noExternalDependency\": true, \"lazyFontLoad\": true, \"noNewStore\": true, \"noRemoteImageFetch\": true, \"selectableTextOutput\": true, \"vectorShapesOutput\": true, \"rasterImageEmbedding\": true, \"pdfx\": false, \"cmyk\": false}"
+    },
+    {
+      "id": "P82 parses vector shapes, text and gradients across all canonical pages",
+      "status": "pass",
+      "detail": "{\"count\": 2, \"text\": \"Báo cáo Nhân sự Việt Nam Tiếng Việt: ă â ê ô ơ ư đ Đ Ắ Ộ ỹ · Quản trị nhân lực Tuyển dụng & phát triển Kết quả: cải thiện trải nghiệm ứng viên, nâng cao hiệu quả phối hợp và pháttriển đội ngũ. Kế hoạch phát triển đội ngũ Đào tạo, kế nhiệm, đánh giá năng lực và gắn kết nhân viên.\"}"
+    },
+    {
+      "id": "P82 generated PDF with embedded font and image",
+      "status": "pass",
+      "detail": "539376 bytes"
+    },
+    {
+      "id": "P82 reports successful PDF export in UI",
+      "status": "pass",
+      "detail": "Đã xuất PDF vector 2 trang · 527 KB. Chữ được nhúng bằng Noto Sans (OFL 1.1), ảnh được nhúng dạng JPEG."
+    },
+    {
+      "id": "No uncaught application errors",
+      "status": "pass",
+      "detail": "[]"
+    },
+    {
+      "id": "No browser console errors",
+      "status": "pass",
+      "detail": "[]"
+    },
+    {
+      "id": "PDF has two valid pages",
+      "status": "pass",
+      "detail": "2 pages"
+    },
+    {
+      "id": "PDF text extraction preserves Vietnamese: Báo cáo Nhân sự Việt Nam",
+      "status": "pass",
+      "detail": ""
+    },
+    {
+      "id": "PDF text extraction preserves Vietnamese: Tiếng Việt",
+      "status": "pass",
+      "detail": ""
+    },
+    {
+      "id": "PDF text extraction preserves Vietnamese: Quản trị nhân lực",
+      "status": "pass",
+      "detail": ""
+    },
+    {
+      "id": "PDF text extraction preserves Vietnamese: Tuyển dụng",
+      "status": "pass",
+      "detail": ""
+    },
+    {
+      "id": "PDF text extraction preserves Vietnamese: Kế hoạch phát triển đội ngũ",
+      "status": "pass",
+      "detail": ""
+    },
+    {
+      "id": "PDF basic shapes remain vector",
+      "status": "pass",
+      "detail": "3 vector drawings"
+    },
+    {
+      "id": "PDF gradient is preserved as a native PDF shading resource",
+      "status": "pass",
+      "detail": "<</Font<</F1 8 0 R>>/XObject<</Im1 12 0 R>>/ExtGState<</GS1 9 0 R>>/Shading<</Sh1 11 0 R>>>>"
+    },
+    {
+      "id": "PDF embeds placed images as raster XObjects",
+      "status": "pass",
+      "detail": "1 image objects"
+    },
+    {
+      "id": "PDF declares embedded Noto Sans font resource",
+      "status": "pass",
+      "detail": "[[8, \"ttf\", \"Type0\", \"CANVIONotoSans\", \"F1\", \"Identity-H\", 0]]"
+    },
+    {
+      "id": "PDF embeds TrueType font program (FontFile2)",
+      "status": "pass",
+      "detail": ""
+    },
+    {
+      "id": "PDF first page renders in MuPDF",
+      "status": "pass",
+      "detail": "715x1011, 51107 bytes"
+    },
+    {
+      "id": "PDF parses in Poppler pdfinfo",
+      "status": "pass",
+      "detail": "Title:           Ke-hoach-phat-trien-doi-ngu"
+    }
+  ],
+  "limitations": [
+    "Noto Sans is used as a licensed PDF export fallback; original editor font families and exact font shaping are not preserved.",
+    "Images are embedded as JPEG raster; basic rectangles/ellipses/linear/radial gradients and text remain vector/selectable.",
+    "This is not PDF/X, CMYK, bleed/crop-box or printer-proof acceptance.",
+    "The browser fixture uses about:blank with an intercepted local font asset; user must keep the bundled assets/pdf-fonts path alongside index.html.",
+    "CV direct PDF workflow is not yet wired; current P82/P84 vector action is for Poster/Slide pages."
+  ]
+}

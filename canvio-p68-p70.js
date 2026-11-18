@@ -23,7 +23,7 @@
       if (text.length > MAX_SOURCE_CHARS) throw new Error('OBJ vượt giới hạn 5 MiB văn bản.');
       var vertices = [], faces = 0, triangles = [], ignored = { normals: 0, texcoords: 0, materials: 0, groups: 0, other: 0 }, lines = text.split(/\r?\n/);
       for (var li = 0; li < lines.length; li++) {
-        var line = lines[li].split('#')[0].trim();
+        var line = lines[li].trim();
         if (!line || line.charAt(0) === '#') continue;
         var parts = line.split(/\s+/), kind = parts[0];
         if (kind === 'v') {

@@ -125,8 +125,8 @@ assert('P51 never claims MP4 support from WebM support', diag.codecs.mp4H264 ===
   assert('P55 release report does not expose provider secret values', !JSON.stringify(release).includes('never expose this'));
 
   assert('P55 lineage advances cleanly into P56 build and PhaseSuite', /version:'23\.3\.70-p56',base:'23\.3\.69-p55',candidate:'P56'/.test(html) && /version:'56\.0\.0'/.test(html));
-  assert('P62 document title matches the current candidate version', /<title>CANVIO 23\.3\.76-p62 — Phase 1 Release Candidate<\/title>/.test(html));
-  assert('P42 title observer follows P62/P56 builds instead of pinning a stale title', /buildTitleForVersion=function\(\)\{var version=window\.CANVIO_BUILD&&window\.CANVIO_BUILD\.version/.test(html) && /version==='23\.3\.76-p62'\?'CANVIO 23\.3\.76-p62 — Phase 1 Release Candidate':version==='23\.3\.70-p56'/.test(html));
+  assert('Current integrated document title observer recognizes the active P104 candidate', /version==='23\.3\.106-p74-p81-p107-r1'\?'CANVIO 23\.3\.106 — Local Three\.js r187 \+ Portable Presets'/.test(html));
+  assert('Central title observer maps current version from CANVIO_BUILD', /buildTitleForVersion=function\(\)\{var version=window\.CANVIO_BUILD&&window\.CANVIO_BUILD\.version/.test(html) && /version==='23\.3\.106-p74-p81-p107-r1'/.test(html));
   assert('P55 release dashboard button and panel IDs are created by module', /canvioP55Run/.test(p55) && /canvioP55Panel/.test(p55));
   assert('P55 restore integrity preflight remains after the P56 archive validator and before payload mutation', /CANVIOArchivePreflight\.inspect\(file\)[\s\S]{0,350}preflightRestore\(file\)[\s\S]{0,160}readStoreZip\(file\)/.test(html));
   assert('P55 backup audit is updated after a user-created ZIP', /noteBackup\(m\)/.test(html));

@@ -1,29 +1,35 @@
 {
-  "format": "CANVIO_P68_P70_CHROMIUM_SMOKE",
-  "candidate": "P70",
-  "version": "23.3.84-p70",
-  "browser": "157.0.8103.0",
+  "format": "CANVIO_P68_P70_INHERITED_ON_P84_CHROMIUM_SMOKE",
+  "candidate": "23.3.108-p85-studio-r2 (P68–P70 inherited module)",
+  "version": "23.3.108-p85-studio-r2",
+  "browser": "157.0.8103.78",
   "origin": "about:blank",
   "testOnlyStorageShim": true,
+  "startupNetworkRequests": [],
   "limitations": [
     "Opaque about:blank; native IndexedDB/HTTPS are not covered.",
     "OBJ offline viewer smoke is an in-memory document, not a clean-machine offline acceptance test.",
     "No Chrome/Edge/Safari matrix, real project restore, real A/V sync, Whisper inference, WCAG review or deployed hosting certificate."
   ],
   "summary": {
-    "pass": 16,
+    "pass": 17,
     "fail": 0
   },
   "checks": [
     {
-      "id": "P70 build marker active",
+      "id": "Application startup issues zero network requests",
       "status": "pass",
-      "detail": "23.3.84-p70"
+      "detail": "[]"
     },
     {
-      "id": "P70 document title survives legacy observers",
+      "id": "Latest candidate build marker active",
       "status": "pass",
-      "detail": "CANVIO 23.3.84-p70 — Stable Release Candidate"
+      "detail": "23.3.108-p85-studio-r2"
+    },
+    {
+      "id": "Candidate title survives legacy observers",
+      "status": "pass",
+      "detail": "CANVIO 23.3.108 — Creative Runtime Lab · P85 Runtime Hardening r2"
     },
     {
       "id": "P68–P70 control panel mounted in Video Engine",
@@ -38,7 +44,7 @@
     {
       "id": "P68/P69/P70 APIs exposed",
       "status": "pass",
-      "detail": "{\"p68\": true, \"p69\": true, \"p70\": true, \"build\": \"23.3.84-p70\", \"phase\": \"70.0.0\"}"
+      "detail": "{\"p68\": true, \"p69\": true, \"p70\": true, \"build\": \"23.3.108-p85-studio-r2\", \"phase\": \"70.0.0\"}"
     },
     {
       "id": "P68 packages real tetra OBJ geometry",
@@ -53,7 +59,7 @@
     {
       "id": "P69 audit + P70 release gate remain read-only and fail-closed",
       "status": "pass",
-      "detail": "{\"nodes\": 13466, \"readOnly\": true, \"totals\": {\"canvasBackingBytes\": 14493600, \"imageDecodedEstimateBytes\": 12480000, \"videoSurfaceEstimateBytes\": 0, \"combinedSurfaceEstimateBytes\": 26973600}, \"resourceCount\": 0, \"phase1\": {\"status\": \"AVAILABLE_ASYNC_GATE_NOT_AUTORUN\", \"available\": true, \"invoked\": false, \"releaseCertified\": false}, \"phase2\": {\"status\": \"IMPLEMENTATION_READY_PENDING_MANUAL_ACCEPTANCE\", \"releaseCertified\": false, \"summary\": {\"pass\": 32, \"fail\": 0}}, \"gates\": 14, \"pending\": 14, \"status\": \"BLOCKED_PENDING_REAL_WORLD_ACCEPTANCE\", \"certified\": false}"
+      "detail": "{\"nodes\": 14485, \"readOnly\": true, \"totals\": {\"canvasBackingBytes\": 16740000, \"imageDecodedEstimateBytes\": 12501384, \"videoSurfaceEstimateBytes\": 0, \"combinedSurfaceEstimateBytes\": 29241384}, \"resourceCount\": 0, \"phase1\": {\"status\": \"AVAILABLE_ASYNC_GATE_NOT_AUTORUN\", \"available\": true, \"invoked\": false, \"releaseCertified\": false}, \"phase2\": {\"status\": \"IMPLEMENTATION_READY_PENDING_MANUAL_ACCEPTANCE\", \"releaseCertified\": false, \"summary\": {\"pass\": 32, \"fail\": 0}}, \"gates\": 14, \"pending\": 14, \"status\": \"BLOCKED_PENDING_REAL_WORLD_ACCEPTANCE\", \"certified\": false}"
     },
     {
       "id": "P70 summary does not auto-run asynchronous Phase 1 media probe",
@@ -63,7 +69,7 @@
     {
       "id": "P69 browser frame sampler runs",
       "status": "pass",
-      "detail": "{\"supported\": true, \"durationMs\": 310.9999999999818, \"frames\": 19, \"averageFps\": 61.09324758842801, \"medianFrameMs\": 16.69999999999891, \"over33ms\": 0, \"over50ms\": 0, \"heuristicOnly\": true, \"noProjectMutation\": true}"
+      "detail": "{\"supported\": true, \"durationMs\": 303.9999999999909, \"frames\": 19, \"averageFps\": 62.50000000000187, \"medianFrameMs\": 16.69999999999891, \"over33ms\": 0, \"over50ms\": 0, \"heuristicOnly\": true, \"noProjectMutation\": true}"
     },
     {
       "id": "Offline viewer renders mesh to canvas",

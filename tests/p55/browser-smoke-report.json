@@ -2,7 +2,7 @@
   "format": "CANVIO_P55_CHROMIUM_RUNTIME_SMOKE",
   "version": 1,
   "candidate": "P55",
-  "browser": "144.0.7559.96",
+  "browser": "153.0.8010.12",
   "origin": "about:blank",
   "testOnlyStorageShim": true,
   "limitations": [
@@ -14,12 +14,12 @@
     {
       "id": "build-marker",
       "status": "pass",
-      "value": "23.3.69-p55"
+      "value": "23.3.108-p85-studio-r2"
     },
     {
       "id": "document-title",
       "status": "pass",
-      "value": "CANVIO 23.3.69-p55 — Stable Release Readiness"
+      "value": "CANVIO 23.3.108 — Creative Runtime Lab · P85 Runtime Hardening r2"
     },
     {
       "id": "spa-navigation",
@@ -69,7 +69,24 @@
         "p55RenderRecovery": true,
         "p55ProjectIntegrity": true,
         "p55PerformanceBudget": true,
-        "p55ReleaseGate": true
+        "p55ReleaseGate": true,
+        "p56ArchivePreflight": true,
+        "p56ReadOnlyRestorePreview": true,
+        "p57NativePersistenceAudit": true,
+        "p57SafeRoundTrip": true,
+        "p58ExportAcceptance": true,
+        "p59WhisperWorkerAcceptance": true,
+        "p60AccessibilityScreening": true,
+        "p61HostingSecurityScreening": true,
+        "p62Phase1ReleaseGate": true,
+        "p63UnifiedTimeline": true,
+        "p64AdvancedTimelineEditing": true,
+        "p65MotionTracking": true,
+        "p66AICreativeAssetWorkflow": true,
+        "p67PrintProduction": true,
+        "p68Offline3DPackaging": true,
+        "p69SystemOptimization": true,
+        "p70StableReleaseGate": true
       }
     },
     {
@@ -91,15 +108,15 @@
       "id": "real-webm-export-decode",
       "status": "pass",
       "value": {
-        "size": 19515,
+        "size": 18177,
         "mime": "video/webm;codecs=vp9",
         "duration": 0.9,
         "width": 960,
         "height": 540,
         "readyState": 4,
         "download": {
-          "name": "CANVIO_multitrack_1794847994277.webm",
-          "href": "blob:null/b2cfe1c8-3a79-4978-bc1d-6806b931c042"
+          "name": "CANVIO_multitrack_1795015339827.webm",
+          "href": "blob:null/21f5652f-4ecd-44c1-8941-47d64b0d7034"
         }
       }
     },
@@ -107,15 +124,15 @@
       "id": "real-mp4-h264-export-decode",
       "status": "pass",
       "value": {
-        "size": 11915,
+        "size": 12651,
         "mime": "video/mp4;codecs=avc1.420020",
-        "duration": 0.8889,
+        "duration": 0.9007,
         "width": 960,
         "height": 540,
         "readyState": 4,
         "download": {
-          "name": "CANVIO_multitrack_1794847995225.mp4",
-          "href": "blob:null/9a35a9ee-0fb8-4f54-bc8c-ca3477c0308f"
+          "name": "CANVIO_multitrack_1795015340804.mp4",
+          "href": "blob:null/5ebce6a5-4d42-4bf8-88a8-0cdb6dfc0a38"
         }
       }
     },
@@ -132,15 +149,15 @@
       "id": "render-retry-after-cancel",
       "status": "pass",
       "value": {
-        "size": 20013,
+        "size": 17788,
         "mime": "video/webm;codecs=vp9",
         "duration": 0.8,
         "width": 960,
         "height": 540,
         "readyState": 4,
         "download": {
-          "name": "CANVIO_multitrack_1794847996349.webm",
-          "href": "blob:null/5103f8dc-bf22-4e0a-a429-02b54bf94018"
+          "name": "CANVIO_multitrack_1795015341918.webm",
+          "href": "blob:null/c18dcb35-dd1b-455b-a5d5-3edb436c2caa"
         }
       }
     },
@@ -244,7 +261,11 @@
     "mp4Mime": "video/mp4;codecs=avc1.42E01E",
     "h264Supported": true,
     "mp4RequiresNativeH264": true,
-    "ffmpegFallback": false
+    "ffmpegFallback": false,
+    "webCodecsAvailable": false,
+    "webCodecsMuxer": "CANVIO_ISOBMFF_AVC_1TRACK",
+    "webCodecsMP4Scope": "silent-image-text-timeline-only",
+    "mp4Supported": true
   },
   "summary": {
     "passed": 24,

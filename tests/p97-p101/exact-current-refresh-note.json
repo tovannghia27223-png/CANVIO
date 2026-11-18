@@ -1,0 +1,8 @@
+{
+  "suite": "P97-P101-P104-browser-exact-current-refresh",
+  "candidate": "23.3.108-p85-studio-r2",
+  "indexSha256": "1736457b13aa9db40d847ea065ea521328d247709664dde6b1d3781088869b82",
+  "status": "TIMEOUT_NOT_COUNTED",
+  "result": null,
+  "note": "Exact-current browser rerun exceeded the command time limit before a final assertion report was produced. A prior 35/35 report from the preceding same-marker pass is retained as historical evidence and is not reused as a result of this refresh."
+}

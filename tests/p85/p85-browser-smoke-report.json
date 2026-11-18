@@ -1,0 +1,24 @@
+{
+  "suite": "CANVIO_P85_BROWSER_LAZY_BOOT",
+  "candidate": "23.3.108-p85-studio-r2",
+  "passed": 10,
+  "total": 10,
+  "assertions": {
+    "mountsAfterDomReady": true,
+    "ownerAndVersion": true,
+    "allFourP85Panels": true,
+    "controlsAndCleanupButtons": true,
+    "P85ReusesCanonicalP72GlbInput": true,
+    "lazyRuntimeBoot": true,
+    "noRemoteRequestsAtBoot": true,
+    "noUncaughtPageErrors": true,
+    "noConsoleErrors": true,
+    "webgpuCapabilityDetectedWithoutFalsePositive": true
+  },
+  "runtimeCapabilities": "không có",
+  "remoteRequests": [],
+  "pageErrors": [],
+  "consoleErrors": [],
+  "realVendorRuntimeExecuted": false,
+  "note": "Isolated synthetic browser mount verifies local UI and lazy boot. Real vendor packages are installed by the online hosted workflow; no inference or path tracing is claimed by this smoke."
+}

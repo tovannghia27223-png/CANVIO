@@ -1,0 +1,29 @@
+{
+  "suite": "CANVIO_P102_P105_WORKER_CONTRACT",
+  "candidate": "23.3.108-p85-studio-r2",
+  "passed": 19,
+  "total": 19,
+  "checks": {
+    "P102 worker exists and parses": true,
+    "P105 worker exists and parses": true,
+    "P102 worker path is wired from app": true,
+    "P105 worker path is wired from app": true,
+    "P102 model and background-removal task are pinned": true,
+    "P105 model and depth-estimation task are pinned": true,
+    "P102 runtime load occurs only inside explicit message path": true,
+    "P105 runtime load occurs only inside explicit message path": true,
+    "P102 transfer result is RGBA with alpha": true,
+    "P105 output is normalized to one grayscale byte per pixel": true,
+    "Both workers bound input sizes and output pixel counts": true,
+    "Both workers expose WebGPU-to-WASM fallback": true,
+    "Both workers transfer result buffers": true,
+    "Both workers post bounded error messages instead of leaking exceptions": true,
+    "P102 and P105 ignore unrelated worker messages without loading models": true,
+    "Depth normalization rejects non-finite values and oversized output": true,
+    "Transformers.js runtime is self-hosted and pinned locally": true,
+    "ONNX WASM is self-hosted from the same-origin runtime directory": true,
+    "Model weights remain explicit and user-triggered from pinned model repositories": true
+  },
+  "runtimeInferenceExecuted": false,
+  "note": "Runtime and ONNX WASM are provisioned locally by scripts/vendor-p85-runtimes.sh; the model weights remain user-triggered downloads from pinned Hugging Face repositories. This source contract does not execute model inference."
+}

@@ -26,8 +26,8 @@ except Exception as exc:  # pragma: no cover - optional dependency
 
 ROOT = Path(__file__).resolve().parents[2]
 REPORT_PATH = Path(__file__).with_name("browser-smoke-report.json")
-EXPECTED_VERSION = "23.3.84-p70"
-EXPECTED_TITLE = "CANVIO 23.3.84-p70 — Stable Release Candidate"
+EXPECTED_VERSION = "23.3.108-p85-studio-r2"
+EXPECTED_TITLE = "CANVIO 23.3.108 — Creative Runtime Lab · P85 Runtime Hardening r2"
 
 STORAGE_SHIM = r"""<script id="canvio-p56-test-storage-shim">
 (() => {
@@ -72,9 +72,9 @@ def main() -> int:
     executable = os.environ.get("CHROMIUM_EXECUTABLE_PATH")
 
     results: dict[str, object] = {
-        "format": "CANVIO_P63_P70_INHERITED_CHROMIUM_RUNTIME_SMOKE",
+        "format": "CANVIO_P63_P67_INHERITED_CHROMIUM_RUNTIME_SMOKE",
         "version": 1,
-        "candidate": "P70",
+        "candidate": EXPECTED_VERSION,
         "browser": None,
         "origin": "about:blank",
         "testOnlyStorageShim": True,
@@ -118,10 +118,10 @@ def main() -> int:
 
         title = page.title()
         version = page.evaluate("window.CANVIO_BUILD && window.CANVIO_BUILD.version")
-        require(version == EXPECTED_VERSION, "P70 app build marker is active", str(version))
+        require(version == EXPECTED_VERSION, "Current candidate build marker is active", str(version))
         results["checks"].append({"id": "build-marker", "status": "pass", "value": version})
         passed += 1
-        require(title == EXPECTED_TITLE, "P70 title survives inherited title observers", title)
+        require(title == EXPECTED_TITLE, "Current candidate title survives inherited title observers", title)
         results["checks"].append({"id": "document-title", "status": "pass", "value": title})
         passed += 1
 
@@ -428,7 +428,7 @@ def main() -> int:
 
     results["summary"] = {"passed": passed, "failed": 0, "status": "PASS_WITH_ORIGIN_LIMITATIONS"}
     REPORT_PATH.write_text(json.dumps(results, ensure_ascii=False, indent=2), encoding="utf-8")
-    print(f"\nP63–P67 inherited Chromium regression on P70: {passed} checks passed; origin-dependent acceptance remains pending.")
+    print(f"\nP63–P67 inherited Chromium regression on current candidate: {passed} checks passed; origin-dependent acceptance remains pending.")
     print("Report:", REPORT_PATH)
     return 0
 
@@ -437,5 +437,5 @@ if __name__ == "__main__":
     try:
         raise SystemExit(main())
     except Exception as error:
-        print("P63–P67 inherited regression on P70 failed:", repr(error), file=sys.stderr)
+        print("P63–P67 inherited regression on current candidate failed:", repr(error), file=sys.stderr)
         raise

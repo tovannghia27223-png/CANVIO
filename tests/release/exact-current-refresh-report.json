@@ -1,0 +1,109 @@
+{
+  "format": "CANVIO_EXACT_CURRENT_REFRESH",
+  "schemaVersion": 1,
+  "generatedAt": "2026-11-18",
+  "candidate": "23.3.109-p85-vendor-atomic-r1",
+  "phaseSuite": "70.0.0",
+  "source": {
+    "path": "index.html",
+    "bytes": 4921610,
+    "sha256": "1736457b13aa9db40d847ea065ea521328d247709664dde6b1d3781088869b82"
+  },
+  "staticAudit": {
+    "inlineScripts": "111/111 PASS",
+    "uniqueDomIds": "525/525",
+    "duplicateIds": 0,
+    "externalScriptSrc": 0,
+    "startupRemoteFontReferences": 0,
+    "standaloneModules": "21/21 synchronized",
+    "workers": "3/3 syntax PASS"
+  },
+  "sourceSuites": {
+    "P47": "PASS (phase, Bezier, restore and CRC fixtures)",
+    "P48": "26/26 PASS",
+    "P49": "35/35 PASS",
+    "P50": "27/27 PASS",
+    "P55": "49/49 PASS",
+    "P56": "27/27 PASS",
+    "P57-P62": "15/15 PASS",
+    "P63-P67": "18/18 PASS",
+    "P68-P70": "16/16 PASS",
+    "P74-P81": "18/18 PASS (source/contract only; vendor runtime absent)",
+    "P85": "13/13 PASS (source contract only)",
+    "P102-P105": "19/19 PASS (worker contract only; inference not run)",
+    "P107": "14/14 PASS"
+  },
+  "browserSuites": {
+    "P55": "24/24 PASS",
+    "P56": "27/27 PASS",
+    "P62": "32/32 PASS",
+    "P63-P67": "43/43 PASS",
+    "P68-P70": "17/17 PASS",
+    "P72": "8/8 PASS",
+    "P73": "9/9 PASS",
+    "P102": "11/11 PASS",
+    "P103": "10/10 PASS",
+    "P105-P107": "18/18 PASS",
+    "P82-P84": "28/28 PASS",
+    "P85LazyBoot": "10/10 PASS",
+    "P87": "14/14 PASS",
+    "P88": "14/14 PASS",
+    "P90-P96": "34/34 PASS",
+    "P97-P101-P104": "35/35 PASS (rerun completed; supersedes previous timeout note)",
+    "P106Headless2DFallback": "14/14 PASS",
+    "P106HeadedSwiftShaderWebGL": "14/14 PASS (supersedes previous timeout; software renderer, not physical GPU)",
+    "P107IsolatedBrowserContextZipImport": "PASS within both P106 browser modes"
+  },
+  "office": {
+    "LibreOfficeWriter": "PASS (open/edit/save/reopen; Vietnamese marker retained)",
+    "LibreOfficeImpress": "PASS (open/edit/save/reopen; Vietnamese marker retained)",
+    "scope": "LibreOffice only; not Microsoft Office or Google Workspace certification"
+  },
+  "unverifiedOrBlocked": [
+    "P74/P81 Three.js r187 plus Draco/Meshopt/KTX2 runtime binaries are not provisioned in this local package; runtime and compressed fixture decoding not executed.",
+    "P85 PostFX/OpenCV/dotLottie/Rive actual vendor runtime smoke not executed because pinned npm artifacts could not be downloaded in the local environment.",
+    "P102/P105 ONNX model inference and P80 Whisper model inference not run; model weights not packaged.",
+    "Physical GPU qualification not run; P106 headed result uses ANGLE SwiftShader software rendering.",
+    "P107 physical two-device transfer and Project Vault native persistence not run.",
+    "P70 fourteen real-world acceptance gates remain open; releaseCertified=false; not Stable.",
+    "Current candidate has no hosted GitHub Actions validation, PR, merge, or Pages deployment."
+  ],
+  "environment": {
+    "localVendorProvisioning": "BLOCKED: outbound DNS resolution for registry.npmjs.org and github.com failed in this container.",
+    "githubMain": {
+      "branch": "main",
+      "head": "f681c1239dc56968dde338e1c33aa4b63002665a",
+      "status": "P70 baseline; not this local candidate"
+    },
+    "latestObservedHostedRun": {
+      "id": 44118368800,
+      "conclusion": "success",
+      "headSha": "3602e9b76918bf1f40f6cd4ffd2a3024ec60bb8a",
+      "url": "https://github.com/tovannghia27223-png/CANVIO/actions/runs/44118368800",
+      "scope": "older P70 baseline only"
+    }
+  },
+  "releaseDecision": {
+    "status": "BLOCKED_PENDING_REAL_WORLD_ACCEPTANCE",
+    "releaseCertified": false,
+    "deploymentAuthorized": false
+  },
+  "applicationIndexUnchanged": true,
+  "applicationIndexBytes": 4921610,
+  "vendorProvisioningTransaction": {
+    "shellSyntax": "4/4 PASS",
+    "replacementAndRollback": "2/2 PASS"
+  },
+  "sourceContracts": {
+    "P74_P81": "18/18 PASS",
+    "P85": "13/13 PASS",
+    "P102_P105": "19/19 PASS",
+    "P107": "14/14 PASS"
+  },
+  "browserSmoke": {
+    "P85LazyBoot": "10/10 PASS",
+    "actualVendorRuntime": "NOT RUN — runtime files absent"
+  },
+  "networkProvisioning": "BLOCKED — DNS resolution failed for registry.npmjs.org and github.com",
+  "releaseStatus": "NOT CERTIFIED — P70 fourteen real-world acceptance gates remain OPEN"
+}

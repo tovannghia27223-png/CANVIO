@@ -10,8 +10,8 @@ from playwright.sync_api import sync_playwright
 
 ROOT = Path(__file__).resolve().parents[2]
 REPORT = Path(__file__).with_name('browser-smoke-report.json')
-EXPECTED_VERSION = '23.3.84-p70'
-EXPECTED_TITLE = 'CANVIO 23.3.84-p70 — Stable Release Candidate'
+EXPECTED_VERSION = '23.3.108-p85-studio-r2'
+EXPECTED_TITLE = 'CANVIO 23.3.108 — Creative Runtime Lab · P85 Runtime Hardening r2'
 SHIM = r'''<script id="canvio-p70-test-storage-shim">(()=>{function make(){const m=new Map();return{get length(){return m.size},key(i){return Array.from(m.keys())[i]??null},getItem(k){return m.has(String(k))?m.get(String(k)):null},setItem(k,v){m.set(String(k),String(v))},removeItem(k){m.delete(String(k))},clear(){m.clear()}}}Object.defineProperty(window,'localStorage',{configurable:true,value:make()});Object.defineProperty(window,'sessionStorage',{configurable:true,value:make()});})();</script>'''
 
 checks=[]
@@ -23,21 +23,27 @@ def require(ok, name, detail=''):
 def main():
     source=(ROOT/'index.html').read_text(encoding='utf-8')
     source=re.sub(r'^(\s*<!doctype[^>]*>)', lambda m:m.group(1)+SHIM, source, count=1, flags=re.I)
-    errors=[]; console_errors=[]
+    errors=[]; console_errors=[]; app_requests=[]
     with sync_playwright() as p:
         executable=os.environ.get('CHROMIUM_EXECUTABLE_PATH') or shutil.which('chromium') or shutil.which('chromium-browser')
         browser=p.chromium.launch(headless=True,executable_path=executable,args=['--no-sandbox','--disable-dev-shm-usage'])
         page=browser.new_page(viewport={'width':1440,'height':1000},accept_downloads=True)
         page.on('pageerror',lambda e:errors.append(str(e)))
         page.on('console',lambda m:console_errors.append(m.text[:500]) if m.type=='error' else None)
-        page.route('https://fonts.googleapis.com/**',lambda r:r.fulfill(status=200,content_type='text/css',body=''))
-        page.route('https://fonts.gstatic.com/**',lambda r:r.fulfill(status=200,content_type='font/woff2',body=b''))
+        page.on('request',lambda r:app_requests.append(r.url) if r.url.startswith(('http://','https://')) else None)
+        def block_remote(route):
+            if route.request.url.startswith(('http://','https://')):
+                route.abort()
+            else:
+                route.continue_()
+        page.route('**/*',block_remote)
         page.set_content(source,wait_until='load',timeout=120000)
         page.wait_for_timeout(4400)
+        require(not app_requests,'Application startup issues zero network requests',json.dumps(app_requests,ensure_ascii=False))
         version=page.evaluate('window.CANVIO_BUILD && CANVIO_BUILD.version')
-        require(version==EXPECTED_VERSION,'P70 build marker active',str(version))
+        require(version==EXPECTED_VERSION,'Latest candidate build marker active',str(version))
         title=page.title()
-        require(title==EXPECTED_TITLE,'P70 document title survives legacy observers',title)
+        require(title==EXPECTED_TITLE,'Candidate title survives legacy observers',title)
         page.evaluate("CV.go('videoEngine')")
         page.wait_for_timeout(1000)
         require(page.locator('#cv-p68-p70-panel').count()==1,'P68–P70 control panel mounted in Video Engine')
@@ -77,7 +83,7 @@ def main():
         require(not overflow,'P70 panel has no horizontal overflow at 375px')
         require(not errors,'No uncaught application page errors',json.dumps(errors[:5]))
         require(not console_errors,'No console errors in app boot/smoke',json.dumps(console_errors[:5]))
-        results={'format':'CANVIO_P68_P70_CHROMIUM_SMOKE','candidate':'P70','version':EXPECTED_VERSION,'browser':browser.version,'origin':'about:blank','testOnlyStorageShim':True,'limitations':['Opaque about:blank; native IndexedDB/HTTPS are not covered.','OBJ offline viewer smoke is an in-memory document, not a clean-machine offline acceptance test.','No Chrome/Edge/Safari matrix, real project restore, real A/V sync, Whisper inference, WCAG review or deployed hosting certificate.'],'summary':{'pass':len(checks),'fail':0},'checks':checks,'releaseCertified':False,'releaseStatus':report['status']}
+        results={'format':'CANVIO_P68_P70_INHERITED_ON_P84_CHROMIUM_SMOKE','candidate':'23.3.108-p85-studio-r2 (P68–P70 inherited module)','version':EXPECTED_VERSION,'browser':browser.version,'origin':'about:blank','testOnlyStorageShim':True,'startupNetworkRequests':app_requests,'limitations':['Opaque about:blank; native IndexedDB/HTTPS are not covered.','OBJ offline viewer smoke is an in-memory document, not a clean-machine offline acceptance test.','No Chrome/Edge/Safari matrix, real project restore, real A/V sync, Whisper inference, WCAG review or deployed hosting certificate.'],'summary':{'pass':len(checks),'fail':0},'checks':checks,'releaseCertified':False,'releaseStatus':report['status']}
         REPORT.write_text(json.dumps(results,indent=2,ensure_ascii=False)+'\n',encoding='utf-8')
         browser.close()
     print(f'P68–P70 Chromium smoke: {len(checks)}/{len(checks)} PASS')

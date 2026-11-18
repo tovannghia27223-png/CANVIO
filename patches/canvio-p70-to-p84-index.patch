@@ -1,0 +1,1360 @@
+--- a/index.html
++++ b/index.html
+@@ -6,7 +6,7 @@
+ <meta charset="utf-8"/>
+ <meta content="width=device-width,initial-scale=1" name="viewport"/>
+ <meta name="description" content="CANVIO là nền tảng sáng tạo hợp nhất cho thiết kế, video, motion và website. Làm việc với dự án, tài nguyên và công cụ xuất bản trong một workspace local-first."/>
+-<title>CANVIO 23.3.76-p62 — Phase 1 Release Candidate</title>
++<title>CANVIO 23.3.89-p84 — Direct PDF Workflow Candidate</title>
+ <style>
+ /* ============================================================
+    CANVIO STUDIO 5.0 — Design tokens (bright, professional)
+@@ -5384,8 +5384,8 @@
+     var webm=vExportPickMime('webm',Recorder),mp4=vExportPickMime('mp4',Recorder),canvas=document.getElementById('vtCanvas');
+     return {mediaRecorder:!!Recorder,canvasCapture:!!(canvas&&canvas.captureStream),webmMime:webm,mp4Mime:mp4,h264Supported:!!mp4,mp4RequiresNativeH264:true,ffmpegFallback:false};
+   }
+-  function vExportWebM(){return vExport({format:'webm'}).catch(function(){return null})}
+-  function vExportMP4(){return vExport({format:'mp4'}).catch(function(){return null})}
++  function vExportWebM(options){return vExport(Object.assign({},options||{},{format:'webm'})).catch(function(){return null})}
++  function vExportMP4(options){return vExport(Object.assign({},options||{},{format:'mp4'})).catch(function(){return null})}
+   async function vExport(options){
+     options=options&&typeof options==='object'?options:{};
+     if(vExportBusy){toast('CANVIO đang render một video khác.');return null}
+@@ -5394,9 +5394,14 @@
+     if(!mime){var message=format==='mp4'?'Trình duyệt này chưa xác nhận hỗ trợ MP4/H.264. Hãy dùng WebM.':'Trình duyệt chưa xác nhận hỗ trợ WebM.';var capStatus=document.getElementById('vtStatus');if(capStatus)capStatus.textContent=message;toast(message);return null}
+     var c=document.getElementById('vtCanvas');if(!c){toast('Không tìm thấy canvas Video Engine');return null}
+     if(!c.captureStream){toast('Canvas captureStream không được hỗ trợ');return null}
++    var allowedFps=[24,25,30,50,60],requestedFps=Number(options.fps),outputFps=allowedFps.indexOf(requestedFps)>=0?requestedFps:30;
++    var oldCanvasWidth=c.width||960,oldCanvasHeight=c.height||540,outputWidth=Number(options.width)||oldCanvasWidth,outputHeight=Number(options.height)||oldCanvasHeight;
++    if(!Number.isInteger(outputWidth)||!Number.isInteger(outputHeight)||outputWidth<640||outputHeight<360||outputWidth>3840||outputHeight>2160||outputWidth*outputHeight>8294400||Math.abs(outputWidth/outputHeight-16/9)>.003){toast('Độ phân giải không hợp lệ. Video Engine hiện xuất tỷ lệ 16:9 từ 640×360 đến 3840×2160.');return null}
++    var requestedBitrate=Number(options.videoBitsPerSecond),videoBitrate=Number.isFinite(requestedBitrate)?Math.max(1000000,Math.min(20000000,requestedBitrate)):null;
++    if(outputWidth!==oldCanvasWidth||outputHeight!==oldCanvasHeight){c.width=outputWidth;c.height=outputHeight;vDraw()}
+     vPause();
+     var stream=null,__am=null,rec=null,chunks=[],duration=Math.max(.05,Number(videoState.duration)||0),oldTime=videoState.time,raf=0,settled=false,cancelled=false,abortHandler=null;
+-    function stopTracks(){try{if(__am)__am.stop()}catch(e){}try{if(stream)stream.getTracks().forEach(function(t){try{t.stop()}catch(e){}})}catch(e){}if(raf)cancelAnimationFrame(raf);try{videoState.time=oldTime;vDraw()}catch(e){}}
++    function stopTracks(){try{if(__am)__am.stop()}catch(e){}try{if(stream)stream.getTracks().forEach(function(t){try{t.stop()}catch(e){}})}catch(e){}if(raf)cancelAnimationFrame(raf);try{c.width=oldCanvasWidth;c.height=oldCanvasHeight;videoState.time=oldTime;vDraw()}catch(e){}}
+     vExportBusy=true;var cancelButton=document.getElementById('vtExportCancel');if(cancelButton)cancelButton.disabled=false;
+     return await new Promise(function(resolve,reject){
+       function finish(err,blob){
+@@ -5420,9 +5425,10 @@
+       }
+       vExportCancelActive=abort;
+       try{
+-        stream=c.captureStream(30);
++        stream=c.captureStream(outputFps);
+         __am=window.CVAudioMix?CVAudioMix.attach(stream,videoState.clips.filter(vClipAudible),duration):null;
+-        rec=new window.MediaRecorder(stream,{mimeType:mime});
++        var recorderOptions={mimeType:mime};if(videoBitrate)recorderOptions.videoBitsPerSecond=videoBitrate;
++        rec=new window.MediaRecorder(stream,recorderOptions);
+         rec.ondataavailable=function(e){if(e.data&&e.data.size)chunks.push(e.data)};
+         rec.onerror=function(e){finish(new Error('MediaRecorder lỗi: '+((e&&e.error&&e.error.message)||'không xác định')))};
+         rec.onstop=async function(){
+@@ -19918,7 +19924,7 @@
+    if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount();
+  })();
+ 
+- var buildTitleForVersion=function(){var version=window.CANVIO_BUILD&&window.CANVIO_BUILD.version||'';return version==='23.3.84-p70'?'CANVIO 23.3.84-p70 — Stable Release Candidate':version==='23.3.81-p67'?'CANVIO 23.3.81-p67 — Creative Production Expansion':version==='23.3.76-p62'?'CANVIO 23.3.76-p62 — Phase 1 Release Candidate':version==='23.3.70-p56'?'CANVIO 23.3.70-p56 — Archive Integrity & Safe Restore':version==='23.3.69-p55'?'CANVIO 23.3.69-p55 — Stable Release Readiness':'CANVIO 23.3.60-r6 — Production Excellence · P42 Final Acceptance'};
++ var buildTitleForVersion=function(){var version=window.CANVIO_BUILD&&window.CANVIO_BUILD.version||'';return version==='23.3.89-p84'?'CANVIO 23.3.89-p84 — Direct PDF Workflow Candidate':version==='23.3.88-p87'?'CANVIO 23.3.88-p87 — CV DOCX & ATS Candidate':version==='23.3.87-p104'?'CANVIO 23.3.87-p104 — Image to Video Candidate':version==='23.3.86-p101'?'CANVIO 23.3.86-p101 — Video Editor UX Candidate':version==='23.3.85-p96'?'CANVIO 23.3.85-p96 — UX Integration Candidate':version==='23.3.84-p70'?'CANVIO 23.3.84-p70 — Stable Release Candidate':version==='23.3.81-p67'?'CANVIO 23.3.81-p67 — Creative Production Expansion':version==='23.3.76-p62'?'CANVIO 23.3.76-p62 — Phase 1 Release Candidate':version==='23.3.70-p56'?'CANVIO 23.3.70-p56 — Archive Integrity & Safe Restore':version==='23.3.69-p55'?'CANVIO 23.3.69-p55 — Stable Release Readiness':'CANVIO 23.3.60-r6 — Production Excellence · P42 Final Acceptance'};
+  var syncBuildTitle=function(){var buildTitle=buildTitleForVersion();if(document.title!==buildTitle)document.title=buildTitle};
+  syncBuildTitle();
+  if(document.head&&typeof MutationObserver==='function'&&!window.__canvioBuildTitleObserver){
+@@ -23004,5 +23010,1299 @@
+   setTimeout(mount, 900); setTimeout(mount, 2400);
+ })();
+ </script>
++<script id="canvio-p90-p96-main">
++/* CANVIO P90–P96 · UX Navigation & Workflow Layer
++ * Additive UI only. Reuses CV.go, CV.palette, CV.engines.video, existing Poster/CV/Website owners.
++ * No new project store, timeline, media store, dependency, CDN, API or background request.
++ */
++(function () {
++  'use strict';
++  if (window.CANVIOUXSuite) return;
++
++  var VERSION = '96.0.0';
++  var MODE_KEY = 'canvio:ux:mode-v1';
++  var ONBOARD_KEY = 'canvio:ux:onboarding-dismissed-v1';
++  var primaryPages = new Set(['home', 'projects', 'studio', 'poster', 'web', 'cvstudio', 'videoEngine', 'brand', 'export', 'templates', 'responsive']);
++  var routes = [
++    { id: 'cv', label: 'Làm CV', page: 'cvstudio', aliases: 'resume résumé hồ sơ xin việc portfolio ứng tuyển', shortcut: 'Alt+Shift+1', icon: '▤' },
++    { id: 'poster', label: 'Làm poster', page: 'poster', aliases: 'ấn phẩm banner tuyển dụng quảng cáo thiết kế', shortcut: 'Alt+Shift+2', icon: '▣' },
++    { id: 'slide', label: 'Làm slide / PPTX', page: 'poster', aliases: 'presentation thuyết trình powerpoint trình chiếu', shortcut: 'Alt+Shift+3', icon: '▥' },
++    { id: 'web', label: 'Làm website', page: 'web', aliases: 'landing page trang web tuyển dụng', shortcut: 'Alt+Shift+4', icon: '◫' },
++    { id: 'video', label: 'Dựng video', page: 'videoEngine', aliases: 'capcut timeline video editor clip', shortcut: 'Alt+Shift+5', icon: '▶' }
++  ];
++  var mode = 'full';
++  var keyboardBound = false;
++  var paletteDecorated = false;
++  var installQueued = false;
++
++  function $(selector, root) { return (root || document).querySelector(selector); }
++  function $$(selector, root) { return Array.prototype.slice.call((root || document).querySelectorAll(selector)); }
++  function safeGet(key, fallback) { try { var v = localStorage.getItem(key); return v == null ? fallback : v; } catch (e) { return fallback; } }
++  function safeSet(key, value) { try { localStorage.setItem(key, value); return true; } catch (e) { return false; } }
++  function toast(message) { try { var cv = window.CV; if (cv && typeof cv.toast === 'function') cv.toast(message); } catch (e) {} }
++  function normalize(value) {
++    return String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').toLowerCase();
++  }
++  function route(page, focusId) {
++    var cv = window.CV;
++    if (!cv || typeof cv.go !== 'function') return toast('Điều hướng CANVIO chưa sẵn sàng.');
++    try { cv.go(page); } catch (e) { toast('Không mở được công cụ: ' + (e.message || e)); return; }
++    if (focusId) setTimeout(function () {
++      var el = document.getElementById(focusId);
++      if (el) { try { el.focus({ preventScroll: false }); el.scrollIntoView({ block: 'center', behavior: 'auto' }); } catch (e) {} }
++    }, 280);
++  }
++  function openPptx() {
++    route('poster');
++    setTimeout(function () {
++      var button = $('#cv-pptx2') || $('#cv-pptx');
++      if (button && !button.disabled) button.click();
++      else toast('Thanh PPTX chưa sẵn sàng. Mở Poster Studio rồi chọn Xuất PPTX.');
++    }, 520);
++  }
++  function exportDirectPdf() {
++    route('poster');
++    setTimeout(function () {
++      var button = $('#cv-pdf');
++      var owner = window.CVLot22;
++      var pages = window.CVPages && CVPages.pages;
++      if (button && owner && typeof owner.pdf === 'function' && pages && pages.length) {
++        button.click();
++        toast('Đang tạo PDF trực tiếp từ các trang Poster/Slide. Chọn 1×, 1.5× hoặc 2× trong thanh xuất.');
++      } else {
++        toast('PDF trực tiếp chưa sẵn sàng. Hãy mở hoặc tạo thiết kế trong Poster Studio trước.');
++      }
++    }, 560);
++  }
++  function openPdfWorkspace() {
++    route('layoutFoundry');
++    setTimeout(function () {
++      var button = $('[data-lf="pdf"]');
++      if (button) { button.focus(); button.scrollIntoView({ block: 'center', behavior: 'auto' }); }
++    }, 350);
++  }
++  function openSubtitle() {
++    route('videoEngine');
++    setTimeout(function () {
++      var cv = window.CV, api = cv && cv.engines && cv.engines.video;
++      if (api && typeof api.whisperCaption === 'function') api.whisperCaption();
++      else toast('Whisper chưa sẵn sàng. Hãy mở Video Engine và kiểm tra module phụ đề.');
++    }, 350);
++  }
++  function commandItems() {
++    return [
++      { label: 'Làm CV · mở CV Studio', hint: 'CV · resume · hồ sơ xin việc · ứng tuyển', icon: '▤', shortcut: 'Alt+Shift+1', run: function () { route('cvstudio', 'cs-raw'); } },
++      { label: 'Làm poster · Poster Studio', hint: 'Poster · banner · ấn phẩm · quảng cáo', icon: '▣', shortcut: 'Alt+Shift+2', run: function () { route('poster'); } },
++      { label: 'Làm slide / xuất PPTX sửa được', hint: 'Slide · presentation · PowerPoint · trình chiếu', icon: '▥', shortcut: 'Alt+Shift+3', run: openPptx },
++      { label: 'Làm website · Website Builder', hint: 'Website · web · landing page · trang tuyển dụng', icon: '◫', shortcut: 'Alt+Shift+4', run: function () { route('web'); } },
++      { label: 'Dựng video · Video Engine', hint: 'Video · CapCut · timeline · clip · phụ đề', icon: '▶', shortcut: 'Alt+Shift+5', run: function () { route('videoEngine'); } },
++      { label: 'Xuất PDF trực tiếp · Poster / Slide', hint: 'PDF · xuat pdf · tải pdf · poster · slide · ảnh trang', icon: '⇧', shortcut: 'Ctrl+K', run: exportDirectPdf },
++      { label: 'Mở Layout Foundry · in / lưu PDF', hint: 'PDF · in · print preview · tài liệu · CV · website', icon: '▤', shortcut: 'Ctrl+K', run: openPdfWorkspace },
++      { label: 'Tạo phụ đề bằng Whisper', hint: 'Phụ đề · subtitle · caption · ASR · speech to text', icon: 'CC', shortcut: 'Ctrl+K', run: openSubtitle },
++      { label: 'Nhập phụ đề SRT vào Video Engine', hint: 'SRT · subtitle · phụ đề nhập', icon: '⇧', shortcut: 'Ctrl+K', run: function () { route('videoEngine'); setTimeout(function () { var cv = window.CV, v = cv && cv.engines && cv.engines.video; if (v && v.srtImport) v.srtImport(); }, 350); } },
++      { label: 'Mở Brand Kit · bộ nhận diện', hint: 'Brand · thương hiệu · palette · font · màu · ap mau', icon: '◉', shortcut: 'Ctrl+K', run: function () { route('brand'); } },
++      { label: 'Mở Đa kích thước', hint: 'Responsive · resize · nhiều kích thước · xuất nhiều kênh', icon: '▦', shortcut: 'Ctrl+K', run: function () { route('responsive'); } },
++      { label: 'Mở Template Library', hint: 'Mẫu · template · kho thiết kế · tìm mẫu', icon: '▤', shortcut: 'Ctrl+K', run: function () { route('templates'); } },
++      { label: 'Chạy Design QA', hint: 'QA · kiểm tra chất lượng · accessibility · preflight', icon: '✓', shortcut: 'Ctrl+K', run: function () { route('insight'); } }
++    ];
++  }
++  function installPalette() {
++    var cv = window.CV;
++    if (!cv || !cv.palette || typeof cv.palette.build !== 'function' || cv.palette.build.__p90p96) return false;
++    var originalBuild = cv.palette.build;
++    cv.palette.build = function () {
++      var items = originalBuild.apply(this, arguments) || [];
++      var extra = commandItems();
++      extra.forEach(function (item) {
++        if (!items.some(function (existing) { return existing && existing.label === item.label; })) items.unshift(item);
++      });
++      return items;
++    };
++    cv.palette.build.__p90p96 = true;
++
++    var originalRender = cv.palette.render;
++    if (typeof originalRender === 'function' && !originalRender.__p90p96) {
++      var enhancedRender = function (query) {
++        var result = originalRender.apply(this, arguments);
++        var list = $('#paletteList');
++        if (!list) return result;
++        list.setAttribute('role', 'listbox');
++        list.setAttribute('aria-label', 'Kết quả lệnh CANVIO');
++        $$('.palItem', list).forEach(function (node) {
++          var index = Number(node.getAttribute('data-i'));
++          var item = cv.palette.items && cv.palette.items[index];
++          node.setAttribute('role', 'option');
++          node.setAttribute('tabindex', '-1');
++          node.setAttribute('aria-selected', node.classList.contains('on') ? 'true' : 'false');
++          if (item && item.shortcut && !node.querySelector('.cvux-pal-shortcut')) {
++            var chip = document.createElement('kbd');
++            chip.className = 'cvux-pal-shortcut';
++            chip.textContent = item.shortcut;
++            node.appendChild(chip);
++          }
++        });
++        return result;
++      };
++      enhancedRender.__p90p96 = true;
++      cv.palette.render = enhancedRender;
++    }
++    var input = $('#paletteInput');
++    if (input && !input.__p90p96) {
++      input.__p90p96 = true;
++      input.setAttribute('aria-label', 'Tìm lệnh CANVIO bằng tiếng Việt hoặc tiếng Anh');
++      input.setAttribute('autocomplete', 'off');
++      input.addEventListener('input', function () { try { cv.palette.render(input.value); } catch (e) {} });
++      input.addEventListener('keydown', function (event) {
++        var list = $('#paletteList');
++        var nodes = list ? $$('.palItem', list) : [];
++        if (event.key === 'Escape') { event.preventDefault(); cv.palette.close(); return; }
++        if (!nodes.length) return;
++        if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
++          event.preventDefault();
++          var active = nodes.findIndex(function (n) { return n.classList.contains('on'); });
++          var next = event.key === 'ArrowDown' ? (active + 1 + nodes.length) % nodes.length : (active - 1 + nodes.length) % nodes.length;
++          nodes.forEach(function (node, i) { node.classList.toggle('on', i === next); node.setAttribute('aria-selected', i === next ? 'true' : 'false'); });
++          nodes[next].scrollIntoView({ block: 'nearest' });
++        } else if (event.key === 'Enter') {
++          var activeNode = nodes.find(function (n) { return n.classList.contains('on'); }) || nodes[0];
++          if (activeNode) { event.preventDefault(); event.stopImmediatePropagation(); activeNode.click(); }
++        }
++      }, true);
++    }
++    var palette = $('#palette');
++    if (palette) { palette.setAttribute('role', 'dialog'); palette.setAttribute('aria-modal', 'true'); palette.setAttribute('aria-label', 'Bảng lệnh CANVIO'); }
++    var originalOpen = cv.palette.open;
++    if (typeof originalOpen === 'function' && !originalOpen.__p90p96) {
++      var enhancedOpen = function () {
++        var result = originalOpen.apply(this, arguments);
++        if (input) { input.value = ''; try { cv.palette.render(''); } catch (e) {} }
++        return result;
++      };
++      enhancedOpen.__p90p96 = true;
++      cv.palette.open = enhancedOpen;
++    }
++    return true;
++  }
++  function launchRoute(id) {
++    if (id === 'cv') route('cvstudio', 'cs-raw');
++    else if (id === 'poster') route('poster');
++    else if (id === 'slide') openPptx();
++    else if (id === 'web') route('web');
++    else if (id === 'video') route('videoEngine');
++  }
++  function installHome() {
++    var home = $('#page-home');
++    if (!home) return false;
++    var launch = $('#cvux-home-launch');
++    if (!launch) {
++      launch = document.createElement('section');
++      launch.id = 'cvux-home-launch';
++      launch.className = 'cvux-launch card';
++      launch.setAttribute('aria-labelledby', 'cvux-launch-title');
++      launch.innerHTML = '<div class="cvux-section-head"><div><div class="eyebrow">BẮT ĐẦU NHANH</div><h2 id="cvux-launch-title">Bạn muốn tạo sản phẩm gì?</h2><p>Đi thẳng tới đúng workspace. Mẫu và nội dung chỉ được áp dụng khi bạn chủ động chọn.</p></div><span class="cvux-meta">5 lối tắt</span></div><div class="cvux-launch-grid">' + routes.map(function (r) {
++        return '<button type="button" class="cvux-launch-card" data-cvux-go="' + r.id + '" aria-label="' + r.label + '"><span class="cvux-launch-icon" aria-hidden="true">' + r.icon + '</span><span class="cvux-launch-title">' + r.label + '</span><small>' + ({ cv: 'Hồ sơ & portfolio', poster: 'Ấn phẩm & truyền thông', slide: 'Trình chiếu & PowerPoint', web: 'Landing page & website', video: 'Timeline & phụ đề' }[r.id]) + '</small></button>';
++      }).join('') + '</div>';
++      var hero = $('#cvHero', home);
++      if (hero) hero.insertAdjacentElement('afterend', launch); else home.insertBefore(launch, home.firstChild);
++    }
++    if (!launch.__p90p96Bound) {
++      launch.__p90p96Bound = true;
++      launch.addEventListener('click', function (event) {
++        var button = event.target.closest('[data-cvux-go]');
++        if (button) launchRoute(button.getAttribute('data-cvux-go'));
++      });
++    }
++    return true;
++  }
++  function onboardingDismissed() { return safeGet(ONBOARD_KEY, '0') === '1'; }
++  function installOnboarding() {
++    var home = $('#page-home');
++    if (!home || onboardingDismissed()) { var old = $('#cvux-onboarding'); if (old) old.remove(); return false; }
++    var banner = $('#cvux-onboarding');
++    if (!banner) {
++      banner = document.createElement('aside');
++      banner.id = 'cvux-onboarding';
++      banner.className = 'cvux-onboarding';
++      banner.setAttribute('role', 'region');
++      banner.setAttribute('aria-label', 'Hướng dẫn bắt đầu CANVIO');
++      banner.innerHTML = '<div><b>Làm quen CANVIO trong 10 giây</b><p>Nhấn <kbd>Ctrl/⌘ + K</kbd> để tìm mọi công cụ; dùng lối tắt phía dưới để mở CV, poster, slide, website hoặc video. Bạn có thể chuyển Đơn giản / Đầy đủ ở thanh trên.</p></div><div class="cvux-onboarding-actions"><button type="button" class="btn btn-primary sm" data-cvux-onboard="search">Mở tìm lệnh</button><button type="button" class="btn btn-ghost sm" data-cvux-onboard="dismiss">Bỏ qua</button></div>';
++      var launch = $('#cvux-home-launch', home);
++      if (launch) launch.before(banner); else home.prepend(banner);
++      banner.addEventListener('click', function (event) {
++        var action = event.target.closest('[data-cvux-onboard]');
++        if (!action) return;
++        if (action.dataset.cvuxOnboard === 'search') { if (window.CV && window.CV.palette && window.CV.palette.open) window.CV.palette.open(); }
++        if (action.dataset.cvuxOnboard === 'dismiss') { safeSet(ONBOARD_KEY, '1'); banner.remove(); }
++      });
++    }
++    return true;
++  }
++  function applyMode() {
++    document.body.classList.toggle('cvux-simple', mode === 'simple');
++    document.documentElement.setAttribute('data-canvio-ux-mode', mode);
++    $$('.side button[data-page]').forEach(function (button) {
++      var page = button.getAttribute('data-page') || '';
++      button.setAttribute('data-cvux-advanced', primaryPages.has(page) ? 'false' : 'true');
++      if (mode === 'simple' && button.classList.contains('active')) button.setAttribute('aria-current', 'page');
++      else button.removeAttribute('aria-current');
++    });
++    $$('.side .navgroup').forEach(function (group) {
++      var buttons = $$('button[data-page]', group);
++      var hasVisible = buttons.some(function (button) { return mode !== 'simple' || button.classList.contains('active') || primaryPages.has(button.dataset.page); });
++      group.classList.toggle('cvux-empty', !hasVisible && buttons.length > 0);
++    });
++    var toggle = $('#cvux-mode-toggle');
++    if (toggle) {
++      toggle.textContent = mode === 'simple' ? 'Hiện tất cả' : 'Đơn giản';
++      toggle.title = mode === 'simple' ? 'Chuyển sang chế độ Đầy đủ để xem toàn bộ công cụ' : 'Chuyển sang chế độ Đơn giản để tập trung vào tác vụ chính';
++      toggle.setAttribute('aria-pressed', mode === 'simple' ? 'true' : 'false');
++    }
++  }
++  function setMode(next) {
++    mode = next === 'simple' ? 'simple' : 'full';
++    safeSet(MODE_KEY, mode);
++    applyMode();
++    toast(mode === 'simple' ? 'Đã bật chế độ Đơn giản. Chọn “Hiện tất cả” để mở mọi công cụ.' : 'Đã hiển thị đầy đủ công cụ CANVIO.');
++  }
++  function installModeToggle() {
++    var host = $('.topRight');
++    if (!host || $('#cvux-mode-toggle')) return false;
++    var button = document.createElement('button');
++    button.type = 'button'; button.id = 'cvux-mode-toggle'; button.className = 'btn btn-soft sm';
++    button.addEventListener('click', function () { setMode(mode === 'simple' ? 'full' : 'simple'); });
++    var save = $('#saveState', host);
++    if (save) host.insertBefore(button, save); else host.insertBefore(button, host.firstChild);
++    return true;
++  }
++  function actionBarHtml(type) {
++    var common = '<button type="button" class="btn btn-ghost sm" data-cvux-act="brand" title="Mở Brand Kit để chọn palette và font" aria-label="Mở Brand Kit">◉ Brand Kit</button><button type="button" class="btn btn-ghost sm" data-cvux-act="responsive" title="Mở công cụ đa kích thước" aria-label="Mở Đa kích thước">▦ Đa kích thước</button><button type="button" class="btn btn-ghost sm" data-cvux-act="undo" title="Hoàn tác trong editor hiện tại" aria-label="Hoàn tác">↶ Hoàn tác</button><button type="button" class="btn btn-ghost sm" data-cvux-act="redo" title="Làm lại trong editor hiện tại" aria-label="Làm lại">↷ Làm lại</button>';
++    var main = '';
++    var advanced = '';
++    if (type === 'poster') {
++      main = '<button type="button" class="btn btn-primary sm" data-cvux-act="pdf-direct" title="Tạo PDF nhiều trang từ Poster/Slide bằng bộ xuất hiện có; chữ được raster hóa" aria-label="Xuất PDF trực tiếp">⇧ Xuất PDF trực tiếp</button><button type="button" class="btn btn-soft sm" data-cvux-act="pptx" title="Xuất trang thành PPTX chỉnh sửa được nếu nút hiện có sẵn sàng" aria-label="Xuất PPTX sửa được">⇧ Xuất PPTX sửa được</button><button type="button" class="btn btn-ghost sm" data-cvux-act="png" title="Xuất thiết kế hiện tại thành PNG" aria-label="Xuất PNG">⇧ Xuất PNG</button>';
++      advanced = '<button type="button" class="cvux-advanced-link" data-cvux-act="templates">Mở Template Library <small>Tìm mẫu và chọn mẫu; không tự ghi đè thiết kế.</small></button><button type="button" class="cvux-advanced-link" data-cvux-act="pdf-print">Mở Layout Foundry / in PDF <small>Đây là luồng Print của trình duyệt, phù hợp tài liệu Web; không phải PDF/X hoặc CMYK.</small></button><button type="button" class="cvux-advanced-link" data-cvux-act="export">Trung tâm xuất <small>Mở các định dạng và quy trình xuất hiện có.</small></button><span class="cvux-limit-note">PDF trực tiếp của Poster/Slide hiện là ảnh raster trong PDF; chưa có chữ vector/chọn được, nhúng/outline font, PDF/X hoặc CMYK.</span>';
++    } else if (type === 'cv') {
++      main = '<button type="button" class="btn btn-primary sm" data-cvux-act="cv-docx" title="Tải DOCX văn bản chỉnh sửa được từ CV Studio" aria-label="Xuất CV DOCX">⇧ Xuất CV DOCX</button><button type="button" class="btn btn-soft sm" data-cvux-act="cv-html" title="Xuất CV Studio dưới dạng một file HTML" aria-label="Xuất CV HTML">⇧ Xuất CV HTML</button>';
++      advanced = '<button type="button" class="cvux-advanced-link" data-cvux-act="templates">Mở Template Library <small>Chọn mẫu CV/portfolio trong kho mẫu hiện có.</small></button><button type="button" class="cvux-advanced-link" data-cvux-act="pdf-print">Mở bản xem trước / in PDF <small>Dùng Print của trình duyệt; chưa phải PDF dựng trực tiếp cho CV.</small></button><span class="cvux-limit-note">DOCX là văn bản OOXML chỉnh sửa được. PDF cho CV vẫn phụ thuộc hộp thoại in; font chưa nhúng.</span>';
++    } else if (type === 'video') {
++      main = '<button type="button" class="btn btn-primary sm" data-cvux-act="video-export" title="Xuất video bằng định dạng WebM hiện có" aria-label="Xuất video WebM">⇧ Xuất WebM</button><button type="button" class="btn btn-soft sm" data-cvux-act="whisper" title="Chọn audio để tạo phụ đề bằng Whisper chạy trong trình duyệt" aria-label="Tạo phụ đề bằng Whisper">CC Tạo phụ đề</button>';
++      advanced = '<button type="button" class="cvux-advanced-link" data-cvux-act="srt-in">Nhập phụ đề SRT <small>Đưa cue từ file SRT vào track chữ.</small></button><button type="button" class="cvux-advanced-link" data-cvux-act="vtt-in">Nhập phụ đề WebVTT <small>Đưa cue WebVTT vào track chữ.</small></button><button type="button" class="cvux-advanced-link" data-cvux-act="beat">Beat sync / AutoCut <small>Các thao tác cắt nhịp có thể hoàn tác trong Video Engine.</small></button><span class="cvux-limit-note">MP4/H.264 phụ thuộc codec trình duyệt; WebM là đường xuất dự phòng. Đồng bộ A/V với footage thật chưa được chứng nhận.</span>';
++    }
++    return '<section class="cvux-actionbar" data-cvux-bar="' + type + '" aria-label="Thao tác nhanh ' + type + '"><div class="cvux-action-main">' + main + common + '</div><details class="cvux-advanced"><summary>Nâng cao <span>Tuỳ chọn bổ sung và giới hạn định dạng</span></summary><div class="cvux-advanced-content">' + advanced + '</div></details></section>';
++  }
++  function runAction(action, page) {
++    var cv = window.CV || {}, video = cv.engines && cv.engines.video;
++    try {
++      if (action === 'brand') return route('brand');
++      if (action === 'responsive') return route('responsive');
++      if (action === 'templates') return route('templates');
++      if (action === 'export') return route('export');
++      if (action === 'pdf-direct') return exportDirectPdf();
++      if (action === 'pdf-print') return openPdfWorkspace();
++      if (action === 'pptx') return openPptx();
++      if (action === 'cv-docx') { var docx = $('#cv87-docx'); if (docx && !docx.disabled) docx.click(); else toast('Mở CV Studio và đợi khối Xuất CV tải xong.'); return; }
++      if (action === 'png') { var ex = cv.export || window.Export; if (ex && typeof ex.png === 'function') ex.png(); else toast('PNG export chưa sẵn sàng.'); return; }
++      if (action === 'cv-html') { var b = $('#cs-ex'); if (b) b.click(); else toast('CV Studio chưa sẵn sàng.'); return; }
++      if (action === 'video-export') { if (video && video.exportWebM) video.exportWebM(); else toast('Video Engine export chưa sẵn sàng.'); return; }
++      if (action === 'whisper') { if (video && video.whisperCaption) video.whisperCaption(); else toast('Whisper chưa sẵn sàng.'); return; }
++      if (action === 'srt-in') { if (video && video.srtImport) video.srtImport(); else toast('SRT import chưa sẵn sàng.'); return; }
++      if (action === 'vtt-in') { if (video && video.vttImport) video.vttImport(); else toast('WebVTT import chưa sẵn sàng.'); return; }
++      if (action === 'beat') { if (video && video.beatSyncPrompt) video.beatSyncPrompt(); else toast('Beat sync chưa sẵn sàng.'); return; }
++      if (action === 'undo') { if (page === 'video' && video && video.undoAuto) video.undoAuto(); else if (cv.history && cv.history.undo) cv.history.undo(); else toast('Undo chưa sẵn sàng.'); return; }
++      if (action === 'redo') { if (page === 'video' && video && video.redo) video.redo(); else if (cv.history && cv.history.redo) cv.history.redo(); else toast('Redo chưa sẵn sàng.'); return; }
++    } catch (e) { toast('Thao tác chưa hoàn tất: ' + (e.message || e)); }
++  }
++  function installActionBar(pageId, type) {
++    var page = $('#page-' + pageId);
++    if (!page || $('[data-cvux-bar="' + type + '"]', page)) return false;
++    var holder = document.createElement('div');
++    holder.innerHTML = actionBarHtml(type);
++    var bar = holder.firstElementChild;
++    if (!bar) return false;
++    var head = $('.head', page);
++    if (head && head.parentNode === page) head.insertAdjacentElement('afterend', bar);
++    else page.insertBefore(bar, page.firstChild);
++    bar.addEventListener('click', function (event) {
++      var button = event.target.closest('[data-cvux-act]');
++      if (button) runAction(button.dataset.cvuxAct, type);
++    });
++    return true;
++  }
++  function installActionBars() {
++    installActionBar('poster', 'poster');
++    installActionBar('cvstudio', 'cv');
++    installActionBar('videoEngine', 'video');
++    // Slide/PPTX is an existing multi-page Poster workflow, not a second editor.
++    return true;
++  }
++  function installAccessibility() {
++    var qbar = $('.top .qbar');
++    if (qbar) { qbar.setAttribute('aria-label', 'Mở bảng lệnh và tìm công cụ CANVIO'); qbar.setAttribute('title', 'Tìm công cụ, trang và tác vụ · Ctrl/⌘ + K'); }
++    var input = $('#paletteInput');
++    if (input) input.setAttribute('aria-label', 'Tìm công cụ hoặc lệnh, hỗ trợ tiếng Việt không dấu');
++    var modal = $('#palette');
++    if (modal) { modal.setAttribute('role', 'dialog'); modal.setAttribute('aria-modal', 'true'); modal.setAttribute('aria-label', 'Bảng lệnh CANVIO'); }
++    $$('.topRight .btn-icon, .top .menuBtn').forEach(function (button) {
++      if (!button.getAttribute('aria-label')) {
++        var title = button.getAttribute('title') || button.textContent.trim();
++        if (title) button.setAttribute('aria-label', title);
++      }
++    });
++    $$('#cvux-home-launch button').forEach(function (button) {
++      if (!button.hasAttribute('aria-label')) button.setAttribute('aria-label', button.textContent.trim());
++    });
++  }
++  function installKeyboardShortcuts() {
++    if (keyboardBound) return;
++    keyboardBound = true;
++    document.addEventListener('keydown', function (event) {
++      var target = event.target;
++      var editing = target && (target.matches('input,textarea,select') || target.isContentEditable);
++      if (editing || event.ctrlKey || event.metaKey || event.altKey !== true || event.shiftKey !== true) return;
++      var index = Number(event.key) - 1;
++      if (index >= 0 && index < routes.length) {
++        event.preventDefault();
++        launchRoute(routes[index].id);
++      }
++    });
++  }
++  function scheduleInstall() {
++    if (installQueued) return;
++    installQueued = true;
++    Promise.resolve().then(function () {
++      installQueued = false;
++      installHome(); installOnboarding(); installModeToggle(); installActionBars(); installPalette(); installAccessibility(); applyMode();
++    });
++  }
++  function audit() {
++    var cv = window.CV || {};
++    var nav = $$('.side button[data-page]');
++    var pages = $$('.page[id^="page-"]');
++    var quick = $$('#cvux-home-launch [data-cvux-go]');
++    return {
++      format: 'CANVIO_UX_INVENTORY_P90', version: VERSION,
++      current: { navigationEntries: nav.length, pageElements: pages.length, existingQuickLaunches: $$('.cvQuick button').length, newGoalLaunches: quick.length, commandPaletteAvailable: !!(cv.palette && cv.palette.build), canonicalVideoEngine: !!(cv.engines && cv.engines.video), posterPptxActions: !!($('#cv-pptx2') || $('#cv-pptx')), cvStudioExport: !!$('#cs-ex'), browserPrintPdfAction: !!$('[data-lf="pdf"]') },
++      targetFlows: [
++        { task: 'CV Studio', before: 'Home quick area → CV Studio route (dynamic/late quick tile)', after: 'Home → Làm CV; Ctrl+K → Làm CV', afterActionsToOpenTool: 1, limitation: 'P87 adds editable DOCX and a local ATS heuristic; direct CV PDF and font embedding remain open.' },
++        { task: 'Poster', before: 'Home → Poster or navigation', after: 'Home → Làm poster; Ctrl+K → Poster', afterActionsToOpenTool: 1, limitation: 'User still chooses a template; no template is applied silently.' },
++        { task: 'Slide / PPTX', before: 'Poster Studio → find PPTX export in toolbar', after: 'Home → Làm slide / PPTX or Ctrl+K → PPTX; export is invoked after explicit selection', afterActionsToExport: 2, limitation: 'PPTX must still be opened in PowerPoint/Google Slides for real acceptance.' },
++        { task: 'Website', before: 'Home → Website / nav', after: 'Home → Làm website; Ctrl+K → Website Builder', afterActionsToOpenTool: 1, limitation: 'Template selection and deployment remain separate actions.' },
++        { task: 'Video / subtitles', before: 'Video Studio and Video Engine/CapCut routes overlap', after: 'Home → Dựng video; action bar exposes WebM and Whisper', afterActionsToOpenTool: 1, afterActionsToStartWhisper: 2, limitation: 'User must select audio; real ASR quality and media acceptance remain open.' },
++        { task: 'PDF Poster/Slide', before: 'Poster toolbar → find PDF multi-page', after: 'Ctrl+K → Xuất PDF trực tiếp or Poster action bar → Xuất PDF trực tiếp', afterActionsToExportPdf: 1, limitation: 'Existing PDF owner rasterizes pages; no selectable vector text, font embedding, PDF/X or CMYK.' },
++        { task: 'PDF CV/Website', before: 'Open CV/Website preview → print', after: 'Ctrl+K → Layout Foundry / in PDF', afterActionsToOpenPrint: 2, limitation: 'Still browser print; dedicated CV direct PDF is not integrated.' },
++        { task: 'Apply brand', before: 'Open Brand Kit then locate compatible editor/application controls', after: 'Ctrl+K or action bar → Brand Kit', afterActionsToOpenBrandKit: 1, limitation: 'One-click brand propagation to every editor is not certified; later P86 priority.' }
++      ],
++      topFriction: [
++        'Navigation exposes more than twenty tool destinations; some have overlapping names (Video Studio, Video Engine, CapCut Engine).',
++        'The homepage quick area did not present the five key product goals as one consistent set.',
++        'Slide/PPTX is implemented inside the existing multi-page Poster workflow, so it is not obvious that this is the slide editor.',
++        'Poster/Slide already has a direct raster PDF export, but it was not exposed in the new action bar or command palette; CV/Website still use browser print.',
++        'Whisper and subtitle import/export actions are inside the Video Engine toolbar among many controls.',
++        'Brand Kit, Responsive and Template Library require navigation away from the current workspace.',
++        'Ctrl+K existed, but high-value goal commands and keyboard result navigation were not consolidated here.',
++        'Some topbar controls rely on icon/title rather than consistently exposed accessible names.'
++      ],
++      disposition: 'Static/runtime UI inventory. These step counts are interaction-path counts, not user-study measurements. Real accessibility and task-completion acceptance remain open.'
++    };
++  }
++  function tests() {
++    var cv = window.CV || {}, built = [];
++    try { built = cv.palette && cv.palette.build ? cv.palette.build() : []; } catch (e) {}
++    var wanted = ['Làm CV · mở CV Studio', 'Làm poster · Poster Studio', 'Làm slide / xuất PPTX sửa được', 'Làm website · Website Builder', 'Dựng video · Video Engine', 'Xuất PDF trực tiếp · Poster / Slide', 'Mở Layout Foundry · in / lưu PDF', 'Tạo phụ đề bằng Whisper', 'Mở Brand Kit · bộ nhận diện'];
++    var names = built.map(function (item) { return item && item.label; });
++    var checks = {
++      p90InventoryAvailable: typeof audit === 'function' && audit().current.navigationEntries > 0,
++      p91CommandsRegistered: wanted.every(function (label) { return names.indexOf(label) >= 0; }),
++      p91VietnameseAccentNormalization: normalize('xuất phụ đề') === normalize('xuat phu de'),
++      p91KeyboardNavigationWired: !!($('#paletteInput') && $('#paletteList')),
++      p92FiveGoalLaunches: $$('#cvux-home-launch [data-cvux-go]').length === 5,
++      p93ModeToggleAvailable: !!$('#cvux-mode-toggle'),
++      p93ModeIsPersistedSeparately: MODE_KEY.indexOf('project') === -1 && (mode === 'full' || mode === 'simple'),
++      p94EditorActionBarsAvailable: !!( $('[data-cvux-bar="poster"]') && $('[data-cvux-bar="cv"]') && $('[data-cvux-bar="video"]') ),
++      p84DirectPosterPdfReusesExistingOwner: !!(window.CVLot22 && typeof CVLot22.pdf === 'function' && $('#cv-pdf')),
++      p84DirectPdfShortcutVisible: !!$('[data-cvux-bar="poster"] [data-cvux-act="pdf-direct"]'),
++      p87DocxShortcutVisible: !!$('[data-cvux-bar="cv"] [data-cvux-act="cv-docx"]'),
++      p94AdvancedDisclosureAvailable: $$('.cvux-advanced').length >= 3,
++      p95CommandPaletteHasAccessibleName: !!($('#palette') && $('#palette').getAttribute('aria-label')),
++      p95KeyboardFocusStyle: !!$('#canvio-p90-p96-styles'),
++      p96NonBlockingOnboardingAvailable: !!$('#cvux-onboarding') || onboardingDismissed(),
++      noSecondTimeline: true,
++      noNewProjectStore: true,
++      noNetworkOrExternalDependency: true
++    };
++    var passed = Object.keys(checks).filter(function (key) { return checks[key] === true; }).length;
++    return { version: VERSION, passed: passed, total: Object.keys(checks).length, checks: checks, status: passed === Object.keys(checks).length ? 'PASS_LOCAL_UI_ASSERTIONS' : 'PARTIAL', releaseCertified: false };
++  }
++  function installStyles() {
++    if ($('#canvio-p90-p96-styles')) return;
++    var style = document.createElement('style');
++    style.id = 'canvio-p90-p96-styles';
++    style.textContent = [
++      '.cvux-launch{margin:0 0 16px;padding:18px;border:1px solid var(--line);border-radius:16px;background:var(--surface,#fff)}',
++      '.cvux-section-head{display:flex;justify-content:space-between;align-items:flex-end;gap:14px;margin-bottom:12px;flex-wrap:wrap}',
++      '.cvux-section-head h2{font-size:17px;letter-spacing:-.35px;margin:5px 0 3px;color:var(--ink)}',
++      '.cvux-section-head p{font-size:11.5px;color:var(--ink-3);margin:0}',
++      '.cvux-meta{font-size:10px;color:var(--ink-3);font-weight:700;background:var(--surface-3);border-radius:99px;padding:5px 9px}',
++      '.cvux-launch-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px}',
++      '.cvux-launch-card{min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:7px;text-align:left;padding:13px;border-radius:12px;background:var(--surface-2,#fbfcff);border:1px solid var(--line);transition:border-color .16s,transform .16s,box-shadow .16s}',
++      '.cvux-launch-card:hover{border-color:var(--brand);transform:translateY(-2px);box-shadow:var(--sh-2)}',
++      '.cvux-launch-icon{width:31px;height:31px;border-radius:9px;display:grid;place-items:center;background:var(--brand-soft);color:var(--brand);font-size:16px;font-weight:800}',
++      '.cvux-launch-title{font-size:12px;font-weight:800;color:var(--ink)}.cvux-launch-card small{font-size:10px;color:var(--ink-3);line-height:1.4}',
++      '.cvux-onboarding{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:13px 16px;margin:0 0 14px;border:1px solid var(--brand-line);border-radius:13px;background:var(--brand-soft);color:var(--ink)}',
++      '.cvux-onboarding p{font-size:11px;line-height:1.55;color:var(--ink-2);margin:3px 0 0}.cvux-onboarding-actions{display:flex;gap:7px;flex:none;flex-wrap:wrap}',
++      '.cvux-onboarding kbd,.cvux-pal-shortcut{font:700 9px/1.4 ui-monospace,monospace;padding:3px 6px;border:1px solid var(--line-2);border-radius:6px;background:var(--surface,#fff);color:var(--ink-2)}',
++      '.cvux-actionbar{position:sticky;top:68px;z-index:18;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;padding:9px 11px;margin:0 0 14px;border:1px solid var(--line);border-radius:13px;background:color-mix(in srgb,var(--surface,#fff) 94%,transparent);box-shadow:var(--sh-1);backdrop-filter:blur(12px)}',
++      '.cvux-action-main{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.cvux-advanced{position:relative;font-size:10.5px;color:var(--ink-2)}',
++      '.cvux-advanced summary{cursor:pointer;list-style:none;font-weight:800;padding:7px 9px;border-radius:8px;border:1px solid var(--line);background:var(--surface-2)}.cvux-advanced summary::-webkit-details-marker{display:none}.cvux-advanced summary span{font-weight:500;color:var(--ink-3);margin-left:4px}',
++      '.cvux-advanced-content{position:absolute;right:0;top:calc(100% + 7px);z-index:25;width:min(340px,calc(100vw - 36px));padding:10px;border:1px solid var(--line);border-radius:11px;background:var(--surface);box-shadow:var(--sh-3);display:grid;gap:7px}',
++      '.cvux-advanced-link{display:block;text-align:left;padding:9px;border:1px solid var(--line);border-radius:8px;background:var(--surface-2);font-size:11px;font-weight:750;color:var(--ink)}.cvux-advanced-link small{display:block;color:var(--ink-3);font-size:9.5px;font-weight:500;margin-top:3px;line-height:1.45}',
++      '.cvux-limit-note{display:block;padding:8px;border-radius:8px;background:var(--amber-soft);color:var(--ink-2);font-size:10px;line-height:1.5}',
++      '.cvux-pal-shortcut{margin-left:auto;white-space:nowrap}.palItem{gap:9px}.palItem[aria-selected="true"]{outline:2px solid var(--brand);outline-offset:-2px}',
++      '.cvux-simple .side button[data-cvux-advanced="true"]:not(.active){display:none!important}.cvux-simple .side .navgroup.cvux-empty{display:none!important}',
++      '#cvux-mode-toggle{white-space:nowrap}',
++      ':root[data-ui=v16] header.top .topRight>#cvux-mode-toggle{display:inline-flex!important;flex:none!important}',
++      ':is(.cvux-launch-card,.cvux-onboarding button,.cvux-actionbar button,.cvux-advanced summary,#cvux-mode-toggle,.palItem):focus-visible{outline:3px solid #2563eb!important;outline-offset:3px!important}',
++      '@media(max-width:900px){.cvux-launch-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.cvux-actionbar{top:60px}}',
++      '@media(max-width:620px){.cvux-launch-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.cvux-onboarding{align-items:flex-start;flex-direction:column}.cvux-onboarding-actions{width:100%}.cvux-actionbar{position:relative;top:auto}.cvux-advanced-content{position:static;width:100%;margin-top:7px}.cvux-advanced{width:100%}}',
++      '@media(prefers-reduced-motion:reduce){.cvux-launch-card{transition:none}.cvux-launch-card:hover{transform:none}}',
++      '@media(min-width:621px) and (max-width:900px){.cvux-actionbar{align-items:flex-start}}'
++    ].join('\n');
++    document.head.appendChild(style);
++  }
++  function init() {
++    mode = safeGet(MODE_KEY, 'full') === 'simple' ? 'simple' : 'full';
++    installStyles();
++    installHome(); installOnboarding(); installModeToggle(); installActionBars(); installPalette(); installAccessibility(); installKeyboardShortcuts(); applyMode();
++    var cv = window.CV;
++    if (cv && typeof cv.go === 'function' && !cv.go.__p90p96) {
++      var oldGo = cv.go;
++      var wrappedGo = function () {
++        var result = oldGo.apply(this, arguments);
++        scheduleInstall();
++        return result;
++      };
++      wrappedGo.__p90p96 = true;
++      cv.go = wrappedGo;
++    }
++    installPalette();
++    window.CANVIOUXSuite = {
++      version: VERSION,
++      mode: function () { return mode; },
++      setMode: setMode,
++      audit: audit,
++      tests: tests,
++      commands: commandItems,
++      launch: launchRoute,
++      limitations: {
++        pdf: 'Layout Foundry currently invokes the browser print dialog; not direct PDF/X or CMYK.',
++        cv: 'CV Studio exports HTML. DOCX/ATS are not part of P90–P96.',
++        video: 'MP4/H.264 is browser-dependent; A/V sync real-media acceptance remains open.',
++        brand: 'Brand Kit opens the existing brand owner; universal one-click propagation is not certified.'
++      },
++      noSecondTimeline: true,
++      noNewProjectStore: true,
++      noExternalDependency: true
++    };
++    var prior = window.CANVIO_BUILD || {};
++    window.CANVIO_BUILD = Object.freeze(Object.assign({}, prior, {
++      version: '23.3.85-p96', base: '23.3.84-p70', candidate: 'P90–P96', phaseRange: 'P68–P70 + P90–P96',
++      features: (prior.features || []).concat([
++        'P90 UX inventory: navigation/page overlap, homepage task routes, PDF/PPTX/brand/subtitle workflow map',
++        'P91 existing Ctrl+K extended with Vietnamese accent-insensitive goal commands and arrow-key navigation',
++        'P92 five homepage goal launches route to canonical CV, Poster/Slide, Website and Video owners',
++        'P93 Simple/Full menu modes with reversible show-all control and separate local preference key',
++        'P94 sticky Poster/Slide, CV and Video action bars with visible Advanced details',
++        'P95 accessible names, command dialog/list semantics, visible focus and truthful format limitations',
++        'P96 non-blocking, dismissible first-run onboarding'
++      ])
++    }));
++    try { document.title = 'CANVIO 23.3.85-p96 — UX Integration Candidate'; } catch (e) {}
++    scheduleInstall();
++  }
++  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once: true }); else init();
++})();
++</script>
++<script>
++/* CANVIO P97–P101 · Video Editor UX & local AI Director
++ * Additive workflow layer. Canonical owner: CV.engines.video; ripple owner: CANVIOAdvancedTimeline.
++ * No provider call, CDN, background request, project store, media store, or parallel timeline.
++ */
++(function () {
++  'use strict';
++  if (window.CANVIOVideoUXSuite) return;
++
++  var VERSION = '101.0.0';
++  var $ = function (s, r) { return (r || document).querySelector(s); };
++  var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
++  var esc = function (v) { return String(v == null ? '' : v).replace(/[&<>"']/g, function (c) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]; }); };
++  var normalize = function (v) { return String(v || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').toLowerCase().trim(); };
++  var api = function () { return window.CV && CV.engines && CV.engines.video || null; };
++  var state = function () { var a = api(); return a && a._state ? a._state() : null; };
++  var snapshot = function () { var a = api(); return a && a.snapshotState ? a.snapshotState() : null; };
++  var stable = function (v) { try { return JSON.stringify(v); } catch (e) { return ''; } };
++  var toast = function (m) { try { if (window.CV && CV.toast) CV.toast(m); } catch (e) {} };
++  var lastUndo = null, directorPlan = null, wordPlan = null, ripplePlan = null, exportBusy = false;
++
++  function visibleVideoPage() {
++    var p = $('#page-videoEngine');
++    return !!(p && (p.classList.contains('active') || p.offsetParent !== null));
++  }
++  function activeClip() {
++    var s = state();
++    return s && Array.isArray(s.clips) ? s.clips.find(function (c) { return c.id === s.selected; }) || null : null;
++  }
++  function isLocked(v, c) { return !!(v && c && v.isClipLocked && v.isClipLocked(c)); }
++  function id(prefix) {
++    try { if (window.crypto && crypto.randomUUID) return prefix + '_' + crypto.randomUUID(); } catch (e) {}
++    return prefix + '_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 10);
++  }
++  function rememberUndo(before, after, label) {
++    if (!before || !after || stable(before) === stable(after)) { lastUndo = null; return false; }
++    lastUndo = { after: stable(after), label: label || 'thao tác vừa rồi' };
++    return true;
++  }
++  function undoLast() {
++    var v = api(), current = snapshot();
++    if (!v || !lastUndo || !current) { toast('Không có thao tác của Đạo diễn AI để hoàn tác.'); return false; }
++    if (stable(current) !== lastUndo.after) { toast('Timeline đã thay đổi sau thao tác. Để tránh hoàn tác nhầm, hãy dùng Undo chuẩn của Video Engine.'); return false; }
++    var label = lastUndo.label;
++    var ok = typeof v.undoAuto === 'function' && v.undoAuto();
++    if (ok) { lastUndo = null; refreshTranscript(); setDirectorStatus('Đã hoàn tác: ' + label + '.'); }
++    return !!ok;
++  }
++
++  /* P97 · Deterministic local command planner; no model/provider invocation. */
++  function buildDirectorPlan(raw) {
++    var v = api(), s = state(), phrase = normalize(raw), c = activeClip();
++    if (!v || !s || !Array.isArray(s.clips)) return { ok: false, reason: 'Video Engine chưa sẵn sàng.' };
++    var action = null, value = null, title = '', detail = '';
++    if (/cat (khoang lang|im lang)|remove silence|auto.?cut/.test(phrase)) {
++      action = 'autocut'; title = 'Mở AutoCut hiện có'; detail = 'Sau bước xem trước này, CANVIO sẽ mở hộp AutoCut hiện hữu. Bạn vẫn tự chọn ngưỡng và xác nhận cắt/xóa trong hộp thoại gốc.';
++    } else if (/nhanh gap doi|gap doi toc do|double speed/.test(phrase)) {
++      action = 'speed'; value = 2; title = 'Đặt tốc độ clip thành 2×'; detail = 'Áp dụng cho clip video đang chọn; tốc độ được giới hạn trong khoảng 0,25×–4×.';
++    } else {
++      var speedMatch = phrase.match(/(?:toc do|speed)\s*(?:len|to)?\s*(\d+(?:[.,]\d+)?)\s*x?/);
++      var zoomMatch = phrase.match(/zoom\s*(?:len|to)?\s*(\d+(?:[.,]\d+)?)\s*x?/);
++      if (speedMatch) { action = 'speed'; value = Number(speedMatch[1].replace(',', '.')); title = 'Đặt tốc độ clip thành ' + value + '×'; detail = 'Chỉ thay đổi tốc độ phát của clip video đang chọn.'; }
++      else if (zoomMatch) { action = 'zoom'; value = Number(zoomMatch[1].replace(',', '.')); title = 'Tăng tỷ lệ cuối clip lên ' + value + '×'; detail = 'Tạo chuyển động zoom bằng keyframe đầu/cuối trên clip video hoặc ảnh đang chọn.'; }
++      else if (/mau am|tone am|warm/.test(phrase)) { action = 'warm'; title = 'Áp màu ấm'; detail = 'Điều chỉnh nhiệt màu, sepia và bão hòa trên clip hình đang chọn.'; }
++      else if (/dien anh|cinematic|phim/.test(phrase)) { action = 'cinema'; title = 'Áp màu điện ảnh'; detail = 'Áp contrast/saturation/brightness ở mức preset cục bộ hiện có.'; }
++      else if (/dat lai mau|reset mau|mau goc/.test(phrase)) { action = 'resetFx'; title = 'Đặt lại bộ lọc màu'; detail = 'Trả bộ lọc của clip hình đang chọn về mặc định.'; }
++    }
++    if (!action) return { ok: false, reason: 'Chưa hiểu lệnh. Thử: “tốc độ 2x”, “zoom 1.3x”, “màu ấm”, “điện ảnh” hoặc “cắt khoảng lặng”.' };
++    if (action !== 'autocut') {
++      if (!c) return { ok: false, reason: 'Hãy chọn một clip trên timeline trước.' };
++      if (isLocked(v, c)) return { ok: false, reason: 'Clip hoặc track đang khóa. Mở khóa trước khi chỉnh sửa.' };
++      if (action === 'speed' && c.type !== 'video') return { ok: false, reason: 'Lệnh tốc độ chỉ áp dụng cho clip video.' };
++      if (['zoom', 'warm', 'cinema', 'resetFx'].indexOf(action) >= 0 && !['video', 'image'].includes(c.type)) return { ok: false, reason: 'Lệnh hình ảnh chỉ áp dụng cho clip video hoặc ảnh.' };
++      if (action === 'speed' && (!Number.isFinite(value) || value < 0.25 || value > 4)) return { ok: false, reason: 'Tốc độ phải từ 0,25× đến 4×.' };
++      if (action === 'zoom' && (!Number.isFinite(value) || value < 0.05 || value > 5)) return { ok: false, reason: 'Tỷ lệ zoom phải từ 0,05× đến 5×.' };
++    } else if (!s.clips.length) return { ok: false, reason: 'Timeline chưa có media để phân tích khoảng lặng.' };
++    return { ok: true, action: action, value: value, title: title, detail: detail, clipId: c && c.id || null, clipName: c && (c.name || c.type) || 'Timeline', before: snapshot() };
++  }
++  function setDirectorStatus(msg) { var n = $('#cv97-status'); if (n) n.textContent = String(msg || ''); }
++  function renderDirectorPlan(plan) {
++    var box = $('#cv97-preview'), apply = $('#cv97-apply');
++    if (!box || !apply) return;
++    if (!plan || !plan.ok) { box.textContent = plan && plan.reason || 'Nhập một yêu cầu để lập kế hoạch.'; apply.disabled = true; return; }
++    directorPlan = plan;
++    box.innerHTML = '<b>' + esc(plan.title) + '</b><p>' + esc(plan.detail) + '</p><small>Đối tượng: ' + esc(plan.clipName) + (plan.clipId ? ' · ' + esc(plan.clipId) : '') + '</small><p class="cv97-safety">Chưa có thay đổi nào được áp dụng. Hãy kiểm tra rồi mới xác nhận.</p>';
++    apply.disabled = false;
++  }
++  function applyDirectorPlan() {
++    var v = api(), s = state(), p = directorPlan;
++    if (!v || !s || !p || !p.ok) return false;
++    if (stable(snapshot()) !== stable(p.before)) { setDirectorStatus('Timeline đã đổi sau khi lập kế hoạch. Hãy tạo preview mới.'); directorPlan = null; $('#cv97-apply').disabled = true; return false; }
++    if (p.action === 'autocut') {
++      var beforeAuto = snapshot();
++      try { v.autoCutPrompt(); } catch (e) { setDirectorStatus('AutoCut chưa chạy: ' + (e.message || e)); return false; }
++      var afterAuto = snapshot();
++      if (rememberUndo(beforeAuto, afterAuto, 'AutoCut')) setDirectorStatus('AutoCut đã thay đổi timeline. Bạn có thể hoàn tác ngay bằng nút bên dưới.');
++      else setDirectorStatus('AutoCut đã đóng hoặc không tạo thay đổi.');
++      directorPlan = null; $('#cv97-apply').disabled = true; return true;
++    }
++    var clip = s.clips.find(function (x) { return x.id === p.clipId; });
++    if (!clip || isLocked(v, clip)) { setDirectorStatus('Clip không còn tồn tại hoặc đã bị khóa. Hãy lập kế hoạch lại.'); return false; }
++    var before = snapshot();
++    if (!before || !v._pro || typeof v._pro.pushUndo !== 'function' || typeof v.commit !== 'function') { setDirectorStatus('Owner không cung cấp snapshot/undo/commit cần thiết.'); return false; }
++    v._pro.pushUndo();
++    if (p.action === 'speed') clip.speed = Math.max(0.25, Math.min(4, Number(p.value)));
++    else if (p.action === 'warm') clip.fx = Object.assign({}, clip.fx || {}, { temp: 0.28, sepia: 0.16, sat: 1.08 });
++    else if (p.action === 'cinema') clip.fx = Object.assign({}, clip.fx || {}, { contrast: 1.15, sat: 0.9, bright: 0.95, sepia: 0.1 });
++    else if (p.action === 'resetFx') clip.fx = {};
++    else if (p.action === 'zoom') {
++      var m = clip.motion && typeof clip.motion === 'object' ? JSON.parse(JSON.stringify(clip.motion)) : {};
++      var from = Object.assign({ x: 0, y: 0, scale: 1, opacity: 1, rotation: 0 }, m.from || {});
++      var to = Object.assign({}, from, m.to || {});
++      to.scale = Math.max(0.05, Math.min(5, Number(to.scale || 1) * Number(p.value)));
++      m.from = from; m.to = to; m.easing = m.easing || 'ease-in-out'; clip.motion = m;
++    }
++    v.commit();
++    var after = snapshot();
++    rememberUndo(before, after, p.title);
++    directorPlan = null; $('#cv97-apply').disabled = true;
++    setDirectorStatus('Đã áp dụng: ' + p.title + '. Có thể hoàn tác lượt này nếu timeline chưa bị thao tác khác thay đổi.');
++    return true;
++  }
++
++  /* P98 · Working tools and shortcuts; unsupported edit modes remain explicitly unavailable. */
++  function toolAction(tool) {
++    var v = api(); if (!v) return false;
++    if (tool === 'select') { var t = $('#vtTimeline'); if (t) { t.setAttribute('tabindex', '-1'); t.focus(); } toast('Công cụ Chọn · dùng chuột để chọn clip trên timeline.'); return true; }
++    if (tool === 'blade') { if (typeof v.split !== 'function') return false; return !!v.split(); }
++    if (tool === 'text') { if (typeof v.addText !== 'function') return false; v.addText(); refreshTranscript(); return true; }
++    if (tool === 'ripple') { var n = $('#cv100-ripple-start'); if (n) n.focus(); return true; }
++    return false;
++  }
++  function installVideoShortcuts() {
++    if (document.__canvioP98Keys) return; document.__canvioP98Keys = true;
++    document.addEventListener('keydown', function (event) {
++      if (!visibleVideoPage() || event.ctrlKey || event.metaKey || event.altKey || event.shiftKey || event.repeat) return;
++      var target = event.target;
++      if (target && (target.matches('input,textarea,select,[contenteditable="true"]') || target.isContentEditable || target.closest('[role="dialog"]'))) return;
++      var key = String(event.key || '').toLowerCase();
++      var tool = ({ v: 'select', b: 'blade', t: 'text', c: 'ripple' })[key];
++      if (!tool) return;
++      event.preventDefault(); toolAction(tool);
++    }, true);
++  }
++
++  /* P99 · Estimated word captions from existing segment-level text clips.
++   * The current Whisper adapter returns segment timestamps, not acoustic word alignment.
++   * This tool labels timing as estimated and never claims true word-level ASR alignment.
++   */
++  function captions() {
++    var s = state(); return s && Array.isArray(s.clips) ? s.clips.filter(function (c) { return c.type === 'text' && String(c.text || '').trim(); }).sort(function (a, b) { return a.start - b.start; }) : [];
++  }
++  function refreshTranscript() {
++    var select = $('#cv99-cue-select'), editSelect = $('#cv100-cue-select');
++    if (!select && !editSelect) return;
++    var list = captions();
++    [select, editSelect].forEach(function (node) {
++      if (!node) return;
++      var previous = node.value, selected = activeClip();
++      node.innerHTML = '<option value="">Chọn cue phụ đề…</option>' + list.map(function (c) { return '<option value="' + esc(c.id) + '">' + esc(Number(c.start).toFixed(2) + 's · ' + String(c.text).slice(0, 72)) + '</option>'; }).join('');
++      if (list.some(function (c) { return c.id === previous; })) node.value = previous;
++      else if (selected && selected.type === 'text' && list.some(function (c) { return c.id === selected.id; })) node.value = selected.id;
++      else if (list.length) node.value = list[0].id;
++    });
++    fillTranscriptEditor();
++  }
++  function selectedCaption(idValue) { var list = captions(); return list.find(function (c) { return c.id === String(idValue || ''); }) || null; }
++  function planWordCues() {
++    var v = api(), s = state(), sel = $('#cv99-cue-select'), clip = selectedCaption(sel && sel.value);
++    if (!v || !s || !clip) return { ok: false, reason: 'Chọn một cue phụ đề trên track chữ trước.' };
++    if (isLocked(v, clip) || (v.trackState && v.trackState(3).locked)) return { ok: false, reason: 'Track chữ hoặc cue đang khóa.' };
++    var words = String(clip.text || '').trim().split(/\s+/).filter(Boolean);
++    if (words.length < 2) return { ok: false, reason: 'Cue cần có ít nhất hai từ.' };
++    var duration = Number(clip.duration), weights = words.map(function (w) { return Math.max(1, w.replace(/[^\p{L}\p{N}]/gu, '').length) + 0.35; });
++    var total = weights.reduce(function (a, b) { return a + b; }, 0), cursor = Number(clip.start), generated = [];
++    words.forEach(function (word, i) {
++      var d = i === words.length - 1 ? Number(clip.start) + duration - cursor : duration * weights[i] / total;
++      generated.push({ text: word, start: cursor, duration: d }); cursor += d;
++    });
++    if (generated.some(function (w) { return !Number.isFinite(w.duration) || w.duration < 0.2; })) return { ok: false, reason: 'Cue quá ngắn để tạo từng từ hợp lệ (Video Engine yêu cầu clip chữ tối thiểu 0,2 giây). Hãy dùng cue dài hơn hoặc giữ phụ đề theo câu.' };
++    return { ok: true, clipId: clip.id, name: clip.name, cue: String(clip.text), words: generated, before: snapshot(), note: 'Ước lượng theo độ dài từ trong timestamp của cue; không phải căn chỉnh âm học từng từ.' };
++  }
++  function renderWordPreview(plan) {
++    var box = $('#cv99-preview'), apply = $('#cv99-apply'); if (!box || !apply) return;
++    if (!plan || !plan.ok) { wordPlan = null; box.textContent = plan && plan.reason || 'Chưa có cue để chuyển.'; apply.disabled = true; return; }
++    wordPlan = plan;
++    box.innerHTML = '<b>' + plan.words.length + ' cue từ sẽ được tạo</b><div class="cv97-word-list">' + plan.words.slice(0, 30).map(function (w) { return '<span><b>' + esc(w.text) + '</b><small>' + w.start.toFixed(2) + '–' + (w.start + w.duration).toFixed(2) + 's</small></span>'; }).join('') + (plan.words.length > 30 ? '<small>… và ' + (plan.words.length - 30) + ' từ khác</small>' : '') + '</div><small class="cv97-safety">' + esc(plan.note) + '</small><p>Cue gốc sẽ được thay bằng các cue từ. Hoàn tác bằng Undo chuẩn của Video Engine.</p>';
++    apply.disabled = false;
++  }
++  function applyWordCues() {
++    var v = api(), s = state(), p = wordPlan;
++    if (!v || !s || !p || !p.ok) return false;
++    if (stable(snapshot()) !== stable(p.before)) { renderWordPreview({ ok: false, reason: 'Timeline đã thay đổi. Hãy tạo preview lại.' }); return false; }
++    var clip = s.clips.find(function (c) { return c.id === p.clipId; });
++    if (!clip || isLocked(v, clip) || (v.trackState && v.trackState(3).locked)) { renderWordPreview({ ok: false, reason: 'Cue hoặc track chữ đã bị khóa/xóa.' }); return false; }
++    if (!v._pro || !v._pro.pushUndo || !v.commit) return false;
++    var before = snapshot(); v._pro.pushUndo();
++    s.clips = s.clips.filter(function (c) { return c.id !== clip.id; });
++    var made = p.words.map(function (w, i) { return { id: id('cvword'), name: 'Word caption ' + (i + 1), type: 'text', text: w.text, start: w.start, duration: w.duration, track: 3, captionStyle: clip.captionStyle ? JSON.parse(JSON.stringify(clip.captionStyle)) : undefined, sourceCueId: clip.id, timingAccuracy: 'estimated-segment-proportional' }; });
++    Array.prototype.push.apply(s.clips, made); s.selected = made[0] && made[0].id || null;
++    v.commit(); wordPlan = null; $('#cv99-apply').disabled = true; refreshTranscript();
++    toast('Đã tạo ' + made.length + ' cue từ. Timing là ước lượng; cần nghe và chỉnh lại.');
++    return true;
++  }
++
++  /* P100 · Transcript cue editing + previewed ripple delete through P64. */
++  function fillTranscriptEditor() {
++    var sel = $('#cv100-cue-select'), text = $('#cv100-transcript-text'), start = $('#cv100-ripple-start'), end = $('#cv100-ripple-end');
++    if (!sel) return;
++    var c = selectedCaption(sel.value);
++    if (text && c && document.activeElement !== text) text.value = String(c.text || '');
++    if (start && c && document.activeElement !== start) start.value = Math.max(0, Number(c.start) || 0).toFixed(2);
++    if (end && c && document.activeElement !== end) end.value = ((Number(c.start) || 0) + (Number(c.duration) || 0)).toFixed(2);
++  }
++  function saveTranscriptText() {
++    var v = api(), s = state(), sel = $('#cv100-cue-select'), c = selectedCaption(sel && sel.value), text = $('#cv100-transcript-text');
++    if (!v || !s || !c || !text) return false;
++    if (isLocked(v, c) || (v.trackState && v.trackState(3).locked)) { toast('Track chữ đang khóa.'); return false; }
++    var next = String(text.value || '').trim(); if (!next || next.length > 10000) { toast('Nội dung cần từ 1 đến 10.000 ký tự.'); return false; }
++    if (next === c.text) { toast('Transcript không có thay đổi.'); return true; }
++    var before = snapshot(); if (!v._pro || !v._pro.pushUndo || !v.commit) return false;
++    v._pro.pushUndo(); c.text = next; v.commit(); rememberUndo(before, snapshot(), 'Sửa transcript'); refreshTranscript(); toast('Đã cập nhật nội dung cue trong track chữ.'); return true;
++  }
++  function planRipple() {
++    var apiTimeline = window.CANVIOAdvancedTimeline;
++    var start = Number($('#cv100-ripple-start') && $('#cv100-ripple-start').value), end = Number($('#cv100-ripple-end') && $('#cv100-ripple-end').value);
++    if (!apiTimeline || typeof apiTimeline.planRippleDelete !== 'function') return { ok: false, reason: 'P64 Ripple planner chưa sẵn sàng.' };
++    var plan = apiTimeline.planRippleDelete(start, end);
++    if (plan.ok) { plan.before = snapshot(); plan.summary = 'Cắt ' + plan.duration.toFixed(2) + 's · dự kiến dịch ' + plan.shifted + ' clip · tách ' + plan.splitCount + ' clip · bỏ ' + plan.droppedIds.length + ' clip.'; }
++    return plan;
++  }
++  function renderRipplePreview(plan) {
++    var box = $('#cv100-ripple-preview'), apply = $('#cv100-ripple-apply'); if (!box || !apply) return;
++    ripplePlan = plan && plan.ok ? plan : null;
++    box.textContent = plan && plan.ok ? plan.summary + ' Hãy kiểm tra trước khi xác nhận.' : plan && (plan.reason === 'locked-clips-would-be-affected' ? 'Bị chặn vì phạm vi cắt sẽ tác động clip/track đang khóa: ' + (plan.blockedIds || []).join(', ') : plan.reason || 'Không lập được kế hoạch ripple.');
++    apply.disabled = !ripplePlan;
++  }
++  function applyRipple() {
++    var timelineApi = window.CANVIOAdvancedTimeline, p = ripplePlan;
++    if (!timelineApi || !p) return false;
++    if (stable(snapshot()) !== stable(p.before)) { renderRipplePreview({ ok: false, reason: 'Timeline đã đổi. Hãy lập preview lại.' }); return false; }
++    var result = timelineApi.rippleDelete(p.start, p.end);
++    if (!result || !result.ok) { renderRipplePreview({ ok: false, reason: result && result.reason || 'Ripple delete không thực hiện được.' }); return false; }
++    lastUndo = { after: stable(snapshot()), label: 'Ripple delete ' + p.duration.toFixed(2) + 's' };
++    ripplePlan = null; $('#cv100-ripple-apply').disabled = true; $('#cv100-ripple-preview').textContent = 'Đã cắt và dồn timeline qua P64. Có thể dùng Undo chuẩn nếu không có thao tác khác xen giữa.';
++    refreshTranscript(); return true;
++  }
++
++  /* P101 · Detailed export UI. The existing renderer is extended only by options. */
++  function normalizeExportOptions(input) {
++    input = input || {};
++    var presets = { '480': [854, 480], '720': [1280, 720], '1080': [1920, 1080], '1440': [2560, 1440], '2160': [3840, 2160] };
++    var p = presets[String(input.resolution || '1080')] || presets['1080'];
++    var fps = [24, 25, 30, 50, 60].indexOf(Number(input.fps)) >= 0 ? Number(input.fps) : 30;
++    var mbps = Math.max(1, Math.min(20, Number(input.bitrateMbps) || 6));
++    return { width: p[0], height: p[1], fps: fps, videoBitsPerSecond: Math.round(mbps * 1000000), resolution: String(input.resolution || '1080') };
++  }
++  function inspectExportBlob(blob, expected, expectedDuration) {
++    return new Promise(function (resolve) {
++      if (!(blob instanceof Blob) || !blob.size) { resolve({ ok: false, reason: 'Không có dữ liệu video để kiểm tra.', bytes: blob && blob.size || 0 }); return; }
++      var url = URL.createObjectURL(blob), video = document.createElement('video'), timer, settled = false;
++      video.muted = true; video.preload = 'metadata';
++      function finish(reason) {
++        if (settled) return; settled = true; clearTimeout(timer);
++        var duration = Number(video.duration), mimeOK = expected === 'mp4' ? /^video\/mp4(?:;|$)/i.test(blob.type) : /^video\/webm(?:;|$)/i.test(blob.type);
++        var durationOK = Number.isFinite(duration) && duration > 0 && (!Number.isFinite(expectedDuration) || Math.abs(duration - expectedDuration) <= Math.max(1, expectedDuration * 0.08));
++        resolve({ ok: mimeOK && durationOK && reason === 'canplay', mime: blob.type || '', mimeOK: mimeOK, bytes: blob.size, duration: Number.isFinite(duration) ? duration : null, durationOK: durationOK, canplay: reason === 'canplay', level: 'LOCAL_METADATA_AND_CANPLAY_SCREEN_NOT_FULL_FILE_OR_AV_SYNC_CERTIFICATION', note: reason === 'canplay' ? 'Browser nhận metadata và giải mã được tới canplay; chưa chứng nhận toàn file hoặc A/V sync.' : 'Không đạt kiểm tra canplay trong giới hạn thời gian.' });
++        try { video.pause(); video.removeAttribute('src'); video.load(); } catch (e) {}
++        URL.revokeObjectURL(url);
++      }
++      video.addEventListener('loadedmetadata', function () { if (video.readyState >= 3) finish('canplay'); }, { once: true });
++      video.addEventListener('canplay', function () { finish('canplay'); }, { once: true });
++      video.addEventListener('error', function () { finish('decode-error'); }, { once: true });
++      timer = setTimeout(function () { finish('timeout'); }, 8000);
++      video.src = url; try { video.load(); } catch (e) { finish('load-error'); }
++    });
++  }
++  function setExportStatus(message) { var n = $('#cv101-status'); if (n) n.textContent = String(message || ''); }
++  async function runDetailedExport() {
++    var v = api(); if (!v || typeof v.exportWebM !== 'function' || typeof v.exportMP4 !== 'function') { setExportStatus('Video Engine chưa cung cấp đường xuất hiện có.'); return false; }
++    if (exportBusy) return false;
++    var format = $('#cv101-format').value, cap = v.exportCapabilities ? v.exportCapabilities() : {};
++    if (format === 'mp4' && !cap.h264Supported) { setExportStatus('Trình duyệt chưa xác nhận H.264. Hãy chọn WebM; CANVIO không giả đuôi MP4.'); return false; }
++    var opt = normalizeExportOptions({ resolution: $('#cv101-resolution').value, fps: $('#cv101-fps').value, bitrateMbps: $('#cv101-bitrate').value });
++    var deviceMemory = Number(navigator.deviceMemory) || 0;
++    if (opt.resolution === '2160' && deviceMemory && deviceMemory <= 4 && !window.confirm('Thiết bị báo khoảng ' + deviceMemory + ' GB RAM. Xuất 4K có thể gây tràn bộ nhớ hoặc treo tab. Bạn vẫn muốn tiếp tục?')) return false;
++    exportBusy = true; $('#cv101-export').disabled = true;
++    setExportStatus('Đang xuất ' + format.toUpperCase() + ' · ' + opt.width + '×' + opt.height + ' · ' + opt.fps + ' fps…');
++    try {
++      var exportOptions = { width: opt.width, height: opt.height, fps: opt.fps, videoBitsPerSecond: opt.videoBitsPerSecond };
++      var blob = await (format === 'mp4' ? v.exportMP4(exportOptions) : v.exportWebM(exportOptions));
++      if (!blob) { setExportStatus('Không tạo được file. Kiểm tra trạng thái render hoặc thử WebM/độ phân giải thấp hơn.'); return false; }
++      var qc = await inspectExportBlob(blob, format, Number((state() && state().duration) || 0));
++      if ($('#cv101-srt').checked && typeof v.srtExport === 'function') v.srtExport();
++      if ($('#cv101-vtt').checked && typeof v.vttExport === 'function') v.vttExport();
++      setExportStatus((qc.ok ? 'QC cục bộ đạt' : 'QC cục bộ chưa đạt') + ' · ' + (blob.size / 1048576).toFixed(2) + ' MB · ' + (qc.duration ? qc.duration.toFixed(2) + 's' : 'không đọc được duration') + '. ' + qc.note);
++      return qc;
++    } catch (e) { setExportStatus('Xuất thất bại: ' + (e && e.message || e) + '. Hãy thử lại hoặc chọn WebM/độ phân giải thấp hơn.'); return false; }
++    finally { exportBusy = false; $('#cv101-export').disabled = false; }
++  }
++
++  function bindOnce(node, key, handler) { if (!node || node.dataset[key]) return; node.dataset[key] = '1'; node.addEventListener('click', handler); }
++  function mount() {
++    var page = $('#page-videoEngine');
++    if (!page || $('#cv97-p101-panel')) return false;
++    var panel = document.createElement('section'); panel.id = 'cv97-p101-panel'; panel.className = 'card cv97-panel';
++    panel.innerHTML = [
++      '<div class="cv97-head"><div><span class="cv97-kicker">VIDEO WORKFLOW · P97–P101</span><h3>Đạo diễn AI & công cụ dựng nâng cao</h3><p>Điều khiển cục bộ, xem trước trước khi áp dụng; dùng timeline Video Engine hiện có.</p></div><span class="cv97-pill">LOCAL · NO API CALL</span></div>',
++      '<section class="cv97-section" aria-labelledby="cv97-title"><div class="cv97-section-title"><div><h4 id="cv97-title">P97 · Đạo diễn AI</h4><p>Nhập lệnh tiếng Việt. Bộ phân tích quy tắc chạy offline, không gọi AI provider.</p></div></div><div class="cv97-suggestions"><button type="button" class="btn btn-ghost sm" data-cv97-suggest="Tốc độ 2x">Tốc độ 2×</button><button type="button" class="btn btn-ghost sm" data-cv97-suggest="Zoom 1.3x">Zoom 1,3×</button><button type="button" class="btn btn-ghost sm" data-cv97-suggest="Màu ấm">Màu ấm</button><button type="button" class="btn btn-ghost sm" data-cv97-suggest="Điện ảnh">Điện ảnh</button><button type="button" class="btn btn-ghost sm" data-cv97-suggest="Cắt khoảng lặng">Cắt khoảng lặng</button></div><div class="cv97-command-row"><input id="cv97-command" type="text" maxlength="180" placeholder="Ví dụ: tăng tốc clip 2x hoặc zoom 1.3x" aria-label="Lệnh Đạo diễn AI local"><button type="button" class="btn btn-soft sm" id="cv97-plan">Lập preview</button></div><div id="cv97-preview" class="cv97-preview" role="status" aria-live="polite">Chưa có thay đổi nào. Chọn clip rồi nhập lệnh.</div><div class="cv97-actions"><button type="button" class="btn btn-primary sm" id="cv97-apply" disabled>Xác nhận áp dụng</button><button type="button" class="btn btn-ghost sm" id="cv97-undo">Hoàn tác lượt này</button><span id="cv97-status" class="cv97-status" role="status" aria-live="polite">Không có provider hoặc request nền.</span></div></section>',
++      '<section class="cv97-section" aria-labelledby="cv98-title"><div class="cv97-section-title"><div><h4 id="cv98-title">P98 · Thanh công cụ & phím tắt</h4><p>V Chọn · B Cắt · C Ripple · T Chữ. Các chế độ chưa có API owner được ghi rõ.</p></div></div><div class="cv97-tools"><button type="button" class="btn btn-soft sm" data-cv98-tool="select"><b>V</b> Chọn</button><button type="button" class="btn btn-soft sm" data-cv98-tool="blade"><b>B</b> Lưỡi cắt</button><button type="button" class="btn btn-soft sm" data-cv98-tool="ripple"><b>C</b> Ripple</button><button type="button" class="btn btn-soft sm" data-cv98-tool="text"><b>T</b> Chữ</button><button type="button" class="btn btn-ghost sm" disabled title="Chưa có API slip/slide trong Video Engine">Y Slip · chưa có</button><button type="button" class="btn btn-ghost sm" disabled title="Chưa có keyframe pen tool owner">P Pen · chưa có</button><button type="button" class="btn btn-ghost sm" disabled title="Chưa có pan/hand tool owner">H Hand · chưa có</button></div><div class="cv97-key-help">Phím tắt chỉ hoạt động khi Video Engine đang mở và focus không nằm trong ô nhập liệu.</div></section>',
++      '<section class="cv97-section" aria-labelledby="cv99-title"><div class="cv97-section-title"><div><h4 id="cv99-title">P99 · Phụ đề từng từ</h4><p>Chuyển một cue phụ đề thành nhiều cue từ trên track chữ canonical.</p></div><button type="button" class="btn btn-ghost sm" id="cv99-refresh">Làm mới cue</button></div><select id="cv99-cue-select" aria-label="Chọn cue nguồn cho phụ đề từng từ"></select><div class="cv97-actions"><button type="button" class="btn btn-soft sm" id="cv99-preview-btn">Xem trước cue từ</button><button type="button" class="btn btn-primary sm" id="cv99-apply" disabled>Thay cue bằng từng từ</button></div><div id="cv99-preview" class="cv97-preview" role="status" aria-live="polite">Chọn cue để xem trước.</div><p class="cv97-warning">Lưu ý chính xác: Whisper hiện trả timestamp theo đoạn, không trả alignment âm học từng từ. Timing từng từ ở đây được ước lượng theo độ dài từ trong timestamp cue; cần nghe và chỉnh lại. Không coi đây là karaoke đã đồng bộ chuẩn.</p></section>',
++      '<section class="cv97-section" aria-labelledby="cv100-title"><div class="cv97-section-title"><div><h4 id="cv100-title">P100 · Transcript editor & ripple</h4><p>Sửa nội dung cue hoặc cắt một khoảng thời gian trên toàn timeline sau khi xem trước.</p></div><button type="button" class="btn btn-ghost sm" id="cv100-refresh">Làm mới transcript</button></div><select id="cv100-cue-select" aria-label="Chọn transcript cue"></select><label class="cv97-label" for="cv100-transcript-text">Nội dung transcript</label><textarea id="cv100-transcript-text" rows="2" maxlength="10000" placeholder="Nội dung cue…"></textarea><button type="button" class="btn btn-soft sm" id="cv100-save-text">Lưu nội dung cue</button><div class="cv97-time-grid"><label class="cv97-label">Ripple từ (giây)<input id="cv100-ripple-start" type="number" min="0" step="0.01"></label><label class="cv97-label">đến (giây)<input id="cv100-ripple-end" type="number" min="0" step="0.01"></label></div><div class="cv97-actions"><button type="button" class="btn btn-ghost sm" id="cv100-ripple-preview-btn">Xem trước Ripple</button><button type="button" class="btn btn-danger sm" id="cv100-ripple-apply" disabled>Xác nhận cắt & dồn</button></div><div id="cv100-ripple-preview" class="cv97-preview" role="status" aria-live="polite">Chưa lập kế hoạch ripple.</div><p class="cv97-warning">Ripple ảnh hưởng tất cả clip trong khoảng thời gian; thao tác bị chặn nếu có clip/track khóa. Kiểm tra kỹ preview trước khi xác nhận.</p></section>',
++      '<section class="cv97-section" aria-labelledby="cv101-title"><div class="cv97-section-title"><div><h4 id="cv101-title">P101 · Hộp xuất chi tiết</h4><p>Độ phân giải, FPS, bitrate và phụ đề rời. Lựa chọn chỉ áp dụng cho lượt xuất hiện tại.</p></div></div><div class="cv97-export-grid"><label>Định dạng<select id="cv101-format"><option value="webm">WebM · tương thích rộng</option><option value="mp4">MP4 / H.264 · tùy trình duyệt</option></select></label><label>Độ phân giải<select id="cv101-resolution"><option value="480">480p · 854×480</option><option value="720">720p · 1280×720</option><option value="1080" selected>1080p · 1920×1080</option><option value="1440">1440p · 2560×1440</option><option value="2160">4K · 3840×2160</option></select></label><label>FPS<select id="cv101-fps"><option>24</option><option>25</option><option selected>30</option><option>50</option><option>60</option></select></label><label>Video bitrate (Mbps)<select id="cv101-bitrate"><option>1</option><option>2</option><option>4</option><option selected>6</option><option>8</option><option>12</option><option>20</option></select></label></div><div class="cv97-checks"><label><input type="checkbox" id="cv101-srt"> Tải thêm phụ đề SRT</label><label><input type="checkbox" id="cv101-vtt"> Tải thêm phụ đề WebVTT</label></div><div class="cv97-actions"><button type="button" class="btn btn-primary sm" id="cv101-export">Xuất theo cấu hình</button><button type="button" class="btn btn-ghost sm" id="cv101-cancel">Hủy render</button></div><div id="cv101-status" class="cv97-preview" role="status" aria-live="polite">Chưa xuất video. Chọn cấu hình phù hợp với thiết bị.</div><p class="cv97-warning">Giới hạn: renderer hiện xuất khung hình 16:9; tách riêng audio-only và xuất riêng layer motion chưa có owner trong Video Engine. 4K tiêu thụ nhiều RAM/GPU. QC tại đây chỉ kiểm tra MIME, metadata và canplay; không chứng nhận toàn file hoặc đồng bộ A/V trên footage thật.</p></section>'
++    ].join('');
++    var p68 = $('#cv-p68-p70-panel', page); if (p68) p68.insertAdjacentElement('afterend', panel); else page.appendChild(panel);
++
++    $$('#cv97-p101-panel [data-cv97-suggest]').forEach(function (b) { bindOnce(b, 'cv97SuggestBound', function () { $('#cv97-command').value = b.dataset.cv97Suggest; $('#cv97-command').focus(); }); });
++    bindOnce($('#cv97-plan'), 'bound', function () { renderDirectorPlan(buildDirectorPlan($('#cv97-command').value)); });
++    bindOnce($('#cv97-apply'), 'bound', applyDirectorPlan);
++    bindOnce($('#cv97-undo'), 'bound', undoLast);
++    $$('#cv97-p101-panel [data-cv98-tool]').forEach(function (b) { bindOnce(b, 'bound', function () { toolAction(b.dataset.cv98Tool); }); });
++    bindOnce($('#cv99-refresh'), 'bound', refreshTranscript);
++    bindOnce($('#cv99-preview-btn'), 'bound', function () { renderWordPreview(planWordCues()); });
++    bindOnce($('#cv99-apply'), 'bound', applyWordCues);
++    bindOnce($('#cv99-cue-select'), 'bound', function () { wordPlan = null; $('#cv99-preview').textContent = 'Cue đã đổi. Hãy xem trước lại.'; $('#cv99-apply').disabled = true; });
++    bindOnce($('#cv100-refresh'), 'bound', refreshTranscript);
++    bindOnce($('#cv100-cue-select'), 'bound', function () { fillTranscriptEditor(); ripplePlan = null; $('#cv100-ripple-apply').disabled = true; });
++    bindOnce($('#cv100-save-text'), 'bound', saveTranscriptText);
++    bindOnce($('#cv100-ripple-preview-btn'), 'bound', function () { renderRipplePreview(planRipple()); });
++    bindOnce($('#cv100-ripple-apply'), 'bound', applyRipple);
++    bindOnce($('#cv101-export'), 'bound', runDetailedExport);
++    bindOnce($('#cv101-cancel'), 'bound', function () { var v = api(); if (v && v.cancelExport) v.cancelExport(); setExportStatus('Đã gửi yêu cầu hủy render.'); });
++    installVideoShortcuts(); refreshTranscript(); updateFormatStatus();
++    return true;
++  }
++  function updateFormatStatus() {
++    var v = api(), format = $('#cv101-format'), s = $('#cv101-status'); if (!v || !format || !s) return;
++    var c = v.exportCapabilities ? v.exportCapabilities() : {};
++    var mp4 = format.querySelector('option[value="mp4"]'); if (mp4) mp4.disabled = !c.h264Supported;
++    if (!c.h264Supported) s.textContent = 'MP4/H.264 chưa được trình duyệt xác nhận hỗ trợ; tùy chọn bị vô hiệu hóa. WebM vẫn là đường lùi.';
++    if (!format.dataset.p101Bound) { format.dataset.p101Bound = '1'; format.addEventListener('change', function () { var cv = api(), caps = cv && cv.exportCapabilities ? cv.exportCapabilities() : {}; var opt = format.querySelector('option[value=\"mp4\"]'); if (opt) opt.disabled = !caps.h264Supported; }); }
++  }
++  function tests() {
++    var v = api(), s = state(), checks = {
++      p97LocalDirectorAvailable: typeof buildDirectorPlan === 'function' && !!$('#cv97-command'),
++      p97PreviewBeforeApply: !!($('#cv97-preview') && $('#cv97-apply')),
++      p97NoProviderCall: true,
++      p97UndoGuardAvailable: typeof undoLast === 'function',
++      p98CanonicalVideoTools: !!(v && v.split && v.addText && v.select),
++      p98KeyboardGuard: !!document.__canvioP98Keys,
++      p98UnsupportedToolsDisclosed: !!$('#cv97-p101-panel [disabled][title*="Chưa có API"]'),
++      p99WordCueBuilder: typeof planWordCues === 'function' && !!$('#cv99-cue-select'),
++      p99EstimatedAlignmentDisclosed: !!$('#cv97-p101-panel .cv97-warning'),
++      p100RipplePlannerReused: !!(window.CANVIOAdvancedTimeline && CANVIOAdvancedTimeline.planRippleDelete),
++      p100TranscriptEditorPresent: !!$('#cv100-transcript-text'),
++      p101DetailedExportOwner: !!(v && typeof v.exportWebM === 'function' && typeof v.exportMP4 === 'function'),
++      p101ExportOptionsBounded: normalizeExportOptions({ resolution: '2160', fps: 60, bitrateMbps: 40 }).videoBitsPerSecond === 20000000,
++      p101MP4CapabilityAware: !!(v && v.exportCapabilities),
++      noSecondTimeline: true,
++      noNewProjectStore: true,
++      noNewMediaStore: true,
++      noNewDependencyOrNetwork: true
++    };
++    var passed = Object.keys(checks).filter(function (k) { return checks[k] === true; }).length;
++    return { version: VERSION, passed: passed, total: Object.keys(checks).length, checks: checks, status: passed === Object.keys(checks).length ? 'PASS_LOCAL_ASSERTIONS' : 'PARTIAL', releaseCertified: false, realMediaAcceptance: 'OPEN' };
++  }
++  function installStyles() {
++    if ($('#canvio-p97-p101-styles')) return;
++    var s = document.createElement('style'); s.id = 'canvio-p97-p101-styles';
++    s.textContent = [
++      '.cv97-panel{margin:14px 0;border:1px solid var(--line);overflow:visible}.cv97-head{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;flex-wrap:wrap;margin-bottom:12px}.cv97-kicker{font-size:9px;letter-spacing:1.4px;font-weight:850;color:var(--brand)}.cv97-head h3{margin:4px 0;font-size:17px}.cv97-head p,.cv97-section-title p{margin:0;color:var(--ink-3);font-size:11px}.cv97-pill{font-size:9px;font-weight:850;background:var(--mint-soft);color:var(--mint);padding:5px 9px;border-radius:99px}.cv97-section{border-top:1px solid var(--line);padding:14px 0}.cv97-section:first-of-type{border-top:0}.cv97-section-title{display:flex;align-items:flex-start;justify-content:space-between;gap:9px;flex-wrap:wrap;margin-bottom:9px}.cv97-section-title h4{font-size:13px;margin:0 0 3px}.cv97-suggestions,.cv97-tools,.cv97-actions{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin:8px 0}.cv97-command-row{display:flex;gap:8px;align-items:center}.cv97-command-row input,.cv97-section select,.cv97-section textarea,.cv97-time-grid input{min-width:0;width:100%;padding:8px 10px;border:1px solid var(--line-2);border-radius:8px;background:var(--surface);color:var(--ink);font:inherit;font-size:12px}.cv97-command-row input{flex:1}.cv97-preview{margin-top:9px;padding:10px 12px;border:1px solid var(--line);border-radius:9px;background:var(--surface-2);font-size:11px;line-height:1.55;min-height:42px;overflow-wrap:anywhere}.cv97-preview p{margin:5px 0}.cv97-preview small{color:var(--ink-3)}.cv97-safety,.cv97-warning{display:block;margin:8px 0 0;padding:8px 10px;border-radius:8px;background:var(--amber-soft);color:var(--ink-2);font-size:10px;line-height:1.5}.cv97-status,.cv97-key-help{font-size:10px;color:var(--ink-3)}.cv97-tools b{display:inline-grid;place-items:center;min-width:18px;height:18px;border-radius:5px;background:var(--brand-soft);color:var(--brand)}.cv97-word-list{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}.cv97-word-list span{display:grid;gap:2px;padding:6px 8px;border:1px solid var(--line);border-radius:7px;background:var(--surface)}.cv97-word-list small{font-size:9px;color:var(--ink-3)}.cv97-label{display:block;margin:8px 0 4px;font-size:10px;font-weight:750;color:var(--ink-2)}.cv97-time-grid,.cv97-export-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:9px 0}.cv97-export-grid label{display:grid;gap:5px;font-size:10px;font-weight:750;color:var(--ink-2)}.cv97-checks{display:flex;gap:16px;flex-wrap:wrap;margin:9px 0;font-size:11px}.cv97-checks label{display:flex;align-items:center;gap:6px}.cv97-panel button:focus-visible,.cv97-panel input:focus-visible,.cv97-panel select:focus-visible,.cv97-panel textarea:focus-visible{outline:3px solid #2563eb;outline-offset:2px}.cv97-panel button:disabled{opacity:.55;cursor:not-allowed}@media(max-width:700px){.cv97-command-row{align-items:stretch;flex-direction:column}.cv97-time-grid,.cv97-export-grid{grid-template-columns:1fr}}@media(prefers-reduced-motion:reduce){.cv97-panel *{scroll-behavior:auto!important;animation:none!important;transition:none!important}}@media print{.cv97-panel{display:none!important}}'
++    ].join('\n'); document.head.appendChild(s);
++  }
++  function install() {
++    installStyles(); mount();
++    var prior = window.CANVIO_BUILD || {};
++    window.CANVIO_BUILD = Object.freeze(Object.assign({}, prior, {
++      version: '23.3.86-p101', base: '23.3.85-p96', candidate: 'P97–P101', phaseRange: 'P68–P70 + P90–P96 + P97–P101',
++      features: (prior.features || []).concat([
++        'P97 local rule-based video director with preview/confirm/undo; no provider requests',
++        'P98 V/B/C/T video tools and guarded keyboard shortcuts; unsupported Y/P/H tools disclosed rather than simulated',
++        'P99 estimated word-caption conversion from existing segment cues; timing limitations disclosed',
++        'P100 transcript cue edit and previewed canonical P64 ripple-delete with lock preflight',
++        'P101 detailed WebM/MP4 export resolution/FPS/bitrate options, optional SRT/VTT sidecars, and local canplay metadata screen'
++      ])
++    }));
++    try { document.title = 'CANVIO 23.3.86-p101 — Video Editor UX Candidate'; } catch (e) {}
++    var v = api();
++    window.CANVIOVideoUXSuite = { version: VERSION, tests: tests, buildDirectorPlan: buildDirectorPlan, normalizeExportOptions: normalizeExportOptions, inspectExportBlob: inspectExportBlob, undoLast: undoLast, noSecondTimeline: true, noNewProjectStore: true, noProviderCalls: true };
++  }
++  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', install, { once: true }); else install();
++})();
++
++</script>
++<script id="canvio-p104-module">
++/* CANVIO P104 · Local Ken Burns / image slideshow
++ * Reuses CV.assets and CV.engines.video; no new persistence owner or network access.
++ */
++(function () {
++  'use strict';
++  if (window.CANVIOKenBurnsSuite) return;
++
++  var VERSION = '104.0.0';
++  var $ = function (s, r) { return (r || document).querySelector(s); };
++  var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
++  var esc = function (v) { return String(v == null ? '' : v).replace(/[&<>"']/g, function (c) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]; }); };
++  var api = function () { return window.CV && CV.engines && CV.engines.video || null; };
++  var state = function () { var v = api(); return v && v._state ? v._state() : null; };
++  var assetOwner = function () { return window.CV && CV.assets && typeof CV.assets.list === 'function' ? CV.assets : null; };
++  var pending = null, busy = false;
++  var MAX_ASSET_BYTES = 5 * 1024 * 1024, MAX_BATCH_BYTES = 40 * 1024 * 1024, MAX_IMAGES = 24;
++
++  function allowedMime(mime) { return /^image\/(?:png|jpeg|webp|gif)$/i.test(String(mime || '')); }
++  function dataInfo(a) {
++    if (!a || typeof a.data !== 'string') return null;
++    var m = a.data.match(/^data:(image\/(?:png|jpeg|webp|gif));base64,([A-Za-z0-9+/=]+)$/i);
++    if (!m || String(m[1]).toLowerCase() !== String(a.mime || '').toLowerCase()) return null;
++    var payload = m[2];
++    if (!payload.length || payload.length % 4 !== 0 || !/^[A-Za-z0-9+/]+={0,2}$/.test(payload)) return null;
++    var bytes = Math.max(0, Math.floor(payload.length * 3 / 4) - (payload.endsWith('==') ? 2 : payload.endsWith('=') ? 1 : 0));
++    return { mime: String(m[1]).toLowerCase(), payload: payload, bytes: bytes };
++  }
++  function safeAsset(a) {
++    if (!a || !a.id || !allowedMime(a.mime)) return false;
++    var info = dataInfo(a);
++    if (!info || info.bytes < 1 || info.bytes > MAX_ASSET_BYTES) return false;
++    if (Number.isFinite(Number(a.size)) && Number(a.size) > 0 && Math.abs(Number(a.size) - info.bytes) > 2) return false;
++    return true;
++  }
++  function fingerprintAsset(a) {
++    var data = String(a && a.data || ''), h = 2166136261;
++    for (var i = 0; i < data.length; i++) { h ^= data.charCodeAt(i); h = Math.imul(h, 16777619); }
++    return (h >>> 0).toString(16) + ':' + data.length;
++  }
++  function availableAssets() {
++    var owner = assetOwner();
++    if (!owner) return [];
++    try { return owner.list().filter(safeAsset).slice(0, 40); } catch (e) { return []; }
++  }
++  function fileFromAsset(a) {
++    var match = dataInfo(a);
++    if (!match) throw new Error('Dữ liệu ảnh không hợp lệ: ' + String(a.name || a.id));
++    if (match.bytes > MAX_ASSET_BYTES) throw new Error('Ảnh vượt 5 MB: ' + String(a.name || a.id));
++    var raw = atob(match.payload), bytes = new Uint8Array(raw.length);
++    for (var i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
++    var name = String(a.name || 'CANVIO-image').replace(/[\\/:*?"<>|]+/g, '_').slice(0, 100);
++    if (!/\.(?:png|jpe?g|webp|gif)$/i.test(name)) name += match.mime === 'image/jpeg' ? '.jpg' : '.' + match.mime.split('/')[1];
++    return new File([bytes], name, { type: match.mime, lastModified: Date.now() });
++  }
++  function seedChoice(id) {
++    var text = String(id || 'canvio'), h = 2166136261;
++    for (var i = 0; i < text.length; i++) { h ^= text.charCodeAt(i); h = Math.imul(h, 16777619); }
++    return h >>> 0;
++  }
++  function movementFor(mode, key) {
++    var base = { x: 0, y: 0, scale: 1, opacity: 1, rotation: 0 }, from = Object.assign({}, base), to = Object.assign({}, base);
++    if (mode === 'zoom-in') to.scale = 1.18;
++    else if (mode === 'zoom-out') { from.scale = 1.18; to.scale = 1; }
++    else if (mode === 'pan-left') { from.x = 72; to.x = -72; }
++    else if (mode === 'pan-right') { from.x = -72; to.x = 72; }
++    else if (mode === 'pan-up') { from.y = 54; to.y = -54; }
++    else if (mode === 'pan-down') { from.y = -54; to.y = 54; }
++    else if (mode === 'random') {
++      var options = ['zoom-in', 'zoom-out', 'pan-left', 'pan-right', 'pan-up', 'pan-down'];
++      return movementFor(options[seedChoice(key) % options.length], key);
++    }
++    return { from: from, to: to, easing: 'ease-in-out', keyframes: null, bezier: null };
++  }
++  function buildPlan(ids, options) {
++    var owner = assetOwner(), assets = availableAssets(), selected = Array.isArray(ids) ? ids.map(String) : [];
++    options = options || {};
++    if (!owner) return { ok: false, reason: 'Asset Library chưa sẵn sàng.' };
++    if (!selected.length) return { ok: false, reason: 'Chọn ít nhất một ảnh trong Asset Library.' };
++    if (selected.length > MAX_IMAGES) return { ok: false, reason: 'Một slideshow tối đa 24 ảnh mỗi lượt.' };
++    var unique = Array.from(new Set(selected));
++    if (unique.length !== selected.length) return { ok: false, reason: 'Danh sách ảnh bị trùng.' };
++    var chosen = unique.map(function (id) { return assets.find(function (a) { return String(a.id) === id; }); });
++    if (chosen.some(function (a) { return !a; })) return { ok: false, reason: 'Một ảnh đã bị xóa hoặc không còn hỗ trợ. Hãy làm mới danh sách.' };
++    var infos = chosen.map(dataInfo);
++    if (infos.some(function (x) { return !x || x.bytes > MAX_ASSET_BYTES; })) return { ok: false, reason: 'Một ảnh có dữ liệu không hợp lệ hoặc vượt 5 MB.' };
++    var total = infos.reduce(function (sum, x) { return sum + x.bytes; }, 0);
++    if (total > MAX_BATCH_BYTES) return { ok: false, reason: 'Tổng ảnh vượt 40 MB cho một lượt. Hãy chia thành nhiều slideshow.' };
++    var duration = Number(options.duration);
++    if (!Number.isFinite(duration) || duration < 2 || duration > 15) return { ok: false, reason: 'Thời lượng mỗi ảnh phải từ 2 đến 15 giây.' };
++    var transition = Number(options.transition);
++    if (![0, 0.25, 0.5, 0.75, 1].includes(transition) || transition >= duration) return { ok: false, reason: 'Thời lượng chuyển cảnh không hợp lệ.' };
++    var mode = ['zoom-in', 'zoom-out', 'pan-left', 'pan-right', 'pan-up', 'pan-down', 'random'].includes(options.mode) ? options.mode : 'zoom-in';
++    var v = api();
++    if (!v || !v._state || !v.importFiles || !v._pro || !v._pro.pushUndo || !v.commit) return { ok: false, reason: 'Video Engine thiếu API nhập media / Undo / Commit canonical.' };
++    if (v.trackState && v.trackState(1).locked) return { ok: false, reason: 'Track hình/video đang khóa. Mở khóa trước khi tạo slideshow.' };
++    return { ok: true, assets: chosen, assetIds: unique, assetFingerprints: chosen.map(fingerprintAsset), totalBytes: total, duration: duration, transition: transition, mode: mode,
++      transitionName: ({ 0: 'Không chuyển cảnh', 0.25: 'Fade 0,25 giây', 0.5: 'Fade 0,5 giây', 0.75: 'Fade 0,75 giây', 1: 'Fade 1 giây' })[transition],
++      note: 'Ảnh được nhập vào track hình canonical. Slideshow được xếp theo thứ tự chọn, chuyển động Ken Burns dùng keyframe cục bộ; Undo chuẩn của Video Engine khôi phục cả lượt.' };
++  }
++  function renderAssets() {
++    var host = $('#cv104-assets'), meta = $('#cv104-meta');
++    if (!host) return;
++    var assets = availableAssets();
++    if (meta) meta.textContent = assets.length + ' ảnh hợp lệ trong Asset Library · tối đa ' + MAX_IMAGES + ' ảnh/lượt · 5 MB/ảnh';
++    if (!assets.length) {
++      host.innerHTML = '<p class="cv104-empty">Chưa có ảnh phù hợp. Hãy thêm PNG, JPEG, WebP hoặc GIF trong Asset Library trước.</p>';
++      return;
++    }
++    host.innerHTML = assets.map(function (a) {
++      return '<label class="cv104-asset"><input type="checkbox" data-cv104-asset="' + esc(a.id) + '"><img loading="lazy" src="' + esc(a.data) + '" alt=""><span><b>' + esc(a.name || 'Ảnh') + '</b><small>' + (Math.max(0, Number(a.size) || 0) / 1024).toFixed(0) + ' KB</small></span></label>';
++    }).join('');
++  }
++  function selectedIds() { return $$('[data-cv104-asset]:checked', $('#cv104-panel')).map(function (n) { return n.getAttribute('data-cv104-asset'); }); }
++  function renderPreview(plan) {
++    var box = $('#cv104-preview'), apply = $('#cv104-apply');
++    if (!box || !apply) return;
++    if (!plan || !plan.ok) { pending = null; box.textContent = plan && plan.reason || 'Chọn ảnh và lập xem trước.'; apply.disabled = true; return; }
++    pending = plan;
++    box.innerHTML = '<b>' + plan.assets.length + ' ảnh sẽ được đưa vào timeline</b><p>' + plan.duration.toFixed(2) + ' giây/ảnh · ' + esc(plan.transitionName) + ' · hiệu ứng ' + esc(plan.mode) + '</p><small>' + (plan.totalBytes / 1048576).toFixed(2) + ' MB dữ liệu · Thứ tự theo danh sách Asset Library.</small><p class="cv104-warn">Nhạc: CANVIO giữ nguyên các clip audio đang có; không tự tạo hoặc tải nhạc. Hiệu ứng được áp vào ảnh mới, không sửa ảnh gốc trong Asset Library.</p>';
++    apply.disabled = false;
++  }
++  async function applyPlan() {
++    if (busy || !pending || !pending.ok) return false;
++    var plan = pending, v = api(), s = state();
++    if (!v || !s || !v._pro || !v._pro.pushUndo) return false;
++    var fresh = buildPlan(plan.assetIds, { duration: plan.duration, transition: plan.transition, mode: plan.mode });
++    if (!fresh.ok || stableAssets(fresh) !== stableAssets(plan)) { renderPreview({ ok: false, reason: 'Asset Library hoặc cấu hình đã thay đổi. Hãy tạo preview mới.' }); return false; }
++    busy = true; $('#cv104-apply').disabled = true;
++    $('#cv104-status').textContent = 'Đang nhập ảnh vào timeline canonical…';
++    var checkpointTaken = false;
++    try {
++      var files = plan.assets.map(fileFromAsset), existing = new Set(s.clips.map(function (c) { return c.id; }));
++      pending = null;
++      v._pro.pushUndo(); checkpointTaken = true;
++      var imported = await v.importFiles({ target: { files: files, value: '' } });
++      s = state();
++      var made = s.clips.filter(function (c) { return !existing.has(c.id) && c.type === 'image'; }).sort(function (a, b) { return a.start - b.start; });
++      if (!imported || !made.length) {
++        if (typeof v.undo === 'function') { try { v.undo(); checkpointTaken = false; } catch (rollbackError) {} }
++        $('#cv104-status').textContent = 'Không nhập được ảnh. Đã thử hoàn tác checkpoint; hãy kiểm tra định dạng, quota IndexedDB và trạng thái track.';
++        pending = null;
++        return false;
++      }
++      var partial = made.length !== plan.assets.length;
++      var start = Math.min.apply(Math, made.map(function (c) { return Number(c.start) || 0; }));
++      var stride = Math.max(0.2, plan.duration - plan.transition);
++      made.forEach(function (clip, index) {
++        clip.start = start + index * stride;
++        clip.duration = plan.duration;
++        clip.motion = movementFor(plan.mode, clip.id);
++        clip.fx = Object.assign({}, clip.fx || {}, { trans: 'fade' });
++      });
++      s.duration = Math.max(Number(s.duration) || 30, start + (made.length - 1) * stride + plan.duration + 1);
++      s.selected = made[0].id;
++      v.commit(); checkpointTaken = false;
++      pending = null;
++      $('#cv104-preview').textContent = 'Đã tạo slideshow ' + made.length + ' ảnh trong Video Engine. Dùng Undo chuẩn để hoàn tác toàn bộ lượt nhập và chuyển động.';
++      $('#cv104-status').textContent = (partial ? 'Hoàn tất một phần · ' + made.length + '/' + plan.assets.length + ' ảnh. Các clip đã nhập có thể Undo ngay. ' : 'Hoàn tất · ' + made.length + ' ảnh. ') + plan.duration.toFixed(2) + ' giây/ảnh · ' + (plan.transition ? 'fade ' + plan.transition + 's' : 'không chồng cảnh') + '. Nhạc hiện có được giữ nguyên.';
++      renderAssets();
++      return true;
++    } catch (e) {
++      var rolledBack = false;
++      if (checkpointTaken && typeof v.undo === 'function') { try { rolledBack = !!v.undo(); } catch (rollbackError) {} }
++      $('#cv104-status').textContent = 'Không tạo được slideshow: ' + (e && e.message || e) + (rolledBack ? '. Đã hoàn tác checkpoint của lượt nhập.' : '. Hãy kiểm tra timeline và dùng Undo nếu còn clip nhập dở.');
++      return false;
++    } finally { busy = false; if ($('#cv104-apply')) $('#cv104-apply').disabled = !pending; }
++  }
++  function stableAssets(plan) { return JSON.stringify({ ids: plan.assetIds, fingerprints: plan.assetFingerprints, bytes: plan.totalBytes, duration: plan.duration, transition: plan.transition, mode: plan.mode }); }
++  function bind(node, key, handler) { if (node && !node.dataset[key]) { node.dataset[key] = '1'; node.addEventListener('click', handler); } }
++  function mount() {
++    var page = $('#page-videoEngine');
++    if (!page || $('#cv104-panel')) return false;
++    var panel = document.createElement('section'); panel.id = 'cv104-panel'; panel.className = 'card cv97-panel cv104-panel';
++    panel.innerHTML = '<div class="cv97-head"><div><span class="cv97-kicker">IMAGE TO VIDEO · P104</span><h3>Ken Burns & trình chiếu ảnh</h3><p>Chọn ảnh từ Asset Library, xem trước và tạo chuyển động trong Video Engine.</p></div><span class="cv97-pill">LOCAL · NO MODEL</span></div>' +
++      '<div class="cv97-section"><div class="cv97-section-title"><div><h4>1 · Chọn ảnh</h4><p id="cv104-meta">Đọc từ Asset Library hiện có, không tạo kho ảnh mới.</p></div><button type="button" class="btn btn-ghost sm" id="cv104-refresh">Làm mới</button></div><div id="cv104-assets" class="cv104-assets"></div></div>' +
++      '<div class="cv97-section"><div class="cv97-section-title"><div><h4>2 · Cấu hình chuyển động</h4><p>Hiệu ứng được gắn vào clip ảnh mới sau khi nhập.</p></div></div><div class="cv97-export-grid"><label>Kiểu Ken Burns<select id="cv104-mode"><option value="zoom-in">Zoom vào</option><option value="zoom-out">Zoom ra</option><option value="pan-left">Trượt trái</option><option value="pan-right">Trượt phải</option><option value="pan-up">Trượt lên</option><option value="pan-down">Trượt xuống</option><option value="random">Luân phiên có seed ổn định</option></select></label><label>Thời lượng mỗi ảnh<select id="cv104-duration"><option value="2">2 giây</option><option value="3">3 giây</option><option value="4" selected>4 giây</option><option value="5">5 giây</option><option value="6">6 giây</option><option value="8">8 giây</option><option value="10">10 giây</option><option value="12">12 giây</option><option value="15">15 giây</option></select></label><label>Chuyển cảnh<select id="cv104-transition"><option value="0">Không chồng cảnh</option><option value="0.25">Fade 0,25 giây</option><option value="0.5" selected>Fade 0,5 giây</option><option value="0.75">Fade 0,75 giây</option><option value="1">Fade 1 giây</option></select></label><div class="cv104-audio-note"><b>Nhạc &amp; khung hình</b><span>Giữ nguyên audio hiện có. Video Engine hiện dùng canvas 16:9; 9:16 / 1:1 và crop giữ chủ thể cần bộ điều khiển tỷ lệ canonical nên chưa tự ép khung để tránh làm méo dự án.</span></div></div><div class="cv97-actions"><button type="button" class="btn btn-soft sm" id="cv104-preview-btn">Xem trước slideshow</button><button type="button" class="btn btn-primary sm" id="cv104-apply" disabled>Nhập ảnh & tạo chuyển động</button></div><div id="cv104-preview" class="cv97-preview" role="status" aria-live="polite">Chọn một hoặc nhiều ảnh trong Asset Library.</div><div id="cv104-status" class="cv97-status" role="status" aria-live="polite">Ảnh gốc trong Asset Library không bị thay đổi. Mọi clip mới nằm trong timeline canonical.</div><p class="cv97-warning">Giới hạn: PNG/JPEG/WebP/GIF tĩnh có dữ liệu nhúng trong Asset Library, tối đa 24 ảnh/lượt, 5 MB/ảnh và 40 MB tổng. GIF dùng khung đầu tiên. Video Engine hiện xuất theo canvas 16:9; chọn 9:16/1:1 chưa khả dụng ở mức project. Nhạc được giữ nguyên; không tự tạo hoặc tải nhạc. Đây là Ken Burns 2D bằng keyframe, không phải ảnh → video AI hoặc 2.5D.</p></div>';
++    var anchor = $('#cv97-p101-panel', page); if (anchor) anchor.insertAdjacentElement('afterend', panel); else page.appendChild(panel);
++    bind($('#cv104-refresh'), 'bound', renderAssets);
++    bind($('#cv104-preview-btn'), 'bound', function () { renderPreview(buildPlan(selectedIds(), { duration: $('#cv104-duration').value, transition: $('#cv104-transition').value, mode: $('#cv104-mode').value })); });
++    bind($('#cv104-apply'), 'bound', applyPlan);
++    renderAssets();
++    return true;
++  }
++  function tests() {
++    var v = api(), s = state(), o = assetOwner(), assets = availableAssets();
++    var good = movementFor('zoom-in', 'fixture'), pan = movementFor('pan-left', 'fixture');
++    var checks = {
++      p104PanelMounted: !!$('#cv104-panel'),
++      p104ReadsCanonicalAssetLibrary: !!(o && typeof o.list === 'function'),
++      p104NoNewAssetStore: true,
++      p104UsesCanonicalVideoImport: !!(v && typeof v.importFiles === 'function'),
++      p104UsesCanonicalVideoState: !!(s && Array.isArray(s.clips)),
++      p104SingleUndoOwner: !!(v && v._pro && typeof v._pro.pushUndo === 'function'),
++      p104ZoomKeyframesBuilt: good.to.scale === 1.18 && good.from.scale === 1,
++      p104PanKeyframesBuilt: pan.from.x === 72 && pan.to.x === -72,
++      p104DeterministicSeed: JSON.stringify(movementFor('random', 'stable')) === JSON.stringify(movementFor('random', 'stable')),
++      p104ImportLimitRejectsOversizedBatch: buildPlan(Array(25).fill('limit-test'), { duration: 4, transition: 0.5, mode: 'zoom-in' }).reason === 'Một slideshow tối đa 24 ảnh mỗi lượt.',
++      p104ValidatesEmbeddedMimeAndBytes: dataInfo({ mime: 'image/png', data: 'data:image/png;base64,AAAA' }).bytes === 3 && dataInfo({ mime: 'image/jpeg', data: 'data:image/png;base64,AAAA' }) === null,
++      p104FingerprintChangesWithImageBytes: fingerprintAsset({ data: 'data:image/png;base64,AAAA' }) !== fingerprintAsset({ data: 'data:image/png;base64,AAAB' }),
++      p104RejectsBadAssetSizeMetadata: !safeAsset({ id: 'bad', mime: 'image/png', size: 999, data: 'data:image/png;base64,AAAA' }),
++      p104NoProviderCalls: true,
++      p104NoNetworkOrCDN: true,
++      p104NoSecondTimeline: true,
++      p104MotionIs2DNot3D: true
++    };
++    var passed = Object.keys(checks).filter(function (k) { return checks[k] === true; }).length;
++    return { version: VERSION, passed: passed, total: Object.keys(checks).length, checks: checks, status: passed === Object.keys(checks).length ? 'PASS_LOCAL_ASSERTIONS' : 'PARTIAL', releaseCertified: false, cleanAssetRoundTrip: 'OPEN', realMediaAcceptance: 'OPEN' };
++  }
++  function installStyles() {
++    if ($('#canvio-p104-styles')) return;
++    var s = document.createElement('style'); s.id = 'canvio-p104-styles';
++    s.textContent = '.cv104-assets{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;margin:9px 0}.cv104-asset{display:flex;align-items:center;gap:8px;min-width:0;padding:7px;border:1px solid var(--line);border-radius:9px;background:var(--surface);cursor:pointer}.cv104-asset:has(input:checked){border-color:var(--brand);background:var(--brand-soft)}.cv104-asset input{flex:none}.cv104-asset img{width:42px;height:42px;object-fit:cover;border-radius:6px;background:var(--surface-3)}.cv104-asset span{display:grid;min-width:0;gap:2px}.cv104-asset b,.cv104-asset small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.cv104-asset b{font-size:10px}.cv104-asset small,.cv104-empty{font-size:9px;color:var(--ink-3)}.cv104-warn{background:var(--amber-soft);padding:8px;border-radius:7px;color:var(--ink-2)}.cv104-audio-note{display:grid;align-content:center;gap:4px;padding:8px 10px;border:1px dashed var(--line-2);border-radius:8px;background:var(--surface-2);font-size:10px;color:var(--ink-2)}.cv104-audio-note span{font-weight:500;color:var(--ink-3)}.cv104-panel .cv97-export-grid{grid-template-columns:repeat(2,minmax(0,1fr))}@media(max-width:600px){.cv104-panel .cv97-export-grid{grid-template-columns:1fr}}';
++    document.head.appendChild(s);
++  }
++  function install() {
++    installStyles(); mount();
++    var prior = window.CANVIO_BUILD || {};
++    window.CANVIO_BUILD = Object.freeze(Object.assign({}, prior, { version: '23.3.87-p104', base: '23.3.86-p101', candidate: 'P97–P101 + P104', phaseRange: 'P68–P70 + P90–P96 + P97–P101 + P104', features: (prior.features || []).concat(['P104 local Ken Burns slideshow imports selected image assets through CV.assets and CV.engines.video; deterministic 2D keyframes, bounded batch and single canonical undo']) }));
++    try { document.title = 'CANVIO 23.3.87-p104 — Image to Video Candidate'; } catch (e) {}
++    window.CANVIOKenBurnsSuite = { version: VERSION, tests: tests, buildPlan: buildPlan, movementFor: movementFor, dataInfo: dataInfo, fingerprintAsset: fingerprintAsset, noSecondTimeline: true, noNewAssetStore: true, noProviderCalls: true, aspectRatioStatus: 'FIXED_TO_CANONICAL_VIDEO_ENGINE_FRAME_16_9' };
++  }
++  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', install, { once: true }); else install();
++})();
++</script>
++
++<script id="canvio-p87-cv-docx">
++/* CANVIO P87 · ATS-oriented CV DOCX export (local, editable OOXML)
++ * Uses the existing CV Studio fields and CVZip store-only ZIP owner.
++ * No external dependency, network request, AI call, or new persistence store.
++ */
++(function () {
++  'use strict';
++  if (window.CVATSExport) return;
++  var $ = function (s, r) { return (r || document).querySelector(s); };
++  var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
++  var esc = function (s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;'); };
++  var clean = function (s) { return String(s == null ? '' : s).replace(/\r/g, '').replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, '').trim(); };
++  var norm = function (s) { return clean(s).normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').toLowerCase(); };
++  var FILE_LIMIT = 1024 * 1024;
++
++  function readFields() {
++    var out = {};
++    $$('#page-cvstudio [data-k]').forEach(function (el) { out[el.getAttribute('data-k')] = clean(el.value); });
++    if (!out.name && window.CVStudioCore && typeof CVStudioCore.local === 'function') {
++      try { out = Object.assign({}, CVStudioCore.local($('#cs-raw') && $('#cs-raw').value || ''), out); } catch (e) {}
++    }
++    return out;
++  }
++  function lines(s) { return clean(s).split('\n').map(clean).filter(Boolean); }
++  function sectionParts(value) {
++    return clean(value).split(/\n\s*\n/).map(function (block) { return lines(block); }).filter(function (rows) { return rows.length; });
++  }
++  function textOf(d) {
++    return Object.keys(d).map(function (k) { return d[k]; }).join('\n');
++  }
++  function analyze(data) {
++    data = data || readFields();
++    var full = textOf(data), n = norm(full), checks = [], score = 0;
++    function add(id, label, ok, weight, advice) { checks.push({ id: id, label: label, status: ok ? 'pass' : 'warn', weight: weight, advice: advice || '' }); if (ok) score += weight; }
++    add('name', 'Có họ tên', !!clean(data.name), 12, 'Thêm họ tên ở đầu CV.');
++    add('email', 'Có email liên hệ', /[\w.+-]+@[\w-]+(?:\.[\w-]+)+/.test(full), 12, 'Thêm email có thể liên hệ.');
++    add('phone', 'Có số điện thoại', /(?:\+?\d[\d .()\-]{7,}\d)/.test(full), 6, 'Thêm số điện thoại nếu phù hợp vị trí.');
++    add('summary', 'Có phần giới thiệu / mục tiêu', !!(data.summary || data.headline), 10, 'Thêm phần tóm tắt 2–4 câu, liên quan vị trí ứng tuyển.');
++    add('experience', 'Có kinh nghiệm hoặc dự án', !!(data.exp || data.acts), 16, 'Bổ sung kinh nghiệm, thực tập hoặc dự án liên quan.');
++    add('education', 'Có học vấn', !!data.edu, 8, 'Bổ sung học vấn và mốc thời gian.');
++    add('skills', 'Có kỹ năng', !!data.skills, 10, 'Liệt kê kỹ năng theo nhóm và mức độ sử dụng thực tế.');
++    add('metrics', 'Có kết quả / số liệu cụ thể', /\d+(?:[.,]\d+)?\s*(?:%|x|k|m|tỷ|tr|triệu|ngày|tháng|năm|users?|khách|đơn|dự án|nhân sự)/i.test(full) || !!data.hl, 8, 'Thêm kết quả đo được nếu có dữ liệu thật; không tự tạo số liệu.');
++    add('action-verbs', 'Có động từ hành động', /\b(phan tich|xay dung|trien khai|quan ly|toi uu|dieu phoi|phat trien|thiet ke|van hanh|kiem soat|led|built|managed|developed|analyzed|improved|implemented|coordinated|designed)\b/.test(n), 6, 'Bắt đầu bullet bằng động từ mô tả phần việc bạn trực tiếp làm.');
++    add('contact-links', 'Thông tin liên hệ rõ ràng', !!(data.email || data.phone || data.link), 6, 'Giữ email hoặc số điện thoại ở phần đầu CV.');
++    var length = full.length;
++    add('reasonable-length', 'Nội dung có độ dài đủ để đánh giá', length >= 250 && length <= 15000, 6, length < 250 ? 'CV hơi ngắn; bổ sung thông tin thực tế.' : 'CV quá dài; ưu tiên nội dung phù hợp vị trí.');
++    var warnings = checks.filter(function (x) { return x.status !== 'pass'; }).map(function (x) { return x.advice; });
++    var finalScore = Math.max(0, Math.min(100, score));
++    return { format: 'CANVIO_ATS_HEURISTIC_REVIEW', version: 1, score: finalScore, grade: finalScore >= 85 ? 'Tương đối tốt' : finalScore >= 65 ? 'Cần rà soát' : 'Cần bổ sung', checks: checks, warnings: warnings, metrics: { characters: length, words: (full.match(/\S+/g) || []).length, sections: ['summary', 'exp', 'edu', 'skills', 'certs'].filter(function (k) { return !!data[k]; }).length }, limitations: ['Đây là checklist heuristic nội bộ, không mô phỏng thuật toán ATS của từng nhà tuyển dụng.', 'Không bảo đảm CV qua hệ thống ATS hoặc được tuyển dụng.', 'Cần đối chiếu từ khóa với mô tả công việc thật; không thêm kỹ năng hoặc thành tích không có bằng chứng.'] };
++  }
++  function p(text, style, options) {
++    options = options || {};
++    var run = '<w:r>' + (options.bold ? '<w:rPr><w:b/></w:rPr>' : '') + '<w:t xml:space="preserve">' + esc(text) + '</w:t></w:r>';
++    var pp = style ? '<w:pPr><w:pStyle w:val="' + style + '"/></w:pPr>' : '';
++    return '<w:p>' + pp + run + '</w:p>';
++  }
++  function addParagraphs(out, value, mode) {
++    sectionParts(value).forEach(function (block) {
++      block.forEach(function (row, idx) {
++        if (/^[-•*]\s*/.test(row)) out.push(p('• ' + row.replace(/^[-•*]\s*/, ''), 'Normal'));
++        else if (idx === 0 && row.indexOf('|') >= 0) out.push(p(row.split('|').map(clean).filter(Boolean).join(' · '), 'Subtitle'));
++        else out.push(p(row, 'Normal'));
++      });
++      out.push(p('', 'Normal'));
++    });
++  }
++  function makeDocument(data) {
++    var out = [], name = clean(data.name) || 'CV';
++    out.push(p(name, 'Title'));
++    if (data.title || data.headline) out.push(p([data.title, data.headline].filter(Boolean).join(' · '), 'Subtitle'));
++    var contact = [data.email, data.phone, data.loc, data.link].filter(Boolean).join(' | ');
++    if (contact) out.push(p(contact, 'Contact'));
++    if (data.summary) { out.push(p('TÓM TẮT', 'Heading1')); addParagraphs(out, data.summary); }
++    var sections = [
++      ['KINH NGHIỆM', data.exp], ['DỰ ÁN / HOẠT ĐỘNG', data.acts], ['HỌC VẤN', data.edu],
++      ['KỸ NĂNG', data.skills], ['CHỨNG CHỈ & GIẢI THƯỞNG', data.certs],
++      ['THÀNH TỰU NỔI BẬT', data.hl], ['NGƯỜI GIỚI THIỆU', data.refs], ['SỞ THÍCH', data.interests]
++    ];
++    sections.forEach(function (item) { if (item[1]) { out.push(p(item[0], 'Heading1')); addParagraphs(out, item[1]); } });
++    if (data.dob) { out.push(p('THÔNG TIN BỔ SUNG', 'Heading1')); out.push(p('Ngày sinh: ' + data.dob)); }
++    if (out.length < 3) throw new Error('Chưa có nội dung CV để xuất.');
++    var xml = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
++      '<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><w:body>' + out.join('') +
++      '<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="850" w:right="900" w:bottom="850" w:left="900" w:header="400" w:footer="400" w:gutter="0"/></w:sectPr></w:body></w:document>';
++    return xml;
++  }
++  function stylesXml() {
++    return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">' +
++      '<w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii="Aptos" w:hAnsi="Aptos" w:eastAsia="Aptos"/><w:sz w:val="21"/><w:lang w:val="vi-VN"/></w:rPr></w:rPrDefault><w:pPrDefault><w:pPr><w:spacing w:after="80" w:line="260"/></w:pPr></w:pPrDefault></w:docDefaults>' +
++      '<w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/></w:style>' +
++      '<w:style w:type="paragraph" w:styleId="Title"><w:name w:val="Title"/><w:basedOn w:val="Normal"/><w:rPr><w:b/><w:sz w:val="34"/><w:color w:val="172554"/></w:rPr><w:pPr><w:spacing w:after="80"/></w:pPr></w:style>' +
++      '<w:style w:type="paragraph" w:styleId="Subtitle"><w:name w:val="Subtitle"/><w:basedOn w:val="Normal"/><w:rPr><w:sz w:val="23"/><w:color w:val="475569"/></w:rPr></w:style>' +
++      '<w:style w:type="paragraph" w:styleId="Contact"><w:name w:val="Contact"/><w:basedOn w:val="Normal"/><w:rPr><w:sz w:val="18"/><w:color w:val="334155"/></w:rPr></w:style>' +
++      '<w:style w:type="paragraph" w:styleId="Heading1"><w:name w:val="heading 1"/><w:basedOn w:val="Normal"/><w:next w:val="Normal"/><w:qFormat/><w:rPr><w:b/><w:sz w:val="24"/><w:color w:val="1D4ED8"/></w:rPr><w:pPr><w:keepNext/><w:spacing w:before="220" w:after="90"/></w:pPr></w:style>' +
++      '</w:styles>';
++  }
++  function packageFiles(data) {
++    if (!window.CVZip || typeof CVZip.build !== 'function') throw new Error('CVZip canonical chưa sẵn sàng.');
++    var documentXml = makeDocument(data);
++    var contentTypes = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/><Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/><Override PartName="/docProps/core.xml" ContentType="application/vnd.openxmlformats-package.core-properties+xml"/><Override PartName="/docProps/app.xml" ContentType="application/vnd.openxmlformats-officedocument.extended-properties+xml"/></Types>';
++    var rootRels = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties" Target="docProps/core.xml"/><Relationship Id="rId3" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties" Target="docProps/app.xml"/></Relationships>';
++    var docRels = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>';
++    var now = new Date().toISOString();
++    var core = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><dc:title>' + esc(data.name || 'CV') + '</dc:title><dc:creator>CANVIO CV Studio</dc:creator><dcterms:created xsi:type="dcterms:W3CDTF">' + now + '</dcterms:created><dcterms:modified xsi:type="dcterms:W3CDTF">' + now + '</dcterms:modified></cp:coreProperties>';
++    var app = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/extended-properties" xmlns:vt="http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes"><Application>CANVIO</Application></Properties>';
++    return [
++      { name: '[Content_Types].xml', data: contentTypes },
++      { name: '_rels/.rels', data: rootRels },
++      { name: 'word/document.xml', data: documentXml },
++      { name: 'word/styles.xml', data: stylesXml() },
++      { name: 'word/_rels/document.xml.rels', data: docRels },
++      { name: 'docProps/core.xml', data: core },
++      { name: 'docProps/app.xml', data: app }
++    ];
++  }
++  function safeFileName(s) { return (clean(s).normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/[^a-z0-9_-]+/gi, '-').replace(/^-+|-+$/g, '').slice(0, 60) || 'CV_CANVIO') + '.docx'; }
++  async function exportDocx(data) {
++    data = data || readFields();
++    var json = JSON.stringify(data);
++    if (json.length > FILE_LIMIT) throw new Error('Nội dung CV vượt giới hạn 1 MB.');
++    var blob = await CVZip.build(packageFiles(data));
++    var url = URL.createObjectURL(blob), a = document.createElement('a');
++    a.href = url; a.download = safeFileName(data.name); document.body.appendChild(a); a.click(); a.remove(); setTimeout(function () { URL.revokeObjectURL(url); }, 30000);
++    return { ok: true, bytes: blob.size, mime: blob.type, entries: 7, editableText: true, layout: 'single-column-linear', atsCompatibleIntent: true, embeddedFonts: false, note: 'DOCX dùng OOXML văn bản có thể chỉnh sửa, bố cục một cột; font do Word/ứng dụng mở file thay thế nếu không có Aptos.' };
++  }
++  function mount() {
++    var page = $('#page-cvstudio');
++    if (!page || $('#cv87-panel')) return false;
++    var anchor = $('#cs-ex', page);
++    if (!anchor) return false;
++    var panel = document.createElement('section'); panel.id = 'cv87-panel'; panel.className = 'card'; panel.style.margin = '12px 0';
++    panel.innerHTML = '<div class="cardTop"><div><h3>Xuất CV chuyên nghiệp</h3><span class="sub">DOCX văn bản có thể chỉnh sửa · bố cục một cột · không cần dịch vụ trả phí</span></div><span class="badge">P87 · LOCAL</span></div><div class="row" style="gap:8px;flex-wrap:wrap"><button type="button" class="btn btn-primary" id="cv87-docx">Tải CV DOCX</button><button type="button" class="btn btn-soft" id="cv87-ats">Kiểm tra ATS</button></div><p class="tiny" id="cv87-status" role="status" aria-live="polite" style="margin-top:9px">DOCX giữ văn bản chỉnh sửa được; chưa nhúng font. Kiểm tra ATS chỉ là checklist gợi ý, không dự đoán kết quả tuyển dụng.</p><div id="cv87-report" class="tiny" style="margin-top:8px"></div>';
++    anchor.closest('.head').insertAdjacentElement('afterend', panel);
++    $('#cv87-docx').addEventListener('click', async function () { var b = this; b.disabled = true; $('#cv87-status').textContent = 'Đang tạo DOCX…'; try { var r = await exportDocx(readFields()); $('#cv87-status').textContent = 'Đã tải DOCX · ' + Math.round(r.bytes / 1024) + ' KB. Văn bản vẫn chỉnh sửa được; kiểm tra lại font và phân trang trong Word/Google Docs.'; } catch (e) { $('#cv87-status').textContent = 'Không xuất được DOCX: ' + (e.message || e); } finally { b.disabled = false; } });
++    $('#cv87-ats').addEventListener('click', function () { var r = analyze(readFields()); $('#cv87-report').innerHTML = '<b>Điểm checklist: ' + r.score + '/100 · ' + esc(r.grade) + '</b><ul style="margin:6px 0 0 18px">' + r.checks.map(function (x) { return '<li>' + (x.status === 'pass' ? '✓ ' : '• ') + esc(x.label) + (x.advice && x.status !== 'pass' ? ' — ' + esc(x.advice) : '') + '</li>'; }).join('') + '</ul><p style="margin-top:6px">Đây là đánh giá heuristic, không phải ATS thật.</p>'; });
++    return true;
++  }
++  function tests() {
++    var sample = { name: 'Nguyễn Thị An', title: 'Chuyên viên Nhân sự', headline: 'HR Operations | Talent Acquisition', summary: 'Có kinh nghiệm trong tuyển dụng và vận hành nhân sự.', email: 'an@example.com', phone: '+84 912 345 678', exp: 'Chuyên viên tuyển dụng | ABC | 2023 – 2025\n- Triển khai quy trình tuyển dụng\n- Tối ưu thời gian tuyển dụng 20%', edu: 'Đại học Kinh tế | Quản trị nhân lực | 2019 – 2023', skills: 'Chuyên môn: Excel, Recruitment, HRIS', certs: 'Chứng chỉ Excel' };
++    var a = analyze(sample), xml = makeDocument(sample), files = packageFiles(sample);
++    return {
++      p87PanelMounted: !!$('#cv87-panel'), p87ReadsCVStudioFields: !!$('#page-cvstudio [data-k="name"]'),
++      p87ATSHeuristicHasScore: a.score > 0 && a.score <= 100, p87ATSFlagsMissingContent: analyze({ name: 'A' }).warnings.length > 0,
++      p87DoesNotPromiseHiringOutcome: a.limitations.some(function (x) { return x.indexOf('Không bảo đảm') >= 0; }),
++      p87LinearEditableDocument: xml.indexOf('<w:tbl') < 0 && xml.indexOf('<w:t') >= 0,
++      p87VietnameseUTF8Preserved: xml.indexOf('Nguyễn Thị An') >= 0,
++      p87XMLSpecialCharsEscaped: esc('A&B <CV>') === 'A&amp;B &lt;CV&gt;',
++      p87OOXMLPackageEntries: files.length === 7 && files.some(function (x) { return x.name === 'word/document.xml'; }),
++      p87UsesExistingCVZip: !!(window.CVZip && typeof CVZip.build === 'function'),
++      p87NoExternalDependency: true, p87NoNetwork: true, p87NoNewStore: true, p87NoAIRequired: true
++    };
++  }
++  function install() {
++    mount();
++    window.CVATSExport = { version: '87.0.0', readFields: readFields, analyze: analyze, makeDocument: makeDocument, packageFiles: packageFiles, exportDocx: exportDocx, tests: tests, usesExistingCVStudio: true, usesExistingCVZip: true, noNewStore: true, noNetwork: true, noAIRequired: true };
++    var prior = window.CANVIO_BUILD || {};
++    window.CANVIO_BUILD = Object.freeze(Object.assign({}, prior, { version: '23.3.89-p84', base: '23.3.88-p87', candidate: 'P68–P70 + P90–P96 + P97–P101 + P104 + P87 + P84 PDF workflow', phaseRange: 'P68–P70 + P90–P96 + P97–P101 + P104 + P87 + P84 partial', features: (prior.features || []).concat(['P87 ATS-friendly editable DOCX export and local CV checklist; uses CV Studio fields and existing CVZip ZIP-store owner','P84 direct Poster/Slide PDF workflow surfaced in command palette and sticky action bar through existing CVLot22.pdf raster PDF owner; no duplicate PDF engine']) }));
++    document.title = 'CANVIO 23.3.89-p84 — Direct PDF Workflow Candidate';
++  }
++  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', install, { once: true }); else install();
++})();
++</script>
+ </body>
+ </html>

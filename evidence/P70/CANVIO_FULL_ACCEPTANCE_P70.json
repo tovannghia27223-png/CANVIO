@@ -1,0 +1,193 @@
+{
+  "format": "CANVIO_FULL_PHASE_ACCEPTANCE",
+  "version": 1,
+  "date": "2026-11-17",
+  "candidate": "23.3.84-p70",
+  "phase_suite": "70.0.0",
+  "acceptance_disposition": "AUTOMATED_REGRESSION_PASS_PRODUCTION_RELEASE_BLOCKED",
+  "index_sha256": "73e97aeb4b538f7e7c828ac740084113574db671206a1a1db0f19a45fb22d45c",
+  "package_sha256": "61289ae7d73e961c9a3584e2a7263cac847c2ff2826b692576b2bcc7cf3ed949",
+  "static_audit": {
+    "inline_scripts": "91/91 PASS",
+    "html_ids": "504/504 unique",
+    "duplicate_ids": 0,
+    "external_script_src": 0,
+    "workflow_yaml": "PASS",
+    "p63_p67_module_sync": "PASS",
+    "p68_p70_module_sync": "PASS",
+    "whisper_worker_syntax": "PASS",
+    "manifest_files": 57,
+    "manifest_verified": 57,
+    "manifest_mismatches": [],
+    "zip_integrity": "PASS"
+  },
+  "source_suites": {
+    "P47": {
+      "status": "PASS",
+      "detail": "integration, Bezier, restore and CRC fixtures; restore values persisted; isolated harness does not load later runtime modules"
+    },
+    "P48": {
+      "status": "PASS",
+      "assertions": 26
+    },
+    "P49": {
+      "status": "PASS",
+      "assertions": 35
+    },
+    "P50": {
+      "status": "PASS",
+      "assertions": 27
+    },
+    "P51-P55": {
+      "status": "PASS",
+      "assertions": 49
+    },
+    "P56": {
+      "status": "PASS",
+      "assertions": 27
+    },
+    "P57-P62": {
+      "status": "PASS",
+      "assertions": 15
+    },
+    "P63-P67": {
+      "status": "PASS",
+      "assertions": 18
+    },
+    "P68-P70": {
+      "status": "PASS",
+      "assertions": 16
+    }
+  },
+  "browser_smokes": {
+    "P55 inherited runtime compatibility on P70": {
+      "status": "PASS",
+      "checks": 24,
+      "note": "Temporary copy of legacy harness changed only expected candidate marker/title and redirected its report output."
+    },
+    "P56 archive/restore compatibility on P70": {
+      "status": "PASS",
+      "checks": 27,
+      "note": "Temporary copy of legacy harness changed only expected candidate marker/title and redirected its report output."
+    },
+    "P57-P62 on P70": {
+      "status": "PASS",
+      "checks": 32,
+      "note": "Temporary copy of P62 harness changed only expected candidate marker/title and redirected its report output."
+    },
+    "P63-P67 regression on P70": {
+      "status": "PASS",
+      "checks": 43,
+      "note": "Packaged inherited browser smoke, executed against current P70 source."
+    },
+    "P68-P70": {
+      "status": "PASS",
+      "checks": 16,
+      "note": "Packaged P68-P70 browser smoke, executed against current P70 source."
+    }
+  },
+  "browser_environment": {
+    "browser": "Chromium 144.0.7559.96",
+    "origin": "about:blank",
+    "storage": "in-memory localStorage/sessionStorage shims where specified",
+    "node_local": "v22.16.0",
+    "python_local": "3.13.5",
+    "note": "The repository workflow requests Node 24, but this local runtime was Node 22; a hosted Node 24 workflow run has not been observed."
+  },
+  "origin_probe": {
+    "http_local_navigation": "BLOCKED",
+    "error": "net::ERR_BLOCKED_BY_ADMINISTRATOR",
+    "consequence": "Cannot perform native IndexedDB, secure-context, same-origin worker and real HTTPS acceptance here."
+  },
+  "manual_gates": [
+    {
+      "gate": "HTTPS browser matrix",
+      "status": "OPEN",
+      "evidence": "Only Chromium available; localhost/127.0.0.1 navigation was blocked by ERR_BLOCKED_BY_ADMINISTRATOR; Edge/Safari HTTPS not run."
+    },
+    {
+      "gate": "Native IndexedDB persistence round-trip",
+      "status": "OPEN",
+      "evidence": "P57 source suite passed, but browser reports databaseAvailable=false on about:blank; native IndexedDB save/close/reopen not verified."
+    },
+    {
+      "gate": "Real media export and A/V sync",
+      "status": "OPEN",
+      "evidence": "Synthetic WebM and MP4/H.264 video encodes decode; report explicitly avSyncCertified=false; no real audio/video source sync test."
+    },
+    {
+      "gate": "Whisper real inference",
+      "status": "OPEN",
+      "evidence": "Worker syntax and adapter safeguards pass; no worker/model run, download, Vietnamese/English inference, cancellation during inference or unload measured."
+    },
+    {
+      "gate": "Accessibility review",
+      "status": "OPEN",
+      "evidence": "P60 automated screen reports 32 triage findings; WCAG certification false; keyboard-only, screen reader and real 200% reflow not audited."
+    },
+    {
+      "gate": "Hosting/security headers",
+      "status": "OPEN",
+      "evidence": "Workflow YAML parses and worker path checked statically; no P70 deployment, HTTPS headers, CSP/CORS/HSTS/MIME or hosted Pages run."
+    },
+    {
+      "gate": "Real production timeline project",
+      "status": "OPEN",
+      "evidence": "Canonical owner and editing behavior passed synthetic fixture; no user production project, full bridge and undo/redo acceptance."
+    },
+    {
+      "gate": "Real footage tracking/stabilization",
+      "status": "OPEN",
+      "evidence": "Textured translated-patch fixture passes; representative camera footage, occlusion, motion blur and variable frame rate untested."
+    },
+    {
+      "gate": "Real AI provider/provenance/licensing",
+      "status": "OPEN",
+      "evidence": "Prompt construction, SVG sanitization and Asset Library integration pass; no external provider request or license review."
+    },
+    {
+      "gate": "Typography and print/prepress",
+      "status": "OPEN",
+      "evidence": "Layout Foundry master/typography and sanitized HTML checks pass; no actual font licensing, pagination, PDF/X, CMYK or printer proof."
+    },
+    {
+      "gate": "Offline 3D on clean machine",
+      "status": "OPEN",
+      "evidence": "OBJ package renders in Chromium with zero observed requests; clean-machine test with physical network disabled not performed."
+    },
+    {
+      "gate": "Performance on target hardware",
+      "status": "OPEN",
+      "evidence": "P69 short frame sample and heuristic audit pass; minimum target hardware and large production project budgets not measured."
+    },
+    {
+      "gate": "Cross-origin backup/restore",
+      "status": "OPEN",
+      "evidence": "CVZip format integrity and preview checks pass; restore validation across two real origins not performed."
+    },
+    {
+      "gate": "Release rollback and observability",
+      "status": "OPEN",
+      "evidence": "No P70 hosted workflow/deploy; rollback rehearsal, production error logging and post-deploy monitoring absent."
+    }
+  ],
+  "github": {
+    "repository": "https://github.com/tovannghia27223-png/CANVIO",
+    "default_branch": "main",
+    "main_head": "8ac85d810c40d22b62a5750a8b16ce0ee2e09aa4",
+    "main_commit_message": "Add inline favicon (fix favicon.ico 404) (#6)",
+    "main_commit_date_utc": "2026-11-16T13:06:58Z",
+    "main_index_title": "CANVIO 23.3.60-r6 — Production Excellence · P42 Final Acceptance",
+    "release_fallback_branch_head": "98a5ca6cb33d5fc0dacde831245fa00a1bc76323",
+    "release_fallback_message": "Retire legacy automatic Pages deployment; keep manual Node 24 fallback",
+    "p70_source_on_main": false,
+    "p70_hosted_actions_run_observed": false,
+    "deploy_or_merge_performed": false,
+    "references": [
+      "https://github.com/tovannghia27223-png/CANVIO/commit/8ac85d810c40d22b62a5750a8b16ce0ee2e09aa4",
+      "https://github.com/tovannghia27223-png/CANVIO/commit/98a5ca6cb33d5fc0dacde831245fa00a1bc76323",
+      "https://github.com/tovannghia27223-png/CANVIO/actions"
+    ]
+  },
+  "conclusion": "All available local automated source and Chromium fixture suites pass. This is not a production acceptance: fourteen real-world gates remain open. Do not call CANVIO 1.0 Stable or deploy P70 until those gates are evidenced and reviewed."
+}

@@ -1,0 +1,195 @@
+{
+  "format": "CANVIO_P97_P101_P104_P87_CHROMIUM_SMOKE",
+  "candidate": "23.3.108-p85-studio-r2",
+  "browser": "157.0.8103.78",
+  "origin": "about:blank",
+  "testOnlyStorageShim": true,
+  "checks": [
+    {
+      "id": "P84 final candidate build marker",
+      "status": "pass",
+      "detail": "23.3.108-p85-studio-r2"
+    },
+    {
+      "id": "Latest candidate document title",
+      "status": "pass",
+      "detail": "CANVIO 23.3.108 — Creative Runtime Lab · P85 Runtime Hardening r2"
+    },
+    {
+      "id": "P97–P101 panel mounts",
+      "status": "pass",
+      "detail": ""
+    },
+    {
+      "id": "P97–P101 source assertions",
+      "status": "pass",
+      "detail": "{}"
+    },
+    {
+      "id": "No duplicate DOM IDs after Video page mount",
+      "status": "pass",
+      "detail": ""
+    },
+    {
+      "id": "Seed synthetic timeline through canonical Video Engine",
+      "status": "pass",
+      "detail": ""
+    },
+    {
+      "id": "P97 creates a preview before mutation",
+      "status": "pass",
+      "detail": ""
+    },
+    {
+      "id": "P97 preview describes planned speed change",
+      "status": "pass",
+      "detail": "Đặt tốc độ clip thành 2×\n\nChỉ thay đổi tốc độ phát của clip video đang chọn.\n\nĐối tượng: Synthetic footage · p101-video\n\nChưa có thay đổi nào được áp dụng. Hãy kiểm tra rồi mới xác"
+    },
+    {
+      "id": "P97 applies requested 2x speed to selected canonical clip",
+      "status": "pass",
+      "detail": "2"
+    },
+    {
+      "id": "P97 undo restores previous clip speed",
+      "status": "pass",
+      "detail": "1"
+    },
+    {
+      "id": "P97 rejects an unknown command safely",
+      "status": "pass",
+      "detail": ""
+    },
+    {
+      "id": "P98 ignores shortcuts while an input is focused",
+      "status": "pass",
+      "detail": ""
+    },
+    {
+      "id": "P98 B shortcut invokes canonical Video Engine split",
+      "status": "pass",
+      "detail": "4"
+    },
+    {
+      "id": "P98 V shortcut focuses canonical timeline",
+      "status": "pass",
+      "detail": ""
+    },
+    {
+      "id": "P98 labels available tools and truthfully disables unsupported modes",
+      "status": "pass",
+      "detail": "{\"select\": 1, \"disabled\": 3, \"titles\": [\"\", \"Ch\\u01b0a c\\u00f3 API slip/slide trong Video Engine\", \"Ch\\u01b0a c\\u00f3 keyframe pen tool owner\", \"Ch\\u01b0a c\\u00f3 pan/hand tool owner\", \"\", \"\"]}"
+    },
+    {
+      "id": "P99 previews estimated per-word captions",
+      "status": "pass",
+      "detail": "4 cue từ sẽ được tạo\nHello\n1.00–2.00s\nworld\n2.00–3.00s\nfrom\n3.00–3.81s\nCANVIO\n3.81–5.00s\nƯớc lượng theo độ dài từ trong timestamp của cue; không phải căn chỉnh âm học từng từ.\n\nCue gốc sẽ được thay bằng các cue từ. Hoàn "
+    },
+    {
+      "id": "P99 inserts word cues into canonical text track with estimate metadata",
+      "status": "pass",
+      "detail": "[{\"text\": \"Hello\", \"accuracy\": \"estimated-segment-proportional\"}, {\"text\": \"world\", \"accuracy\": \"estimated-segment-proportional\"}, {\"text\": \"from\", \"accuracy\": \"estimated-segment-proportional\"}, {\"text\": \"CANVIO\", \"accuracy\": \"estimated-segment-proportional\"}]"
+    },
+    {
+      "id": "P100 saves transcript edits to canonical cue",
+      "status": "pass",
+      "detail": "Hello updated"
+    },
+    {
+      "id": "P100 creates ripple preview through P64",
+      "status": "pass",
+      "detail": "Cắt 1.00s · dự kiến dịch 3 clip · tách 0 clip · bỏ 1 clip. Hãy kiểm tra trước khi xác nhận."
+    },
+    {
+      "id": "P100 blocks ripple affecting a locked track",
+      "status": "pass",
+      "detail": "Bị chặn vì phạm vi cắt sẽ tác động clip/track đang khóa: cvword_mwm9uohn_hwg1hto2, cvword_mwm9uohn_g85aiusp, cvword_mwm9uohn_gwcmwmlr"
+    },
+    {
+      "id": "P101 clamps export controls to supported range",
+      "status": "pass",
+      "detail": "{\"width\": 3840, \"height\": 2160, \"fps\": 60, \"videoBitsPerSecond\": 20000000, \"resolution\": \"2160\"}"
+    },
+    {
+      "id": "P101 MP4 option matches browser H.264 capability",
+      "status": "pass",
+      "detail": "{\"mediaRecorder\": true, \"canvasCapture\": true, \"webmMime\": \"video/webm;codecs=vp9\", \"mp4Mime\": \"video/mp4;codecs=avc1.42E01E\", \"h264Supported\": true, \"mp4RequiresNativeH264\": true, \"ffmpegFallback\": false, \"webCodecsAvailable\": false, \"webCodecsMuxer\": \"CANVIO_ISOBMFF_AVC_1TRACK\", \"webCodecsMP4Scope\": \"silent-image-text-timeline-only\", \"mp4Supported\": true}"
+    },
+    {
+      "id": "P101 exposes optional subtitle sidecars",
+      "status": "pass",
+      "detail": ""
+    },
+    {
+      "id": "P104 reuses two images in existing Asset Library",
+      "status": "pass",
+      "detail": "[{\"id\": \"as_mwm9up42_6u0kg\", \"name\": \"KenBurns B.png\", \"size\": 130}, {\"id\": \"as_mwm9up3w_chwup\", \"name\": \"KenBurns A.png\", \"size\": 130}]"
+    },
+    {
+      "id": "P104 displays Asset Library image checkboxes",
+      "status": "pass",
+      "detail": ""
+    },
+    {
+      "id": "P104 refuses slideshow creation when image/video track is locked",
+      "status": "pass",
+      "detail": "Track hình/video đang khóa. Mở khóa trước khi tạo slideshow."
+    },
+    {
+      "id": "P104 previews image count, clip duration and transition",
+      "status": "pass",
+      "detail": "2 ảnh sẽ được đưa vào timeline\n\n3.00 giây/ảnh · Fade 0,5 giây · hiệu ứng pan-left\n\n0.00 MB dữ liệu · Thứ tự theo danh sách Asset Library.\n\nNhạc: CANVIO giữ nguyên các clip audio đang có; không tự tạo hoặc tải nhạc. Hiệu "
+    },
+    {
+      "id": "P104 imports images and applies local Ken Burns keyframes",
+      "status": "pass",
+      "detail": "[{\"name\": \"KenBurns B.png\", \"start\": 12, \"duration\": 3, \"from\": {\"x\": 72, \"y\": 0, \"scale\": 1, \"opacity\": 1, \"rotation\": 0}, \"to\": {\"x\": -72, \"y\": 0, \"scale\": 1, \"opacity\": 1, \"rotation\": 0}, \"transition\": \"fade\"}, {\"name\": \"KenBurns A.png\", \"start\": 14.5, \"duration\": 3, \"from\": {\"x\": 72, \"y\": 0, \"scale\": 1, \"opacity\": 1, \"rotation\": 0}, \"to\": {\"x\": -72, \"y\": 0, \"scale\": 1, \"opacity\": 1, \"rotation\": 0}, \"transition\": \"fade\"}]"
+    },
+    {
+      "id": "P104 creates sequential slideshow with 0.5s overlap fade",
+      "status": "pass",
+      "detail": "[{\"name\": \"KenBurns B.png\", \"start\": 12, \"duration\": 3, \"from\": {\"x\": 72, \"y\": 0, \"scale\": 1, \"opacity\": 1, \"rotation\": 0}, \"to\": {\"x\": -72, \"y\": 0, \"scale\": 1, \"opacity\": 1, \"rotation\": 0}, \"transition\": \"fade\"}, {\"name\": \"KenBurns A.png\", \"start\": 14.5, \"duration\": 3, \"from\": {\"x\": 72, \"y\": 0, \"scale\": 1, \"opacity\": 1, \"rotation\": 0}, \"to\": {\"x\": -72, \"y\": 0, \"scale\": 1, \"opacity\": 1, \"rotation\": 0}, \"transition\": \"fade\"}]"
+    },
+    {
+      "id": "P104 one canonical Undo removes the slideshow batch",
+      "status": "pass",
+      "detail": "{\"ok\": true, \"before\": 2, \"after\": 0}"
+    },
+    {
+      "id": "P101 synthetic WebM render, MIME and canplay QC",
+      "status": "pass",
+      "detail": "{\"ok\": true, \"mime\": \"video/webm;codecs=vp9\", \"bytes\": 1506, \"qc\": {\"ok\": true, \"mime\": \"video/webm;codecs=vp9\", \"mimeOK\": true, \"bytes\": 1506, \"duration\": 0.5, \"durationOK\": true, \"canplay\": true, \"level\": \"LOCAL_METADATA_AND_CANPLAY_SCREEN_NOT_FULL_FILE_OR_AV_SYNC_CERTIFICATION\", \"note\": \"Browser nhận metadata và giải mã được tới canplay; chưa chứng nhận toàn file hoặc A/V sync.\"}}"
+    },
+    {
+      "id": "P104 Ken Burns owner/source assertions",
+      "status": "pass",
+      "detail": "{}"
+    },
+    {
+      "id": "P70 release gate remains fail-closed",
+      "status": "pass",
+      "detail": "{\"pending\": 14, \"total\": 14, \"certified\": false, \"status\": \"BLOCKED_PENDING_REAL_WORLD_ACCEPTANCE\"}"
+    },
+    {
+      "id": "No uncaught application errors",
+      "status": "pass",
+      "detail": "[]"
+    },
+    {
+      "id": "No console errors in P97-P101 smoke",
+      "status": "pass",
+      "detail": "[]"
+    }
+  ],
+  "passed": 35,
+  "total": 35,
+  "status": "PASS_SYNTHETIC_BROWSER_SMOKE",
+  "limitations": [
+    "Opaque about:blank with test storage shims; no native IndexedDB/browser restart acceptance.",
+    "Synthetic media only; no real footage, Whisper model inference, A/V sync or long-form export acceptance.",
+    "No HTTPS, CSP, hosting, Safari/Edge or target-device acceptance.",
+    "P99 word timings are proportional estimates, not acoustic alignment.",
+    "P101 QC is MIME/metadata/canplay only, not full-file or A/V sync certification.",
+    "P70 remains fail-closed with fourteen real-world gates open."
+  ]
+}

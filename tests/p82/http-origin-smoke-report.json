@@ -1,0 +1,8 @@
+{
+  "candidate": "23.3.107-p107-preset-v2-r2",
+  "origin": "http://127.0.0.1",
+  "status": "BLOCKED_OR_FAILED_LOCALHOST_ORIGIN",
+  "error": "Page.goto: net::ERR_BLOCKED_BY_ADMINISTRATOR at http://127.0.0.1:34071/index.html\nCall log:\n  - navigating to \"http://127.0.0.1:34071/index.html\", waiting until \"domcontentloaded\"\n",
+  "checks": [],
+  "fontResponses": []
+}

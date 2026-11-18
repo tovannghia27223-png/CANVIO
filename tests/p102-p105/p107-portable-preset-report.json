@@ -1,0 +1,25 @@
+{
+  "suite": "CANVIO_P107_PORTABLE_PRESET_SECURITY_AND_ASSET_ROUNDTRIP",
+  "candidate": "23.3.108-p85-studio-r2",
+  "passed": 14,
+  "total": 14,
+  "checks": {
+    "P107 strict parser accepts exact three-file ZIP bundle": true,
+    "P107 preserves valid numeric strength zero": true,
+    "P107 v2 accepts distinct source and depth image dimensions": true,
+    "P107 v2 rejects PNG dimensions that disagree with the declared source size": true,
+    "P107 rejects encrypted ZIP entries": true,
+    "P107 rejects data-descriptor ZIP entries": true,
+    "P107 rejects compressed ZIP methods": true,
+    "P107 rejects path traversal and non-allowlisted names": true,
+    "P107 rejects duplicate ZIP filenames": true,
+    "P107 validates entry CRC32 before accepting PNG bytes": true,
+    "P107 rejects invalid metadata, zero/oversized dimensions and out-of-range strength": true,
+    "P107 imports source/depth into the existing Asset Library and retains zero strength": true,
+    "P107 v2 imports source/depth with independent dimensions and preserves zero strength": true,
+    "P107 rolls back a partial Asset Library import after a later write fails": true
+  },
+  "fixture": "synthetic 1x1 and 2x1 RGBA PNGs plus uncompressed STORE ZIP; v1 backward compatibility and v2 independent dimensions",
+  "cloudSyncExecuted": false,
+  "crossDevicePhysicalRoundtripExecuted": false
+}

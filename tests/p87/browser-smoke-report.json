@@ -1,0 +1,88 @@
+{
+  "format": "CANVIO_P87_CV_DOCX_ATS_CHROMIUM_SMOKE",
+  "candidate": "23.3.108-p85-studio-r2",
+  "browser": "144.0.7559.96",
+  "origin": "about:blank",
+  "testOnlyStorageShim": true,
+  "passed": 14,
+  "total": 14,
+  "status": "PASS_SYNTHETIC_BROWSER_AND_OOXML_VALIDATION",
+  "checks": [
+    {
+      "id": "P87 build marker",
+      "status": "pass",
+      "detail": "23.3.108-p85-studio-r2"
+    },
+    {
+      "id": "Latest candidate title guard",
+      "status": "pass",
+      "detail": "CANVIO 23.3.108 — Creative Runtime Lab · P85 Runtime Hardening r2"
+    },
+    {
+      "id": "P87 panel mounted in canonical CV Studio",
+      "status": "pass",
+      "detail": ""
+    },
+    {
+      "id": "P87 module assertions",
+      "status": "pass",
+      "detail": "{}"
+    },
+    {
+      "id": "P87 ATS checklist displays score and limitations",
+      "status": "pass",
+      "detail": "Điểm checklist: 100/100 · Tương đối tốt\n✓ Có họ tên\n✓ Có email liên hệ\n✓ Có số điện thoại\n✓ Có phần giới thiệu / mục tiêu\n✓ Có kinh nghiệm hoặc dự án\n✓ Có học vấn\n✓ Có kỹ năng\n✓ Có kết quả / số liệu cụ thể\n✓ Có động từ hành động\n✓ Thông tin liên hệ r"
+    },
+    {
+      "id": "P87 sample CV scores using declared heuristics",
+      "status": "pass",
+      "detail": ""
+    },
+    {
+      "id": "P87 DOCX download generated",
+      "status": "pass",
+      "detail": "8093 bytes"
+    },
+    {
+      "id": "P87 ZIP CRC and member integrity",
+      "status": "pass",
+      "detail": ""
+    },
+    {
+      "id": "P87 OOXML package has all required parts",
+      "status": "pass",
+      "detail": "[\"[Content_Types].xml\", \"_rels/.rels\", \"docProps/app.xml\", \"docProps/core.xml\", \"word/_rels/document.xml.rels\", \"word/document.xml\", \"word/styles.xml\"]"
+    },
+    {
+      "id": "P87 keeps Vietnamese text and editable content",
+      "status": "pass",
+      "detail": ""
+    },
+    {
+      "id": "P87 export is linear, table-free, ATS-oriented layout",
+      "status": "pass",
+      "detail": ""
+    },
+    {
+      "id": "P87 UI reports download result",
+      "status": "pass",
+      "detail": "Đã tải DOCX · 8 KB. Văn bản vẫn chỉnh sửa được; kiểm tra lại font và phân trang trong Word/Google Docs."
+    },
+    {
+      "id": "No uncaught application errors",
+      "status": "pass",
+      "detail": "[]"
+    },
+    {
+      "id": "No console errors",
+      "status": "pass",
+      "detail": "[]"
+    }
+  ],
+  "limitations": [
+    "ATS score is a local heuristic, not an employer ATS prediction.",
+    "DOCX OOXML ZIP/XML structure validated; not opened in desktop Microsoft Word or Google Docs here.",
+    "Aptos is a font preference; fonts are not embedded. Pagination may vary by installed fonts and Office implementation.",
+    "P87 DOCX remains a separate OOXML export; P82/P84 vector PDF is a separate Poster/Slide path with its own limitations."
+  ]
+}

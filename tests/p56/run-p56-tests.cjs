@@ -142,7 +142,7 @@ api.setPendingPreview(report);
 assert('P56 preview context is one-use and cleared after consumption', api.consumePendingPreview().entryCount===3 && api.consumePendingPreview()===null);
 
 assert('P56 is wired before legacy ZIP parser and restore confirmation', /CANVIOArchivePreflight\.inspect\(file\)[\s\S]{0,350}readStoreZip\(file\)/.test(html) && /XEM TRƯỚC KHÔI PHỤC/.test(html));
-assert('P56 candidate title observer follows the new build marker', /version==='23\.3\.70-p56'\?'CANVIO 23\.3\.70-p56/.test(html));
+assert('P56 candidate title observer follows the active CANVIO_BUILD marker', /buildTitleForVersion=function/.test(html) && /version==='23\.3\.106-p74-p81-p107-r1'/.test(html));
 assert('P56 is one additive inline script after P55', /<script id="canvio-p55-runtime-release-gate">[\s\S]*?<\/script>\s*<script id="canvio-p56-portable-archive-preflight">/.test(html));
 
 console.log(`\nP56: ${passed}/${passed} assertions passed.`);

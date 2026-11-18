@@ -13,7 +13,7 @@ sandbox.CV11=cv11;sandbox.CVZip=cvZip;sandbox.CV=sandbox.window.CV;sandbox.CVUni
 vm.createContext(sandbox);vm.runInContext(m[1],sandbox);
 (async()=>{
  const allSuiteTests=sandbox.window.CANVIOPhaseSuite.tests();
- const newerRuntimeOnly=new Set(['videoTrackControls','videoWebVTT','videoTrackStateInSnapshot','videoNativeMP4H264','videoCaptionPreflight','videoWhisperASR','videoWhisperCancellation','videoExportCancellation']);
+ const newerRuntimeOnly=new Set(['videoTrackControls','videoWebVTT','videoTrackStateInSnapshot','videoNativeMP4H264','videoCaptionPreflight','videoWhisperASR','videoWhisperCancellation','videoExportCancellation','p55RuntimeDiagnostics','p55RenderRecovery','p55ProjectIntegrity','p55PerformanceBudget','p55ReleaseGate']);
  const p47SuiteTests=Object.fromEntries(Object.entries(allSuiteTests).filter(([name])=>!newerRuntimeOnly.has(name)));
  const direct=await sandbox.window.CANVIOProjectBundle.restorePayload({format:'CANVIO_FULL_BACKUP',schema:2,localStorage:{'canvio:qa':'direct-ok','canvio:gemini_key':'secret'},indexedDB:[]});
  const zipData=fs.readFileSync(require('path').join(__dirname, 'fixtures', 'restore-fixture.zip'));

@@ -1,8 +1,8 @@
 {
-  "format": "CANVIO_P63_P70_INHERITED_CHROMIUM_RUNTIME_SMOKE",
+  "format": "CANVIO_P63_P67_INHERITED_CHROMIUM_RUNTIME_SMOKE",
   "version": 1,
-  "candidate": "P70",
-  "browser": "159.0.8154.6",
+  "candidate": "23.3.108-p85-studio-r2",
+  "browser": "153.0.8010.12",
   "origin": "about:blank",
   "testOnlyStorageShim": true,
   "limitations": [
@@ -14,12 +14,12 @@
     {
       "id": "build-marker",
       "status": "pass",
-      "value": "23.3.84-p70"
+      "value": "23.3.108-p85-studio-r2"
     },
     {
       "id": "document-title",
       "status": "pass",
-      "value": "CANVIO 23.3.84-p70 — Stable Release Candidate"
+      "value": "CANVIO 23.3.108 — Creative Runtime Lab · P85 Runtime Hardening r2"
     },
     {
       "id": "spa-navigation",
@@ -107,7 +107,7 @@
         },
         "p60": {
           "api": true,
-          "issueCount": 32,
+          "issueCount": 34,
           "wcagCertified": false
         },
         "p61": {
@@ -141,7 +141,7 @@
         "localHeaders": true,
         "mismatchRejected": true,
         "preview": {
-          "backupCreatedAt": "11/17/2026, 10:00:00 AM",
+          "backupCreatedAt": "11/17/2026, 5:00:00 PM",
           "localStorageKeys": 1,
           "indexedDBDatabases": 0,
           "indexedDBStores": 0,
@@ -174,7 +174,7 @@
       "id": "real-webm-export-decode",
       "status": "pass",
       "value": {
-        "size": 18577,
+        "size": 18758,
         "mime": "video/webm;codecs=vp9",
         "duration": 0.9,
         "width": 960,
@@ -186,8 +186,8 @@
           "avSyncCertified": false
         },
         "download": {
-          "name": "CANVIO_multitrack_1794928900516.webm",
-          "href": "blob:null/b8747807-3165-48dc-b1bc-5d793d972560"
+          "name": "CANVIO_multitrack_1795015387970.webm",
+          "href": "blob:null/e534495b-3c15-4906-8b88-7c35c53eb63d"
         }
       }
     },
@@ -195,9 +195,9 @@
       "id": "real-mp4-h264-export-decode",
       "status": "pass",
       "value": {
-        "size": 12530,
+        "size": 12551,
         "mime": "video/mp4;codecs=avc1.420020",
-        "duration": 0.900233,
+        "duration": 0.890567,
         "width": 960,
         "height": 540,
         "readyState": 4,
@@ -207,8 +207,8 @@
           "avSyncCertified": false
         },
         "download": {
-          "name": "CANVIO_multitrack_1794928901505.mp4",
-          "href": "blob:null/b69c71d1-2a2e-4db0-9a9b-95bc6b6a8b0c"
+          "name": "CANVIO_multitrack_1795015388953.mp4",
+          "href": "blob:null/c1f909c3-40ca-4d05-89b6-375430c5c3f7"
         }
       }
     },
@@ -225,7 +225,7 @@
       "id": "render-retry-after-cancel",
       "status": "pass",
       "value": {
-        "size": 16802,
+        "size": 18410,
         "mime": "video/webm;codecs=vp9",
         "duration": 0.8,
         "width": 960,
@@ -237,8 +237,8 @@
           "avSyncCertified": false
         },
         "download": {
-          "name": "CANVIO_multitrack_1794928902629.webm",
-          "href": "blob:null/b995ae4c-0f69-41fa-a45d-fbe892ce9e35"
+          "name": "CANVIO_multitrack_1795015390085.webm",
+          "href": "blob:null/a2b9afa4-4b69-4b60-a29f-f4db78ac557a"
         }
       }
     },
@@ -319,7 +319,7 @@
         },
         "grouped": {
           "ok": true,
-          "groupId": "vtgroup-mwkubphe-eoyafmw9c1",
+          "groupId": "vtgroup-mwm9tfmk-5tx4bcmqun",
           "count": 2,
           "name": "P67 smoke group"
         },
@@ -332,8 +332,8 @@
           "ok": true,
           "duplicated": 2,
           "ids": [
-            "vtclip-mwkubphi-rbos33vdu3",
-            "vtclip-mwkubphi-pfouelxbpx"
+            "vtclip-mwm9tfmo-vk3xj1p543",
+            "vtclip-mwm9tfmo-1rga61665u"
           ],
           "mediaReferencesReused": true
         },
@@ -354,8 +354,8 @@
             "p67-a",
             "p67-b",
             "p67-c",
-            "vtclip-mwkubphi-rbos33vdu3",
-            "vtclip-mwkubphi-pfouelxbpx"
+            "vtclip-mwm9tfmo-vk3xj1p543",
+            "vtclip-mwm9tfmo-1rga61665u"
           ]
         },
         "mounted": true,
@@ -556,7 +556,11 @@
     "mp4Mime": "video/mp4;codecs=avc1.42E01E",
     "h264Supported": true,
     "mp4RequiresNativeH264": true,
-    "ffmpegFallback": false
+    "ffmpegFallback": false,
+    "webCodecsAvailable": false,
+    "webCodecsMuxer": "CANVIO_ISOBMFF_AVC_1TRACK",
+    "webCodecsMP4Scope": "silent-image-text-timeline-only",
+    "mp4Supported": true
   },
   "summary": {
     "passed": 43,

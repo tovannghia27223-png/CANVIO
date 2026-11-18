@@ -1,11 +1,11 @@
-# CANVIO — AI Agent Guide (23.3 · cập nhật tới 23.3.84-p70)
-> **CURRENT WORKING BASE (2026-11-17):** `index.html` — CANVIO `23.3.84-p70`, built additively on P67. Historical sections preserve architecture and acceptance notes; P47–P70 addenda document the integrated source chain and bounded test evidence. Use this guide before editing.
-> Work surgically from the named owners/APIs below. Do not re-scan the entire HTML unless an unresolved question requires it; do not break active data synchronization or local project data. The current artifact has 91 inline script blocks and 504 unique static HTML IDs; the separate reviewable modules are `canvio-p63-p67.js` and `canvio-p68-p70.js`, alongside `assets/canvio-whisper-worker.js`.
+# CANVIO — AI Agent Guide (23.3 · current candidate 23.3.107-p107-preset-v2-r2)
+> **CURRENT WORKING BASE (2026-11-18):** `index.html` — `23.3.107-p107-preset-v2-r2`, SHA-256 `ea758d17fa94bab1167e0a5792b0c806045b6102e1dfe5d4306603cbf8048687` (4,890,301 bytes). It includes P72–P89 selected modules, P90–P107 current UX/video/media work, with P85 OPEN (optional heavy runtime stack not yet integrated) and P108 unspecified. Historical sections preserve architecture and acceptance notes. Read sections 97–102 for current P74/P81 runtime integrity, P107 ZIP v2 and P106 dual-renderer evidence.
+> Work surgically from the named owners/APIs below. Current source: 110 inline JS blocks, 524 unique static HTML IDs, 20 standalone modules synchronized; workers: `assets/canvio-whisper-worker.js`, `assets/canvio-rmbg-worker.js`, `assets/canvio-depth-worker.js`. Do not break active data synchronization or local project data.
 > Preserve the canonical project, asset, media, timeline, history, Brand Kit, Project Vault and P8 owners. Keep tests/readiness claims bounded by their actual fixture and real-origin evidence.
 >
-> **ACTIVE MAINLINE RELEASE CANDIDATE:** P70 application marker `23.3.84-p70`, base `23.3.81-p67`, PhaseSuite `70.0.0`. It adds a geometry-only self-contained OBJ viewer, read-only system resource/frame audit and a fail-closed CANVIO 1.0 release gate on top of P57–P67. Existing database, timeline, Project Vault, Asset Library, Layout Foundry and backup owners remain unchanged. P70 is integrated on GitHub `main`; the validated source tree was promoted by commit `8606375ed2671099b7b2f1713138109eec905088`, and GitHub Pages deployment completed successfully (run `#87`). Fourteen real-world acceptance gates remain open; this is not CANVIO 1.0 Stable and is not production-certified. See `CANVIO_MANIFEST.json` for current source/package SHA-256 values.
+> **ACTIVE LOCAL CANDIDATE:** `CANVIO_BUILD.version = 23.3.107-p107-preset-v2-r2` (index SHA-256 `ea758d17fa94bab1167e0a5792b0c806045b6102e1dfe5d4306603cbf8048687`); `CANVIOPhaseSuite.version = 70.0.0` remains unchanged. P72–P83, P86–P107 selected modules are integrated or bounded as mapped in section 93/97; P85 OPEN (not implemented); P108 unspecified. P102/P105 model/runtime loads are user-triggered and online-first; inference not yet performed in this environment. P74/P81 local code/CI provisioning are integrated, but the vendor binaries are provisioned only in hosted CI and their hosted browser smoke remains pending. P70 fourteen real-world gates remain OPEN; not merged, deployed or production-certified. See `CANVIO_MANIFEST.json` for package SHA-256 values.
 
-> **Historical release note:** the original 23.3.3 Prism Studio baseline and its internal `CANVIO_RELEASE.version` compatibility rule are retained in the historical guide sections. The current deliverable build is tracked by `CANVIO_BUILD.version = 23.3.84-p70`; historical values in older sections do not override this marker.
+> **Historical release note:** earlier version markers in historical sections are retained for traceability. The current build marker is `CANVIO_BUILD.version = 23.3.107-p107-preset-v2-r2` and overrides earlier markers for the active candidate.
 ## 1. Nguyên tắc bắt buộc
 - KHÔNG viết lại file từ đầu. Chỉ chỉnh sửa trong các hàm/mảng đã có.
 - KHÔNG thêm dependency ngoài hoặc gọi API AI trả phí. Prompt generation hiện hữu vẫn là local-only (xem `choosePrompt()`). Ngoại lệ mạng có chủ ý: P30/P31 chỉ gửi request GET/HEAD khi người dùng bấm kiểm tra website công khai; không chạy nền, không gửi credentials, không upload/ghi website.
@@ -3256,7 +3256,7 @@ P55 is the planned stable-release readiness candidate, **not CANVIO 1.0 Stable**
 - `inspect()` preflights pages, missing alt text, unsafe URL/handler/script/embed content, paper format, margins and bleed metadata. `buildPrintHtml()` removes active content/event handlers/unsafe URLs. It exports HTML for browser Print Preview; no PDF/X, CMYK, physical bleed/crop marks or press-ready certification is claimed.
 
 ## P63–P67 test and release boundary
-- Source VM suite: **18/18**. Chromium 144.0.7559.96 smoke: **43/43**. Static audit: 90/90 inline scripts parse; 503/503 IDs unique; no duplicate IDs or external script `src`.
+- Source VM suite: **19/19**. Chromium 144.0.7559.96 smoke: **43/43**. Static audit: 90/90 inline scripts parse; 503/503 IDs unique; no duplicate IDs or external script `src`.
 - Browser smoke uses an opaque origin and in-memory storage shims; it does not establish HTTPS, native IndexedDB, real project round-trip, real footage tracking quality, AI provider output, font/printer behavior, cross-browser accessibility or server headers.
 - `window.CANVIOPhase2.report()` reports implementation readiness separately and always sets `releaseCertified:false` until manual acceptance is documented. P62 Phase 1 release gates remain OPEN.
 
@@ -3282,70 +3282,531 @@ P55 is the planned stable-release readiness candidate, **not CANVIO 1.0 Stable**
 - The fourteen gates cover HTTPS/browser matrix, persistence/restore, real media A/V sync, Whisper inference, accessibility, hosting headers, real project timeline behavior, real footage tracking, AI provider/licensing, typography/print, offline OBJ acceptance, target-device performance, cross-origin backup/restore and rollback/observability.
 
 ## P68–P70 validation and limitations
-- Source VM: **15/15**; Chromium smoke: **16/16**; inherited P63–P67 browser regression: **43/43**; P63–P67 source VM: **18/18**. Static audit: **91/91** inline scripts parse; **504/504** static IDs unique; zero duplicate IDs and zero external `<script src>`.
+- Source VM: **15/15**; Chromium smoke: **16/16**; inherited P63–P67 browser regression: **43/43**; P63–P67 source VM: **19/19**. Static audit: **91/91** inline scripts parse; **504/504** static IDs unique; zero duplicate IDs and zero external `<script src>`.
 - Browser smoke uses opaque `about:blank` with test-only storage shims. The OBJ viewer smoke renders an embedded fixture in Chromium but does not replace clean-machine offline acceptance. Phase 1 and Phase 2 manual gates remain open.
 - **P70 is a Stable Release Candidate, not CANVIO 1.0 Stable.** Do not change `releaseCertified:false` without reviewed evidence for every required gate. No commit, PR, merge or deployment is implied by local test success.
 
+---
 
-# P70 Previous Hosted Verification Refresh — run #46 (2026-11-17)
+# 76. CANVIO P90–P96, P97–P101, P104 and P87 — Current Candidate Addendum (2026-11-17)
 
-## Verified repository state
-- The current GitHub `main` head is `3e6be7e2653a1f5d999ece355236a6bf4e8738e5`; application marker remains `23.3.84-p70` and PhaseSuite remains `70.0.0`.
-- CANVIO Node.js 24 workflow [run #46](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44104323930) completed successfully. Its validation/package job and Pages deployment job both report success. All listed validation steps completed, including exact candidate SHA verification, static checks, P47–P70 regression suites and two Chromium smoke suites.
-- The workflow validated the candidate at head `d14096255e16dfad4ce70260914c837f4bd7dd5c`; the resulting current `main` promotion is the head above.
-- GitHub Pages [run #91](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44104556386) completed successfully for current `main`.
+> **Historical application marker at this section:** `23.3.89-p84` · `CANVIOPhaseSuite.version` remains `70.0.0`. This is a local candidate snapshot superseded by the P82 addendum at the end of this guide. P70's fourteen real-world gates remain OPEN; no production certification, merge, PR or deployment is implied.
 
-## Changed files and data ownership
-- This refresh changes documentation/evidence only: QA report, handoff, phase status, roadmap, this AI Guide and the delivery manifest hashes/byte counts.
-- No application modules, data owners, schemas, persistence stores, API adapters, timeline owner, media paths or synchronization flows were changed.
-- Application version and manifest candidate stay `23.3.84-p70`; no functional version increment is claimed.
+## 76.1 Current owners and module map
 
-## Validation status and remaining limits
-- Automated P47–P70 regressions and the two Chromium smoke suites passed in workflow #46. The workflow also completed source integrity, static audit and Node.js 24 validation steps.
-- The fourteen P70 real-world acceptance gates remain OPEN. In particular, CI/synthetic tests do not certify native IndexedDB across restarts, real media A/V sync, deployed Whisper inference, keyboard/screen-reader/200% zoom WCAG review, production HTTP headers, real project round-trip, target-device performance, cross-origin recovery or operational rollback/observability.
-- No gate was marked PASS without target-environment evidence. P70 remains a Stable Release Candidate, not CANVIO 1.0 Stable or production-certified.
+| Module | Public owner | Integration contract |
+|---|---|---|
+| P90–P96 | `window.CANVIOUXSuite` | Reuses the existing app shell, `CV.go`, existing command palette/Ctrl+K surface, current nav/page DOM and local preference storage. It does not create a second router or project store. |
+| P97–P101 | `window.CANVIOVideoUXSuite` | Uses `CV.engines.video` as the only timeline/clip/undo owner. Preview → explicit apply → canonical undo. Unsupported slip/slide/pen/hand tools remain visibly unavailable rather than simulated. |
+| P104 | `window.CANVIOKenBurnsSuite` | Reads `CV.assets.list()`, converts validated embedded image data into File objects, imports through `CV.engines.video.importFiles()`, and updates the imported clips' `motion`/transition on the canonical timeline. Undo remains owned by `CV.engines.video`. |
+| P87 | `window.CVATSExport` | Reads the live form fields in `#page-cvstudio [data-k]`; uses `CVStudioCore.local()` only as a fallback parser; packages editable OOXML via existing `CVZip.build()`. No CV database/store is created. |
 
-## Synchronization and manifest
-- Standalone P63–P67 and P68–P70 modules remain byte-for-byte synchronized with their embedded copies as checked by workflow #46.
-- No synchronization flow or application data map changed in this refresh.
-- SHA-256 and byte counts for the five updated Markdown documents are refreshed in `CANVIO_MANIFEST.json`; the manifest still represents 57 packaged files.
+Standalone review copies must remain synchronized with the matching inline source blocks: `canvio-p63-p67.js`, `canvio-p68-p70.js`, `canvio-p90-p96.js`, `canvio-p97-p101.js`, `canvio-p104.js`, `canvio-p87-cv-docx.js`. The P97–P101 block is the inline script immediately after P90–P96 and currently has no DOM `id`; byte comparison uses its extracted script body.
+
+## 76.2 P90–P96 — Navigation and usability
+
+- Goal-oriented Home entry points, an expanded existing command search with Vietnamese accent-insensitive matching, Simple/Full mode, per-editor quick action bars, visible advanced-action disclosure and dismissible onboarding are added as a navigation/presentation layer.
+- Existing workspace/engine owners are not replaced; no second timeline, project store or provider/network path is introduced.
+- Current Chromium synthetic smoke: **34/34 PASS** (including P84 direct PDF and P87 DOCX quick-action routing). This does not replace keyboard-only, assistive-technology, real 200% zoom or WCAG review.
+
+## 76.3 P97–P101 — Video editor workflow UX
+
+- P97 director commands are deterministic local command rules with plan/preview, explicit apply and undo; there is no automatic model/provider call.
+- P98 exposes implemented select/blade controls and keyboard shortcuts while truthfully disabling unsupported tools. Shortcuts must remain inactive in editable inputs.
+- P99 builds per-word subtitle cues using proportional allocation of the source cue duration. This is **estimated timing**, not acoustic word alignment.
+- P100 transcript edits and ripple plans mutate the canonical text/video timeline through existing APIs and block edits affecting locked clips/tracks.
+- P101 normalizes resolution/fps/bitrate, offers subtitle sidecars and matches MP4 availability to native H.264 capability; WebM remains browser-dependent. The QC checks MIME, duration metadata and `canplay`, not full-file/A/V synchronization.
+- Current integrated browser smoke (P97–P101 plus P104): **35/35 PASS** on synthetic fixture.
+
+## 76.4 P104 — Local Ken Burns slideshow
+
+- Public API: `window.CANVIOKenBurnsSuite` (`version: 104.0.0`). Reads existing Asset Library records only; allowed embedded formats: PNG, JPEG, WebP and GIF. GIF currently imports as the browser-decoded first frame.
+- Limits: 24 images per batch; 5 MiB per image; 40 MiB total embedded data. MIME/base64/declared-size checks run before planning. A stable data fingerprint is compared again before apply to reject a changed asset between preview and confirmation.
+- Supports zoom-in, zoom-out, pan directions and deterministic seeded random movement; duration 2–15 seconds; fade overlap choices 0–1 second. The UI preserves existing audio clips and does not synthesize or download music.
+- A plan is previewed before explicit apply; import routes through `CV.engines.video.importFiles()`. The imported images are sequenced and keyframed; one canonical Video Engine Undo restores the pre-batch state. Track 1 lock is checked before import.
+- **Aspect-ratio limitation:** current Video Engine renderer/export canvas is fixed to 16:9. P104 does not claim 9:16/1:1 project framing or subject-aware crop; it explicitly discloses this rather than distorting the project.
+- Current fixture validates two real PNG blobs added to the existing Asset Library, sequential 3-second clips with 0.5-second overlap/fade, pan keyframes and one-step undo. Real user media, large batches, persistence/reopen and complete output playback remain OPEN.
+
+## 76.5 P87 — CV DOCX and ATS checklist
+
+- Public API: `window.CVATSExport` (`version: 87.0.0`). Reads current CV Studio fields; no separate CV data model/store.
+- Generates a seven-part OOXML DOCX package with editable paragraphs, linear single-column flow, Vietnamese UTF-8 text and ordinary Office styles. The existing `CVZip.build()` STORE ZIP writer is reused; no npm/CDN package, AI provider or network call is used.
+- Local checklist scores the presence of name/contact, summary, experience/project, education, skills, results/metrics, action verbs and reasonable text length. The numeric result is a **heuristic**, not a simulation or prediction of any employer ATS and not a hiring guarantee.
+- Current Chromium + Python OOXML validation: **14/14 PASS**; downloaded DOCX ZIP CRC valid, seven required parts present, XML parses, Vietnamese sample text preserved and document is table-free.
+- **Not yet accepted:** no desktop Microsoft Word / Google Docs open-and-save test in this environment; fonts are not embedded; pagination may vary. Direct PDF export, font embedding/outlining and PDF/X/CMYK remain OPEN (P86 priority 1 remains ahead of further Office feature work).
+
+## 76.6 Verification snapshot (historical P84 snapshot; see P82 addendum at end)
+
+| Check | Result | Meaning / boundary |
+|---|---:|---|
+| P84/P90–P96 browser smoke | **34/34 PASS** | Chromium 144, opaque `about:blank`, storage shim |
+| P97–P101 + P104 browser smoke | **35/35 PASS** | Synthetic timeline/media; 0.5-second WebM metadata/canplay screen only |
+| P87 DOCX browser + OOXML validation | **14/14 PASS** | Chromium download + Python ZIP/XML parser; not desktop Office acceptance |
+| P68–P70 browser + source VM | **16/16 PASS** | Retains fourteen OPEN manual release gates |
+| P88 PPTX OOXML smoke | **14/14 PASS** | Synthetic 16:9 deck; no desktop Office round-trip |
+| P63–P67 inherited Chromium regression | **43/43 PASS** | Exact current candidate, opaque origin/storage shim |
+| Static audit | **95/95 inline JavaScript parse; 507/507 IDs unique; 0 duplicate IDs; 0 external script `src`** | Source-level validation only |
+
+All smoke browser runs use opaque `about:blank` and test-only in-memory local/session storage shims. Native IndexedDB save-close-reopen, HTTPS hosting, cross-browser, real footage A/V sync, Whisper model inference, screen reader/WCAG, Word/Google Docs and printer acceptance are not certified. P70 release gate remains `BLOCKED_PENDING_REAL_WORLD_ACCEPTANCE`, `releaseCertified:false`, fourteen manual gates pending.
+
+## 76.7 Next work order (superseded by current P82 completion)
+
+P82/P84 vector PDF now has a tested local implementation for Poster/Slide. Next priority: cross-application open/edit/save/reopen for P87 DOCX and P88 PPTX, then P76/P77/P83 one-click Brand/Theme propagation across Web + Poster + CV + Slide with preview/undo. Keep WebCodecs/Whisper improvements (P79/P80) after those deliverables; optional depth/2.5D (P105–P107) remains low priority. Do not add new dependencies or copy external source code without a free license/maintenance/bundle review.
 
 
-# P70 Hosted Verification Refresh — run #47 (2026-11-17)
+---
 
-## Verified repository state
-- Current `main` head: `93d484037ca8a00f49cd07e44e702f03964e0b4e`; application version remains `23.3.84-p70`, PhaseSuite remains `70.0.0`.
-- Node.js 24 workflow [#47](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44110607967) completed successfully. Both validation/package and deployment jobs succeeded; every listed step passed, including source integrity, P47–P70 regressions and both Chromium smoke suites.
-- Workflow #47 validated commit `0217c253b36a145b979397cafa785fdd5232ec3d`; the promotion step produced the current `main` head above. Pages [#92](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44110606281) and [#93](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44110828590) both completed successfully, with #93 deploying promoted `main`.
+# 77. CANVIO P84 — Direct Poster/Slide PDF workflow wiring (2026-11-17)
 
-## Changed files, module map and synchronization
-- This refresh changes evidence only in QA report, Handoff, Phase Status, Roadmap, this guide and the manifest. No application code, schema, persistence store, API adapter, media engine, timeline owner or synchronization flow changed.
-- P63–P67 and P68–P70 standalone files remain synchronized with their embedded copies as verified by workflow #47. Canonical Video Engine, Project Vault, Asset Library, Layout Foundry, `CANVIO_81_MEDIA` and `CVZip` ownership remain unchanged.
-- Version remains `23.3.84-p70`; this is not a functional version increment.
+> **Historical application marker:** `23.3.89-p84`. This addendum records the original partial P84 workflow integration only; current vector PDF improvements are documented in section 79. It does not certify full PDF quality, vector text, embedded fonts, PDF/X or CMYK.
 
-## Validation, limitations and release disposition
-- Workflow #47 completed the P47 fixture suite; P48 26/26; P49 35/35; P50 27/27; P55 49/49; P56 27/27; P57–P62 15/15; P63–P67 18/18; P68–P70 16/16; inherited Chromium 43/43 and P68–P70 Chromium 16/16.
-- Fourteen P70 real-world acceptance gates remain OPEN. CI does not certify native IndexedDB restart/restore, real A/V sync, real Whisper inference, keyboard/screen-reader/200% zoom WCAG review, production HTTP headers, real timeline/footage acceptance, provider/license approval, print/prepress, clean-machine offline 3D, target-device performance, cross-origin recovery or rollback/observability.
-- No manual gate is marked PASS without target-environment evidence. P70 remains a Stable Release Candidate, not CANVIO 1.0 Stable or production-certified.
+## 77.1 Canonical owner and routing
+- The existing Poster multi-page export remains the PDF implementation owner: `window.CVLot22.pdf()`.
+- `canvio-p90-p96.js` / inline block `canvio-p90-p96-main` now surfaces this existing export through the Poster/Slide sticky action bar and the existing Ctrl+K palette. The route opens Poster Studio then invokes the canonical `#cv-pdf` action.
+- The Layout Foundry browser Print path remains separately available and is labelled as browser print, not as the direct raster PDF path.
+- The CV Studio quick action now exposes the existing P87 `#cv87-docx` action. CV direct PDF has not been implemented; its current preview/print route remains distinct.
+- No second PDF engine, editor, canvas, document store, network request or external dependency was added.
 
-## Manifest
-- SHA-256 and byte counts for the five updated Markdown documents are refreshed in `CANVIO_MANIFEST.json`. The manifest remains a 57-file delivery package.
+## 77.2 Verified behavior and quality boundary
+- A Chromium smoke generated `canvio-thiet-ke.pdf` from the currently loaded Poster page: 51,213 bytes, `%PDF-1.4`, page `/MediaBox` and JPEG image XObject detected.
+- The existing implementation renders each Poster page through `CV.export.toBlob()`, converts it to JPEG and places the image into a PDF page. Selectable/vector text and embedded or outlined fonts are therefore **not** provided by this path.
+- Existing quality choices remain 1×, 1.5× and 2×. Higher scale increases raster detail and memory/size cost; it does not convert text into vector paths.
+- PDF/X, CMYK separation, physical bleed/crop-box certification, font-rights verification, and printer proof are not claimed.
+
+## 77.3 Verification snapshot
+- P84 + P90–P96 Chromium smoke: **34/34 PASS**, including a real browser download of the PDF and structural signature/page/image checks.
+- P97–P101 + P104 Chromium smoke: **35/35 PASS** (synthetic timeline/media; WebM `canplay` screen only).
+- P87 CV DOCX/ATS/OOXML smoke: **14/14 PASS**.
+- P68–P70 source VM: **16/16 PASS**; fail-closed release gate remains 14/14 OPEN.
+- Static audit: **95/95** inline JavaScript blocks parse; **507/507** static IDs unique; zero duplicate IDs; zero external `<script src>`; six standalone modules remain synchronized.
+- Browser evidence uses Chromium `about:blank` and test-only storage shims. It is not HTTPS/native IndexedDB or desktop Office/reader acceptance.
+
+## 77.4 Remaining P84 / P82 work
+- P84 remains **PARTIAL**: implement selectable/vector text and font embedding/outlining without replacing the canonical Poster/CV/Slide owners; test Vietnamese diacritics and exact A4/poster page sizes in real PDF readers.
+- P82 Logo/font work remains OPEN. Do not bundle font binaries or reuse fonts without confirming license and redistribution rights.
+- CV direct PDF is still not wired to a document renderer. Word/Google Docs DOCX acceptance remains open.
+- P70's fourteen real-world release gates remain OPEN; no production certification or deployment is implied.
+
+# 78. CANVIO P88 — Editable PPTX package verification (2026-11-17)
+
+> **Historical candidate:** `23.3.89-p84` (P88 verification only; no new PPTX engine or build marker change). The goal is to verify the existing editable PPTX export path structurally before any desktop Office acceptance.
+
+## 78.1 Canonical export and ownership
+- Reuse the existing Poster multi-page `CVLot23.pptx(gen)` path and action `#cv-pptx2`; the active document/page data remains owned by the existing Poster/Slide system (`CV.poster` / `CVPages`).
+- Existing ZIP/package construction is reused. P88 does not create another canvas, document model, project store, asset store or export engine.
+- The generated slide serializes supported text as editable DrawingML text (`p:sp` / `a:t`), basic geometry as editable DrawingML shapes, and raster content as `p:pic` with media entries under `ppt/media/`.
+
+## 78.2 P88 synthetic OOXML verification
+- `tests/p88/run-p88-pptx-smoke.py` seeds a single 16:9 Poster fixture through the canonical owner, downloads the user's existing PPTX action, checks ZIP CRC, required package parts, XML parsing, editable Vietnamese text, separate picture/media content, 16:9 slide dimensions and absence of external linked relationships.
+- Latest Chromium 144 `about:blank` smoke: **14/14 PASS**. The generated fixture was a 15,251-byte `.pptx`; the package contained editable text and shape nodes plus a separate PNG media object. All discovered XML/relationship parts parsed.
+- This is package/OOXML structure evidence only. The file has **not** been opened, edited, saved and re-opened in Microsoft PowerPoint, Keynote or Google Slides. Font substitution, embedded font availability, layout/render fidelity, complex animation and speaker notes are not certified.
+
+## 78.3 Boundaries and next acceptance
+- Existing export supports a limited set of editable text/basic shapes and embedded raster images; this does not establish full PowerPoint parity, arbitrary SVG/gradient/effect preservation, theme/master-slide parity or complete animation support.
+- Do not add a second PPTX exporter or a third-party dependency solely to inflate parity. First run cross-application open/edit/save/reopen acceptance on representative real projects and review the current serializer gaps.
+- Next product sequence remains: complete the PDF vector/font objective (P82/P84), run Word/Google Docs and PowerPoint/Google Slides cross-app acceptance (P87/P88), then implement one-click Brand/Theme propagation with explicit preview/undo through existing owners (P76/P77/P83).
+- P70 remains fail-closed with fourteen real-world acceptance gates OPEN; no production certification, commit, PR, merge or deployment is implied.
+
+---
+
+# 79. CANVIO 23.3.90-p82 — Vietnamese Vector PDF for Poster/Slide (2026-11-17)
+
+> **Current candidate:** `23.3.90-p82` · **Base:** `23.3.89-p84` · **PhaseSuite:** `70.0.0` unchanged. Index SHA-256: `7117adc736a448052b8c501c51677bb4e1880a0b03a04b15e9768938011d29e0` (`4,590,209` bytes). This is a local candidate. P70 stays `BLOCKED_PENDING_REAL_WORLD_ACCEPTANCE`, `releaseCertified:false`, 14/14 real-world gates OPEN.
+
+## 79.1 Canonical owner and integration
+- Public API: `window.CANVIOVectorPDF` (`version: 82.1.0`). It reads pages from the existing `CVPages.pages` owner, and serializes SVG obtained through the existing `CV.export.svgString(doc)` path. It does not create a second Poster/Slide model, page store, Asset Library, project store or history owner.
+- UI: `#cv-p82-vector-pdf` is mounted into the existing Poster/Slide action bar; the command `Xuất PDF vector · chữ tiếng Việt chọn được` is added to the existing `CV.palette.build()` command palette. The old `CVLot22.pdf()` raster exporter remains available as a fallback.
+- Standalone review copy: `canvio-p82-p84-vector-pdf.js`, embedded byte-for-byte in `index.html` under `#canvio-p82-p84-vector-pdf`.
+- Font asset: `assets/pdf-fonts/NotoSans-Regular.ttf` (512,672 bytes) and `assets/pdf-fonts/OFL.txt` (SIL Open Font License 1.1). The font is loaded lazily only after the user explicitly starts PDF export, from the same CANVIO origin with `credentials: omit`. No CDN, hosted PDF API, paid dependency, new store or background request is added. The font license is bundled with the binary.
+
+## 79.2 Output profile and explicit limits
+- Export creates a direct multi-page PDF (tested with two pages); text is encoded as Unicode CIDs with a ToUnicode map and embedded TrueType `FontFile2`, so supported text can be searched, selected and copied. Vietnamese NFC strings and required diacritics were validated by extraction.
+- Basic supported shapes and linear/radial gradients remain vector PDF objects/shading resources. Placed images remain embedded raster JPEG XObjects. The output is therefore mixed vector + raster, not an all-vector document.
+- Current support is a bounded TrueType sfnt path; OTF/CFF and WOFF are not supported. Text uses per-codepoint cmap/glyph mapping and does not promise advanced shaping/kerning/ligature fidelity for complex scripts. Supplementary code points outside the supported BMP path are not accepted. Noto Sans Regular is the bundled fallback; original source font family/weight is not preserved or embedded as-is.
+- Limits: maximum 24 pages, 32 MiB total input images and 2 MiB font; design dimensions above 20,000 px are rejected. External-linked images are rejected; import them into the existing Asset Library first. The app needs a same-origin HTTP(S)/localhost context to fetch the bundled font; direct `file://` execution may block that fetch. The existing raster PDF remains a fallback.
+- No PDF/X, CMYK separation, physical bleed/crop marks, printer proof or prepress certification is claimed. CV direct PDF has not been wired; P82 currently covers Poster/Slide.
+
+## 79.3 Verification evidence
+- `tests/p82/run-p82-pdf-vector-smoke.py`: **28/28 PASS** on Chromium 144 `about:blank` with the bundled font response intercepted for deterministic local test. It checks current build/title, UI/command mounting, canonical owner use, lazy font load, Vietnamese glyph coverage, multi-page output, selectable/extractable text, basic vector shapes, PDF shading resource, embedded image and embedded TTF.
+- Test download: a two-page, 539,376-byte PDF. PyMuPDF opened and rendered it (715 × 1011 first-page raster, 51,107 bytes); Poppler `pdfinfo` parsed it. Extracted text preserved `Báo cáo Nhân sự Việt Nam`, `Tiếng Việt`, `Quản trị nhân lực`, `Tuyển dụng` and `Kế hoạch phát triển đội ngũ`.
+- P84/P90–P96: **34/34 PASS**; P97–P101/P104: **35/35 PASS**; P87 DOCX/ATS: **14/14 PASS**; P88 PPTX OOXML: **14/14 PASS**; P63–P67 source: **18/18 PASS** and inherited Chromium: **43/43 PASS**; P68–P70 source and Chromium: **16/16 PASS** each.
+- Source regression: P48 **26/26**, P49 **35/35**, P50 **27/27**, P55 **49/49**, P56 **27/27**, P57–P62 **15/15**; P47 fixtures and restore/Bezier/CRC fixtures pass. Static audit: **96/96** inline JavaScript syntax, **508/508** unique IDs, zero duplicates, zero external script `src`, 7/7 standalone module copies synchronized, Noto Sans license/asset present.
+- Browser smokes still use opaque `about:blank` and in-memory storage shims except the intercepted font asset. They are not native HTTPS, browser restart, desktop PDF-reader or print-production acceptance.
+
+## 79.4 Next work
+1. Run PDF acceptance on actual HTTPS/localhost origin and representative multi-page poster designs, check text selection/copy in Chrome/Edge/Firefox/PDF.js/Adobe reader, and confirm intended A4/print page geometry.
+2. Extend direct PDF through CV only via the canonical CV data/layout owner; keep DOCX and PDF responsibilities distinct and avoid a second CV store.
+3. Improve shaping, font-face/weight choice and font subsetting only with a license-safe implementation and dedicated regression coverage. Do not claim PDF/X, CMYK or printer readiness until externally validated.
+4. Continue P87/P88 application round-trip, then P76/P77/P83 Brand/Theme propagation through existing Brand Kit and Design System owners with preview/undo.
+
+---
+
+# 80. P87/P88 LibreOffice cross-application smoke (2026-11-17)
+
+- Environment: LibreOffice **25.2.3.2** (Writer + Impress) controlled through UNO. This is a local open/edit/save/reopen test, not Microsoft Office or Google Workspace acceptance.
+- P87 DOCX: exported synthetic CV fixture opened in Writer; script appended `CANVIO Writer round-trip verified`, saved back to DOCX, closed and reopened. The marker and Vietnamese name `Nguyễn Thị An` survived; final DOCX ZIP CRC passed.
+- P88 PPTX: exported synthetic 16:9 slide opened in Impress; an editable text shape `P88 LO OK` was added, saved back to PPTX, closed and reopened. The edit marker and original Vietnamese title survived; one slide and two text shapes were found; final PPTX ZIP CRC passed.
+- After round-trip, both files were exported to PDF, rendered with MuPDF and visually inspected. DOCX remained one A4 page; PPTX remained one 16:9 page. These are synthetic fixture outputs, not user project acceptance.
+- Script/report: `tests/office/run-libreoffice-roundtrip.py`, `tests/office/libreoffice-roundtrip-report.json`. Synthetic edited files and render evidence are kept under `tests/office/roundtrip/` and `tests/office/roundtrip-render/`.
+- **Still OPEN:** Microsoft Word/PowerPoint and Google Docs/Slides; complex real CVs and multi-slide real decks; font substitution, advanced animation, master/theme fidelity, speaker notes, accessibility and production print. LibreOffice success must not be used as a claim of Office-suite compatibility.
+
+# 81. P82 localhost origin probe — environment limitation
+
+- `tests/p82/run-p82-http-origin-smoke.py` attempts to serve the exact candidate and bundled font from `http://127.0.0.1` and export PDF through real same-origin font fetch.
+- Chromium navigation was blocked before CANVIO boot with `net::ERR_BLOCKED_BY_ADMINISTRATOR`. Report: `tests/p82/http-origin-smoke-report.json`, status `BLOCKED_OR_FAILED_LOCALHOST_ORIGIN`, zero test assertions ran.
+- This matches the existing P70 origin constraint. The P82 `about:blank` smoke with intercepted font asset remains **28/28 PASS**, but no native localhost/HTTPS acceptance is claimed. Re-run this probe in an ordinary browser environment or deployed staging before release.
 
 
-# P70 Hosted Verification and CI Stability Addendum — run #50 (2026-11-17)
+---
 
-## Verified test and delivery state
-- CANVIO workflow [#50](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44113215411) on Node.js 24 completed successfully. Build/validation and Pages deployment jobs passed.
-- P48 26/26; P49 35/35; P50 27/27; P55 49/49; P56 27/27; P57–P62 15/15; P63–P67 18/18; P68–P70 16/16. P47 integration/Bezier/restore/CRC fixtures passed.
-- Chromium smoke: inherited P63–P67 43/43; P68–P70 16/16. Static checks: 91/91 inline scripts parse; 504/504 static IDs unique; zero duplicates or external script `src`.
-- Workflow #50 refreshed and verified all 57 manifest entries with SHA-256 and byte counts. Pages deployment [#98](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44113545232) succeeded for promoted `main` head `b1c0ecf8e080beafc5f96f357efbbcaddad1444c`.
+# 91. CANVIO P72/P73/P102/P103/P105–P107 — Media & Offline addendum (initially integrated in `23.3.103`; worker files completed in `23.3.104`)
 
-## CI workflow ownership and mutation boundary
-- Browser smoke JSON is uploaded as a run-scoped GitHub Actions artifact (30-day retention). The two tracked JSON report files are restored to their committed versions before the manifest is recalculated.
-- The workflow no longer commits generated browser reports or promotes the entire test workspace. It commits only `CANVIO_MANIFEST.json` when the checksum/byte-count refresh detects a real tracked-file change, preventing report-driven commit loops and limiting CI write scope.
-- Manifest refresh uses Node.js `crypto` and verifies all listed entries after writing. GitHub Pages publishes the validated `_site` built from committed application files.
+> **Current local candidate:** `23.3.103-p102-p105-p107-integration-r1`. The current build marker is set by the last integration script. This is a local implementation candidate; P70 release certification remains blocked.
 
-## App map, synchronization and release limits
-- Application marker remains `23.3.84-p70`, PhaseSuite remains `70.0.0`. P63–P67 and P68–P70 standalone modules remain checked byte-for-byte against embedded scripts; canonical Video Engine, Project Vault, Asset Library, Layout Foundry, `CANVIO_81_MEDIA` and `CVZip` ownership is unchanged.
-- Fourteen real-world release gates remain OPEN: HTTPS/browser matrix, native persistence, real media A/V, actual Whisper inference, accessibility, response headers, real timeline/project, tracking footage, AI/provider licensing, typography/print, clean-machine offline 3D, target-device performance, cross-origin recovery and rollback/observability.
-- CI and simulated smoke are not a substitute for target-environment evidence. P70 remains a Stable Release Candidate, not CANVIO 1.0 Stable or production-certified.
+## 91.1 P72 — GLB static-mesh viewer
+- Owner: `window.CANVIOGLBViewerP72`; mounted inside existing `#page-videoEngine`.
+- `parseGLB()` accepts GLB 2.0 with embedded BIN; checks magic/header/chunk/accessor bounds, node hierarchy/TRS/matrix, triangle indices, vertex/triangle limits.
+- `buildWebGLViewer()` produces a self-contained HTML/WebGL viewer with orbit/zoom/reset; CSP sets `connect-src 'none'`; no Three/CDN/network runtime is used.
+- Scope is geometry-only static TRIANGLES. Materials, textures, animations, skins, morph targets, external buffers and DRACO/meshopt/KTX2 required extensions are not supported. P74 Three upgrade and P81 compressed format support remain OPEN.
+
+## 91.2 P73 — explicit offline website export
+- Owner: `window.CANVIOOfflineSiteP73`; mounted in existing `#page-webEngine`.
+- Reads `CV.engines.web.snapshotWebsite()` without mutation. Network reads occur only after user clicks Inspect/Export, use `credentials:'omit'`, CORS and size/resource bounds.
+- Inlines supported HTTP(S) CSS, classic JS, image/font/media resources, adds restrictive CSP (`connect-src 'none'`) and ZIP manifest.
+- Refuses ESM/importmaps, iframe/object/embed, dynamic runtime network imports, unsupported CORS resources and unresolved external resource references rather than emitting a false offline-ready result.
+- Limitation: current packager is not a universal service worker/PWA builder; local project-relative resource mapping and all Website Engine/GrapesJS templates still need real-site acceptance. Third-party licenses remain the user's responsibility.
+
+## 91.3 P102 — Background Remover
+- Owner: `window.CANVIOBackgroundRemovalP102`; mounted in `#page-imageStudio`.
+- Worker: `assets/canvio-rmbg-worker.js`; model `Orangebot/ormbg-ONNX` (Apache-2.0), Transformers.js 3.8.1, WebGPU fp16 then WASM uint8 fallback. Model/runtime load only on explicit Remove action.
+- Image input is PNG/JPEG/WebP, max 12 MiB, normalized to max edge 1024 px. The output must be RGBA; it is saved as a transparent PNG via `CV.assets.addBlob()`.
+- Worker unload terminates current inference. Fine hair, transparent objects and complex edges may need manual correction. Real model download/inference is not yet run in this environment.
+
+## 91.4 P103 — original SFX & filter presets
+- Owner: `window.CANVIOP103Sfx`; mounted in `#page-videoEngine`.
+- Seven original SFX are synthesized locally with `OfflineAudioContext`, encoded as PCM WAV, saved through `CV.assets.addBlob()` and imported through `CV.engines.video.importFiles()`.
+- Visual filter presets call existing `CV.engines.video.fxPreset()` and populate the current Inspector; user still presses the existing Apply control. Undo uses the canonical Video Engine `undoAuto()`.
+- No third-party sound samples, new store, hosted API or background request.
+
+## 91.5 P105–P107 — depth and 2.5D
+- Owner: `window.CANVIODepthParallaxP105`; UI mounted in existing `#page-videoEngine`.
+- Worker: `assets/canvio-depth-worker.js`; model `onnx-community/depth-anything-v2-small-ONNX` (Apache-2.0), Transformers.js 3.8.1. WebGPU fp16 preferred; WASM/CPU q8 fallback. Model/runtime only load after explicit user action; image input max 10 MiB and max edge 1024.
+- P105 writes original normalized image and grayscale depth map to the existing `CV.assets`/`LS('assets')` store. Metadata includes model, backend, dimension and asset IDs.
+- P106 uses a WebGL shader for depth displacement. When WebGL is not available it falls back to Ken Burns 2D; that fallback is **not depth parallax**. Export captures a WebM from the canvas and hands the file to Asset Library and canonical Video Engine.
+- P107 stores reusable motion settings/depth-map references on the existing source asset and now exports/imports a portable ZIP preset through Asset Library. Import validates ZIP local/central headers, allowlisted filenames, ZIP CRC32, PNG chunk CRC/IHDR/dimensions, model/version/metadata bounds and rolls back inserted assets on failure. This supports manual cross-device transfer; automatic cloud sync and real-device Project Vault round-trip remain unverified.
+- Depth is relative, not metric distance. Edge halos/holes and foreground/background ambiguity are expected; user may need to reduce strength. No full 3D reconstruction, rig or AI image-to-video is claimed.
+
+## 91.6 Current evidence / limitations
+- Synthetic browser harness on minimal editor-page DOM: P72 GLB fixture/parser + standalone viewer checks; P73 zero-resource offline fixture; P103 original WAV synthesis; P102 contract and invalid-input guard; P105/P107 metadata restore/save; P106 4-second WebM fallback export (**385,568 bytes**) saved to Asset Library and handed to canonical Video Engine. No page errors in this minimal harness.
+- Headless Chromium in this environment has no WebGL context. Therefore P106 test exercised the Ken Burns 2D fallback, not the WebGL depth shader. P72 generated WebGL HTML but live WebGL rendering on real GPU remains OPEN.
+- Hugging Face runtime/model fetch is blocked from this environment; no real P102 cutout inference or P105 depth inference is claimed. The worker assets and lazy user-triggered code paths are integrated; AI acceptance must load the models and test Vietnamese/product/portrait fixtures.
+- Full CANVIO app navigation to local HTTP/HTTPS is blocked by `ERR_BLOCKED_BY_ADMINISTRATOR`; this synthetic harness does not prove native persistence, HTTPS, CSP/worker MIME or production media behavior.
+
+
+---
+
+# 92. CANVIO 23.3.104 — P102/P105 worker assets included
+
+> Current application marker: `23.3.105-p107-portable-preset-r1`. Source SHA-256 is recorded in `CANVIO_MANIFEST.json`. This is an integration candidate; it does not claim real model inference or production acceptance.
+
+## P102 worker contract
+- Worker file: `assets/canvio-rmbg-worker.js`; owner: `window.CANVIOBackgroundRemovalP102`.
+- Message input: `{type:'remove', buffer:ArrayBuffer, mime, backend}`. Worker enforces a 12 MiB input limit, loads pinned Transformers.js 3.8.1 after the message, and calls `pipeline('background-removal', 'Orangebot/ormbg-ONNX', ...)`.
+- Backend policy: try WebGPU fp16 when adapter exists; fallback to WASM uint8. Output must be a four-channel RGBA RawImage; transferable pixel buffer is returned to the existing Image Studio canvas/Asset Library path.
+- Termination is handled by the UI by terminating the worker. Real inference and image-quality review remain OPEN.
+
+## P105 worker contract
+- Worker file: `assets/canvio-depth-worker.js`; owner: `window.CANVIODepthParallaxP105`.
+- Message input: `{type:'estimate', buffer:ArrayBuffer, mime, backend}`. Worker enforces a 10 MiB input limit, loads pinned Transformers.js 3.8.1 after the message, and calls `pipeline('depth-estimation', 'onnx-community/depth-anything-v2-small-ONNX', ...)`.
+- Backend policy: try WebGPU fp16; fallback to WASM q8. `output.depth` is normalized to a bounded grayscale `Uint8Array` before transfer to the existing depth PNG/Asset Library path.
+- Model unload uses worker termination. Project Vault and cross-device persistence of asset metadata remain OPEN.
+
+## Runtime, network and license boundaries
+- Upstream model cards declare Apache-2.0. See `assets/AI-MODEL-NOTICES.md` and the Hugging Face model cards. Do not redistribute the model weights without preserving upstream license/notice obligations; the weights are not included in this package.
+- `@huggingface/transformers@3.8.1` loads from esm.sh after explicit user action. Model weights load from Hugging Face on first use. Browser caching is best-effort. This is not fully offline at first run and may require target-host CSP/CORS adjustments.
+- P102 can be weaker on fine hair, glass, pets and busy-background products. P105 returns relative monocular depth, not metric depth or full 3D geometry.
+
+## P102/P105 worker static contract tests
+- `tests/p102-p105/run-worker-contract-tests.cjs`: **13/13 PASS**. This validates syntax, paths, pinned tasks/models, lazy invocation, output shape, limits and transferable buffers; it does not execute ONNX inference.
+- Latest static HTML audit: **109/109** inline scripts parse; **523/523** IDs unique; zero duplicates; zero external script `src`.
+
+
+---
+
+# 93. Historical roadmap-to-code map — `23.3.105-p107-portable-preset-r1`
+
+> Historical snapshot for the 23.3.105 candidate. It is superseded by the current P74/P81/P107 continuation in sections 97–98. At that snapshot the source had 109 inline scripts, 523 unique static IDs, 19 synchronized standalone modules and three worker assets. Do not use this historical map as the current implementation status.
+
+| P | Current status | Canonical owner / implementation boundary |
+|---|---|---|
+| P71 | Documented | `CANVIO_AGENT_SKILLS.md`; skills guide the coding agent and are not runtime CANVIO modules. |
+| P72 | Integrated, partial | `window.CANVIOGLBViewerP72`; bounded GLB 2.0 static mesh, self-contained WebGL viewer. No materials/textures/animation/skin/Draco/meshopt/KTX2. |
+| P73 | Integrated, bounded | `window.CANVIOOfflineSiteP73`; explicit snapshot/inspect/export via existing Website Engine and CVZip; rejects unsupported ESM/iframe/dynamic-network dependencies. |
+| P74 | Integrated code path / runtime OPEN | Three.js r187 viewer + pinned vendor provisioning script/CI step; vendor binaries and browser runtime test pending. |
+| P75 | Integrated | `window.CVLogoStudioP75`; uses Brand Kit, Vector Forge and Asset Library, no new store. |
+| P76/P77/P83 | Integrated code paths | `window.CVBrandUnifiedP76`; voice/guidelines + local image DNA/color delta analysis; explicit save/preview/apply/undo. Perceptual similarity is not identity certification. |
+| P78 | Integrated | Contextual suggestions populate existing Video/Website Motion inspectors; they do not mutate timeline/site until the editor's own Apply action. |
+| P79 | Partial | WebCodecs MP4 experiment limited to silent image/text timelines; existing MediaRecorder remains for footage/audio. Native WebCodecs encode is device-dependent. |
+| P80 | Partial | Existing Whisper worker offers Tiny/Base/Small profile, WebGPU-first/WASM fallback. Runtime/model load after explicit action; real inference not tested in this environment. |
+| P81 | Integrated code path / decoder runtime OPEN | Local Draco/Meshopt/KTX2/Basis bridge and pinned provisioning workflow exist; compressed runtime fixture tests still pending. |
+| P82/P84 | Integrated, bounded | `window.CANVIOVectorPDF`; mixed vector/raster Poster/Slide PDF with same-origin Noto Sans. PDF/X/CMYK/physical bleed not included. |
+| P85 | OPEN / not implemented | Path tracing, postprocessing, OpenCV.js and dotLottie/Rive integration and acceptance remain outstanding. |
+| P86 | Integrated, bounded | CV Studio vector/selectable PDF export using existing CV fields and shared PDF font engine. |
+| P87/P88 | Integrated code paths | Existing OOXML DOCX/PPTX serializers; LibreOffice round-trip evidence belongs to earlier synthetic fixtures only. Microsoft/Google round-trip remains OPEN. |
+| P89 | Integrated | Existing template and responsive owners expose filtering/tags and selected-size export. |
+| P90–P96 | Integrated UX layer | Existing app shell, Home, command palette, simple/full mode and editor action bars. |
+| P97–P101/P104 | Partial video workflow | Existing canonical Video Engine; several advanced tools/audio alignment/real A/V and long-form export remain OPEN. |
+| P102 | Integrated worker path; inference OPEN | `window.CANVIOBackgroundRemovalP102` + `assets/canvio-rmbg-worker.js`; ORMBG model/runtime online-first. |
+| P103 | Integrated local utility | `window.CANVIOP103Sfx`; original procedural SFX and existing Video Engine filter presets. |
+| P105 | Integrated worker path; inference OPEN | `window.CANVIODepthParallaxP105` + `assets/canvio-depth-worker.js`; relative depth, not metric 3D. |
+| P106 | Integrated / partial acceptance | Headless 2D fallback and headed ANGLE SwiftShader WebGL shader/animation/WebM each passed 14/14; physical GPU and real model inference remain open. |
+| P107 | Partial | Depth/preset metadata retained on existing Asset Library records; Project Vault and cross-device round-trip are not proven. |
+
+## 93.1 Worker deployment contract
+- Publish `assets/canvio-whisper-worker.js`, `assets/canvio-rmbg-worker.js`, and `assets/canvio-depth-worker.js` at the exact relative paths beside `index.html`.
+- P102/P105 dynamically import Transformers.js 3.8.1 from esm.sh and fetch weights from Hugging Face only after a user action. Runtime/weights are not vendored. First use requires network; CSP/CORS/worker MIME acceptance is host-specific.
+- `node tests/p102-p105/run-worker-contract-tests.cjs` validates source wiring, pinned task/model, message gate, dimensions/output type, input bounds, fallback branches and transferable buffers (13/13). It does not execute ONNX inference.
+
+## 93.2 Current static audit snapshot
+- `python3 tests/release/run-static-audit.py`: 109/109 inline scripts parse; 523/523 IDs unique; zero duplicate IDs; zero external script `src`; 19/19 standalone module copies synchronized; all three worker scripts pass syntax checks.
+- The receiving AI must run real worker inference, WebGL hardware tests, offline website closure tests, browser/storage/media/accessibility acceptance and the full inherited suites on the deployed candidate. Keep P70's fourteen release gates OPEN until evidenced.
+
+
+# 94. Current integration verification refresh — 23.3.104
+
+- Final app marker is pinned to `23.3.105-p107-portable-preset-r1` after legacy delayed title observers. P63–P67, P68–P70, P90–P96 and P97–P101 smokes verify the marker/title.
+- Static audit: 109 inline script blocks parse; 523 static IDs unique; 19 standalone modules synchronized; Whisper/ORMBG/Depth workers parse.
+- Source suites: P47 fixtures; P48 26/26; P49 35/35; P50 27/27; P55 49/49; P56 27/27; P57–P62 15/15; P63–P67 18/18; P68–P70 16/16; P102/P105 worker contract 13/13.
+- Chromium: P55 24/24; P56 27/27; P62 32/32; P63–P67 43/43; P68–P70 17/17; P72/P73/P102/P103/P105–P107 API contracts 8/8, 9/9, 11/11, 10/10, 13/13; P82/P84 28/28; P87 14/14; P88 14/14; P90–P96 34/34; P97–P101/P104 35/35. These are local synthetic/fixture checks, not production-origin acceptance.
+- P97–P101 WebM synthetic export returned null once on an initial attempt; an instrumented run and clean repeat passed 35/35. Preserve this as a repeat-on-target-hardware item rather than claiming zero transient failures.
+- P102/P105 worker contract tests do not execute model inference. First run is online-first (esm.sh + Hugging Face); WebGPU/WASM, CSP/CORS/MIME and memory/unload still require real browser acceptance.
+- P70 fourteen production gates remain OPEN. Do not mark CANVIO 1.0 Stable.
+
+
+# 94.1 Independent recheck — 2026-11-17 continuation
+
+- Delivery ZIP integrity passed (162 entries); pre-refresh manifest verified 124/124. Static audit rerun: 109/109 inline scripts parse, 523/523 unique DOM IDs, 19/19 standalone modules synchronized, three workers parse.
+- Reran source suites: P48 26/26, P49 35/35, P50 27/27, P55 49/49, P56 27/27, P57–P62 15/15, P63–P67 18/18, P68–P70 16/16, P102/P105 worker contract 13/13; P47 fixtures also passed.
+- Reran Chromium suites: P68–P70 16/16, P82/P84 28/28, P87 14/14, P88 14/14, P90–P96/P84 34/34, P97–P101/P104 35/35. Additional P72/P73/P102/P105–P107 API probes were all true, but are not full acceptance.
+- Two Google Fonts CSS requests were observed at boot. Do not claim fully network-silent startup or complete offline typography. No external script `src` tags were found.
+- GitHub `main` commit `f681c1239dc56968dde338e1c33aa4b63002665a` had successful Pages run #105, but the inspected main artifact remains P70 `23.3.84-p70`; 23.3.104 is not merged/deployed.
+- Keep P102/P105 inference, physical WebGPU/WebGL, P107 Project Vault/cross-device round-trip, P72 real GPU rendering, P73 representative site closure, P74/P81/P85 and all 14 P70 gates OPEN until evidenced.
+
+# 95. r2 startup-network repair and verified handoff
+
+- Current candidate: `23.3.105-p107-portable-preset-r1`; `index.html` is 4,849,053 bytes with SHA-256 `a8b5deeed4115554c39580a949e0ac59f7c872e80ff18a7907422ae2e781ece2`. `CANVIOPhaseSuite.version` remains `70.0.0`.
+- Root cause fixed: the app shell loaded Google Fonts from both a `<link rel="preconnect">`/stylesheet pair and an `@import` inside `#canvio-lot36-css`. Both were removed. The existing CSS fallback stack is used at boot.
+- Optional Design DNA/typography font actions may still fetch Google Fonts only after a user action. Some generated standalone documents include external font references according to the chosen export preset. Do not describe arbitrary exports as fully offline unless P73's preflight and embedded dependencies pass.
+- Static audit rejects remote Google Fonts stylesheets, preconnects and CSS imports in active style blocks. `tests/p68-p70/run-p68-p70-browser-smoke.py` and `tests/p72-p107/run-p72-p107-api-smoke.py` record external requests and assert zero HTTP(S) requests during boot.
+- Latest static audit: 109 inline scripts parse; 523 IDs unique; no duplicate IDs or external script src; 0 boot-time Google font stylesheet/preconnect/import references; 19/19 module copies synchronized; 3/3 worker syntax PASS.
+- Source guards in `tests/p55/run-p55-tests.cjs` and `tests/p56/run-p56-tests.cjs` were aligned with r2 after the complete source matrix caught stale r1 title-observer assertions. Both suites now pass 49/49 and 27/27.
+- The candidate Node 24 workflow executes the P55/P56/P62 Chromium suites and the P72/P73/P102/P103/P105–P107 API smoke. It rebuilds and verifies the delivery manifest after browser reports are generated, then uploads evidence as an Actions artifact.
+- Verified local suites and limitations are in `CANVIO_QA_REPORT.md` section 18. P102/P105 runtime inference is still NOT RUN; P106 WebGL hardware and P107 Vault/cross-device acceptance remain OPEN.
+- GitHub main/Pages last observed at P70 `23.3.84-p70` (commit `f681c1239dc56968dde338e1c33aa4b63002665a`, run #105). This r2 source package is not represented as merged or deployed.
+- Keep P70 fourteen manual release gates OPEN. The P67 print preflight's `REVIEW_REQUIRED` warning is intentional because embedding/print production proof remains unverified; do not suppress or relabel it as PASS.
+
+
+# 96. Final r2 full-matrix acceptance record — 2026-11-18
+
+- Exact source remains `23.3.105-p107-portable-preset-r1`, index SHA-256 `a8b5deeed4115554c39580a949e0ac59f7c872e80ff18a7907422ae2e781ece2`; no app logic was changed during this acceptance-only pass.
+- Static audit: 109/109 inline scripts, 523 unique IDs, 0 duplicate IDs, 0 external script src, 0 boot-time Google Fonts refs, 19/19 standalone module copies synchronized, 3/3 worker syntax. Worker contract 13/13 is static only.
+- Source suites pass: P47 fixtures; P48 26/26; P49 35/35; P50 27/27; P55 49/49; P56 27/27; P57–P62 15/15; P63–P67 18/18; P68–P70 16/16; P102/P105 worker contract 13/13.
+- Chromium suites pass on synthetic `about:blank` fixtures: P55 24/24; P56 27/27; P62 32/32; P63–P67 43/43; P68–P70 17/17; P72 8/8; P73 9/9; P102 11/11; P103 10/10; P105–P107 13/13; P82/P84 28/28; P87 14/14; P88 14/14; P90–P96 34/34; P97–P101/P104 35/35. LibreOffice Writer/Impress synthetic round-trip also passed.
+- Startup browser probe observed zero HTTP(S) requests and zero page/console errors after the Google Fonts stylesheet/preconnect/@import boot paths were removed. User-triggered optional fonts and some generated exports can still use external fonts.
+- No P102/P105 inference, physical WebGPU/WASM, P106 hardware WebGL, P72 physical GPU, P107 Project Vault/cross-device sync, HTTPS origin, native IndexedDB restart, Safari/Edge, WCAG/screen-reader/200% reflow or production A/V sync is claimed.
+- P74 and P81 remain OPEN; P85 remains OPEN/unimplemented. P70 remains 14/14 OPEN and `releaseCertified:false`. Main/Pages remains P70 as of the last repository check; local r2 candidate is not deployed. See `CANVIO_FINAL_ACCEPTANCE_MATRIX.md` and QA Report section 19.
+
+
+## 96. P107 portable preset transfer — `23.3.105-p107-portable-preset-r1`
+
+- Added explicit-click Export Preset ZIP / Import Preset ZIP to Depth Studio. The bundle contains exactly `manifest.json`, `source.png`, and `depth.png`; it is designed for manual transfer between devices without a cloud provider.
+- Import is fail-closed: STORE ZIP only; no encryption/data descriptors/path traversal/duplicates; allowlisted names only; bounded 28 MiB package / 12 MiB entry / 26 MiB aggregate; validates central directory, CRC32 and PNG chunks/CRC/IHDR/dimensions; validates pinned Depth Anything V2 model, Apache-2.0 notice, strength/duration and dimension metadata.
+- Import uses the existing `CV.assets.addBlob`, `CV.assets.remove`, and `LS('assets')` owner. It does not create a separate store. Partial import is rolled back on failure.
+- Tests: P107 portable preset transfer **9/9 PASS**; P102/P105 worker contract **16/16 PASS**. Actual exported ZIP round-trip through two physical browsers/devices remains an external acceptance item.
+- Candidate `23.3.105-p107-portable-preset-r1`; existing PhaseSuite `70.0.0` retained. P74/P81 remain unbundled because local network/runtime and binary decoder verification are unavailable; P85 heavy optional tools remain deferred under the product's web/design/video-first scope. P70 real-world gates remain open.
+
+
+# 97. Current integration state — `23.3.106-p74-p81-p107-r1` (2026-11-18)
+
+## 97.1 P74 — Full local Three.js r187 GLB viewer
+- Module owner: `window.CANVIOThreeGLBViewerP74`; standalone module `canvio-p74-p81-three-viewer.js`; inline script id `canvio-p74-p81-three-viewer`.
+- P74 is additive to P72 and reuses the canonical `#cv72-file` input. It must not create a second Asset Library, project store, timeline or model repository.
+- The viewer accepts bounded self-contained GLB 2.0 only (250 MiB cap); preflight rejects external image/buffer URIs before calling GLTFLoader. GLTF animation is driven by one mixer. Model resources are disposed on reset; full renderer cleanup is attached to `pagehide`.
+- Three.js r187 imports and addons are lazy-loaded only after a user click. Vendor dependencies are local under `assets/three`; do not add CDN fallbacks or boot-time network requests.
+
+## 97.2 P81 — Local compression decoder bridge
+- GLTFLoader receives local `DRACOLoader`, `MeshoptDecoder` and `KTX2Loader`/Basis transcoder instances. The pinned vendor script `scripts/vendor-three-r187.sh` fetches commit `7e89746a687bb88271253698fa108b1dd59825d0`, rewrites bare `three` package imports to the bundled relative module and creates `assets/three/THREE-VENDOR-MANIFEST.json`.
+- Current container could not fetch GitHub binaries due DNS/network restrictions; therefore the local vendor directory is intentionally absent. The candidate GitHub Node 24 workflow provisions the runtime, validates the vendor manifest and runs the SwiftShader browser test. Do not mark runtime as accepted until that hosted workflow is green.
+- Existing test imports all decoder modules and renders a small uncompressed GLB. It does not yet prove successful decode of representative compressed Draco, Meshopt or KTX2 fixtures; add those fixtures before asserting full P81 media coverage.
+
+## 97.3 P107 — zero-strength persistence repair
+- A strength of `0` is valid and means no displacement. Do not use `Number(value) || .045` for this setting. Preview, save and load now preserve numeric zero, with `.045` used only when the value is missing or non-finite.
+- Portable preset ZIP remains manual transfer only. It does not claim automatic cloud synchronization or Project Vault cross-device consistency.
+
+## 97.4 Current local evidence and limits
+- Static audit: 110/110 inline scripts parse; 524 unique IDs; 0 duplicates; 0 external script `src`; 20/20 module copies synchronized; 3/3 worker syntax.
+- P74/P81 contract: 18/18, including mocked same-origin file byte-size/SHA-256 checks, modified-byte rejection and unpinned commit rejection. P107 portable ZIP tests: 11/11. P102/P105 worker contract: 17/17. These do not execute ONNX model inference, Three.js binary provisioning or physical GPU rendering.
+- P74 explicit-load path validates a pinned `r187` manifest and fetches the required runtime/decoder/license files with same-origin credentials and `redirect:'error'`, then checks byte size and SHA-256 using Web Crypto before importing. This integrity routine is verified with mocked files in tests; the actual vendor files are not present in this local source package.
+- Candidate Node 24 workflow is in `.github/workflows/canvio-pages-node24.yml`. It must run on the candidate branch before merge. It packages the generated vendor assets and test evidence; deployment requires a separate manual `workflow_dispatch` with `deploy_candidate=true`.
+- Keep P70's fourteen real-world release gates OPEN. Keep physical GPU, model inference, HTTPS/Safari/Edge, WCAG/screen-reader, native persistence restart, A/V synchronization, and two-device Project Vault round-trip OPEN until measured on target environments. P85 remains DEFERRED.
+
+
+# 98. Final local regression recheck — `23.3.106-p74-p81-p107-r1` (2026-11-18)
+
+- Exact `index.html`: 4,887,819 bytes; SHA-256 `86e9082ba718d49097645b5c5382ffcf4bf9c91ecd93bb6c44e2ea48812ff34b`. PhaseSuite stays `70.0.0`.
+- Static audit: 110/110 inline scripts; 524/524 unique IDs; 0 duplicates; 0 external script `src`; 20/20 standalone modules synchronized; 3/3 workers parse. Startup font CSS/preconnect/import requests: 0.
+- Source tests: P47 fixture set PASS; P48 26/26; P49 35/35; P50 27/27; P55 49/49; P56 27/27; P57–P62 15/15; P63–P67 18/18; P68–P70 16/16; P74/P81 contract 18/18; P107 portable ZIP 11/11; P102/P105 worker contract 17/17.
+- Chromium tests: P55 24/24; P56 27/27; P62 32/32; P63–P67 43/43; P68–P70 17/17; P82/P84 28/28; P87 14/14; P88 14/14; P90–P96 34/34; P97–P101/P104 35/35. P72/P73/P102/P103/P105–P107 API contract smoke passed 8/8, 9/9, 11/11, 10/10, 18/18 respectively; startup produced 0 HTTP(S) requests and 0 page/console errors.
+- P74/P81 actual vendor runtime is still absent in this local package. The hosted workflow provisions it and invokes SwiftShader/WebGL2 browser smoke. Compressed Draco/Meshopt/KTX2 sample decoding and physical GPU are not tested here. P102/P105 inference remains NOT RUN.
+- `tests/release/package-delivery.py` is now included and referenced by CI; it verifies the manifest, creates a deterministic ZIP, checks ZIP CRC and writes a SHA-256 sidecar.
+- P70 still has fourteen real-world gates OPEN. GitHub `main` was last seen at `f681c1239dc56968dde338e1c33aa4b63002665a` and Pages run #105 was P70. This candidate is not merged/deployed or Stable. P85 remains OPEN/unimplemented; P108 is NOT SPECIFIED in the current Roadmap.
+
+# 99. Re-verification continuation — 2026-11-18
+
+- Re-ran the exact current index source: 110/110 inline scripts parse, 524/524 static IDs unique, 0 external script `src`, 0 boot-time Google Fonts CSS/preconnect/imports, 20/20 standalone modules synchronized, and all three workers parse.
+- Source regressions rerun: P47 fixture set PASS; P48 26/26; P49 35/35; P50 27/27; P55 49/49; P56 27/27; P57–P62 15/15; P63–P67 18/18; P68–P70 16/16; P74/P81 18/18; P107 11/11; P102/P105 worker contract 17/17.
+- Browser suites rerun in this continuation: P97–P101/P104 35/35, P72/P73/P102/P103/P105–P107 API smoke all pass, and P82/P84 28/28. Existing candidate-specific reports retained in the package show P55 24/24, P56 27/27, P62 32/32, P63–P67 43/43, P68–P70 17/17, P87 14/14, P88 14/14 and P90–P96 34/34.
+- `scripts/vendor-three-r187.sh` was attempted locally and stopped before changing `assets/three`: network DNS could not resolve `github.com`. Therefore vendor binaries are not in this local source ZIP and P74 SwiftShader/WebGL2 smoke was not run locally. The GitHub Node 24 workflow contains the provision + smoke steps but has not run on a candidate branch; current remote `main` is still P70 commit `f681c1239dc56968dde338e1c33aa4b63002665a`.
+- Fresh test reports were included in a regenerated SHA-256 manifest; the package builder checks the manifest before creating the ZIP and runs ZIP CRC validation. Do not equate a complete source handoff with a complete vendor-runtime deployment.
+- All previously listed P70 real-world gates remain OPEN. P102/P105 inference, physical GPU, compressed Draco/Meshopt/KTX2 fixtures, native IndexedDB/cross-device restore, hosting/CSP/MIME, Safari/Edge and WCAG acceptance remain unverified.
+
+
+# 100. P106 depth-render fallback verification — 2026-11-18
+
+- Added `tests/p102-p105/run-p106-depth-render-smoke.py` and wired it into the candidate Node 24 workflow. The test uses a deterministic synthetic worker result and checks the real P105 image preparation, worker message contract, depth PNG generation, Asset Library writes, render-mode disclosure, zero-strength persistence, and absence of uncaught/console errors.
+- Current local Chromium 144 does **not** provide a WebGL context even with the SwiftShader flags. The test therefore verified the explicitly disclosed Ken Burns 2D fallback and visible output: **8/8 PASS**. The report records `webglAvailable:false`, `p106WebglShaderAccepted:false`, `fallbackAccepted:true`, `physicalGpuExecuted:false`, and `realDepthAnythingInferenceExecuted:false`.
+- SwiftShader mode compiles and renders the P106 fragment shader, verifies animation frame changes and a real WebM export/handoff; headless mode separately verifies the explicit 2D fallback. Neither is a physical-GPU acceptance or real Depth Anything inference. Physical devices, Project Vault and model quality remain OPEN.
+- LibreOffice 25.2.3.2 Writer and Impress synthetic round-trip was rerun after creating the DOCX/PPTX fixtures: open → edit → save → reopen passed for both; Vietnamese text and markers were preserved, with ZIP CRC PASS. This is not Microsoft Office or Google Workspace certification.
+- No app `index.html` logic or PhaseSuite version was changed in this continuation. P74/P81 vendor runtime remains absent locally; remote main remains the earlier P70 baseline; P70's fourteen acceptance gates are still OPEN. Do not mark this candidate Stable.
+
+
+# 101. P107 portable preset ZIP v2 repair and current candidate — 23.3.107-p107-preset-v2-r2 (2026-11-18)
+
+- Current `index.html`: 4,890,301 bytes; SHA-256 `ea758d17fa94bab1167e0a5792b0c806045b6102e1dfe5d4306603cbf8048687`; PhaseSuite remains `70.0.0`; base candidate `23.3.106-p74-p81-p107-r1`.
+- Fixed a real round-trip defect: source PNG dimensions may differ from Depth Anything output dimensions. ZIP manifest v2 now stores `sourceWidth/sourceHeight` and `depthWidth/depthHeight` separately; `width/height` remain aliases for depth-map dimensions. Import validates both PNG dimensions independently. Version-1 bundles remain readable under their original shared-dimension validation.
+- The exact three-entry ZIP remains `manifest.json`, `source.png`, `depth.png`; strict STORE-only archive, CRC32, PNG checks, path/name allowlist, size bounds, rollback and existing Asset Library owner are retained. No new store or cloud sync was added.
+- P107 source tests: **14/14 PASS**; Chromium P106/P107 test: **14/14 PASS** in both headless fallback and SwiftShader WebGL modes, including import in a separate isolated browser client, with 160×100 source PNG, 96×64 depth PNG and strength `0` retained. An isolated second browser client imported the ZIP with independent dimensions and strength `0`; physical two-device / Project Vault persistence is not yet proven.
+- Fixed legacy `buildTitleForVersion()` so delayed title observers map the new candidate to `CANVIO 23.3.107 — P107 Portable Presets v2` rather than falling back to the P42 title. Re-ran P82/P84 28/28, P87 14/14, P88 14/14, P90–P96 34/34, P97–P101/P104 35/35; LibreOffice Writer/Impress round-trip passed.
+- Current static audit: 110/110 inline scripts; 524/524 unique IDs; 0 duplicates; 0 external script `src`; 0 boot-time font stylesheet/preconnect/import; 20/20 standalone module copies; 3/3 worker syntax. P74/P81 contract 18/18; P102/P105 worker contract 17/17.
+- Superseded by the dual-renderer result recorded below: **14/14 PASS** in headless 2D fallback and **14/14 PASS** in headed Xvfb/ANGLE SwiftShader WebGL. The WebGL result is software-renderer evidence, not a physical GPU test. Both modes use a deterministic synthetic depth Worker; real Depth Anything inference is not claimed.
+- P74/P81 vendor binaries are absent locally because upstream DNS is blocked; Three.js r187 / Draco / Meshopt / KTX2 browser smoke and compressed fixture decode remain open. P102/P105 actual model inference remains NOT RUN. P85 remains OPEN: optional path tracing, postprocessing, OpenCV.js, dotLottie and Rive runtimes are not yet integrated; P108 is unspecified.
+- P70's fourteen real-world release gates remain OPEN and `releaseCertified:false`. Current GitHub `main` is still the separate P70 baseline; this candidate has not been hosted, merged or deployed.
+
+
+# 102. P106 dual-renderer + P107 isolated-client verification — 23.3.107-p107-preset-v2-r2 (2026-11-18)
+
+- Exact `index.html`: 4,890,301 bytes; SHA-256 `ea758d17fa94bab1167e0a5792b0c806045b6102e1dfe5d4306603cbf8048687`; `CANVIO_BUILD.version = 23.3.107-p107-preset-v2-r2`; PhaseSuite `70.0.0`.
+- P106 headless suite: **14/14 PASS**; browser explicitly reports `2D_CANVAS_FALLBACK` / Ken Burns 2D when WebGL is unavailable. It validates the user-triggered worker path, visible output, mode label, WebM export, Asset Library write and canonical Video Engine handoff.
+- P106 headed Chromium with Xvfb + ANGLE SwiftShader: **14/14 PASS**. It initializes WebGL, compiles/renders the depth-displacement shader, verifies changing animation pixels and exports WebM to Asset Library + Video Engine. The renderer is `ANGLE_SWIFTSHADER_SOFTWARE_WEBGL (forced test backend)`, not physical GPU.
+- P107 ZIP transfer: both render modes download the exact three-entry ZIP and pass CRC; a fresh isolated browser context imports it successfully. Source 160×100, depth 96×64 and strength `0` are preserved. Physical two-device transfer and Project Vault persistence are still OPEN.
+- Reports: `tests/p102-p105/p106-depth-render-fallback-browser-smoke-report.json` and `tests/p102-p105/p106-depth-render-webgl-browser-smoke-report.json`; each 14/14.
+- Actual Depth Anything model inference remains NOT RUN. Do not treat synthetic worker output as model QA. P74/P81 vendor runtime/compressed decoder test remains OPEN because assets are unavailable locally and hosted CI has not run. P70's fourteen real-world gates remain OPEN; P85 remains OPEN/unimplemented; candidate is not Stable or deployed.
+
+
+# 103. Current source integration and acceptance — `23.3.108-p85-studio-r2` (2026-11-18)
+
+## 103.1 Exact source and architecture
+- `index.html`: 4,921,610 bytes; SHA-256 `1736457b13aa9db40d847ea065ea521328d247709664dde6b1d3781088869b82`; `CANVIO_BUILD.version = 23.3.108-p85-studio-r2`; PhaseSuite remains `70.0.0`.
+- P85 module owner: `window.CANVIOP85Suite`; one Studio panel; standalone review source `canvio-p85-studio.js`, byte-synchronized in the current index. Runtime assets load only after explicit click; same-origin paths and SHA-256 manifest are required.
+- P85 functionality wired: WebGL postprocessing (bloom/vignette/chromatic aberration), true WebGPU path tracing (no WebGL pretending), OpenCV.js Lucas–Kanade optical flow, dotLottie player and Rive player. Path tracing refuses to start without a real `navigator.gpu` capability. Rive is a playback runtime, not an animation authoring editor.
+- P85 reuses the canonical P72 GLB input and existing Asset Library/Video Engine boundaries. No second project store, timeline, asset owner or background network fetch was added.
+
+## 103.2 Runtime provisioning and license controls
+- `scripts/vendor-p85-runtimes.sh` provisions pinned packages: Three.js 0.187.0, three-mesh-bvh 0.9.18, three-gpu-pathtracer 0.0.28 (experimental WebGPU), postprocessing 6.39.6, `@techstark/opencv-js` 5.0.0-release.1, `@lottiefiles/dotlottie-web` 0.83.2, `@rive-app/canvas` 2.51.0, `@huggingface/transformers` 3.8.1 and esbuild 0.28.2.
+- Build output is same-origin under `assets/p85`; OpenCV, renderer bundle, dotLottie WASM, Rive JS/WASM, Transformers.js and ONNX Runtime WASM have SHA-256 entries. Upstream license texts are copied into `assets/p85/licenses`; no CDN fallback is allowed by CANVIO player setup.
+- Model weights are not packaged. P102 ORMBG, P105 Depth Anything and P80 Whisper model weights remain explicit user-triggered retrieval from their model repositories. Model license notices and weight provenance are recorded in `AI-MODEL-NOTICES.md`.
+- `scripts/vendor-three-r187.sh` remains the P74/P81 provisioning path for Three.js r187, GLTFLoader, Draco, Meshopt and KTX2/Basis decoder assets.
+
+## 103.3 Latest exact-source tests
+- Static audit: **111/111** inline scripts parse; **525/525** static DOM IDs unique; zero duplicate IDs; zero external script `src`; zero boot-time Google Fonts stylesheets/preconnects/CSS imports; **21/21** standalone modules synchronized; **3/3** workers parse.
+- Node/source: P47 fixtures PASS; P48 **26/26**; P49 **35/35**; P50 **27/27**; P55 **49/49**; P56 **27/27**; P57–P62 **15/15**; P63–P67 **18/18**; P68–P70 **16/16**; P74/P81 **18/18**; P85 **13/13**; P102/P105 **19/19**; P107 **14/14**.
+- Chromium exact-current candidate: P55 **24/24**; P56 **27/27**; P62 **32/32**; P63–P67 **43/43**; P68–P70 **17/17**; P82/P84 **28/28**; P85 lazy boot **10/10**; P90–P96 **34/34**; P87 **14/14**; P88 **14/14**; P97–P101/P104 exact-current rerun timed out and is not counted; P106 2D fallback + P107 isolated browser ZIP transfer **14/14**. API smoke: P72 **8/8**, P73 **9/9**, P102 **11/11**, P103 **10/10**, P105–P107 **18/18**.
+- LibreOffice Writer/Impress 25.2.3.2 open/edit/save/reopen: PASS, Vietnamese content and marker retained, post-save ZIP CRC PASS. This is not Microsoft Office/Google Workspace certification.
+
+## 103.4 Explicitly NOT RUN / NOT ACCEPTED
+- P74/P81: `assets/three` is not present locally. Exact-current vendor browser smoke was attempted and stopped because the vendor manifest is missing; no representative Draco/Meshopt/KTX2 file decoding is accepted.
+- P85: exact-current vendor runtime smoke was attempted and stopped because `assets/p85/P85-VENDOR-MANIFEST.json` is absent; `assets/p85` runtime bundles are not present locally. PostFX actual rendering, OpenCV WASM optical-flow calculation, dotLottie WASM playback and Rive WASM initialization were not run. P85 contract and lazy-boot tests prove source shape/UI/lazy behavior only.
+- P102/P105: real ONNX model inference NOT RUN.
+- P97–P101/P104: exact-current browser rerun timed out and is not counted in this refresh; previous same-marker 35/35 remains documented in the earlier history only.
+- P106: current-candidate headed Xvfb/SwiftShader run timed out; only the current 14/14 headless 2D fallback is counted. No physical GPU test.
+- P107: isolated new browser context imports ZIP; physical two-device transfer and Project Vault native persistence are not tested.
+- P70: fourteen real-world release gates remain OPEN; releaseCertified remains false. No HTTPS production origin, server header/CSP/worker MIME, Safari/Edge, accessibility/WCAG, native IndexedDB restart, real media A/V sync/long-form export, cross-application Office or physical print proof is claimed.
+- Workflow YAML parses and exact index SHA is pinned. It provisions runtimes and has a deploy output gate requiring `releaseCertified:true` and `releaseStatus:CERTIFIED`. Hosted Actions has not run for this candidate.
+- No commit, PR, merge or Pages deploy has been performed for 23.3.108. Do not label this Stable.
+
+
+## 103.5 P85 lifecycle hardening follow-up — exact index refresh
+- Fixed `CANVIOP85Suite.inspect().version` to match the public owner version (`85.0.2`).
+- OpenCV Lucas–Kanade temporary `Mat` cleanup now runs on both success and exception paths; ownership transfer to the previous-frame tracker is explicit.
+- Added contract checks for diagnostic/public version parity and OpenCV `Mat` release on success/error. P85 contract is now **13/13 PASS**; browser lazy-boot rerun is **10/10 PASS** with zero remote requests, page errors or console errors.
+- Exact index: 4,921,610 bytes; SHA-256 `1736457b13aa9db40d847ea065ea521328d247709664dde6b1d3781088869b82`.
+- Runtime vendor binaries remain absent locally. Real P85 PostFX, OpenCV WASM tracking, dotLottie/Rive WASM, WebGPU path tracing, P102/P105 model inference, and physical GPU acceptance remain NOT RUN.
+
+
+# 104. Exact-current regression continuation — `23.3.108-p85-studio-r2` (2026-11-18)
+
+This section supersedes the timeout dispositions in sections 103.4–103.5 for P97–P101/P104 and the headed P106 SwiftShader test. Earlier logs remain as historical attempts; the following clean reruns are the current counted results.
+
+## 104.1 Source and regression recheck
+- Exact `index.html`: 4,921,610 bytes · SHA-256 `1736457b13aa9db40d847ea065ea521328d247709664dde6b1d3781088869b82` · build marker `23.3.108-p85-studio-r2` · PhaseSuite `70.0.0`.
+- Static audit rerun: **111/111** inline scripts parse; **525/525** unique IDs; zero duplicate IDs; zero external script `src`; zero boot-time remote Google Fonts references; **21/21** standalone modules synchronized; **3/3** workers parse.
+- Source suites rerun: P47 fixture/restore/CRC tests PASS; P48 **26/26**; P49 **35/35**; P50 **27/27**; P55 **49/49**; P56 **27/27**; P57–P62 **15/15**; P63–P67 **18/18**; P68–P70 **16/16**; P74/P81 **18/18**; P85 **13/13**; P102/P105 worker contract **19/19**; P107 **14/14**.
+- API/browser reports for P72/P73/P102/P103/P105–P107: **8/8**, **9/9**, **11/11**, **10/10**, **18/18** respectively; startup HTTP requests, page errors and console errors all zero in the synthetic browser fixture.
+
+## 104.2 Browser reruns that now complete
+- P97–P101/P104: **35/35 PASS** on Chromium 144.0.7559.96. The run exercised canonical Video Engine plan/apply/undo, shortcut handling, estimated word captions, transcript edits, locked-track ripple blocking, image Asset Library reuse, Ken Burns batch undo, and synthetic WebM MIME/canplay QC. This supersedes the prior timeout note. It remains synthetic `about:blank` media testing, not real-footage A/V-sync or long-form export certification.
+- P106 headed Xvfb/ANGLE SwiftShader WebGL: **14/14 PASS**. Verified the WebGL depth shader renders >8 colors, animation changes frame pixels, the UI labels 2.5D truthfully, and WebM exports to Asset Library + Video Engine. The renderer is software SwiftShader, **not physical GPU**. This supersedes the prior headed timeout note.
+- P106 headless 2D fallback: **14/14 PASS**. Both modes export the exact three-entry portable ZIP with CRC valid and import it into a fresh isolated browser context, retaining source 160×100, depth 96×64 and strength `0`.
+- Other exact-current browser reports retained: P55 **24/24**; P56 **27/27**; P62 **32/32**; P63–P67 **43/43**; P68–P70 **17/17**; P82/P84 **28/28**; P85 lazy boot **10/10**; P87 **14/14**; P88 **14/14**; P90–P96 **34/34**. LibreOffice Writer/Impress 25.2.3.2 open/edit/save/reopen remains PASS.
+
+## 104.3 Boundaries that remain OPEN/BLOCKED
+- P74/P81 vendor assets are still absent (`assets/three/THREE-VENDOR-MANIFEST.json` is not present); actual Three.js r187 runtime, Draco/Meshopt/KTX2 compressed fixture decode and the P74 browser vendor smoke were not run.
+- P85 vendor bundles remain absent (`assets/p85/P85-VENDOR-MANIFEST.json` is not present); PostFX runtime, OpenCV WASM tracking, dotLottie and Rive WASM playback/initialization were not run. P85 source contract **13/13** and lazy boot **10/10** do not prove runtime behavior.
+- Local provisioning scripts are valid, but package downloads cannot complete because this container cannot resolve `registry.npmjs.org` or `github.com`. No fabricated vendor assets were added.
+- P80 Whisper, P102 RMBG and P105 Depth Anything real model inference were not run; model weights remain unbundled and user-triggered.
+- P106 uses synthetic depth worker data and SwiftShader; physical GPU is not tested. P107 has fresh-browser-context ZIP proof, not two physical devices or Project Vault persistence.
+- P70 continues to report **14/14 real-world gates OPEN**, `releaseCertified:false`, `BLOCKED_PENDING_REAL_WORLD_ACCEPTANCE`. No Stable claim or deployment authorization.
+
+## 104.4 Repository / release evidence
+- GitHub `main` was re-read at `f681c1239dc56968dde338e1c33aa4b63002665a`, still the older P70 baseline. The observed successful Actions run `44118368800` belongs to commit `3602e9b76918bf1f40f6cd4ffd2a3024ec60bb8a`, also the older P70 baseline; it is not validation of this 23.3.108 local candidate.
+- No PR, commit, merge, candidate Pages deploy or hosted Actions result is claimed for this local source. The local 23.3.108 workflow does contain provisioning and runtime-smoke steps, but it has not run remotely.
+- Full machine-readable evidence: `tests/release/exact-current-refresh-report.json`; the candidate remains a local integration candidate, not Stable.
+
+
+# 105. Vendor provisioning transaction hardening — 23.3.109-p85-vendor-atomic-r1 (2026-11-18)
+
+- Scope: maintenance-only patch to runtime provisioning. The application `index.html` and its SHA-256 are unchanged from 23.3.108-p85-studio-r2; no feature/UI behavior is claimed to have changed.
+- `scripts/vendor-three-r187.sh` and `scripts/vendor-p85-runtimes.sh` now build into isolated staging directories under `assets/`, verify all expected artifacts/licenses/manifests there, and only then invoke `scripts/activate-vendor-tree.sh`.
+- The shared activator keeps the previous runtime tree until the staged tree is moved into place. If activation fails after the previous tree is moved aside, it restores the previous tree. A stale backup causes a fail-closed stop rather than destructive overwrite.
+- `tests/vendor/test-activate-vendor-tree.sh` exercises both successful replacement and injected second-move failure/rollback: 2/2 PASS.
+- `bash -n` passes for both provisioning scripts, the shared activator and its test. P74/P81 contract 18/18, P85 contract 13/13, P102/P105 worker contract 19/19, P107 portable ZIP contract 14/14, and P85 lazy-boot browser smoke 10/10 were rerun on this source tree.
+- Runtime provisioning itself remains BLOCKED in this local environment: DNS resolution for `registry.npmjs.org` and `github.com` fails. P74/P81 and P85 vendor runtime smoke cannot be claimed. No model inference, physical GPU, cross-device sync, hosted CI, PR, merge or production deploy is implied.
+- This change is source/provisioner safety hardening only; it does not close any of P70's fourteen real-world acceptance gates.
+
+
+# 105. Continuation audit — 23.3.110 (2026-11-18)
+
+This is a verification/documentation refresh only. No application source, UI, or runtime binaries changed.
+
+- Re-ran P74/P81 source contract: **18/18 PASS**; vendor runtime absent and compressed decoder fixture decode not run.
+- Re-ran P85 source contract: **13/13 PASS**; actual runtime browser smoke exits before launch because `assets/p85/P85-VENDOR-MANIFEST.json` is absent.
+- Re-ran P102/P105 worker contract: **19/19 PASS**; real ONNX model inference not run.
+- Re-ran P107 ZIP/security contract: **14/14 PASS**; no cloud sync, Project Vault or physical two-device round trip.
+- Static audit: **111/111** inline scripts, **525/525** unique IDs, **21/21** standalone modules, **3/3** workers.
+- Attempted npm registry resolution; `npm view three@0.187.0` failed with `EAI_AGAIN registry.npmjs.org`. GitHub host DNS also did not resolve. npm cache is only 12 KB and contains no usable packages; no Three.js, decoder, OpenCV, dotLottie, Rive, Transformers.js or ONNX WASM binaries exist in the package.
+- P106 physical GPU remains untested. Software SwiftShader evidence is not physical GPU acceptance.
+- P70 remains **14/14 manual gates OPEN**, `releaseCertified:false`. These require real devices, production HTTPS origin, real media/projects/footage, human accessibility and licensing review, print/prepress, backup/restore and rollback/observability evidence. They cannot be truthfully completed in this isolated container.
+- No GitHub commit, hosted Actions run, PR, merge, Pages deployment or Stable certification is claimed.
+
+Machine-readable evidence: `tests/release/continuation-acceptance-audit-23.3.110.json`.
+
+
+# 106. Continuation — 23.3.110 (2026-11-18, session 2)
+
+Chỉ thêm tài liệu/script; `index.html` giữ nguyên SHA-256 `1736457b13aa9db40d847ea065ea521328d247709664dde6b1d3781088869b82`.
+- Đã đọc Guide, xác minh SHA zip, chạy lại P74/P81, P85, P102/P105, P107 contract và static audit: PASS. `registry.npmjs.org` vẫn không phân giải DNS (nằm ngoài proxy).
+- Thêm `scripts/run-real-acceptance.sh` (provision + smoke + ghi TSV, không fake) và `CANVIO_REAL_ACCEPTANCE_RUNBOOK.md` (inference, GPU vật lý, 2 thiết bị, P70).
+- Không có hạng mục BLOCKED nào được đóng; P70 vẫn 14/14 OPEN, không Stable, không deploy.
+- Cảnh báo chưa xác minh được offline: (1) các pin npm của P85 (three-gpu-pathtracer 0.0.28, @techstark/opencv-js 5.0.0-release.1, dotlottie-web 0.83.2, @rive-app/canvas 2.51.0...) chưa kiểm tra tồn tại; runner có bước `00b-pins-exist` để kiểm. (2) Tài liệu công khai mô tả three-gpu-pathtracer dựa trên WebGL 2, không phải WebGPU; mục 103.1 gọi là "true WebGPU path tracing" cần được kiểm chứng trên thư viện thật trước khi giữ lời tuyên bố đó.
+
+- Nghiệm thu 2026-11-19: xem `CANVIO_ACCEPTANCE_RESULT_2026-11-19.md` (PASS/ENV/OPEN theo từng suite). Không đổi index.html.

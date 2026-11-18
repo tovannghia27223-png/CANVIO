@@ -1,0 +1,30 @@
+{
+  "suite": "CANVIO_P74_P81_LOCAL_THREE_R187_CONTRACT",
+  "candidate": "23.3.108-p85-studio-r2",
+  "passed": 18,
+  "total": 18,
+  "checks": {
+    "P74 owner and pinned Three.js r187 commit are exposed": true,
+    "P74 has bounded self-contained GLB 2.0 input preflight": true,
+    "P74 rejects invalid GLB magic": true,
+    "P74 rejects unsupported GLB container version": true,
+    "P74 rejects a mismatched GLB total length": true,
+    "P74 rejects external buffer URIs before loader execution": true,
+    "P74 rejects external image URIs before loader execution": true,
+    "P74 refuses malformed and truncated inputs": true,
+    "P74 boot is lazy and reuses P72 file input": true,
+    "P74 local module graph and decoder adapters are wired without CDN": true,
+    "P81 vendor script pins upstream commit and binary decoder assets": true,
+    "P81 runtime manifest requires files and SHA-256 hashes": true,
+    "P74/P81 resource cleanup, animation and shared-owner boundaries remain present": true,
+    "P74 runtime is user-triggered; boot contains no external script tags": true,
+    "P81 addon import rewrite remains relative to local Three.js core": true,
+    "P81 rejects a vendor manifest from an unpinned Three.js commit": true,
+    "P81 rejects a runtime asset whose actual bytes do not match its SHA-256": true,
+    "P81 verifies actual same-origin runtime file bytes against SHA-256 manifest": true
+  },
+  "vendorRuntimePresentInLocalPackage": false,
+  "physicalGpuExecuted": false,
+  "compressedFixtureDecodeExecuted": false,
+  "note": "Static contract, GLB preflight and mocked byte-integrity verification. Hosted workflow provisions runtime assets and executes software-WebGL uncompressed GLB smoke; compressed Draco/Meshopt/KTX2 fixture decode and physical GPU remain separate gates."
+}

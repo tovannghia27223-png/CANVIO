@@ -1,0 +1,27 @@
+{
+  "suite": "CANVIO_P85_RUNTIME_CONTRACT",
+  "candidate": "23.3.108-p85-studio-r2",
+  "passed": 13,
+  "total": 13,
+  "checks": {
+    "P85 public owner exposes mount, inspection, runtime loaders and lifecycle": true,
+    "P85 diagnostic version always matches the public runtime owner": true,
+    "P85 boot does not download runtime, model, worker or any remote asset": true,
+    "P85 uses local SHA-256 manifest and same-origin relative assets only": true,
+    "P85 limits GLB, video and animation input size and type": true,
+    "P85 postprocessing is lazy and includes bloom, vignette, chromatic aberration": true,
+    "P85 path tracing is real WebGPU-only and fails closed without navigator.gpu": true,
+    "P85 OpenCV Lucas–Kanade flow uses local runtime and releases Mats on normal and error paths": true,
+    "P85 dotLottie and Rive are local players with exact WASM URL configuration": true,
+    "P85 vendor script pins every package and keeps license notices in package": true,
+    "P85 is embedded byte-for-byte in the current app index and has a single runtime panel owner": true,
+    "P85 reuses canonical P72 GLB input and optical flow has no undefined point accumulator or seek deadlock": true,
+    "P85 does not create a second project store, asset library or video timeline": true
+  },
+  "vendorRuntimePresentInLocalPackage": false,
+  "realPathTracingExecuted": false,
+  "realOpenCVTrackingExecuted": false,
+  "dotLottiePlaybackExecuted": false,
+  "rivePlaybackExecuted": false,
+  "note": "P85 runtime entry/source contracts and user-triggered lazy local loading are verified. Pinned npm runtime assets are provisioned by scripts/vendor-p85-runtimes.sh in hosted CI; local package installation is blocked by container DNS/network."
+}

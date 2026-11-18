@@ -1,0 +1,44 @@
+{
+  "format": "CANVIO_P72_P73_P102_P103_P105_P107_API_CONTRACT_SMOKE",
+  "candidate": "23.3.108-p85-studio-r2",
+  "browser": "153.0.8010.12",
+  "origin": "about:blank",
+  "testOnlyStorageShim": true,
+  "apiChecks": {
+    "P72": {
+      "pass": 8,
+      "total": 8,
+      "allPass": true
+    },
+    "P73": {
+      "pass": 9,
+      "total": 9,
+      "allPass": true
+    },
+    "P103": {
+      "pass": 10,
+      "total": 10,
+      "allPass": true
+    },
+    "P102": {
+      "pass": 11,
+      "total": 11,
+      "allPass": true
+    },
+    "P105–P107": {
+      "pass": 18,
+      "total": 18,
+      "allPass": true
+    }
+  },
+  "startupHttpRequests": [],
+  "pageErrors": [],
+  "consoleErrors": [],
+  "runtimeInferenceExecuted": false,
+  "limitations": [
+    "No ORMBG or Depth Anything model was downloaded or executed.",
+    "No physical WebGPU/WASM benchmark or WebGL hardware validation.",
+    "P72 GPU rendering and P73 full real-site dependency closure remain separate acceptance tasks.",
+    "P107 Project Vault and cross-device synchronization round-trip are not tested."
+  ]
+}

@@ -1,0 +1,167 @@
+import * as THREE from 'three';
+import * as THREEGPU from 'three/webgpu';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import {
+  EffectComposer,
+  RenderPass,
+  EffectPass,
+  BloomEffect,
+  VignetteEffect,
+  ChromaticAberrationEffect,
+} from 'postprocessing';
+import { WebGPUPathTracer } from 'three-gpu-pathtracer/webgpu';
+
+function fitModel(root, camera) {
+  const bounds = new THREE.Box3().setFromObject(root);
+  if (bounds.isEmpty()) throw new Error('GLB không có geometry để render.');
+  const center = bounds.getCenter(new THREE.Vector3());
+  const size = bounds.getSize(new THREE.Vector3());
+  root.position.sub(center);
+  const radius = Math.max(size.x, size.y, size.z) * 0.5;
+  if (!Number.isFinite(radius) || radius <= 0) throw new Error('Bounding box của GLB không hợp lệ.');
+  const distance = radius / Math.tan(camera.fov * Math.PI / 360) * 1.7;
+  camera.position.set(distance * 0.9, distance * 0.65, distance * 1.2);
+  camera.near = Math.max(0.001, distance / 10000);
+  camera.far = Math.max(100, distance * 100);
+  camera.updateProjectionMatrix();
+  return { center: center.toArray(), size: size.toArray(), radius };
+}
+
+function disposeTree(root) {
+  if (!root) return;
+  root.traverse((node) => {
+    if (node.geometry?.dispose) node.geometry.dispose();
+    const materials = Array.isArray(node.material) ? node.material : (node.material ? [node.material] : []);
+    for (const material of materials) {
+      for (const value of Object.values(material)) if (value?.isTexture && value.dispose) value.dispose();
+      material.dispose?.();
+    }
+  });
+}
+
+async function parseGlb(file) {
+  if (!file || file.size < 20 || file.size > 250 * 1024 * 1024) throw new Error('GLB phải từ 20 byte đến 250 MiB.');
+  if (!/\.glb$/i.test(file.name || '') && file.type !== 'model/gltf-binary') throw new Error('Chỉ nhận GLB nhúng, không nhận glTF tham chiếu tệp ngoài.');
+  const loader = new GLTFLoader();
+  return loader.parseAsync(await file.arrayBuffer(), '');
+}
+
+export async function createPostProcessingPreview(canvas, file, options = {}) {
+  if (!canvas || !canvas.isConnected) throw new Error('Canvas PostFX không còn trong trang.');
+  const gltf = await parseGlb(file);
+  const width = Math.max(320, canvas.clientWidth || 960);
+  const height = Math.max(240, canvas.clientHeight || 540);
+  let renderer = null, controls = null, composer = null, raf = 0, disposed = false;
+  try {
+    renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance', preserveDrawingBuffer: false });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+    renderer.setSize(width, height, false);
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x101827);
+    scene.add(gltf.scene);
+    scene.add(new THREE.HemisphereLight(0xffffff, 0x273449, 2.1));
+    const key = new THREE.DirectionalLight(0xffffff, 2.6); key.position.set(4, 7, 5); scene.add(key);
+    const fill = new THREE.DirectionalLight(0x9cc8ff, 0.75); fill.position.set(-5, 2, -4); scene.add(fill);
+    const camera = new THREE.PerspectiveCamera(42, width / height, 0.01, 100000);
+    const bounds = fitModel(gltf.scene, camera);
+    controls = new OrbitControls(camera, canvas); controls.enableDamping = true; controls.dampingFactor = 0.065;
+    composer = new EffectComposer(renderer);
+    composer.addPass(new RenderPass(scene, camera));
+    const bloom = new BloomEffect({ intensity: Number(options.bloom ?? 0.55), luminanceThreshold: 0.8, luminanceSmoothing: 0.15 });
+    const vignette = new VignetteEffect({ eskil: false, offset: 0.24, darkness: 0.24 });
+    const chromatic = new ChromaticAberrationEffect({ offset: new THREE.Vector2(0.00035, 0.00035), radialModulation: false, modulationOffset: 0.15 });
+    composer.addPass(new EffectPass(camera, bloom, vignette, chromatic));
+    let lastTime = 0;
+    const render = (time) => {
+      if (disposed) return;
+      raf = requestAnimationFrame(render);
+      if (document.hidden) return;
+      const delta = lastTime ? Math.min(0.05, (time - lastTime) / 1000) : 0;
+      lastTime = time; controls.update(delta); composer.render(delta);
+    };
+    raf = requestAnimationFrame(render);
+    return {
+      engine: 'three.js + postprocessing',
+      revision: 'Three.js r187 / postprocessing 6.39.6',
+      bounds,
+      setBloom(value) { bloom.intensity = Math.max(0, Math.min(2, Number(value) || 0)); },
+      dispose() {
+        if (disposed) return; disposed = true;
+        if (raf) cancelAnimationFrame(raf);
+        controls?.dispose(); composer?.dispose(); disposeTree(gltf.scene); renderer?.dispose(); renderer?.forceContextLoss?.();
+      },
+    };
+  } catch (error) {
+    disposed = true;
+    if (raf) cancelAnimationFrame(raf);
+    try { controls?.dispose(); } catch (_) {}
+    try { composer?.dispose(); } catch (_) {}
+    disposeTree(gltf.scene);
+    try { renderer?.dispose(); renderer?.forceContextLoss?.(); } catch (_) {}
+    throw error;
+  }
+}
+
+export async function createWebGPUPathTracingPreview(canvas, file, options = {}) {
+  if (!navigator.gpu) throw new Error('Thiết bị/trình duyệt không có WebGPU. Dùng PostFX/WebGL hoặc thử Chrome/Edge trên thiết bị hỗ trợ.');
+  if (!canvas || !canvas.isConnected) throw new Error('Canvas Path Tracing không còn trong trang.');
+  const gltf = await parseGlb(file);
+  const width = Math.max(320, canvas.clientWidth || 960);
+  const height = Math.max(240, canvas.clientHeight || 540);
+  let renderer = null, tracer = null, raf = 0, disposed = false;
+  try {
+    renderer = new THREEGPU.WebGPURenderer({ canvas, antialias: false, powerPreference: 'high-performance' });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.25));
+    renderer.setSize(width, height, false);
+    await renderer.init();
+    const scene = new THREEGPU.Scene(); scene.background = new THREEGPU.Color(0x101827);
+    scene.add(gltf.scene);
+    scene.add(new THREEGPU.HemisphereLight(0xffffff, 0x273449, 1.8));
+    const key = new THREEGPU.DirectionalLight(0xffffff, 2.2); key.position.set(4, 7, 5); scene.add(key);
+    const fill = new THREEGPU.DirectionalLight(0xa4c9ff, 0.7); fill.position.set(-5, 2, -4); scene.add(fill);
+    const camera = new THREEGPU.PerspectiveCamera(42, width / height, 0.01, 100000);
+    const bounds = fitModel(gltf.scene, camera);
+    tracer = new WebGPUPathTracer(renderer);
+    tracer.renderScale = Math.max(0.25, Math.min(1, Number(options.renderScale) || 0.5));
+    tracer.minSamples = 1;
+    tracer.maxSamples = Math.max(8, Math.min(256, Number(options.maxSamples) || 96));
+    tracer.renderDelay = 0;
+    tracer.fadeDuration = 250;
+    tracer.setScene(scene, camera);
+    let frames = 0;
+    const render = () => {
+      if (disposed) return;
+      tracer.renderSample(); frames++;
+      raf = requestAnimationFrame(render);
+    };
+    raf = requestAnimationFrame(render);
+    return {
+      engine: 'three-gpu-pathtracer WebGPU',
+      revision: 'three-gpu-pathtracer 0.0.28 / Three.js r187',
+      bounds,
+      get frames() { return frames; },
+      dispose() {
+        if (disposed) return; disposed = true;
+        if (raf) cancelAnimationFrame(raf);
+        tracer?.dispose?.(); disposeTree(gltf.scene); renderer?.dispose(); renderer?.destroy?.();
+      },
+    };
+  } catch (error) {
+    disposed = true;
+    if (raf) cancelAnimationFrame(raf);
+    try { tracer?.dispose?.(); } catch (_) {}
+    disposeTree(gltf.scene);
+    try { renderer?.dispose(); renderer?.destroy?.(); } catch (_) {}
+    throw error;
+  }
+}
+
+export const P85_RENDERER_VERSION = Object.freeze({
+  three: '0.187.0',
+  postprocessing: '6.39.6',
+  threeGpuPathtracer: '0.0.28',
+  threeMeshBvh: '0.9.18',
+});

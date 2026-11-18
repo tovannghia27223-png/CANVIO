@@ -1,0 +1,92 @@
+{
+  "format": "CANVIO_P88_PPTX_OOXML_SMOKE",
+  "candidate": "23.3.108-p85-studio-r2",
+  "browser": "157.0.8103.78",
+  "origin": "about:blank",
+  "testOnlyStorageShim": true,
+  "download": {
+    "filename": "canvio-thiet-ke-sua-duoc.pptx",
+    "bytes": 15251
+  },
+  "checks": [
+    {
+      "id": "P88 latest candidate marker",
+      "status": "pass",
+      "detail": "23.3.108-p85-studio-r2"
+    },
+    {
+      "id": "P88 candidate title remains stable",
+      "status": "pass",
+      "detail": "CANVIO 23.3.108 — Creative Runtime Lab · P85 Runtime Hardening r2"
+    },
+    {
+      "id": "P88 uses the existing editable PPTX export action",
+      "status": "pass",
+      "detail": ""
+    },
+    {
+      "id": "P88 seeds a 16:9 fixture through the canonical Poster owner",
+      "status": "pass",
+      "detail": "{\"width\": 960, \"height\": 540, \"layers\": 3, \"pages\": 1}"
+    },
+    {
+      "id": "P88 downloadable PPTX is a ZIP-based Office package",
+      "status": "pass",
+      "detail": "canvio-thiet-ke-sua-duoc.pptx · 15251 bytes"
+    },
+    {
+      "id": "P88 ZIP CRC and member integrity",
+      "status": "pass",
+      "detail": ""
+    },
+    {
+      "id": "P88 contains core PowerPoint OOXML package parts",
+      "status": "pass",
+      "detail": "[]"
+    },
+    {
+      "id": "P88 keeps text as editable DrawingML text shapes",
+      "status": "pass",
+      "detail": "{\"shapes\": 2, \"texts\": [\"CANVIO – Thuyết trình nhân sự Việt Nam\"]}"
+    },
+    {
+      "id": "P88 keeps image content as a separate picture/media part",
+      "status": "pass",
+      "detail": "{\"pictures\": 1, \"media\": [\"ppt/media/s1i4.png\"]}"
+    },
+    {
+      "id": "P88 slide dimensions preserve the seeded 16:9 ratio",
+      "status": "pass",
+      "detail": "{\"cx\": \"9144000\", \"cy\": \"5143500\"}"
+    },
+    {
+      "id": "P88 package has no external linked relationship targets",
+      "status": "pass",
+      "detail": "[]"
+    },
+    {
+      "id": "P88 all discovered OOXML/XML parts parsed",
+      "status": "pass",
+      "detail": "11 parts parsed"
+    },
+    {
+      "id": "P88 browser has no uncaught application errors",
+      "status": "pass",
+      "detail": "[]"
+    },
+    {
+      "id": "P88 browser has no console errors",
+      "status": "pass",
+      "detail": "[]"
+    }
+  ],
+  "passed": 14,
+  "total": 14,
+  "status": "PASS_SYNTHETIC_OOXML_STRUCTURE_ONLY",
+  "limitations": [
+    "PPTX package was structurally parsed; it was not opened, edited, saved or re-opened in desktop PowerPoint, Keynote or Google Slides.",
+    "Font substitution and slide rendering may differ across Office applications; no font embedding or font licensing verification is claimed.",
+    "Complex animations/transitions and speaker notes are not accepted by this smoke.",
+    "Test uses one synthetic 16:9 slide on about:blank with in-memory storage; not production project acceptance."
+  ]
+}

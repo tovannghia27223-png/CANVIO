@@ -1,0 +1,218 @@
+{
+  "format": "CANVIO_P84_P90_P96_CHROMIUM_SMOKE",
+  "candidate": "P84 partial + P90-P96",
+  "version": "23.3.108-p85-studio-r2",
+  "browser": "144.0.7559.96",
+  "origin": "about:blank",
+  "testOnlyStorageShim": true,
+  "limitations": [
+    "Opaque about:blank; native IndexedDB/HTTPS are not covered.",
+    "OBJ offline viewer smoke is an in-memory document, not a clean-machine offline acceptance test.",
+    "No Chrome/Edge/Safari matrix, real project restore, real A/V sync, Whisper inference, WCAG review or deployed hosting certificate."
+  ],
+  "summary": {
+    "pass": 34,
+    "fail": 0
+  },
+  "uxSuite": {
+    "version": "96.0.0",
+    "passed": 18,
+    "total": 18,
+    "checks": {
+      "p90InventoryAvailable": true,
+      "p91CommandsRegistered": true,
+      "p91VietnameseAccentNormalization": true,
+      "p91KeyboardNavigationWired": true,
+      "p92FiveGoalLaunches": true,
+      "p93ModeToggleAvailable": true,
+      "p93ModeIsPersistedSeparately": true,
+      "p94EditorActionBarsAvailable": true,
+      "p84DirectPosterPdfReusesExistingOwner": true,
+      "p84DirectPdfShortcutVisible": true,
+      "p87DocxShortcutVisible": true,
+      "p94AdvancedDisclosureAvailable": true,
+      "p95CommandPaletteHasAccessibleName": true,
+      "p95KeyboardFocusStyle": true,
+      "p96NonBlockingOnboardingAvailable": true,
+      "noSecondTimeline": true,
+      "noNewProjectStore": true,
+      "noNetworkOrExternalDependency": true
+    },
+    "status": "PASS_LOCAL_UI_ASSERTIONS",
+    "releaseCertified": false
+  },
+  "checks": [
+    {
+      "id": "P84 latest candidate marker active",
+      "status": "pass",
+      "detail": "23.3.108-p85-studio-r2"
+    },
+    {
+      "id": "P84 document title survives legacy observers",
+      "status": "pass",
+      "detail": "CANVIO 23.3.108 — Creative Runtime Lab · P85 Runtime Hardening r2"
+    },
+    {
+      "id": "P90–P96 UX suite is exposed",
+      "status": "pass",
+      "detail": ""
+    },
+    {
+      "id": "P90–P96 internal UX assertions pass",
+      "status": "pass",
+      "detail": "{\"p90InventoryAvailable\": true, \"p91CommandsRegistered\": true, \"p91VietnameseAccentNormalization\": true, \"p91KeyboardNavigationWired\": true, \"p92FiveGoalLaunches\": true, \"p93ModeToggleAvailable\": true, \"p93ModeIsPersistedSeparately\": true, \"p94EditorActionBarsAvailable\": true, \"p84DirectPosterPdfReusesExistingOwner\": true, \"p84DirectPdfShortcutVisible\": true, \"p87DocxShortcutVisible\": true, \"p94AdvancedDisclosureAvailable\": true, \"p95CommandPaletteHasAccessibleName\": true, \"p95KeyboardFocusStyle\": true, \"p96NonBlockingOnboardingAvailable\": true, \"noSecondTimeline\": true, \"noNewProjectStore\": true, \"noNetworkOrExternalDependency\": true}"
+    },
+    {
+      "id": "P92 five goal-oriented Home launches mounted",
+      "status": "pass",
+      "detail": "5"
+    },
+    {
+      "id": "P93 reversible Simple/Full mode toggle mounted",
+      "status": "pass",
+      "detail": ""
+    },
+    {
+      "id": "P93 simple mode applies reversible nav filter",
+      "status": "pass",
+      "detail": ""
+    },
+    {
+      "id": "P93 Show all returns to full mode",
+      "status": "pass",
+      "detail": ""
+    },
+    {
+      "id": "P94 Poster/Slide action bar mounts",
+      "status": "pass",
+      "detail": ""
+    },
+    {
+      "id": "P84 direct PDF action is surfaced on Poster/Slide",
+      "status": "pass",
+      "detail": ""
+    },
+    {
+      "id": "P84 direct PDF route generates a downloadable PDF",
+      "status": "pass",
+      "detail": "canvio-thiet-ke.pdf · 51213 bytes"
+    },
+    {
+      "id": "P84 PDF contains raster page image and page geometry",
+      "status": "pass",
+      "detail": "51213 bytes"
+    },
+    {
+      "id": "P94 CV action bar mounts",
+      "status": "pass",
+      "detail": ""
+    },
+    {
+      "id": "P87 editable DOCX action is surfaced in CV quick bar",
+      "status": "pass",
+      "detail": ""
+    },
+    {
+      "id": "P87 quick-bar action launches the existing editable DOCX export",
+      "status": "pass",
+      "detail": "CANVIO-Smoke.docx · 6697 bytes"
+    },
+    {
+      "id": "P94 Video action bar mounts",
+      "status": "pass",
+      "detail": ""
+    },
+    {
+      "id": "P84 direct PDF, browser-print PDF and subtitle commands are searchable",
+      "status": "pass",
+      "detail": ""
+    },
+    {
+      "id": "P91 accent-insensitive command search works",
+      "status": "pass",
+      "detail": ""
+    },
+    {
+      "id": "P95 command palette has dialog semantics",
+      "status": "pass",
+      "detail": ""
+    },
+    {
+      "id": "P96 onboarding dismissal persists in test storage",
+      "status": "pass",
+      "detail": ""
+    },
+    {
+      "id": "P68–P70 control panel mounted in Video Engine",
+      "status": "pass",
+      "detail": ""
+    },
+    {
+      "id": "P47–P70 PhaseSuite flags all true",
+      "status": "pass",
+      "detail": "{}"
+    },
+    {
+      "id": "P68/P69/P70 APIs exposed",
+      "status": "pass",
+      "detail": "{\"p68\": true, \"p69\": true, \"p70\": true, \"build\": \"23.3.108-p85-studio-r2\", \"phase\": \"70.0.0\"}"
+    },
+    {
+      "id": "P68 packages real tetra OBJ geometry",
+      "status": "pass",
+      "detail": "{\"format\": \"CANVIO_P68_OFFLINE_3D_PREFLIGHT\", \"status\": \"PASS\", \"checks\": [{\"id\": \"single-html-document\", \"ok\": true}, {\"id\": \"no-external-script\", \"ok\": true}, {\"id\": \"no-external-stylesheet\", \"ok\": true}, {\"id\": \"no-network-api\", \"ok\": true}, {\"id\": \"embedded-geometry\", \"ok\": true}, {\"id\": \"offline-controls\", \"ok\": true}], \"pass\": 6, \"fail\": 0, \"bytes\": 5199, \"singleFile\": true, \"externalRuntime\": false, \"geometryOnly\": true, \"noTextures\": true, \"noMaterials\": true}"
+    },
+    {
+      "id": "P68 viewer package embeds geometry and forbids external runtime",
+      "status": "pass",
+      "detail": ""
+    },
+    {
+      "id": "P69 audit + P70 release gate remain read-only and fail-closed",
+      "status": "pass",
+      "detail": "{\"nodes\": 14756, \"readOnly\": true, \"totals\": {\"canvasBackingBytes\": 16740000, \"imageDecodedEstimateBytes\": 12501384, \"videoSurfaceEstimateBytes\": 0, \"combinedSurfaceEstimateBytes\": 29241384}, \"resourceCount\": 0, \"phase1\": {\"status\": \"AVAILABLE_ASYNC_GATE_NOT_AUTORUN\", \"available\": true, \"invoked\": false, \"releaseCertified\": false}, \"phase2\": {\"status\": \"IMPLEMENTATION_READY_PENDING_MANUAL_ACCEPTANCE\", \"releaseCertified\": false, \"summary\": {\"pass\": 32, \"fail\": 0}}, \"gates\": 14, \"pending\": 14, \"status\": \"BLOCKED_PENDING_REAL_WORLD_ACCEPTANCE\", \"certified\": false}"
+    },
+    {
+      "id": "P70 summary does not auto-run asynchronous Phase 1 media probe",
+      "status": "pass",
+      "detail": ""
+    },
+    {
+      "id": "P69 browser frame sampler runs",
+      "status": "pass",
+      "detail": "{\"supported\": true, \"durationMs\": 314.09999999962747, \"frames\": 19, \"averageFps\": 60.01604639556254, \"medianFrameMs\": 16.69999999999891, \"over33ms\": 0, \"over50ms\": 0, \"heuristicOnly\": true, \"noProjectMutation\": true}"
+    },
+    {
+      "id": "Offline viewer renders mesh to canvas",
+      "status": "pass",
+      "detail": "{'w': 1024, 'h': 706}, nonblank pixels=11632"
+    },
+    {
+      "id": "Offline viewer wireframe control works",
+      "status": "pass",
+      "detail": ""
+    },
+    {
+      "id": "Offline viewer runs without errors or network requests",
+      "status": "pass",
+      "detail": "{\"errors\": [], \"requests\": []}"
+    },
+    {
+      "id": "P70 panel has no horizontal overflow at 375px",
+      "status": "pass",
+      "detail": ""
+    },
+    {
+      "id": "No uncaught application page errors",
+      "status": "pass",
+      "detail": "[]"
+    },
+    {
+      "id": "No console errors in app boot/smoke",
+      "status": "pass",
+      "detail": "[]"
+    }
+  ],
+  "releaseCertified": false,
+  "releaseStatus": "BLOCKED_PENDING_REAL_WORLD_ACCEPTANCE"
+}
