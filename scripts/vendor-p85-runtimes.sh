@@ -40,7 +40,7 @@ copy_license(){
   local src="$1" dest="$2" found="" package_dir=""
   if test -s "$src"; then cp "$src" "$STAGE/licenses/$dest"; return 0; fi
   package_dir="$(dirname "$src")"
-  found="$(find "$package_dir" -maxdepth 5 -type f \\( -iname 'LICENSE' -o -iname 'LICENSE.md' -o -iname 'LICENSE.txt' -o -iname 'COPYING' \\) -print -quit 2>/dev/null || true)"
+  found="$(find "$package_dir" -maxdepth 5 -type f \( -iname 'LICENSE' -o -iname 'LICENSE.md' -o -iname 'LICENSE.txt' -o -iname 'COPYING' \) -print -quit 2>/dev/null || true)"
   if test -n "$found" && test -s "$found"; then cp "$found" "$STAGE/licenses/$dest"; return 0; fi
   echo "Missing license file for vendored package: $package_dir" >&2
   return 1
