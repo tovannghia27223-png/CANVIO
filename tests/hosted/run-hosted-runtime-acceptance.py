@@ -14,9 +14,9 @@ def record(name,ok,detail=None):
     print(('PASS' if ok else 'FAIL'),name,detail or '')
     if not ok: raise AssertionError(name+(': '+str(detail) if detail is not None else ''))
 def glb_fixture():
-    pos=struct.pack('<9f',-.72,-.48,0,.72,-.48,0,0,.72,0); inds=struct.pack('<3H',0,1,2); binary=pos+inds+b'\\x00\\x00'
+    pos=struct.pack('<9f',-.72,-.48,0,.72,-.48,0,0,.72,0); inds=struct.pack('<3H',0,1,2); binary=pos+inds+b'\x00\x00'
     doc={'asset':{'version':'2.0','generator':'CANVIO hosted runtime smoke'},'scene':0,'scenes':[{'nodes':[0]}],'nodes':[{'mesh':0}],'meshes':[{'primitives':[{'attributes':{'POSITION':0},'indices':1,'material':0}]}],'materials':[{'pbrMetallicRoughness':{'baseColorFactor':[.15,.75,.42,1],'metallicFactor':.05,'roughnessFactor':.5}}],'buffers':[{'byteLength':len(binary)}],'bufferViews':[{'buffer':0,'byteOffset':0,'byteLength':len(pos),'target':34962},{'buffer':0,'byteOffset':len(pos),'byteLength':6,'target':34963}],'accessors':[{'bufferView':0,'componentType':5126,'count':3,'type':'VEC3','min':[-.72,-.48,0],'max':[.72,.72,0]},{'bufferView':1,'componentType':5123,'count':3,'type':'SCALAR'}]}
-    raw=json.dumps(doc,separators=(',',':')).encode(); raw+=b' '*((4-len(raw)%4)%4); binary+=b'\\x00'*((4-len(binary)%4)%4); total=12+8+len(raw)+8+len(binary)
+    raw=json.dumps(doc,separators=(',',':')).encode(); raw+=b' '*((4-len(raw)%4)%4); binary+=b'\x00'*((4-len(binary)%4)%4); total=12+8+len(raw)+8+len(binary)
     return struct.pack('<III',0x46546c67,2,total)+struct.pack('<II',len(raw),0x4e4f534a)+raw+struct.pack('<II',len(binary),0x004e4942)+binary
 
 class QuietHandler(http.server.SimpleHTTPRequestHandler):
@@ -75,7 +75,7 @@ def main():
         }""")
         record('P85 PostFX/WebGPU bundle, OpenCV WASM, dotLottie WASM and Rive WASM initialize',p85['renderer'] and p85['opencv'] and p85['dotlottie'] and p85['rive'],{renderer:p85['renderer'],opencv:p85['opencv'],dotlottie:p85['dotlottie'],rive:p85['rive']})
         page.locator('#p85-postfx-open').click()
-        page.wait_for_function("document.querySelector('#p85-postfx-status')?.textContent.includes('Đã render')",timeout=120000)
+        page.wait_for_function("document.querySelector('#p85-postfx-status')?.textContent.includes('Đã render')")
         record('P85 PostFX produces live GLB preview',True,page.locator('#p85-postfx-status').inner_text())
         record('P106 software-WebGL context exists (not physical GPU)',page.evaluate("!!document.createElement('canvas').getContext('webgl2')"),'ANGLE SwiftShader software renderer')
         # Real OpenCV Lucas-Kanade tracking on a synthetic 2-second motion clip.
@@ -83,7 +83,7 @@ def main():
         import subprocess
         subprocess.run(['ffmpeg','-hide_banner','-loglevel','error','-y','-f','lavfi','-i','testsrc=size=320x240:rate=15:duration=2','-c:v','libvpx-vp9','-deadline','realtime','-cpu-used','8',str(video_path)],check=True)
         page.locator('#p85-video').set_input_files(str(video_path))
-        track=page.evaluate("""async()=>{const s=window.CANVIOP85Suite;const before=s.inspect();const r=await s.startOpticalFlow();await new Promise(resolve=>setTimeout(resolve,1200));const status=document.querySelector('#p85-cv-status')?.textContent||'';s.stopOpticalFlow();return {started:!!r,dimensions:[r.width,r.height],status,loaded:s.inspect().openCvLoaded};}""",timeout=120000)
+        track=page.evaluate("""async()=>{const s=window.CANVIOP85Suite;const before=s.inspect();const r=await s.startOpticalFlow();await new Promise(resolve=>setTimeout(resolve,1200));const status=document.querySelector('#p85-cv-status')?.textContent||'';s.stopOpticalFlow();return {started:!!r,dimensions:[r.width,r.height],status,loaded:s.inspect().openCvLoaded};}""")
         record('P85 OpenCV Lucas-Kanade processes local video frames',track['started'] and track['dimensions']==[320,240] and 'OpenCV.js LK optical flow' in track['status'],track)
         # Real ORMBG and Depth Anything ONNX WASM inference through the shipped workers.
         infer=page.evaluate("""async()=>{
@@ -95,11 +95,11 @@ def main():
           if(bg.width<1||bg.height<1||bg.bytes!==bg.width*bg.height*4)throw new Error('ORMBG returned invalid RGBA');
           if(depth.width<1||depth.height<1||depth.bytes!==depth.width*depth.height)throw new Error('Depth Anything returned invalid grayscale depth');
           return {backgroundRemoval:bg,depthEstimation:depth};
-        }""",timeout=2100000)
+        }""")
         record('P102 ORMBG model inference completes in real ONNX WASM worker',infer['backgroundRemoval']['bytes']==infer['backgroundRemoval']['width']*infer['backgroundRemoval']['height']*4,infer['backgroundRemoval'])
         record('P105 Depth Anything V2 model inference completes in real ONNX WASM worker',infer['depthEstimation']['bytes']==infer['depthEstimation']['width']*infer['depthEstimation']['height'],infer['depthEstimation'])
         # Whisper worker real inference using bounded synthetic audio; output is validated as text, not accuracy-scored.
-        whisper=page.evaluate("""async()=>{const n=16000*3,a=new Float32Array(n);for(let i=0;i<n;i++)a[i]=.035*Math.sin(2*Math.PI*(190+40*Math.sin(i/n*6.28))*i/16000);return await new Promise((resolve,reject)=>{const w=new Worker('/assets/canvio-whisper-worker.js',{type:'module'}),timer=setTimeout(()=>{w.terminate();reject(new Error('Whisper inference timeout'));},900000);w.onmessage=e=>{const m=e.data||{};if(m.type==='error'){clearTimeout(timer);w.terminate();reject(new Error(m.error||'Whisper worker error'));}if(m.type==='result'){clearTimeout(timer);w.terminate();if(!m.output||typeof m.output.text!=='string')return reject(new Error('Whisper result is not text'));resolve({text:m.output.text,language:m.output.chunks?.[0]?.timestamp||null});}};w.onerror=e=>{clearTimeout(timer);w.terminate();reject(new Error(e.message));};w.postMessage({action:'transcribe',id:'github-hosted-whisper',audio:a.buffer,language:'english'},[a.buffer]);});}""",timeout=1000000)
+        whisper=page.evaluate("""async()=>{const n=16000*3,a=new Float32Array(n);for(let i=0;i<n;i++)a[i]=.035*Math.sin(2*Math.PI*(190+40*Math.sin(i/n*6.28))*i/16000);return await new Promise((resolve,reject)=>{const w=new Worker('/assets/canvio-whisper-worker.js',{type:'module'}),timer=setTimeout(()=>{w.terminate();reject(new Error('Whisper inference timeout'));},900000);w.onmessage=e=>{const m=e.data||{};if(m.type==='error'){clearTimeout(timer);w.terminate();reject(new Error(m.error||'Whisper worker error'));}if(m.type==='result'){clearTimeout(timer);w.terminate();if(!m.output||typeof m.output.text!=='string')return reject(new Error('Whisper result is not text'));resolve({text:m.output.text,language:m.output.chunks?.[0]?.timestamp||null});}};w.onerror=e=>{clearTimeout(timer);w.terminate();reject(new Error(e.message));};w.postMessage({action:'transcribe',id:'github-hosted-whisper',audio:a.buffer,language:'english'},[a.buffer]);});}""")
         record('P80/P59 Whisper Tiny performs actual WASM inference and returns text',isinstance(whisper.get('text'),str),{'textLength':len(whisper.get('text',''))})
         # P107 Node fixture round-trip is run separately in CI. Confirm the product explicitly exposes portable import/export and no cloud-sync lie.
         p107=page.evaluate("() => window.CANVIODepthParallaxP105.tests()")
@@ -108,7 +108,7 @@ def main():
         record('No uncaught browser page errors',not page_errors,page_errors)
         # Save current report before closing browser.
         data={'suite':'CANVIO_23.3.111_GITHUB_HOSTED_RUNTIME_ACCEPTANCE','origin':origin,'browser':browser.version,'checks':checks,'details':details,'pageErrors':page_errors,'consoleErrors':console_errors,'requests':requests,'actualModelInference':{'P102':infer['backgroundRemoval'],'P105':infer['depthEstimation'],'P80':{'textLength':len(whisper.get('text',''))}},'physicalGpuExecuted':False,'twoPhysicalDevicesExecuted':False,'projectVaultCloudSync':False,'p70ReleaseCertified':False,'limitations':['SwiftShader is software rendering, not physical GPU acceptance.','P107 validates a portable preset ZIP and Asset Library import; Project Vault remains local-first with no server sync adapter.','A synthetic video and synthetic speech signal validate execution, not real-footage quality or transcription accuracy.']}
-        REPORT.write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\\n',encoding='utf-8')
+        REPORT.write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
         browser.close()
     finally:
       server.shutdown();server.server_close()
