@@ -2,11 +2,11 @@
   "format": "CANVIO_DELIVERY_MANIFEST",
   "schemaVersion": 2,
   "candidate": "23.3.111-github-runtime-ci",
-  "generatedAt": "2026-11-18T20:29:21.360Z",
+  "generatedAt": "2026-11-18T20:53:39.651Z",
   "hashAlgorithm": "SHA-256",
   "indexSha256": "227353c4f90c478940cbdf1ffed1250c2513b612db351e32050a426dd035f629",
   "indexBytes": 4926230,
-  "fileCount": 145,
+  "fileCount": 146,
   "releaseCertified": false,
   "releaseStatus": "BLOCKED_PENDING_REAL_WORLD_ACCEPTANCE",
   "p70ManualGates": {
@@ -27,8 +27,8 @@
     },
     {
       "path": ".github/workflows/canvio-candidate-runtime.yml",
-      "bytes": 22785,
-      "sha256": "1ba3671172792559b1fbd25725a451e60004e0937e5faa20da4a6de8a1188c80"
+      "bytes": 23309,
+      "sha256": "d6bc1b88da17b2b1d0940ae2928a76eadbd279b03685c75c69be84ca23667c7e"
     },
     {
       "path": ".github/workflows/canvio-pages-node24.yml",
@@ -547,8 +547,8 @@
     },
     {
       "path": "tests/hosted/hosted-runtime-report.json",
-      "bytes": 25096,
-      "sha256": "9e45400293ca042578b240f8da55d7e1a41a4f184e304338bb4ef48ec8da36e7"
+      "bytes": 27144,
+      "sha256": "3fe3fca10eaa8f0c5d7013e86be4cc06468427edb77ac4db3d17066d333c7d2a"
     },
     {
       "path": "tests/hosted/integrated-source-contracts.cjs",
@@ -559,6 +559,11 @@
       "path": "tests/hosted/integrated-source-contracts.json",
       "bytes": 1032,
       "sha256": "bf798f9122eb72da6c029065fb641bfe83c9485c4725454275713426affaa754"
+    },
+    {
+      "path": "tests/hosted/make-compressed-glb-fixtures.mjs",
+      "bytes": 2833,
+      "sha256": "273d17292ee019e0141eeb089a89eaca8bd44fb7bd42c34f045c27732e0f403a"
     },
     {
       "path": "tests/hosted/p107-portable-report.json",
@@ -572,8 +577,8 @@
     },
     {
       "path": "tests/hosted/run-hosted-runtime-acceptance.py",
-      "bytes": 16473,
-      "sha256": "f09beac9ed1a988baa7a50c21652beda4ff1735942a98a3750498c1efe0e70d4"
+      "bytes": 18574,
+      "sha256": "4c33a9adfb4b834917a962d925721bcd4e35e2f268e6d8794e779a971f611ac4"
     },
     {
       "path": "tests/p47/fixtures/restore-fixture-corrupt.zip",
