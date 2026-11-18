@@ -3,6 +3,12 @@ import path from 'node:path';
 const root=process.cwd();
 const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
 const modules=[
+ ['canvio-p57-native-persistence-audit','tests/p57/p57-native-persistence.js'],
+ ['canvio-p58-media-export-acceptance','tests/p58/p58-media-export-acceptance.js'],
+ ['canvio-p59-whisper-runtime-acceptance','tests/p59/p59-whisper-runtime-acceptance.js'],
+ ['canvio-p60-accessibility-screening','tests/p60/p60-accessibility-audit.js'],
+ ['canvio-p61-hosting-security-audit','tests/p61/p61-hosting-security-audit.js'],
+ ['canvio-p62-phase1-release-gate','tests/p62/p62-release-candidate-gate.js'],
  ['canvio-p74-p81-three-viewer','canvio-p74-p81-three-viewer.js'],
  ['canvio-p85-module','canvio-p85-studio.js'],
  ['canvio-p102-background-removal','canvio-p102-background-removal.js'],
