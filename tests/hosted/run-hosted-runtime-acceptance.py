@@ -60,7 +60,7 @@ def main():
         record('Three.js r187 and P85 vendor manifests verify every file SHA-256',manifest['three']['files']>0 and manifest['p85']['files']>0,manifest)
         record('P74/P81 uncompressed GLB input owner exists',page.locator('#cv72-file').count()==1 and page.locator('#cv74-load').count()==1)
         page.locator('#cv72-file').set_input_files({'name':'canvio-hosted-smoke.glb','mimeType':'model/gltf-binary','buffer':glb_fixture()})
-        page.locator('#cv74-load').click()
+        page.locator('#cv74-load').evaluate('(el) => el.click()')
         page.wait_for_function("document.querySelector('#cv74-status')?.textContent.includes('Đã tải GLB')",timeout=180000)
         p74=page.evaluate("() => ({tests:window.CANVIOThreeGLBViewerP74.tests(),report:JSON.parse(document.querySelector('#cv74-report').textContent),webgl2:!!document.querySelector('#cv74-canvas').getContext('webgl2')})")
         record('P74/P81 loads real r187 GLB viewer with local decoders',p74['tests'].get('vendorManifestVerified') and p74['tests'].get('threeModuleLoaded') and p74['tests'].get('dracoModuleLoaded') and p74['tests'].get('meshoptDecoderReady') and p74['tests'].get('ktx2ModuleLoaded') and p74['webgl2'],p74['report'])
