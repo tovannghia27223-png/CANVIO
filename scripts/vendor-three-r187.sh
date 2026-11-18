@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Provision pinned, free Three.js r187 + GLTF compression decoders locally.
 set -euo pipefail
-ROOT="$(cd "$(dirname "\${BASH_SOURCE[0]}")/.." && pwd)"
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 COMMIT="7e89746a687bb88271253698fa108b1dd59825d0"
 DRACO_LICENSE_REF="1.5.9"
 BASIS_LICENSE_COMMIT="073eb6a0a34a23d77e75e54f41dcd9653a52da83"
