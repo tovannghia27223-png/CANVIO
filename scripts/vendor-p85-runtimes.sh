@@ -36,7 +36,15 @@ test -s "$TRANSFORMERS/dist/transformers.min.js"; cp "$TRANSFORMERS/dist/transfo
 for f in "$TRANSFORMERS"/dist/ort-wasm* "$NODE_MODULES/onnxruntime-web/dist"/ort-wasm*; do test -s "$f" || continue; cp "$f" "$STAGE/transformers/"; done
 test -n "$(find "$STAGE/transformers" -maxdepth 1 -type f -name 'ort-wasm*.wasm' -print -quit)"
 test -n "$(find "$STAGE/transformers" -maxdepth 1 -type f -name 'ort-wasm*.mjs' -print -quit)"
-copy_license(){ local src="$1" dest="$2"; if test -s "$src"; then cp "$src" "$STAGE/licenses/$dest"; else echo "Missing license: $src" >&2; exit 1; fi; }
+copy_license(){
+  local src="$1" dest="$2" found="" package_dir=""
+  if test -s "$src"; then cp "$src" "$STAGE/licenses/$dest"; return 0; fi
+  package_dir="$(dirname "$src")"
+  found="$(find "$package_dir" -maxdepth 5 -type f \\( -iname 'LICENSE' -o -iname 'LICENSE.md' -o -iname 'LICENSE.txt' -o -iname 'COPYING' \\) -print -quit 2>/dev/null || true)"
+  if test -n "$found" && test -s "$found"; then cp "$found" "$STAGE/licenses/$dest"; return 0; fi
+  echo "Missing license file for vendored package: $package_dir" >&2
+  return 1
+}
 copy_license "$NODE_MODULES/three/LICENSE" "THREE-MIT.txt"
 copy_license "$NODE_MODULES/three-mesh-bvh/LICENSE" "THREE-MESH-BVH-MIT.txt"
 copy_license "$NODE_MODULES/three-gpu-pathtracer/LICENSE" "THREE-GPU-PATHTRACER-MIT.txt"
