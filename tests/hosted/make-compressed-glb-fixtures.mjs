@@ -3,7 +3,10 @@
 import fs from 'node:fs';
 import { Document, NodeIO } from '@gltf-transform/core';
 import { KHRDracoMeshCompression, EXTMeshoptCompression, KHRTextureBasisu } from '@gltf-transform/extensions';
-import { draco, meshopt, toktx } from '@gltf-transform/functions';
+import { draco, meshopt } from '@gltf-transform/functions';
+import { execFileSync } from 'node:child_process';
+import os from 'node:os';
+import path from 'node:path';
 import zlib from 'node:zlib';
 import draco3d from 'draco3dgltf';
 import { MeshoptEncoder, MeshoptDecoder } from 'meshoptimizer';
@@ -60,7 +63,11 @@ function texturedDoc() {
   const uv = [];
   for (let y = 0; y <= 24; y++) for (let x = 0; x <= 48; x++) uv.push(x / 48, y / 24);
   prim.setAttribute('TEXCOORD_0', doc.createAccessor().setType('VEC2').setArray(new Float32Array(uv)).setBuffer(buffer));
-  const tex = doc.createTexture('grad').setImage(new Uint8Array(png(64, 64))).setMimeType('image/png');
+  // Encode the PNG to a real UASTC KTX2 file with the external toktx binary (KTX-Software).
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'ktx-'));
+  fs.writeFileSync(path.join(tmp, 'in.png'), png(64, 64));
+  execFileSync('toktx', ['--t2', '--encode', 'uastc', '--zcmp', '18', '--genmipmap', path.join(tmp, 'out.ktx2'), path.join(tmp, 'in.png')], { stdio: 'inherit' });
+  const tex = doc.createTexture('grad').setImage(new Uint8Array(fs.readFileSync(path.join(tmp, 'out.ktx2')))).setMimeType('image/ktx2');
   prim.setMaterial(doc.createMaterial('m').setBaseColorTexture(tex));
   return doc;
 }
@@ -73,7 +80,6 @@ const d2 = sphereDoc();
 await d2.transform(meshopt({ encoder: MeshoptEncoder, level: 'medium' }));
 fs.writeFileSync(`${out}/meshopt.glb`, await io.writeBinary(d2));
 const d3 = texturedDoc();
-await d3.transform(toktx({ mode: 'uastc', slots: /baseColor/ }));
 fs.writeFileSync(`${out}/ktx2.glb`, await io.writeBinary(d3));
 for (const f of ['draco', 'meshopt', 'ktx2']) {
   const txt = fs.readFileSync(`${out}/${f}.glb`).toString('latin1');
