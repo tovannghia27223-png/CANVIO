@@ -79,32 +79,14 @@ def main():
         page.wait_for_function("document.querySelector('#p85-postfx-status')?.textContent.includes('Đã render')")
         record('P85 PostFX produces live GLB preview',True,page.locator('#p85-postfx-status').inner_text())
         record('P106 software-WebGL context exists (not physical GPU)',page.evaluate("!!document.createElement('canvas').getContext('webgl2')"),'ANGLE SwiftShader software renderer')
-        # Real OpenCV Lucas-Kanade tracking on a synthetic 2-second motion clip.
-        # Generate a short local WebM in Chromium itself; no external ffmpeg binary needed.
-        video_data=page.evaluate("""async()=>{
-          const canvas=document.createElement('canvas');canvas.width=320;canvas.height=240;
-          const ctx=canvas.getContext('2d'),stream=canvas.captureStream(15);
-          const mime=['video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm'].find(x=>MediaRecorder.isTypeSupported(x));
-          if(!mime)throw new Error('Chromium has no supported WebM MediaRecorder MIME');
-          const recorder=new MediaRecorder(stream,{mimeType:mime}),chunks=[];
-          const stopped=new Promise((resolve,reject)=>{recorder.ondataavailable=e=>{if(e.data&&e.data.size)chunks.push(e.data)};recorder.onerror=e=>reject(e.error||new Error('MediaRecorder failed'));recorder.onstop=()=>resolve(new Blob(chunks,{type:mime}));});
-          recorder.start(200);const start=performance.now();
-          await new Promise(resolve=>{function frame(now){const t=Math.min(1,(now-start)/2200);ctx.fillStyle='#18283c';ctx.fillRect(0,0,320,240);ctx.fillStyle='#e3b36a';ctx.beginPath();ctx.arc(30+t*250,120,28,0,Math.PI*2);ctx.fill();ctx.fillStyle='#ffffff';ctx.font='16px sans-serif';ctx.fillText('CANVIO synthetic motion',12,24);if(t<1)requestAnimationFrame(frame);else setTimeout(()=>{recorder.stop();resolve();},250);}requestAnimationFrame(frame);});
-          const blob=await stopped;stream.getTracks().forEach(t=>t.stop());const bytes=new Uint8Array(await blob.arrayBuffer());let binary='';for(let i=0;i<bytes.length;i+=32768)binary+=String.fromCharCode(...bytes.subarray(i,i+32768));
-          return {base64:btoa(binary),mime:blob.type,size:blob.size};
-        }""")
-        video_path=Path('/tmp/canvio-motion-smoke.webm')
-        video_path.write_bytes(base64.b64decode(video_data['base64']))
-        if video_data['size']<1024:raise RuntimeError('Browser-generated WebM fixture is unexpectedly small')
-        # Chromium MediaRecorder WebM may omit a finite Duration element. Re-mux
-        # with Playwright's pinned FFmpeg so the fixture carries real duration metadata.
+        # Build a deterministic finite-duration, textured WebM with Playwright's pinned FFmpeg.
+        # This avoids MediaRecorder blobs with zero/unknown duration in headless Chromium.
         ffmpeg=Path.home()/'.cache/ms-playwright/ffmpeg-1013/ffmpeg-linux'
-        if not ffmpeg.is_file(): raise RuntimeError('Pinned Playwright FFmpeg binary is missing; cannot finalize WebM duration metadata')
-        finalized=Path('/tmp/canvio-motion-smoke-finalized.webm')
-        mux=subprocess.run([str(ffmpeg),'-y','-stream_loop','4','-i',str(video_path),'-c','copy','-t','8','-map_metadata','-1','-f','webm',str(finalized)],capture_output=True,text=True)
-        if mux.returncode or not finalized.is_file() or finalized.stat().st_size<1024:
-            raise RuntimeError('Could not finalize synthetic WebM duration metadata: '+(mux.stderr or '')[-1600:])
-        video_path=finalized
+        if not ffmpeg.is_file(): raise RuntimeError('Pinned Playwright FFmpeg binary is missing; cannot create video fixture')
+        video_path=Path('/tmp/canvio-motion-smoke.webm')
+        mux=subprocess.run([str(ffmpeg),'-y','-f','lavfi','-i','testsrc2=size=320x240:rate=15:duration=8','-vf',"drawbox=x='mod(t*90,280)':y=92:w=40:h=40:color=white:t=fill",'-c:v','libvpx','-deadline','realtime','-cpu-used','8','-b:v','400k','-pix_fmt','yuv420p','-an','-t','8','-map_metadata','-1','-f','webm',str(video_path)],capture_output=True,text=True)
+        if mux.returncode or not video_path.is_file() or video_path.stat().st_size<1024:
+            raise RuntimeError('Could not create deterministic finite-duration WebM fixture: '+(mux.stderr or '')[-1600:])
         page.locator('#p85-video').set_input_files(str(video_path))
         track=page.evaluate("""async()=>{const s=window.CANVIOP85Suite;const r=await s.startOpticalFlow();await new Promise(resolve=>setTimeout(resolve,700));const status=document.querySelector('#p85-cv-status')?.textContent||'';const match=status.match(/LK optical flow · (?:khởi tạo lại )?(\\d+) điểm/);const points=match?Number(match[1]):0;const result={started:!!r,duration:r.duration,dimensions:[r.width,r.height],status,points,loaded:s.inspect().openCvLoaded};s.stopOpticalFlow();return result;}""")
         record('P85 OpenCV Lucas-Kanade processes real points on local video frames',track['started'] and track['dimensions']==[320,240] and track['points']>0 and 'OpenCV.js LK optical flow' in track['status'],track)
