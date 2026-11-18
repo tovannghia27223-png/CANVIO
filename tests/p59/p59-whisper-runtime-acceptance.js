@@ -18,7 +18,7 @@
           status: response.status,
           contentType: response.headers && response.headers.get ? response.headers.get('content-type') : null,
           sameOrigin: true,
-          transformersVersionPinned: /transformers@3\.8\.1/.test(source),
+          transformersVersionPinned: /Transformers\.js 3\.8\.1/.test(source) && /from ['"]\.\/p85\/transformers\/transformers\.min\.js['"]/.test(source),
           modelPinned: /Xenova\/whisper-tiny/.test(source),
           browserLocalInference: /automatic-speech-recognition/.test(source),
           remoteAsrEndpointAbsent: !/(?:api\.openai\.com\/v1\/audio|speech-to-text\s*:\s*http)/i.test(source),
