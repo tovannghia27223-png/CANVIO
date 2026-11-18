@@ -21,7 +21,7 @@ NODE_MODULES="$TMP/npm/node_modules"
 if test -e "$ROOT/node_modules" || test -L "$ROOT/node_modules"; then echo "Refusing to overwrite existing $ROOT/node_modules" >&2; exit 1; fi
 ln -s "$NODE_MODULES" "$ROOT/node_modules"
 "$NODE_MODULES/.bin/esbuild" "$ROOT/scripts/p85-renderers.entry.mjs" --bundle --format=esm --platform=browser --target=es2022 --minify --outfile="$STAGE/p85-renderers.js" --legal-comments=none
-"$NODE_MODULES/.bin/esbuild" "$ROOT/scripts/p85-opencv.entry.mjs" --bundle --format=esm --platform=browser --target=es2022 --minify --outfile="$STAGE/opencv/opencv.js" --legal-comments=inline
+"$NODE_MODULES/.bin/esbuild" "$ROOT/scripts/p85-opencv.entry.mjs" --bundle --format=esm --platform=browser --target=es2022 --minify --external:fs --external:crypto --outfile="$STAGE/opencv/opencv.js" --legal-comments=inline
 test "$(wc -c < "$STAGE/opencv/opencv.js")" -gt 1000000
 DOT="$NODE_MODULES/@lottiefiles/dotlottie-web"
 test -s "$DOT/dist/index.js"; test -s "$DOT/dist/dotlottie-player.wasm"
