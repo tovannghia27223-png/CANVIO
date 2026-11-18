@@ -64,9 +64,9 @@ def main():
         page.wait_for_function("document.querySelector('#cv74-status')?.textContent.includes('Đã tải GLB')",timeout=180000)
         p74=page.evaluate("() => ({tests:window.CANVIOThreeGLBViewerP74.tests(),report:JSON.parse(document.querySelector('#cv74-report').textContent),webgl2:!!document.querySelector('#cv74-canvas').getContext('webgl2')})")
         record('P74/P81 loads real r187 GLB viewer with local decoders',p74['tests'].get('vendorManifestVerified') and p74['tests'].get('threeModuleLoaded') and p74['tests'].get('dracoModuleLoaded') and p74['tests'].get('meshoptDecoderReady') and p74['tests'].get('ktx2ModuleLoaded') and p74['webgl2'],p74['report'])
-        # Compressed GLB decode (Draco + Meshopt) with fixtures generated in CI. KTX2/Basis texture decode is NOT covered.
+        # Compressed GLB decode (Draco + Meshopt) with fixtures generated in CI. KTX2 uses a UASTC-encoded texture from toktx.
         fx=os.environ.get('CANVIO_GLB_FIXTURES')
-        for kind,ext in (('draco','KHR_draco_mesh_compression'),('meshopt','EXT_meshopt_compression')):
+        for kind,ext in (('draco','KHR_draco_mesh_compression'),('meshopt','EXT_meshopt_compression'),('ktx2','KHR_texture_basisu')):
             path=Path(fx)/(kind+'.glb') if fx else None
             if not path or not path.exists():
                 record(f'P74/P81 compressed {kind} GLB decodes in real r187 viewer',False,'fixture missing: set CANVIO_GLB_FIXTURES'); continue
