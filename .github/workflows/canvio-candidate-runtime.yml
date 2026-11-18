@@ -52,7 +52,7 @@ jobs:
             if(html.includes('23.3.108-p85-studio-r2')) throw new Error('Legacy candidate version marker remains');
             fs.writeFileSync('index.html',html,'utf8');
             console.log('Restored and version-pinned complete index.html');
-            NODE
+          NODE
             rm -rf .canvio/candidate/index
           else
             test -s index.html
