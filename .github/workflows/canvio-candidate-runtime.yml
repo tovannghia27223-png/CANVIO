@@ -52,10 +52,6 @@ jobs:
             html=html.replaceAll('<title>CANVIO 23.3.108 — Creative Runtime Lab · P85</title>','<title>CANVIO 23.3.111 — GitHub Runtime Verified Candidate</title>');
             if(html.includes('23.3.108-p85-studio-r2')) throw new Error('Legacy candidate version marker remains');
             if(!html.includes('<title>CANVIO 23.3.111 — GitHub Runtime Verified Candidate</title>')) throw new Error('Candidate document title was not updated');
-            const p59Old=String.raw`transformersVersionPinned: /transformers@3\.8\.1/.test(source),`;
-            const p59New=String.raw`transformersVersionPinned: /Transformers\.js 3\.8\.1/.test(source) && /from ['"]\.\/p85\/transformers\/transformers\.min\.js['"]/.test(source),`;
-            if(!html.includes(p59Old)) throw new Error('P59 still uses the obsolete npm URL signature check');
-            html=html.replace(p59Old,p59New);
             fs.writeFileSync('index.html',html,'utf8');
             console.log('Restored and version-pinned complete index.html');
           NODE
