@@ -2,10 +2,10 @@
   "format": "CANVIO_DELIVERY_MANIFEST",
   "schemaVersion": 2,
   "candidate": "23.3.111-github-runtime-ci",
-  "generatedAt": "2026-11-19T07:23:55.353Z",
+  "generatedAt": "2026-11-19T07:43:37.941Z",
   "hashAlgorithm": "SHA-256",
-  "indexSha256": "c0aa50be0a34007b4af94f2637c2dcc1d8c7e0d67f6c49603758316cc443f426",
-  "indexBytes": 4927995,
+  "indexSha256": "669ec7481b2ce73fb056fda492e1085e0d6608914cf6c3bde9aa00ce75800e29",
+  "indexBytes": 4931259,
   "fileCount": 146,
   "releaseCertified": false,
   "releaseStatus": "BLOCKED_PENDING_REAL_WORLD_ACCEPTANCE",
@@ -432,8 +432,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 4927995,
-      "sha256": "c0aa50be0a34007b4af94f2637c2dcc1d8c7e0d67f6c49603758316cc443f426"
+      "bytes": 4931259,
+      "sha256": "669ec7481b2ce73fb056fda492e1085e0d6608914cf6c3bde9aa00ce75800e29"
     },
     {
       "path": "patches/canvio-p42-r6.patch",
@@ -547,8 +547,8 @@
     },
     {
       "path": "tests/hosted/hosted-runtime-report.json",
-      "bytes": 29309,
-      "sha256": "40f3cc3c20e2b9ad2dd196416db387918a0c8c46d0f68d79d00fda8c8f767ee2"
+      "bytes": 29649,
+      "sha256": "f6aacb4643cf591a25543d736ef1573242fa939f03be570185d17de91d9a49b7"
     },
     {
       "path": "tests/hosted/integrated-source-contracts.cjs",
