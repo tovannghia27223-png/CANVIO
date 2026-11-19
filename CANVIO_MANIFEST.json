@@ -2,11 +2,11 @@
   "format": "CANVIO_DELIVERY_MANIFEST",
   "schemaVersion": 2,
   "candidate": "23.3.111-github-runtime-ci",
-  "generatedAt": "2026-11-19T08:32:59.714Z",
+  "generatedAt": "2026-11-19T09:07:37.870Z",
   "hashAlgorithm": "SHA-256",
-  "indexSha256": "d6405c86b186a6e682e3eaa287c3fc77752412a4d9c8d75b9ad2cce0178713f7",
-  "indexBytes": 4939015,
-  "fileCount": 147,
+  "indexSha256": "bcb295515f1d014dd9357c952c678910f517dfcfede4c170b2b3feae68ee3dcf",
+  "indexBytes": 4951344,
+  "fileCount": 148,
   "releaseCertified": false,
   "releaseStatus": "BLOCKED_PENDING_REAL_WORLD_ACCEPTANCE",
   "p70ManualGates": {
@@ -27,8 +27,8 @@
     },
     {
       "path": ".github/workflows/canvio-candidate-runtime.yml",
-      "bytes": 23820,
-      "sha256": "b70857ffa7e3de1dd494487ffe4b92ff01de4181e741206c48b31370c27e9159"
+      "bytes": 23865,
+      "sha256": "3a92a1501d3c0a157416d3bad5ab5ad648a0a32c35c0fc9e3a6480d745a1247a"
     },
     {
       "path": ".github/workflows/canvio-pages-node24.yml",
@@ -332,8 +332,8 @@
     },
     {
       "path": "CANVIO_AI_GUIDE.md",
-      "bytes": 336579,
-      "sha256": "a58c1e839806a8b552a7a6480397cd8b68b7f91f474297849c46b00143290211"
+      "bytes": 337335,
+      "sha256": "f9afa4a3a9ae3692fbb2d5c9f8ccc68edc28db6f76b720a6e9b5f943a993b218"
     },
     {
       "path": "CANVIO_FINAL_ACCEPTANCE_MATRIX.md",
@@ -362,8 +362,8 @@
     },
     {
       "path": "CANVIO_ROADMAP.md",
-      "bytes": 42872,
-      "sha256": "5602d1d70d82ee9684f48f890499e0964b19ababe094b23e0276564b7f00741f"
+      "bytes": 43824,
+      "sha256": "4ae706771876f85e317cd5409a1b3d95546911dba16247d905366fc528335e0d"
     },
     {
       "path": "canvio-p102-background-removal.js",
@@ -432,8 +432,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 4939015,
-      "sha256": "d6405c86b186a6e682e3eaa287c3fc77752412a4d9c8d75b9ad2cce0178713f7"
+      "bytes": 4951344,
+      "sha256": "bcb295515f1d014dd9357c952c678910f517dfcfede4c170b2b3feae68ee3dcf"
     },
     {
       "path": "patches/canvio-p42-r6.patch",
@@ -547,18 +547,18 @@
     },
     {
       "path": "tests/hosted/hosted-runtime-report.json",
-      "bytes": 29307,
-      "sha256": "a1a67337f4e177e2fb26f433db99116ff15ff3d907c6756355d9c0469201c149"
+      "bytes": 29669,
+      "sha256": "e9e44d3f3d0b3667e77b3f7c141ec7cf10ae22c961a31049155ca9a232664f73"
     },
     {
       "path": "tests/hosted/integrated-source-contracts.cjs",
-      "bytes": 6161,
-      "sha256": "096d6e1518b39cce1d1d9fb1403f3b4e41d5c6986d11a2ab4606f988ee31fe50"
+      "bytes": 6810,
+      "sha256": "c6adc3afe90580d3ea59a29540afef45f509bf5350d611713ad6d64f6a28a3ef"
     },
     {
       "path": "tests/hosted/integrated-source-contracts.json",
-      "bytes": 1149,
-      "sha256": "b979f16a2ac771e655ba7ef8c161d98b36b722b22d862acafc7442166bbeac5c"
+      "bytes": 1246,
+      "sha256": "10b8b27a428ffdf7b89a0c6ed7984485ff3a7c89c7348b67145ffdb6934abdea"
     },
     {
       "path": "tests/hosted/make-compressed-glb-fixtures.mjs",
@@ -584,6 +584,11 @@
       "path": "tests/p109/run-p109-tests.cjs",
       "bytes": 2675,
       "sha256": "293784e189e7e9752572b78e72d9aef40cd063cc51ee9c938bfe5d5cdf01a0bd"
+    },
+    {
+      "path": "tests/p110/run-p110-tests.cjs",
+      "bytes": 2756,
+      "sha256": "9e3e8db7b6e223c133d6100c03a2656d597acf61ea0dd1e39da8a2f7be6d00c9"
     },
     {
       "path": "tests/p47/fixtures/restore-fixture-corrupt.zip",
