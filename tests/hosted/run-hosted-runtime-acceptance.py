@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Hosted, same-origin runtime acceptance: Three.js r187, P85 runtimes and real ONNX inference."""
+import base64 as _b64
 from __future__ import annotations
 import base64
 import functools, http.server, json, os, socketserver, struct, threading, subprocess
@@ -150,8 +151,7 @@ def main():
         record('P102 ORMBG model inference completes in real ONNX WASM worker',infer['backgroundRemoval']['bytes']==infer['backgroundRemoval']['width']*infer['backgroundRemoval']['height']*4,infer['backgroundRemoval'])
         # UI-driven P102: choose a file and press the real button (the worker-only check above cannot catch scope bugs in the UI code).
         try:
-            import base64
-            png=base64.b64decode(page.evaluate("""async()=>{const c=document.createElement('canvas');c.width=192;c.height=192;const x=c.getContext('2d');x.fillStyle='#e6b56e';x.fillRect(0,0,192,192);x.fillStyle='#d94d43';x.beginPath();x.arc(96,92,50,0,Math.PI*2);x.fill();const b=await new Promise(r=>c.toBlob(r,'image/png'));const u=new Uint8Array(await b.arrayBuffer());let s='';u.forEach(v=>s+=String.fromCharCode(v));return btoa(s);}"""))
+            png=_b64.b64decode(page.evaluate("""async()=>{const c=document.createElement('canvas');c.width=192;c.height=192;const x=c.getContext('2d');x.fillStyle='#e6b56e';x.fillRect(0,0,192,192);x.fillStyle='#d94d43';x.beginPath();x.arc(96,92,50,0,Math.PI*2);x.fill();const b=await new Promise(r=>c.toBlob(r,'image/png'));const u=new Uint8Array(await b.arrayBuffer());let s='';u.forEach(v=>s+=String.fromCharCode(v));return btoa(s);}"""))
             page.evaluate("() => { const s=document.querySelector('#cv102-status'); if(s) s.textContent=''; }")
             page.locator('#cv102-file').set_input_files({'name':'ui-p102.png','mimeType':'image/png','buffer':png})
             page.locator('#cv102-run').evaluate('(el) => el.click()')
