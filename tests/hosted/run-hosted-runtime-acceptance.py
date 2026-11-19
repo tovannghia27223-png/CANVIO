@@ -45,7 +45,7 @@ def main():
         page.on('request',lambda r:requests.append(r.url))
         page.on('pageerror',lambda e:page_errors.append(str(e)))
         page.on('console',lambda m:console_errors.append(m.text[:500]) if m.type=='error' else None)
-        page.goto(origin+'/index.html',wait_until='load',timeout=180000)
+        page.goto(origin+'/index.html',wait_until='domcontentloaded',timeout=60000)
         page.wait_for_function("!!window.CANVIOStableRelease && !!window.CANVIOP85Suite && !!window.CANVIOThreeGLBViewerP74",timeout=60000)
         record('Integrated P70/P74/P85 owners boot',True)
         boot_vendor=[u for u in requests if '/assets/three/' in u or '/assets/p85/' in u]
@@ -178,3 +178,4 @@ def main():
       server.shutdown();server.server_close()
     print('Hosted runtime acceptance:',sum(checks.values()),'/',len(checks))
 if __name__=='__main__': main()
+
