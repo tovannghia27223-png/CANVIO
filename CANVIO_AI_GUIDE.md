@@ -3377,3 +3377,10 @@ Phạm vi: nhánh ứng viên `canvio/23-3-111-github-runtime-ci`; không thay t
 - P107 portable preset archive uses the existing Asset Library owner; it does not claim cloud Project Vault or physical multi-device synchronization.
 - See tests/hosted reports and CANVIO_MANIFEST.json for machine-readable evidence.
 - P70 remains fail-closed until all fourteen real-world acceptance gates have separately reviewed evidence. Headless Chromium/SwiftShader is software rendering, not physical GPU certification.
+
+
+## P108–P109 · Điều hướng Tổng quan và Studio Switcher (2026-11-19)
+- Base GitHub main: `6dc77e7a579d310c2ccd9ada1b997bd252a0e85b`; không dùng file đính kèm làm base vì main có P104 subtitle panel mới hơn.
+- Giữ `CVWS` (5 workspaces), `CVWS.state.last`, `CVWS.open()` và `CV.go()` làm chủ sở hữu duy nhất của điều hướng. P109 chỉ gộp bề mặt chuyển nhanh thành Tổng quan + ba studio; Projects/AI tiếp tục đi qua CVWS, command palette và trang hiện hữu.
+- `canvio-lot109-css` + `canvio-lot109`: nút topbar, menu accessible, `CV.palette.build` commands; không thêm store, route owner, timeline hoặc request. `CANVIOStudioSwitcherP109.tests()` là smoke API mới.
+- P110–P114 chưa tích hợp: Hub mới, shell/rail theo studio và cờ lùi về v16 vẫn là bước tiếp theo.

@@ -396,3 +396,20 @@ Phạm vi: nhánh ứng viên `canvio/23-3-111-github-runtime-ci`; không thay t
 - Run true model inference smoke for Whisper, ORMBG and Depth Anything after explicit test invocation; keep model weights outside the repository and disclose first-use network requirements.
 - Retain P107 as portable export/import through the canonical Asset Library. Cloud sync/Project Vault is not implemented without a secure backend; physical two-device acceptance remains separate.
 - Keep P70 fail-closed; physical GPU, target-device performance, real footage/audio quality, production HTTPS/security headers, print workflow, accessibility review, and rollback/observability need separately recorded evidence.
+
+
+## P108–P109 thực hiện trong GitHub main (2026-11-19)
+
+### P108 · Kiểm kê và wireframe điều hướng
+- Base được kiểm: GitHub `main` tại `6dc77e7a579d310c2ccd9ada1b997bd252a0e85b`, candidate source `23.3.111-github-runtime-ci`; file đính kèm đối chiếu SHA-256 riêng: `C0AA50BE0A34007B4AF94F2637C2DCC1D8C7E0D67F6C49603758316CC443F426`. Main có thay đổi mới hơn file đính kèm (P104 subtitle panel), nên triển khai trên main để giữ thay đổi đó.
+- Hiện trạng dùng `CVWS` + `CV.go`; 5 workspace đã có (ngoài `home`) là `design`, `site`, `media`, `proj`, `ai`. P108 wireframe hợp nhất 4 mục đầu thành Tổng quan + ba studio; `proj`/`ai` vẫn truy cập bằng điều hướng cũ, Ctrl+K và trang Xuất.
+- Luồng: Hub → Studio Switcher → `CVWS.open(studio)` → trang cuối trong `CVWS.state.last`; trang/engine cũ tiếp tục mở bằng `CV.go` và giữ nguyên ID. Không tạo store, timeline hoặc adapter đồng bộ mới.
+- Mapping hiện có: Thiết kế: Poster, Layout Foundry, Vector Forge, Design Engine, Templates, Brand, Assets, Design System, Responsive; Website & hồ sơ: Auto Design, CV Studio, Website Builder, Web Engine, Portfolio Studio, HR Visual; Ảnh & video: Pixel Atelier, Luma Develop, Clarity Lab, AI ảnh, ArtCraft, Video Engine, Motion Lab, Video Studio, ShotCraft, Motion presets và MotionCut legacy; Dự án/xuất: Projects, Export, Collab, Asset Hub, Platform; AI/cài đặt: AI Studio, One-click, Prompt Forge, Creative Hub, Insight, Hallmark, Guide, Settings.
+- Wireframe P108: trên cùng là nút chữ “Studio ▾”; menu bốn đích Tổng quan/Thiết kế/Website & hồ sơ/Ảnh & video; Hub giữ vùng bắt đầu nhanh hiện có; mỗi Studio sẽ dùng cùng trang/engine hiện hữu. Rail đặt bên trái theo mặc định trong roadmap; không sao chép nhãn hiệu hay tài sản tham chiếu.
+- Việc tiếp: hoàn thiện Hub P110, rồi Studio Shell P111–P113, sau đó hợp nhất/lùi cũ P114. Screenshot và duyệt wireframe bằng chủ dự án chưa thực hiện trong môi trường này.
+
+### P109 · Studio Switcher
+- Đã thêm `canvio-lot109-css` và `canvio-lot109` vào cuối `index.html`; menu bàn phím hỗ trợ mũi tên/Home/End/Escape, trạng thái Studio hiện tại, focus và layout hẹp.
+- Nút gọi `CVWS.open` cho ba studio và `CV.go('home')` cho Tổng quan; lệnh được thêm vào `CV.palette.build`; Alt+0…3 giữ nguyên ánh xạ gốc trong CVWS. Không tạo nguồn route hay dữ liệu song song.
+- Kiểm: module syntax PASS; P109 API smoke 5/5, 4 tuyến/4 lệnh palette PASS; integrated source contracts 9/9; P107 round-trip 6/6; P68–P70 17/17 PASS; HTML audit 112 scripts, 533 IDs duy nhất, không lỗi cú pháp. Browser origin thật/screenshot và CI hosted chưa chạy.
+- Giới hạn: chưa có Chrome origin thật/screenshot do môi trường không cho bind localhost; chức năng P85 cần runtime bundles riêng theo manifest. Không đánh dấu release gate P70 nào đạt.

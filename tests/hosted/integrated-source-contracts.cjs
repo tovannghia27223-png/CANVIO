@@ -50,6 +50,14 @@ test('Candidate index includes the three local worker paths, no external script 
  while(true){const start=lowerHtml.indexOf('<script',cursor);if(start<0)break;const end=html.indexOf('>',start);if(end<0)break;const open=html.slice(start,end+1);if(/\\bsrc\\s*=/.test(open))activeExternal.push(open);const close=lowerHtml.indexOf('</script',end+1);if(close<0)break;cursor=close+9;}
  assert.equal(activeExternal.length,0,'Active external script element found: '+activeExternal.join(' | '));
 });
+const p109=html.match(/<script id="canvio-lot109">([\s\S]*?)<\/script>/)?.[1]||'';
+test('P109 Studio Switcher preserves CVWS/CV.go ownership, four destinations and accessible keyboard controls',()=>{
+ assert.equal((html.match(/id="canvio-lot109-css"/g)||[]).length,1);
+ assert.ok(p109.includes('window.CANVIOStudioSwitcherP109'));
+ for(const token of ['CVWS.open(id)','CV.go','CV.palette.build','aria-expanded','aria-current','aria-label','ArrowDown','ArrowUp','Escape'])assert.ok(p109.includes(token),token);
+ for(const route of ['home','design','site','media'])assert.ok(p109.includes("id:'"+route+"'"),route);
+ assert.ok(!/fetch\s*\(|XMLHttpRequest/.test(p109));
+});
 const passed=Object.values(checks).filter(Boolean).length,total=Object.keys(checks).length;
 const report={suite:'CANVIO_23.3.111_INTEGRATED_SOURCE_CONTRACTS',passed,total,checks,modelInferenceExecuted:false,physicalGpuExecuted:false,twoDeviceSyncExecuted:false,p70ReleaseCertified:false};
 fs.writeFileSync(path.join(root,'tests/hosted/integrated-source-contracts.json'),JSON.stringify(report,null,2)+'\n');

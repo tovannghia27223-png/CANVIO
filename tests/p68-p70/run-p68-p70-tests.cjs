@@ -187,5 +187,5 @@ const OBJ = [
     assert.equal(suite.p70StableReleaseGate, true);
   });
 
-  process.stdout.write('\nP68–P70 tests: ' + passed + '/16 PASS\n');
+  process.stdout.write('\nP68–P70 tests: ' + passed + '/17 PASS\n');
 })().catch(error => { console.error(error.stack || error); process.exit(1); });

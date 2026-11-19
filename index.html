@@ -27938,5 +27938,58 @@ if(gate&&typeof gate.run==='function'&&!gate.run.__canvioP56Wrapped){var oldRun=
   window.addEventListener('pagehide', dispose, { once: true });
 })();
 </script>
+<style id="canvio-lot109-css">
+#cv-studio-switch{position:relative;z-index:35;flex:0 0 auto}
+#cv-studio-switch>[data-cv-studio-trigger]{height:34px;display:inline-flex;align-items:center;gap:8px;padding:0 12px;border:1px solid var(--line,#e7ecf5);border-radius:10px;background:var(--surface,#fff);color:var(--ink,#0d1a2b);font:650 12px/1 inherit;font-family:inherit;cursor:pointer;white-space:nowrap}
+#cv-studio-switch>[data-cv-studio-trigger]:hover{border-color:var(--brand,#4f46e5);background:var(--brand-soft,#eef0ff)}
+#cv-studio-switch>[data-cv-studio-trigger]:focus-visible,#cv-studio-menu button:focus-visible{outline:2px solid var(--brand,#4f46e5);outline-offset:2px}
+#cv-studio-switch .cvss-caret{font-size:10px;color:var(--ink-3,#7a8ba3)}
+#cv-studio-menu{position:fixed;z-index:100020;top:58px;right:180px;width:min(280px,calc(100vw - 24px));padding:7px;border:1px solid var(--line,#e7ecf5);border-radius:14px;background:var(--surface,#fff);box-shadow:0 18px 48px rgba(15,25,55,.18)}
+#cv-studio-menu[hidden]{display:none}
+#cv-studio-menu .cvss-label{padding:8px 10px 6px;color:var(--ink-3,#7a8ba3);font-size:10px;font-weight:800;letter-spacing:1.15px;text-transform:uppercase}
+#cv-studio-menu button{width:100%;min-height:42px;display:flex;align-items:center;gap:10px;padding:8px 10px;border:0;border-radius:9px;background:transparent;color:var(--ink,#0d1a2b);text-align:left;font:600 13px/1.25 inherit;font-family:inherit;cursor:pointer}
+#cv-studio-menu button:hover,#cv-studio-menu button[aria-current=page]{background:var(--brand-soft,#eef0ff);color:var(--brand-ink,#3f37c9)}
+#cv-studio-menu button .cvss-ic{width:27px;height:27px;display:grid;place-items:center;border-radius:8px;background:var(--surface-3,#f3f6fc);font-size:14px}
+#cv-studio-menu button small{margin-left:auto;color:var(--ink-3,#7a8ba3);font:500 10px/1.2 inherit}
+#cv-studio-menu .cvss-foot{margin:5px 8px 6px;padding-top:9px;border-top:1px solid var(--line,#e7ecf5);color:var(--ink-3,#7a8ba3);font-size:10px;line-height:1.4}
+@media(max-width:560px){#cv-studio-switch>[data-cv-studio-trigger]{height:32px;padding:0 9px;font-size:11px}#cv-studio-switch .cvss-caret{display:none}#cv-studio-menu{top:auto;right:8px;bottom:calc(58px + env(safe-area-inset-bottom,0px));width:min(300px,calc(100vw - 16px))}}
+@media(prefers-reduced-motion:reduce){#cv-studio-switch *,#cv-studio-menu *{scroll-behavior:auto!important;transition:none!important}}
+</style>
+<script id="canvio-lot109">
+/* P109 · Studio Switcher: một cổng duy nhất qua CVWS/CV.go; không tạo route hay store mới. */
+(function(){
+'use strict';
+if(window.CANVIOStudioSwitcherP109||!window.CV||!CV.go||!window.CVWS)return;
+var $=function(s,r){return(r||document).querySelector(s);};
+var ROUTES=[
+ {id:'home',label:'Tổng quan',icon:'⌂',key:'Alt+0'},
+ {id:'design',label:'Thiết kế',icon:'▧',key:'Alt+1'},
+ {id:'site',label:'Website & hồ sơ',icon:'◫',key:'Alt+2'},
+ {id:'media',label:'Ảnh & video',icon:'▶',key:'Alt+3'}
+];
+var current='home',wrap=document.createElement('div');wrap.id='cv-studio-switch';
+var trigger=document.createElement('button');trigger.type='button';trigger.dataset.cvStudioTrigger='';trigger.setAttribute('aria-haspopup','menu');trigger.setAttribute('aria-expanded','false');trigger.setAttribute('aria-controls','cv-studio-menu');
+var menu=document.createElement('div');menu.id='cv-studio-menu';menu.hidden=true;menu.setAttribute('role','menu');menu.setAttribute('aria-label','Chuyển không gian làm việc');
+menu.innerHTML='<div class="cvss-label">Không gian làm việc</div>'+ROUTES.map(function(x){return '<button type="button" role="menuitem" data-route="'+x.id+'"><span class="cvss-ic" aria-hidden="true">'+x.icon+'</span><span>'+x.label+'</span><small>'+x.key+'</small></button>';}).join('')+'<div class="cvss-foot">Alt+0–3 chuyển nhanh · Ctrl+K để tìm công cụ</div>';
+wrap.appendChild(trigger);var top=$('.topRight');if(!top)return;top.insertBefore(wrap,top.firstChild);document.body.appendChild(menu);
+function routeForPage(id){if(id==='home')return'home';var wid=window.CVWS.pageToSpace[id];return wid==='design'||wid==='site'||wid==='media'?wid:(wid==='proj'||wid==='ai'?'home':'home');}
+function labelFor(id){var x=ROUTES.filter(function(r){return r.id===id})[0];return x?x.label:'Tổng quan';}
+function place(){var r=trigger.getBoundingClientRect();if(innerWidth<=560){menu.style.top='auto';menu.style.bottom='calc(58px + env(safe-area-inset-bottom, 0px))';menu.style.right='8px';}else{menu.style.bottom='auto';menu.style.top=Math.max(8,Math.min(r.bottom+6,innerHeight-230))+'px';menu.style.right=Math.max(8,innerWidth-r.right)+'px';}}
+function refresh(id){current=routeForPage(id||((document.querySelector('.page.active')||{}).id||'page-home').replace('page-',''));trigger.setAttribute('aria-label','Studio · '+labelFor(current));trigger.innerHTML='Studio <span class="cvss-caret" aria-hidden="true">▾</span>';wrap.dataset.current=current;menu.querySelectorAll('[data-route]').forEach(function(b){if(b.dataset.route===current)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});}
+function close(returnFocus){menu.hidden=true;trigger.setAttribute('aria-expanded','false');if(returnFocus)trigger.focus();}
+function go(id){if(id==='home'){CV.go('home');}else{CVWS.open(id);}close(false);}
+trigger.addEventListener('click',function(){var opening=menu.hidden;menu.hidden=!opening;trigger.setAttribute('aria-expanded',opening?'true':'false');if(opening){place();var active=menu.querySelector('[aria-current=page]')||menu.querySelector('button');if(active)active.focus();}});
+menu.addEventListener('click',function(e){var b=e.target.closest('[data-route]');if(b)go(b.dataset.route);});
+menu.addEventListener('keydown',function(e){var bs=[].slice.call(menu.querySelectorAll('[role=menuitem]')),i=bs.indexOf(document.activeElement);if(e.key==='Escape'){e.preventDefault();e.stopPropagation();close(true);}else if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();bs[(i+(e.key==='ArrowDown'?1:bs.length-1))%bs.length].focus();}else if(e.key==='Home'||e.key==='End'){e.preventDefault();bs[e.key==='Home'?0:bs.length-1].focus();}});
+document.addEventListener('click',function(e){if(!menu.hidden&&!wrap.contains(e.target)&&!menu.contains(e.target))close(false);});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!menu.hidden){close(true);}});
+var oldGo=CV.go;CV.go=function(id){var out=oldGo.apply(this,arguments);try{refresh(id);}catch(e){}return out;};
+var oldOpen=CVWS.open;CVWS.open=function(id){var out=oldOpen.apply(this,arguments);try{refresh();}catch(e){}return out;};
+if(CV.palette&&typeof CV.palette.build==='function'){var oldBuild=CV.palette.build;CV.palette.build=function(){var items=oldBuild.apply(this,arguments)||[];ROUTES.forEach(function(r){var label='Chuyển sang '+r.label;if(!items.some(function(i){return i.label===label;}))items.push({label:label,hint:'Studio · '+r.key,icon:r.icon,run:function(){go(r.id);}});});return items;};}
+window.addEventListener('resize',function(){if(!menu.hidden)place();},{passive:true});
+refresh();
+window.CANVIOStudioSwitcherP109={version:'109.1.0',routes:ROUTES.map(function(r){return r.id;}),open:function(){trigger.click();},go:go,tests:function(){return{singleTrigger:!!document.querySelectorAll('#cv-studio-switch').length,menuItems:menu.querySelectorAll('[data-route]').length===4,publicNavigation:typeof CV.go==='function'&&typeof CVWS.open==='function',shortcutMap:ROUTES.map(function(r){return r.key;}).join(',')==='Alt+0,Alt+1,Alt+2,Alt+3',paletteCommands:!!(CV.palette&&CV.palette.build&&ROUTES.every(function(r){return CV.palette.build().some(function(i){return i.label==='Chuyển sang '+r.label;});}))};}};
+})();
+</script>
 </body>
 </html>
