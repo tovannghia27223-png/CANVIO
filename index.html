@@ -26873,6 +26873,7 @@ if(gate&&typeof gate.run==='function'&&!gate.run.__canvioP56Wrapped){var oldRun=
   var $ = function (id) { return document.getElementById(id); };
   function say(s, kind) { var n = $('cv102-status'); if (n) { n.textContent = s; n.dataset.kind = kind || 'info'; } }
   function stopWorker(reason) { if (state.worker) { state.worker.terminate(); state.worker = null; } if (state.pendingReject) { var reject = state.pendingReject; state.pendingReject = null; reject(new Error(reason || 'Đã hủy tác vụ tách nền.')); } }
+  function fileFromBlob(blob, name, type) { return new File([blob], name, { type: type || blob.type || 'application/octet-stream', lastModified: Date.now() }); }
   function saveBlob(blob, name) {
     if (!window.CV || !CV.assets || typeof CV.assets.addBlob !== 'function') throw new Error('Asset Library chưa sẵn sàng.');
     var file = new File([blob], name, { type: 'image/png', lastModified: Date.now() });

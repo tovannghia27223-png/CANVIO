@@ -148,6 +148,19 @@ def main():
           return {backgroundRemoval:bg,depthEstimation:depth};
         }""")
         record('P102 ORMBG model inference completes in real ONNX WASM worker',infer['backgroundRemoval']['bytes']==infer['backgroundRemoval']['width']*infer['backgroundRemoval']['height']*4,infer['backgroundRemoval'])
+        # UI-driven P102: choose a file and press the real button (the worker-only check above cannot catch scope bugs in the UI code).
+        try:
+            import base64
+            png=base64.b64decode(page.evaluate("""async()=>{const c=document.createElement('canvas');c.width=192;c.height=192;const x=c.getContext('2d');x.fillStyle='#e6b56e';x.fillRect(0,0,192,192);x.fillStyle='#d94d43';x.beginPath();x.arc(96,92,50,0,Math.PI*2);x.fill();const b=await new Promise(r=>c.toBlob(r,'image/png'));const u=new Uint8Array(await b.arrayBuffer());let s='';u.forEach(v=>s+=String.fromCharCode(v));return btoa(s);}"""))
+            page.evaluate("() => { const s=document.querySelector('#cv102-status'); if(s) s.textContent=''; }")
+            page.locator('#cv102-file').set_input_files({'name':'ui-p102.png','mimeType':'image/png','buffer':png})
+            page.locator('#cv102-run').evaluate('(el) => el.click()')
+            page.wait_for_function("(()=>{const t=document.querySelector('#cv102-status')?.textContent||'';return t.includes('Đã tách nền')||t.includes('Không thể')})()",timeout=900000)
+            st=page.evaluate("() => document.querySelector('#cv102-status').textContent")
+            ok=('Đã tách nền' in st) and page.evaluate("() => !document.querySelector('#cv102-download').disabled")
+            record('P102 UI: Tách nền button produces transparent PNG and enables download',bool(ok),{'status':st[:300]})
+        except Exception as e:
+            record('P102 UI: Tách nền button produces transparent PNG and enables download',False,{'error':str(e)[:400]})
         record('P105 Depth Anything V2 model inference completes in real ONNX WASM worker',infer['depthEstimation']['bytes']==infer['depthEstimation']['width']*infer['depthEstimation']['height'],infer['depthEstimation'])
         # Whisper worker real inference using bounded synthetic audio; output is validated as text, not accuracy-scored.
         whisper=page.evaluate("""async()=>{const n=16000*3,a=new Float32Array(n);for(let i=0;i<n;i++)a[i]=.035*Math.sin(2*Math.PI*(190+40*Math.sin(i/n*6.28))*i/16000);return await new Promise((resolve,reject)=>{const w=new Worker('/assets/canvio-whisper-worker.js',{type:'module'}),timer=setTimeout(()=>{w.terminate();reject(new Error('Whisper inference timeout'));},900000);w.onmessage=e=>{const m=e.data||{};if(m.type==='error'){clearTimeout(timer);w.terminate();reject(new Error(m.error||'Whisper worker error'));}if(m.type==='result'){clearTimeout(timer);w.terminate();if(!m.output||typeof m.output.text!=='string')return reject(new Error('Whisper result is not text'));resolve({text:m.output.text,language:m.output.chunks?.[0]?.timestamp||null});}};w.onerror=e=>{clearTimeout(timer);w.terminate();reject(new Error(e.message));};w.postMessage({action:'transcribe',id:'github-hosted-whisper',audio:a.buffer,language:'english'},[a.buffer]);});}""")
