@@ -3930,8 +3930,8 @@ var Assets = (function(){
     }
     grid.innerHTML = items.map(function(a){
       return '<div class="assetCard"><div class="assetThumb">'
-        + (a.data? '<img src="'+a.data+'" alt="'+U.esc(a.name)+'" loading="lazy">':'<span class="tiny">Không xem trước</span>')
-        + '</div><div class="assetInfo"><b title="'+U.esc(a.name)+'">'+U.esc(a.name)+'</b><small>'+U.esc(a.cat||'')+' · '+U.fmtBytes(a.size||0)+'</small>'
+        + (a.data? (/^data:video\//.test(a.data)? '<video src="'+a.data+'" muted playsinline preload="metadata" controls style="width:100%;height:100%;object-fit:contain;background:#0b1020" aria-label="'+U.esc(a.name)+'"></video>' : /^data:audio\//.test(a.data)? '<audio src="'+a.data+'" controls preload="metadata" style="width:100%"></audio>' : '<img src="'+a.data+'" alt="'+U.esc(a.name)+'" loading="lazy">'):'<span class="tiny">Không xem trước</span>')
+        + '</div><div class="assetInfo"><b title="'+U.esc(a.name)+'">'+U.esc(a.name)+'</b><small>'+U.esc(/^data:video\//.test(a.data||'')?'video':/^data:audio\//.test(a.data||'')?'audio':(a.cat||''))+' · '+U.fmtBytes(a.size||0)+'</small>'
         + '<div class="row" style="gap:4px;margin-top:6px">'
         + '<button class="btn btn-soft sm" onclick="Assets.use(\''+a.id+'\')">Chèn</button>'
         + '<button class="btn btn-danger sm" onclick="Assets.remove(\''+a.id+'\')">Xoá</button>'
