@@ -420,3 +420,52 @@ Phạm vi: nhánh ứng viên `canvio/23-3-111-github-runtime-ci`; không thay t
 - Gần đây đọc `canvio15.recent` và ánh xạ tên qua `CVWS.spaces`; yêu thích đọc owner sẵn có `CVDesignSystem.state.favorites` + `CV.assets.list()`. Không tạo store mới. Bắt đầu nhanh cũ giữ bên dưới.
 - Kiểm cục bộ: P110 smoke 5/5, P109 5/5, integrated contracts 10/10, P107 round-trip 6/6, P63–P67 18/18, P68–P70 17/17; `git diff --check` không có lỗi khoảng trắng.
 - Chưa có ảnh Chrome 1280/390 hoặc browser origin thật; GitHub hosted workflow cho P109 còn chạy khi ghi chú này được tạo. P111–P144 còn lại; 14 cổng P70 vẫn pending, `releaseCertified:false`.
+
+
+### P111 · Studio Shell + Thiết kế (đang làm cục bộ, 2026-11-19)
+- Đã thêm `canvio-lot111-css` + `canvio-lot111`: rail lấy đủ trang từ `CVWS.spaces.design.p`, chuyển trang qua `CV.go`, cập nhật `aria-current` và gỡ shell khỏi trang khác. Không clone/di chuyển engine DOM.
+- Kiểm cục bộ: P111 API smoke 4/4; rail map khớp đủ trang Thiết kế; chạy `node --check` module PASS. Chưa visual QA.
+- Theo yêu cầu mới, chưa đẩy P111 riêng; sẽ gộp các P còn lại rồi mới đưa loạt hoàn chỉnh lên GitHub và chạy test tổng.
+
+
+### P112 · Studio Website & hồ sơ (đang làm cục bộ, 2026-11-19)
+- Đăng ký workspace `site` vào shell dùng chung P111; rail lấy toàn bộ sáu trang từ CVWS, gọi lại `CV.go`. CV Studio/A4 không bị sửa.
+- Kiểm cục bộ: P112 API smoke 7/7; sáu route hợp lệ; shared shell cleanup/navigation PASS. Chưa visual QA. Sẽ đẩy cùng các P còn lại và chạy hosted workflow tổng.
+
+
+### P113 · Studio Ảnh & video (đang làm cục bộ, 2026-11-19)
+- Đăng ký workspace `media` vào shell dùng chung; nhóm rail lấy từ `CVWS.spaces` (`ẢNH`, `VIDEO`, `LEGACY`), route vẫn qua `CV.go`. Video Engine/owner không đổi.
+- Kiểm cục bộ: P113 API smoke 8/8; 11 route đúng và nhãn nhóm đầy đủ. Chưa visual QA hoặc hosted test.
+
+
+### P114 · Hợp nhất điều hướng & lùi giao diện (đang làm cục bộ, 2026-11-19)
+- Thêm `data-nav=shell` mặc định và nút đổi về `v16` ở Hub/Settings; không xóa `#side`/`#ws-tabs`. Ghi lựa chọn ở khóa UI `canvio15.nav-mode`.
+- Rail dùng thanh cuộn ngang trên desktop/tablet nhỏ và thanh fixed có safe-area trên mobile; tôn trọng reduced motion, labels và aria.
+- Kiểm cục bộ: P114 smoke 5/5. Chưa Chrome/screen reader review; 14 gate P70 vẫn pending. Theo yêu cầu, chưa đẩy riêng từng P; sẽ push sau khi hoàn tất danh sách P còn làm được.
+
+
+### P115 · PWA shell và vendor cục bộ (2026-11-19)
+- Vendor pinned cùng giấy phép và SHA-256 manifest: GrapesJS 0.22.13, Konva 10.0.0, Lenis 1.1.13. GrapesJS/Konva lazy-load cùng origin, không fallback CDN; Lenis được giữ trong manifest nhưng cuộn mượt sinh trang chuyển sang native CSS/browser APIs.
+- PWA app shell: `canvio.webmanifest`, icon SVG cục bộ, `canvio-sw.js`; chỉ xử lý GET same-origin, bỏ qua API/model; navigation network-first có app-shell fallback và asset tĩnh runtime cache. Không cache dữ liệu dự án/media.
+- GSAP không đóng gói vào trình dựng animation trực quan khi chưa có quyền phù hợp theo license; đã thay phần reveal/parallax/scroll progress bằng IntersectionObserver/CSS/native browser APIs. FFmpeg.wasm không đóng gói trước khi xác minh đúng biến thể LGPL/GPL và artifact tuân thủ; nút storyboard MP4 báo rõ và xuất WebM qua owner hiện có.
+- Kiểm cục bộ P115: 12/12. Giới hạn còn mở: chưa nghiệm thu offline trên Chrome origin thật; mô hình/provider vẫn cần mạng theo yêu cầu; trang website xuất có thể giữ runtime Three.js từ URL ngoài.
+
+### P122.1 · Design Taste (một phần, 2026-11-19)
+- `CVTasteP122.audit(html, css)` chấm heuristic 0–100 và đưa gợi ý có tên nhóm cho typography, màu, icon, motion, accessibility và layout. Áp preset tinh gọn là thao tác chủ động, thêm CSS vào website hiện tại.
+- Kiểm pure fixture thuộc suite P122/P123: điểm bị giới hạn 0–100; mẫu lỗi bị trừ điểm và giải thích.
+- Phạm vi hiện tại là Website Engine; heuristic không thay thế kiểm tương phản WCAG bằng trình duyệt, visual QA hoặc đánh giá người thiết kế. P122.2 Unslop theo từng lượt và P122.3 MCP chưa làm.
+
+### P123 · Website Layout Library (2026-11-19)
+- Thêm 12 khối responsive tĩnh: Bento, Command Palette, Canvas Editor, Mega Menu, Sticky Sidebar, Three-Pane Inbox, Kanban, Timeline, Zig-Zag, Map + List, Product Page, Chat + Artifact.
+- Chèn thẳng vào GrapesJS instance hiện tại bằng `CVWeb.addComponents`; các khối dữ liệu minh họa không kết nối dịch vụ ngoài. Kiểm suite P122/P123 đạt 13/13.
+- Chưa có Chrome screenshot/responsive keyboard review; nên thực hiện trên hosted Pages cùng lượt phát hành cuối.
+
+### Trạng thái phần roadmap còn lại sau P123
+- Nhiều chức năng đã hiện diện một phần: PDF/DOCX/PPTX raster (P116), Whisper và optical flow (P117), Logo Studio (P118), GLB/dotLottie runtime (P119), RMBG/Depth/Ken Burns (P120), mask/LUT (P121), provider registry/video engine/Studio shell. Báo cáo phạm vi cụ thể ở `CANVIO_PROGRESS_REPORT_2026-11-19.md`.
+- P130/P130.A không được giả lập nếu không có dự án Supabase, credential và deployment/RLS để nghiệm thu. P142, Playwright real-origin và Pages deployment phải xác nhận sau lần push hợp nhất.
+- P131–P145 còn một số mục lớn/chưa nghiệm thu (bảo mật nhập file tổng thể, OPFS/khôi phục, media quality, import/export chuyên nghiệp, offline content packs, full visual QA); P70 tiếp tục fail-closed với 14 cổng thủ công đang mở.
+
+### P127.1 · JSON Edit Plan (phần đầu, 2026-11-19)
+- `CVEditPlanP127` xuất timeline hiện tại hoặc nạp JSON rồi áp mốc `start`, `duration`, `trimIn` cho clip đang có. Kiểm định format/version, ID tồn tại, ID trùng, giới hạn 500 clip, số hữu hạn, thời lượng và clip/track khóa trước khi ghi.
+- Gọi `CV.engines.video.commit()` của timeline canonical; nếu lưu lỗi, khôi phục mốc trước đó. Không thêm timeline, asset, clip mới hoặc gọi AI.
+- Kiểm P127 suite: 13/13. Chưa hỗ trợ b-roll, chữ, SFX, zoom/keyframe, auto-director hoặc quality gate P127.4.

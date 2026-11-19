@@ -1,0 +1,22 @@
+'use strict';
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const vm=require('node:vm');
+const html=fs.readFileSync(path.resolve(__dirname,'../../index.html'),'utf8');
+function source(id){const m=html.match(new RegExp('<script id="'+id+'">([\\s\\S]*?)<\\/script>'));assert.ok(m,'missing '+id);return m[1]}
+const sandbox={window:{},document:{readyState:'loading',addEventListener(){}},MutationObserver:function(){},console,Set,Array,Object,String,Math,RegExp,Promise};sandbox.window.window=sandbox.window;
+vm.createContext(sandbox);vm.runInContext(source('canvio-lot122'),sandbox);vm.runInContext(source('canvio-lot123'),sandbox);
+const taste=sandbox.window.CVTasteP122,layouts=sandbox.window.CVLayoutsP123;
+const t=taste.tests(),l=layouts.tests();
+for(const [k,v] of Object.entries(t))assert.equal(v,true,'Taste: '+k);
+for(const [k,v] of Object.entries(l))assert.equal(v,true,'Layouts: '+k);
+assert.equal(layouts.items.length,12);
+const weak=taste.audit('<h1>A</h1><h1>B</h1>😀','h1{font-family:Inter} p{font-family:Arial} p{font-family:Georgia} .x{animation:fade 1s}');
+assert.ok(weak.score<100);assert.ok(weak.issues.length>=3);
+const strong=taste.audit('<h1>Good layout</h1>','body{font-family:Inter;max-width:70rem} @media(prefers-reduced-motion:reduce){*{animation:none}}');
+assert.ok(strong.score>=weak.score);
+const rendered=layouts.insert('kanban');assert.equal(rendered,false,'must wait for canonical editor');
+sandbox.window.CVWeb={addComponents:html=>{sandbox.inserted=html}};sandbox.window.CV={engines:{web:{save(){sandbox.saved=true}}}};
+assert.equal(layouts.insert('kanban'),true);assert.match(sandbox.inserted,/data-canvio-layout="kanban"/);assert.equal(sandbox.saved,true);
+console.log(JSON.stringify({suite:'P122.1/P123 local design audit and layout library',passed:13,total:13,checks:{taste:t,layouts:l,weakFixtureIssues:weak.issues.length,strongFixtureScore:strong.score,canonicalInsert:!!sandbox.inserted}},null,2));

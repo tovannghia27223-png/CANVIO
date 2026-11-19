@@ -1,0 +1,70 @@
+{
+  "format": "CANVIO_VENDOR_MANIFEST",
+  "schemaVersion": 1,
+  "hashAlgorithm": "SHA-256",
+  "components": [
+    {
+      "name": "Konva",
+      "version": "10.0.0",
+      "license": "MIT",
+      "registryIntegrity": "sha512-BlwOR6avOq6AQOOU6ZYWnAewxx0l1e3anD3ZCVcrf3EdETRzGdCd6d1WGx0CZBZNy/usqwqDmh7J5k1RWROQTg==",
+      "files": [
+        {
+          "path": "assets/vendor/konva/konva.min.js",
+          "bytes": 182849,
+          "sha256": "b405f1a4554b8fa2527ba531b49f9a4b263e2fce79177b1caa14e596a660b79f"
+        },
+        {
+          "path": "assets/vendor/konva/LICENSE.txt",
+          "bytes": 1172,
+          "sha256": "7190132c82df30243dc2ba512c9509ea3b629329b4266e9f2c3b5dbd04029613"
+        }
+      ]
+    },
+    {
+      "name": "GrapesJS",
+      "version": "0.22.13",
+      "license": "BSD-3-Clause",
+      "registryIntegrity": "sha512-GsLqv9ckVF7cWgp6aqlmxmLUJSsGvni4FHsKm9nxa6rv3acUeTkdR93GbbYaTejn5nFFCn9mBwzGGmGh9X+xHA==",
+      "files": [
+        {
+          "path": "assets/vendor/grapesjs/grapes.min.js",
+          "bytes": 1095002,
+          "sha256": "c459a47bf7ff831e309b10aab4ce27c8d2d8280f62aa35dc6c1b7f776368f8c6"
+        },
+        {
+          "path": "assets/vendor/grapesjs/grapes.min.css",
+          "bytes": 60968,
+          "sha256": "1edd206fb9e41c60d70c66cfdb2e79e2b9358df5c952333a8b5a6a5989f8c2d4"
+        },
+        {
+          "path": "assets/vendor/grapesjs/LICENSE.txt",
+          "bytes": 1485,
+          "sha256": "1a7603ac82661e3ec4f0ad015e37f68ab62c85c725f07659b81760edb459ff8d"
+        }
+      ]
+    },
+    {
+      "name": "Lenis",
+      "version": "1.1.13",
+      "license": "MIT",
+      "registryIntegrity": "sha512-iny+vWwUHcZGbJz+p2I75H1muLBRZqSG7t04jnhA+CWOQDFL1vt9bsZDwPPtYEmYVVvqAdo5MbXVFzNOlbgUkQ==",
+      "files": [
+        {
+          "path": "assets/vendor/lenis/lenis.min.js",
+          "bytes": 13485,
+          "sha256": "b2958f142f832f0d5e547cdef77e6fadfce16bea60982fc8bbf50395a2439df8"
+        },
+        {
+          "path": "assets/vendor/lenis/LICENSE.txt",
+          "bytes": 1096,
+          "sha256": "bba15b1137346a73ed8c35e7f20961a69e0ed842d956a50339240c3e7b08c089"
+        }
+      ]
+    }
+  ],
+  "excludedFeatures": {
+    "GSAP": "Not redistributed in visual animation builder because its official Standard License prohibits competing visual animation-builder use without prior written consent; native Web Animations/IntersectionObserver fallback is used.",
+    "FFmpeg.wasm": "Not bundled until exact LGPL/GPL build configuration and corresponding compliance artifacts are reviewed; native WebCodecs/MediaRecorder/WebM paths remain."
+  }
+}

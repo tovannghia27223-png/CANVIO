@@ -1,7 +1,7 @@
 {
   "suite": "CANVIO_23.3.111_INTEGRATED_SOURCE_CONTRACTS",
-  "passed": 10,
-  "total": 10,
+  "passed": 18,
+  "total": 18,
   "checks": {
     "Integrated P74/P81, P85, P102/P105/P107 and P70 module owners are present exactly once": true,
     "P74/P81 uses pinned local r187 runtime and strict vendor manifest SHA verification": true,
@@ -12,7 +12,15 @@
     "P70 remains fail-closed and enumerates fourteen manual acceptance gates": true,
     "Candidate index includes the three local worker paths, no external script tags, and P85/Three panels": true,
     "P109 Studio Switcher preserves CVWS/CV.go ownership, four destinations and accessible keyboard controls": true,
-    "P110 Hub reuses CVWS recent history, command palette and existing favorites owner": true
+    "P110 Hub reuses CVWS recent history, command palette and existing favorites owner": true,
+    "P111 Design rail maps the complete existing workspace and preserves page engines": true,
+    "P112 Website & hồ sơ registers the existing site workspace in the shared shell": true,
+    "P113 Photo & Video uses existing rail groups and keeps Video Engine owner": true,
+    "P114 keeps a reversible v16 fallback and responsive accessible Studio navigation": true,
+    "P115 keeps a same-origin optional PWA shell and local pinned design runtimes": true,
+    "P122.1 offers explainable local taste checks and opt-in style application": true,
+    "P123 provides twelve unique editable layout starters through the existing GrapesJS editor": true,
+    "P127.1 imports only validated edits to existing unlocked canonical clips with rollback": true
   },
   "modelInferenceExecuted": false,
   "physicalGpuExecuted": false,

@@ -1,0 +1,11 @@
+'use strict';
+const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
+const html=fs.readFileSync(path.resolve(__dirname,'../../index.html'),'utf8'),m=html.match(/<script id="canvio-lot127">([\s\S]*?)<\/script>/);assert.ok(m,'P127.1 module');
+const s={window:{},document:{readyState:'loading',addEventListener(){}},MutationObserver:function(){},Map,Set,Array,Object,String,Number,Math,JSON,Promise,Blob:function(){},URL:{},console};s.window.window=s.window;vm.createContext(s);vm.runInContext(m[1],s);const api=s.window.CVEditPlanP127;assert.ok(api);
+const flags=api.tests();for(const [k,v]of Object.entries(flags))assert.equal(v,true,k);
+const state={clips:[{id:'v1',type:'video',start:0,duration:10,trimIn:0,track:1},{id:'i1',type:'image',start:10,duration:5,trimIn:0,track:2}]};
+const plan={format:api.format,version:api.version,edits:[{clipId:'v1',start:3,duration:6,trimIn:2},{clipId:'i1',start:9,duration:4,trimIn:0}]};
+assert.equal(api.validate(plan,state).ok,true);assert.equal(api.validate(plan,state,c=>c.id==='v1').ok,false);assert.equal(api.validate({format:api.format,version:api.version,edits:[{clipId:'i1',start:-1,duration:0,trimIn:1}]},state).ok,false);
+let commits=0;const applied=api.apply(plan,state,()=>{commits++});assert.equal(applied.ok,true);assert.equal(commits,1);assert.equal(state.clips[0].start,3);assert.equal(state.clips[1].start,9);
+const exported=api.currentPlan(state);assert.equal(exported.format,'CANVIO_EDIT_PLAN');assert.equal(exported.edits.length,2);
+console.log(JSON.stringify({suite:'P127.1 validated Edit Plan JSON',passed:13,total:13,checks:{api:flags,validApply:applied.ok,lockedRejected:true,invalidTimingRejected:true,commitOnce:commits===1,exportCurrentTimeline:exported.edits.length===2}},null,2));

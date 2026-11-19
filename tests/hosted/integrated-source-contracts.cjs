@@ -66,6 +66,61 @@ test('P110 Hub reuses CVWS recent history, command palette and existing favorite
  assert.ok(p110.includes('data-cvh-studio')&&p110.includes('data-cvh-favorites')&&p110.includes('data-cvh-recent'));
  assert.ok(!/localStorage\.setItem|fetch\s*\(|XMLHttpRequest/.test(p110));
 });
+const p111=html.match(/<script id="canvio-lot111">([\s\S]*?)<\/script>/)?.[1]||'';
+test('P111 Design rail maps the complete existing workspace and preserves page engines',()=>{
+ assert.equal((html.match(/id="canvio-lot111-css"/g)||[]).length,1);
+ assert.ok(p111.includes('window.CANVIOStudioShellP111'));
+ for(const token of ['CVWS.spaces','CVWS.pageToSpace','CV.go','aria-current','data-cv111-page'])assert.ok(p111.includes(token),token);
+ assert.ok(!/localStorage\.setItem|fetch\s*\(|XMLHttpRequest|innerHTML\s*=\s*.*cloneNode/.test(p111));
+});
+const p112=html.match(/<script id="canvio-lot112">([\s\S]*?)<\/script>/)?.[1]||'';
+test('P112 Website & hồ sơ registers the existing site workspace in the shared shell',()=>{
+ assert.ok(p112.includes('CANVIOStudioShellP111')&&p112.includes("shell.register('site')"));
+ for(const id of ['autodesign','cvstudio','web','webEngine','portfolioStudio','hrvisual'])assert.ok(html.includes("['"+id+"'"),id);
+ assert.ok(p112.includes('#page-cvstudio')&&p112.includes('#cv87-docx'));
+ assert.ok(!/localStorage\.setItem|fetch\s*\(|XMLHttpRequest/.test(p112));
+});
+const p113=html.match(/<script id="canvio-lot113">([\s\S]*?)<\/script>/)?.[1]||'';
+test('P113 Photo & Video uses existing rail groups and keeps Video Engine owner',()=>{
+ assert.ok(p113.includes("shell.register('media')"));
+ for(const id of ['pixelStudio','imageStudio','videoEngine','motionLab','videoStudio','shotcraft','motionCut'])assert.ok(html.includes("['"+id+"'"),id);
+ assert.ok(p113.includes("x[2]==='ẢNH'")&&p113.includes("x[2]==='VIDEO'")&&p113.includes("x[2]==='LEGACY'"));
+ assert.ok(p113.includes('#page-videoEngine')&&p113.includes('CV.go'));
+ assert.ok(!/localStorage\.setItem|fetch\s*\(|XMLHttpRequest/.test(p113));
+});
+const p114=html.match(/<script id="canvio-lot114">([\s\S]*?)<\/script>/)?.[1]||'';
+test('P114 keeps a reversible v16 fallback and responsive accessible Studio navigation',()=>{
+ assert.equal((html.match(/id="canvio-lot114-css"/g)||[]).length,1);
+ assert.ok(p114.includes("KEY='canvio15.nav-mode'")&&p114.includes("mode==='shell'?'v16':'shell'"));
+ assert.ok(p114.includes("root.setAttribute('data-nav',mode)")&&p114.includes('aria-pressed')&&p114.includes('aria-label'));
+ assert.ok(p114.includes("document.querySelector('#side')")&&p114.includes("document.querySelector('#ws-tabs')"));
+ assert.ok(html.includes('safe-area-inset-bottom')&&html.includes('prefers-reduced-motion'));
+});
+const p115=html.match(/<script id="canvio-lot115">([\s\S]*?)<\/script>/)?.[1]||'';
+test('P115 keeps a same-origin optional PWA shell and local pinned design runtimes',()=>{
+ for(const token of ['CANVIOOfflineP115','./canvio-sw.js','https:','serviceWorkerOptional:true'])assert.ok(p115.includes(token),token);
+ const vm=read('assets/vendor/CANVIO-VENDOR-MANIFEST.json');
+ for(const token of ['assets/vendor/konva/konva.min.js','assets/vendor/grapesjs/grapes.min.js','assets/vendor/lenis/lenis.min.js'])assert.ok(vm.includes(token),token);
+ assert.ok(!html.includes("import('https://esm.sh/@ffmpeg"));
+});
+const p122=html.match(/<script id="canvio-lot122">([\s\S]*?)<\/script>/)?.[1]||'';
+test('P122.1 offers explainable local taste checks and opt-in style application',()=>{
+ assert.ok(p122.includes('CVTasteP122')&&p122.includes('function audit('));
+ for(const token of ['typography','color','icons','motion','accessibility','hierarchy','prefers-reduced-motion'])assert.ok(p122.includes(token),token);
+ assert.ok(p122.includes('userAppliedPresetOnly:true')&&!/fetch\s*\(|XMLHttpRequest/.test(p122));
+});
+const p123=html.match(/<script id="canvio-lot123">([\s\S]*?)<\/script>/)?.[1]||'';
+test('P123 provides twelve unique editable layout starters through the existing GrapesJS editor',()=>{
+ assert.ok(p123.includes('CVLayoutsP123')&&p123.includes('ed.addComponents(markup(item))'));
+ for(const name of ['Bento Grid','Command Palette','Canvas Editor','Mega Menu','Sticky Sidebar','Three-Pane Inbox','Kanban Board','Timeline','Zig-Zag','Map + List','Product Page','Chat + Artifact'])assert.ok(p123.includes(name),name);
+ assert.ok(p123.includes('twelveUniqueLayouts')&&!/fetch\s*\(|XMLHttpRequest/.test(p123));
+});
+const p127=html.match(/<script id="canvio-lot127">([\s\S]*?)<\/script>/)?.[1]||'';
+test('P127.1 imports only validated edits to existing unlocked canonical clips with rollback',()=>{
+ for(const token of ['CVEditPlanP127','CANVIO_EDIT_PLAN','clipId','duration','isLocked','rollback','typeof a.commit'])assert.ok(p127.includes(token),token);
+ assert.ok(p127.includes('MAX=500')&&p127.includes('onlyExistingClips:true'));
+ assert.ok(!/fetch\s*\(|XMLHttpRequest|localStorage\.setItem/.test(p127));
+});
 const passed=Object.values(checks).filter(Boolean).length,total=Object.keys(checks).length;
 const report={suite:'CANVIO_23.3.111_INTEGRATED_SOURCE_CONTRACTS',passed,total,checks,modelInferenceExecuted:false,physicalGpuExecuted:false,twoDeviceSyncExecuted:false,p70ReleaseCertified:false};
 fs.writeFileSync(path.join(root,'tests/hosted/integrated-source-contracts.json'),JSON.stringify(report,null,2)+'\n');

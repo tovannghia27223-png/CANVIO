@@ -3391,3 +3391,34 @@ Phạm vi: nhánh ứng viên `canvio/23-3-111-github-runtime-ci`; không thay t
 - Gần đây đọc khóa `canvio15.recent` và tên trang từ `CVWS.spaces`; Sao đọc `CVDesignSystem.state.favorites` cùng `CV.assets.list()`. Không tạo khóa lưu hoặc owner dữ liệu mới.
 - Các phần Bắt đầu nhanh hiện có tiếp tục bên dưới Hub; không đổi `CV.go`, engine, ID trang hoặc schema.
 - Kiểm cục bộ: P110 API smoke 5/5; P109 5/5; integrated source contracts 10/10; P107 round-trip 6/6; P63–P67 18/18; P68–P70 17/17. Chưa chụp Chrome origin thật; không đánh dấu P70 gate đạt.
+
+
+## P111 · Studio Shell — Thiết kế
+- Thêm rail Studio Thiết kế dùng danh sách `CVWS.spaces` đang có; mọi route gọi `CV.go` tới trang/engine gốc. Chỉ shell mới được di chuyển giữa trang, không clone hoặc di chuyển DOM của engine.
+- Rail hiển thị nhãn chữ, `aria-current`, focus bàn phím, layout ngang ở màn hình nhỏ và tôn trọng `prefers-reduced-motion`. Chưa tạo shell cho Website/Ảnh; P112/P113 tiếp tục cùng cấu hình này.
+- Kiểm cục bộ: P111 API smoke 4/4, bản đồ rail khớp toàn bộ workspace Thiết kế và cleanup khi rời studio. Visual Chrome QA chưa chạy.
+
+
+## P112 · Studio Website & hồ sơ
+- Mở rộng `CANVIOStudioShellP111` dùng chung, đăng ký workspace `site` và tạo rail từ toàn bộ `CVWS.spaces.site.p`: Auto Design, CV Studio, Website Builder, Web Engine, Portfolio và HR Visual.
+- `CV.go` và DOM/engine CV Studio giữ nguyên; không thay luồng in A4 hoặc owner xuất CV.
+- Kiểm cục bộ: P112 API smoke 7/7; sáu route map đúng; chuyển sang Web page vẫn hiện rail dùng chung. Hosted/Chrome QA tổng sẽ chạy sau khi các P còn lại hoàn tất.
+
+
+## P113 · Studio Ảnh & video
+- Đăng ký workspace `media` vào rail dùng chung. Các nhóm `ẢNH`, `VIDEO`, `LEGACY` lấy nhãn nhóm trực tiếp từ `CVWS.spaces`; giữ Video Engine/MotionCut và route cũ.
+- Không tạo timeline, media engine hoặc state owner mới. Kiểm cục bộ: P113 API smoke 8/8; 11 trang giữ route; nhóm ảnh/video/legacy hiện đúng.
+
+
+## P114 · Hợp nhất điều hướng và lùi giao diện
+- `data-nav=shell` bật mặc định; ẩn rail/tab v16 khi shell mới đang dùng và giữ chúng nguyên vẹn. Hub có nút chuyển sang v16 và quay lại shell; cài đặt giao diện lưu ở khóa tiện ích `canvio15.nav-mode`, không nằm trong dữ liệu dự án.
+- Rail Studio chuyển sang thanh ngang trên màn hình hẹp, chừa safe area đáy; nhãn, focus, reduced motion và shortcut owner hiện có được giữ.
+- Kiểm cục bộ: P114 API smoke 5/5; bật/tắt v16 và trạng thái ARIA; kiểm CSS rail di động. Chưa có Chrome/screen reader review.
+
+## Cập nhật điều hướng, vendor/offline và Website Engine (2026-11-19)
+
+- P109–P114 hiện có Studio Switcher, Hub và ba rail Studio; điều hướng chuẩn vẫn qua `CVWS.open`, `CV.go` và `CV.palette`. Legacy `#side` / `#ws-tabs` được giữ để fallback; không thêm nguồn route hoặc project store thứ hai.
+- P115 bổ sung `CANVIOOfflineP115`, `canvio-sw.js`, `canvio.webmanifest` và các gói trong `assets/vendor/`. GrapesJS/Konva nạp lười từ origin CANVIO; SHA-256 + registry integrity được ghi trong `assets/vendor/CANVIO-VENDOR-MANIFEST.json`. Service Worker không cache API, model, dữ liệu project hoặc media.
+- P122.1 có `CVTasteP122.audit(html, css)` — heuristic local cho Website Engine. Preset chỉ áp khi người dùng bấm; không tự viết lại trang. P123 có `CVLayoutsP123.items/insert`; chèn layout vào GrapesJS hiện có qua `CVWeb.addComponents`, không tạo editor hoặc store song song.
+- P115 hiện chưa chứng nhận chạy offline hoàn toàn hoặc Chrome thật. GSAP/FFmpeg.wasm không được phát hành trong gói này do giới hạn cấp phép/chưa xác minh đúng build. Website HTML xuất có thể còn tham chiếu Three.js bên ngoài. Xem `CANVIO_PROGRESS_REPORT_2026-11-19.md` và `CANVIO_ROADMAP.md` để biết phạm vi P còn mở.
+- P127.1 có `CVEditPlanP127`: export/validate/apply JSON plan vào timeline `CV.engines.video` đang có; chỉ chỉnh thời gian và trim của clip hiện hữu. Clip/track đang khóa bị từ chối; dữ liệu bên ngoài không được dùng để thêm media hay markup. Các bước đạo diễn đầy đủ còn mở.

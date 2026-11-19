@@ -1,0 +1,25 @@
+'use strict';
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const crypto=require('node:crypto');
+const root=path.resolve(__dirname,'../..');
+const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
+const sw=fs.readFileSync(path.join(root,'canvio-sw.js'),'utf8');
+const manifest=JSON.parse(fs.readFileSync(path.join(root,'canvio.webmanifest'),'utf8'));
+const vendor=JSON.parse(fs.readFileSync(path.join(root,'assets/vendor/CANVIO-VENDOR-MANIFEST.json'),'utf8'));
+const results=[];
+function check(name,fn){try{fn();results.push({name,pass:true})}catch(e){results.push({name,pass:false,error:e.message})}}
+check('PWA manifest has install metadata and local icon',()=>{assert.equal(manifest.display,'standalone');assert.equal(manifest.start_url,'./');assert.ok(fs.existsSync(path.join(root,manifest.icons[0].src.replace(/^\.\//,''))))});
+check('PWA icon is included in app shell cache',()=>assert.ok(sw.includes("'./assets/icons/canvio-icon.svg'")));
+check('Service worker only caches same-origin resources',()=>assert.ok(sw.includes('url.origin!==scopeUrl.origin')));
+check('Service worker excludes API and model paths',()=>{assert.ok(sw.includes("url.pathname.includes('/api/')"));assert.ok(sw.includes("url.pathname.includes('/models/')"))});
+check('Service worker uses network-first navigation with app shell fallback',()=>{assert.ok(sw.includes("req.mode==='navigate'"));assert.ok(sw.includes('cache.match(shellUrl)'))});
+check('Service worker caches only static file extensions at runtime',()=>assert.ok(sw.includes('js|mjs|css|wasm|json|webmanifest|svg|png|webp|woff2?')));
+check('PWA registration is HTTPS/localhost only and optional',()=>{assert.ok(html.includes("locationRef.protocol==='https:'"));assert.ok(html.includes("'./canvio-sw.js'"));assert.ok(html.includes('serviceWorkerOptional:true'))});
+check('GrapesJS and Konva loaders use same-origin pinned assets',()=>{assert.ok(html.includes("assets/vendor/konva/konva.min.js"));assert.ok(html.includes("assets/vendor/grapesjs/grapes.min.js"));assert.ok(!html.includes('https://unpkg.com/konva@10/konva.min.js\');'))});
+check('Portfolio and generated motion use native web APIs without GSAP CDN loaders',()=>{const a=html.indexOf('const MOTJS=');const b=html.indexOf('/* ---------- Phong cách Swiss',a);const mot=html.slice(a,b);assert.ok(mot.includes('IntersectionObserver'));assert.ok(!mot.includes('gsap.min.js'));const c=html.indexOf('function motionRT(o)');const d=html.indexOf('const SWISS=',c);const rt=html.slice(c,d);assert.ok(rt.includes('IntersectionObserver'));assert.ok(!rt.includes('ScrollTrigger'));});
+check('MP4 fallback is honest and uses existing WebM export',()=>{const m=html.match(/async function exportMP4\(\)\{([^}]*)\}/);assert.ok(m);assert.ok(m[1].includes('return exportVideo()'));assert.ok(!html.includes("import('https://esm.sh/@ffmpeg"));assert.ok(html.includes('MP4 chưa được đóng gói offline'))});
+check('Vendor files match the recorded byte counts and SHA-256',()=>{assert.equal(vendor.hashAlgorithm,'SHA-256');for(const component of vendor.components)for(const file of component.files){const abs=path.join(root,file.path);const data=fs.readFileSync(abs);assert.equal(data.length,file.bytes,file.path+' bytes');assert.equal(crypto.createHash('sha256').update(data).digest('hex'),file.sha256,file.path+' hash')}});
+check('Vendor manifest states excluded GSAP/FFmpeg constraints',()=>{assert.ok(vendor.excludedFeatures.GSAP);assert.ok(vendor.excludedFeatures['FFmpeg.wasm'])});
+const failed=results.filter(x=>!x.pass);console.log(JSON.stringify({suite:'P115 offline/vendor source contract',passed:results.length-failed.length,total:results.length,results},null,2));if(failed.length)process.exitCode=1;
