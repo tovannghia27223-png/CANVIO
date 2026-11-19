@@ -469,3 +469,9 @@ Phạm vi: nhánh ứng viên `canvio/23-3-111-github-runtime-ci`; không thay t
 - `CVEditPlanP127` xuất timeline hiện tại hoặc nạp JSON rồi áp mốc `start`, `duration`, `trimIn` cho clip đang có. Kiểm định format/version, ID tồn tại, ID trùng, giới hạn 500 clip, số hữu hạn, thời lượng và clip/track khóa trước khi ghi.
 - Gọi `CV.engines.video.commit()` của timeline canonical; nếu lưu lỗi, khôi phục mốc trước đó. Không thêm timeline, asset, clip mới hoặc gọi AI.
 - Kiểm P127 suite: 13/13. Chưa hỗ trợ b-roll, chữ, SFX, zoom/keyframe, auto-director hoặc quality gate P127.4.
+
+
+### P122.2 · Unslop theo từng lượt (một phần, 2026-11-19)
+- Website Engine có `CVUnslopP1222`: 5 thao tác CSS an toàn (chữ, bố cục, màu, reduced motion, focus bàn phím) để preview tạm trên iframe, áp dụng hoặc bỏ qua, và hoàn tác có kiểm tra editor chưa bị sửa tiếp. Nếu lưu lỗi thì trả CSS về trước lượt.
+- Kiểm `tests/p115/run-p1222-tests.cjs`: 14/14; integrated source contracts: 19/19. Chưa sửa nội dung HTML, emoji/icon, poster/slide; chưa nối Project Vault history nên P122.2 còn partial.
+- Hosted workflow được tách inference ONNX/Whisper dài sang lựa chọn `workflow_dispatch`; push thường vẫn chạy runtime Chrome nhưng không chiếm hàng chục phút cho model inference.

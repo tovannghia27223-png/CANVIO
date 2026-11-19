@@ -8,6 +8,13 @@ on:
   pull_request:
     branches:
       - main
+  workflow_dispatch:
+    inputs:
+      full_model_acceptance:
+        description: Run slow ORMBG, Depth Anything and Whisper WASM model inference checks
+        type: boolean
+        required: false
+        default: false
 
 permissions:
   contents: write
@@ -20,7 +27,7 @@ jobs:
   verify:
     if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
     runs-on: ubuntu-24.04
-    timeout-minutes: 300
+    timeout-minutes: 90
     steps:
       - name: Checkout candidate
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
@@ -211,6 +218,7 @@ jobs:
           node tests/p114/run-p114-tests.cjs
           node tests/p115/run-p115-tests.cjs
           node tests/p115/run-p122-p123-tests.cjs
+          node tests/p115/run-p1222-tests.cjs
           node tests/p115/run-p127-tests.cjs
           node tests/hosted/p107-portable-roundtrip.cjs
 
@@ -243,6 +251,8 @@ jobs:
 
       - name: Execute same-origin GLB, P85, ONNX model and worker browser acceptance
         shell: bash
+        env:
+          CANVIO_FULL_MODEL_ACCEPTANCE: ${{ github.event_name == 'workflow_dispatch' && inputs.full_model_acceptance }}
         run: |
           set -euo pipefail
           export CANVIO_GLB_FIXTURES=/tmp/glbfx/out

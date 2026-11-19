@@ -13,6 +13,7 @@ Work is based on the GitHub `main` checkout and the attached complete roadmap. E
 | P111–P114 | Shared Design/Website/Media Studio rails, responsive default shell and reversible legacy navigation | 4/4, 7/7, 8/8 and 5/5 API smoke checks |
 | P115 | Local pinned GrapesJS, Konva and Lenis packages with license/hash manifest; optional same-origin app-shell Service Worker; offline PWA metadata/icon; reduced-motion website animation now uses browser APIs; MP4 storyboard fallback reports WebM truthfully | P115 source contract 12/12. Offline is partial: model/provider traffic remains on demand; exported 3D sites may still require their external Three.js script; no real Chrome offline session has been run yet. GSAP was not redistributed because of its visual-builder license restriction; FFmpeg.wasm was not bundled pending its LGPL/GPL build compliance. Existing local Three.js r187 remains the in-app viewer runtime. |
 | P122.1 | Local, explainable Website Engine Taste audit (typography, color, icons, motion, access and layout) plus an opt-in, additive style preset | P122/P123 suite 13/13. Heuristic only; it does not certify WCAG contrast or design quality, and currently audits website HTML/CSS rather than every studio. |
+| P122.2 | One-group-at-a-time Website Engine polish with temporary iframe preview, explicit apply/cancel and guarded undo/rollback | P122.2 suite 14/14. CSS-only, local and scoped to GrapesJS; does not yet edit content, synchronize with Project Vault version history, or cover poster/slide studios. |
 | P123 | Twelve editable static layout starters in the existing GrapesJS canvas | P122/P123 suite 13/13. Map/inbox/Kanban/chat are sample UI only; no service or remote map is implied. |
 | P127.1 | Strict JSON Edit Plan import/export for cut timing on existing, unlocked canonical video clips; validates clip IDs, timing, duplicates and save rollback | P127 suite 13/13. Does not yet add B-roll, text/SFX, zoom suggestions, director heuristics or the full quality gate. |
 
@@ -32,10 +33,20 @@ Work is based on the GitHub `main` checkout and the attached complete roadmap. E
 
 - P109–P115 API/source suites: P109 5/5, P110 5/5, P111 4/4, P112 7/7, P113 8/8, P114 5/5, P115 12/12.
 - P122.1/P123: 13/13 fixtures, including insertion into the existing GrapesJS editor API. P127.1: 13/13 fixtures, including locked clip rejection, invalid timing rejection, atomic validation and rollback on save failure.
-- Integrated source contracts: 14/14 before the latest P115/P122/P123 checks were added; the expanded suite is scheduled in GitHub Actions.
+- Integrated source contracts: 18/18; P115 12/12; P122.1/P123 13/13; P122.2 14/14; P127.1 13/13.
 - P107 portable ZIP: 6/6; P63–P67: 18/18; P68–P70: 17/17.
 - `node --check` on the P115 Service Worker and `git diff --check` passed. GitHub-hosted Chrome/offline tests have not yet run for these new changes.
 
 ## Release disposition
 
 This batch is not a completion claim for P115–P145 and does not certify CANVIO 1.0. P70 remains fail-closed with fourteen real-world acceptance gates open. The next release action is one consolidated push after implementation edits, followed by the repository's hosted CI and Pages checks; results must be appended here before calling the batch verified on GitHub.
+
+
+## GitHub publication and hosted retest
+
+- Published the implementation to `main`; current tested head is `0eff0c8fd4dfb8efb9aa4791e1a3ba0b9ae08c11` (test-only follow-ups are included after the implementation commit).
+- GitHub Pages build/deployment for that head completed successfully: run `44508331563`.
+- Fixed two hosted-check issues exposed after publication: (1) the P63–P67 source sync test now normalizes checkout newlines; (2) vendor text assets are stored with exact pinned bytes and `.gitattributes` prevents line-ending rewriting. P115 vendor contract now passes 12/12 on the hosted job.
+- Fixed the hosted browser navigation wait after the initial `load` and `DOMContentLoaded` signals timed out on bundled/third-party page resources. It now proceeds at response commit and waits for the required CANVIO APIs explicitly.
+- As of 2026-11-19 11:27 UTC, hosted workflow run `44508333096` was still executing its same-origin Chromium runtime/model acceptance step; no final result was available. Do not label the browser/model run as passed until GitHub reports a final conclusion. Static/source checks and the Pages deployment were green; actual ONNX, video and physical-device/manual gates remain separate acceptance areas.
+- P122.2 was added after that report snapshot. Workflow runtime was capped at 90 minutes and ONNX/Whisper-heavy inference became an explicit manual `workflow_dispatch` option (default off) to prevent ordinary pushes from consuming long runner time. The previous workflow ref uses `cancel-in-progress` on main pushes, so the next main update supersedes the stalled run.

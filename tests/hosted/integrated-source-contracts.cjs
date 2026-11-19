@@ -109,6 +109,11 @@ test('P122.1 offers explainable local taste checks and opt-in style application'
  for(const token of ['typography','color','icons','motion','accessibility','hierarchy','prefers-reduced-motion'])assert.ok(p122.includes(token),token);
  assert.ok(p122.includes('userAppliedPresetOnly:true')&&!/fetch\s*\(|XMLHttpRequest/.test(p122));
 });
+const p1222=html.match(/<script id="canvio-lot1222">([\s\S]*?)<\/script>/)?.[1]||'';
+test('P122.2 previews one local CSS group and guards apply, cancel and undo',()=>{
+ for(const token of ['CVUnslopP1222','function plan(','function preview(','function apply(','function undo(','editor-changed-review-again','apply-failed-rolled-back','cv1222-preview'])assert.ok(p1222.includes(token),token);
+ assert.ok(!/fetch\s*\(|XMLHttpRequest/.test(p1222));
+});
 const p123=html.match(/<script id="canvio-lot123">([\s\S]*?)<\/script>/)?.[1]||'';
 test('P123 provides twelve unique editable layout starters through the existing GrapesJS editor',()=>{
  assert.ok(p123.includes('CVLayoutsP123')&&p123.includes('ed.addComponents(markup(item))'));

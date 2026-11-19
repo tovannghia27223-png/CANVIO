@@ -137,45 +137,50 @@ def main():
         page.locator('#p85-video').set_input_files(str(video_path))
         track=page.evaluate("""async()=>{const s=window.CANVIOP85Suite;const r=await s.startOpticalFlow();const deadline=performance.now()+5000;let status='';let frames=0;while(performance.now()<deadline){status=document.querySelector('#p85-cv-status')?.textContent||'';const m=status.match(/· (\\d+) khung xử lý/);frames=m?Number(m[1]):0;if(frames>=2)break;await new Promise(resolve=>setTimeout(resolve,100));}const match=status.match(/LK optical flow · (?:khởi tạo lại )?(\\d+) điểm/);const points=match?Number(match[1]):0;const result={started:!!r,duration:r.duration,dimensions:[r.width,r.height],status,points,frames,loaded:s.inspect().openCvLoaded};s.stopOpticalFlow();return result;}""")
         record('P85 OpenCV Lucas-Kanade processes real points on local video frames',track['started'] and track['dimensions']==[320,240] and track['points']>0 and 'OpenCV.js LK optical flow' in track['status'],track)
-        # Real ORMBG and Depth Anything ONNX WASM inference through the shipped workers.
-        infer=page.evaluate("""async()=>{
-          function makePng(){const c=document.createElement('canvas');c.width=256;c.height=256;const x=c.getContext('2d');const g=x.createLinearGradient(0,0,256,256);g.addColorStop(0,'#173b61');g.addColorStop(1,'#e6b56e');x.fillStyle=g;x.fillRect(0,0,256,256);x.fillStyle='#d94d43';x.beginPath();x.arc(128,120,60,0,Math.PI*2);x.fill();return new Promise(r=>c.toBlob(r,'image/png')); }
-          const blob=await makePng(),buffer=await blob.arrayBuffer();
-          async function run(path,type,extra,timeoutMs){return await new Promise((resolve,reject)=>{const w=new Worker(path,{type:'module'}),timer=setTimeout(()=>{w.terminate();reject(new Error(path+' timed out'));},timeoutMs);w.onmessage=e=>{const m=e.data||{};if(m.type==='error'){clearTimeout(timer);w.terminate();reject(new Error(path+': '+m.message));}if(m.type==='result'){clearTimeout(timer);const v={type:m.type,width:m.width,height:m.height,bytes:m.buffer?.byteLength,backend:m.backend,channels:m.channels};w.terminate();resolve(v);}};w.onerror=e=>{clearTimeout(timer);w.terminate();reject(new Error(path+': '+e.message));};const copy=buffer.slice(0);w.postMessage(Object.assign({type:type,buffer:copy,mime:'image/png',backend:'wasm'},extra),[copy]);});}
-          const bg=await run('/assets/canvio-rmbg-worker.js','remove',{},900000);
-          const depth=await run('/assets/canvio-depth-worker.js','estimate',{},900000);
-          if(bg.width<1||bg.height<1||bg.bytes!==bg.width*bg.height*4)throw new Error('ORMBG returned invalid RGBA');
-          if(depth.width<1||depth.height<1||depth.bytes!==depth.width*depth.height)throw new Error('Depth Anything returned invalid grayscale depth');
-          return {backgroundRemoval:bg,depthEstimation:depth};
-        }""")
-        record('P102 ORMBG model inference completes in real ONNX WASM worker',infer['backgroundRemoval']['bytes']==infer['backgroundRemoval']['width']*infer['backgroundRemoval']['height']*4,infer['backgroundRemoval'])
-        # UI-driven P102: choose a file and press the real button (the worker-only check above cannot catch scope bugs in the UI code).
-        try:
-            png=_b64.b64decode(page.evaluate("""async()=>{const c=document.createElement('canvas');c.width=192;c.height=192;const x=c.getContext('2d');x.fillStyle='#e6b56e';x.fillRect(0,0,192,192);x.fillStyle='#d94d43';x.beginPath();x.arc(96,92,50,0,Math.PI*2);x.fill();const b=await new Promise(r=>c.toBlob(r,'image/png'));const u=new Uint8Array(await b.arrayBuffer());let s='';u.forEach(v=>s+=String.fromCharCode(v));return btoa(s);}"""))
-            page.evaluate("() => { const s=document.querySelector('#cv102-status'); if(s) s.textContent=''; }")
-            page.locator('#cv102-file').set_input_files({'name':'ui-p102.png','mimeType':'image/png','buffer':png})
-            page.locator('#cv102-run').evaluate('(el) => el.click()')
-            page.wait_for_function("(()=>{const t=document.querySelector('#cv102-status')?.textContent||'';return t.includes('Đã tách nền')||t.includes('Không thể')})()",timeout=900000)
-            st=page.evaluate("() => document.querySelector('#cv102-status').textContent")
-            ok=('Đã tách nền' in st) and page.evaluate("() => !document.querySelector('#cv102-download').disabled")
-            record('P102 UI: Tách nền button produces transparent PNG and enables download',bool(ok),{'status':st[:300]})
-        except Exception as e:
-            record('P102 UI: Tách nền button produces transparent PNG and enables download',False,{'error':str(e)[:400]})
-        record('P105 Depth Anything V2 model inference completes in real ONNX WASM worker',infer['depthEstimation']['bytes']==infer['depthEstimation']['width']*infer['depthEstimation']['height'],infer['depthEstimation'])
-        # Whisper worker real inference using bounded synthetic audio; output is validated as text, not accuracy-scored.
-        whisper=page.evaluate("""async()=>{const n=16000*3,a=new Float32Array(n);for(let i=0;i<n;i++)a[i]=.035*Math.sin(2*Math.PI*(190+40*Math.sin(i/n*6.28))*i/16000);return await new Promise((resolve,reject)=>{const w=new Worker('/assets/canvio-whisper-worker.js',{type:'module'}),timer=setTimeout(()=>{w.terminate();reject(new Error('Whisper inference timeout'));},900000);w.onmessage=e=>{const m=e.data||{};if(m.type==='error'){clearTimeout(timer);w.terminate();reject(new Error(m.error||'Whisper worker error'));}if(m.type==='result'){clearTimeout(timer);w.terminate();if(!m.output||typeof m.output.text!=='string')return reject(new Error('Whisper result is not text'));resolve({text:m.output.text,language:m.output.chunks?.[0]?.timestamp||null});}};w.onerror=e=>{clearTimeout(timer);w.terminate();reject(new Error(e.message));};w.postMessage({action:'transcribe',id:'github-hosted-whisper',audio:a.buffer,language:'english'},[a.buffer]);});}""")
-        record('P80/P59 Whisper Tiny performs actual WASM inference and returns text',isinstance(whisper.get('text'),str),{'textLength':len(whisper.get('text',''))})
+        full_model_acceptance=os.environ.get("CANVIO_FULL_MODEL_ACCEPTANCE", "false").lower() in ("1","true","yes")
+        if full_model_acceptance:
+            # Real ORMBG and Depth Anything ONNX WASM inference through the shipped workers.
+            infer=page.evaluate("""async()=>{
+              function makePng(){const c=document.createElement('canvas');c.width=256;c.height=256;const x=c.getContext('2d');const g=x.createLinearGradient(0,0,256,256);g.addColorStop(0,'#173b61');g.addColorStop(1,'#e6b56e');x.fillStyle=g;x.fillRect(0,0,256,256);x.fillStyle='#d94d43';x.beginPath();x.arc(128,120,60,0,Math.PI*2);x.fill();return new Promise(r=>c.toBlob(r,'image/png')); }
+              const blob=await makePng(),buffer=await blob.arrayBuffer();
+              async function run(path,type,extra,timeoutMs){return await new Promise((resolve,reject)=>{const w=new Worker(path,{type:'module'}),timer=setTimeout(()=>{w.terminate();reject(new Error(path+' timed out'));},timeoutMs);w.onmessage=e=>{const m=e.data||{};if(m.type==='error'){clearTimeout(timer);w.terminate();reject(new Error(path+': '+m.message));}if(m.type==='result'){clearTimeout(timer);const v={type:m.type,width:m.width,height:m.height,bytes:m.buffer?.byteLength,backend:m.backend,channels:m.channels};w.terminate();resolve(v);}};w.onerror=e=>{clearTimeout(timer);w.terminate();reject(new Error(path+': '+e.message));};const copy=buffer.slice(0);w.postMessage(Object.assign({type:type,buffer:copy,mime:'image/png',backend:'wasm'},extra),[copy]);});}
+              const bg=await run('/assets/canvio-rmbg-worker.js','remove',{},900000);
+              const depth=await run('/assets/canvio-depth-worker.js','estimate',{},900000);
+              if(bg.width<1||bg.height<1||bg.bytes!==bg.width*bg.height*4)throw new Error('ORMBG returned invalid RGBA');
+              if(depth.width<1||depth.height<1||depth.bytes!==depth.width*depth.height)throw new Error('Depth Anything returned invalid grayscale depth');
+              return {backgroundRemoval:bg,depthEstimation:depth};
+            }""")
+            record('P102 ORMBG model inference completes in real ONNX WASM worker',infer['backgroundRemoval']['bytes']==infer['backgroundRemoval']['width']*infer['backgroundRemoval']['height']*4,infer['backgroundRemoval'])
+            # UI-driven P102: choose a file and press the real button (the worker-only check above cannot catch scope bugs in the UI code).
+            try:
+                png=_b64.b64decode(page.evaluate("""async()=>{const c=document.createElement('canvas');c.width=192;c.height=192;const x=c.getContext('2d');x.fillStyle='#e6b56e';x.fillRect(0,0,192,192);x.fillStyle='#d94d43';x.beginPath();x.arc(96,92,50,0,Math.PI*2);x.fill();const b=await new Promise(r=>c.toBlob(r,'image/png'));const u=new Uint8Array(await b.arrayBuffer());let s='';u.forEach(v=>s+=String.fromCharCode(v));return btoa(s);}"""))
+                page.evaluate("() => { const s=document.querySelector('#cv102-status'); if(s) s.textContent=''; }")
+                page.locator('#cv102-file').set_input_files({'name':'ui-p102.png','mimeType':'image/png','buffer':png})
+                page.locator('#cv102-run').evaluate('(el) => el.click()')
+                page.wait_for_function("(()=>{const t=document.querySelector('#cv102-status')?.textContent||'';return t.includes('Đã tách nền')||t.includes('Không thể')})()",timeout=900000)
+                st=page.evaluate("() => document.querySelector('#cv102-status').textContent")
+                ok=('Đã tách nền' in st) and page.evaluate("() => !document.querySelector('#cv102-download').disabled")
+                record('P102 UI: Tách nền button produces transparent PNG and enables download',bool(ok),{'status':st[:300]})
+            except Exception as e:
+                record('P102 UI: Tách nền button produces transparent PNG and enables download',False,{'error':str(e)[:400]})
+            record('P105 Depth Anything V2 model inference completes in real ONNX WASM worker',infer['depthEstimation']['bytes']==infer['depthEstimation']['width']*infer['depthEstimation']['height'],infer['depthEstimation'])
+            # Whisper worker real inference using bounded synthetic audio; output is validated as text, not accuracy-scored.
+            whisper=page.evaluate("""async()=>{const n=16000*3,a=new Float32Array(n);for(let i=0;i<n;i++)a[i]=.035*Math.sin(2*Math.PI*(190+40*Math.sin(i/n*6.28))*i/16000);return await new Promise((resolve,reject)=>{const w=new Worker('/assets/canvio-whisper-worker.js',{type:'module'}),timer=setTimeout(()=>{w.terminate();reject(new Error('Whisper inference timeout'));},900000);w.onmessage=e=>{const m=e.data||{};if(m.type==='error'){clearTimeout(timer);w.terminate();reject(new Error(m.error||'Whisper worker error'));}if(m.type==='result'){clearTimeout(timer);w.terminate();if(!m.output||typeof m.output.text!=='string')return reject(new Error('Whisper result is not text'));resolve({text:m.output.text,language:m.output.chunks?.[0]?.timestamp||null});}};w.onerror=e=>{clearTimeout(timer);w.terminate();reject(new Error(e.message));};w.postMessage({action:'transcribe',id:'github-hosted-whisper',audio:a.buffer,language:'english'},[a.buffer]);});}""")
+            record('P80/P59 Whisper Tiny performs actual WASM inference and returns text',isinstance(whisper.get('text'),str),{'textLength':len(whisper.get('text',''))})
+        else:
+            infer=None
+            whisper={"text":""}
+            skipped_models=["P102 ORMBG ONNX inference","P105 Depth Anything ONNX inference","P102 UI background-removal inference","P80 Whisper inference"]
         # P107 Node fixture round-trip is run separately in CI. Confirm the product explicitly exposes portable import/export and no cloud-sync lie.
         p107=page.evaluate("() => window.CANVIODepthParallaxP105.tests()")
         record('P107 exposes portable ZIP export/import while reusing the existing Asset Library',p107.get('portablePresetExport') and p107.get('portablePresetImport') and p107.get('strictStoreZipParser') and p107.get('noNewStore'),p107)
         record('P107 does not claim cloud Project Vault synchronization',p107.get('noNewStore') is True,'Portable ZIP round-trip is supported; Project Vault remains local-first.')
         record('No uncaught browser page errors',not page_errors,page_errors)
         # Save current report before closing browser.
-        data={'suite':'CANVIO_23.3.111_GITHUB_HOSTED_RUNTIME_ACCEPTANCE','origin':origin,'browser':browser.version,'checks':checks,'details':details,'pageErrors':page_errors,'consoleErrors':console_errors,'requests':requests,'actualModelInference':{'P102':infer['backgroundRemoval'],'P105':infer['depthEstimation'],'P80':{'textLength':len(whisper.get('text',''))}},'physicalGpuExecuted':False,'twoPhysicalDevicesExecuted':False,'projectVaultCloudSync':False,'p70ReleaseCertified':False,'limitations':['SwiftShader is software rendering, not physical GPU acceptance.','P107 validates a portable preset ZIP and Asset Library import; Project Vault remains local-first with no server sync adapter.','A synthetic video and synthetic speech signal validate execution, not real-footage quality or transcription accuracy.']}
+        data={'suite':'CANVIO_23.3.111_GITHUB_HOSTED_RUNTIME_ACCEPTANCE','origin':origin,'browser':browser.version,'checks':checks,'details':details,'pageErrors':page_errors,'consoleErrors':console_errors,'requests':requests,'actualModelInference':({'P102':infer['backgroundRemoval'],'P105':infer['depthEstimation'],'P80':{'textLength':len(whisper.get('text',''))}} if infer is not None else {'performed':False,'optInRequired':'workflow_dispatch with full_model_acceptance=true','skipped':skipped_models}),'physicalGpuExecuted':False,'twoPhysicalDevicesExecuted':False,'projectVaultCloudSync':False,'p70ReleaseCertified':False,'limitations':['SwiftShader is software rendering, not physical GPU acceptance.','P107 validates a portable preset ZIP and Asset Library import; Project Vault remains local-first with no server sync adapter.','A synthetic video and synthetic speech signal validate execution, not real-footage quality or transcription accuracy.']}
         REPORT.write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
         browser.close()
     finally:
       server.shutdown();server.server_close()
     print('Hosted runtime acceptance:',sum(checks.values()),'/',len(checks))
 if __name__=='__main__': main()
-

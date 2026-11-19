@@ -1,7 +1,7 @@
 {
   "suite": "CANVIO_23.3.111_INTEGRATED_SOURCE_CONTRACTS",
-  "passed": 18,
-  "total": 18,
+  "passed": 19,
+  "total": 19,
   "checks": {
     "Integrated P74/P81, P85, P102/P105/P107 and P70 module owners are present exactly once": true,
     "P74/P81 uses pinned local r187 runtime and strict vendor manifest SHA verification": true,
@@ -19,6 +19,7 @@
     "P114 keeps a reversible v16 fallback and responsive accessible Studio navigation": true,
     "P115 keeps a same-origin optional PWA shell and local pinned design runtimes": true,
     "P122.1 offers explainable local taste checks and opt-in style application": true,
+    "P122.2 previews one local CSS group and guards apply, cancel and undo": true,
     "P123 provides twelve unique editable layout starters through the existing GrapesJS editor": true,
     "P127.1 imports only validated edits to existing unlocked canonical clips with rollback": true
   },
