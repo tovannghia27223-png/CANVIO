@@ -204,6 +204,7 @@ jobs:
           set -euo pipefail
           node tests/hosted/integrated-source-contracts.cjs
           node tests/p109/run-p109-tests.cjs
+          node tests/p110/run-p110-tests.cjs
           node tests/hosted/p107-portable-roundtrip.cjs
 
       - name: Install Chromium and Playwright for hosted runtime acceptance

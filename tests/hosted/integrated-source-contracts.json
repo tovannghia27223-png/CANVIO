@@ -1,7 +1,7 @@
 {
   "suite": "CANVIO_23.3.111_INTEGRATED_SOURCE_CONTRACTS",
-  "passed": 9,
-  "total": 9,
+  "passed": 10,
+  "total": 10,
   "checks": {
     "Integrated P74/P81, P85, P102/P105/P107 and P70 module owners are present exactly once": true,
     "P74/P81 uses pinned local r187 runtime and strict vendor manifest SHA verification": true,
@@ -11,7 +11,8 @@
     "P97–P101 local Video Editor UX module is extracted and its workflow boundaries are explicit": true,
     "P70 remains fail-closed and enumerates fourteen manual acceptance gates": true,
     "Candidate index includes the three local worker paths, no external script tags, and P85/Three panels": true,
-    "P109 Studio Switcher preserves CVWS/CV.go ownership, four destinations and accessible keyboard controls": true
+    "P109 Studio Switcher preserves CVWS/CV.go ownership, four destinations and accessible keyboard controls": true,
+    "P110 Hub reuses CVWS recent history, command palette and existing favorites owner": true
   },
   "modelInferenceExecuted": false,
   "physicalGpuExecuted": false,

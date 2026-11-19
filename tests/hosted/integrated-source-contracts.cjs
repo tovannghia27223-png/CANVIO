@@ -58,6 +58,14 @@ test('P109 Studio Switcher preserves CVWS/CV.go ownership, four destinations and
  for(const route of ['home','design','site','media'])assert.ok(p109.includes("id:'"+route+"'"),route);
  assert.ok(!/fetch\s*\(|XMLHttpRequest/.test(p109));
 });
+const p110=html.match(/<script id="canvio-lot110">([\s\S]*?)<\/script>/)?.[1]||'';
+test('P110 Hub reuses CVWS recent history, command palette and existing favorites owner',()=>{
+ assert.equal((html.match(/id="canvio-lot110-css"/g)||[]).length,1);
+ assert.ok(p110.includes('window.CANVIOHubP110'));
+ for(const token of ['canvio15.recent','CV.palette.open()','CVDesignSystem','CV.assets.list','CVWS.spaces','CV.go'])assert.ok(p110.includes(token),token);
+ assert.ok(p110.includes('data-cvh-studio')&&p110.includes('data-cvh-favorites')&&p110.includes('data-cvh-recent'));
+ assert.ok(!/localStorage\.setItem|fetch\s*\(|XMLHttpRequest/.test(p110));
+});
 const passed=Object.values(checks).filter(Boolean).length,total=Object.keys(checks).length;
 const report={suite:'CANVIO_23.3.111_INTEGRATED_SOURCE_CONTRACTS',passed,total,checks,modelInferenceExecuted:false,physicalGpuExecuted:false,twoDeviceSyncExecuted:false,p70ReleaseCertified:false};
 fs.writeFileSync(path.join(root,'tests/hosted/integrated-source-contracts.json'),JSON.stringify(report,null,2)+'\n');

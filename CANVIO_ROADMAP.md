@@ -413,3 +413,10 @@ Phạm vi: nhánh ứng viên `canvio/23-3-111-github-runtime-ci`; không thay t
 - Nút gọi `CVWS.open` cho ba studio và `CV.go('home')` cho Tổng quan; lệnh được thêm vào `CV.palette.build`; Alt+0…3 giữ nguyên ánh xạ gốc trong CVWS. Không tạo nguồn route hay dữ liệu song song.
 - Kiểm: module syntax PASS; P109 API smoke 5/5, 4 tuyến/4 lệnh palette PASS; integrated source contracts 9/9; P107 round-trip 6/6; P68–P70 17/17 PASS; HTML audit 112 scripts, 533 IDs duy nhất, không lỗi cú pháp. Browser origin thật/screenshot và CI hosted chưa chạy.
 - Giới hạn: chưa có Chrome origin thật/screenshot do môi trường không cho bind localhost; chức năng P85 cần runtime bundles riêng theo manifest. Không đánh dấu release gate P70 nào đạt.
+
+
+### P110 · Hub Tổng quan (2026-11-19)
+- Đã thêm `canvio-lot110-css` + `canvio-lot110`: rail Tổng quan/Dự án/Mẫu/Thương hiệu/AI/Xuất/Thêm; ô tìm kiếm gọi lại `CV.palette`; chip Poster/Thuyết trình/CV/Website/Video/Ảnh/In ấn; ba Studio; khối Gần đây và Đã gắn sao.
+- Gần đây đọc `canvio15.recent` và ánh xạ tên qua `CVWS.spaces`; yêu thích đọc owner sẵn có `CVDesignSystem.state.favorites` + `CV.assets.list()`. Không tạo store mới. Bắt đầu nhanh cũ giữ bên dưới.
+- Kiểm cục bộ: P110 smoke 5/5, P109 5/5, integrated contracts 10/10, P107 round-trip 6/6, P63–P67 18/18, P68–P70 17/17; `git diff --check` không có lỗi khoảng trắng.
+- Chưa có ảnh Chrome 1280/390 hoặc browser origin thật; GitHub hosted workflow cho P109 còn chạy khi ghi chú này được tạo. P111–P144 còn lại; 14 cổng P70 vẫn pending, `releaseCertified:false`.

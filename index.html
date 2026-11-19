@@ -27991,5 +27991,78 @@ refresh();
 window.CANVIOStudioSwitcherP109={version:'109.1.0',routes:ROUTES.map(function(r){return r.id;}),open:function(){trigger.click();},go:go,tests:function(){return{singleTrigger:!!document.querySelectorAll('#cv-studio-switch').length,menuItems:menu.querySelectorAll('[data-route]').length===4,publicNavigation:typeof CV.go==='function'&&typeof CVWS.open==='function',shortcutMap:ROUTES.map(function(r){return r.key;}).join(',')==='Alt+0,Alt+1,Alt+2,Alt+3',paletteCommands:!!(CV.palette&&CV.palette.build&&ROUTES.every(function(r){return CV.palette.build().some(function(i){return i.label==='Chuyển sang '+r.label;});}))};}};
 })();
 </script>
+<style id="canvio-lot110-css">
+#cv-hub110{display:grid;grid-template-columns:176px minmax(0,1fr);gap:24px;margin:0 0 24px;padding:20px;background:linear-gradient(145deg,#f8f9ff,#fff 46%,#f1fbff);border:1px solid var(--line,#e7ecf5);border-radius:22px;color:var(--ink,#172033)}
+#cv-hub110 *{box-sizing:border-box}#cv-hub110 .cvh-rail{display:flex;flex-direction:column;gap:6px;padding:4px 8px 4px 0;border-right:1px solid var(--line,#e7ecf5)}
+#cv-hub110 .cvh-brand{font-size:11px;letter-spacing:1.3px;color:var(--ink-3,#748198);font-weight:850;padding:9px 10px 14px}
+#cv-hub110 .cvh-rail button,#cv-hub110 .cvh-more{display:flex;align-items:center;gap:10px;width:100%;min-height:42px;padding:8px 11px;border:0;border-radius:11px;background:transparent;color:var(--ink-2,#43516a);font:650 13px/1.3 system-ui,sans-serif;font-family:inherit;text-align:left;cursor:pointer}
+#cv-hub110 .cvh-rail button:hover,#cv-hub110 .cvh-rail button:focus-visible{background:#eef2ff;color:#4338ca;outline:0}
+#cv-hub110 .cvh-rail i{font-style:normal;font-size:17px;width:20px;text-align:center}
+#cv-hub110 .cvh-main{min-width:0}.cvh-greeting{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin:2px 0 16px}
+#cv-hub110 h1{font-size:clamp(23px,3vw,34px);line-height:1.14;letter-spacing:-.035em;margin:0;color:#152039}
+#cv-hub110 .cvh-sub{margin:7px 0 0;color:var(--ink-3,#71809a);font-size:13px}
+#cv-hub110 .cvh-search{display:flex;align-items:center;gap:12px;width:100%;min-height:58px;margin:18px 0;padding:0 17px;border:1px solid #dfe5f2;border-radius:16px;background:#fff;box-shadow:0 8px 26px rgba(44,61,111,.07);color:#7a869a}
+#cv-hub110 .cvh-search span{font-size:19px}.cvh-search button{flex:1;text-align:left;border:0;background:none;color:#69778d;font:500 14px/1.4 system-ui,sans-serif;font-family:inherit;cursor:text}.cvh-search kbd{font:600 10px system-ui,sans-serif;background:#f4f6fa;border:1px solid #e5e8ef;border-radius:6px;padding:4px 6px}
+#cv-hub110 .cvh-label{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:20px 0 10px;font-size:13px;font-weight:800;color:#28344d}
+#cv-hub110 .cvh-types{display:flex;gap:8px;overflow:auto;padding:2px 1px 8px;scrollbar-width:thin}
+#cv-hub110 .cvh-types button{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:10px 13px;border:1px solid #e5e9f1;border-radius:12px;background:#fff;color:#34415b;font:650 12px system-ui,sans-serif;font-family:inherit;cursor:pointer;transition:transform .16s,border-color .16s}
+#cv-hub110 .cvh-types button:hover{transform:translateY(-2px);border-color:#b8c4fa}
+#cv-hub110 .cvh-studios{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+#cv-hub110 .cvh-studio{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:8px;min-height:142px;padding:17px;border:1px solid #e4e8f2;border-radius:16px;background:#fff;text-align:left;cursor:pointer;transition:transform .18s,box-shadow .18s,border-color .18s}
+#cv-hub110 .cvh-studio:hover{transform:translateY(-3px);border-color:#c4ccff;box-shadow:0 12px 25px rgba(35,50,90,.09)}
+#cv-hub110 .cvh-studio b{font-size:14px;color:#1c2942}.cvh-studio small{font-size:11px;line-height:1.5;color:#748199}
+#cv-hub110 .cvh-studio .cvh-ic{display:grid;place-items:center;width:34px;height:34px;border-radius:11px;background:var(--tone,#eef2ff);color:var(--accent,#5145d8);font-size:17px}
+#cv-hub110 .cvh-lower{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(210px,.8fr);gap:12px;margin-top:13px}
+#cv-hub110 .cvh-panel{min-width:0;padding:14px;border:1px solid #e7eaf2;border-radius:15px;background:rgba(255,255,255,.9)}
+#cv-hub110 .cvh-panel h2{font-size:12px;margin:0 0 9px;color:#34415b}.cvh-panel small{color:#8892a5}
+#cv-hub110 .cvh-list{display:flex;flex-wrap:wrap;gap:7px}
+#cv-hub110 .cvh-list button{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:7px 10px;border:1px solid #e6eaf2;border-radius:9px;background:#fff;color:#46536a;font:600 11px system-ui,sans-serif;font-family:inherit;cursor:pointer}
+#cv-hub110 .cvh-empty{font-size:11px;color:#8791a4;line-height:1.6}
+#cv-hub110 button:focus-visible{outline:2px solid #635bdb;outline-offset:2px}
+:root[data-theme=dark] #cv-hub110{background:linear-gradient(145deg,#161a2a,#1c2435 55%,#132b35);border-color:var(--line-2,#394258)}
+:root[data-theme=dark] #cv-hub110 h1,:root[data-theme=dark] #cv-hub110 .cvh-studio b,:root[data-theme=dark] #cv-hub110 .cvh-label,:root[data-theme=dark] #cv-hub110 .cvh-panel h2{color:var(--ink,#edf1fb)}
+:root[data-theme=dark] #cv-hub110 .cvh-search,:root[data-theme=dark] #cv-hub110 .cvh-studio,:root[data-theme=dark] #cv-hub110 .cvh-panel,:root[data-theme=dark] #cv-hub110 .cvh-types button,:root[data-theme=dark] #cv-hub110 .cvh-list button{background:var(--surface-2,#242b3c);border-color:var(--line-2,#394258);color:var(--ink-2,#d2d8e5)}
+@media(max-width:820px){#cv-hub110{grid-template-columns:1fr;gap:12px;padding:14px}.cvh-rail{border:0!important;border-bottom:1px solid var(--line,#e7ecf5);padding:0 0 9px!important;flex-direction:row!important;overflow:auto}.cvh-brand{display:none}.cvh-rail button{width:auto!important;flex:0 0 auto;min-height:38px!important}.cvh-rail i{width:auto!important}.cvh-greeting{margin-top:0}}
+@media(max-width:560px){#cv-hub110{margin-left:-4px;margin-right:-4px;padding:12px;border-radius:16px}.cvh-studios{grid-template-columns:1fr}.cvh-studio{min-height:100px}.cvh-lower{grid-template-columns:1fr}.cvh-greeting{display:block}.cvh-sub{font-size:12px}}
+@media(prefers-reduced-motion:reduce){#cv-hub110 *,#cv-hub110 *::before,#cv-hub110 *::after{scroll-behavior:auto!important;transition-duration:.01ms!important;animation-duration:.01ms!important}}
+</style>
+<script id="canvio-lot110">
+/* P110 · Hub overview. Reuses CVWS recent history, command palette, studios and Asset Library favorites. */
+(function(){
+'use strict';
+if(!window.CV||!window.CV.go||!window.CVWS||window.CANVIOHubP110)return;
+var $=function(s,r){return(r||document).querySelector(s)},esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
+var studios=[{id:'design',title:'Thiết kế',icon:'▧',tone:'#eef1ff',accent:'#5145d8',desc:'Poster, bố cục, vector, thương hiệu và đa kích thước.'},{id:'site',title:'Website & hồ sơ',icon:'◫',tone:'#e8f7ff',accent:'#1686b5',desc:'CV Studio, website, portfolio và HR Visual.'},{id:'media',title:'Ảnh & video',icon:'◉',tone:'#e8faf3',accent:'#17865e',desc:'Ảnh, video, chuyển động và dựng nội dung.'}];
+var types=[['Poster','▣','poster'],['Thuyết trình','▤','layoutFoundry'],['CV','▤','cvstudio'],['Website','◫','web'],['Video','▶','videoEngine'],['Ảnh','▧','pixelStudio'],['In ấn','⇧','layoutFoundry']];
+function go(id){if(id==='design'||id==='site'||id==='media'){if(window.CANVIOStudioSwitcherP109)return window.CANVIOStudioSwitcherP109.go(id);return CVWS.open(id)}return CV.go(id)}
+function titleFor(id){var spaces=CVWS.spaces||[];for(var i=0;i<spaces.length;i++){var p=spaces[i].p||[];for(var j=0;j<p.length;j++)if(p[j][0]===id)return p[j][1]}return id}
+function recent(){try{var a=JSON.parse(localStorage.getItem('canvio15.recent')||'[]');return(Array.isArray(a)?a:[]).filter(function(id){return typeof id==='string'&&titleFor(id)!==id}).slice(0,5)}catch(e){return[]}}
+function favorites(){try{var ds=window.CVDesignSystem,assets=CV.assets&&CV.assets.list?CV.assets.list():[],ids=ds&&ds.state&&Array.isArray(ds.state.favorites)?ds.state.favorites:[];return ids.map(function(id){return assets.find(function(a){return a.id===id})}).filter(Boolean).slice(0,5)}catch(e){return[]}}
+function draw(){var host=$('#cv-hub110');if(!host)return;
+var r=recent(),f=favorites();
+var recentHtml=r.length?r.map(function(id){return'<button type="button" data-cvh-go="'+esc(id)+'" title="Tiếp tục: '+esc(titleFor(id))+'">'+esc(titleFor(id))+'</button>'}).join(''):'<span class="cvh-empty">Công cụ bạn mở gần đây sẽ xuất hiện tại đây.</span>';
+var favHtml=f.length?f.map(function(a){return'<button type="button" data-cvh-go="designSystem" title="Mở tài nguyên đã gắn sao">★ '+esc(a.name||'Tài nguyên')+'</button>'}).join(''):'<span class="cvh-empty">Tài nguyên đã gắn sao trong Creative System Library sẽ hiển thị tại đây.</span>';
+host.querySelector('[data-cvh-recent]').innerHTML=recentHtml;host.querySelector('[data-cvh-favorites]').innerHTML=favHtml;
+}
+function install(){var home=$('#page-home');if(!home)return false;var host=$('#cv-hub110');if(!host){host=document.createElement('section');host.id='cv-hub110';host.setAttribute('aria-label','Tổng quan CANVIO');
+var typeMarkup=types.map(function(t){return'<button type="button" data-cvh-go="'+t[2]+'"><span aria-hidden="true">'+t[1]+'</span>'+t[0]+'</button>'}).join('');
+var studioMarkup=studios.map(function(s){return'<button type="button" class="cvh-studio" data-cvh-studio="'+s.id+'" style="--tone:'+s.tone+';--accent:'+s.accent+'"><span class="cvh-ic" aria-hidden="true">'+s.icon+'</span><b>'+s.title+'</b><small>'+s.desc+'</small></button>'}).join('');
+host.innerHTML=[
+'<nav class="cvh-rail" aria-label="Điều hướng Tổng quan"><div class="cvh-brand">CANVIO · KHÔNG GIAN SÁNG TẠO</div><button type="button" data-cvh-go="home" aria-current="page"><i>⌂</i>Tổng quan</button><button type="button" data-cvh-go="projects"><i>▤</i>Dự án</button><button type="button" data-cvh-go="templates"><i>▦</i>Mẫu</button><button type="button" data-cvh-go="brand"><i>◉</i>Thương hiệu</button><button type="button" data-cvh-go="studio"><i>✦</i>AI Studio</button><button type="button" data-cvh-go="export"><i>⇧</i>Xuất bản</button><button type="button" data-cvh-go="settings"><i>＋</i>Thêm công cụ</button></nav>',
+'<div class="cvh-main"><div class="cvh-greeting"><div><h1>Bạn muốn sáng tạo điều gì?</h1><p class="cvh-sub">Bắt đầu với một công cụ, rồi tiếp tục liền mạch trong studio phù hợp.</p></div></div>',
+'<div class="cvh-search"><span aria-hidden="true">⌕</span><button type="button" data-cvh-search>Tìm công cụ, mẫu và lệnh…</button><kbd>Ctrl K</kbd></div>',
+'<div class="cvh-label"><span>Chọn loại nội dung</span><small>Mở công cụ phù hợp</small></div><div class="cvh-types">'+typeMarkup+'</div>',
+'<div class="cvh-label"><span>Studio của bạn</span><small>Ba không gian, cùng dự án</small></div><div class="cvh-studios">'+studioMarkup+'</div>',
+'<div class="cvh-lower"><section class="cvh-panel"><h2>Tiếp tục thiết kế <span>· Gần đây</span></h2><div class="cvh-list" data-cvh-recent></div></section><section class="cvh-panel"><h2>Đã gắn sao</h2><div class="cvh-list" data-cvh-favorites></div></section></div></div>'
+].join('');
+var hero=$('#cvHero',home);if(hero)home.insertBefore(host,hero);else home.insertBefore(host,home.firstChild);
+host.addEventListener('click',function(e){var search=e.target.closest('[data-cvh-search]');if(search){e.preventDefault();CV.palette.open();return}var studio=e.target.closest('[data-cvh-studio]');if(studio){go(studio.dataset.cvhStudio);return}var route=e.target.closest('[data-cvh-go]');if(route)go(route.dataset.cvhGo)});
+}
+ return true;
+ }
+draw();if(install()){draw();var original=CV.go;CV.go=function(id){var out=original.apply(this,arguments);if(id==='home')setTimeout(draw,0);return out};if(CV.palette&&typeof CV.palette.build==='function'){var build=CV.palette.build;CV.palette.build=function(){var a=build.apply(this,arguments)||[];if(!a.some(function(x){return x.label==='Tổng quan CANVIO'}))a.unshift({label:'Tổng quan CANVIO',hint:'Hub',icon:'⌂',run:function(){CV.go('home')}});return a}}}
+window.CANVIOHubP110={version:'110.1.0',recent:recent,favorites:favorites,openSearch:function(){CV.palette.open()},go:go,tests:function(){var h=$('#cv-hub110');return{singleHub:!!h&&document.querySelectorAll('#cv-hub110').length===1,search:!!(h&&h.querySelector('[data-cvh-search]')),contentTypes:!!(h&&h.querySelectorAll('.cvh-types [data-cvh-go]').length===7),threeStudios:!!(h&&h.querySelectorAll('[data-cvh-studio]').length===3),recentUsesOwner:recent.toString().indexOf('canvio15.recent')>-1}}};
+})();
+</script>
 </body>
 </html>

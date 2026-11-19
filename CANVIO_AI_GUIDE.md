@@ -3384,3 +3384,10 @@ Phạm vi: nhánh ứng viên `canvio/23-3-111-github-runtime-ci`; không thay t
 - Giữ `CVWS` (5 workspaces), `CVWS.state.last`, `CVWS.open()` và `CV.go()` làm chủ sở hữu duy nhất của điều hướng. P109 chỉ gộp bề mặt chuyển nhanh thành Tổng quan + ba studio; Projects/AI tiếp tục đi qua CVWS, command palette và trang hiện hữu.
 - `canvio-lot109-css` + `canvio-lot109`: nút topbar, menu accessible, `CV.palette.build` commands; không thêm store, route owner, timeline hoặc request. `CANVIOStudioSwitcherP109.tests()` là smoke API mới.
 - P110–P114 chưa tích hợp: Hub mới, shell/rail theo studio và cờ lùi về v16 vẫn là bước tiếp theo.
+
+
+## P110 · Hub Tổng quan
+- Thêm Hub ở đầu trang `#page-home` với rail riêng, tìm kiếm mở `CV.palette`, bảy lối tắt loại nội dung, ba thẻ Studio, Gần đây và Đã gắn sao.
+- Gần đây đọc khóa `canvio15.recent` và tên trang từ `CVWS.spaces`; Sao đọc `CVDesignSystem.state.favorites` cùng `CV.assets.list()`. Không tạo khóa lưu hoặc owner dữ liệu mới.
+- Các phần Bắt đầu nhanh hiện có tiếp tục bên dưới Hub; không đổi `CV.go`, engine, ID trang hoặc schema.
+- Kiểm cục bộ: P110 API smoke 5/5; P109 5/5; integrated source contracts 10/10; P107 round-trip 6/6; P63–P67 18/18; P68–P70 17/17. Chưa chụp Chrome origin thật; không đánh dấu P70 gate đạt.
