@@ -182,3 +182,11 @@ The GitHub-hosted Node 24 runner provisions same-origin Three.js r187 and P85 ru
 - P127.7 still needs hands-on review with real subtitle/music projects and listening tests. P70 release certification remains false; fourteen manual gates are pending. No cloud/two-device sync, physical GPU or production certification is claimed.
 
 Workflow: https://github.com/tovannghia27223-png/CANVIO/actions/runs/44747203664
+
+
+## Documentation refresh verification — workflow #137
+
+- Workflow #137 completed SUCCESS after the Guide, Roadmap, QA and acceptance documentation were updated. The source/index candidate remains the same P127.7-integrated build already validated by workflow #136; this second run re-executed the hosted candidate pipeline and regenerated the manifest/package.
+- Keep P70 release certification false and all fourteen manual gates pending until real-world evidence is reviewed.
+
+Workflow: https://github.com/tovannghia27223-png/CANVIO/actions/runs/44747930420
