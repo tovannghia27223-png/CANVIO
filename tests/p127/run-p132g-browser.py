@@ -17,6 +17,7 @@ with sync_playwright() as p:
     page.goto(url, wait_until='commit', timeout=60000)
     page.wait_for_function('!!(window.CV && CV.go && window.CVGifP132)', timeout=90000, polling=500)
     page.evaluate("CV.go('videoEngine')"); page.wait_for_timeout(1500)
+    expected_height = page.evaluate("Math.max(1, Math.round(200 * document.getElementById('vtCanvas').height / document.getElementById('vtCanvas').width))")
     c['buttonMounted'] = page.evaluate("!!document.getElementById('cv132-gif')")
     page.evaluate("var s=CV.engines.video._state();s.duration=2;CV.engines.video.commit&&0"); 
     page.fill('#cv132-fps', '5'); page.fill('#cv132-w', '200')
@@ -78,9 +79,9 @@ with sync_playwright() as p:
     c['webpRiffSizeValid'] = riff_size_ok
     c['webpChunkStructureValid'] = structure_ok and pos == len(wdata)
     c['webpAnimationFlag'] = bool(vp8x and (vp8x['flags'] & 2)) and has_anim
-    c['webpCanvasDimensions'] = bool(vp8x and vp8x['width'] == 200 and vp8x['height'] == 200)
+    c['webpCanvasDimensions'] = bool(vp8x and vp8x['width'] == 200 and vp8x['height'] == expected_height)
     c['webpFrameCount'] = anmf == 10 and len(frame_info) == 10
-    c['webpFramesHaveValidImagePayload'] = len(frame_info) == 10 and all(f['hasImage'] and f['width'] == 200 and f['height'] == 200 and f['durationMs'] > 0 for f in frame_info)
+    c['webpFramesHaveValidImagePayload'] = len(frame_info) == 10 and all(f['hasImage'] and f['width'] == 200 and f['height'] == expected_height and f['durationMs'] > 0 for f in frame_info)
     import base64
     encoded = base64.b64encode(wdata).decode('ascii')
     decoded = page.evaluate("""async b64 => { try { const raw=Uint8Array.from(atob(b64),c=>c.charCodeAt(0)); const bmp=await createImageBitmap(new Blob([raw],{type:'image/webp'})); const r={ok:true,width:bmp.width,height:bmp.height}; bmp.close(); return r; } catch(e) { return {ok:false,error:String(e)}; } }""", encoded)
