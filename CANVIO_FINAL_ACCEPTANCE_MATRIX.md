@@ -41,3 +41,7 @@
 
 
 | P145.10 local-vault SHA-256 | Manual read-only byte-level Web Crypto scan on `CV.assets.list()`; session-only hashes; 40 rows / 25 MiB per file / 64 MiB aggregate | Original PR #37 hosted workflow passed; rebased current-main rerun pending. Skipped items remain unverified; no cloud sync |
+
+
+
+| P136.4 local SVG pattern fills | Six first-party SVG patterns (dots, diagonal, grid, cross, wave, checker), per-colour-layer local definitions; Node parity and Chromium preview/download checks | Candidate pending hosted CI; no brush engine, gradient mesh, topology editing, photo-quality or production-art review implied |
