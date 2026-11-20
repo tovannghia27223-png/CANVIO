@@ -57,6 +57,8 @@ with sync_playwright() as p:
   page.locator('#cv145910-list button').nth(2).evaluate('(el)=>el.click()')
  detail=page.locator('#cv145910-detail').inner_text()
  checks['selected asset detail lists missing license and session SHA']=('chưa khai báo' in detail or 'unknown' in detail) and 'SHA-256 tạm tính trong phiên' in detail and len(detail.split('SHA-256'))>1
+ hash_value=detail.split('Hash: ',1)[1].split(' ',1)[0]
+ checks['computed SHA-256 is 64 lowercase hex chars']=len(hash_value)==64 and all(c in '0123456789abcdef' for c in hash_value.lower())
  checks['SHA-256 duplicate detection uses local bytes']=any('trùng nội dung' in t for t in item_texts)
  checks['transient hashes do not mutate Asset Library records']=page.evaluate('window.__cv145910Assets.every(x=>!Object.prototype.hasOwnProperty.call(x,"hash"))')
  checks['module is read-only']=page.locator('#cv145910-card button').count()==4 and page.locator('#cv145910-card input[type=file]').count()==0
