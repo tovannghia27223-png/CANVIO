@@ -38,3 +38,6 @@ P125.4 merged in PR #32 and P145.6–P145.10 merged in PR #33. Hosted verificati
 
 
 | P132.3 animated WebP | Browser-native WebP frame encode + RIFF animation mux; browser test checks RIFF chunks, frame count/payload/dimensions and Chromium decode | Corrected hosted workflow pending; run #300 failed its WebP test assertions. Real-footage quality, alpha/profile, mobile and long-file performance remain manual |
+
+
+| P132.3 latest run #303 | RIFF layout, 10 ANMF/VP8 payloads, dimensions/timing and Chromium decode 200×113 passed | Only stale hard-coded height assertion failed; corrected to editor-derived expected height; hosted rerun pending |
