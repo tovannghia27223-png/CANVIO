@@ -316,3 +316,11 @@ The candidate workflow runs standalone/embedded source parity and API tests for 
 - WebP checks: download/status/button reset, RIFF+WEBP signature and declared RIFF size, chunk walk and padding, VP8X animation flag/canvas dimensions, ANIM, exactly 10 ANMF frames, each with VP8 payload, 200×113 per-frame dimensions, 200 ms delay and Chromium `createImageBitmap` decode all true. Browser report ended with `pageErrors: []` and `failed: []`.
 - GIF and APNG controls, signatures and decoding also passed. Workflow-wide HTML/JS audit, P47–P70 regressions, integrated source contracts/P107 ZIP round-trip, vendor SHA verification, compressed GLB fixtures and same-origin P85/ONNX/worker browser acceptance passed.
 - Hosted artifact `CANVIO-23.3.111-GITHUB-RUNTIME-VERIFIED-304` uploaded (21,573,301 bytes). Human acceptance still needed for actual footage, alpha/color profile, mobile browser support and long-form memory/performance; P70 remains uncertified.
+
+
+## P145.10 — local Asset Library SHA-256 (rebased candidate; 2026-11-21)
+
+- Confirms native local owner `CV.assets.list()` / `CV.assets.addBlob()` and existing `LS('assets')` persistence; earlier wording that the provider itself was missing is corrected.
+- Adds manual byte-level SHA-256 for base64 data URLs. Results are session-only and passed into the shared quality gate; no asset mutation or metadata write.
+- Bounded at 40 rows, 25 MiB per file and 64 MiB aggregate. Unsupported or over-budget items remain unverified. No network/upload/background scan.
+- Original PR #37 run #305 (`44811157725`) passed full hosted runtime and Chromium acceptance. Rebased current-main run pending.
