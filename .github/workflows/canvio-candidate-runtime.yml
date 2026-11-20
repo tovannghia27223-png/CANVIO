@@ -10,6 +10,7 @@ on:
       - work/p136-bezier-smoothing
       - work/p136-single-line-stroke
       - work/p125-2-scroll-storyboard
+      - work/p125-4-rebased-20261121
       - work/p132-apng
       - main
   pull_request:
@@ -448,6 +449,7 @@ jobs:
           node tests/p127/run-p127t-tests.cjs
           node tests/p127/run-p125f-tests.cjs
           node tests/p127/run-p1252-tests.cjs
+          node tests/p127/run-p1254-tests.cjs
           node tests/p127/run-p145c-tests.cjs
           node tests/p145/run-p1455-tests.cjs
           node tests/p127/run-p132g-tests.cjs
@@ -499,6 +501,7 @@ jobs:
           /tmp/canvio-playwright/bin/python tests/p131/run-p131-app-smoke.py
           /tmp/canvio-playwright/bin/python tests/p127/run-p125f-browser.py
           /tmp/canvio-playwright/bin/python tests/p127/run-p1252-browser.py
+          /tmp/canvio-playwright/bin/python tests/p127/run-p1254-browser.py
           /tmp/canvio-playwright/bin/python tests/p127/run-p1272-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p145-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p1455-browser.py
@@ -558,6 +561,7 @@ jobs:
           | P80/P102/P105 inference | Hosted model inference reports | Synthetic inputs prove pipeline execution only, not model accuracy |
           | P106 rendering | Chromium WebGL/SwiftShader | Software GPU only; physical GPU and target-device performance remain open |
           | P107 portability | ZIP CRC, independent Asset Library import and rollback tests | No cloud Project Vault sync or physical two-device acceptance claimed |
+          | P125.4 split-asset storyboard ZIP | Node package/path/manifest checks + hosted Chromium ZIP integrity, image signatures and offline final-frame decode | Hosted synthetic WebM/desktop browser only; no audio, touch/mobile and long real-media performance remain manual |
           | P145.2 shader transitions/FX | Standalone/embedded parity + hosted Chromium render endpoints and PNG smoke | SwiftShader/software rendering only; physical 60 fps and real-footage acceptance remain open; optional MP4 is video-only |
           | P70 Stable release | Fourteen fail-closed manual gates | releaseCertified:false until every gate has reviewed production evidence |
 
@@ -593,6 +597,7 @@ jobs:
           - Corrected P80/P102/P105 workers to import the local Transformers.js runtime and preserve the application message contracts.
           - Added portable P107 parser/import/rollback tests and explicit documentation that Project Vault cloud sync is not implemented.
           - Added P145.2 local WebGL shader transitions/effects, Canvas2D fallback, PNG export and an optional P79-muxed video-only transition MP4 path with hosted Chromium coverage.
+          - Added P125.4 optional split-asset storyboard ZIP alongside the original self-contained HTML export; hosted Chromium verifies ZIP integrity and final relative-frame decoding offline. Audio and mobile/real-media acceptance remain open.
           - Stable release remains fail-closed at P70; no physical GPU or two-device certification is implied.
           PATCH
           if ! grep -q '## P145.2 — Shader transitions and effects' CANVIO_AI_GUIDE.md; then

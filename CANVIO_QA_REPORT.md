@@ -255,3 +255,12 @@ The candidate workflow runs standalone/embedded source parity and API tests for 
 - Node checks cover subtitle cue filtering, pause-boundary analysis, valid/invalid clip selection and bounded motion/keyframe output.
 - Hosted Chromium test imports a generated 5-second WebM with deterministic 440 Hz audio bursts separated by silence, seeds caption cues, verifies the pause report, applies/persists punch-in keyframes, runs the canonical AutoCut route and checks Undo availability.
 - The synthetic audio fixture is a deterministic UI/code-path test only. Whisper transcription accuracy, real speech, face tracking, multi-speaker editorial decisions and human review on project footage remain manual acceptance.
+
+
+## P125.4 — Split-asset ZIP acceptance (rebased to current main)
+
+- Added a dedicated Node suite for P125.1 source/embedded parity, allow-listed relative image paths, unsafe-path fallback, manifest creation and separate binary image entries.
+- Added hosted Chromium acceptance using a generated synthetic WebM. The test exports ZIP, checks ZIP integrity and image signatures, extracts the package and opens the HTML via file://, scrolls to the last frame and waits for its relative image to decode (naturalWidth > 0).
+- The current 1–50 MB control is explicitly documented as an encoded-frame data budget. Final ZIP bytes are reported separately; manifest records frame bytes and package structure.
+- Hosted runtime run #271 (2026-11-20, GitHub Actions run 44798663309) passed the P125.4 Node package suite (14 assertions) and Chromium acceptance. Browser checks passed ZIP integrity, manifest/README presence, separate image files and image signatures, relative frame references, final-frame scroll and final relative-image decode; no page errors were reported. This later run supersedes the initial #255 confirmation. The synthetic WebM/desktop browser scope does not replace real-media/mobile acceptance.
+- Manual acceptance remains for real user footage, audio requirements, mobile/touch controls and large-file memory/performance.

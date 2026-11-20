@@ -675,3 +675,12 @@ Hosted verification after the ffmpeg repair is complete:
 - Provides caption/pause analysis, bounded punch-in keyframes and an AutoCut action delegated to the existing silence-cut implementation.
 - Hosted tests cover a generated WebM fixture with deterministic audio bursts, cue markers, pause display, keyframe persistence, AutoCut and Undo. This validates the code path only; it does not certify Whisper transcription, real speech quality, face tracking or editorial quality.
 - Manual validation on real talking-head footage remains required.
+
+
+## 23.3.111 continuation — P125.4 Split-asset offline storyboard ZIP (2026-11-21)
+
+- Rebased the P125.4 implementation onto the current main baseline rather than merging its stale conflicting branch. The existing single-file storyboard export remains unchanged; ZIP is a second export choice.
+- ZIP contains offline index.html, manifest, README and separate relative frame images. Only generated local frame names are accepted; invalid paths fall back to embedded local data.
+- Reuses P125.1 frame extraction, P125.2 caption/editor controls and the existing CVZip.build owner. No duplicate project state, server or cloud-sync dependency.
+- Added Node and hosted Chromium + Python acceptance for parity, ZIP integrity, frame signatures and offline open/scroll. Hosted runtime run #271 (2026-11-20) passed the P125.4 Node package suite (14 assertions) and Chromium ZIP/offline checks, including decode of the last relative image (naturalWidth > 0); it supersedes earlier run #255.
+- Still open: audio, real user-media review, touch/mobile editor acceptance and memory/performance on long high-resolution source video.
