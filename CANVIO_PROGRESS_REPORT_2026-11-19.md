@@ -93,3 +93,12 @@ This batch is not a completion claim for P115–P145 and does not certify CANVIO
 - P136.4 merged through PR #39 at `1eb4129f4252b31c41f819d23f1cd9dd02948d68`. Hosted run #312 (`44813838108`) passed 33 steps; full P47–P70 regression, source audits, P107 round-trip, Chromium/GLB/P85/ONNX acceptance passed. Artifact `CANVIO-23.3.111-GITHUB-RUNTIME-VERIFIED-312`, 21,583,636 bytes.
 - P131.3 extends the P131 security hub with safe local HTML import into the existing Website Engine. 5 MiB cap, allow-list sanitization, no external image fetch, canonical add/save path, explicit confirmation. Candidate PR #41 awaits CI.
 - Automated CI does not close the fourteen P70 real-world acceptance gates. No production certification, physical GPU, full model-inference, cross-device/cloud sync, real-media quality, or accessibility sign-off is implied.
+
+
+
+## 2026-11-21 continuation — P131.3 fully embedded and accepted
+
+- P131.3 merged via PR #41 at `1ac185d7aea7b14ad13a0517f51e72292cc42162`; hosted workflow #315 (`44816184861`) success. Browser checks 31/31, zero page errors; app smoke 21 passed across 48 pages; full candidate/runtime workflow success.
+- Merge-triggered build commit `4fdaae3219cde7ebc6c4c9358bf40b3d57812f16` updated main `index.html` and Manifest. Verified main index blob includes P131.3 import API v131.3.0 and palette entry. Manifest index SHA-256 `e419b50f1bd459201ad19d94f6a2cd5ea08c03b539be3c0a3b7899b8b925a7ac`, 5,358,886 bytes, 237 files.
+- Artifact #315: `CANVIO-23.3.111-GITHUB-RUNTIME-VERIFIED-315`, 21,590,752 bytes; SHA-256 `12305d7990ed16b93d6d653cd3fd1d662a3cd90144b9800773e560a5a55fa06c`.
+- P70 remains not production-certified: fourteen manual gates pending; no physical-GPU, complete ONNX/Whisper inference, real-media, production-origin IndexedDB, cloud/two-device sync or final accessibility sign-off is claimed.
