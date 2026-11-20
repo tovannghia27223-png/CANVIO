@@ -200,3 +200,11 @@ The candidate is built and verified by the hosted runtime workflow. Runtime vend
 - Main candidate build: `23.3.111-github-runtime-ci`, commit `782aa562f5341172330d114ccb21a3269efbbb37`. Mainline workflow #282 completed successfully.
 - Do not represent Asset Search/Quality Gate as full live-vault coverage until the canonical provider is connected and its inventory/hash behavior is verified. Keep the four P145 tools described as local/offline panels, not cloud services.
 - Release remains blocked: `releaseCertified:false`, `BLOCKED_PENDING_REAL_WORLD_ACCEPTANCE`, fourteen P70 manual gates open.
+
+
+## P132.3 — Animated WebP candidate handoff (2026-11-21)
+
+- Module owner: `canvio-p132-gif.js` / `window.CVGifP132` version 132.3.0; adds “Xuất WebP động” beside the existing GIF/APNG actions in Video Engine.
+- Native browser WebP encoding plus local RIFF frame mux; no paid dependency or remote request. Caps: 180 frames, 640 px maximum side, 64 MiB raw-frame and output budgets. Output is video-only (no audio).
+- Corrective test checks RIFF chunks, ten image-bearing frames, canvas-derived dimensions and Chromium native decode. The first run #300's browser verification failed because of a test parser/ffprobe assertion; the corrected hosted run is pending. Do not merge before it passes.
+- Human acceptance still needed for real footage, alpha/color profile, target mobile browsers and long-timeline memory/performance.
