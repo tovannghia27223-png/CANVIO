@@ -45,3 +45,9 @@
 
 
 | P136.4 local SVG pattern fills | Six first-party SVG patterns (dots, diagonal, grid, cross, wave, checker), per-colour-layer local definitions; Node parity and Chromium preview/download checks | Candidate pending hosted CI; no brush engine, gradient mesh, topology editing, photo-quality or production-art review implied |
+
+
+
+ 
+| P136.4 SVG pattern fills | Six local SVG patterns; full hosted workflow #312 PASS (PR #39 merged; Node + Chromium + whole-candidate integration checks) | Manual production artwork/design review remains; no brush authoring, gradient mesh, topology editor or physical GPU certification |
+| P131.3 safe HTML import | 5 MiB local HTML import, existing P131 allow-list sanitizer, no external image/source fetch, canonical Website Engine add/save path; Node and Chromium coverage added | Candidate PR #40; hosted verification pending. Imported CSS/style tags, scripts, forms, iframes and remote images are deliberately not imported |
