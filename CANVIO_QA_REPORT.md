@@ -288,3 +288,11 @@ The candidate workflow runs standalone/embedded source parity and API tests for 
 - Node results: P145.6 9/9, P145.7 7/7, P145.8 11/11, P145.9/.10 8/8.
 - Chromium results: P145.6 icon preview/search/download/sprite/contact sheet; P145.7 system typography presets, live controls, CSS export and real mouse interaction; P145.8 eight illustration cards/theme/search/vector exports; P145.9/.10 read-only search, provider fixture, license/hash gate and filter behavior. All four suites reported `failed: []`, `pageErrors: []`.
 - Same-origin GLB Draco/Meshopt/KTX2, P85 runtime and synthetic P80 Whisper/P102 ORMBG/P105 Depth Anything ONNX worker inference completed successfully. This validates execution plumbing on synthetic data and CI renderer only, not production model accuracy or physical GPU/performance.
+
+
+## Main-branch consolidation — PR #32 and #33 (2026-11-21)
+
+- PR #32 merged P125.4 to `main` (merge commit `0f485fcfbdcc19cc19acf09320ee90eaefd46e17`). Hosted run #271 (`44798663309`) passed 14 Node assertions and the offline Chromium ZIP round-trip, including the final relative-image decode check.
+- PR #33 merged P145.6–P145.10 to `main` (merge commit `4f56fcb002e4ef9f10c08b7fc920c50457ecc6e1`). Hosted run #298 (`44800999215`) passed P145.6 9/9, P145.7 7/7, P145.8 11/11, P145.9/.10 8/8; all four Chromium suites had `failed: []` and `pageErrors: []`.
+- Current post-merge main build commit: `782aa562f5341172330d114ccb21a3269efbbb37`. Mainline workflow #282 (`44799501341`) concluded success. The candidate-branch commit step was skipped because the run was PR-triggered; it is not counted as a failure.
+- Remaining non-automated scope: canonical live Asset Vault provider coverage/hash verification, real user media, mobile/touch, OS font/print review and the fourteen P70 production acceptance gates. None is certified by synthetic CI fixtures.
