@@ -38,3 +38,6 @@
 
 
 | P132.3 animated WebP | Hosted run #304 PASS; 10 image-bearing ANMF/VP8 frames, 200×113, 200 ms, Chromium native decode; GIF/APNG and full candidate workflow also PASS | Manual real footage, alpha/color profile, touch/mobile and long-animation memory/performance remain open; no audio |
+
+
+| P145.10 local-vault SHA-256 | Manual read-only byte-level Web Crypto scan on `CV.assets.list()`; session-only hashes; 40 rows / 25 MiB per file / 64 MiB aggregate | Original PR #37 hosted workflow passed; rebased current-main rerun pending. Skipped items remain unverified; no cloud sync |
