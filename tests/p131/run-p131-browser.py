@@ -103,7 +103,7 @@ with sync_playwright() as p:
     log('P131.3 prepare and import malicious HTML fixture')
     payload = '<h2>Chào CANVIO</h2><script>window.__importX=1</script><form><input name="x"></form><iframe src="https://evil.test"></iframe><img src="https://tracker.test/pixel.png" onerror="window.__importX=2" alt="remote"><img src="data:image/png;base64,AAAA" alt="local"><a href="https://example.test">Liên kết</a><p style="background:url(https://evil.test/x)">Nội dung</p>'
     prepared = page.evaluate('(s)=>CANVIOSecurity.prepareHtmlImport(s)', payload)
-    c['safeHtmlPreparationRemovesActiveElements'] = not re.search(r'<script|<form|<input|<iframe|onerror|evil\\.test|tracker\\.test', prepared['html'], re.I)
+    c['safeHtmlPreparationRemovesActiveElements'] = not re.search(r'<script|<form|<input|<iframe|onerror|evil\.test|tracker\.test', prepared['html'], re.I)
     c['safeHtmlKeepsVietnameseAndExternalLinks'] = 'Chào CANVIO' in prepared['html'] and 'https://example.test' in prepared['html']
     c['safeHtmlKeepsLocalRasterAndDropsRemoteImageSource'] = 'data:image/png;base64,AAAA' in prepared['html'] and 'tracker.test' not in prepared['html'] and prepared['remoteSourcesRemoved'] == 1
     c['safeHtmlReportsRemovedContent'] = prepared['removed']['elements'] > 0 and prepared['removed']['attrs'] > 0
