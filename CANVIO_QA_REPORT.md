@@ -264,3 +264,14 @@ The candidate workflow runs standalone/embedded source parity and API tests for 
 - The current 1–50 MB control is explicitly documented as an encoded-frame data budget. Final ZIP bytes are reported separately; manifest records frame bytes and package structure.
 - Hosted runtime run #271 (2026-11-20, GitHub Actions run 44798663309) passed the P125.4 Node package suite (14 assertions) and Chromium acceptance. Browser checks passed ZIP integrity, manifest/README presence, separate image files and image signatures, relative frame references, final-frame scroll and final relative-image decode; no page errors were reported. This later run supersedes the initial #255 confirmation. The synthetic WebM/desktop browser scope does not replace real-media/mobile acceptance.
 - Manual acceptance remains for real user footage, audio requirements, mobile/touch controls and large-file memory/performance.
+
+
+## P145.6–P145.10 — Asset Library candidate test plan (rebased to current main)
+
+- P145.6 Node/browser tests: 25 icon catalogue and unique IDs, category/search, preview, safe standalone SVG, sprite and contact sheet; verifies no remote assets and no uncaught page errors.
+- P145.7 Node/browser tests: six presets, numeric bounds, local font support reporting, CSS output without remote fonts, live preview and physical Playwright mouse clicks on Apply/preset controls. The card is intentionally excluded from the global `.card` tilt observer.
+- P145.8 Node/browser tests: eight illustrations, four categories/themes, SVG palette resolution, category/search, preview, individual export, sprite and contact-sheet output.
+- P145.9/.10 Node/browser tests: shared license/source/size/hash gate, duplicate hash behavior, search/type/status filters, read-only behavior and local provider fixture.
+- Root-cause history: run #263 failed P145.7 because the global MutationObserver tagged every `.card` under `#page-assets` with `data-tilt`; pointer movement rotated the typography panel and caused the real Playwright click to be intercepted. A z-index-only patch failed. Current branch removes the `.card` class from the P145.7 shell and the regression test asserts no `data-tilt`/transform while still using a physical click.
+- Status: the corrective source and tests have been rebased onto current main; the new hosted workflow result is pending. P145.6–P145.10 are not yet marked accepted from this branch.
+- Live vault boundary: browser fixtures use a test provider. Production asset listing and hash coverage are not certified until a canonical live provider is wired and reviewed.
