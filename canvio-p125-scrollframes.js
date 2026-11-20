@@ -37,7 +37,8 @@ function estimateBytes(frames) { return cleanFrames(frames).reduce(function (s, 
 function buildHtml(frames, o) {
   o = o || {}; var f = cleanFrames(frames); if (f.length < 2) throw new Error('Cần ít nhất 2 khung hợp lệ.');
   var w = Math.round(clamp(o.width, 64, 4096)), h = Math.round(clamp(o.height, 64, 4096)), title = esc(o.title || 'Trang cuộn'), len = Math.round(clamp(o.scrollScreens || Math.max(3, Math.ceil(f.length / 15)), 1, 12)) * 100, caps = cleanCaptions(o.captions || (o.caption ? [{ from: 0, to: 1, text: o.caption }] : [])), mq = String(o.marquee || '').slice(0, 120), parallax = clamp(o.parallax, 0, 24), easing = ['linear', 'ease-out', 'ease-in-out'].indexOf(o.easing) >= 0 ? o.easing : 'linear';
-  var data = JSON.stringify(f).replace(/</g, '\\u003c'), capData = JSON.stringify(caps).replace(/</g, '\\u003c');
+  var framePaths = Array.isArray(o.framePaths) && o.framePaths.length === f.length && o.framePaths.every(function (p) { return typeof p === 'string' && p.indexOf('frames/') === 0 && p.split('/').length === 2 && (function (n) { return n.slice(0,6) === 'frame-' && /^[0-9]{3}$/.test(n.slice(6,9)) && n.charAt(9) === '.' && ['webp','jpg','png'].indexOf(n.slice(10)) >= 0; })(p.split('/')[1]); }) ? o.framePaths : null;
+  var data = JSON.stringify(framePaths || f).replace(/</g, '\\u003c'), capData = JSON.stringify(caps).replace(/</g, '\\u003c');
   return '<!DOCTYPE html>\n<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>' + title + '</title>' +
     '<style>html,body{margin:0;background:#0b1220;color:#f8fafc;font-family:system-ui,sans-serif}#track{height:' + len + 'vh;position:relative}#stage{position:sticky;top:0;height:100vh;display:grid;place-items:center;overflow:hidden}canvas{max-width:100%;max-height:100vh;object-fit:contain;transform:translate3d(0,var(--py,0px),0) scale(var(--ps,1));transform-origin:center;will-change:transform}#cap{position:absolute;left:0;right:0;bottom:12vh;text-align:center;font-size:clamp(18px,3vw,36px);font-weight:700;text-shadow:0 2px 12px #000;transition:opacity .3s,transform .3s;padding:0 5vw}#cap[data-pos=top]{top:12vh;bottom:auto}#cap[data-pos=center]{top:50%;bottom:auto}#cap[data-anim=zoom]{letter-spacing:.015em}#cap[data-anim=slide]{transition:opacity .3s,transform .3s}#mq{position:absolute;left:0;right:0;bottom:3vh;overflow:hidden;white-space:nowrap;font-weight:800;letter-spacing:.2em;opacity:.85}#mq span{display:inline-block;will-change:transform}@media (prefers-reduced-motion:reduce){#track{height:100vh}}</style></head>' +
     '<body><div id="track"><div id="stage"><canvas id="c" width="' + w + '" height="' + h + '" role="img" aria-label="' + title + '"></canvas><div id="cap" aria-live="polite"></div>' + (mq ? '<div id="mq" aria-hidden="true"><span id="mqs">' + esc(mq + mq + mq + mq) + '</span></div>' : '') + '</div></div>' +
@@ -69,6 +70,41 @@ function extract(file, opt, onProgress) {
   });
 }
 function download(name, text) { var b = new Blob([text], { type: 'text/html' }), u = URL.createObjectURL(b), a = document.createElement('a'); a.href = u; a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(function () { URL.revokeObjectURL(u); }, 4000); }
+function frameAsset(dataUrl, index) {
+  var m = /^data:image\/(webp|jpeg|png);base64,([A-Za-z0-9+\/=]+)$/.exec(String(dataUrl || ''));
+  if (!m) throw new Error('Khung #' + (index + 1) + ' không phải ảnh WebP/JPEG/PNG hợp lệ.');
+  var bin;
+  try { bin = atob(m[2]); } catch (e) { throw new Error('Không giải mã được dữ liệu ảnh #' + (index + 1) + '.'); }
+  var bytes = new Uint8Array(bin.length);
+  for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  return { ext: m[1] === 'jpeg' ? 'jpg' : m[1], mime: 'image/' + m[1], bytes: bytes };
+}
+async function buildPackage(frames, options) {
+  options = options || {};
+  if (!window.CVZip || typeof window.CVZip.build !== 'function') throw new Error('CVZip canonical chưa sẵn sàng.');
+  var maxMB = Math.round(clamp(options.maxMB || 8, 1, 50)), budget = maxMB * 1048576;
+  var kept = decimate(frames, budget), encodedBytes = estimateBytes(kept);
+  if (kept.length < 2) throw new Error('Cần ít nhất 2 khung hợp lệ để đóng gói.');
+  if (encodedBytes > budget) throw new Error('Gói vẫn vượt ngân sách ' + maxMB + ' MB sau khi giảm khung; hãy giảm chiều rộng hoặc FPS.');
+  var files = [], paths = [], manifest = { format: 'CANVIO_SCROLL_STORYBOARD_PACKAGE_V1', frameCount: kept.length, width: Math.round(clamp(options.width, 64, 4096)), height: Math.round(clamp(options.height, 64, 4096)), sourceFrameCount: cleanFrames(frames).length, embeddedHtml: false, maxMB: maxMB, encodedFrameBytes: encodedBytes, assets: [] };
+  var assets = [];
+  for (var i = 0; i < kept.length; i++) {
+    var asset = frameAsset(kept[i], i), name = 'frames/frame-' + String(i + 1).padStart(3, '0') + '.' + asset.ext;
+    paths.push(name); assets.push({ name: name, data: asset.bytes });
+    manifest.assets.push({ path: name, mime: asset.mime, bytes: asset.bytes.length });
+  }
+  var htmlOptions = {};
+  Object.keys(options).forEach(function (k) { if (k !== 'maxMB' && k !== 'framePaths') htmlOptions[k] = options[k]; });
+  htmlOptions.framePaths = paths;
+  var html = buildHtml(kept, htmlOptions);
+  files.push({ name: 'index.html', data: html });
+  files.push({ name: 'CANVIO-STORYBOARD-MANIFEST.json', data: JSON.stringify(manifest, null, 2) });
+  files.push({ name: 'README.md', data: '# CANVIO Scroll Storyboard\n\nMở index.html bằng trình duyệt hiện đại. Giữ nguyên thư mục frames bên cạnh index.html để phát offline. Gói không chứa âm thanh.\n' });
+  assets.forEach(function (f) { files.push(f); });
+  var blob = await window.CVZip.build(files);
+  if (!blob || !(Number(blob.size) > 0)) throw new Error('CVZip không tạo được gói ZIP hợp lệ.');
+  return { blob: blob, manifest: manifest, fileCount: files.length, frameCount: kept.length, sourceFrameCount: manifest.sourceFrameCount, bytes: blob.size };
+}
 function mount() {
   var page = document.querySelector('#page-webEngine'); if (!page || page.querySelector('#cv125-card')) return false;
   var card = document.createElement('div'); card.className = 'card'; card.id = 'cv125-card'; card.style.marginBottom = '12px';
@@ -103,5 +139,5 @@ function tests() {
     defaultScrollLengthIsLong: /id="track"/.test(html) && /#track\{height:300vh/.test(html), presetsWellFormed: Object.keys(PRESETS).every(function (k) { var c = cleanCaptions(PRESETS[k].captions); return c.length === PRESETS[k].captions.length; }), captionsSanitized: cleanCaptions([{ from: 2, to: -1, text: 'x' }, { from: 0.5, to: 0.5, text: 'y' }, null]).length === 1 && cleanCaptions('x').length === 0, captionsEscapedInScript: buildHtml([good, good], { captions: [{ from: 0, to: 1, text: '<\/script><b>', position: 'top', animation: 'zoom' }] }).indexOf('<\/script><b>') < 0, captionMotionValidated: cleanCaptions([{from:0,to:1,text:'A',position:'top',animation:'slide'},{from:0,to:1,text:'B',position:'unknown',animation:'bad'}])[0].position==='top' && cleanCaptions([{from:0,to:1,text:'A',position:'unknown',animation:'bad'}])[0].animation==='fade', parallaxAndEasingEmbedded: buildHtml([good,good],{parallax:12,easing:'ease-in-out'}).indexOf('PARALLAX=12,EASING="ease-in-out"')>=0 && buildHtml([good,good],{parallax:99,easing:'bad'}).indexOf('PARALLAX=24,EASING="linear"')>=0, marqueeEscaped: buildHtml([good, good], { marquee: '<i>' }).indexOf('<i>') < 0, decimateFitsBudget: (function () { var many = []; for (var i = 0; i < 64; i++) many.push(good); var d = decimate(many, good.length * 20); return d.length >= 8 && d.length <= 20 && estimateBytes(d) <= good.length * 20 && decimate(many, 1).length >= 8; })(), needsTwoFrames: threw, estimateBytes: estimateBytes([good, good, 'x']) === good.length * 2
   };
 }
-window.CVScrollFramesP125 = { version: '125.4.0', PRESETS: PRESETS, decimate: decimate, plan: plan, buildHtml: buildHtml, extract: extract, estimateBytes: estimateBytes, mount: mount, tests: tests };
+window.CVScrollFramesP125 = { version: '125.5.0', PRESETS: PRESETS, decimate: decimate, plan: plan, buildHtml: buildHtml, buildPackage: buildPackage, extract: extract, estimateBytes: estimateBytes, mount: mount, tests: tests };
 })();
