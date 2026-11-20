@@ -63,6 +63,16 @@ with sync_playwright() as p:
         page.click('#cv127q-cut'); page.wait_for_timeout(500)
         c['p127qCutHandlesNoSelection'] = page.evaluate("!document.getElementById('cv127q-cut').disabled && /Chưa cắt|Đã cắt|Không cắt/.test(document.getElementById('cv127q-status').textContent)")
         page.screenshot(path=os.path.join(OUT, 'p127q.png'))
+        c['p127lMounted'] = page.evaluate("!!document.getElementById('cv127l-run')")
+        if c['p127lMounted']:
+            page.evaluate("CV.engines.video._state().selected=null"); page.click('#cv127l-run'); page.wait_for_timeout(200)
+            c['p127lNoSelectionMessage'] = page.evaluate("/Chọn/.test(document.getElementById('cv127l-out').textContent)")
+        c['p127tMounted'] = page.evaluate("document.querySelectorAll('[data-cv127t]').length===4")
+        if c['p127tMounted']:
+            n0 = page.evaluate("CV.engines.video._state().clips.length")
+            page.click('[data-cv127t=short]'); page.wait_for_timeout(300)
+            c['p127tAddsClips'] = page.evaluate("CV.engines.video._state().clips.length")==n0+5 and page.evaluate("document.getElementById('cv127t-out').textContent.includes('Đã thêm')")
+            c['p127tUndoable'] = page.evaluate("(()=>{var v=CV.engines.video;v.undo();return v._state().clips.length})()")==n0
     page.evaluate("CV.go('home')"); page.wait_for_timeout(300)
     page.evaluate('CANVIOSecurity.open()')
     c['dialogOpens'] = page.locator('#cv131-security .cv131-card').is_visible()

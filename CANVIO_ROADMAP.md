@@ -500,3 +500,5 @@ Phạm vi: nhánh ứng viên `canvio/23-3-111-github-runtime-ci`; không thay t
 - Hàng nút trong thẻ `#cv127-quality`. Test: `node tests/p127/run-p127t-tests.cjs`.
 - Giới hạn: engine chưa có trạng thái tỉ lệ khung, nên mẫu chỉ nhắc tỉ lệ trong ghi chú; chưa gắn media/nhạc tự động; chưa kiểm trên Chrome thật.
 
+- Xác nhận trên Chrome thật (smoke test, 18/18): nút LUFS và 4 nút mẫu hiện đúng, mẫu Short thêm 5 khung và undo được. Đo LUFS với audio thật vẫn chưa kiểm.
+
