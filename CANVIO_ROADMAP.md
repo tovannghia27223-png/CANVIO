@@ -507,3 +507,19 @@ Phạm vi: nhánh ứng viên `canvio/23-3-111-github-runtime-ci`; không thay t
 - Test: `node tests/p127/run-p125f-tests.cjs` và Chrome thật `python3 tests/p127/run-p125f-browser.py` (ffmpeg tạo video thử, trích khung, cuộn đầu/giữa/cuối, reduced-motion).
 - Giới hạn: khung nhúng base64 nên tệp nặng (cảnh báo >20 MB); chưa có editor storyboard cuộn (P125.2), preset (P125.3) hay tối ưu gói/di động (P125.4); chưa tách WebP/JPEG thành tệp riêng.
 
+
+
+## Continuation checkpoint — 2026-11-20 (verified against GitHub main)
+
+Inspection base: `9290d128ca553b06195500d37210c8ffcc45dbbb`. This checkpoint supplements (does not erase) the historical P70 and earlier progress entries.
+
+| Area | Current evidence | Remaining work / truthful status |
+|---|---|---|
+| P131 Security | P131.1 Security Hub and P131.2 P66 SVG import hardening are present. Latest commit `9290d128ca553b06195500d37210c8ffcc45dbbb` updates `canvio-p63-p67.js` to call `CANVIOSecurity.sanitizeSvg`. | Partial. HTML website import, PPTX/ZIP import, archive-bomb limits, generic export redaction wiring, CSP response headers and all other legacy sanitizer paths still require owner-by-owner integration and tests. |
+| P127 Video | P127.1 Edit Plan; P127.2 silence-cut controls (partial); P127.3 LUFS (partial); P127.4 quality gate; P127.5 four text templates; P127.6 EDL are documented as present. | Partial. Whisper timestamp-driven cuts, jump cuts, emphasis zoom, actual SFX/music/ducking, true-peak and real media/browser/device acceptance remain open. |
+| P125 Website storytelling | P125.1 scroll-frame HTML export is present with local test/browser harness. | P125.2 storyboard editor, P125.3 reusable presets and P125.4 output/package/mobile optimization remain open. |
+| P122 Design Intelligence | P122.1 heuristic taste audit; P122.2 CSS-only website polish preview/apply/undo. | Partial. Content/icon-level polish, poster/slide scope, Project Vault history integration and visual/accessibility review remain open. |
+| P130 Cloud sync | No verified Supabase project, deployed schema/RLS, credentials or recovery proof in the repository evidence reviewed. | Explicitly blocked; do not fake login, cloud sync, encryption or cross-device sync. |
+| P70 release gates | Manifest remains `releaseCertified:false`; fourteen real-world acceptance gates are still recorded as pending. | Keep release blocked until evidence is captured on the actual target environment and reviewed. |
+
+No new code or tests are claimed by this documentation checkpoint. The current latest commit's combined status response contained no status entries; do not infer CI PASS from that response. The next code batch must add targeted tests alongside each integration and let hosted Actions refresh the manifest hashes.
