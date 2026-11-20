@@ -10,6 +10,7 @@ on:
       - work/p136-bezier-smoothing
       - work/p136-single-line-stroke
       - work/p125-2-scroll-storyboard
+      - work/p125-4-rebased-20261121
       - work/p132-apng
       - main
   pull_request:
@@ -448,6 +449,7 @@ jobs:
           node tests/p127/run-p127t-tests.cjs
           node tests/p127/run-p125f-tests.cjs
           node tests/p127/run-p1252-tests.cjs
+          node tests/p127/run-p1254-tests.cjs
           node tests/p127/run-p145c-tests.cjs
           node tests/p145/run-p1455-tests.cjs
           node tests/p127/run-p132g-tests.cjs
@@ -499,6 +501,7 @@ jobs:
           /tmp/canvio-playwright/bin/python tests/p131/run-p131-app-smoke.py
           /tmp/canvio-playwright/bin/python tests/p127/run-p125f-browser.py
           /tmp/canvio-playwright/bin/python tests/p127/run-p1252-browser.py
+          /tmp/canvio-playwright/bin/python tests/p127/run-p1254-browser.py
           /tmp/canvio-playwright/bin/python tests/p127/run-p1272-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p145-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p1455-browser.py
