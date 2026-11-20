@@ -280,6 +280,26 @@ jobs:
           console.log('P132 GIF + APNG encoder integrated');
           NODE
 
+      - name: Integrate P127.2 caption-guided talking-head director
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs=require('node:fs');
+          const file='index.html';
+          let html=fs.readFileSync(file,'utf8');
+          const source=fs.readFileSync('canvio-p127-director.js','utf8').trim();
+          if(!source.includes('window.CVCaptionDirectorP1272'))throw new Error('P127.2 module contract missing');
+          const id='canvio-lot1272';
+          const tag='<script id="'+id+'">\n'+source+'\n</script>';
+          const start=html.indexOf('<script id="'+id+'"');
+          if(start>=0){const close=html.indexOf('</script>',start);if(close<0)throw new Error('P127.2 embedded lot is unterminated');html=html.slice(0,start)+tag+html.slice(close+9);}
+          else{const at=html.lastIndexOf('</body>');if(at<0)throw new Error('index.html has no closing body tag');html=html.slice(0,at)+tag+'\n'+html.slice(at);}
+          if((html.match(/id="canvio-lot1272"/g)||[]).length!==1)throw new Error('P127.2 duplicate/missing lot');
+          fs.writeFileSync(file,html,'utf8');
+          console.log('P127.2 caption-guided talking-head director integrated');
+          NODE
+
       - name: Verify native test utilities
         shell: bash
         run: |
@@ -420,6 +440,7 @@ jobs:
           node tests/p115/run-p1222-tests.cjs
           node tests/p115/run-p127-tests.cjs
           node tests/p127/run-p127k-tests.cjs
+          node tests/p127/run-p1272-tests.cjs
           node tests/p131/run-p131-tests.cjs
           node tests/p131/run-p131-export-contracts.cjs
           node tests/p127/run-p127q-tests.cjs
@@ -478,6 +499,7 @@ jobs:
           /tmp/canvio-playwright/bin/python tests/p131/run-p131-app-smoke.py
           /tmp/canvio-playwright/bin/python tests/p127/run-p125f-browser.py
           /tmp/canvio-playwright/bin/python tests/p127/run-p1252-browser.py
+          /tmp/canvio-playwright/bin/python tests/p127/run-p1272-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p145-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p1455-browser.py
           /tmp/canvio-playwright/bin/python tests/p127/run-p132g-browser.py

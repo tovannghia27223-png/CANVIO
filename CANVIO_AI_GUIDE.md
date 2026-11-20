@@ -3566,3 +3566,11 @@ P125.3: `CVScrollFramesP125.PRESETS`, `decimate(frames,maxBytes)`; `buildHtml` n
 - Safety limit: max 600 frames, dimensions at most 4096×4096 and uncompressed scanline budget at most 64 MiB per animation. Reduce FPS/width when the limit is reached. The stored-DEFLATE encoder favours portability/simple verification over smallest file size.
 - Tests: `node tests/p127/run-p132g-tests.cjs`; hosted Chromium + FFprobe: `tests/p127/run-p132g-browser.py`. These verify source/embedded parity, PNG/APNG CRCs, sequence/frame metadata, browser download and actual APNG decode.
 - Still open: animated WebP, animated timeline audio, 256-colour GIF banding, large-file/performance optimization and validation on representative real-world media.
+
+
+## P127.2 — Caption-guided Talking-head Director (2026-11-20 continuation)
+
+- Standalone owner: `canvio-p127-director.js`; embedded lot: `canvio-lot1272`; API: `window.CVCaptionDirectorP1272`. Adds a caption-aware director panel in the existing Video Engine; `CV.engines.video` remains the single canonical timeline and commit/undo owner.
+- Reads text cues from the existing subtitle track, reports caption spans and detected silence/pause regions, and creates bounded punch-in keyframes on the selected video clip. The AutoCut action delegates to the existing canonical audio silence-cut path; it does not build a second timeline.
+- Tests: `tests/p127/run-p1272-tests.cjs` (API/unit invariants) and `tests/p127/run-p1272-browser.py` (hosted Chromium with a generated WebM audio fixture, caption cues, pause report, keyframe persistence, AutoCut and Undo).
+- Scope limits: synthetic 440 Hz bursts separated by silence prove the UI path, not Whisper transcription quality or human speech segmentation. Real speech/media, face tracking, multi-speaker shot selection, SFX/music matching and human editorial acceptance remain open.

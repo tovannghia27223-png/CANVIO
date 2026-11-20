@@ -667,3 +667,11 @@ Hosted verification after the ffmpeg repair is complete:
 - Boundaries: 600 frames maximum, dimensions ≤4096×4096 and raw filtered frame data ≤64 MiB. Stored DEFLATE may produce larger files than optimized encoders; the UI reports file size.
 - Tests extended in `run-p132g-tests.cjs` and hosted `run-p132g-browser.py` (Chromium download + FFprobe APNG decode).
 - Still open: animated WebP, export with audio, real-media/performance and large-animation memory review. P132 is therefore still partial.
+
+
+## 23.3.111 continuation — P127.2 Caption-guided Talking-head Director
+
+- Adds a caption-aware director panel in the existing Video Engine, reusing subtitle text cues, canonical timeline and undo/commit owner.
+- Provides caption/pause analysis, bounded punch-in keyframes and an AutoCut action delegated to the existing silence-cut implementation.
+- Hosted tests cover a generated WebM fixture with deterministic audio bursts, cue markers, pause display, keyframe persistence, AutoCut and Undo. This validates the code path only; it does not certify Whisper transcription, real speech quality, face tracking or editorial quality.
+- Manual validation on real talking-head footage remains required.
