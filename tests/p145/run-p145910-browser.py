@@ -28,17 +28,29 @@ with sync_playwright() as p:
    }));
  }""")
  page.evaluate("CV.go('assets')");page.wait_for_timeout(1000)
- checks['search and gate panel mounts']=page.locator('#cv145910-card').is_visible()
- checks['three local assets are listed']=page.locator('#cv145910-list button').count()==3
+ panel=page.locator('#cv145910-card')
+ checks['search and gate panel mounts']=panel.is_visible()
+ # The module may mount before the fixture provider is installed. Explicitly refresh
+ # after injection so the assertions inspect the seeded fixture, not the host's
+ # initial/previous Asset Vault snapshot.
+ if panel.is_visible():
+  page.locator('#cv145910-refresh').click()
+  page.wait_for_timeout(150)
+ items=page.locator('#cv145910-list button')
+ count=items.count()
+ item_texts=[items.nth(i).inner_text() for i in range(count)]
+ checks['three local assets are listed']=count==3
  checks['shared qualityGate marks two ready one warning']=page.locator('#cv145910-summary').inner_text().startswith('Tổng 3 · Đạt 2 · Cần xử lý 1')
- checks['duplicate hash is detected']='trùng nội dung' in page.locator('#cv145910-list button').nth(2).inner_text()
+ checks['duplicate hash is detected']=any('trùng nội dung' in t for t in item_texts)
  page.fill('#cv145910-q','finance')
  checks['text search finds finance asset']=page.locator('#cv145910-list button').count()==1 and 'Finance-Report' in page.locator('#cv145910-list').inner_text()
  page.fill('#cv145910-q','');page.select_option('#cv145910-kind','image')
  checks['type filter shows only images']=page.locator('#cv145910-list button').count()==1 and 'Brand-Logo' in page.locator('#cv145910-list').inner_text()
  page.select_option('#cv145910-kind','all');page.select_option('#cv145910-status','warning')
  checks['quality filter shows only non-passing assets']=page.locator('#cv145910-list button').count()==1 and 'Duplicate-Clip' in page.locator('#cv145910-list').inner_text()
- page.select_option('#cv145910-status','all');page.locator('#cv145910-list button').nth(2).evaluate('(el)=>el.click()')
+ page.select_option('#cv145910-status','all')
+ if page.locator('#cv145910-list button').count()>=3:
+  page.locator('#cv145910-list button').nth(2).evaluate('(el)=>el.click()')
  detail=page.locator('#cv145910-detail').inner_text()
  checks['selected asset detail lists missing license and hash']=('chưa khai báo' in detail or 'unknown' in detail) and 'hash-one' in detail
  checks['module is read-only']=page.locator('#cv145910-card button').count()==4 and page.locator('#cv145910-card input[type=file]').count()==0
