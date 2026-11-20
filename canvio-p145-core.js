@@ -121,7 +121,16 @@ function toJsonl(pairs, system) {
   }).join('\n');
 }
 /* ---- UI ---- */
-function dl(name, text, type) { var b = new Blob([text], { type: type || 'text/plain' }), u = URL.createObjectURL(b), a = document.createElement('a'); a.href = u; a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(function () { URL.revokeObjectURL(u); }, 4000); }
+function safeExportText(value, security) {
+  var original = String(value == null ? '' : value), hub = security || window.CANVIOSecurity;
+  if (!hub || typeof hub.redact !== 'function') return { text: original, redacted: 0, available: false };
+  var result = hub.redact(original);
+  return { text: String(result && result.text != null ? result.text : original), redacted: Math.max(0, Number(result && result.count) || 0), available: true };
+}
+function dl(name, text, type) {
+  var safe = safeExportText(text);
+  if (!safe.available) { try { if (window.CV && CV.toast) CV.toast('Không thể xuất: bộ redaction P131 chưa sẵn sàng.'); } catch (e) {} return false; }
+  var b = new Blob([safe.text], { type: type || 'text/plain' }), u = URL.createObjectURL(b), a = document.createElement('a'); a.href = u; a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(function () { URL.revokeObjectURL(u); }, 4000); }
 function assetsNow() { try { return window.CV && CV.assets && CV.assets.list ? CV.assets.list() || [] : []; } catch (e) { return []; } }
 function mount() {
   var page = document.querySelector('#page-assets'); if (!page || page.querySelector('#cv145-card')) return false;
@@ -163,6 +172,7 @@ function tests() {
     attributionRequiredWithoutAuthorWarns: pers.rows[2].level === 'warn' && pers.rows[0].level === 'ok',
     creditLinesOnlyForAttr: creditLines(pers).length === 2 && /X/.test(creditLines(pers)[0]),
     reportMentionsMode: /DÙNG CÁ NHÂN/.test(reportText(pers)) && /ĐĂNG CÔNG KHAI/.test(reportText(pub)),
+    exportRedactionUsesSharedHub: (function () { var secret = 'AIza' + new Array(36).join('x'), r = safeExportText('token=' + secret, { redact: function (s) { return { text: s.replace(secret, '[ĐÃ ẨN KHÓA]'), count: 1 }; } }); return r.available && r.redacted === 1 && r.text.indexOf(secret) < 0 && safeExportText('hello', {}).available === false; })(),
     gateFlags: qualityGate({ name: 'a', size: 5, hash: 'h' }, { license: 'cc0', source: 's' }, ['h']).issues.join() === 'trùng nội dung' && qualityGate({ name: 'a', size: 5 }, {}, []).pass === false && qualityGate({ name: 'a', size: 5 }, { license: 'own' }, []).pass === true,
     musicParse: mu.platform === 'youtube-music' && mu.embedSupported === true && parseMusicLink('javascript:alert(1)') === null && parseMusicLink('ftp://x.y/z') === null && parseMusicLink('https://example.org/a').platform === 'other',
     cueSheetOrdersAndRejectsUnsafe: cue.indexOf('javascript:') < 0 && cue.indexOf('1. Video 00:02') > 0 && cue.indexOf('2. Video 00:12') > 0 && /không chứa/.test(cue),
@@ -172,5 +182,5 @@ function tests() {
     badInputSafe: licenseReport(null, null).rows.length === 0 && cueSheet(null).indexOf('CUE SHEET') === 0 && parseCsv(null).records.length === 0 && toJsonl(null) === ''
   };
 }
-window.CVContentCoreP145 = { version: '145.1.0', LICENSES: LIC, licenseReport: licenseReport, creditLines: creditLines, reportText: reportText, qualityGate: qualityGate, sha256Hex: sha256Hex, parseMusicLink: parseMusicLink, cueSheet: cueSheet, fontVietCoverage: fontVietCoverage, parseCsv: parseCsv, mergeTemplate: mergeTemplate, toJsonl: toJsonl, mount: mount, tests: tests };
+window.CVContentCoreP145 = { version: '145.1.1', LICENSES: LIC, licenseReport: licenseReport, creditLines: creditLines, reportText: reportText, qualityGate: qualityGate, safeExportText: safeExportText, sha256Hex: sha256Hex, parseMusicLink: parseMusicLink, cueSheet: cueSheet, fontVietCoverage: fontVietCoverage, parseCsv: parseCsv, mergeTemplate: mergeTemplate, toJsonl: toJsonl, mount: mount, tests: tests };
 })();
