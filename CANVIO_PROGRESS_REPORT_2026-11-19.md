@@ -64,3 +64,14 @@ This batch is not a completion claim for P115–P145 and does not certify CANVIO
 - Diagnosed hosted run #116 from its job log: the failure was an absent `ffmpeg` executable at the P125.1 browser test setup, after P131 and full-app browser smoke reported all checks true.
 - Updated `.github/workflows/canvio-candidate-runtime.yml` to apt-install `ffmpeg` alongside `zip`. Workflow commit: `ccd4f2a0c9d17e617e4cfb09c4ff2cbaaff8e755`.
 - Verification pending the fresh hosted workflow; no PASS claim yet.
+
+
+## 2026-11-20 — Hosted verification completed (23.3.111)
+
+- Fixed runner dependency: workflow installs `ffmpeg` alongside `zip`; hosted runtime run [#125](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44692957703) completed successfully. This verifies the previous P125.1 harness dependency failure is repaired; run #116 remains in history as failed.
+- Hosted Pages deployment [#145](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44692957814) also completed successfully for the same source SHA.
+- P131: 18/18 VM/source tests; browser app smoke 18/18 and zero page errors. P127: Edit Plan 13/13; Quality Gate/EDL 14/14; LUFS/templates/P125.1 tests OK; browser UI smoke 18/18 with no page, console or navigation errors. P107 ZIP round-trip 6/6.
+- Hosted Chromium: Three.js r187 uncompressed + Draco + Meshopt + KTX2 GLB fixtures loaded; P85 runtime initialization/PostFX and OpenCV optical flow fixture passed. WebGL was ANGLE SwiftShader (software), not physical GPU.
+- Workflow refreshed candidate `23.3.111-github-runtime-ci` manifest: 184 files; index SHA-256 `a371b7ebbdfce8632c69e49ad836232fddf9734a41c86d0399cccaa5f1994cbf`; release remains blocked with fourteen manual P70 gates pending.
+- Artifact `CANVIO-23.3.111-GITHUB-RUNTIME-VERIFIED-125` is available from run #125; size 21,310,667 bytes; digest `7f912f905db6158f77671b91205d912cfd8d72a0d5d4d80d8c61acaaaa0815d2`.
+- This is a hosted CI result, not a claim that P122/P125/P127/P130/P131–P145 or the full CANVIO roadmap are complete.

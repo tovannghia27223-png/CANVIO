@@ -3449,3 +3449,13 @@ Phạm vi: nhánh ứng viên `canvio/23-3-111-github-runtime-ci`; không thay t
 
 ### CI runner dependency note — P125.1
 The hosted workflow provisions native test tools in the “Verify native test utilities” step. The P125.1 browser harness generates a short WebM fixture through the `ffmpeg` executable; keep `ffmpeg` in that apt-installed tool list. A source-level P125 test pass alone does not replace this browser acceptance.
+
+
+## Current continuation checkpoint — 2026-11-20 hosted verification (23.3.111)
+
+- Latest verified candidate: `23.3.111-github-runtime-ci`; runtime workflow [#125](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44692957703) and Pages workflow [#145](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44692957814) both completed successfully for source SHA `6a003524a1a46a9254035361303a779d9f4401b9`.
+- Workflow-generated manifest: 184 files; index SHA-256 `a371b7ebbdfce8632c69e49ad836232fddf9734a41c86d0399cccaa5f1994cbf`; `releaseCertified:false`; P70 manual gates 14 pending / 0 passed. Build bot commit: `ebc7331361f4215bdd14366c07e4748a955b233d`.
+- Hosted checks now confirmed: P125.1 browser harness after ffmpeg provisioning; P131 VM/source 18/18 and browser app smoke 18/18; P127.1 13/13, P127.4/P127.6 14/14, P127.3/P127.5/P125.1 source tests OK, P127 browser UI smoke 18/18; P107 portable ZIP 6/6; Three.js r187/Draco/Meshopt/KTX2 and P85 runtime manifests verified. The hosted browser reported zero uncaught page errors for the covered app smoke.
+- Keep the distinction between synthetic/fixture verification and user-media acceptance. SwiftShader is not physical GPU; synthetic audio/frames do not validate actual production media quality. No verified two-device Project Vault cloud sync exists.
+- The prior note saying the ffmpeg repair was pending is superseded by workflow #125. Run #116 remains a historical failed run; do not erase that history.
+- Continue from the live source owners and test harnesses. Remaining roadmap work is not complete: P122 wider content/icon and history scope; P125.2–P125.4; P127 timestamp-led director, jump cuts/zoom, SFX/music/ducking/true-peak and real-media checks; P130 only after real backend/RLS/recovery infrastructure; P131 owner-by-owner HTML/PPTX/ZIP and export-redaction integration. P70 remains fail-closed until all fourteen manual gates have actual reviewed evidence.

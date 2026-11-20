@@ -528,3 +528,16 @@ No new code or tests are claimed by this documentation checkpoint. The current l
 ## Hosted CI defect follow-up — 2026-11-20
 
 Run #116 failed after the P85/GLB checks, P131 browser checks and full-app smoke had passed because the P125.1 browser harness invoked `ffmpeg` but the Ubuntu runner did not install it. The workflow now includes `ffmpeg` in its native test utility installation list (workflow commit `ccd4f2a0c9d17e617e4cfb09c4ff2cbaaff8e755`). The fix remains PENDING until the new run completes; run #116 remains FAILED in history.
+
+
+## 2026-11-20 — CI verification checkpoint (candidate 23.3.111)
+
+Hosted verification after the ffmpeg repair is complete:
+
+- Runtime [workflow #125](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44692957703): success; all verify-job steps completed on `6a003524a1a46a9254035361303a779d9f4401b9`.
+- Pages [workflow #145](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44692957814): success for the same source SHA.
+- P125.1 hosted browser test is now unblocked and completed. P131 source/VM 18/18; P131 app smoke 18/18 with zero page errors; P127 Edit Plan 13/13, Quality Gate/EDL 14/14, P127 UI smoke 18/18; P107 ZIP round-trip 6/6.
+- Three.js r187 + Draco/Meshopt/KTX2 vendor manifests and P85 vendor manifests passed SHA-256 verification. Hosted Chromium loaded the compressed GLB fixtures and initialized the listed P85 runtimes. SwiftShader is software rendering only.
+- Workflow refreshed the manifest for `23.3.111-github-runtime-ci`: 184 files; index SHA-256 `a371b7ebbdfce8632c69e49ad836232fddf9734a41c86d0399cccaa5f1994cbf`.
+
+**Roadmap disposition remains partial:** P122.2, P125.2–P125.4, P127.2 advanced director/audio functions, P130 real cloud sync and P131 broad import/export hardening remain open. The fourteen P70 real-world acceptance gates remain pending; no physical GPU, real-media quality, production security-header, accessibility, clean-machine offline, cross-origin recovery or two-device sync certification is implied.
