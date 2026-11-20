@@ -488,3 +488,10 @@ Phạm vi: nhánh ứng viên `canvio/23-3-111-github-runtime-ci`; không thay t
 - Kiểm: `tests/p127/run-p127q-tests.cjs` (14 điều kiện, gồm "phân tích không đổi dữ liệu") và smoke toàn app (thẻ gắn đúng chỗ, nút chạy được, 0 lỗi trang).
 - **Còn mở:** P127.2 (talking head bằng Whisper timestamp + jump cut + zoom nhấn), P127.3 (SFX/nhạc cục bộ, ducking, LUFS), P127.5 (mẫu Short/Reel...), và phần đo bố cục (headroom/safe area), tương phản chữ, glow/bloom, độ ồn của P127.4 (cần dữ liệu khung hình/âm thanh thật, chưa làm).
 - **P127.2 (phần đầu, 2026-11-20):** hàng điều khiển hiển thị sẵn trong thẻ "Cổng chất lượng dựng": ngưỡng dB, khoảng lặng tối thiểu, tùy chọn "Xoá và dồn clip", nút "Cắt khoảng lặng clip đang chọn". Gọi thẳng `CV.engines.video.autoCut` hiện có (không viết lại logic, có Hoàn tác); trước đây chỉ chạy qua hộp thoại `prompt()`. Test toàn app xác nhận nút xử lý đúng khi chưa chọn clip; **chưa chạy với âm thanh thật trong sandbox**. Chưa có: cắt theo Whisper timestamp, jump cut tự động, zoom nhấn.
+
+### P127.3 (phần đo) — Đo độ to LUFS
+- Thêm `canvio-p127-loudness.js` (lot `canvio-lot127l`): `CVLoudnessP127.measure/measureClip/advice`, K-weighting + khối 400 ms + gate tuyệt đối -70 / tương đối -10 LU theo BS.1770-4.
+- Nút "Đo LUFS clip đang chọn" trong thẻ `#cv127-quality`; chỉ đọc, gợi ý tăng/giảm dB tới -14 LUFS.
+- Test: `node tests/p127/run-p127l-tests.cjs` (sine chuẩn -3,01 LUFS, stereo +3 dB, gate, im lặng).
+- Giới hạn: chỉ đỉnh mẫu (chưa true-peak), tối đa 80 MB / 30 phút, chưa ducking/map SFX; chưa kiểm với audio thật trên Chrome.
+

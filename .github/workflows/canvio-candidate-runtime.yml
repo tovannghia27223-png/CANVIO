@@ -222,6 +222,7 @@ jobs:
           node tests/p115/run-p127-tests.cjs
           node tests/p131/run-p131-tests.cjs
           node tests/p127/run-p127q-tests.cjs
+          node tests/p127/run-p127l-tests.cjs
           node tests/hosted/p107-portable-roundtrip.cjs
 
       - name: Install Chromium and Playwright for hosted runtime acceptance
