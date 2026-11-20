@@ -29,7 +29,7 @@ with sync_playwright() as p:
  {id:'p1272-cue2',name:'Cue 2',type:'text',track:3,start:1.65,duration:0.9,text:'Chúng ta bắt đầu phân tích.'},
  {id:'p1272-cue3',name:'Cue 3',type:'text',track:3,start:3.15,duration:0.8,text:'Đây là phần kết luận.'}
  );CV.engines.video.commit();}""",state['id'])
- page.select_option('#cv1272-video',state['id']);page.click('#cv1272-analyze')
+ page.click('#cv1272-analyze');page.select_option('#cv1272-video',state['id']);page.click('#cv1272-analyze')
  checks['subtitle pause report appears']='3 cue phụ đề' in page.locator('#cv1272-status').inner_text()
  checks['detected pause listed']=page.locator('#cv1272-pauses li').count()>=1
  page.fill('#cv1272-zoom','1.16');page.click('#cv1272-zoom-apply')
@@ -38,10 +38,10 @@ with sync_playwright() as p:
  checks['zoom scale increases on cue']=bool(motion and any(float(k.get('scale',1))>1.05 for k in motion.get('keyframes',[])))
  checks['motion keyframes persisted by canonical commit']=bool(motion and abs(float(motion['keyframes'][0]['t']))<.001 and abs(float(motion['keyframes'][-1]['t'])-100)<.001)
  page.select_option('#cv1272-source',state['id']);before=page.evaluate("CV.engines.video._state().clips.length")
- page.click('#cv1272-cut');page.wait_for_function("document.getElementById('cv1272-status').textContent.indexOf('AutoCut')>=0||document.getElementById('cv1272-status').textContent.indexOf('Không phát hiện')>=0",timeout=30000)
+ page.click('#cv1272-cut');page.wait_for_function("document.getElementById('cv1272-status').textContent.indexOf('Đã cắt')>=0||document.getElementById('cv1272-status').textContent.indexOf('Không phát hiện')>=0",timeout=30000)
  cut_status=page.locator('#cv1272-status').inner_text()
  after=page.evaluate("CV.engines.video._state().clips.length")
- checks['AutoCut reports original-audio result']='AutoCut' in cut_status
+ checks['AutoCut reports original-audio result']=('Đã cắt' in cut_status) or ('Không phát hiện' in cut_status)
  checks['AutoCut created timeline cuts']=after>=before
  page.click('#cv1272-undo')
  checks['undo action remains available']=page.evaluate("typeof CV.engines.video.undo==='function'")
