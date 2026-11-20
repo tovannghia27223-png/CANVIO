@@ -221,3 +221,10 @@ The candidate workflow runs standalone/embedded source parity and API tests for 
 - Unit checks cover optional cubic output, default compatibility, finite/clamped coordinates and preserved layer/loop counts.
 - Chromium smoke keeps the existing unsmoothed pixel round-trip baseline and exports a second 65% smooth SVG; checks the slider, cubic paths and script-free safe SVG.
 - Review on diverse production artwork remains manual.
+
+
+## P145.5 Template Factory — hosted acceptance
+
+- Unit checks cover five template types, rendering, XSS-like text escaping, field bounds, palette allow-list, offline output and validated JSON round-trip/rejection.
+- Hosted Chromium run #44773327159 passed its candidate workflow, including Template Factory browser coverage for Asset Library mount, presets, escaped preview, local save, standalone HTML export, JSON import/export and local persistence.
+- Manual typography/print proof and native Poster/Slide document integration remain open. Browser-local template persistence is not cloud synchronization.

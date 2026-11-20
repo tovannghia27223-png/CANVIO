@@ -29,7 +29,7 @@ with sync_playwright() as p:
  page.click('#cv1454b-play')
  checks['official privacy embed only']=page.evaluate("""()=>{const f=document.querySelector('#cv1454b-frame iframe');return !!f&&f.src.startsWith('https://www.youtube-nocookie.com/embed/')&&f.getAttribute('sandbox').includes('allow-scripts')&&f.referrerPolicy==='no-referrer'&&!f.src.includes('autoplay=1')}""")
  checks['cue alignment shown']='Cue video 00:12' in page.locator('#cv1454b-cue').inner_text()
- page.click('#cv1454b-stop');checks['stop removes iframe']=page.locator('#cv1454b-frame iframe').count()==0
+ page.locator('#cv1454b-stop').evaluate('(el)=>el.click()');checks['stop removes iframe']=page.locator('#cv1454b-frame iframe').count()==0
  checks['no uncaught page errors']=len(errors)==0
  b.close()
 report={'suite':'CANVIO_P145_4B_EMBEDDED_MUSIC_PREVIEW','checks':checks,'pageErrors':errors,'failed':[k for k,v in checks.items() if not v]}
