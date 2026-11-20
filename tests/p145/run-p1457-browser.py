@@ -18,7 +18,7 @@ with sync_playwright() as p:
  page.wait_for_function('!!(window.CV&&CV.go&&window.CVTypographyPresetsP1457)',timeout=90000,polling=500)
  page.evaluate("CV.go('assets')");page.wait_for_timeout(800)
  checks['typography panel mounts']=page.locator('#cv1457-card').is_visible()
- checks['card is lifted above page overlay and controls accept pointer events']=page.locator('#cv1457-card').evaluate("el=>getComputedStyle(el).position==='relative'&&Number(getComputedStyle(el).zIndex)>=40&&getComputedStyle(el).isolation==='isolate'&&getComputedStyle(el).pointerEvents==='none'&&Array.from(el.querySelectorAll('button,input,select')).every(x=>getComputedStyle(x).pointerEvents==='auto')")
+ checks['typography panel opts out of global card tilt and controls accept pointer events']=page.locator('#cv1457-card').evaluate("el=>!el.classList.contains('card')&&!el.hasAttribute('data-tilt')&&getComputedStyle(el).transform==='none'&&getComputedStyle(el).pointerEvents==='auto'&&Array.from(el.querySelectorAll('button,input,select')).every(x=>getComputedStyle(x).pointerEvents==='auto')")
  checks['six presets available']=page.locator('#cv1457-preset option').count()==6
  checks['unit suite passes']=page.evaluate("Object.values(CVTypographyPresetsP1457.tests()).every(Boolean)")
  page.select_option('#cv1457-preset','editorial')
