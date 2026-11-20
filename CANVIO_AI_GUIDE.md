@@ -3623,3 +3623,8 @@ P125.3: `CVScrollFramesP125.PRESETS`, `decimate(frames,maxBytes)`; `buildHtml` n
 
 - The four standalone modules are added to the current-main rebased branch and integrated into the candidate `index.html` by the hosted workflow. Four Node suites and four hosted Chromium suites are wired into CI.
 - Earlier run #263 caught a genuine P145.7 pointer hit-test failure. A z-index-only adjustment did not solve it. The follow-up excludes the P145.7 panel from the global card-tilt observer using the dedicated `cv1457-card` class; the new browser regression keeps physical Playwright clicks. The current-main rebase is awaiting its fresh hosted result; do not mark P145.7–P145.10 accepted until that run passes.
+
+
+### P145.6–P145.10 prior hosted run record (2026-11-20)
+- Superseded branch run #276 (`44799265880`) completed success. Node suites: P145.6 9/9, P145.7 7/7, P145.8 11/11 and P145.9/.10 all reported PASS. Hosted Chromium reports for all four modules had no failed assertions or uncaught page errors; importantly P145.7 confirmed the non-`.card` shell received real Apply/preset pointer clicks after excluding the global tilt observer.
+- This is historical evidence from the pre-P125.4 rebase branch. The new current-main branch also corrects the P145.9/.10 panel insertion order (after P145.8), so a fresh workflow run on this rebased branch remains mandatory before merge.
