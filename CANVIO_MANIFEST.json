@@ -2,7 +2,7 @@
   "format": "CANVIO_DELIVERY_MANIFEST",
   "schemaVersion": 2,
   "candidate": "23.3.111-github-runtime-ci",
-  "generatedAt": "2026-11-20T21:08:55.974Z",
+  "generatedAt": "2026-11-20T21:20:15.200Z",
   "hashAlgorithm": "SHA-256",
   "indexSha256": "e419b50f1bd459201ad19d94f6a2cd5ea08c03b539be3c0a3b7899b8b925a7ac",
   "indexBytes": 5358886,
@@ -382,8 +382,8 @@
     },
     {
       "path": "CANVIO_AI_GUIDE.md",
-      "bytes": 383455,
-      "sha256": "f110bb2347dde582904b91a72e206457d28a1e3fe49d29b51b0f645dd49ad906"
+      "bytes": 385714,
+      "sha256": "568a9b17f4bba0387c129cd727bad5e0bb0d83aacce672ea8af05d548d31269c"
     },
     {
       "path": "CANVIO_FINAL_ACCEPTANCE_MATRIX.md",
@@ -392,8 +392,8 @@
     },
     {
       "path": "CANVIO_HANDOFF.md",
-      "bytes": 25187,
-      "sha256": "9c604ed773fe7561d4fbd8f120f9c6ba53c41f60cb7dc10f36dafe2316fee90d"
+      "bytes": 26140,
+      "sha256": "75fbaf81843c76c30e729a601647a196378f5264010b33ee4a5018704cf45ccc"
     },
     {
       "path": "CANVIO_NEXT_AI_PROMPT.md",
@@ -412,18 +412,18 @@
     },
     {
       "path": "CANVIO_PROGRESS_REPORT_2026-11-19.md",
-      "bytes": 11989,
-      "sha256": "6505fa3f6b164b7bd4c9f268a525a2a169a33ced720a509c051971b44aeaa698"
+      "bytes": 12996,
+      "sha256": "b81543ce83bb36acdd799db2c02e6f9b15ebeb8214103ab8518d9680fe70ed3f"
     },
     {
       "path": "CANVIO_QA_REPORT.md",
-      "bytes": 39013,
-      "sha256": "c67dd9e88a0a8c737673b5e694bf2d9202ea0d450c3c5f4fb0be4abacefa8d43"
+      "bytes": 40830,
+      "sha256": "752f4fe897bd6e4e04cf2bdcc07c9ebb90cedcfa09f078ff5e61c6322876d03f"
     },
     {
       "path": "CANVIO_ROADMAP.md",
-      "bytes": 89576,
-      "sha256": "a2bd080340c9cefd12e26100f0e7b49d116d63342884f732b6d8b478d76574b1"
+      "bytes": 90561,
+      "sha256": "1852714fa5232924ecb40e51bc8fe473be4dc296f05031f44f0be9c93659ca2a"
     },
     {
       "path": "canvio-p102-background-removal.js",
@@ -728,7 +728,7 @@
     {
       "path": "tests/hosted/hosted-runtime-report.json",
       "bytes": 16376,
-      "sha256": "bb3aa54552655894b6264f5adaf17078761891a2857bfd1e035fd4d14635b69a"
+      "sha256": "9d91e752ca8bb321ac9e11f0a939df7f76a00b6f24aacba71724549f55facb01"
     },
     {
       "path": "tests/hosted/integrated-source-contracts.cjs",

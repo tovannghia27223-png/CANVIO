@@ -8,7 +8,3 @@
 - Added P125.4 optional split-asset storyboard ZIP alongside the original self-contained HTML export; hosted Chromium verifies ZIP integrity and final relative-frame decoding offline. Audio and mobile/real-media acceptance remain open.
 - Added P145.6–P145.10 Asset Library tools: 25 original SVG icons, six local typography presets, eight original SVG illustrations, and read-only asset search/quality gate, with Node and hosted Chromium acceptance.
 - Stable release remains fail-closed at P70; no physical GPU or two-device certification is implied.
-
-
-
-- P131.3 safe HTML import merged and hosted-verified in run #315; canonical main `index.html` embeds v131.3.0 after build commit `4fdaae3`. P131 browser 31/31, app smoke 21/21 across 48 pages. Manifest index SHA begins `e419b50f`; 5,358,886 bytes.
