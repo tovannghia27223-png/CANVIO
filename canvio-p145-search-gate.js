@@ -130,7 +130,7 @@ function mount(){
    (g.issues&&g.issues.length?'\n'+g.issues.join('\n'):'\nĐủ các trường kiểm tra hiện có.')+
    '\nGiấy phép: '+(m.license||'chưa khai báo')+' · Nguồn: '+(m.source||m.author||'chưa khai báo')+
    '\nDung lượng: '+(Number(a.size)>0?(Number(a.size)/1048576).toFixed(2)+' MB':'chưa có')+
-   '\nHash: '+(a.hash||'chưa có; không khẳng định đã kiểm trùng');
+   '\nHash: '+(selected.hash?selected.hash+' ('+(selected.hashSource==='session'?'SHA-256 tạm tính trong phiên':'metadata')+')':'chưa có; chưa kiểm trùng nội dung');
  }
  ['input','change'].forEach(function(ev){$('#cv145910-q').addEventListener(ev,function(){run(false);});$('#cv145910-kind').addEventListener(ev,function(){run(false);});$('#cv145910-status').addEventListener(ev,function(){run(false);});});
  $('#cv145910-refresh').addEventListener('click',function(){run(true);});
