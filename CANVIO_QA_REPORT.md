@@ -255,3 +255,12 @@ The candidate workflow runs standalone/embedded source parity and API tests for 
 - Node checks cover subtitle cue filtering, pause-boundary analysis, valid/invalid clip selection and bounded motion/keyframe output.
 - Hosted Chromium test imports a generated 5-second WebM with deterministic 440 Hz audio bursts separated by silence, seeds caption cues, verifies the pause report, applies/persists punch-in keyframes, runs the canonical AutoCut route and checks Undo availability.
 - The synthetic audio fixture is a deterministic UI/code-path test only. Whisper transcription accuracy, real speech, face tracking, multi-speaker editorial decisions and human review on project footage remain manual acceptance.
+
+
+## P125.4 — Split-asset ZIP acceptance (rebased to current main)
+
+- Added a dedicated Node suite for P125.1 source/embedded parity, allow-listed relative image paths, unsafe-path fallback, manifest creation and separate binary image entries.
+- Added hosted Chromium acceptance using a generated synthetic WebM. The test exports ZIP, checks ZIP integrity and image signatures, extracts the package and opens the HTML via file:// to verify offline frame loading while scrolling.
+- The current 1–50 MB control is explicitly documented as an encoded-frame data budget. Final ZIP bytes are reported separately; manifest records frame bytes and package structure.
+- Status on this branch: tests are wired into candidate CI; no passing result is claimed until the new hosted workflow run completes.
+- Manual acceptance remains for real user footage, audio requirements, mobile/touch controls and large-file memory/performance.
