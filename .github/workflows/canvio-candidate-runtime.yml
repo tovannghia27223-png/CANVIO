@@ -10,6 +10,7 @@ on:
       - work/p136-bezier-smoothing
       - work/p136-single-line-stroke
       - work/p125-2-scroll-storyboard
+      - work/p132-apng
       - main
   pull_request:
     branches:
@@ -258,6 +259,25 @@ jobs:
           if((html.match(/id="canvio-lot1454"/g)||[]).length!==1)throw new Error('P145.4 embedded lot duplicate/missing');
           fs.writeFileSync(file,html,'utf8');
           console.log('P145.4 local background music composer integrated');
+          NODE
+
+      - name: Integrate P132 animated PNG export
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs=require('node:fs');
+          const file='index.html';
+          let html=fs.readFileSync(file,'utf8');
+          const source=fs.readFileSync('canvio-p132-gif.js','utf8').trim();
+          if(!source.includes('window.CVGifP132')||!source.includes('encodeApng: encodeApng'))throw new Error('P132 APNG source contract missing');
+          const id='canvio-lot132g',tag='<script id="'+id+'">\\n'+source+'\\n</script>';
+          const re=/(<script\\b(?=[^>]*\\bid=["']canvio-lot132g["'])[^>]*>)[\\s\\S]*?(<\\/script\\s*>)/i;
+          if(re.test(html))html=html.replace(re,tag);
+          else{const at=html.lastIndexOf('</body>');if(at<0)throw new Error('index.html has no closing body tag');html=html.slice(0,at)+tag+'\\n'+html.slice(at);}
+          if((html.match(/id="canvio-lot132g"/g)||[]).length!==1)throw new Error('P132 embedded lot duplicate/missing');
+          fs.writeFileSync(file,html,'utf8');
+          console.log('P132 GIF + APNG encoder integrated');
           NODE
 
       - name: Verify native test utilities
