@@ -191,3 +191,12 @@ The candidate is built and verified by the hosted runtime workflow. Runtime vend
 - Hosted run #298 (`44800999215`) passed the complete candidate workflow. Node: 9/9 (P145.6), 7/7 (P145.7), 11/11 (P145.8), 8/8 (P145.9/.10). Four Chromium reports: no failed checks or uncaught page errors.
 - Use P145.7 presets from Asset Library; choose one of six system-font styles, adjust heading/body sizes, line height and tracking, preview, then export CSS. P145.7 deliberately avoids the global `.card` tilt class; keep this to preserve control clickability.
 - P145.9/.10 is a read-only browser panel; it uses the host asset provider or a supplied canonical provider. Test data proves behavior, not full production-vault enumeration or binary hashing.
+
+
+## Main branch state — 2026-11-21
+
+- P125.4 is merged via PR #32; hosted run #271 passed ZIP package and offline final-frame decode acceptance.
+- P145.6–P145.10 are merged via PR #33; hosted run #298 passed all four Node suites (35/35 assertions) and all four Chromium suites (no failed checks/page errors).
+- Main candidate build: `23.3.111-github-runtime-ci`, commit `782aa562f5341172330d114ccb21a3269efbbb37`. Mainline workflow #282 completed successfully.
+- Do not represent Asset Search/Quality Gate as full live-vault coverage until the canonical provider is connected and its inventory/hash behavior is verified. Keep the four P145 tools described as local/offline panels, not cloud services.
+- Release remains blocked: `releaseCertified:false`, `BLOCKED_PENDING_REAL_WORLD_ACCEPTANCE`, fourteen P70 manual gates open.
