@@ -347,3 +347,15 @@ The candidate workflow runs standalone/embedded source parity and API tests for 
 - Standalone security hub adds bounded `prepareHtmlImport` and async `importHtmlText`; local user file picker restricted to .html/.htm and text/html/application/xhtml+xml. Hard cap 5 MiB.
 - Uses existing allow-list sanitizer, removes remote image/source URLs but keeps local raster data URLs, strips active HTML and confirms before adding to current Website Engine. Uses only `CVWeb.addComponents` and `CV.engines.web.save`.
 - Workflow explicitly syncs standalone/embedded lot before P131 parity tests. New browser assertions cover safe content, removed scripts/handlers/forms/iframes, remote asset stripping, save result, save failure reporting and actual file picker path. Hosted result pending; do not merge until full P131 workflow passes.
+
+
+
+## P131.3 — hosted workflow PASS (run #315, 2026-11-21)
+
+- PR #41 merged at `1ac185d7aea7b14ad13a0517f51e72292cc42162`; hosted run #315 (`44816184861`) concluded success. P131 Chromium suite reported `passed: 31`, `failed: []`, `pageErrors: 0`; the standalone Node suite and P131 app smoke passed. App smoke found 48 pages with 21 passed checks, no console or navigation errors.
+- P131 browser assertions all true: scripts/forms/inputs/iframes/event handlers and unsafe URL content removed; Vietnamese text and normal hyperlink retained; local base64 raster image retained; remote image URL removed; oversized content rejected; canonical `CVWeb.addComponents` + `CV.engines.web.save` used; no script execution/network image request; save failure reported; actual user file-picker path succeeds.
+- Full hosted runtime workflow passed source integration, syntax, entire HTML/inline-JS audit, P47–P70 regression, integrated contracts/P107 ZIP, Three.js r187 and P85 vendor manifests, Draco/Meshopt/KTX2 GLB decoding, P85/OpenCV runtime and Chromium smoke. Browser used SwiftShader software rendering; physical GPU and full model inference were not run.
+- Artifact `CANVIO-23.3.111-GITHUB-RUNTIME-VERIFIED-315` (21,590,752 bytes) SHA-256: `12305d7990ed16b93d6d653cd3fd1d662a3cd90144b9800773e560a5a55fa06c`.
+- Promotion note: the PR merged the standalone security source and CI workflow/test; this follow-up branch is building/committing the generated embedded `index.html` because the PR merge commit did not modify that large file. Do not mark canonical default index updated until the promotion PR merges.
+- P70 remains fail-closed: 14 manual gates pending, release certification false.
+
