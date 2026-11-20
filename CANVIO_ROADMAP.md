@@ -622,3 +622,11 @@ Hosted verification after the ffmpeg repair is complete:
 - Preview loops locally, stop, download WAV or add the generated result to the existing Video Engine timeline via \`importFiles\`. This complements P145.3 synthetic SFX and P145.4b official third-party previews; it is not a curated commercial music pack.
 - Original oscillator synthesis only: no sample libraries, remote API or unverified assets. Does not claim stems, MIDI, live instrumental recording, or cross-device Project Vault sync.
 - Added deterministic unit assertions and hosted browser checks for all four moods, duration, non-silence, peak normalization, WAV decode, preview/stop and timeline import. Human listening review remains a separate manual acceptance.
+
+
+## 23.3.111 continuation — P125.2 Scroll Storyboard Editor
+
+- Adds a two-stage P125 workflow: extract frames, then edit/export a scroll storyboard.
+- Adds a visual frame preview, editable caption timeline (0–100% start/end), add/remove and native drag reorder, position (top/center/bottom), entrance effect (fade/slide/zoom), parallax, scroll easing and page length.
+- Reuses P125.1 local extraction, decimation and standalone offline HTML builder; reduced-motion fallback remains first-frame only.
+- Hosted unit/browser tests are in the candidate workflow. Touch-device drag, real project editorial review and physical mobile performance remain manual.

@@ -118,3 +118,9 @@ The candidate is built and verified by the hosted runtime workflow. Runtime vend
 - Added four original procedural moods with 60–140 BPM and 4/8 bars.
 - Preview/stop, WAV export and canonical Video Engine audio import are supported; no external assets or sample files are used.
 - Verify with \`node tests/p145/run-p1454-tests.cjs\` and \`tests/p145/run-p1454-browser.py\`. The hosted check includes ffprobe decode; listening review remains a manual task.
+
+
+## P125.2 — Scroll Storyboard
+- Added caption timeline editing to the P125.1 video-to-scroll workflow, up to 12 markers, drag reorder, position/effect, preview, parallax/easing and standalone offline HTML export.
+- Reuses existing frame extraction and exporter; browser-session editor state only, no cloud sync.
+- Tests: \`run-p125f-tests.cjs\`, \`run-p1252-tests.cjs\`, \`run-p125f-browser.py\`, \`run-p1252-browser.py\`.

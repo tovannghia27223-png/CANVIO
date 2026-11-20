@@ -3515,3 +3515,12 @@ P125.3: `CVScrollFramesP125.PRESETS`, `decimate(frames,maxBytes)`; `buildHtml` n
 - User actions: loop preview, stop, WAV download and add to existing video timeline. No extra timeline, project store, cloud-sync key or licensed audio bundle.
 - Limitations: procedural synthesis is not a curated instrumental library or human-recorded production; no stems, melody editor, MIDI, key selector or cross-device sync. Browser OfflineAudioContext support is required.
 - Verification: Node unit suite and hosted Chromium render/import/download/ffprobe test are added to the candidate workflow. Listening and quality review on real projects/devices remains manual.
+
+
+## P125.2 — Scroll Storyboard Editor (2026-11-20 continuation)
+
+- Standalone owner: \`canvio-p125-storyboard.js\`; embedded lot: \`canvio-lot1252\`; API: \`window.CVScrollStoryboardP1252\`. Extends the existing \`CVScrollFramesP125\` extractor and offline HTML exporter; no duplicate video engine.
+- Two-stage UI: extract video frames, then edit/export. Up to 12 caption markers, start/end progress, text, top/center/bottom position, fade/slide/zoom, add/remove, drag reorder and frame preview.
+- Export uses the existing offline HTML builder with parallax 0–24, scroll easing linear/ease-out/ease-in-out, page length 3–12 screens and reduced-motion first-frame fallback. Caption data is sanitized/escaped.
+- No external runtime, network request, cloud store or new media owner. Editor state is browser-session only; output is portable standalone HTML.
+- Hosted unit/browser tests include frame extraction, caption editor, export settings, scroll mapping and reduced motion. Real project/touch/mobile QA remains manual.

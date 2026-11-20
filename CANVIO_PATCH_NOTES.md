@@ -6,3 +6,5 @@
 - Added portable P107 parser/import/rollback tests and explicit documentation that Project Vault cloud sync is not implemented.
 - Added P145.2 local WebGL shader transitions/effects, Canvas2D fallback, PNG export and an optional P79-muxed video-only transition MP4 path with hosted Chromium coverage.
 - Stable release remains fail-closed at P70; no physical GPU or two-device certification is implied.
+
+- P125.2: add editable scroll storyboard with caption timeline, frame preview, drag reorder, position/effects, parallax/easing and offline HTML export; update P125.1 browser smoke to follow the two-stage workflow.

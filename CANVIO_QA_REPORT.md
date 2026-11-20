@@ -208,3 +208,10 @@ The candidate workflow runs standalone/embedded source parity and API tests for 
 - Unit suite covers four presets, BPM/bar clamps, chord progression, deterministic mood plans, PCM WAV header/format and peak normalization.
 - Hosted browser suite renders all four moods with OfflineAudioContext, checks non-silent output, -1 dBFS peak normalization, 4-bar duration at 96 BPM, imports WAV via the canonical Video Engine importer, downloads/decodes WAV using ffprobe, and exercises loop preview/stop.
 - This is procedural synthesized music, not a curated/licensed music library. Listening quality, musical suitability and mix review on actual user projects remain manual.
+
+
+## P125.2 Scroll Storyboard — hosted acceptance
+
+- Unit tests cover caption range clamping, text limit, position/animation allow-lists and drag-order data behavior.
+- Chromium test extracts a generated video, opens editor, edits/adds captions, sets position/animation, parallax/easing and exports standalone HTML. It checks scroll mapping, caption settings and reduced-motion fallback.
+- P125.1 browser test now follows the two-stage extraction/editor/export flow. Real-project and physical touch/mobile review remain manual.

@@ -24,10 +24,13 @@ with sync_playwright() as p:
     page.click('#cv125-run'); page.wait_for_timeout(200)
     c['noFileMessage'] = page.evaluate("/Chọn/.test(document.getElementById('cv125-out').textContent)")
     page.set_input_files('#cv125-file', vid); page.fill('#cv125-n', '20'); page.fill('#cv125-w', '320'); page.select_option('#cv125-preset', 'hero')
-    with page.expect_download(timeout=90000) as d: page.click('#cv125-run')
+    page.click('#cv125-run')
+    page.wait_for_function("document.querySelector('#cv1252-editor')&&document.querySelector('#cv1252-editor').style.display==='block'", timeout=90000)
+    c['storyboardEditorOpened'] = page.locator('#cv1252-editor').is_visible()
+    c['statusReportsFrames'] = 'Đã trích 20 khung' in page.locator('#cv125-out').inner_text()
+    with page.expect_download(timeout=90000) as d: page.click('#cv1252-export')
     path = os.path.join(tmp, 'out.html'); d.value.save_as(path)
     c['exported'] = os.path.getsize(path) > 2000
-    c['statusReportsFrames'] = page.evaluate("/Đã xuất 20\/20 khung/.test(document.getElementById('cv125-out').textContent)")
     html = open(path, encoding='utf-8').read()
     c['noExternalRefs'] = 'http://' not in html.replace('http://www.w3.org', '') and 'https://' not in html
     pg = ctx.new_page(); pg.on('pageerror', lambda e: errs.append(str(e)[:200]))
