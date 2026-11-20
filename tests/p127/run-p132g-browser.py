@@ -85,7 +85,7 @@ with sync_playwright() as p:
     import base64
     encoded = base64.b64encode(wdata).decode('ascii')
     decoded = page.evaluate("""async b64 => { try { const raw=Uint8Array.from(atob(b64),c=>c.charCodeAt(0)); const bmp=await createImageBitmap(new Blob([raw],{type:'image/webp'})); const r={ok:true,width:bmp.width,height:bmp.height}; bmp.close(); return r; } catch(e) { return {ok:false,error:String(e)}; } }""", encoded)
-    c['webpChromiumDecoder'] = decoded.get('ok') is True and decoded.get('width') == 200 and decoded.get('height') == 200
+    c['webpChromiumDecoder'] = decoded.get('ok') is True and decoded.get('width') == 200 and decoded.get('height') == expected_height
     wr = subprocess.run(['ffprobe', '-v', 'error', '-count_frames', '-select_streams', 'v:0', '-show_entries', 'stream=codec_name,width,nb_read_frames', '-of', 'json', webp], capture_output=True, text=True)
     winfo = json.loads(wr.stdout or '{}').get('streams', [{}])[0]
     info['apng'] = ainfo; info['webp'] = {'riffTags':tags,'frames':frame_info,'chromiumDecode':decoded,'ffprobeInfo':winfo,'ffprobeStderr':wr.stderr[:500]}
