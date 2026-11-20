@@ -3434,3 +3434,14 @@ Phạm vi: nhánh ứng viên `canvio/23-3-111-github-runtime-ci`; không thay t
 ## P125.1 Scroll frames
 `window.CVScrollFramesP125` {plan, buildHtml(frames,opts), extract(file,opts,cb), estimateBytes, mount, tests}. Embedded `canvio-lot125f` khớp `canvio-p125-scrollframes.js`. Chỉ nhận frame dạng data:image/(webp|jpeg|png);base64. Test: `tests/p127/run-p125f-tests.cjs`, `tests/p127/run-p125f-browser.py`.
 
+
+
+# Current continuation checkpoint — 2026-11-20 (P131.2 / P127 / P125)
+
+- Verified GitHub main base at inspection: `9290d128ca553b06195500d37210c8ffcc45dbbb` (commit: P63–P67 standalone SVG import now delegates to `CANVIOSecurity.sanitizeSvg`).
+- Do not use the historical P70 header above as the current feature-completion marker. The later roadmap/progress addenda below record work integrated after P70; the application candidate/manifest must be refreshed by the repository's checksum workflow before release packaging.
+- P131.1 Security Hub exists in `canvio-p131-security.js` and embedded lot `canvio-lot131`; P131.2 additionally hardens the P66 SVG ingestion path through the shared allow-list sanitizer. The latest commit changes only `canvio-p63-p67.js`; it does not prove every HTML/PPTX/ZIP import or export path uses the sanitizer.
+- P127 currently has JSON Edit Plan, quality gate/EDL, silence-cut UI using the existing `autoCut`, LUFS measurement and four text-layout templates. Remaining work includes Whisper-timestamp director/jump cuts/zoom emphasis, real SFX/music/ducking integration, true-peak/real-media validation, and visual safe-area/headroom/contrast checks where actual frame data is available.
+- P125.1 scroll-frame export exists; P125.2–P125.4 remain open (storyboard editor, presets, package/mobile optimization).
+- P122.2 remains CSS-only/Website Engine scoped and does not yet cover content/icon cleanup or Project Vault version history. P130/P130.A must remain unimplemented until a real Supabase project, credentials, RLS and recovery test environment are available.
+- Keep all release and manual acceptance gates fail-closed. Current source-level/fixture tests do not certify real user media, real devices, cross-origin recovery, production headers, accessibility or two-device synchronization.
