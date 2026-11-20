@@ -25,6 +25,3 @@
 12. Physical target-device GPU/VRAM, performance and long-render testing.
 13. Cross-origin backup/restore and independent-device recovery.
 14. Rollback, release observability, alerting and production incident drill.
-
- 
-| P132.2 APNG export | APNG RGBA encoder, bounded 64 MiB raw frames, chunk CRC/sequence tests, Chromium download and FFprobe decode | Animated WebP, audio mux, large real timelines and device memory/performance remain open |
