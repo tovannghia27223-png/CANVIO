@@ -25,3 +25,5 @@
 12. Physical target-device GPU/VRAM, performance and long-render testing.
 13. Cross-origin backup/restore and independent-device recovery.
 14. Rollback, release observability, alerting and production incident drill.
+
+| P145.8 Original vector illustrations | 8 SVG compositions, 4 categories/palettes, search/filter, preview, individual/sprite/contact-sheet export and hosted browser checks | Manual visual critique and import into each design engine remain open; not stock/AI image generation |

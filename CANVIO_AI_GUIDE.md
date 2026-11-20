@@ -3541,3 +3541,10 @@ P125.3: `CVScrollFramesP125.PRESETS`, `decimate(frames,maxBytes)`; `buildHtml` n
 - Sandboxed \`srcdoc\` preview; user text is bounded and escaped; palettes are allow-listed. Export is standalone offline HTML/CSS without scripts, remote fonts, external images or requests.
 - Save up to 20 templates in localStorage; export/import validated portable \`CANVIO_TEMPLATE_V1\` JSON (64 KB max). Local saved templates do not sync across devices.
 - Hosted unit/browser checks cover render/escaping/schema, preview, save, HTML/JSON export and import. Manual typography/print proofing and native Poster/Slide integration remain separate acceptance work.
+
+## P145.8 — Original offline vector illustration pack (2026-11-20 continuation)
+
+- Owner: \`canvio-p145-visual-assets.js\`; embedded lot: \`canvio-lot1458\`; API: \`window.CVOriginalVectorAssetsP1458\`.
+- Eight original vector illustrations across Business, Finance, People/HR and Creative/Social; four local palettes. Asset Library includes category filter, text search, inline preview, individual SVG download, symbol sprite and vector contact sheet.
+- The assets are original geometric compositions, not licensed stock photos/illustrations or AI-generated media. No external image URLs, font files, scripts or remote requests. SVGs can be manually imported into supported design surfaces; no automatic insert into all engines.
+- Tests: unit integrity and hosted Chromium category/search/theme/preview/download checks. Manual design critique, print review and import into each target engine remain separate acceptance.

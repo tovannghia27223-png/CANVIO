@@ -136,3 +136,8 @@ The candidate is built and verified by the hosted runtime workflow. Runtime vend
 - Added five original editable template presets (business, finance, HR, profile, social) and four palettes.
 - Sandbox preview, up to 20 local saves, standalone offline HTML and validated JSON export/import. No external font/image/runtime.
 - Tests: \`run-p1455-tests.cjs\`, \`run-p1455-browser.py\`. Manual print/typography and native Poster/Slide integration remain open.
+
+## P145.8 — Original vector illustration pack
+- Added eight original SVG illustrations across Business, Finance, HR and Creative/Social, four palettes, search/filter, preview, individual export, sprite and contact sheet.
+- No stock or external assets; manual import into supported design tools. Not an AI image model/photo library.
+- Tests: \`run-p1458-tests.cjs\` and \`run-p1458-browser.py\`.

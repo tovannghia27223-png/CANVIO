@@ -228,3 +228,9 @@ The candidate workflow runs standalone/embedded source parity and API tests for 
 - Unit checks cover five template types, rendering, XSS-like text escaping, field bounds, palette allow-list, offline output and validated JSON round-trip/rejection.
 - Hosted Chromium run #44773327159 passed its candidate workflow, including Template Factory browser coverage for Asset Library mount, presets, escaped preview, local save, standalone HTML export, JSON import/export and local persistence.
 - Manual typography/print proof and native Poster/Slide document integration remain open. Browser-local template persistence is not cloud synchronization.
+
+## P145.8 — original vector illustration pack
+
+- Unit checks cover eight unique SVG assets, four categories/themes, theme token resolution, safe standalone SVG, sprite IDs, contact-sheet labels and no remote resources.
+- Hosted Chromium checks category filtering, search, theme update, selected preview, individual download, sprite export and vector contact sheet.
+- This pack is original SVG geometry, not stock/AI photo media. Importing into each downstream engine and visual review on real projects remains manual.
