@@ -523,3 +523,8 @@ Inspection base: `9290d128ca553b06195500d37210c8ffcc45dbbb`. This checkpoint sup
 | P70 release gates | Manifest remains `releaseCertified:false`; fourteen real-world acceptance gates are still recorded as pending. | Keep release blocked until evidence is captured on the actual target environment and reviewed. |
 
 No new code or tests are claimed by this documentation checkpoint. The current latest commit's combined status response contained no status entries; do not infer CI PASS from that response. The next code batch must add targeted tests alongside each integration and let hosted Actions refresh the manifest hashes.
+
+
+## Hosted CI defect follow-up — 2026-11-20
+
+Run #116 failed after the P85/GLB checks, P131 browser checks and full-app smoke had passed because the P125.1 browser harness invoked `ffmpeg` but the Ubuntu runner did not install it. The workflow now includes `ffmpeg` in its native test utility installation list (workflow commit `ccd4f2a0c9d17e617e4cfb09c4ff2cbaaff8e755`). The fix remains PENDING until the new run completes; run #116 remains FAILED in history.
