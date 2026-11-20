@@ -154,3 +154,9 @@ The candidate is built and verified by the hosted runtime workflow. Runtime vend
 - Use the existing FPS/width controls and the separate Export APNG action. Limit: 600 frames / 64 MiB raw scanline data; output has no audio.
 - Verify source/embedded parity and format structure with `node tests/p127/run-p132g-tests.cjs`; verify actual Chromium download/decode with `tests/p127/run-p132g-browser.py`.
 - Animated WebP and real-device long-timeline validation are not included.
+
+
+## P145.6–P145.10 Asset Library continuation
+- Added original local SVG icon and illustration packs plus six system-font typography presets.
+- Added read-only Asset Search & Quality Gate using the shared P145 license/credit rules and hash metadata. The host must expose `CV.assets.list()` or call `CVAssetSearchGateP145910.setAssetProvider(fn)` to provide a real list; do not interpret an empty fallback list as an accepted full inventory.
+- Verify using `run-p1456-tests.cjs`, `run-p1457-tests.cjs`, `run-p1458-tests.cjs`, `run-p145910-tests.cjs` plus their four hosted browser scripts.
