@@ -3587,5 +3587,5 @@ P125.3: `CVScrollFramesP125.PRESETS`, `decimate(frames,maxBytes)`; `buildHtml` n
 
 
 ### P125.4 hosted acceptance record (2026-11-20)
-- GitHub Actions run #255 (`44796675217`) passed the P125.4 Node suite and hosted Chromium ZIP/offline test. The last relative frame image was explicitly awaited until decoded (`naturalWidth > 0`).
+- GitHub Actions run #271 (`44798663309`) passed the P125.4 Node suite (14 assertions) and hosted Chromium ZIP/offline test, including final-frame image decode. This is the latest verified P125.4 run. The last relative frame image was explicitly awaited until decoded (`naturalWidth > 0`).
 - Do not interpret this synthetic desktop run as audio support, mobile/touch acceptance or performance certification for long high-resolution footage.
