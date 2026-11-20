@@ -35,3 +35,6 @@
 
 
 | P132.3 latest run #303 | RIFF layout, 10 ANMF/VP8 payloads, dimensions/timing and Chromium decode 200×113 passed | Only stale hard-coded height assertion failed; corrected to editor-derived expected height; hosted rerun pending |
+
+
+| P132.3 animated WebP | Hosted run #304 PASS; 10 image-bearing ANMF/VP8 frames, 200×113, 200 ms, Chromium native decode; GIF/APNG and full candidate workflow also PASS | Manual real footage, alpha/color profile, touch/mobile and long-animation memory/performance remain open; no audio |
