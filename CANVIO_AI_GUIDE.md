@@ -3627,4 +3627,10 @@ P125.3: `CVScrollFramesP125.PRESETS`, `decimate(frames,maxBytes)`; `buildHtml` n
 
 ### P145.6–P145.10 prior hosted run record (2026-11-20)
 - Superseded branch run #276 (`44799265880`) completed success. Node suites: P145.6 9/9, P145.7 7/7, P145.8 11/11 and P145.9/.10 all reported PASS. Hosted Chromium reports for all four modules had no failed assertions or uncaught page errors; importantly P145.7 confirmed the non-`.card` shell received real Apply/preset pointer clicks after excluding the global tilt observer.
-- This is historical evidence from the pre-P125.4 rebase branch. The new current-main branch also corrects the P145.9/.10 panel insertion order (after P145.8), so a fresh workflow run on this rebased branch remains mandatory before merge.
+- The newer current-main rebase is now verified by run #298 (`44800999215`), which includes the P145.9/.10 insertion-order correction after P145.8. Run #276 is retained only as historical evidence.
+
+
+### P145.6–P145.10 current-main hosted acceptance — run #298 (2026-11-20)
+- Full candidate workflow run #298 (`44800999215`) completed success. It restored the 23.3.111 candidate, integrated all P145 modules, verified vendor SHA manifests, passed the full HTML/inline-JS audit, P47–P70 regressions and integrated source/P107 ZIP tests, then passed hosted browser/runtime verification.
+- Node results: P145.6 9/9, P145.7 7/7, P145.8 11/11, P145.9/.10 8/8. Hosted Chromium results: all four P145 suites returned `failed: []` and `pageErrors: []`; P145.7 confirmed actual pointer interaction without the global tilt observer.
+- Hosted GLB/P85/ONNX inference checks used synthetic fixtures and CI software rendering. They verify integration/execution paths, not production accuracy, physical GPU performance or target-device FPS.
