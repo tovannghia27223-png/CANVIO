@@ -248,3 +248,11 @@ The candidate workflow runs standalone/embedded source parity and API tests for 
 - Unit checks cover PNG signature/IEND, APNG frame/play counts, sequence layout, IDAT/fdAT placement, CRC-32 on every chunk, frame delay and invalid/oversize rejection.
 - Hosted Chromium test downloads both GIF and APNG from the Video Engine UI; FFprobe checks codec, width and decoded frame count for each.
 - Synthetic timeline fixture only. Real timeline footage, transparency gradients, long animations and memory/performance on ordinary devices remain manual.
+
+
+## P125.4 — Split-asset ZIP package acceptance
+
+- Node tests verify P125.1 source/embedded sync, strict local frame path validation, safe fallback to self-contained HTML, ZIP manifest and separate binary asset entries.
+- Hosted Chromium imports a synthetic WebM, extracts storyboard frames, exports the ZIP, and Python `zipfile` checks archive integrity, required files, manifest/size budget, frame count, and JPEG/WebP/PNG signatures.
+- The extracted `index.html` is then opened via `file://` in Chromium; the test scrolls to the last frame to verify relative asset loading offline.
+- This remains synthetic video/desktop browser evidence. Target-device mobile memory, touch UI and large real-media testing remain manual.

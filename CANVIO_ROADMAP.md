@@ -667,3 +667,12 @@ Hosted verification after the ffmpeg repair is complete:
 - Boundaries: 600 frames maximum, dimensions ≤4096×4096 and raw filtered frame data ≤64 MiB. Stored DEFLATE may produce larger files than optimized encoders; the UI reports file size.
 - Tests extended in `run-p132g-tests.cjs` and hosted `run-p132g-browser.py` (Chromium download + FFprobe APNG decode).
 - Still open: animated WebP, export with audio, real-media/performance and large-animation memory review. P132 is therefore still partial.
+
+
+## 23.3.111 continuation — P125.4 Split-asset offline package
+
+- Added a second export path to the existing P125.2 storyboard editor: compact ZIP with `index.html`, relative `frames/frame-NNN.webp|jpg|png` image assets, `CANVIO-STORYBOARD-MANIFEST.json` and README. The original single-file HTML export is retained.
+- The HTML builder only accepts generated, relative frame paths with a strict allow-list. Unsafe frame paths fall back to the original self-contained data-URL output; image bytes are separated into ZIP entries through the existing `CVZip.build` owner.
+- Uses the existing maximum-MB control (1–50 MB), adaptive frame decimation and fail-closed size check; no cloud store, external request or new timeline.
+- Unit + hosted Chromium test verifies ZIP integrity, separate image payloads/signatures, manifest metadata and opening/scrolling the extracted package offline.
+- Still open: physical mobile performance, memory pressure on long/high-resolution source video, touch editing review, and audio-inclusive storyboard packages.

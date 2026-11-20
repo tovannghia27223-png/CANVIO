@@ -3566,3 +3566,12 @@ P125.3: `CVScrollFramesP125.PRESETS`, `decimate(frames,maxBytes)`; `buildHtml` n
 - Safety limit: max 600 frames, dimensions at most 4096×4096 and uncompressed scanline budget at most 64 MiB per animation. Reduce FPS/width when the limit is reached. The stored-DEFLATE encoder favours portability/simple verification over smallest file size.
 - Tests: `node tests/p127/run-p132g-tests.cjs`; hosted Chromium + FFprobe: `tests/p127/run-p132g-browser.py`. These verify source/embedded parity, PNG/APNG CRCs, sequence/frame metadata, browser download and actual APNG decode.
 - Still open: animated WebP, animated timeline audio, 256-colour GIF banding, large-file/performance optimization and validation on representative real-world media.
+
+
+## P125.4 — Split-asset offline storyboard package
+
+- P125.1 retains the original single-file HTML export. P125.4 adds a second ZIP export from the P125.2 storyboard editor: `index.html`, `frames/frame-001.*` onward, `CANVIO-STORYBOARD-MANIFEST.json` and `README.md`.
+- External frame paths are accepted only when they match the generated local `frames/frame-NNN.(webp|jpg|png)` form; untrusted paths fall back to the self-contained data-URL mode. The ZIP stores extracted image bytes as separate files, and the offline HTML lazily loads relative paths.
+- The current MB field is the package image-data budget (1–50 MB). The encoder decimates frames to fit and fails closed if the result still exceeds the budget or if the canonical `CVZip.build` owner is unavailable. No server, cloud sync or extra project store is introduced.
+- Tests: `tests/p127/run-p1254-tests.cjs` checks safe relative paths, embedded-vs-split HTML, binary frame payload entries, manifest and package bounds. `tests/p127/run-p1254-browser.py` verifies ZIP integrity, image signatures, manifest/file count, and opens the extracted package offline in hosted Chromium.
+- Limitations: the ZIP is larger than HTML-only for the same frames if compression is weak; browser support for the source video codec still controls frame extraction; audio is not packaged. Touch/mobile performance and clean-machine target-device review remain manual.
