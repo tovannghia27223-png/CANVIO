@@ -20,3 +20,8 @@
 
 
 - P136.4 candidate: added six local SVG pattern-fill presets to the existing Image Trace fill mode; default output remains unchanged, Stroke mode disables the pattern control, and no remote assets/dependencies are used. Hosted verification pending.
+
+
+
+- P136.4 SVG pattern fills merged and hosted verified in workflow #312: six local pattern presets for the existing Image Trace multicolour mode; no paid dependency or external asset.
+- P131.3 candidate adds bounded, sanitized local HTML import to Website Studio through the existing editor/save owner; 5 MiB cap, active content and remote image URLs removed. Hosted verification pending.
