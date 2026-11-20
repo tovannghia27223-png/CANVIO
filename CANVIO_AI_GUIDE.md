@@ -3584,3 +3584,8 @@ P125.3: `CVScrollFramesP125.PRESETS`, `decimate(frames,maxBytes)`; `buildHtml` n
 - Uses the canonical CVZip.build implementation. The current 1–50 MB selector is an encoded-frame data budget used for bounded decimation; ZIP container overhead and final package bytes are reported separately. If fewer than two frames remain, ZIP export fails closed.
 - Automated acceptance: tests/p127/run-p1254-tests.cjs verifies source/embedded parity, local-path allow-list, safe fallback, manifest and binary entries. tests/p127/run-p1254-browser.py generates a synthetic WebM, exports ZIP in Chromium, validates archive/image signatures and opens the extracted HTML offline, explicitly waiting for the final relative image to decode (naturalWidth > 0).
 - Limitations: no audio is packaged; codec support depends on the browser; synthetic desktop Chromium evidence does not certify touch/mobile use, long/high-resolution footage or low-memory devices. Manual target-device acceptance remains open.
+
+
+### P125.4 hosted acceptance record (2026-11-20)
+- GitHub Actions run #255 (`44796675217`) passed the P125.4 Node suite and hosted Chromium ZIP/offline test. The last relative frame image was explicitly awaited until decoded (`naturalWidth > 0`).
+- Do not interpret this synthetic desktop run as audio support, mobile/touch acceptance or performance certification for long high-resolution footage.
