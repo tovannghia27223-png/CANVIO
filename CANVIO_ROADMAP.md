@@ -599,3 +599,10 @@ Hosted verification after the ffmpeg repair is complete:
 
 ### Release disposition
 - Candidate marker vẫn `23.3.111-github-runtime-ci`; workflow #136 PASS chỉ chứng nhận các bước tự động đã chạy. P70 vẫn `releaseCertified:false`, 14 manual gates pending. Không tuyên bố production-ready, physical GPU, media thật hoặc đồng bộ cloud/hai thiết bị.
+
+## 23.3.111 continuation — P145.2 shader transitions
+
+- Integrated first P145.2 increment: nine shader transitions, nine effect options, quality caps, local image input, PNG frame export and optional P79 WebCodecs video-only MP4 transition segment.
+- Uses the existing Video Engine page as the UI host and existing P79 muxer as the export owner; no third-party dependency, external fetch, new timeline, store or media database.
+- Canvas2D fallback preserves crossfade/wipe only and clearly disables shader-specific FX. Hosted browser coverage is SwiftShader/software rendering.
+- Still open: 60 fps/performance acceptance on representative physical devices, WebCodecs H.264 support matrix, professional review on real project footage, full multi-track/timeline transition editing and audio-inclusive export through the existing canonical exporter.
