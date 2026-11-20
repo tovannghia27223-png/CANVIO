@@ -181,3 +181,7 @@ The candidate is built and verified by the hosted runtime workflow. Runtime vend
 - Implementation files: `canvio-p145-icons.js`, `canvio-p145-typography.js`, `canvio-p145-visual-assets.js`, `canvio-p145-search-gate.js`. Tests are in `tests/p145/run-p1456-*.{cjs,py}`, `run-p1457-*.{cjs,py}`, `run-p1458-*.{cjs,py}` and `run-p145910-*.{cjs,py}`.
 - Important: P145.7’s card intentionally does not use the global `.card` class to avoid the app-wide 3D tilt pointer hit-test bug. Do not re-add that class or replace real Playwright pointer checks with synthetic DOM clicks.
 - Limitations: the original vector/icon sets are starter packs; no remote font service is used; P145.9/.10 cannot claim all production assets are enumerated or hashed without the live canonical provider. Fresh rebased CI is required before acceptance.
+
+
+### P145.6–P145.10 — prior verification and current-main rebase
+- The superseded branch's hosted run #276 passed the P145.6–P145.10 Node and Chromium checks, including the physical Apply/preset pointer interaction for P145.7. The current-main rebase additionally fixes the insertion order so Search/Quality Gate follows the illustration pack; run the new branch workflow before using it as a release acceptance record.
