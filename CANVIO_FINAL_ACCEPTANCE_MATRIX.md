@@ -9,7 +9,6 @@
 | P107 portability | ZIP CRC, independent Asset Library import and rollback tests | No cloud Project Vault sync or physical two-device acceptance claimed |
 | P70 Stable release | Fourteen fail-closed manual gates | releaseCertified:false until every gate has reviewed production evidence |
 
-| P127.7 subtitle-led ducking | 7/7 source regression; hosted inline audit and runtime workflow #136/#137 | Real project A/B listening and export verification remain open |\n| P145.1 Content Core / P145.3 synthetic SFX | Unit and hosted browser checks in workflow #136/#137 | Does not certify full P145 packs, shader transitions, Template Factory or curated music |\n
 ## Required manual gates
 1. HTTPS and supported browser matrix on deployed origin.
 2. Native IndexedDB persistence, restore and quota behavior.
