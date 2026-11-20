@@ -19,7 +19,7 @@ function mount(){
  var editor=document.createElement('section');editor.id='cv1252-editor';editor.className='card';editor.style.cssText='margin-top:12px;display:none';
  editor.innerHTML='<div class="cardTop"><h3>Storyboard cuộn · P125.2</h3><span class="sub">Kéo thả mốc chữ · parallax · easing</span></div>'+
  '<div class="row" style="gap:10px;align-items:center;flex-wrap:wrap"><canvas id="cv1252-preview" width="640" height="360" style="width:min(100%,520px);max-height:270px;object-fit:contain;background:#0b1220;border-radius:10px" aria-label="Xem trước storyboard"></canvas><div style="flex:1;min-width:220px"><label class="tiny">Tiến trình xem trước <input id="cv1252-progress" type="range" min="0" max="100" value="0" style="width:100%"></label><div class="tiny" id="cv1252-preview-caption" role="status" aria-live="polite">Chưa có mốc chữ</div><div class="tiny" id="cv1252-frame-count"></div></div></div>'+
- '<div class="row" style="gap:10px;align-items:end;flex-wrap:wrap;margin-top:10px"><label class="tiny">Parallax <input id="cv1252-parallax" type="range" min="0" max="24" value="8"></label><label class="tiny">Easing <select id="cv1252-easing" class="input"><option value="linear">Linear</option><option value="ease-out">Ease out</option><option value="ease-in-out" selected>Ease in/out</option></select></label><label class="tiny">Chiều dài cuộn <select id="cv1252-screens" class="input"><option value="3">3 màn hình</option><option value="4" selected>4 màn hình</option><option value="6">6 màn hình</option><option value="8">8 màn hình</option><option value="10">10 màn hình</option><option value="12">12 màn hình</option></select></label><button type="button" class="btn btn-soft sm" id="cv1252-add">+ Thêm mốc chữ</button><button type="button" class="btn btn-primary sm" id="cv1252-export" disabled>Xuất storyboard HTML</button></div>'+
+ '<div class="row" style="gap:10px;align-items:end;flex-wrap:wrap;margin-top:10px"><label class="tiny">Parallax <input id="cv1252-parallax" type="range" min="0" max="24" value="8"></label><label class="tiny">Easing <select id="cv1252-easing" class="input"><option value="linear">Linear</option><option value="ease-out">Ease out</option><option value="ease-in-out" selected>Ease in/out</option></select></label><label class="tiny">Chiều dài cuộn <select id="cv1252-screens" class="input"><option value="3">3 màn hình</option><option value="4" selected>4 màn hình</option><option value="6">6 màn hình</option><option value="8">8 màn hình</option><option value="10">10 màn hình</option><option value="12">12 màn hình</option></select></label><button type="button" class="btn btn-soft sm" id="cv1252-add">+ Thêm mốc chữ</button><button type="button" class="btn btn-primary sm" id="cv1252-export" disabled>Xuất storyboard HTML</button><button type="button" class="btn btn-soft sm" id="cv1252-zip" disabled>Xuất ZIP gọn + ảnh rời</button></div>'+
  '<div class="tiny" style="margin-top:8px">Mốc chữ tối đa 12. Sắp xếp bằng kéo thả; thời gian tính theo phần trăm hành trình cuộn. Các trường nhập được làm sạch và escape khi xuất.</div><div id="cv1252-captions" style="display:grid;gap:8px;margin-top:10px"></div>';
  card.appendChild(editor);
  var $=function(s){return editor.querySelector(s);},frames=[],meta=null,captions=[],imageCache={},dragIndex=-1,sourceFile=null;
@@ -72,12 +72,13 @@ function mount(){
    root.appendChild(row);
   });
  }
+ function downloadBlob(name,blob){var url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url);},4000);}
  function download(name,text){var blob=new Blob([text],{type:'text/html;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url);},4000);}
  button.addEventListener('click',function(){
   var file=card.querySelector('#cv125-file').files[0];if(!file){say('Chọn một video trước.');return;}
   button.disabled=true;say('Đang trích khung storyboard…');
   api.extract(file,{frames:card.querySelector('#cv125-n').value,width:card.querySelector('#cv125-w').value},function(a,b){say('Đang trích khung '+a+'/'+b+'…');}).then(function(res){
-   frames=res.frames;meta=res;sourceFile=file;imageCache={};captions=presetCaptions();editor.style.display='block';$('#cv1252-export').disabled=false;$('#cv1252-progress').value='0';renderRows();drawPreview();say('Đã trích '+frames.length+' khung. Chỉnh mốc chữ, parallax và easing rồi xuất storyboard.');
+   frames=res.frames;meta=res;sourceFile=file;imageCache={};captions=presetCaptions();editor.style.display='block';$('#cv1252-export').disabled=false;$('#cv1252-zip').disabled=false;$('#cv1252-progress').value='0';renderRows();drawPreview();say('Đã trích '+frames.length+' khung. Chỉnh mốc chữ, parallax và easing rồi xuất storyboard.');
   }).catch(function(e){say(String(e&&e.message||e).slice(0,160));}).finally(function(){button.disabled=false;});
  });
  $('#cv1252-add').addEventListener('click',function(){if(captions.length>=12){say('Tối đa 12 mốc chữ.');return;}var start=captions.length?Math.min(.9,captions[captions.length-1].to+.02):0;captions.push(normalCaption({from:start,to:Math.min(1,start+.15),text:'Mốc chữ mới'}));renderRows();drawPreview();});
@@ -89,8 +90,17 @@ function mount(){
    var preset=api.PRESETS[card.querySelector('#cv125-preset').value]||api.PRESETS.none;
    var html=api.buildHtml(kept,{width:meta.width,height:meta.height,title:sourceFile.name.replace(/\.[^.]+$/,''),captions:captions,marquee:preset.marquee,parallax:Number($('#cv1252-parallax').value),easing:$('#cv1252-easing').value,scrollScreens:Number($('#cv1252-screens').value)});
    download('scroll-storyboard-'+Date.now().toString(36)+'.html',html);
-   say('Đã xuất storyboard '+kept.length+'/'+frames.length+' khung · parallax '+$('#cv1252-parallax').value+' · easing '+$('#cv1252-easing').value+'.');
+   say('Đã xuất storyboard HTML '+kept.length+'/'+frames.length+' khung · parallax '+$('#cv1252-parallax').value+' · easing '+$('#cv1252-easing').value+'.');
   }catch(e){say(String(e&&e.message||e).slice(0,160));}
+ });
+ $('#cv1252-zip').addEventListener('click',function(){
+  if(!frames.length||!meta||typeof api.buildPackage!=='function')return;
+  var btn=this,cap=Math.max(1,Number(card.querySelector('#cv125-mb').value)||8),preset=api.PRESETS[card.querySelector('#cv125-preset').value]||api.PRESETS.none;
+  btn.disabled=true;say('Đang tối ưu khung và đóng gói ZIP ngoại tuyến…');
+  api.buildPackage(frames,{maxMB:cap,width:meta.width,height:meta.height,title:sourceFile.name.replace(/\.[^.]+$/,''),captions:captions,marquee:preset.marquee,parallax:Number($('#cv1252-parallax').value),easing:$('#cv1252-easing').value,scrollScreens:Number($('#cv1252-screens').value)}).then(function(pkg){
+   downloadBlob('scroll-storyboard-package-'+Date.now().toString(36)+'.zip',pkg.blob);
+   say('Đã xuất ZIP '+pkg.frameCount+'/'+pkg.sourceFrameCount+' khung · '+(pkg.bytes/1048576).toFixed(1)+' MB · index.html + '+pkg.manifest.assets.length+' ảnh rời.');
+  }).catch(function(e){say(String(e&&e.message||e).slice(0,180));}).finally(function(){btn.disabled=false;});
  });
  var preset=card.querySelector('#cv125-preset');if(preset)preset.addEventListener('change',function(){if(frames.length){captions=presetCaptions();renderRows();drawPreview();}});
  return true;
