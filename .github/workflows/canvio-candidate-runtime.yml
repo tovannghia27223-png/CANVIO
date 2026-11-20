@@ -86,7 +86,7 @@ jobs:
         run: |
           set -euo pipefail
           missing=()
-          for tool in zip; do
+          for tool in zip ffmpeg; do
             command -v "$tool" >/dev/null 2>&1 || missing+=("$tool")
           done
           if (("${#missing[@]}" > 0)); then
