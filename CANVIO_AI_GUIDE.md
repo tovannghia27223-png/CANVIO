@@ -3445,3 +3445,7 @@ Phạm vi: nhánh ứng viên `canvio/23-3-111-github-runtime-ci`; không thay t
 - P125.1 scroll-frame export exists; P125.2–P125.4 remain open (storyboard editor, presets, package/mobile optimization).
 - P122.2 remains CSS-only/Website Engine scoped and does not yet cover content/icon cleanup or Project Vault version history. P130/P130.A must remain unimplemented until a real Supabase project, credentials, RLS and recovery test environment are available.
 - Keep all release and manual acceptance gates fail-closed. Current source-level/fixture tests do not certify real user media, real devices, cross-origin recovery, production headers, accessibility or two-device synchronization.
+
+
+### CI runner dependency note — P125.1
+The hosted workflow provisions native test tools in the “Verify native test utilities” step. The P125.1 browser harness generates a short WebM fixture through the `ffmpeg` executable; keep `ffmpeg` in that apt-installed tool list. A source-level P125 test pass alone does not replace this browser acceptance.
