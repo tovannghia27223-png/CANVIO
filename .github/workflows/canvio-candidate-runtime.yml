@@ -168,12 +168,12 @@ jobs:
             if(!source.includes(spec.contract))throw new Error(spec.name+' source contract missing');
             const openTag='<script id="'+spec.id+'">';
             const re=new RegExp('(<script\\b(?=[^>]*\\bid=["\\\']'+spec.id+'["\\\'])[^>]*>)[\\s\\S]*?(<\\/script\\s*>)','i');
-            const tag=openTag+'\\n'+source+'\\n</script>';
+            const tag=openTag+'\n'+source+'\n</script>';
             if(re.test(html))html=html.replace(re,tag);
             else{
               const at=html.lastIndexOf('</body>');
               if(at<0)throw new Error('index.html has no closing body tag for '+spec.id);
-              html=html.slice(0,at)+tag+'\\n'+html.slice(at);
+              html=html.slice(0,at)+tag+'\n'+html.slice(at);
             }
             if((html.match(new RegExp('id="'+spec.id+'"','g'))||[]).length!==1)throw new Error(spec.id+': duplicate/missing embedded lot');
           }
