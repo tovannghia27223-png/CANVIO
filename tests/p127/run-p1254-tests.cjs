@@ -25,5 +25,6 @@ const api=win.CVScrollFramesP125, good='data:image/jpeg;base64,/9j/AAAA';
  const first=captured.find(f=>f.name==='frames/frame-001.jpg');
  assert.ok(first&&first.data.constructor.name==='Uint8Array'&&first.data.length>0,'binary frame file included');
  assert.equal(pack.manifest.embeddedHtml,false,'manifest identifies split-asset output');
+ assert.equal(pack.manifest.maxMB,8,'manifest preserves selected image budget');
  console.log(JSON.stringify({suite:'CANVIO_P125_4_SPLIT_ASSET_PACKAGE',checks:12,frames:pack.frameCount,files:pack.fileCount,bytes:pack.bytes},null,2));
 })().catch(e=>{console.error(e);process.exit(1);});
