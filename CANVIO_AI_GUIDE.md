@@ -3541,3 +3541,11 @@ P125.3: `CVScrollFramesP125.PRESETS`, `decimate(frames,maxBytes)`; `buildHtml` n
 - Sandboxed \`srcdoc\` preview; user text is bounded and escaped; palettes are allow-listed. Export is standalone offline HTML/CSS without scripts, remote fonts, external images or requests.
 - Save up to 20 templates in localStorage; export/import validated portable \`CANVIO_TEMPLATE_V1\` JSON (64 KB max). Local saved templates do not sync across devices.
 - Hosted unit/browser checks cover render/escaping/schema, preview, save, HTML/JSON export and import. Manual typography/print proofing and native Poster/Slide integration remain separate acceptance work.
+
+## P145.7 — Local system typography presets (2026-11-20 continuation)
+
+- Owner: \`canvio-p145-typography.js\`; embedded lot: \`canvio-lot1457\`; API: \`window.CVTypographyPresetsP1457\`.
+- Six original typographic pairings for business, finance, HR, social, editorial and data dashboards using system-installed stacks only (system-ui, Segoe UI, Arial, Georgia, Trebuchet MS, Consolas and generic fallbacks).
+- User can adjust heading/body sizes, line height and tracking, preview locally, test font availability with the browser Font Loading API, download or copy CSS.
+- No binary font files, remote @font-face, CDN, Google Fonts or license claim. Output CSS describes system fallback stacks; a font not installed on a device falls back automatically.
+- Verification: unit suite plus hosted Chromium preview/font-check/CSS-export checks. This is a typography preset toolkit, not a distributable licensed font pack.

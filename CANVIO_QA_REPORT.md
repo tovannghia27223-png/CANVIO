@@ -228,3 +228,9 @@ The candidate workflow runs standalone/embedded source parity and API tests for 
 - Unit checks cover five template types, rendering, XSS-like text escaping, field bounds, palette allow-list, offline output and validated JSON round-trip/rejection.
 - Hosted Chromium run #44773327159 passed its candidate workflow, including Template Factory browser coverage for Asset Library mount, presets, escaped preview, local save, standalone HTML export, JSON import/export and local persistence.
 - Manual typography/print proof and native Poster/Slide document integration remain open. Browser-local template persistence is not cloud synchronization.
+
+## P145.7 — system typography preset checks
+
+- Unit tests cover six presets, allow-listed stack pairing, clamped controls, generic fallback, CSS tokens and no remote requests.
+- Hosted Chromium checks Asset Library panel, preset count, local preview, custom size/line-height/tracking, font availability check and downloadable CSS with no @import/remote font.
+- System font availability varies by OS. This is a CSS preset toolkit, not a packaged font library; visual review across Windows/macOS/Linux and real print output remains manual.

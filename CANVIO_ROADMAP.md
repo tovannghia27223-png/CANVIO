@@ -644,3 +644,10 @@ Hosted verification after the ffmpeg repair is complete:
 - Five original local starter layouts: Business Brief, Finance Snapshot, HR Recruitment, Professional Profile and Social Story. Four local palettes; edit title/subtitle/body, three metrics/labels and footer.
 - Sandboxed preview, save up to 20 browser-local templates, standalone offline HTML export, validated JSON import/export. User text is escaped and bounded; no remote fonts or images.
 - Unit + hosted Chromium tests passed on feature run #44773327159. Native Poster/Slide bundles, manual typography/print proof and cloud sync remain open.
+
+## 23.3.111 continuation — P145.7 local typography presets
+
+- Added six system-font typography pairings for Business, Finance, HR, Social, Editorial and Dashboard use.
+- Editable heading/body size, line-height and tracking; local preview; browser font-availability check; CSS download/copy for use in supported design surfaces.
+- Uses only common local/system font stacks and generic fallbacks. No bundled font binaries, remote fonts or paid licensing. Does not claim to install fonts or provide an actual font pack.
+- Added unit and hosted Chromium coverage.

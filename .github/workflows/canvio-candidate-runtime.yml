@@ -5,6 +5,7 @@ on:
     branches:
       - canvio/23-3-111-github-runtime-ci
       - work/p127-7-ducking-p145-continuation
+      - work/p145-7-typography-presets
       - work/p145-5-template-factory
       - work/p136-bezier-smoothing
       - work/p125-2-scroll-storyboard
@@ -143,6 +144,25 @@ jobs:
           if((html.match(/id="canvio-lot1455"/g)||[]).length!==1)throw new Error('P145.5 embedded lot duplicate/missing');
           fs.writeFileSync(file,html,'utf8');
           console.log('P145.5 local template factory integrated');
+          NODE
+
+      - name: Integrate P145.7 local typography presets
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs=require('node:fs');
+          const file='index.html';
+          let html=fs.readFileSync(file,'utf8');
+          const source=fs.readFileSync('canvio-p145-typography.js','utf8').trim();
+          if(!source.includes('window.CVTypographyPresetsP1457'))throw new Error('P145.7 source contract missing');
+          const tag='<script id="canvio-lot1457">\n'+source+'\n</script>';
+          const re=/(<script\b(?=[^>]*\bid=["']canvio-lot1457["'])[^>]*>)[\s\S]*?(<\/script\s*>)/i;
+          if(re.test(html))html=html.replace(re,tag);
+          else{const at=html.lastIndexOf('</body>');if(at<0)throw new Error('index.html has no closing body tag');html=html.slice(0,at)+tag+'\n'+html.slice(at);}
+          if((html.match(/id="canvio-lot1457"/g)||[]).length!==1)throw new Error('P145.7 embedded lot duplicate/missing');
+          fs.writeFileSync(file,html,'utf8');
+          console.log('P145.7 local typography presets integrated');
           NODE
 
       - name: Integrate P127.7 subtitle-led music ducking
@@ -376,6 +396,7 @@ jobs:
           node tests/p127/run-p125f-tests.cjs
           node tests/p127/run-p1252-tests.cjs
           node tests/p127/run-p145c-tests.cjs
+          node tests/p145/run-p1457-tests.cjs
           node tests/p145/run-p1455-tests.cjs
           node tests/p127/run-p132g-tests.cjs
           node tests/p127/run-p145s-tests.cjs
@@ -427,6 +448,7 @@ jobs:
           /tmp/canvio-playwright/bin/python tests/p127/run-p125f-browser.py
           /tmp/canvio-playwright/bin/python tests/p127/run-p1252-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p145-browser.py
+          /tmp/canvio-playwright/bin/python tests/p145/run-p1457-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p1455-browser.py
           /tmp/canvio-playwright/bin/python tests/p127/run-p132g-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p145s-browser.py

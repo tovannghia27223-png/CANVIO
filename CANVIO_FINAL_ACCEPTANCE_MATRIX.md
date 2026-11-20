@@ -25,3 +25,5 @@
 12. Physical target-device GPU/VRAM, performance and long-render testing.
 13. Cross-origin backup/restore and independent-device recovery.
 14. Rollback, release observability, alerting and production incident drill.
+
+| P145.7 Typography presets | Six system-font pairings, clamped controls, local preview, availability check, CSS export and hosted Chromium | No bundled font binaries; cross-platform font fidelity and print review remain manual |

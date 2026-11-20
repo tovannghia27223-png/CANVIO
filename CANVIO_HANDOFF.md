@@ -136,3 +136,8 @@ The candidate is built and verified by the hosted runtime workflow. Runtime vend
 - Added five original editable template presets (business, finance, HR, profile, social) and four palettes.
 - Sandbox preview, up to 20 local saves, standalone offline HTML and validated JSON export/import. No external font/image/runtime.
 - Tests: \`run-p1455-tests.cjs\`, \`run-p1455-browser.py\`. Manual print/typography and native Poster/Slide integration remain open.
+
+## P145.7 — Typography presets
+- Added six local/system typography pairing presets, adjustable sizes/line-height/tracking, preview, font availability check and CSS export.
+- No font binaries or remote imports; actual display depends on fonts installed on the user's device.
+- Tests: \`run-p1457-tests.cjs\` and \`run-p1457-browser.py\`.
