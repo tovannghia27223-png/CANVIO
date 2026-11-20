@@ -118,3 +118,9 @@ The candidate is built and verified by the hosted runtime workflow. Runtime vend
 - Added four original procedural moods with 60–140 BPM and 4/8 bars.
 - Preview/stop, WAV export and canonical Video Engine audio import are supported; no external assets or sample files are used.
 - Verify with \`node tests/p145/run-p1454-tests.cjs\` and \`tests/p145/run-p1454-browser.py\`. The hosted check includes ffprobe decode; listening review remains a manual task.
+
+
+## P145.5 — Template Factory
+- Added five original template presets and four local palettes. Edit title/subtitle/body, metrics and footer.
+- Preview uses a sandboxed iframe. Export HTML is offline and has no scripts or external resources. JSON import/export uses validated \`CANVIO_TEMPLATE_V1\`.
+- Up to 20 saved templates in localStorage; no cloud sync claim. Test: \`node tests/p145/run-p1455-tests.cjs\` and \`tests/p145/run-p1455-browser.py\`.

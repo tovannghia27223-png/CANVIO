@@ -3515,3 +3515,13 @@ P125.3: `CVScrollFramesP125.PRESETS`, `decimate(frames,maxBytes)`; `buildHtml` n
 - User actions: loop preview, stop, WAV download and add to existing video timeline. No extra timeline, project store, cloud-sync key or licensed audio bundle.
 - Limitations: procedural synthesis is not a curated instrumental library or human-recorded production; no stems, melody editor, MIDI, key selector or cross-device sync. Browser OfflineAudioContext support is required.
 - Verification: Node unit suite and hosted Chromium render/import/download/ffprobe test are added to the candidate workflow. Listening and quality review on real projects/devices remains manual.
+
+
+## P145.5 — Local Template Factory (2026-11-20 continuation)
+
+- Standalone owner: \`canvio-p145-templates.js\`; embedded lot: \`canvio-lot1455\`; API: \`window.CVTemplateFactoryP1455\`. Mounts after Content Factory in the existing Asset Library; does not create a second asset or project store.
+- Five original editable starter templates: Business Brief, Finance Snapshot, HR Recruitment, Professional Profile and Social Story. User can change title, subtitle, body, three metrics/labels, footer and one of four local palettes.
+- Live preview uses a sandboxed \`srcdoc\` iframe. User text is length-bounded and escaped; palette is allow-listed. Export is standalone HTML/CSS with no scripts, remote fonts, external images or network requests.
+- Save up to 20 templates in localStorage; export/import portable \`CANVIO_TEMPLATE_V1\` JSON up to 64 KB. Browser-local template library is not cloud-synced and does not imply Project Vault synchronization.
+- Verification added: standalone/embedded parity, render/escaping/schema tests, and hosted Chromium coverage for preview, save, HTML/JSON download and import.
+- Limitations: templates are static HTML starter layouts, not native multi-layer Poster/Slide document assets; manual typography/print proofing and Project Vault history remain separate work.

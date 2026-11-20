@@ -10,3 +10,5 @@
 - P145.4b: add user-triggered official YouTube/Spotify/SoundCloud music preview using existing cue metadata; HTTPS allowlist, sandboxed iframe, no autoplay/capture/download; add hosted acceptance.
 
 - P145.4: add locally synthesized mood/BPM background loop composer, WAV export, preview/stop and canonical Video Engine import; add unit and hosted browser/ffprobe coverage.
+
+- P145.5: add offline Template Factory with five original business/finance/HR/profile/social templates, editable text/metrics, local save, sandboxed preview and validated HTML/JSON import/export.

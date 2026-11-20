@@ -622,3 +622,12 @@ Hosted verification after the ffmpeg repair is complete:
 - Preview loops locally, stop, download WAV or add the generated result to the existing Video Engine timeline via \`importFiles\`. This complements P145.3 synthetic SFX and P145.4b official third-party previews; it is not a curated commercial music pack.
 - Original oscillator synthesis only: no sample libraries, remote API or unverified assets. Does not claim stems, MIDI, live instrumental recording, or cross-device Project Vault sync.
 - Added deterministic unit assertions and hosted browser checks for all four moods, duration, non-silence, peak normalization, WAV decode, preview/stop and timeline import. Human listening review remains a separate manual acceptance.
+
+
+## 23.3.111 continuation — P145.5 local Template Factory
+
+- Added five original local starter templates for Business Brief, Finance Snapshot, HR Recruitment, Professional Profile and Social Story.
+- Editable fields: title, subtitle, body, 3 metrics/labels and footer; four local palettes. Preview in sandboxed iframe, save up to 20 templates locally, export standalone HTML or portable JSON and import validated JSON.
+- User text is bounded and escaped; color selection is allow-listed; no external fonts/images/scripts are embedded. The exported HTML works offline.
+- This is a local HTML template factory, not yet a native Poster/Slide document bundle or cross-device Project Vault asset.
+- Added unit and hosted browser coverage for parity, escaping, schema validation, save, preview, export and import.

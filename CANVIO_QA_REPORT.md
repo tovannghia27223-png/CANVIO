@@ -208,3 +208,10 @@ The candidate workflow runs standalone/embedded source parity and API tests for 
 - Unit suite covers four presets, BPM/bar clamps, chord progression, deterministic mood plans, PCM WAV header/format and peak normalization.
 - Hosted browser suite renders all four moods with OfflineAudioContext, checks non-silent output, -1 dBFS peak normalization, 4-bar duration at 96 BPM, imports WAV via the canonical Video Engine importer, downloads/decodes WAV using ffprobe, and exercises loop preview/stop.
 - This is procedural synthesized music, not a curated/licensed music library. Listening quality, musical suitability and mix review on actual user projects remain manual.
+
+
+## P145.5 Template Factory — hosted acceptance added
+
+- Unit checks cover all five template IDs, rendering, HTML escaping, max field lengths, palette allow-list, offline output, JSON schema round-trip and rejection of unknown schemas.
+- Chromium browser smoke covers Asset Library mount, all five presets, escaped preview content (including script-like text), local save, standalone HTML export, JSON export/import and persistence in the local template list.
+- The export is static HTML/CSS only; it is not a native Poster/Slide project, and saved templates remain browser-local.

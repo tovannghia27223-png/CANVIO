@@ -29,3 +29,5 @@
 | P145.4b embedded music preview | HTTPS host/path allowlist, sandboxed iframe generation, cue display and hosted local smoke | Provider playback/region/account access and precise Spotify/SoundCloud seek remain manual; no capture/download |
 
 | P145.4 local BGM composer | Four-mood local synthesis, BPM/bar bounds, WAV/ffprobe, loop preview and canonical timeline import | Manual listening/mix review and device performance remain open; not a curated music pack or stems |
+
+| P145.5 Template Factory | Five local templates, editable content/metrics, allow-listed palettes, sandboxed preview, local save, standalone HTML and validated JSON import/export | Manual print/typography review and native Poster/Slide/Project Vault integration remain open |
