@@ -693,11 +693,18 @@ Hosted verification after the ffmpeg repair is complete:
 - P145.8 adds eight first-party offline SVG illustrations, four palettes, filter/search, preview and vector exports.
 - P145.9/.10 adds read-only local asset search and a shared license/source/size/hash quality gate. Uses the existing `CV.assets.list()` provider when present; full vault enumeration and binary hashing still require a canonical provider.
 - All four modules are inserted into the candidate `index.html` by the runtime integration workflow. Node and hosted Chromium test commands are included for each module.
-- Previous run #263 exposed the P145.7 pointer-interception defect; this rebase contains the non-`.card` fix and preserves real mouse-click testing. Fresh CI on the rebased PR is the acceptance gate.
+- Previous run #263 exposed the P145.7 pointer-interception defect; the non-`.card` fix is confirmed by current-main hosted run #298 (`44800999215`). P145.6–P145.10 Node and Chromium suites passed on the rebased PR.
 - Free/offline implementation: no remote fonts, stock images, paid package or duplicate project/timeline store. Remaining work: inspect the live Asset Vault provider, real production metadata/hash coverage and human design review.
 
 
 ### P145.6–P145.10 prior run evidence and rebase gate (2026-11-21)
 - Prior superseded branch CI run #276 completed success with P145.6 9/9, P145.7 7/7, P145.8 11/11 Node suites and all four browser suites clear of failures/page errors.
 - P145.7 real pointer interaction now passes after removing the global `.card` tilt hook from its custom panel wrapper.
-- Current-main rebase additionally orders the P145.9/.10 search panel after P145.8. Re-run the whole candidate workflow on this rebased branch before merging.
+- Current-main rebase additionally orders P145.9/.10 after P145.8; this was included in successful hosted run #298 (`44800999215`). The older #276 remains historical.
+
+
+### P145.6–P145.10 current-main acceptance — 2026-11-20
+- Hosted runtime run #298 (`44800999215`) completed success on the post-P125.4 main baseline. P145.6–P145.10 integration, audit and browser tests are now included in the verified candidate.
+- Node suites: P145.6 9/9; P145.7 7/7; P145.8 11/11; P145.9/.10 8/8. Chromium reports for all four suites returned no failed checks and no uncaught page errors.
+- Run #298 also passed candidate HTML/JS audit, P47–P70 regression suites, source contracts, P107 ZIP round-trip, local Three.js r187/P85 runtime SHA verification, GLB Draco/Meshopt/KTX2 fixtures and synthetic P80/P102/P105 ONNX worker/browser acceptance.
+- Boundaries remain: test provider is a fixture, not complete live Asset Vault coverage; no automatic hashing of every real uploaded binary; fonts are system fallbacks; SVG packs are starter assets. Physical GPU, real-media/mobile/print/accessibility and the 14 P70 manual gates remain open.
