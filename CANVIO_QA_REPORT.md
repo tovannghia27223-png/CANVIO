@@ -333,3 +333,18 @@ The candidate workflow runs standalone/embedded source parity and API tests for 
 - Node test suite extends CVTraceP136.tests() while retaining standalone/embedded parity; assertions cover exact default output parity, one local pattern definition/reference per colour path, static/self-contained SVG and invalid preset fallback.
 - Hosted Chromium test exercises the actual Image Studio control, downloads SVG, checks defs/pattern and local fragment references, awaits preview decode, and verifies single-line Stroke remains usable with pattern disabled.
 - Status: source and test changes are on work/p136-pattern-fill-20261121; hosted workflow result pending. Do not mark accepted until both Node and Chromium checks pass.
+
+
+
+ 
+## P136.4 — final hosted verification PASS (run #312, 2026-11-21)
+
+- PR #39 merged at `1eb4129f4252b31c41f819d23f1cd9dd02948d68`. Workflow #312 (`44813838108`) completed success; 33 steps, no failures.
+- Node P136 tests and Chromium pattern-preview/download checks passed. Full workflow also passed source extraction/syntax, complete HTML/inline-JS audit, P47–P70 regression, integrated source contracts, genuine P107 ZIP round-trip, pinned Three.js r187/Draco/Meshopt/KTX2 and P85 vendor checks, and same-origin GLB/P85/ONNX worker browser acceptance.
+- Artifact `CANVIO-23.3.111-GITHUB-RUNTIME-VERIFIED-312` uploaded at 21,583,636 bytes. Browser uses software SwiftShader, not physical GPU; model inference workflow_dispatch tests were not run. P70 remains blocked with 14 manual gates pending.
+
+## P131.3 — Safe HTML import candidate (2026-11-21)
+
+- Standalone security hub adds bounded `prepareHtmlImport` and async `importHtmlText`; local user file picker restricted to .html/.htm and text/html/application/xhtml+xml. Hard cap 5 MiB.
+- Uses existing allow-list sanitizer, removes remote image/source URLs but keeps local raster data URLs, strips active HTML and confirms before adding to current Website Engine. Uses only `CVWeb.addComponents` and `CV.engines.web.save`.
+- Workflow now performs explicit standalone/embedded lot sync before P131 parity tests. New browser assertions cover safe content, removed scripts/handlers/forms/iframes, remote asset stripping, save result, save failure reporting and the actual file-picker path. Hosted result pending; do not merge until the P131 full workflow passes.
