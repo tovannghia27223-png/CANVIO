@@ -564,3 +564,8 @@ Hosted verification after the ffmpeg repair is complete:
 - Test: `node tests/p127/run-p145s-tests.cjs`; Chrome thật `tests/p145/run-p145s-browser.py` (không im lặng, đỉnh đúng, xác định theo seed, thêm clip audio, ffprobe giải mã WAV).
 - Chưa làm: nhạc nền loop theo mood/BPM, stems, ducking, nhạc bằng model cục bộ; nút "Nghe" chưa được kiểm bằng tai thật (chỉ kiểm đường dữ liệu).
 
+### P136 — Image Trace (ảnh → vector SVG)
+- `canvio-p136-trace.js` (lot `canvio-lot136t`): thẻ "Ảnh → Vector" ở Image Studio. Median-cut 2–12 màu, tách lớp theo màu, dò đường biên theo cạnh điểm ảnh, đơn giản hoá Douglas-Peucker, tô evenodd (lỗ thủng đúng), nền tự nhận, bỏ pixel trong suốt, thu nhỏ ≤ 512 px. SVG xuất chỉ gồm rect/path (không script, không link ngoài).
+- Test: `node tests/p127/run-p136t-tests.cjs`; Chrome thật `python3 tests/p145/run-p136-browser.py` (vẽ ảnh, trace qua giao diện, kết xuất lại và so pixel: lệch 0,15%).
+- Chưa làm: làm mượt Bezier, tách nét đơn (stroke), pattern/brush/gradient mesh (phần còn lại của P136); ảnh chụp nhiều chuyển sắc ra dạng poster.
+

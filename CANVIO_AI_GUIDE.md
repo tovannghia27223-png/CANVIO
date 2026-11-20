@@ -3471,3 +3471,6 @@ P125.3: `CVScrollFramesP125.PRESETS`, `decimate(frames,maxBytes)`; `buildHtml` n
 ## P145.3 SFX
 `window.CVSfxP145` {recipes, render(kind,{duration,seed}) -> {samples,wav,duration}, wav, normalize, mount, tests}. Lot `canvio-lot145s` khớp `canvio-p145-sfx.js`.
 
+## P136 Image Trace
+`window.CVTraceP136` {quantize, traceMask, simplify, traceImageData({width,height,data},{colors,detail}) -> {svg,paths,loops,...}, fromBitmap, mount, tests}. Lot `canvio-lot136t` khớp `canvio-p136-trace.js`.
+
