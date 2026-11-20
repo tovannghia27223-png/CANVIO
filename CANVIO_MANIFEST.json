@@ -2,7 +2,7 @@
   "format": "CANVIO_DELIVERY_MANIFEST",
   "schemaVersion": 2,
   "candidate": "23.3.111-github-runtime-ci",
-  "generatedAt": "2026-11-20T19:31:54.173Z",
+  "generatedAt": "2026-11-20T20:07:17.024Z",
   "hashAlgorithm": "SHA-256",
   "indexSha256": "4e9e73d52d49b9470d0378371202fe008fde8bb9a8f2b244f165e36e038ac025",
   "indexBytes": 5335158,
@@ -382,8 +382,8 @@
     },
     {
       "path": "CANVIO_AI_GUIDE.md",
-      "bytes": 373414,
-      "sha256": "f307c11f7c8babcd3287a6c1f12dc9f702466319dd20b8a3d5f559135a0d2bce"
+      "bytes": 375122,
+      "sha256": "14ecb5b270ced739d74ee8f942eb92725c630547b85fe88bebbb3c4d65b9f53e"
     },
     {
       "path": "CANVIO_FINAL_ACCEPTANCE_MATRIX.md",
@@ -392,8 +392,8 @@
     },
     {
       "path": "CANVIO_HANDOFF.md",
-      "bytes": 20216,
-      "sha256": "0e829d7bc717ac6d910938d55282eb896d7cd04d4d01b48c56e3e02f3466d630"
+      "bytes": 21048,
+      "sha256": "a651e7c2e31e42da756d37a2b41a74767d99dac198ce0ed09d3652261813ace8"
     },
     {
       "path": "CANVIO_NEXT_AI_PROMPT.md",
@@ -417,13 +417,13 @@
     },
     {
       "path": "CANVIO_QA_REPORT.md",
-      "bytes": 31904,
-      "sha256": "9fda1e93a7073171b3071e30a85ea1bdce9d9270fadfbbf4712c2d1c689fe0a9"
+      "bytes": 32963,
+      "sha256": "e93deebf9277826dde74e0e808f2ed61219c0b972231e765bdc282f37a23c757"
     },
     {
       "path": "CANVIO_ROADMAP.md",
-      "bytes": 82242,
-      "sha256": "ed0a8ae4275ebabbc503bf22e50e2e8c871b277d549b913e7301f0a163c7069e"
+      "bytes": 83785,
+      "sha256": "99470bbdb5ff7e489ee1e66d29f38cee51bf8e9b0e450aa4d76fe1bc9d4e53a0"
     },
     {
       "path": "canvio-p102-background-removal.js",
@@ -727,8 +727,8 @@
     },
     {
       "path": "tests/hosted/hosted-runtime-report.json",
-      "bytes": 16378,
-      "sha256": "b272fd2285babbc79ab5e0626e6b16419de1b93f1ff62969f1c220b1d40c4482"
+      "bytes": 16376,
+      "sha256": "2792014993147c99cdf0277ca66eb360a474cd297fde304ed24734e266992bfe"
     },
     {
       "path": "tests/hosted/integrated-source-contracts.cjs",
