@@ -50,6 +50,11 @@ with sync_playwright() as p:
     page.wait_for_timeout(800)
     c['allPagesNavigate'] = not res['navErrors']
     c['responsiveAfterNav'] = page.evaluate('2+2') == 4 and page.evaluate('window.__moN') < 20000
+    evil = ['<svg xmlns="http://www.w3.org/2000/svg"><a><animate attributeName="href" values="javascript:window.__x=1"/><text>x</text></a></svg>',
+            '<svg xmlns="http://www.w3.org/2000/svg"><a><set attributeName="xlink:href" to="javascript:window.__x=1"/><text>x</text></a></svg>',
+            '<svg xmlns="http://www.w3.org/2000/svg"><style>rect{fill:url(\\68ttp://e.test/x)}</style><rect width="3" height="3"/></svg>']
+    outs = page.evaluate("(l)=>l.map(s=>{try{return CANVIOAICreativeWorkflow.sanitizeSvg(s)}catch(e){return 'ERR'}})", evil)
+    c['appSvgImportHardened'] = all(('javascript:' not in o and '<animate' not in o and '<set' not in o and 'e.test' not in o) for o in outs)
     page.evaluate("CV.go('home')"); page.wait_for_timeout(300)
     page.evaluate('CANVIOSecurity.open()')
     c['dialogOpens'] = page.locator('#cv131-security .cv131-card').is_visible()
