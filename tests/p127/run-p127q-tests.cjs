@@ -1,0 +1,11 @@
+'use strict';
+const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
+const root=path.resolve(__dirname,'../..'),html=fs.readFileSync(path.join(root,'index.html'),'utf8'),m=html.match(/<script id="canvio-lot127q">([\s\S]*?)<\/script>/);
+assert.ok(m,'P127.4 module embedded');assert.equal((html.match(/id="canvio-lot127q"/g)||[]).length,1);
+const norm=t=>t.replace(/\r\n/g,'\n').trim();
+assert.equal(norm(m[1]),norm(fs.readFileSync(path.join(root,'canvio-p127-quality.js'),'utf8')),'standalone copy in sync');
+const sb={window:{},document:{readyState:'loading',addEventListener(){}},console,URL,Blob};sb.window.window=sb.window;vm.createContext(sb);vm.runInContext(m[1],sb);
+const api=sb.window.CVEditQualityP127,t=api.tests();for(const[k,v]of Object.entries(t))assert.equal(v,true,k);
+const before=JSON.stringify({clips:[{id:'a',type:'video',start:0,duration:5,trimIn:2}]}),st=JSON.parse(before);api.analyze(st);api.toEdl(st);
+assert.equal(JSON.stringify(st),before,'analysis is read-only');
+console.log(JSON.stringify({suite:'P127.4/P127.6 quality gate + EDL',passed:Object.keys(t).length+3,t},null,1));

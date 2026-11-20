@@ -55,6 +55,12 @@ with sync_playwright() as p:
             '<svg xmlns="http://www.w3.org/2000/svg"><style>rect{fill:url(\\68ttp://e.test/x)}</style><rect width="3" height="3"/></svg>']
     outs = page.evaluate("(l)=>l.map(s=>{try{return CANVIOAICreativeWorkflow.sanitizeSvg(s)}catch(e){return 'ERR'}})", evil)
     c['appSvgImportHardened'] = all(('javascript:' not in o and '<animate' not in o and '<set' not in o and 'e.test' not in o) for o in outs)
+    page.evaluate("CV.go('videoEngine')"); page.wait_for_timeout(1500)
+    c['p127qMounted'] = page.evaluate("!!document.getElementById('cv127-quality')")
+    if c['p127qMounted']:
+        page.click('#cv127q-run'); page.wait_for_timeout(300)
+        c['p127qRuns'] = page.evaluate("document.querySelectorAll('#cv127q-list li').length")>0
+        page.screenshot(path=os.path.join(OUT, 'p127q.png'))
     page.evaluate("CV.go('home')"); page.wait_for_timeout(300)
     page.evaluate('CANVIOSecurity.open()')
     c['dialogOpens'] = page.locator('#cv131-security .cv131-card').is_visible()
