@@ -212,3 +212,10 @@ The candidate is built and verified by the hosted runtime workflow. Runtime vend
 ### P132.3 latest hosted diagnosis — run #303
 - Structural checks: RIFF/chunk layout, VP8X/ANIM, ten ANMF frames, VP8 payloads and 200×113 frame dimensions passed. Chromium decoded the downloaded file at 200×113, and there were no page errors.
 - Run failure came from the final assertion retaining height=200; the measured canvas height is 113. Fixed to compare with `expected_height`; hosted rerun pending. ffprobe metadata is diagnostic only because the runner does not decode this animated WebP output.
+
+
+### P132.3 — run #304 verified PASS
+
+- Hosted workflow #304 (`44809678883`) completed success. The WebP browser report shows a valid RIFF animation with VP8X/ANIM/10 ANMF chunks, valid VP8 data in every frame, dimensions 200×113, 200 ms frame delay and successful Chromium native decode; no browser page errors or failed assertions.
+- GIF/APNG browser checks plus full candidate syntax, regression, ZIP/P107, GLB/P85/ONNX and worker acceptance also passed. Artifact `CANVIO-23.3.111-GITHUB-RUNTIME-VERIFIED-304` uploaded at 21,573,301 bytes.
+- Merge readiness is established for automated CI only. No audio in WebP; real footage, color/alpha, touch/mobile and long-duration performance remain manual.
