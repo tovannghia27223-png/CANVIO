@@ -652,3 +652,10 @@ Hosted verification after the ffmpeg repair is complete:
 - Connected redaction to P73 Offline Website HTML before ZIP packaging; missing redactor fails closed and package report records the redaction count.
 - Hosted browser smoke and source-contract tests passed after DOMParser-scope correction.
 - Still open: generic hostile HTML/PPTX/ZIP imports, complete archive expansion quotas, all binary export owners and server-side CSP/SRI response headers.
+
+## 23.3.111 continuation — P136.3 Single-line Stroke Trace
+
+- Added optional “Nét đơn (Stroke)” mode alongside existing filled multi-colour Image Trace. Uses Otsu thresholding, transparent-pixel exclusion, Zhang–Suen thinning, graph-based path extraction and static SVG stroke export.
+- Added bounded stroke width and retained existing local processing/PNG→SVG flow. Does not use stock assets, remote font files, OpenCV download or external trace service.
+- Unit and hosted Chrome acceptance extend existing P136 suites; P136.2 filled-mode and Bezier regression are retained.
+- Still open: topology/branch editing, handwriting OCR, pattern/brush, gradient mesh and complex photographic edge cleanup. Stroke mode works best on high-contrast logos/line art.

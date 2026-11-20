@@ -3549,3 +3549,11 @@ P125.3: `CVScrollFramesP125.PRESETS`, `decimate(frames,maxBytes)`; `buildHtml` n
 - P73 Offline Website redacts the final HTML before ZIP creation, fails closed without the shared redactor and records redaction count in its package report.
 - Hosted smoke covers hostile Print HTML, safe CSS/link preservation, Content Factory key redaction and P73 redaction/fail-closed. Source-contract suite validates the three standalone owners.
 - Still open: generic HTML/PPTX/ZIP import hardening, comprehensive ZIP expansion quotas on every importer, unrelated binary exports that may include secrets, and deployment HTTP CSP/SRI response headers. Meta CSP is not a replacement for server response headers.
+
+## P136.3 — Single-line Stroke Trace (2026-11-20 continuation)
+
+- Standalone owner: canvio-p136-trace.js; canonical embedded lot remains canvio-lot136t; API CVTraceP136.traceStrokeImageData, fromBitmapStroke, skeletonize, skeletonPaths. Existing filled multi-colour trace and P136.2 Bezier smoothing stay unchanged.
+- New optional mode: Otsu grayscale threshold (ignores transparent pixels), Zhang–Suen skeleton thinning with bounded iterations (1–64), and graph tracing into open SVG stroke paths with round caps/joins. Stroke width is clamped to 0.5–12 px. Output is local static SVG with no embedded script, external image or font.
+- UI: Image Studio adds “Mảng màu” / “Nét đơn (Stroke)” mode and stroke-width control; export stays the existing SVG download path.
+- Tests: extended tests/p127/run-p136t-tests.cjs API checks and tests/p145/run-p136-browser.py real Chrome UI/export checks. The hosted fixture covers filled-vector regression and single-line stroke output on simple high-contrast illustration.
+- Limits: this is a centreline vectorizer for clean, high-contrast art, not handwriting recognizer, font OCR, multi-stroke recovery or topology-perfect skeletonizer. Photographs, anti-aliased colour art and noisy scans may produce fragmented or branched strokes; inspect before production use.

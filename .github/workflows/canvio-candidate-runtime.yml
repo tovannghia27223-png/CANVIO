@@ -8,6 +8,7 @@ on:
       - work/p131-export-hardening
       - work/p145-5-template-factory
       - work/p136-bezier-smoothing
+      - work/p136-single-line-stroke
       - work/p125-2-scroll-storyboard
       - main
   pull_request:

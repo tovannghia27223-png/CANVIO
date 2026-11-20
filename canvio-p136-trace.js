@@ -101,6 +101,76 @@ function traceImageData(img, opt) {
   var svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + w + ' ' + h + '" width="' + w + '" height="' + h + '" shape-rendering="geometricPrecision">' + (bg != null ? '<rect width="' + w + '" height="' + h + '" fill="' + hex(q.palette[bg]) + '"/>' : '') + paths.map(function (p) { return '<path fill="' + p.color + '" stroke="' + p.color + '" stroke-width="0.5" fill-rule="evenodd" d="' + p.d + '"/>'; }).join('') + '</svg>';
   return { svg: svg, width: w, height: h, colors: q.palette.length, paths: paths.length, loops: total, background: bg != null ? hex(q.palette[bg]) : null, bytes: svg.length };
 }
+
+/* Single-line mode: Otsu threshold + Zhang–Suen thinning + vectorized skeleton graph. */
+function otsuMask(img) {
+  var w=img.width,h=img.height,d=img.data,hist=new Uint32Array(256),total=0,sum=0,i;
+  for(i=0;i<w*h;i++){if(d[i*4+3]<128)continue;var lum=Math.max(0,Math.min(255,Math.round(.2126*d[i*4]+.7152*d[i*4+1]+.0722*d[i*4+2])));hist[lum]++;total++;sum+=lum;}
+  if(!total)return{mask:new Uint8Array(w*h),threshold:127,color:'#222222',foreground:0};
+  var sumB=0,wB=0,best=-1,threshold=127;
+  for(i=0;i<256;i++){wB+=hist[i];if(!wB)continue;var wF=total-wB;if(!wF)break;sumB+=i*hist[i];var mB=sumB/wB,mF=(sum-sumB)/wF,between=wB*wF*(mB-mF)*(mB-mF);if(between>best){best=between;threshold=i;}}
+  var dark=0,light=0;
+  for(i=0;i<w*h;i++){if(d[i*4+3]<128)continue;var v=.2126*d[i*4]+.7152*d[i*4+1]+.0722*d[i*4+2];if(v<=threshold)dark++;else light++;}
+  var chooseDark=dark<=light,mask=new Uint8Array(w*h),count=0,rr=0,gg=0,bb=0;
+  for(i=0;i<w*h;i++){if(d[i*4+3]<128)continue;var lum=.2126*d[i*4]+.7152*d[i*4+1]+.0722*d[i*4+2],on=chooseDark?lum<=threshold:lum>threshold;if(on){mask[i]=1;count++;rr+=d[i*4];gg+=d[i*4+1];bb+=d[i*4+2];}}
+  return{mask:mask,threshold:threshold,color:count?hex([Math.round(rr/count),Math.round(gg/count),Math.round(bb/count)]):'#222222',foreground:count};
+}
+function skeletonize(mask,w,h,maxIterations) {
+  var a=new Uint8Array(mask),limit=Math.max(1,Math.min(64,Math.round(Number(maxIterations)||32))),changed=true,iter=0;
+  function pass(phase){
+    var remove=[],x,y,i,p2,p3,p4,p5,p6,p7,p8,p9,B,A;
+    for(y=1;y<h-1;y++)for(x=1;x<w-1;x++){
+      i=y*w+x;if(!a[i])continue;
+      p2=a[i-w];p3=a[i-w+1];p4=a[i+1];p5=a[i+w+1];p6=a[i+w];p7=a[i+w-1];p8=a[i-1];p9=a[i-w-1];
+      B=p2+p3+p4+p5+p6+p7+p8+p9;if(B<2||B>6)continue;
+      var q=[p2,p3,p4,p5,p6,p7,p8,p9,p2];A=0;for(var k=0;k<8;k++)if(!q[k]&&q[k+1])A++;if(A!==1)continue;
+      if(phase===0){if(p2*p4*p6||p4*p6*p8)continue;}else if(p2*p4*p8||p2*p6*p8)continue;
+      remove.push(i);
+    }
+    for(var j=0;j<remove.length;j++)a[remove[j]]=0;
+    return remove.length;
+  }
+  while(changed&&iter<limit){changed=false;iter++;if(pass(0))changed=true;if(pass(1))changed=true;}
+  return{mask:a,iterations:iter};
+}
+function skeletonPaths(mask,w,h,detail) {
+  var dirs=[[-1,-1],[0,-1],[1,-1],[-1,0],[1,0],[-1,1],[0,1],[1,1]],adj=new Map(),visited=new Set(),paths=[],eps=Math.max(0,Math.min(5,Number(detail)||0));
+  function key(a,b){return a<b?a+':'+b:b+':'+a;}
+  function add(a,b){var list=adj.get(a);if(list)list.push(b);else adj.set(a,[b]);}
+  for(var y=1;y<h-1;y++)for(var x=1;x<w-1;x++){
+    var id=y*w+x;if(!mask[id])continue;
+    for(var k=0;k<8;k++){var dx=dirs[k][0],dy=dirs[k][1],nx=x+dx,ny=y+dy,nid=ny*w+nx;if(!mask[nid]||nid<=id)continue;
+      if(dx&&dy&&(mask[y*w+nx]||mask[ny*w+x]))continue;add(id,nid);add(nid,id);}
+  }
+  function coords(id){return[id%w+.5,Math.floor(id/w)+.5];}
+  function walk(start,next){
+    var ids=[start],prev=start,cur=next,guard=0;visited.add(key(start,next));ids.push(cur);
+    while(guard++<w*h){var ns=adj.get(cur)||[];if(ns.length!==2)break;var candidate=ns[0]===prev?ns[1]:ns[0],ek=key(cur,candidate);if(visited.has(ek))break;visited.add(ek);prev=cur;cur=candidate;ids.push(cur);if(cur===start)break;}
+    if(ids.length>=2){
+      var closed=ids.length>2&&ids[0]===ids[ids.length-1],core=closed?ids.slice(0,-1):ids,pts=core.map(coords);
+      var simple=closed?simplifyLoop(pts,eps):(pts.length>2?rdp(pts,eps):pts);
+      if(simple.length>=2){simple.closed=closed;paths.push(simple);}
+    }
+  }
+  adj.forEach(function(ns,id){if(ns.length===2)return;ns.forEach(function(n){var ek=key(id,n);if(!visited.has(ek))walk(id,n);});});
+  adj.forEach(function(ns,id){ns.forEach(function(n){var ek=key(id,n);if(!visited.has(ek))walk(id,n);});});
+  return paths;
+}
+function traceStrokeImageData(img,opt) {
+  opt=opt||{};var w=img&&img.width,h=img&&img.height,d=img&&img.data;
+  if(!(w>=1&&h>=1&&w<=4096&&h<=4096)||!d||d.length<w*h*4)throw new Error('Ảnh không hợp lệ.');
+  if(w<3||h<3)throw new Error('Ảnh cần tối thiểu 3×3 pixel để dò nét.');
+  var thresholded=otsuMask(img),pw=w+2,ph=h+2,padded=new Uint8Array(pw*ph);
+  for(var py=0;py<h;py++)padded.set(thresholded.mask.subarray(py*w,(py+1)*w),(py+1)*pw+1);
+  var thin=skeletonize(padded,pw,ph,opt.iterations||32),paths=skeletonPaths(thin.mask,pw,ph,opt.detail==null?.5:opt.detail),width=Math.max(.5,Math.min(12,Number(opt.strokeWidth)||2)),color=opt.color&&/^#[0-9a-fA-F]{6}$/.test(opt.color)?opt.color:thresholded.color;
+  var svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+w+' '+h+'" width="'+w+'" height="'+h+'" fill="none" stroke="'+color+'" stroke-width="'+width+'" stroke-linecap="round" stroke-linejoin="round">'+paths.map(function(p){return'<path d="M'+p.map(function(v){return(Math.round((v[0]-1)*1000)/1000)+' '+(Math.round((v[1]-1)*1000)/1000);}).join('L')+(p.closed?'Z':'')+'"/>';}).join('')+'</svg>';
+  return{svg:svg,width:w,height:h,paths:paths.length,foreground:thresholded.foreground,skeleton:thin.mask.reduce(function(n,v){return n+v;},0),iterations:thin.iterations,threshold:thresholded.threshold,color:color,bytes:svg.length,mode:'stroke'};
+}
+function fromBitmapStroke(bmp,opt){
+  var sc=Math.min(1,MAX_SIDE/Math.max(bmp.width,bmp.height)),w=Math.max(1,Math.round(bmp.width*sc)),h=Math.max(1,Math.round(bmp.height*sc)),c=document.createElement('canvas');c.width=w;c.height=h;
+  var x=c.getContext('2d',{willReadFrequently:true});x.drawImage(bmp,0,0,w,h);var id=x.getImageData(0,0,w,h);return traceStrokeImageData({width:w,height:h,data:id.data},opt);
+}
+
 function fromBitmap(bmp, opt) {
   var s = Math.min(1, MAX_SIDE / Math.max(bmp.width, bmp.height)), w = Math.max(1, Math.round(bmp.width * s)), h = Math.max(1, Math.round(bmp.height * s)), c = document.createElement('canvas'); c.width = w; c.height = h;
   var x = c.getContext('2d', { willReadFrequently: true }); x.drawImage(bmp, 0, 0, w, h); var id = x.getImageData(0, 0, w, h);
@@ -116,7 +186,7 @@ function loadFile(file) {
 function mount() {
   var page = document.querySelector('#page-imageStudio'); if (!page || page.querySelector('#cv136-card')) return false;
   var card = document.createElement('div'); card.className = 'card'; card.id = 'cv136-card'; card.style.marginTop = '12px';
-  card.innerHTML = '<div class="row" style="gap:8px;flex-wrap:wrap;align-items:center"><b>Ảnh → Vector (P136)</b><input type="file" id="cv136-file" accept="image/*" aria-label="Chọn ảnh"><label class="tiny">Số màu <input type="range" id="cv136-k" min="2" max="12" value="6"> <span id="cv136-kv">6</span></label><label class="tiny">Chi tiết <select id="cv136-d" class="input"><option value="0.5">Cao</option><option value="1" selected>Vừa</option><option value="2">Thấp (nhẹ hơn)</option></select></label><label class="tiny">Làm mượt Bezier <input type="range" id="cv136-s" min="0" max="100" value="0"><span id="cv136-sv">0%</span></label><button type="button" class="btn btn-soft sm" id="cv136-run">Chuyển sang SVG</button><button type="button" class="btn btn-ghost sm" id="cv136-dl" disabled>Tải SVG</button><span class="tiny" id="cv136-out" role="status" aria-live="polite">Logo, icon, hình ít màu cho kết quả tốt nhất; ảnh chụp sẽ thành dạng poster.</span></div><div id="cv136-prev" style="margin-top:8px;max-height:260px;overflow:auto"></div>';
+  card.innerHTML = '<div class="row" style="gap:8px;flex-wrap:wrap;align-items:center"><b>Ảnh → Vector (P136)</b><input type="file" id="cv136-file" accept="image/*" aria-label="Chọn ảnh"><label class="tiny">Số màu <input type="range" id="cv136-k" min="2" max="12" value="6"> <span id="cv136-kv">6</span></label><label class="tiny">Kiểu vector <select id="cv136-mode" class="input"><option value="fill">Mảng màu</option><option value="stroke">Nét đơn (Stroke)</option></select></label><label class="tiny">Độ dày nét <input type="number" id="cv136-sw" min="0.5" max="12" step="0.5" value="2" style="width:64px"></label><label class="tiny">Chi tiết <select id="cv136-d" class="input"><option value="0.5">Cao</option><option value="1" selected>Vừa</option><option value="2">Thấp (nhẹ hơn)</option></select></label><label class="tiny">Làm mượt Bezier <input type="range" id="cv136-s" min="0" max="100" value="0"><span id="cv136-sv">0%</span></label><button type="button" class="btn btn-soft sm" id="cv136-run">Chuyển sang SVG</button><button type="button" class="btn btn-ghost sm" id="cv136-dl" disabled>Tải SVG</button><span class="tiny" id="cv136-out" role="status" aria-live="polite">Logo, icon, hình ít màu cho kết quả tốt nhất; ảnh chụp sẽ thành dạng poster.</span></div><div id="cv136-prev" style="margin-top:8px;max-height:260px;overflow:auto"></div>';
   page.appendChild(card);
   var $ = function (s) { return card.querySelector(s); }, last = null;
   $('#cv136-k').addEventListener('input', function () { $('#cv136-kv').textContent = this.value; });
@@ -124,9 +194,9 @@ function mount() {
   $('#cv136-run').addEventListener('click', function () {
     var f = $('#cv136-file').files[0], out = $('#cv136-out'), btn = this; if (!f) { out.textContent = 'Chọn một ảnh trước.'; return; }
     btn.disabled = true; out.textContent = 'Đang dò đường biên…';
-    loadFile(f).then(function (im) { return new Promise(function (ok) { setTimeout(function () { ok(fromBitmap(im, { colors: $('#cv136-k').value, detail: $('#cv136-d').value, smooth: Number($('#cv136-s').value) / 100 })); }, 20); }); }).then(function (r) {
+    loadFile(f).then(function (im) { return new Promise(function (ok) { setTimeout(function () { var opt={colors:$('#cv136-k').value,detail:$('#cv136-d').value,smooth:Number($('#cv136-s').value)/100,strokeWidth:$('#cv136-sw').value};ok($('#cv136-mode').value==='stroke'?fromBitmapStroke(im,opt):fromBitmap(im,opt)); }, 20); }); }).then(function (r) {
       last = r; var u = URL.createObjectURL(new Blob([r.svg], { type: 'image/svg+xml' })), im = new Image(); im.alt = 'Kết quả vector'; im.style.maxWidth = '100%'; im.onload = function () { URL.revokeObjectURL(u); }; im.src = u; var pv = $('#cv136-prev'); pv.innerHTML = ''; pv.appendChild(im); $('#cv136-dl').disabled = false;
-      out.textContent = r.colors + ' màu, ' + r.paths + ' lớp, ' + r.loops + ' đường viền, Bezier ' + Math.round(Number($('#cv136-s').value)) + '%, ' + (r.bytes / 1024).toFixed(0) + ' KB' + (r.bytes > 800000 ? '. Nặng: giảm số màu hoặc chọn Chi tiết thấp.' : '.');
+      out.textContent = r.mode==='stroke' ? 'Stroke: '+r.paths+' nét vector · '+r.foreground+' pixel tiền cảnh · '+r.iterations+' vòng làm mảnh · '+(r.bytes/1024).toFixed(0)+' KB.' : r.colors + ' màu, ' + r.paths + ' lớp, ' + r.loops + ' đường viền, Bezier ' + Math.round(Number($('#cv136-s').value)) + '%, ' + (r.bytes / 1024).toFixed(0) + ' KB' + (r.bytes > 800000 ? '. Nặng: giảm số màu hoặc chọn Chi tiết thấp.' : '.');
     }).catch(function (e) { out.textContent = String(e && e.message || e).slice(0, 140); }).then(function () { btn.disabled = false; });
   });
   $('#cv136-dl').addEventListener('click', function () { if (!last) return; var u = URL.createObjectURL(new Blob([last.svg], { type: 'image/svg+xml' })), a = document.createElement('a'); a.href = u; a.download = 'trace-' + Date.now().toString(36) + '.svg'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(function () { URL.revokeObjectURL(u); }, 4000); });
@@ -154,8 +224,11 @@ function tests() {
     detailReducesPoints: traceImageData(fixture(), { colors: 3, detail: 5 }).bytes <= r.bytes,
     bezierSmoothingIsOptional: !/C[-0-9.]+ [-0-9.]+/.test(r.svg) && /C[-0-9.]+ [-0-9.]+/.test(traceImageData(fixture(), { colors: 3, detail: 0, smooth: 0.65 }).svg),
     smoothKeepsLayerAndLoopCounts: (function () { var z = traceImageData(fixture(), { colors: 3, detail: 0, smooth: 0.65 }); return z.paths === r.paths && z.loops === r.loops; })(),
-    smoothnessClampedAndFinite: (function () { var a = loopPath([[0,0],[10,0],[10,10],[0,10]], 99), b = loopPath([[0,0],[10,0],[10,10],[0,10]], -2); return a.indexOf('C') >= 0 && !/NaN|Infinity/.test(a) && b.indexOf('C') < 0; })()
+    smoothnessClampedAndFinite: (function () { var a = loopPath([[0,0],[10,0],[10,10],[0,10]], 99), b = loopPath([[0,0],[10,0],[10,10],[0,10]], -2); return a.indexOf('C') >= 0 && !/NaN|Infinity/.test(a) && b.indexOf('C') < 0; })(),
+    strokeModeProducesOpenPaths: (function(){var w=24,h=24,d=new Uint8ClampedArray(w*h*4);for(var y=0;y<h;y++)for(var x=0;x<w;x++){var i=(y*w+x)*4,on=(x>=10&&x<=13)||(y>=10&&y<=13&&x>=4&&x<=19);d[i]=d[i+1]=d[i+2]=on?0:255;d[i+3]=255;}var z=traceStrokeImageData({width:w,height:h,data:d},{detail:.2,strokeWidth:2});return z.mode==='stroke'&&z.paths>=1&&z.skeleton>0&&z.skeleton<z.foreground&&/<path d="M/.test(z.svg)&&/fill="none"/.test(z.svg)&&/stroke-linecap="round"/.test(z.svg);})(),
+    strokeWidthIsBounded: (function(){var w=8,h=8,d=new Uint8ClampedArray(w*h*4);for(var i=0;i<w*h;i++){d[i*4]=d[i*4+1]=d[i*4+2]=i%8<4?0:255;d[i*4+3]=255;}var z=traceStrokeImageData({width:w,height:h,data:d},{strokeWidth:99});return z.svg.indexOf('stroke-width="12"')>=0&&z.mode==='stroke';})(),
+    invalidStrokeImageRejected: (function(){try{traceStrokeImageData({width:2,height:2,data:new Uint8ClampedArray(16)});return false;}catch(e){return true;}})()
   };
 }
-window.CVTraceP136 = { version: '136.2.0', quantize: quantize, traceMask: traceMask, simplify: simplifyLoop, loopPath: loopPath, traceImageData: traceImageData, fromBitmap: fromBitmap, mount: mount, tests: tests };
+window.CVTraceP136 = { version: '136.3.0', quantize: quantize, traceMask: traceMask, simplify: simplifyLoop, loopPath: loopPath, traceImageData: traceImageData, traceStrokeImageData:traceStrokeImageData, skeletonize:skeletonize, skeletonPaths:skeletonPaths, fromBitmap: fromBitmap, fromBitmapStroke:fromBitmapStroke, mount: mount, tests: tests };
 })();

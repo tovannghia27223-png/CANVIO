@@ -40,6 +40,14 @@ with sync_playwright() as p:
     sp2 = os.path.join(tmp, 'smooth.svg'); d2.value.save_as(sp2); svg2 = open(sp2, encoding='utf-8').read()
     c['smoothExportContainsCubicSegments'] = bool(__import__('re').search(r'd="[^"]*C[-0-9.]', svg2))
     c['smoothExportKeepsSafeSvg'] = svg2.startswith('<svg') and '<script' not in svg2 and 'javascript:' not in svg2
+    page.select_option('#cv136-mode', 'stroke'); page.fill('#cv136-sw', '2.5')
+    page.click('#cv136-run'); page.wait_for_function("!document.getElementById('cv136-run').disabled", timeout=30000)
+    c['strokeModeSummary'] = 'Stroke:' in page.locator('#cv136-out').inner_text()
+    c['strokePreviewShown'] = page.evaluate("!!document.querySelector('#cv136-prev img')")
+    with page.expect_download(timeout=15000) as d3: page.click('#cv136-dl')
+    stroke_path = os.path.join(tmp, 'stroke.svg'); d3.value.save_as(stroke_path); stroke_svg = open(stroke_path, encoding='utf-8').read()
+    c['singleLineSVGUsesOpenStrokePaths'] = 'fill="none"' in stroke_svg and 'stroke-linecap="round"' in stroke_svg and '<path d="M' in stroke_svg and 'stroke-width="2.5"' in stroke_svg
+    c['strokeSVGContainsNoFilledColorLayers'] = 'fill="#' not in stroke_svg and '<rect' not in stroke_svg
     b.close()
 res = {'checks': c, 'mismatchRatio': score, 'svgKB': round(len(svg) / 1024, 1), 'pageErrors': errs, 'failed': [k for k, v in c.items() if not v]}
 print(json.dumps(res, ensure_ascii=False, indent=1)); sys.exit(1 if res['failed'] or errs else 0)
