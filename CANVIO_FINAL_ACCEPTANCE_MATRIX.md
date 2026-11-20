@@ -25,3 +25,6 @@
 12. Physical target-device GPU/VRAM, performance and long-render testing.
 13. Cross-origin backup/restore and independent-device recovery.
 14. Rollback, release observability, alerting and production incident drill.
+
+
+| P127.2 Caption-guided Director | Existing subtitle cue/pause analysis, bounded punch-in keyframes, canonical AutoCut delegation, Undo and hosted synthetic-WebM test | Whisper quality, real speech/media, face tracking, multi-speaker edit decisions and final editorial review remain open |
