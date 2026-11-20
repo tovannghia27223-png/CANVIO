@@ -257,3 +257,7 @@ The candidate workflow runs standalone/embedded source parity and API tests for 
 ## P145.7 browser assertion stabilization
 - The preset-change browser assertion now waits for both the selected preset value and the updated inline/computed font family before sampling the preview.
 - This makes the UI check deterministic without weakening the expected Georgia serif preview, and preserves the live-control, CSS export and no-console-error checks.
+
+ 
+## P145.7 browser assertion refinement
+- The automated preview test follows the explicit Apply action after selecting Editorial. It checks the selected CSS stack and visible confirmation text; OS font availability is tested separately. This separates CSS preset application from whether a runner happens to contain the Georgia font binary.

@@ -3588,3 +3588,7 @@ P125.3: `CVScrollFramesP125.PRESETS`, `decimate(frames,maxBytes)`; `buildHtml` n
  
 ### P145.7 browser acceptance adjustment
 - Hosted Chromium now waits for the Editorial preset change handler and computed-style update before asserting the preview font. The assertion still requires both inline and computed font families to include Georgia; it does not bypass the preview behavior.
+
+ 
+### P145.7 hosted browser test follow-up
+- The browser suite now selects Editorial and explicitly uses the visible “Cập nhật xem trước” control, then checks that the heading's declared inline family stack includes Georgia and the UI reports “Editorial Serif”. It deliberately does not require an OS-installed Georgia font or a renderer-specific computed font result.
