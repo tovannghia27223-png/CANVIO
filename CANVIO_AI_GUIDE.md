@@ -3574,3 +3574,13 @@ P125.3: `CVScrollFramesP125.PRESETS`, `decimate(frames,maxBytes)`; `buildHtml` n
 - Reads text cues from the existing subtitle track, reports caption spans and detected silence/pause regions, and creates bounded punch-in keyframes on the selected video clip. The AutoCut action delegates to the existing canonical audio silence-cut path; it does not build a second timeline.
 - Tests: `tests/p127/run-p1272-tests.cjs` (API/unit invariants) and `tests/p127/run-p1272-browser.py` (hosted Chromium with a generated WebM audio fixture, caption cues, pause report, keyframe persistence, AutoCut and Undo).
 - Scope limits: synthetic 440 Hz bursts separated by silence prove the UI path, not Whisper transcription quality or human speech segmentation. Real speech/media, face tracking, multi-speaker shot selection, SFX/music matching and human editorial acceptance remain open.
+
+
+## P125.4 — Split-asset offline storyboard ZIP (rebased continuation, 2026-11-21)
+
+- Standalone owner remains canvio-p125-scrollframes.js (CVScrollFramesP125) and the existing P125.2 editor remains canvio-p125-storyboard.js (CVScrollStoryboardP1252). No second editor, timeline or media store is introduced.
+- Adds an optional ZIP export alongside the existing self-contained HTML export. ZIP contents: index.html, frames/frame-NNN.(webp|jpg|png), CANVIO-STORYBOARD-MANIFEST.json and README.md. Image payloads are separate binary entries; the HTML references only generated relative frame paths.
+- Frame paths are constrained to the generated frames/frame-NNN.webp|jpg|png form. Unsafe or untrusted paths fall back to embedded data URLs rather than being written into the offline HTML.
+- Uses the canonical CVZip.build implementation. The current 1–50 MB selector is an encoded-frame data budget used for bounded decimation; ZIP container overhead and final package bytes are reported separately. If fewer than two frames remain, ZIP export fails closed.
+- Automated acceptance: tests/p127/run-p1254-tests.cjs verifies source/embedded parity, local-path allow-list, safe fallback, manifest and binary entries. tests/p127/run-p1254-browser.py generates a synthetic WebM, exports ZIP in Chromium, validates archive/image signatures and opens the extracted HTML offline.
+- Limitations: no audio is packaged; codec support depends on the browser; synthetic desktop Chromium evidence does not certify touch/mobile use, long/high-resolution footage or low-memory devices. Manual target-device acceptance remains open.
