@@ -3696,3 +3696,15 @@ P125.3: `CVScrollFramesP125.PRESETS`, `decimate(frames,maxBytes)`; `buildHtml` n
 - Enforces a 5 MiB source cap, checks extension/MIME, requires the current Website Engine and save owner, then asks before insertion. Reports sanitizer counts. If persistence fails after insertion, it reports that content may remain in the current editor session and instructs the user to undo; it does not claim success.
 - Workflow synchronizes the standalone security module into the existing `canvio-lot131` before the P131 source-parity/Node/Chromium suites. Hosted acceptance is pending. Import is body-fragment content: remote assets, stylesheets, scripts, forms and interactive app runtimes are not imported.
 
+
+
+
+## P131.3 hosted acceptance PASS and index promotion — 2026-11-21
+
+- PR #41 merged source/tests/workflow at commit `1ac185d7aea7b14ad13a0517f51e72292cc42162`. Hosted workflow #315 (`44816184861`) completed success; job `verify` succeeded and artifact `CANVIO-23.3.111-GITHUB-RUNTIME-VERIFIED-315` was uploaded (21,590,752 bytes; SHA-256 `12305d7990ed16b93d6d653cd3fd1d662a3cd90144b9800773e560a5a55fa06c`).
+- P131.3 Chromium security/import suite: 31 checks passed, zero failed, zero page errors. It tested malicious markup removal, Vietnamese content, safe local raster retention, remote image stripping, byte cap, canonical Website Engine add/save, no script execution, no remote image request, save-failure warning, and real local file-picker flow. P131 app smoke: 48 pages found, 21 checks passed, no console/navigation errors.
+- Hosted full workflow also passed standalone/embedded sync, all Node/source suites, full HTML/inline-JS audit, P47–P70 regressions, P107 ZIP round-trip, P85/Three runtime/vendor verification, GLB Draco/Meshopt/KTX2 decoding, OpenCV Lucas–Kanade and Chromium acceptance. Hosted browser was SwiftShader software rendering; no physical GPU or full ONNX/Whisper model-inference acceptance was run.
+- Important integration boundary: the merged PR delivered the standalone security owner and tested the embedded candidate in CI, but its merge commit did not itself modify the large canonical `index.html` blob. This follow-up branch adds the push-build trigger so the normal hosted workflow embeds `canvio-p131-security.js` into `canvio-lot131`, writes the generated candidate index/Manifest back to the branch, and then runs PR verification before it can be considered part of mainline delivery.
+- Feature limits: body-fragment HTML only; 5 MiB maximum; active elements and unsafe attributes are removed; remote images/source URLs stripped; local raster data URLs retained. Stylesheets, scripts, forms, iframes and third-party runtime code are not imported. No new store, backend, remote fetch or upload.
+- P70 remains `releaseCertified:false` / `BLOCKED_PENDING_REAL_WORLD_ACCEPTANCE`; fourteen real-world gates remain pending.
+
