@@ -10,17 +10,19 @@ httpd=socketserver.ThreadingTCPServer(('127.0.0.1',0),functools.partial(Q,direct
 threading.Thread(target=httpd.serve_forever,daemon=True).start()
 url='http://127.0.0.1:%d/index.html'%httpd.server_address[1]
 checks={};errors=[]
+live_owner_ok=False
 with sync_playwright() as p:
  b=p.chromium.launch(executable_path=CHROME,headless=True,args=['--no-sandbox','--disable-dev-shm-usage','--host-resolver-rules=MAP * ~NOTFOUND , EXCLUDE 127.0.0.1'])
  page=b.new_context(viewport={'width':1280,'height':900}).new_page()
  page.on('pageerror',lambda e:errors.append(str(e)[:220]))
  page.goto(url,wait_until='commit',timeout=60000)
  page.wait_for_function('!!(window.CV&&CV.go&&window.CVContentCoreP145&&window.CVAssetSearchGateP145910)',timeout=90000,polling=500)
+ live_owner_ok=page.evaluate("""()=>Array.isArray(CV.assets.list()) && Array.isArray(CVAssetSearchGateP145910.getAssets()) && CVAssetSearchGateP145910.getAssets().length===CV.assets.list().length && (!CV.assets.list().length || CVAssetSearchGateP145910.getAssets()[0].id===CV.assets.list()[0].id)""")
  page.evaluate("""()=>{
    window.__cv145910Assets=[
-    {id:'a1',name:'Finance-Report.pdf',type:'application/pdf',size:1024,hash:'hash-one'},
-    {id:'a2',name:'Brand-Logo.svg',type:'image/svg+xml',size:512,hash:'hash-two'},
-    {id:'a3',name:'Duplicate-Clip.mp4',type:'video/mp4',size:2048,hash:'hash-one'}
+    {id:'a1',name:'Finance-Report.pdf',type:'application/pdf',size:5,data:'data:application/pdf;base64,SGVsbG8='},
+    {id:'a2',name:'Brand-Logo.svg',type:'image/svg+xml',size:44,data:'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciLz4='},
+    {id:'a3',name:'Duplicate-Clip.mp4',type:'video/mp4',size:5,data:'data:video/mp4;base64,SGVsbG8='}
    ];
    CVAssetSearchGateP145910.setAssetProvider(()=>window.__cv145910Assets);
    localStorage.setItem('canvio145:meta',JSON.stringify({
@@ -29,13 +31,15 @@ with sync_playwright() as p:
  }""")
  page.evaluate("CV.go('assets')");page.wait_for_timeout(1000)
  panel=page.locator('#cv145910-card')
+ checks['native live provider defaults to CV.assets.list']=live_owner_ok
  checks['search and gate panel mounts']=panel.is_visible()
  # The module may mount before the fixture provider is installed. Explicitly refresh
  # after injection so the assertions inspect the seeded fixture, not the host's
  # initial/previous Asset Vault snapshot.
  if panel.is_visible():
+  previous_scan=panel.locator('#cv145910-hash-note').get_attribute('data-scan-id')
   page.locator('#cv145910-refresh').click()
-  page.wait_for_timeout(150)
+  page.wait_for_function("""prev => { const e=document.querySelector('#cv145910-hash-note'); return e && e.dataset.state==='done' && e.dataset.scanId!==prev && e.textContent.includes('SHA-256 tạm tính trong phiên'); }""",arg=previous_scan,timeout=15000)
  items=page.locator('#cv145910-list button')
  count=items.count()
  item_texts=[items.nth(i).inner_text() for i in range(count)]
@@ -52,7 +56,11 @@ with sync_playwright() as p:
  if page.locator('#cv145910-list button').count()>=3:
   page.locator('#cv145910-list button').nth(2).evaluate('(el)=>el.click()')
  detail=page.locator('#cv145910-detail').inner_text()
- checks['selected asset detail lists missing license and hash']=('chưa khai báo' in detail or 'unknown' in detail) and 'hash-one' in detail
+ checks['selected asset detail lists missing license and session SHA']=('chưa khai báo' in detail or 'unknown' in detail) and 'SHA-256 tạm tính trong phiên' in detail and len(detail.split('SHA-256'))>1
+ hash_value=detail.split('Hash: ',1)[1].split(' ',1)[0]
+ checks['computed SHA-256 is 64 lowercase hex chars']=len(hash_value)==64 and all(c in '0123456789abcdef' for c in hash_value.lower())
+ checks['SHA-256 duplicate detection uses local bytes']=any('trùng nội dung' in t for t in item_texts)
+ checks['transient hashes do not mutate Asset Library records']=page.evaluate('window.__cv145910Assets.every(x=>!Object.prototype.hasOwnProperty.call(x,"hash"))')
  checks['module is read-only']=page.locator('#cv145910-card button').count()==4 and page.locator('#cv145910-card input[type=file]').count()==0
  checks['no uncaught host page errors']=len(errors)==0
  b.close()
