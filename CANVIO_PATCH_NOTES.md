@@ -10,3 +10,5 @@
 - Stable release remains fail-closed at P70; no physical GPU or two-device certification is implied.
 
 - Mainline consolidation (2026-11-21): P125.4 merged via PR #32 and P145.6–P145.10 via PR #33; their hosted Node/Chromium acceptance evidence is recorded in QA and the AI Guide. P70 remains fail-closed with fourteen manual production gates open.
+
+- P132.3 candidate: added bounded animated WebP beside GIF/APNG using native browser WebP encoding and local RIFF muxing; no external encoder or paid dependency. Corrected the hosted RIFF parser and added Chromium native decode checks after run #300 exposed test-verification defects; acceptance remains pending until the rebased workflow passes.
