@@ -3574,3 +3574,13 @@ P125.3: `CVScrollFramesP125.PRESETS`, `decimate(frames,maxBytes)`; `buildHtml` n
 - Standalone owner: \`canvio-p145-search-gate.js\`; embedded lot: \`canvio-lot145910\`; API: \`window.CVAssetSearchGateP145910\`. Reuses \`CVContentCoreP145.qualityGate\` and \`canvio145:meta\`; read-only filter/search by name, ID, type, license/source and status. Detects duplicate hashes only when a real asset entry supplies a hash.
 - Provider contract: uses \`CV.assets.list()\` when exposed by the host and provides \`setAssetProvider(fn)\` for an explicit canonical bridge. The feature must not claim complete inventory coverage if the host does not expose a provider; the hosted browser suite injects a deterministic fixture provider and is not proof of a production asset backend.
 - Tests: \`tests/p145/run-p145910-tests.cjs\` and \`tests/p145/run-p145910-browser.py\`. These cover the shared license/source/size/hash gate, filters, detail panel and read-only behavior. Hashing every uploaded binary and archive-level scanning are not implemented here.
+
+
+## P127.2 — Caption-guided Talking-head Director (2026-11-20 continuation)
+
+- Standalone owner: \`canvio-p127-director.js\`; embedded lot: \`canvio-lot1272\`; API: \`window.CVCaptionDirectorP1272\`. Reads the existing text/subtitle track 3 produced by Whisper or SRT import; it does not create a second ASR model, media database or timeline.
+- Analysis: identifies subtitle cue coverage and pauses between adjacent cues. Cue analysis is read-only; it does not interpret word-level speech confidence or claim semantic speaker/emotion analysis.
+- Punch-in: applies bounded scale keyframes (1.03–1.40×) to an existing unlocked video clip using the canonical \`motion.keyframes\` model and Video Engine commit/undo path. At most two caption-driven emphasis moments / eight keyframes are created.
+- Jump cuts: the UI reuses the existing audio-aware \`CV.engines.video.autoCut({thr,min,remove:true})\` engine. It analyzes the selected original audio/video blob and removes detected silence with canonical ripple/undo behavior; transcript gaps only provide a visual guide, not the cut signal.
+- Tests: \`tests/p127/run-p1272-tests.cjs\` and \`tests/p127/run-p1272-browser.py\`. Browser coverage uses a synthetic talking-head fixture with 440 Hz bursts and digital silence, fixture caption timestamps, real timeline motion keyframes and AutoCut.
+- Limits: captions must already exist on track 3 (Whisper model execution/download remains optional/user-triggered); no face tracking, automatic subject framing, emotion inference, word-level alignment or human editorial review is claimed.

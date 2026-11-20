@@ -245,3 +245,10 @@ The candidate workflow runs standalone/embedded source parity and API tests for 
 - P145.8 verifies eight first-party illustrations, four palettes, group/search filtering, theme preview and SVG export safety.
 - P145.9/.10 verifies the shared P145 content quality gate (license, source, name, size, duplicate hash), local search/filter and read-only UX using an injected fixture provider.
 - Fixture-based tests are not proof that every production Asset Vault item is enumerable. Live acceptance requires the host's canonical asset provider and verified metadata/hash coverage.
+
+
+## P127.2 — Caption-guided Director tests added
+
+- Unit suite covers track 3 cue filtering, pause detection, non-video rejection, bounded keyframes, punch-in scale and non-mutating preview.
+- Hosted browser suite imports a synthetic WebM talking-head clip with 440 Hz audio bursts separated by digital silence, adds fixture caption cues, checks pause report, applies motion keyframes, invokes the canonical AutoCut path and verifies Undo availability.
+- Synthetic media proves the code path only; Whisper model inference quality, real speech content, real user media and face tracking remain outside this automated acceptance.

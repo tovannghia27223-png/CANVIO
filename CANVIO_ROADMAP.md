@@ -661,3 +661,12 @@ Hosted verification after the ffmpeg repair is complete:
 - P145.8: eight original offline SVG illustrations, four themes, category/search, preview, sprite and contact-sheet export; not stock photography.
 - P145.9/.10: local read-only asset search and shared license/source/size/hash quality gate. Uses \`CV.assets.list()\` if the host exposes it; otherwise the host must set an explicit asset provider. Duplicate detection applies only to supplied hash values; it does not hash every uploaded file automatically.
 - Each module has a Node unit suite and hosted Chromium suite wired into the candidate workflow. Manual content/design review and validation against a production Asset Vault remain separate acceptance.
+
+
+## 23.3.111 continuation — P127.2 Caption-guided talking-head director
+
+- Uses current Whisper/SRT text-track timestamps to show caption coverage and pause gaps.
+- Applies bounded punch-in zoom to an existing unlocked video clip via the canonical motion keyframe model; two selected caption moments maximum, eight keyframes maximum, and Undo is preserved.
+- Reuses the original audio-aware AutoCut engine for actual silence detection and ripple removal. Transcript gaps are cues for review only; they do not replace waveform analysis.
+- Added Node unit and hosted Chromium tests using a synthetic video with audio bursts separated by digital silence. No duplicate ASR model, timeline or media store is introduced.
+- Still open: actual face/person tracking, smart reframing to portrait/square, word-level alignment, labelled transcript quality and editorial review on real footage.

@@ -30,3 +30,5 @@
 | P145.7 typography presets | Six local presets, bounded settings, fallback stacks and CSS export | System-font availability varies by OS; no full font pack or binary licensing bundle |
 | P145.8 original vector illustrations | Eight SVGs, four themes, filtering, preview and safe exports | First-party starter set only; not a comprehensive stock library |
 | P145.9/.10 asset search and gate | Shared license/source/size/hash gate and fixture-based Chromium search/filter checks | Production Asset Vault provider and full binary hash coverage must be verified |
+
+| P127.2 caption-guided director | Pause analysis from track 3, bounded punch-in keyframes, canonical audio-aware AutoCut, hosted fixture and Undo path | Real Whisper inference/labelled transcript accuracy, face tracking and editorial review remain manual |

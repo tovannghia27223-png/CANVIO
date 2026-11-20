@@ -10,6 +10,7 @@ on:
       - work/p136-bezier-smoothing
       - work/p125-2-scroll-storyboard
       - work/p145-6-10-consolidated
+      - work/p127-2-caption-director
       - main
   pull_request:
     branches:
@@ -294,6 +295,26 @@ jobs:
           console.log('P145.6/.7/.8/.9/10 Asset Library modules integrated');
           NODE
 
+      - name: Integrate P127.2 caption-guided talking-head director
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs=require('node:fs');
+          const file='index.html';
+          let html=fs.readFileSync(file,'utf8');
+          const source=fs.readFileSync('canvio-p127-director.js','utf8').trim();
+          if(!source.includes('window.CVCaptionDirectorP1272'))throw new Error('P127.2 module contract missing');
+          const id='canvio-lot1272';
+          const tag='<script id="'+id+'">\n'+source+'\n</script>';
+          const start=html.indexOf('<script id="'+id+'"');
+          if(start>=0){const close=html.indexOf('</script>',start);if(close<0)throw new Error('P127.2 embedded lot is unterminated');html=html.slice(0,start)+tag+html.slice(close+9);}
+          else{const at=html.lastIndexOf('</body>');if(at<0)throw new Error('index.html has no closing body tag');html=html.slice(0,at)+tag+'\n'+html.slice(at);}
+          if((html.match(/id="canvio-lot1272"/g)||[]).length!==1)throw new Error('P127.2 duplicate/missing lot');
+          fs.writeFileSync(file,html,'utf8');
+          console.log('P127.2 caption-guided talking-head director integrated');
+          NODE
+
       - name: Verify native test utilities
         shell: bash
         run: |
@@ -394,13 +415,7 @@ jobs:
                   x=subprocess.run(['node','--check',str(p)],capture_output=True,text=True)
                   if x.returncode: failures.append((i,x.stderr))
           if failures:
-              for i,e in failures:
-                  print('inline script',i,e,file=sys.stderr)
-                  lines=blocks[i].splitlines()
-                  print('INLINE_SCRIPT_CONTEXT_BEGIN',i, 'CHARS',len(blocks[i]),file=sys.stderr)
-                  for n,line in enumerate(lines[max(0,35):min(len(lines),50)],start=max(1,36)):
-                      print(f'{n}: {line}',file=sys.stderr)
-                  print('INLINE_SCRIPT_CONTEXT_END',i,file=sys.stderr)
+              for i,e in failures: print('inline script',i,e,file=sys.stderr)
               raise SystemExit(f'{len(failures)} inline script syntax errors')
           print(f'PASS: {audit.scripts} inline scripts; {len(counts)} unique IDs; zero duplicates; no external script tags.')
           PY
@@ -440,6 +455,7 @@ jobs:
           node tests/p115/run-p1222-tests.cjs
           node tests/p115/run-p127-tests.cjs
           node tests/p127/run-p127k-tests.cjs
+          node tests/p127/run-p1272-tests.cjs
           node tests/p131/run-p131-tests.cjs
           node tests/p131/run-p131-export-contracts.cjs
           node tests/p127/run-p127q-tests.cjs
@@ -502,6 +518,7 @@ jobs:
           /tmp/canvio-playwright/bin/python tests/p131/run-p131-app-smoke.py
           /tmp/canvio-playwright/bin/python tests/p127/run-p125f-browser.py
           /tmp/canvio-playwright/bin/python tests/p127/run-p1252-browser.py
+          /tmp/canvio-playwright/bin/python tests/p127/run-p1272-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p145-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p1455-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p1456-browser.py

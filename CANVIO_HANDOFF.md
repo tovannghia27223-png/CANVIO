@@ -148,3 +148,9 @@ The candidate is built and verified by the hosted runtime workflow. Runtime vend
 - Added original local SVG icon and illustration packs plus six system-font typography presets.
 - Added read-only Asset Search & Quality Gate using the shared P145 license/credit rules and hash metadata. The host must expose \`CV.assets.list()\` or call \`CVAssetSearchGateP145910.setAssetProvider(fn)\` to provide a real list; do not interpret an empty fallback list as an accepted full inventory.
 - Verify using \`run-p1456-tests.cjs\`, \`run-p1457-tests.cjs\`, \`run-p1458-tests.cjs\`, \`run-p145910-tests.cjs\` plus their four hosted browser scripts.
+
+
+## P127.2 continuation — Caption-guided Director
+- Reads existing Whisper/SRT captions on track 3, shows pauses, applies at most two bounded punch-in moments to an existing video clip, and reuses the original AutoCut engine for audio silence removal.
+- No new ASR model, media owner, cloud sync or timeline is created.
+- Verify with \`node tests/p127/run-p1272-tests.cjs\` and \`tests/p127/run-p1272-browser.py\`.

@@ -11,3 +11,5 @@
 - P145.7: six typography presets using local system font stacks and CSS export.
 - P145.8: original offline SVG illustration pack with themes and exports.
 - P145.9/.10: read-only local asset search and shared license/source/size/hash Quality Gate.
+
+- P127.2: add caption-guided talking-head director, pause analysis, bounded punch-in motion keyframes, and UI access to canonical AutoCut; add unit and hosted Chromium acceptance.
