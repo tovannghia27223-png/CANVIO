@@ -85,3 +85,11 @@ This batch is not a completion claim for P115–P145 and does not certify CANVIO
 - P132.3 animated WebP is merged and hosted-tested in workflow #304; it is video-only with no audio. Real footage, alpha/color profile, mobile browser and long-animation performance remain manual.
 - P136.4 pattern-fill work is a separate candidate branch: six static local SVG patterns for multicolour Image Trace only. Existing none, Bezier and single-line Stroke behavior is preserved; hosted verification is pending and brush/gradient mesh remain out of scope.
 - Do not use this report snapshot as a release certification. CANVIO_MANIFEST.json is refreshed by the hosted main-branch workflow; P70 remains fail-closed with fourteen real-world acceptance gates pending.
+
+
+
+## 2026-11-21 continuation — P136.4 accepted; P131.3 candidate
+
+- P136.4 merged through PR #39 at `1eb4129f4252b31c41f819d23f1cd9dd02948d68`. Hosted run #312 (`44813838108`) passed 33 steps; full P47–P70 regression, source audits, P107 round-trip, Chromium/GLB/P85/ONNX acceptance passed. Artifact `CANVIO-23.3.111-GITHUB-RUNTIME-VERIFIED-312`, 21,583,636 bytes.
+- P131.3 extends the P131 security hub with safe local HTML import into the existing Website Engine. 5 MiB cap, allow-list sanitization, no external image fetch, canonical add/save path, explicit confirmation. Candidate PR #41 awaits CI.
+- Automated CI does not close the fourteen P70 real-world acceptance gates. No production certification, physical GPU, full model-inference, cross-device/cloud sync, real-media quality, or accessibility sign-off is implied.
