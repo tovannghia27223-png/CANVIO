@@ -288,3 +288,12 @@ The candidate workflow runs standalone/embedded source parity and API tests for 
 - Node results: P145.6 9/9, P145.7 7/7, P145.8 11/11, P145.9/.10 8/8.
 - Chromium results: P145.6 icon preview/search/download/sprite/contact sheet; P145.7 system typography presets, live controls, CSS export and real mouse interaction; P145.8 eight illustration cards/theme/search/vector exports; P145.9/.10 read-only search, provider fixture, license/hash gate and filter behavior. All four suites reported `failed: []`, `pageErrors: []`.
 - Same-origin GLB Draco/Meshopt/KTX2, P85 runtime and synthetic P80 Whisper/P102 ORMBG/P105 Depth Anything ONNX worker inference completed successfully. This validates execution plumbing on synthetic data and CI renderer only, not production model accuracy or physical GPU/performance.
+
+ 
+## P132.3 — Animated WebP candidate QA (2026-11-21)
+
+- Added RIFF WebP muxing for browser-encoded VP8/VP8L frames with VP8X animation flag, ANIM loop metadata and ANMF frame chunks.
+- Node suite checks source/embedded parity and WebP container/frame metadata, dimensions, delay, loop and invalid-input rejection.
+- Hosted Chromium exports WebP from the existing Video Engine timeline; Python checks RIFF signature, animation flag, ANMF count and ffprobe decode/frame count.
+- CI status: pending on the P132.3 branch. Do not report WebP as verified until the hosted job completes successfully.
+- Manual: real media/visual quality, alpha/profile behavior, mobile browsers, long-video memory/performance. WebP export has no audio.
