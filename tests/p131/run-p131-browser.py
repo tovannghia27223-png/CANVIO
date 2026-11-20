@@ -114,10 +114,16 @@ with sync_playwright() as p:
     c['safeHtmlImportUsesCanonicalWebsiteOwner'] = imported['ok'] and imported['owner']=='CVWeb.addComponents / CV.engines.web.save' and imported['noNewStore']
     c['safeHtmlImportSavesExistingProject'] = page.evaluate('window.__saved===1')
     c['safeHtmlImportNeverExecutesImportedScript'] = page.evaluate('window.__importX===undefined')
-    c['safeHtmlImportDoesNotCreateRemoteImageRequest'] = page.evaluate("!document.querySelector('#p131-import-sink img[src^=\\"https://\\"]')")
+    c['safeHtmlImportDoesNotCreateRemoteImageRequest'] = page.evaluate("Array.from(document.querySelectorAll('#p131-import-sink img')).every(x=>!/^https?:/i.test(x.getAttribute('src')||''))")
     page.locator('#p131-import-sink').remove()
     save_failure = page.evaluate('''async()=>{try{await CANVIOSecurity.importHtmlText('<p>Save fail check</p>',{addComponents:()=>true},{confirmed:true,save:()=>{throw new Error('save test')}});return false}catch(e){return /đã được chèn.*lưu dự án thất bại/i.test(e.message)}}''')
     c['safeHtmlImportReportsSaveFailureRatherThanClaimingSuccess'] = save_failure
+    entry = page.evaluate_handle("CV.palette.build().find(x=>x&&x.label==='Nhập HTML an toàn · Website Studio')")
+    entry.evaluate("(x)=>x.run()")
+    page.locator('#cv131-html-file').set_input_files({'name':'sample.html','mimeType':'text/html','buffer':b'<h3>Nhap file</h3><script>window.__fileX=1</script><img src="https://external.test/x.png">'})
+    page.wait_for_function("window.__imports.length===2 && window.__saved===2",timeout=10000)
+    c['safeHtmlImportFilePickerAcceptsHTMLAndUsesSamePipeline'] = page.evaluate("window.__imports[1].includes('Nhap file') && !window.__imports[1].includes('<script') && !window.__imports[1].includes('external.test') && window.__fileX===undefined")
+    c['safeHtmlImportFileFlowAnnouncesSuccess'] = page.evaluate("window.__toasts.some(x=>String(x).includes('Đã nhập HTML an toàn'))")
     c['linkMounted'] = page.evaluate("!!document.getElementById('cv131-open')")
     page.evaluate('sessionStorage.removeItem("canvio10:gemini_key");localStorage.removeItem("canvio10:gemini_session")')
     b.close()
