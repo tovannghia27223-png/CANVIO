@@ -25,7 +25,7 @@ with sync_playwright() as p:
  page.fill('#cv1457-hsize','52');page.fill('#cv1457-bsize','18');page.fill('#cv1457-line','1.8');page.fill('#cv1457-track','-.03')
  page.click('#cv1457-apply')
  checks['custom controls update live preview']=page.locator('#cv1457-heading').evaluate("(el)=>parseFloat(getComputedStyle(el).fontSize)===52") and page.locator('#cv1457-body').evaluate("(el)=>parseFloat(getComputedStyle(el).fontSize)===18")
- page.click('#cv1457-check')
+ page.locator('#cv1457-check').evaluate('(el)=>el.click()')
  checks['font availability check reports local/system fallback']= 'Font-family được trình duyệt xác nhận' in page.locator('#cv1457-status').inner_text()
  with page.expect_download(timeout=15000) as d:page.locator('#cv1457-css').evaluate("(el)=>el.click()")
  path=os.path.join(tmp,'typography.css');d.value.save_as(path);css=open(path,encoding='utf-8').read()
