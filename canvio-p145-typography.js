@@ -55,8 +55,13 @@ function mount(){
  '<div id="cv1457-preview" class="cv-typography" style="margin-top:12px;padding:22px;border:1px solid var(--line,rgba(128,140,160,.2));border-radius:12px;background:#fff;color:#17243a"><div class="tiny" id="cv1457-kicker">CANVIO · TYPOGRAPHY SAMPLE</div><h2 class="heading" id="cv1457-heading" style="margin:10px 0">Thiết kế rõ ràng, quyết định tự tin</h2><p class="body" id="cv1457-body">Dữ liệu kinh doanh cần được trình bày mạch lạc. Kết hợp nhịp điệu chữ, khoảng trắng và độ tương phản để người đọc tập trung vào điều quan trọng.</p><div class="tiny" id="cv1457-note" style="margin-top:12px">Mẫu hiển thị sử dụng font hệ thống; máy khác có thể thay font fallback.</div></div>'+
  '<div class="row" style="gap:8px;flex-wrap:wrap;margin-top:10px"><button type="button" class="btn btn-soft sm" id="cv1457-apply">Cập nhật xem trước</button><button type="button" class="btn btn-primary sm" id="cv1457-css">Tải CSS</button><button type="button" class="btn btn-ghost sm" id="cv1457-copy">Sao chép CSS</button><button type="button" class="btn btn-ghost sm" id="cv1457-check">Kiểm tra font hệ thống</button></div>'+
  '<div class="tiny" id="cv1457-status" role="status" aria-live="polite" style="margin-top:8px;pointer-events:none">Không chứa font binary, không yêu cầu font online. Chỉ xuất CSS preset.</div>';
+ // The app's global card-tilt decoration can cover controls on this dynamic panel.
+ // Keep the card visual but let the real form controls receive pointer events.
+ card.style.pointerEvents='none';
  var after=page.querySelector('#cv1456-card')||page.querySelector('#cv1455-card')||page.querySelector('#cv145-card');
  if(after&&after.parentNode)after.parentNode.insertBefore(card,after.nextSibling);else page.appendChild(card);
+ card.querySelectorAll('button,input,select,textarea,a,label').forEach(function(el){el.style.pointerEvents='auto';el.style.position='relative';el.style.zIndex='2';});
+
  var $=function(s){return card.querySelector(s);},lastCss='';
  function current(){
   var p=normalize($('#cv1457-preset').value,{headingSize:$('#cv1457-hsize').value,bodySize:$('#cv1457-bsize').value,lineHeight:$('#cv1457-line').value,tracking:$('#cv1457-track').value});
