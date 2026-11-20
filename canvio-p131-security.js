@@ -3,7 +3,7 @@
 (function () {
 'use strict';
 if (window.CANVIOSecurity) return;
-var VERSION = '131.0.0';
+var VERSION = '131.3.0';
 var STRONG_NAME = /(api[-_. ]?key|secret|passw(?:or)?d|token|credential|service[-_.]?role|authorization|bearer)/i;
 var WEAK_NAME = /(^|[-_.:])key$/i;
 var KNOWN_SECRET_KEYS = ['canvio10:gemini_key', 'canvio18:google-font-key', 'canvio16:gh_tok'];
@@ -388,5 +388,5 @@ function tests() {
   return flags;
 }
 
-window.CANVIOSecurity = { version: '131.3.0', scanStorage: scanStorage, migrateToSession: migrateToSession, redact: redact, hasSecret: hasSecret, sanitizeSvg: sanitizeSvg, sanitizeHtml: sanitizeHtml, prepareHtmlImport: prepareHtmlImport, importHtmlText: importHtmlText, chooseHtmlImport: chooseHtmlImport, cleanCss: cleanCss, auditPage: auditPage, report: report, open: openPanel, tests: tests };
+window.CANVIOSecurity = { version: VERSION, scanStorage: scanStorage, migrateToSession: migrateToSession, redact: redact, hasSecret: hasSecret, sanitizeSvg: sanitizeSvg, sanitizeHtml: sanitizeHtml, prepareHtmlImport: prepareHtmlImport, importHtmlText: importHtmlText, chooseHtmlImport: chooseHtmlImport, cleanCss: cleanCss, auditPage: auditPage, report: report, open: openPanel, tests: tests };
 })();
