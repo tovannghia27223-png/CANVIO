@@ -579,3 +579,22 @@ Hosted verification after the ffmpeg repair is complete:
 - Đo trên Chrome thật (ồn trắng 0,05 + tiếng 440 Hz ngắt quãng): ồn giảm ~16 dB, tiếng lệch −0,4 dB, độ dài giữ nguyên. Test: `node tests/p127/run-p138d-tests.cjs`, `tests/p145/run-p138-browser.py`.
 - Giới hạn trung thực: KHÔNG phải RNNoise/AI. Tiếng/nhạc kéo dài đều (không có khoảng yên) bị coi là ồn; ồn thay đổi và tiếng người nền không xử lý được. RNNoise WASM và TTS tiếng Việt (Piper) chưa làm vì cần tải model/runtime.
 
+
+
+## 23.3.111 continuation — P127.7 / P145 verification (2026-11-20)
+
+### P127.7 — Ducking nhạc theo phụ đề (đã tích hợp, regression PASS)
+- Source: `canvio-p127-duck.js`; embedded lot: `canvio-lot127k`; API: `window.CVDuckSubP127`.
+- Lấy cue từ phụ đề track chữ 3 (ưu tiên `CVDirectorP127.cuesFromClips`), cho chọn một clip audio hiện có, tính envelope theo dB/attack/release/pad, gộp khoảng gần nhau, giới hạn 15 đoạn/64 điểm. Chỉ ghi vào `volumeEnvelope` của clip được chọn qua Video Engine canonical commit; kiểm clip/track khóa, undo checkpoint và rollback nếu commit lỗi.
+- Không thêm timeline, asset, store hoặc API đồng bộ mới; không ghi/thu âm từ trình phát bên ngoài. Đây là ducking theo mốc phụ đề, không phải phân tích giọng nói trực tiếp.
+- Test: `node tests/p127/run-p127k-tests.cjs` (7/7) và workflow hosted #136 thành công: https://github.com/tovannghia27223-png/CANVIO/actions/runs/44747203664. Inline syntax audit và các regression suite tích hợp cũng PASS.
+- Còn mở: kiểm thử thao tác UI với dự án thật, nhiều track/clip, nghe A/B và xác minh envelope khi xuất media thật.
+
+### P145 — trạng thái kiểm chứng trong workflow #136
+- P145.1 Content Core/License & Credit: source + unit suite PASS; tiếp tục dùng Asset Library hiện có. Chế độ cá nhân cho phép CC-BY-NC và cảnh báo tài sản chưa rõ; công tắc công khai/kiếm tiền siết điều kiện.
+- P145.3 SFX tổng hợp: 6 recipe Web Audio, WAV 16-bit mono 44.1 kHz, đỉnh chuẩn hóa −1 dBFS; unit suite + hosted browser test PASS. Đây là âm tự tổng hợp, chưa phải thư viện nhạc/SFX được tuyển chọn.
+- Hosted browser acceptance trong workflow #136 cũng chạy P136, P134 và P138; toàn bộ job hoàn tất SUCCESS. P138 hiện là spectral gating, không phải RNNoise/AI.
+- Chưa hoàn tất: P145.2 shader transitions; P145.4 thư viện nhạc/SFX cục bộ; P145.4b tự phát trình phát nhúng (hiện chỉ metadata/cue sheet, không capture); P145.5 Template Factory; P145.6 icon/stock offline packs; P145.7 font packs; P145.8 stock/AI media packs; P145.9/10 full quality gate/search integration. Không nhúng tài sản không rõ giấy phép.
+
+### Release disposition
+- Candidate marker vẫn `23.3.111-github-runtime-ci`; workflow #136 PASS chỉ chứng nhận các bước tự động đã chạy. P70 vẫn `releaseCertified:false`, 14 manual gates pending. Không tuyên bố production-ready, physical GPU, media thật hoặc đồng bộ cloud/hai thiết bị.
