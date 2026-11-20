@@ -221,7 +221,7 @@ function encodeAnimatedWebp(frames, opt) {
 function captureTimeline(opt, onProgress) {
   var v = window.CV && CV.engines && CV.engines.video, s = v && v._state && v._state(), cv = document.getElementById('vtCanvas');
   if (!s || !cv || !v.seek) return Promise.reject(new Error('Mở Video Engine trước.'));
-  var dur = Math.max(1, Number(s.duration) || 1), fps = Math.max(1, Math.min(15, Number(opt && opt.fps) || 8)), n = Math.min(MAX_FRAMES, Math.max(1, Math.round(dur * fps))), w = Math.min(MAX_W, Math.max(64, Math.round(Number(opt && opt.width) || 400))), h = Math.round(w * cv.height / cv.width), c = document.createElement('canvas'), x, frames = [], i = 0, old = s.time;
+  var dur = Math.max(1, Number(s.duration) || 1), fps = Math.max(1, Math.min(15, Number(opt && opt.fps) || 8)), n = Math.min(MAX_FRAMES, Math.max(1, Math.round(dur * fps))), w = Math.min(MAX_W, Math.max(64, Math.round(Number(opt && opt.width) || 400))), h = Math.max(1, Math.round(w * cv.height / cv.width)), c = document.createElement('canvas'), x, frames = [], i = 0, old = s.time; if (h > MAX_W) { w = Math.max(1, Math.round(MAX_W * cv.width / cv.height)); h = MAX_W; }
   if (opt && opt.maxFrames && n > opt.maxFrames) return Promise.reject(new Error('Định dạng này giới hạn ' + opt.maxFrames + ' khung; hãy giảm FPS hoặc thời lượng.')); if (opt && opt.maxRawBytes && w * h * 4 * n > opt.maxRawBytes) return Promise.reject(new Error('Dữ liệu khung vượt ngân sách 64 MiB; hãy giảm FPS hoặc chiều rộng.')); c.width = w; c.height = h; x = c.getContext('2d', { willReadFrequently: true });
   return new Promise(function (ok, no) {
     (function step() {
@@ -271,7 +271,7 @@ function tests() {
   var ap = encodeApng([solid(16, 8, 255, 0, 0), solid(16, 8, 0, 0, 255)], { delayCs: 20 }), parsed = inspectApng(ap), types = parsed.chunks.map(function (x) { return x.type; });
   var actl = parsed.chunks.filter(function (x) { return x.type === 'acTL'; })[0], ctrls = parsed.chunks.filter(function (x) { return x.type === 'fcTL'; });
   var apngThrown = 0; [function () { encodeApng([]); }, function () { encodeApng([solid(4, 4, 0, 0, 0), solid(5, 4, 0, 0, 0)]); }, function () { encodeApng([{ w: 2, h: 2, data: new Uint8ClampedArray(3) }]); }, function () { encodeApng([{ w: 4096, h: 4096, data: new Uint8Array(1) }]); }].forEach(function (f) { try { f(); } catch (e) { apngThrown++; } });
-  var webp = muxAnimatedWebp([staticWebpFixture(), staticWebpFixture()], { width: 16, height: 8, delayMs: 200, loop: 0 }), webpInfo = inspectAnimatedWebp(webp), webpThrown = 0; try { muxAnimatedWebp([new Uint8Array([1, 2, 3])], { width: 16, height: 8 }); } catch (e) { webpThrown++; }
+  var webp = muxAnimatedWebp([staticWebpFixture(), staticWebpFixture()], { width: 16, height: 8, delayMs: 200, loop: 0 }), webpInfo = inspectAnimatedWebp(webp), webpThrown = 0; [function () { muxAnimatedWebp([new Uint8Array([1, 2, 3])], { width: 16, height: 8 }); }, function () { muxAnimatedWebp(new Array(MAX_WEBP_FRAMES + 1).fill(staticWebpFixture()), { width: 16, height: 8 }); }, function () { muxAnimatedWebp([staticWebpFixture()], { width: MAX_W + 1, height: 8 }); }].forEach(function (f) { try { f(); } catch (e) { webpThrown++; } });
   return {
     headerAndTrailer: s === 'GIF89a' && g[g.length - 1] === 0x3B, sizeFields: g[6] === 16 && g[8] === 8,
     hasLoopExtension: String.fromCharCode.apply(null, g.slice(0, 900)).indexOf('NETSCAPE2.0') > 0,
@@ -287,7 +287,8 @@ function tests() {
     webpRiffHeaderAndFrameCount: webpInfo.ok && webpInfo.chunks[0] === 'VP8X' && webpInfo.frames.length === 2,
     webpDimensionsAndDelay: webpInfo.width === 16 && webpInfo.height === 8 && webpInfo.frames.every(function (f) { return f.duration === 200; }),
     webpAnimationFlagAndLoop: webpInfo.animation && webpInfo.loop === 0,
-    rejectsInvalidWebpFrame: webpThrown === 1
+    webpContainsVp8FramePayload: webpInfo.chunks.indexOf('ANMF') >= 0,
+    rejectsInvalidWebpFrameAndBounds: webpThrown === 3
   };
 }
 window.CVGifP132 = { version: '132.3.0', encode: encode, encodeApng: encodeApng, inspectApng: inspectApng, encodeAnimatedWebp: encodeAnimatedWebp, muxAnimatedWebp: muxAnimatedWebp, inspectAnimatedWebp: inspectAnimatedWebp, captureTimeline: captureTimeline, mount: mount, tests: tests };
