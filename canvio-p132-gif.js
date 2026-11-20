@@ -1,6 +1,6 @@
 /* P132 (phần xuất GIF động) · bộ mã hoá GIF89a thuần JS: bảng màu 3-3-2 + dither Bayer 4x4, LZW, vòng lặp NETSCAPE2.0.
    Thêm nút "Xuất GIF từ timeline" vào thẻ #cv127-quality: tua timeline, chụp #vtCanvas, mã hoá, tải .gif. Chỉ đọc timeline.
-   Giới hạn: 256 màu cố định (ảnh động gradient có thể bị vân), tối đa 600 khung, rộng ≤ 640 px. Chưa có APNG/WebP động. */
+   GIF 256 màu; APNG RGBA; WebP động dùng bộ mã hoá WebP tĩnh native của trình duyệt + RIFF muxer. Không có tiếng. */
 (function () {
 'use strict';
 if (window.CVGifP132) return;
