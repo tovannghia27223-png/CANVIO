@@ -1,5 +1,5 @@
-# CANVIO — AI Agent Guide (23.3 · cập nhật tới 23.3.84-p70)
-> **CURRENT WORKING BASE (2026-11-17):** `index.html` — CANVIO `23.3.84-p70`, built additively on P67. Historical sections preserve architecture and acceptance notes; P47–P70 addenda document the integrated source chain and bounded test evidence. Use this guide before editing.
+# CANVIO — AI Agent Guide (23.3 · cập nhật tới 23.3.111 + P127.7)
+> **CURRENT WORKING BASE (2026-11-20):** `index.html` — CANVIO `23.3.111-github-runtime-ci`, built additively on P67. Historical sections preserve architecture and acceptance notes; P47–P70 addenda document the integrated source chain and bounded test evidence. Use this guide before editing.
 > Work surgically from the named owners/APIs below. Do not re-scan the entire HTML unless an unresolved question requires it; do not break active data synchronization or local project data. The current artifact has 91 inline script blocks and 504 unique static HTML IDs; the separate reviewable modules are `canvio-p63-p67.js` and `canvio-p68-p70.js`, alongside `assets/canvio-whisper-worker.js`.
 > Preserve the canonical project, asset, media, timeline, history, Brand Kit, Project Vault and P8 owners. Keep tests/readiness claims bounded by their actual fixture and real-origin evidence.
 >
@@ -3480,3 +3480,13 @@ P125.3: `CVScrollFramesP125.PRESETS`, `decimate(frames,maxBytes)`; `buildHtml` n
 ## P138 Denoise
 `window.CVDenoiseP138` {denoise(Float32Array,{strength}), processClip(state,clip,strength), wav, mount, tests}. Lot `canvio-lot138d` khớp `canvio-p138-denoise.js`.
 
+
+
+## Continuation 2026-11-20 — P127.7 and P145 verification
+
+- Current hosted candidate remains `23.3.111-github-runtime-ci`; do not promote the P70 Stable Release gate. P127.7 is an additive video-engine feature, not a new timeline or storage owner.
+- `canvio-p127-duck.js` is the reviewable source and `canvio-lot127k` is its canonical embedded lot in `index.html`. API: `window.CVDuckSubP127` {version, cuesFromClips, envelope, preview, apply, mount, tests}. It reads subtitle cues from the existing text track 3 (delegates to `CVDirectorP127.cuesFromClips` when available), selects an existing audio clip, and writes a bounded `volumeEnvelope` through the canonical Video Engine `_state / _pro.pushUndo / commit / undo` path. Locked clips are refused; failed commits restore the prior envelope. It does not capture audio, download platform music, or create another timeline/store.
+- P127.7 regression: `node tests/p127/run-p127k-tests.cjs` — 7/7 assertions passed in hosted workflow #136. Full inline-script syntax audit, established P47–P70 regression, integrated source contracts, P107 ZIP round-trip, and same-origin browser acceptance all passed in workflow #136: https://github.com/tovannghia27223-png/CANVIO/actions/runs/44747203664.
+- P145.1 Content Core and P145.3 synthetic SFX are retained in their existing owners (`CVContentCoreP145`, `CVSfxP145`). Core and SFX unit suites passed; hosted browser checks for P145 core/SFX, P136, P134 and P138 passed in workflow #136. P145.3 currently supplies six generated SFX recipes and WAV export/import; it is not a curated licensed music library.
+- Not completed by this continuation: P145.2 shader transitions, P145.4 curated local music/SFX packs and embedded-player synchronization, P145.5 Template Factory, P145.6 offline icon/stock packs, P145.7 full font packs, P145.8 stock/media packs, and complete P145.9/10 review/search workflows. P145.4b only records links/cue sheets; no stream capture or audio extraction is allowed. P130 cloud sync remains blocked on a real Supabase project, RLS and recovery acceptance.
+- Remaining acceptance: real project media and hearing review for ducking/SFX, physical device/GPU performance, production security/accessibility/print checks, and all fourteen P70 manual release gates. Workflow #136 success is automated hosted evidence, not CANVIO 1.0 Stable certification.
