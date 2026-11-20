@@ -12,3 +12,5 @@
 - P132.3 candidate: added bounded animated WebP beside GIF/APNG using native browser WebP encoding and local RIFF muxing; no external encoder or paid dependency. Corrected the hosted RIFF parser and added Chromium native decode checks after run #300 exposed test-verification defects; acceptance remains pending until the rebased workflow passes.
 
 - P132.3 verification follow-up: run #303 confirmed 10 valid ANMF/VP8 frame chunks and Chromium decoded 200×113; fixed final browser assertion to use canvas-derived height (the prior test incorrectly expected 200 px). ffprobe WebP output remains diagnostic only on this runner; corrected hosted rerun pending.
+
+- P132.3 animated WebP hosted acceptance passed in run #304 (`44809678883`): RIFF/VP8X/ANIM/10×ANMF validation, per-frame VP8 payloads, 200×113 canvas/frame dimensions, 200 ms delay and Chromium `createImageBitmap` decode; no browser failures/page errors. Full hosted candidate workflow passed. Manual real-media/mobile/color/memory checks remain open.
