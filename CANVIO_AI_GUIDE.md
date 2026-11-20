@@ -3477,3 +3477,6 @@ P125.3: `CVScrollFramesP125.PRESETS`, `decimate(frames,maxBytes)`; `buildHtml` n
 ## P134 Scopes
 `window.CVScopesP134` {histogram, waveform, vectorscope, stats, advice, update(row), mount, tests}. Lot `canvio-lot134s` khớp `canvio-p134-scopes.js`.
 
+## P138 Denoise
+`window.CVDenoiseP138` {denoise(Float32Array,{strength}), processClip(state,clip,strength), wav, mount, tests}. Lot `canvio-lot138d` khớp `canvio-p138-denoise.js`.
+

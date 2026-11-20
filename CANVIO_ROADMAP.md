@@ -574,3 +574,8 @@ Hosted verification after the ffmpeg repair is complete:
 - Test: `node tests/p127/run-p134s-tests.cjs`; Chrome thật `tests/p145/run-p134-browser.py`.
 - Chưa làm: Auto Reframe 16:9→9:16/1:1 (cần dò mặt/vật thể và tracking), đo trên clip video thật.
 
+### P138 (phần khử ồn) — Spectral gating
+- `canvio-p138-denoise.js` (lot `canvio-lot138d`): nút "Khử ồn clip đang chọn" (mức 0–100) trong thẻ Video Engine. STFT 1024/hop 512, hồ sơ ồn từ ~10% khung yên nhất, trừ phổ + sàn, làm mượt tần số; tạo clip MỚI mono, clip gốc giữ nguyên. Giới hạn 5 phút / 80 MB.
+- Đo trên Chrome thật (ồn trắng 0,05 + tiếng 440 Hz ngắt quãng): ồn giảm ~16 dB, tiếng lệch −0,4 dB, độ dài giữ nguyên. Test: `node tests/p127/run-p138d-tests.cjs`, `tests/p145/run-p138-browser.py`.
+- Giới hạn trung thực: KHÔNG phải RNNoise/AI. Tiếng/nhạc kéo dài đều (không có khoảng yên) bị coi là ồn; ồn thay đổi và tiếng người nền không xử lý được. RNNoise WASM và TTS tiếng Việt (Piper) chưa làm vì cần tải model/runtime.
+
