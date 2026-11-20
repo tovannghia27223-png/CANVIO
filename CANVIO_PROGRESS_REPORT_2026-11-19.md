@@ -57,3 +57,10 @@ This batch is not a completion claim for P115–P145 and does not certify CANVIO
 - Inspected GitHub main at `9290d128ca553b06195500d37210c8ffcc45dbbb`; P131.2 latest commit wires P66 SVG ingestion through the shared security allow-list sanitizer.
 - Reconciled current status: P131 remains partial (HTML/PPTX/ZIP paths and export redaction still open); P127 remains partial (Whisper director/jump-cut/zoom and audio ducking/SFX/music plus real media checks open); P125.1 exists while P125.2–P125.4 remain open; P122.2 remains website CSS scoped; P130 cloud sync is blocked pending real infrastructure.
 - No new code/test run is claimed. The current commit status response contained no status entries. Manifest/hash refresh must be performed by the repository's verified build workflow.
+
+
+## 2026-11-20 CI repair
+
+- Diagnosed hosted run #116 from its job log: the failure was an absent `ffmpeg` executable at the P125.1 browser test setup, after P131 and full-app browser smoke reported all checks true.
+- Updated `.github/workflows/canvio-candidate-runtime.yml` to apt-install `ffmpeg` alongside `zip`. Workflow commit: `ccd4f2a0c9d17e617e4cfb09c4ff2cbaaff8e755`.
+- Verification pending the fresh hosted workflow; no PASS claim yet.
