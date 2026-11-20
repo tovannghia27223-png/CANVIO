@@ -252,3 +252,8 @@ The candidate workflow runs standalone/embedded source parity and API tests for 
 - Unit suite covers track 3 cue filtering, pause detection, non-video rejection, bounded keyframes, punch-in scale and non-mutating preview.
 - Hosted browser suite imports a synthetic WebM talking-head clip with 440 Hz audio bursts separated by digital silence, adds fixture caption cues, checks pause report, applies motion keyframes, invokes the canonical AutoCut path and verifies Undo availability.
 - Synthetic media proves the code path only; Whisper model inference quality, real speech content, real user media and face tracking remain outside this automated acceptance.
+
+ 
+## P145.7 browser assertion stabilization
+- The preset-change browser assertion now waits for both the selected preset value and the updated inline/computed font family before sampling the preview.
+- This makes the UI check deterministic without weakening the expected Georgia serif preview, and preserves the live-control, CSS export and no-console-error checks.

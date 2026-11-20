@@ -3584,3 +3584,7 @@ P125.3: `CVScrollFramesP125.PRESETS`, `decimate(frames,maxBytes)`; `buildHtml` n
 - Jump cuts: the UI reuses the existing audio-aware \`CV.engines.video.autoCut({thr,min,remove:true})\` engine. It analyzes the selected original audio/video blob and removes detected silence with canonical ripple/undo behavior; transcript gaps only provide a visual guide, not the cut signal.
 - Tests: \`tests/p127/run-p1272-tests.cjs\` and \`tests/p127/run-p1272-browser.py\`. Browser coverage uses a synthetic talking-head fixture with 440 Hz bursts and digital silence, fixture caption timestamps, real timeline motion keyframes and AutoCut.
 - Limits: captions must already exist on track 3 (Whisper model execution/download remains optional/user-triggered); no face tracking, automatic subject framing, emotion inference, word-level alignment or human editorial review is claimed.
+
+ 
+### P145.7 browser acceptance adjustment
+- Hosted Chromium now waits for the Editorial preset change handler and computed-style update before asserting the preview font. The assertion still requires both inline and computed font families to include Georgia; it does not bypass the preview behavior.
