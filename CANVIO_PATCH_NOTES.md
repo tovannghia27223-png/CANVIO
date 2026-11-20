@@ -6,9 +6,3 @@
 - Added portable P107 parser/import/rollback tests and explicit documentation that Project Vault cloud sync is not implemented.
 - Added P145.2 local WebGL shader transitions/effects, Canvas2D fallback, PNG export and an optional P79-muxed video-only transition MP4 path with hosted Chromium coverage.
 - Stable release remains fail-closed at P70; no physical GPU or two-device certification is implied.
-
-
-- P125.4: add split-asset ZIP export beside the original HTML-only storyboard; includes relative frame assets, manifest/README, 1–50 MB budget/decimation, path allow-list and offline Chromium/ZIP verification.
-
- 
-- P125.4 follow-up: correct generated relative frame path validation so split-asset references pass for allowed extensions while traversal and remote paths remain rejected.

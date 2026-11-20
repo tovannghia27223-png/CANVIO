@@ -28572,7 +28572,8 @@ function estimateBytes(frames) { return cleanFrames(frames).reduce(function (s, 
 function buildHtml(frames, o) {
   o = o || {}; var f = cleanFrames(frames); if (f.length < 2) throw new Error('Cần ít nhất 2 khung hợp lệ.');
   var w = Math.round(clamp(o.width, 64, 4096)), h = Math.round(clamp(o.height, 64, 4096)), title = esc(o.title || 'Trang cuộn'), len = Math.round(clamp(o.scrollScreens || Math.max(3, Math.ceil(f.length / 15)), 1, 12)) * 100, caps = cleanCaptions(o.captions || (o.caption ? [{ from: 0, to: 1, text: o.caption }] : [])), mq = String(o.marquee || '').slice(0, 120), parallax = clamp(o.parallax, 0, 24), easing = ['linear', 'ease-out', 'ease-in-out'].indexOf(o.easing) >= 0 ? o.easing : 'linear';
-  var data = JSON.stringify(f).replace(/</g, '\\u003c'), capData = JSON.stringify(caps).replace(/</g, '\\u003c');
+  var framePaths = Array.isArray(o.framePaths) && o.framePaths.length === f.length && o.framePaths.every(function (p) { return typeof p === 'string' && p.indexOf('frames/') === 0 && p.split('/').length === 2 && (function (n) { return n.slice(0,6) === 'frame-' && /^[0-9]{3}$/.test(n.slice(6,9)) && n.charAt(9) === '.' && ['webp','jpg','png'].indexOf(n.slice(10)) >= 0; })(p.split('/')[1]); }) ? o.framePaths : null;
+  var data = JSON.stringify(framePaths || f).replace(/</g, '\\u003c'), capData = JSON.stringify(caps).replace(/</g, '\\u003c');
   return '<!DOCTYPE html>\n<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>' + title + '</title>' +
     '<style>html,body{margin:0;background:#0b1220;color:#f8fafc;font-family:system-ui,sans-serif}#track{height:' + len + 'vh;position:relative}#stage{position:sticky;top:0;height:100vh;display:grid;place-items:center;overflow:hidden}canvas{max-width:100%;max-height:100vh;object-fit:contain;transform:translate3d(0,var(--py,0px),0) scale(var(--ps,1));transform-origin:center;will-change:transform}#cap{position:absolute;left:0;right:0;bottom:12vh;text-align:center;font-size:clamp(18px,3vw,36px);font-weight:700;text-shadow:0 2px 12px #000;transition:opacity .3s,transform .3s;padding:0 5vw}#cap[data-pos=top]{top:12vh;bottom:auto}#cap[data-pos=center]{top:50%;bottom:auto}#cap[data-anim=zoom]{letter-spacing:.015em}#cap[data-anim=slide]{transition:opacity .3s,transform .3s}#mq{position:absolute;left:0;right:0;bottom:3vh;overflow:hidden;white-space:nowrap;font-weight:800;letter-spacing:.2em;opacity:.85}#mq span{display:inline-block;will-change:transform}@media (prefers-reduced-motion:reduce){#track{height:100vh}}</style></head>' +
     '<body><div id="track"><div id="stage"><canvas id="c" width="' + w + '" height="' + h + '" role="img" aria-label="' + title + '"></canvas><div id="cap" aria-live="polite"></div>' + (mq ? '<div id="mq" aria-hidden="true"><span id="mqs">' + esc(mq + mq + mq + mq) + '</span></div>' : '') + '</div></div>' +
@@ -28604,6 +28605,41 @@ function extract(file, opt, onProgress) {
   });
 }
 function download(name, text) { var b = new Blob([text], { type: 'text/html' }), u = URL.createObjectURL(b), a = document.createElement('a'); a.href = u; a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(function () { URL.revokeObjectURL(u); }, 4000); }
+function frameAsset(dataUrl, index) {
+  var m = /^data:image\/(webp|jpeg|png);base64,([A-Za-z0-9+\/=]+)$/.exec(String(dataUrl || ''));
+  if (!m) throw new Error('Khung #' + (index + 1) + ' không phải ảnh WebP/JPEG/PNG hợp lệ.');
+  var bin;
+  try { bin = atob(m[2]); } catch (e) { throw new Error('Không giải mã được dữ liệu ảnh #' + (index + 1) + '.'); }
+  var bytes = new Uint8Array(bin.length);
+  for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  return { ext: m[1] === 'jpeg' ? 'jpg' : m[1], mime: 'image/' + m[1], bytes: bytes };
+}
+async function buildPackage(frames, options) {
+  options = options || {};
+  if (!window.CVZip || typeof window.CVZip.build !== 'function') throw new Error('CVZip canonical chưa sẵn sàng.');
+  var maxMB = Math.round(clamp(options.maxMB || 8, 1, 50)), budget = maxMB * 1048576;
+  var kept = decimate(frames, budget), encodedBytes = estimateBytes(kept);
+  if (kept.length < 2) throw new Error('Cần ít nhất 2 khung hợp lệ để đóng gói.');
+  if (encodedBytes > budget) throw new Error('Gói vẫn vượt ngân sách ' + maxMB + ' MB sau khi giảm khung; hãy giảm chiều rộng hoặc FPS.');
+  var files = [], paths = [], manifest = { format: 'CANVIO_SCROLL_STORYBOARD_PACKAGE_V1', frameCount: kept.length, width: Math.round(clamp(options.width, 64, 4096)), height: Math.round(clamp(options.height, 64, 4096)), sourceFrameCount: cleanFrames(frames).length, embeddedHtml: false, maxMB: maxMB, encodedFrameBytes: encodedBytes, assets: [] };
+  var assets = [];
+  for (var i = 0; i < kept.length; i++) {
+    var asset = frameAsset(kept[i], i), name = 'frames/frame-' + String(i + 1).padStart(3, '0') + '.' + asset.ext;
+    paths.push(name); assets.push({ name: name, data: asset.bytes });
+    manifest.assets.push({ path: name, mime: asset.mime, bytes: asset.bytes.length });
+  }
+  var htmlOptions = {};
+  Object.keys(options).forEach(function (k) { if (k !== 'maxMB' && k !== 'framePaths') htmlOptions[k] = options[k]; });
+  htmlOptions.framePaths = paths;
+  var html = buildHtml(kept, htmlOptions);
+  files.push({ name: 'index.html', data: html });
+  files.push({ name: 'CANVIO-STORYBOARD-MANIFEST.json', data: JSON.stringify(manifest, null, 2) });
+  files.push({ name: 'README.md', data: '# CANVIO Scroll Storyboard\n\nMở index.html bằng trình duyệt hiện đại. Giữ nguyên thư mục frames bên cạnh index.html để phát offline. Gói không chứa âm thanh.\n' });
+  assets.forEach(function (f) { files.push(f); });
+  var blob = await window.CVZip.build(files);
+  if (!blob || !(Number(blob.size) > 0)) throw new Error('CVZip không tạo được gói ZIP hợp lệ.');
+  return { blob: blob, manifest: manifest, fileCount: files.length, frameCount: kept.length, sourceFrameCount: manifest.sourceFrameCount, bytes: blob.size };
+}
 function mount() {
   var page = document.querySelector('#page-webEngine'); if (!page || page.querySelector('#cv125-card')) return false;
   var card = document.createElement('div'); card.className = 'card'; card.id = 'cv125-card'; card.style.marginBottom = '12px';
@@ -28638,7 +28674,7 @@ function tests() {
     defaultScrollLengthIsLong: /id="track"/.test(html) && /#track\{height:300vh/.test(html), presetsWellFormed: Object.keys(PRESETS).every(function (k) { var c = cleanCaptions(PRESETS[k].captions); return c.length === PRESETS[k].captions.length; }), captionsSanitized: cleanCaptions([{ from: 2, to: -1, text: 'x' }, { from: 0.5, to: 0.5, text: 'y' }, null]).length === 1 && cleanCaptions('x').length === 0, captionsEscapedInScript: buildHtml([good, good], { captions: [{ from: 0, to: 1, text: '<\/script><b>', position: 'top', animation: 'zoom' }] }).indexOf('<\/script><b>') < 0, captionMotionValidated: cleanCaptions([{from:0,to:1,text:'A',position:'top',animation:'slide'},{from:0,to:1,text:'B',position:'unknown',animation:'bad'}])[0].position==='top' && cleanCaptions([{from:0,to:1,text:'A',position:'unknown',animation:'bad'}])[0].animation==='fade', parallaxAndEasingEmbedded: buildHtml([good,good],{parallax:12,easing:'ease-in-out'}).indexOf('PARALLAX=12,EASING="ease-in-out"')>=0 && buildHtml([good,good],{parallax:99,easing:'bad'}).indexOf('PARALLAX=24,EASING="linear"')>=0, marqueeEscaped: buildHtml([good, good], { marquee: '<i>' }).indexOf('<i>') < 0, decimateFitsBudget: (function () { var many = []; for (var i = 0; i < 64; i++) many.push(good); var d = decimate(many, good.length * 20); return d.length >= 8 && d.length <= 20 && estimateBytes(d) <= good.length * 20 && decimate(many, 1).length >= 8; })(), needsTwoFrames: threw, estimateBytes: estimateBytes([good, good, 'x']) === good.length * 2
   };
 }
-window.CVScrollFramesP125 = { version: '125.4.0', PRESETS: PRESETS, decimate: decimate, plan: plan, buildHtml: buildHtml, extract: extract, estimateBytes: estimateBytes, mount: mount, tests: tests };
+window.CVScrollFramesP125 = { version: '125.5.0', PRESETS: PRESETS, decimate: decimate, plan: plan, buildHtml: buildHtml, buildPackage: buildPackage, extract: extract, estimateBytes: estimateBytes, mount: mount, tests: tests };
 })();
 </script>
 <script id="canvio-lot145c">
@@ -30246,7 +30282,7 @@ function mount(){
  var editor=document.createElement('section');editor.id='cv1252-editor';editor.className='card';editor.style.cssText='margin-top:12px;display:none';
  editor.innerHTML='<div class="cardTop"><h3>Storyboard cuộn · P125.2</h3><span class="sub">Kéo thả mốc chữ · parallax · easing</span></div>'+
  '<div class="row" style="gap:10px;align-items:center;flex-wrap:wrap"><canvas id="cv1252-preview" width="640" height="360" style="width:min(100%,520px);max-height:270px;object-fit:contain;background:#0b1220;border-radius:10px" aria-label="Xem trước storyboard"></canvas><div style="flex:1;min-width:220px"><label class="tiny">Tiến trình xem trước <input id="cv1252-progress" type="range" min="0" max="100" value="0" style="width:100%"></label><div class="tiny" id="cv1252-preview-caption" role="status" aria-live="polite">Chưa có mốc chữ</div><div class="tiny" id="cv1252-frame-count"></div></div></div>'+
- '<div class="row" style="gap:10px;align-items:end;flex-wrap:wrap;margin-top:10px"><label class="tiny">Parallax <input id="cv1252-parallax" type="range" min="0" max="24" value="8"></label><label class="tiny">Easing <select id="cv1252-easing" class="input"><option value="linear">Linear</option><option value="ease-out">Ease out</option><option value="ease-in-out" selected>Ease in/out</option></select></label><label class="tiny">Chiều dài cuộn <select id="cv1252-screens" class="input"><option value="3">3 màn hình</option><option value="4" selected>4 màn hình</option><option value="6">6 màn hình</option><option value="8">8 màn hình</option><option value="10">10 màn hình</option><option value="12">12 màn hình</option></select></label><button type="button" class="btn btn-soft sm" id="cv1252-add">+ Thêm mốc chữ</button><button type="button" class="btn btn-primary sm" id="cv1252-export" disabled>Xuất storyboard HTML</button></div>'+
+ '<div class="row" style="gap:10px;align-items:end;flex-wrap:wrap;margin-top:10px"><label class="tiny">Parallax <input id="cv1252-parallax" type="range" min="0" max="24" value="8"></label><label class="tiny">Easing <select id="cv1252-easing" class="input"><option value="linear">Linear</option><option value="ease-out">Ease out</option><option value="ease-in-out" selected>Ease in/out</option></select></label><label class="tiny">Chiều dài cuộn <select id="cv1252-screens" class="input"><option value="3">3 màn hình</option><option value="4" selected>4 màn hình</option><option value="6">6 màn hình</option><option value="8">8 màn hình</option><option value="10">10 màn hình</option><option value="12">12 màn hình</option></select></label><button type="button" class="btn btn-soft sm" id="cv1252-add">+ Thêm mốc chữ</button><button type="button" class="btn btn-primary sm" id="cv1252-export" disabled>Xuất storyboard HTML</button><button type="button" class="btn btn-soft sm" id="cv1252-zip" disabled>Xuất ZIP gọn + ảnh rời</button></div>'+
  '<div class="tiny" style="margin-top:8px">Mốc chữ tối đa 12. Sắp xếp bằng kéo thả; thời gian tính theo phần trăm hành trình cuộn. Các trường nhập được làm sạch và escape khi xuất.</div><div id="cv1252-captions" style="display:grid;gap:8px;margin-top:10px"></div>';
  card.appendChild(editor);
  var $=function(s){return editor.querySelector(s);},frames=[],meta=null,captions=[],imageCache={},dragIndex=-1,sourceFile=null;
@@ -30299,12 +30335,13 @@ function mount(){
    root.appendChild(row);
   });
  }
+ function downloadBlob(name,blob){var url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url);},4000);}
  function download(name,text){var blob=new Blob([text],{type:'text/html;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url);},4000);}
  button.addEventListener('click',function(){
   var file=card.querySelector('#cv125-file').files[0];if(!file){say('Chọn một video trước.');return;}
   button.disabled=true;say('Đang trích khung storyboard…');
   api.extract(file,{frames:card.querySelector('#cv125-n').value,width:card.querySelector('#cv125-w').value},function(a,b){say('Đang trích khung '+a+'/'+b+'…');}).then(function(res){
-   frames=res.frames;meta=res;sourceFile=file;imageCache={};captions=presetCaptions();editor.style.display='block';$('#cv1252-export').disabled=false;$('#cv1252-progress').value='0';renderRows();drawPreview();say('Đã trích '+frames.length+' khung. Chỉnh mốc chữ, parallax và easing rồi xuất storyboard.');
+   frames=res.frames;meta=res;sourceFile=file;imageCache={};captions=presetCaptions();editor.style.display='block';$('#cv1252-export').disabled=false;$('#cv1252-zip').disabled=false;$('#cv1252-progress').value='0';renderRows();drawPreview();say('Đã trích '+frames.length+' khung. Chỉnh mốc chữ, parallax và easing rồi xuất storyboard.');
   }).catch(function(e){say(String(e&&e.message||e).slice(0,160));}).finally(function(){button.disabled=false;});
  });
  $('#cv1252-add').addEventListener('click',function(){if(captions.length>=12){say('Tối đa 12 mốc chữ.');return;}var start=captions.length?Math.min(.9,captions[captions.length-1].to+.02):0;captions.push(normalCaption({from:start,to:Math.min(1,start+.15),text:'Mốc chữ mới'}));renderRows();drawPreview();});
@@ -30316,8 +30353,17 @@ function mount(){
    var preset=api.PRESETS[card.querySelector('#cv125-preset').value]||api.PRESETS.none;
    var html=api.buildHtml(kept,{width:meta.width,height:meta.height,title:sourceFile.name.replace(/\.[^.]+$/,''),captions:captions,marquee:preset.marquee,parallax:Number($('#cv1252-parallax').value),easing:$('#cv1252-easing').value,scrollScreens:Number($('#cv1252-screens').value)});
    download('scroll-storyboard-'+Date.now().toString(36)+'.html',html);
-   say('Đã xuất storyboard '+kept.length+'/'+frames.length+' khung · parallax '+$('#cv1252-parallax').value+' · easing '+$('#cv1252-easing').value+'.');
+   say('Đã xuất storyboard HTML '+kept.length+'/'+frames.length+' khung · parallax '+$('#cv1252-parallax').value+' · easing '+$('#cv1252-easing').value+'.');
   }catch(e){say(String(e&&e.message||e).slice(0,160));}
+ });
+ $('#cv1252-zip').addEventListener('click',function(){
+  if(!frames.length||!meta||typeof api.buildPackage!=='function')return;
+  var btn=this,cap=Math.max(1,Number(card.querySelector('#cv125-mb').value)||8),preset=api.PRESETS[card.querySelector('#cv125-preset').value]||api.PRESETS.none;
+  btn.disabled=true;say('Đang tối ưu khung và đóng gói ZIP ngoại tuyến…');
+  api.buildPackage(frames,{maxMB:cap,width:meta.width,height:meta.height,title:sourceFile.name.replace(/\.[^.]+$/,''),captions:captions,marquee:preset.marquee,parallax:Number($('#cv1252-parallax').value),easing:$('#cv1252-easing').value,scrollScreens:Number($('#cv1252-screens').value)}).then(function(pkg){
+   downloadBlob('scroll-storyboard-package-'+Date.now().toString(36)+'.zip',pkg.blob);
+   say('Đã xuất ZIP '+pkg.frameCount+'/'+pkg.sourceFrameCount+' khung · '+(pkg.bytes/1048576).toFixed(1)+' MB · index.html + '+pkg.manifest.assets.length+' ảnh rời.');
+  }).catch(function(e){say(String(e&&e.message||e).slice(0,180));}).finally(function(){btn.disabled=false;});
  });
  var preset=card.querySelector('#cv125-preset');if(preset)preset.addEventListener('change',function(){if(frames.length){captions=presetCaptions();renderRows();drawPreview();}});
  return true;
