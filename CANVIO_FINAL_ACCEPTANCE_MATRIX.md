@@ -30,3 +30,11 @@
 12. Physical target-device GPU/VRAM, performance and long-render testing.
 13. Cross-origin backup/restore and independent-device recovery.
 14. Rollback, release observability, alerting and production incident drill.
+
+| P132.3 animated WebP | Browser-native WebP frame encode + RIFF animation mux; browser test checks RIFF chunks, frame count/payload/dimensions and Chromium decode | Corrected hosted workflow pending; run #300 failed its WebP test assertions. Real-footage quality, alpha/profile, mobile and long-file performance remain manual |
+
+
+| P132.3 latest run #303 | RIFF layout, 10 ANMF/VP8 payloads, dimensions/timing and Chromium decode 200×113 passed | Only stale hard-coded height assertion failed; corrected to editor-derived expected height; hosted rerun pending |
+
+
+| P132.3 animated WebP | Hosted run #304 PASS; 10 image-bearing ANMF/VP8 frames, 200×113, 200 ms, Chromium native decode; GIF/APNG and full candidate workflow also PASS | Manual real footage, alpha/color profile, touch/mobile and long-animation memory/performance remain open; no audio |
