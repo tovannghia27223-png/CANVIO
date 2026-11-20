@@ -146,7 +146,11 @@ function skeletonPaths(mask,w,h,detail) {
   function walk(start,next){
     var ids=[start],prev=start,cur=next,guard=0;visited.add(key(start,next));ids.push(cur);
     while(guard++<w*h){var ns=adj.get(cur)||[];if(ns.length!==2)break;var candidate=ns[0]===prev?ns[1]:ns[0],ek=key(cur,candidate);if(visited.has(ek))break;visited.add(ek);prev=cur;cur=candidate;ids.push(cur);if(cur===start)break;}
-    if(ids.length>=2){var pts=ids.map(coords),simple=pts.length>2?rdp(pts,eps):pts;if(simple.length>=2)paths.push(simple);}
+    if(ids.length>=2){
+      var closed=ids.length>2&&ids[0]===ids[ids.length-1],core=closed?ids.slice(0,-1):ids,pts=core.map(coords);
+      var simple=closed?simplifyLoop(pts,eps):(pts.length>2?rdp(pts,eps):pts);
+      if(simple.length>=2){simple.closed=closed;paths.push(simple);}
+    }
   }
   adj.forEach(function(ns,id){if(ns.length===2)return;ns.forEach(function(n){var ek=key(id,n);if(!visited.has(ek))walk(id,n);});});
   adj.forEach(function(ns,id){ns.forEach(function(n){var ek=key(id,n);if(!visited.has(ek))walk(id,n);});});
@@ -159,7 +163,7 @@ function traceStrokeImageData(img,opt) {
   var thresholded=otsuMask(img),pw=w+2,ph=h+2,padded=new Uint8Array(pw*ph);
   for(var py=0;py<h;py++)padded.set(thresholded.mask.subarray(py*w,(py+1)*w),(py+1)*pw+1);
   var thin=skeletonize(padded,pw,ph,opt.iterations||32),paths=skeletonPaths(thin.mask,pw,ph,opt.detail==null?.5:opt.detail),width=Math.max(.5,Math.min(12,Number(opt.strokeWidth)||2)),color=opt.color&&/^#[0-9a-fA-F]{6}$/.test(opt.color)?opt.color:thresholded.color;
-  var svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+w+' '+h+'" width="'+w+'" height="'+h+'" fill="none" stroke="'+color+'" stroke-width="'+width+'" stroke-linecap="round" stroke-linejoin="round">'+paths.map(function(p){return'<path d="M'+p.map(function(v){return(Math.round((v[0]-1)*1000)/1000)+' '+(Math.round((v[1]-1)*1000)/1000);}).join('L')+'"/>';}).join('')+'</svg>';
+  var svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+w+' '+h+'" width="'+w+'" height="'+h+'" fill="none" stroke="'+color+'" stroke-width="'+width+'" stroke-linecap="round" stroke-linejoin="round">'+paths.map(function(p){return'<path d="M'+p.map(function(v){return(Math.round((v[0]-1)*1000)/1000)+' '+(Math.round((v[1]-1)*1000)/1000);}).join('L')+(p.closed?'Z':'')+'"/>';}).join('')+'</svg>';
   return{svg:svg,width:w,height:h,paths:paths.length,foreground:thresholded.foreground,skeleton:thin.mask.reduce(function(n,v){return n+v;},0),iterations:thin.iterations,threshold:thresholded.threshold,color:color,bytes:svg.length,mode:'stroke'};
 }
 function fromBitmapStroke(bmp,opt){
