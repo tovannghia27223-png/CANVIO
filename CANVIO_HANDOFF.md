@@ -191,3 +191,12 @@ The candidate is built and verified by the hosted runtime workflow. Runtime vend
 - Hosted run #298 (`44800999215`) passed the complete candidate workflow. Node: 9/9 (P145.6), 7/7 (P145.7), 11/11 (P145.8), 8/8 (P145.9/.10). Four Chromium reports: no failed checks or uncaught page errors.
 - Use P145.7 presets from Asset Library; choose one of six system-font styles, adjust heading/body sizes, line height and tracking, preview, then export CSS. P145.7 deliberately avoids the global `.card` tilt class; keep this to preserve control clickability.
 - P145.9/.10 is a read-only browser panel; it uses the host asset provider or a supplied canonical provider. Test data proves behavior, not full production-vault enumeration or binary hashing.
+
+ 
+## P132.3 — Animated WebP export
+
+- In Video Engine, open the existing P132 animation row and choose **Xuất WebP động** beside GIF and APNG.
+- Adjust FPS and output width. WebP is limited to 180 frames and 64 MiB raw frame data; lower FPS or width if the editor reports the budget limit.
+- Export uses browser-native WebP frame encoding. If the browser does not support `canvas.toBlob('image/webp')`, use GIF or APNG.
+- The output is silent (no audio). Keep the file intact; it is a single animated .webp RIFF file, not a ZIP.
+- Verification: `node tests/p127/run-p132g-tests.cjs` and `tests/p127/run-p132g-browser.py`; hosted CI must pass before release acceptance.
