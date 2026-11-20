@@ -3462,3 +3462,6 @@ The hosted workflow provisions native test tools in the “Verify native test ut
 
 P125.3: `CVScrollFramesP125.PRESETS`, `decimate(frames,maxBytes)`; `buildHtml` nhận `captions:[{from,to,text}]` (0..1) và `marquee`. Lưu ý: không viết chuỗi `</script>` thật trong mã nhúng, dùng `<\/script>`.
 
+## P145 core
+`window.CVContentCoreP145` {LICENSES, licenseReport, creditLines, reportText, qualityGate, sha256Hex, parseMusicLink, cueSheet, fontVietCoverage, parseCsv, mergeTemplate, toJsonl, mount, tests}. Lot `canvio-lot145c` khớp `canvio-p145-core.js`. Test: `tests/p127/run-p145c-tests.cjs`, `tests/p145/run-p145-browser.py`.
+

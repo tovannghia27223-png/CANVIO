@@ -547,3 +547,10 @@ Hosted verification after the ffmpeg repair is complete:
 - Ô "Tối đa MB": `decimate` bỏ khung xen kẽ cho tới khi vừa ngân sách (không dưới 8 khung, giữ khung cuối). Test đơn vị + Chrome thật (chữ giữa/cuối đúng theo cuộn).
 - Còn mở: P125.2 editor storyboard cuộn (kéo thả mốc chữ, parallax, easing chung); tách khung thành tệp WebP riêng/gói zip; kiểm trên điện thoại thật.
 
+### P145 core (P145.1, P145.9 phần cổng, P145.4b phần ghi chú, P141/P145.7 kiểm dấu, P137 data merge, P128.3 JSONL)
+- `canvio-p145-core.js` (lot `canvio-lot145c`) + thẻ "Content Factory" ở trang Tài nguyên: gắn giấy phép/nguồn cho từng tài nguyên (lưu `canvio145:meta`), báo cáo + credit .txt, công tắc đăng công khai (mặc định tắt: chỉ cảnh báo; bật: chặn phi thương mại/chưa rõ).
+- Nhạc giữ chỗ: dán link YouTube/SoundCloud/Spotify/khác (chỉ http/https), tên, BPM, giây vào; xuất cue sheet. KHÔNG tải/ghi âm, KHÔNG nhúng trình phát (chưa làm tự phát), xuất video không chứa tiếng từ link.
+- Kiểm font tiếng Việt bằng canvas (134 ký tự có dấu; heuristic, font phải đã nạp). Data merge CSV→HTML (thoát HTML, báo trường thiếu). `toJsonl` cho bộ dữ liệu phong cách.
+- Test: `node tests/p127/run-p145c-tests.cjs`, Chrome thật `python3 tests/p145/run-p145-browser.py`.
+- Chưa làm: manifest cho gói tải offline (OPFS), băm/phát hiện trùng khi tải lên, template factory, SFX/nhạc tổng hợp, shader, pack icon/font/stock, trình phát nhúng tự phát.
+
