@@ -3634,3 +3634,13 @@ P125.3: `CVScrollFramesP125.PRESETS`, `decimate(frames,maxBytes)`; `buildHtml` n
 - Full candidate workflow run #298 (`44800999215`) completed success. It restored the 23.3.111 candidate, integrated all P145 modules, verified vendor SHA manifests, passed the full HTML/inline-JS audit, P47–P70 regressions and integrated source/P107 ZIP tests, then passed hosted browser/runtime verification.
 - Node results: P145.6 9/9, P145.7 7/7, P145.8 11/11, P145.9/.10 8/8. Hosted Chromium results: all four P145 suites returned `failed: []` and `pageErrors: []`; P145.7 confirmed actual pointer interaction without the global tilt observer.
 - Hosted GLB/P85/ONNX inference checks used synthetic fixtures and CI software rendering. They verify integration/execution paths, not production accuracy, physical GPU performance or target-device FPS.
+
+ 
+## P132.3 — Animated WebP export (candidate, 2026-11-21)
+
+- Extends the existing P132 GIF/APNG exporter in `canvio-p132-gif.js`; no second timeline or media store. Public API: `CVGifP132.encodeAnimatedWebp`, `muxAnimatedWebp`, `inspectAnimatedWebp`.
+- Captures the existing Video Engine canvas, asks the browser to encode each RGBA frame as a static WebP (`canvas.toBlob('image/webp')`), then muxes VP8/VP8L image chunks into a RIFF WebP animation with VP8X/ANIM/ANMF chunks. No external encoder, network request, paid package or font/image dependency.
+- Bounds: at most 180 frames, output dimensions up to 640 px per side, raw frame budget 64 MiB, frame duration 20–60,000 ms. The capture rejects an over-budget job before allocating frame buffers. Browser must support WebP canvas encoding; otherwise the UI reports an actionable error and GIF/APNG remain available.
+- Node acceptance extends the existing P132 embedded-source parity and encoder suite with RIFF/VP8X/ANIM/ANMF structure, dimensions, frame timing, loop and invalid-input checks. Hosted Chromium acceptance exports a real timeline WebP and verifies animation frame count and decode with ffprobe.
+- Status: implementation and tests are wired into the existing candidate workflow; hosted CI must pass before this is marked verified.
+- Boundaries: no audio, alpha/profile behavior follows the browser's static WebP encoder, and 180-frame/64-MiB limits are intentional. Real footage, mobile-browser support, large-project memory and visual quality remain manual acceptance.
