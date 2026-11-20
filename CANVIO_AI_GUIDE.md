@@ -3566,3 +3566,28 @@ P125.3: `CVScrollFramesP125.PRESETS`, `decimate(frames,maxBytes)`; `buildHtml` n
 - Safety limit: max 600 frames, dimensions at most 4096×4096 and uncompressed scanline budget at most 64 MiB per animation. Reduce FPS/width when the limit is reached. The stored-DEFLATE encoder favours portability/simple verification over smallest file size.
 - Tests: `node tests/p127/run-p132g-tests.cjs`; hosted Chromium + FFprobe: `tests/p127/run-p132g-browser.py`. These verify source/embedded parity, PNG/APNG CRCs, sequence/frame metadata, browser download and actual APNG decode.
 - Still open: animated WebP, animated timeline audio, 256-colour GIF banding, large-file/performance optimization and validation on representative real-world media.
+
+
+## P145.6 — Original offline SVG icon pack
+
+- Standalone owner: `canvio-p145-icons.js`; embedded lot: `canvio-lot1456`; API: `window.CVOriginalIconPackP1456`. Adds 25 first-party SVG icons across business, finance, HR, social/media and utility categories to the existing Asset Library.
+- Category filter and text search; selected icon preview; individual SVG, hidden-symbol sprite and vector contact-sheet export. No stock images, remote SVG, web font, script or network dependency.
+- Tests: `tests/p145/run-p1456-tests.cjs` and `tests/p145/run-p1456-browser.py`. These verify count, unique IDs, path safety, filters, selected preview and actual SVG downloads. Icons are original CANVIO vectors, not a general licensed stock catalogue.
+
+## P145.7 — Local typography presets
+
+- Standalone owner: `canvio-p145-typography.js`; embedded lot: `canvio-lot1457`; API: `window.CVTypographyPresetsP1457`. Six presets (business, finance, HR, social, editorial and dashboard) use system font stacks only; no font binaries or remote font service.
+- Controls for heading/body size, line height and tracking; live sample preview; CSS download/copy; system font availability hint. CSS uses bounded numeric parameters and allow-listed preset font stacks.
+- Tests: `tests/p145/run-p1457-tests.cjs` and `tests/p145/run-p1457-browser.py`. This is not a full font-library installer or font licensing bundle; actual font choice can fall back per operating system.
+
+## P145.8 — Original vector illustration pack
+
+- Standalone owner: `canvio-p145-visual-assets.js`; embedded lot: `canvio-lot1458`; API: `window.CVOriginalVectorAssetsP1458`. Eight original inline SVG illustrations across business, finance, HR and creative/social, with four local color themes.
+- Filter/search, inline preview, palette selection, standalone SVG, symbol sprite and contact-sheet export. All palette references are resolved locally; no stock assets, external images, fonts or scripts.
+- Tests: `tests/p145/run-p1458-tests.cjs` and `tests/p145/run-p1458-browser.py`. This is a first-party starter illustration pack, not a large stock-photo/vector catalogue or generative-image model.
+
+## P145.9/.10 — Asset Library local search and Quality Gate
+
+- Standalone owner: `canvio-p145-search-gate.js`; embedded lot: `canvio-lot145910`; API: `window.CVAssetSearchGateP145910`. Reuses `CVContentCoreP145.qualityGate` and `canvio145:meta`; read-only filter/search by name, ID, type, license/source and status. Detects duplicate hashes only when a real asset entry supplies a hash.
+- Provider contract: uses `CV.assets.list()` when exposed by the host and provides `setAssetProvider(fn)` for an explicit canonical bridge. The feature must not claim complete inventory coverage if the host does not expose a provider; the hosted browser suite injects a deterministic fixture provider and is not proof of a production asset backend.
+- Tests: `tests/p145/run-p145910-tests.cjs` and `tests/p145/run-p145910-browser.py`. These cover the shared license/source/size/hash gate, filters, detail panel and read-only behavior. Hashing every uploaded binary and archive-level scanning are not implemented here.

@@ -667,3 +667,12 @@ Hosted verification after the ffmpeg repair is complete:
 - Boundaries: 600 frames maximum, dimensions ≤4096×4096 and raw filtered frame data ≤64 MiB. Stored DEFLATE may produce larger files than optimized encoders; the UI reports file size.
 - Tests extended in `run-p132g-tests.cjs` and hosted `run-p132g-browser.py` (Chromium download + FFprobe APNG decode).
 - Still open: animated WebP, export with audio, real-media/performance and large-animation memory review. P132 is therefore still partial.
+
+
+## 23.3.111 continuation — P145.6–P145.10 Asset Library tools
+
+- P145.6: 25 original offline SVG icons, five categories, filter/search, preview, single SVG/sprite/contact-sheet export.
+- P145.7: six local system-font typography presets, live sample controls, CSS export; no downloaded font binaries or remote font dependencies.
+- P145.8: eight original offline SVG illustrations, four themes, category/search, preview, sprite and contact-sheet export; not stock photography.
+- P145.9/.10: local read-only asset search and shared license/source/size/hash quality gate. Uses `CV.assets.list()` if the host exposes it; otherwise the host must set an explicit asset provider. Duplicate detection applies only to supplied hash values; it does not hash every uploaded file automatically.
+- Each module has a Node unit suite and hosted Chromium suite wired into the candidate workflow. Manual content/design review and validation against a production Asset Vault remain separate acceptance.
