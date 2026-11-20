@@ -296,3 +296,11 @@ The candidate workflow runs standalone/embedded source parity and API tests for 
 - PR #33 merged P145.6–P145.10 to `main` (merge commit `4f56fcb002e4ef9f10c08b7fc920c50457ecc6e1`). Hosted run #298 (`44800999215`) passed P145.6 9/9, P145.7 7/7, P145.8 11/11, P145.9/.10 8/8; all four Chromium suites had `failed: []` and `pageErrors: []`.
 - Current post-merge main build commit: `782aa562f5341172330d114ccb21a3269efbbb37`. Mainline workflow #282 (`44799501341`) concluded success. The candidate-branch commit step was skipped because the run was PR-triggered; it is not counted as a failure.
 - Remaining non-automated scope: canonical live Asset Vault provider coverage/hash verification, real user media, mobile/touch, OS font/print review and the fourteen P70 production acceptance gates. None is certified by synthetic CI fixtures.
+
+
+## P145.10 — live local-vault hash implementation (candidate; hosted run pending, 2026-11-21)
+
+- Inspected canonical `index.html`: Asset Library owner is `CV.assets.list()` / `CV.assets.addBlob()`, with existing rows stored in `LS('assets')` (maximum 40). P145.9/.10 already uses `CV.assets.list()` as its default source when no provider fixture is injected. Previous QA wording that suggested the provider itself was missing is corrected: the live local owner is connected; it is not a cloud/remote vault.
+- P145.10 now explicitly hashes local base64 data URLs by decoding to bytes and calling Web Crypto SHA-256 when the user requests a scan. Results are session-only; no write to the existing asset list or metadata. Filters reuse session results.
+- Guardrails: maximum 40 rows, 25 MiB per file, 64 MiB aggregate per scan. Missing/unsupported data, disabled Web Crypto and over-budget items are counted as skipped and remain unverified. No external request, upload, second store or automatic background scan.
+- Node tests add transient hash duplicate and no-mutation assertions. Chromium test checks native `CV.assets.list()` fallback, duplicate content where MIME types differ, and unchanged vault records. Corrected hosted result is pending.
