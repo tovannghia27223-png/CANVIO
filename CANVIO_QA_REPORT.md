@@ -255,3 +255,12 @@ The candidate workflow runs standalone/embedded source parity and API tests for 
 - Node checks cover subtitle cue filtering, pause-boundary analysis, valid/invalid clip selection and bounded motion/keyframe output.
 - Hosted Chromium test imports a generated 5-second WebM with deterministic 440 Hz audio bursts separated by silence, seeds caption cues, verifies the pause report, applies/persists punch-in keyframes, runs the canonical AutoCut route and checks Undo availability.
 - The synthetic audio fixture is a deterministic UI/code-path test only. Whisper transcription accuracy, real speech, face tracking, multi-speaker editorial decisions and human review on project footage remain manual acceptance.
+
+
+## P145.6–P145.10 — hosted verification coverage
+
+- P145.6 verifies 25 first-party SVG icons, category/search/filter, preview and SVG/sprite/contact-sheet downloads.
+- P145.7 verifies six system-font presets, bounded controls, preview CSS, CSS export and that decorative card styling does not block pointer input to interactive descendants.
+- P145.8 verifies eight first-party illustrations, four palettes, filters, preview and vector export safety.
+- P145.9/.10 verifies shared license/source/size/hash quality gate, local search/filter and read-only UX using a fixture provider.
+- Fixture-based testing is not proof every production Asset Vault item is enumerable; live acceptance needs the actual canonical asset provider and verified metadata/hash coverage.

@@ -3574,3 +3574,30 @@ P125.3: `CVScrollFramesP125.PRESETS`, `decimate(frames,maxBytes)`; `buildHtml` n
 - Reads text cues from the existing subtitle track, reports caption spans and detected silence/pause regions, and creates bounded punch-in keyframes on the selected video clip. The AutoCut action delegates to the existing canonical audio silence-cut path; it does not build a second timeline.
 - Tests: `tests/p127/run-p1272-tests.cjs` (API/unit invariants) and `tests/p127/run-p1272-browser.py` (hosted Chromium with a generated WebM audio fixture, caption cues, pause report, keyframe persistence, AutoCut and Undo).
 - Scope limits: synthetic 440 Hz bursts separated by silence prove the UI path, not Whisper transcription quality or human speech segmentation. Real speech/media, face tracking, multi-speaker shot selection, SFX/music matching and human editorial acceptance remain open.
+
+
+## P145.6 — Original offline SVG icon pack
+
+- Standalone owner: `canvio-p145-icons.js`; embedded lot: `canvio-lot1456`; API: `window.CVOriginalIconPackP1456`. Adds 25 first-party SVG icons across business, finance, HR, social/media and utility categories to the existing Asset Library.
+- Category filter and text search; selected icon preview; individual SVG, hidden-symbol sprite and vector contact-sheet export. No stock images, remote SVG, web font, script or network dependency.
+- Tests: `tests/p145/run-p1456-tests.cjs` and `tests/p145/run-p1456-browser.py`.
+
+## P145.7 — Local typography presets
+
+- Standalone owner: `canvio-p145-typography.js`; embedded lot: `canvio-lot1457`; API: `window.CVTypographyPresetsP1457`. Six presets (business, finance, HR, social, editorial and dashboard) use system font stacks only; no font binaries or remote font service.
+- Controls for heading/body size, line height and tracking; live sample preview; CSS download/copy; system font availability hint.
+- The dynamic typography panel disables pointer hit-testing on its decorative card shell and restores it on interactive controls so the application's card-tilt decoration cannot intercept the preview buttons.
+- Tests: `tests/p145/run-p1457-tests.cjs` and `tests/p145/run-p1457-browser.py`; hosted browser test checks the user action path and hit-test behavior. OS-specific actual font fallback is separately reported.
+
+## P145.8 — Original vector illustration pack
+
+- Standalone owner: `canvio-p145-visual-assets.js`; embedded lot: `canvio-lot1458`; API: `window.CVOriginalVectorAssetsP1458`. Eight original inline SVG illustrations across business, finance, HR and creative/social, with four local color themes.
+- Filter/search, inline preview, palette selection, standalone SVG, symbol sprite and contact-sheet export. All palette references are resolved locally.
+- Tests: `tests/p145/run-p1458-tests.cjs` and `tests/p145/run-p1458-browser.py`. This is a starter illustration pack, not a large stock-photo/vector catalogue.
+
+## P145.9/.10 — Asset Library local search and Quality Gate
+
+- Standalone owner: `canvio-p145-search-gate.js`; embedded lot: `canvio-lot145910`; API: `window.CVAssetSearchGateP145910`. Reuses `CVContentCoreP145.qualityGate` and `canvio145:meta`; read-only filter/search by name, ID, type, license/source and status.
+- Provider contract: uses `CV.assets.list()` if exposed or requires the host to set an explicit asset provider. Duplicate detection only checks hashes already supplied; it does not hash every uploaded binary automatically.
+- Tests: `tests/p145/run-p145910-tests.cjs` and `tests/p145/run-p145910-browser.py`. Fixture-based browser acceptance is not proof of full production Asset Vault inventory.
+

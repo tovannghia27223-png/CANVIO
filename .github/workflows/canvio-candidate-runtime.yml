@@ -11,6 +11,7 @@ on:
       - work/p136-single-line-stroke
       - work/p125-2-scroll-storyboard
       - work/p132-apng
+      - work/p145-asset-library-current
       - main
   pull_request:
     branches:
@@ -300,6 +301,40 @@ jobs:
           console.log('P127.2 caption-guided talking-head director integrated');
           NODE
 
+      - name: Integrate P145.6–P145.10 Asset Library modules
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs=require('node:fs');
+          const file='index.html';
+          let html=fs.readFileSync(file,'utf8');
+          const mods=[
+            ['canvio-lot1456','canvio-p145-icons.js','window.CVOriginalIconPackP1456'],
+            ['canvio-lot1457','canvio-p145-typography.js','window.CVTypographyPresetsP1457'],
+            ['canvio-lot1458','canvio-p145-visual-assets.js','window.CVOriginalVectorAssetsP1458'],
+            ['canvio-lot145910','canvio-p145-search-gate.js','window.CVAssetSearchGateP145910']
+          ];
+          for(const [id,path,contract] of mods){
+            const source=fs.readFileSync(path,'utf8').trim();
+            if(!source.includes(contract))throw new Error(path+': module contract missing');
+            const tag='<script id="'+id+'">\n'+source+'\n</script>';
+            const start=html.indexOf('<script id="'+id+'"');
+            if(start>=0){
+              const close=html.indexOf('</script>',start);
+              if(close<0)throw new Error(id+': unterminated script element');
+              html=html.slice(0,start)+tag+html.slice(close+9);
+            }else{
+              const at=html.lastIndexOf('</body>');
+              if(at<0)throw new Error('index.html has no closing body tag');
+              html=html.slice(0,at)+tag+'\n'+html.slice(at);
+            }
+            if((html.match(new RegExp('id="'+id+'"','g'))||[]).length!==1)throw new Error(id+': duplicate or missing embedded lot');
+          }
+          fs.writeFileSync(file,html,'utf8');
+          console.log('P145.6/.7/.8/.9/10 Asset Library modules integrated');
+          NODE
+
       - name: Verify native test utilities
         shell: bash
         run: |
@@ -450,6 +485,10 @@ jobs:
           node tests/p127/run-p1252-tests.cjs
           node tests/p127/run-p145c-tests.cjs
           node tests/p145/run-p1455-tests.cjs
+          node tests/p145/run-p1456-tests.cjs
+          node tests/p145/run-p1457-tests.cjs
+          node tests/p145/run-p1458-tests.cjs
+          node tests/p145/run-p145910-tests.cjs
           node tests/p127/run-p132g-tests.cjs
           node tests/p127/run-p145s-tests.cjs
           node tests/p145/run-p1452-tests.cjs
@@ -502,6 +541,10 @@ jobs:
           /tmp/canvio-playwright/bin/python tests/p127/run-p1272-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p145-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p1455-browser.py
+          /tmp/canvio-playwright/bin/python tests/p145/run-p1456-browser.py
+          /tmp/canvio-playwright/bin/python tests/p145/run-p1457-browser.py
+          /tmp/canvio-playwright/bin/python tests/p145/run-p1458-browser.py
+          /tmp/canvio-playwright/bin/python tests/p145/run-p145910-browser.py
           /tmp/canvio-playwright/bin/python tests/p127/run-p132g-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p145s-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p1452-browser.py

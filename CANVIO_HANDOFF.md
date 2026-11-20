@@ -161,3 +161,11 @@ The candidate is built and verified by the hosted runtime workflow. Runtime vend
 - AutoCut delegates to the existing silence-cut path; it does not create a second timeline or project store.
 - Run `node tests/p127/run-p1272-tests.cjs` and `tests/p127/run-p1272-browser.py`. The browser fixture uses synthetic speech-like audio bursts, not Whisper-quality transcription.
 - Real dialogue, face tracking, multi-speaker editing and final editorial quality still need project-media review.
+
+
+## P145.6–P145.10 Asset Library continuation
+
+- Added original local SVG icon and illustration packs plus six system-font typography presets.
+- Added local read-only Asset Search & Quality Gate using the shared P145 license/source/size/hash rules.
+- The production host must expose `CV.assets.list()` or call `CVAssetSearchGateP145910.setAssetProvider(fn)`; the fixture-based browser suite is not proof of full live vault enumeration or automatic hashing of all uploaded files.
+- Verify using the four Node suites and their hosted Chromium browser scripts.
