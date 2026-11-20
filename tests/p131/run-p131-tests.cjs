@@ -24,4 +24,4 @@ assert.throws(()=>api.sanitizeSvg('<html/>'),/không phải SVG/,'non-SVG reject
 assert.equal(api.cleanCss('a{background:url(javascript:alert(1))}').includes('javascript'),false,'css javascript url removed');
 assert.equal(api.cleanCss('a{color:red}'),'a{color:red}','safe css kept');
 assert.equal(api.cleanCss('a{width:expr\\65ssion(1)}'),'','escaped css dropped');
-console.log(JSON.stringify({suite:'P131 security hub (source/VM)',passed:Object.keys(flags).length+9,flags},null,2));
+console.log(JSON.stringify({suite:'P131 security hub (source/VM)',passed:Object.keys(flags).length+13,flags},null,2));
