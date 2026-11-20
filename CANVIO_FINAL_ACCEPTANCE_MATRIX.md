@@ -30,3 +30,6 @@
 12. Physical target-device GPU/VRAM, performance and long-render testing.
 13. Cross-origin backup/restore and independent-device recovery.
 14. Rollback, release observability, alerting and production incident drill.
+
+
+| P145.10 live local-vault SHA-256 | Default reads native `CV.assets.list()`; manual byte-level Web Crypto scan, session-only results, no storage mutation; budgets 40 rows / 25 MiB per file / 64 MiB per scan | Node + Chromium checks added; hosted run pending. Rows skipped by data/crypto/budget constraints remain unverified; cloud sync is not included |
