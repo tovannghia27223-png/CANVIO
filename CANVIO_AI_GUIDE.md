@@ -3494,7 +3494,24 @@ P125.3: `CVScrollFramesP125.PRESETS`, `decimate(frames,maxBytes)`; `buildHtml` n
 ## P145.2 — Shader transitions and effects (23.3.111 continuation)
 
 - Standalone owner: `canvio-p145-shader.js`; canonical embedded lot: `canvio-lot1452`; API: `window.CVShaderP145`. UI mounts once inside the existing Video Engine page and does not add a timeline, project store, or media owner.
-- Nine transitions: crossfade, four directional wipes, dissolve, radial, zoom and glitch. Nine local effects: grain, light leak, vignette, chromatic aberration, zoom blur, shake, speed lines and bloom (plus none).
+- Nine transitions: crossfade, four directional wipes, dissolve, radial, zoom and glitch. Eight shader FX: grain, light leak, vignette, chromatic aberration, zoom blur, shake, speed lines and bloom, plus the “Không hiệu ứng” option.
 - WebGL 1 shader rendering has bounded output dimensions and low/medium/high quality caps; unsupported WebGL uses a Canvas2D crossfade/wipe fallback with shader-only effects explicitly disabled. User-selected images are processed locally through object URLs.
 - PNG frame export is available. Optional short H.264 MP4 transition export delegates encoding output muxing to existing `CANVIOWebCodecsExport.muxMP4` (P79), is video-only, and is limited to 10 seconds / 600 frames / 1920×1080. It is not a replacement for the canonical multi-track video export path and adds no audio.
 - Verification: `node tests/p145/run-p1452-tests.cjs` and hosted Chromium `tests/p145/run-p1452-browser.py`. Hosted WebGL uses SwiftShader; this is not physical GPU or 60 fps target-device certification.
+
+
+## P145.4b — Official embedded music preview (2026-11-20 continuation)
+
+- New standalone owner: \`canvio-p145-music-preview.js\`; canonical embedded lot: \`canvio-lot1454b\`; API: \`window.CVMusicPreviewP1454B\`. It reads existing cue metadata from \`canvio145:music\` and mounts a preview panel in the existing Asset Library / Content Factory page.
+- Supports official YouTube privacy-enhanced embeds, Spotify embeds and SoundCloud widgets. Only HTTPS URLs on the exact supported hosts and recognized content paths are accepted; unsupported hosts, protocols and malformed paths are rejected.
+- Preview is user-triggered, with no autoplay, capture, recording, download, or media extraction. Cue position/source in/out remain metadata; precise seeking is only passed as start/end for YouTube. Spotify and SoundCloud seeking remains under the platform player controls.
+- Hosted acceptance is added to the candidate workflow. This does not certify platform availability, account entitlements, cross-device cue sync, or that every provider permits embedding in every region/browser.
+
+
+## P145.4 — Local background music composer (2026-11-20 continuation)
+
+- Standalone owner: \`canvio-p145-music.js\`; canonical embedded lot: \`canvio-lot1454\`; API: \`window.CVMusicComposerP1454\`. The composer mounts below the existing Video Engine quality/SFX panel and imports generated WAV through the canonical \`CV.engines.video.importFiles\` path.
+- Generates original, deterministic, mono 44.1 kHz WAV loops locally with Web Audio OfflineAudioContext. Four moods: corporate, calm, uplifting and focus; 60–140 BPM; 4/8 bars. Includes synthesized chord pad, bass, pluck and optional soft beat; no downloaded samples, provider API or external music.
+- User actions: loop preview, stop, WAV download and add to existing video timeline. No extra timeline, project store, cloud-sync key or licensed audio bundle.
+- Limitations: procedural synthesis is not a curated instrumental library or human-recorded production; no stems, melody editor, MIDI, key selector or cross-device sync. Browser OfflineAudioContext support is required.
+- Verification: Node unit suite and hosted Chromium render/import/download/ffprobe test are added to the candidate workflow. Listening and quality review on real projects/devices remains manual.

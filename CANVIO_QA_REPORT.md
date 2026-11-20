@@ -193,4 +193,18 @@ Workflow: https://github.com/tovannghia27223-png/CANVIO/actions/runs/44747930420
 
 ## P145.2 shader verification
 
-The candidate workflow runs standalone/embedded source parity and API tests for the nine transitions, nine effects, bounded resolution and P79 muxer handoff. Hosted Chromium smoke verifies the Video Engine panel, all transition start/end frames, crossfade midpoint, module checks and PNG download. This exercises WebGL through CI SwiftShader or the documented Canvas2D fallback; it does not certify physical GPU performance, a 60 fps target on mid-range hardware, user-footage visual quality or MP4 H.264 availability on every browser. MP4 output is a short video-only transition segment with no audio.
+The candidate workflow runs standalone/embedded source parity and API tests for the nine transitions, eight shader FX plus the no-effect option, bounded resolution and P79 muxer handoff. Hosted Chromium smoke verifies the Video Engine panel, all transition start/end frames, crossfade midpoint, module checks and PNG download. This exercises WebGL through CI SwiftShader or the documented Canvas2D fallback; it does not certify physical GPU performance, a 60 fps target on mid-range hardware, user-footage visual quality or MP4 H.264 availability on every browser. MP4 output is a short video-only transition segment with no audio.
+
+
+## P145.4b — Official embedded music preview
+
+- Added standalone/embedded parity and unit assertions for YouTube, Spotify, SoundCloud, unsafe protocol rejection, host/path validation, cue formatting and no-autoplay defaults.
+- Added hosted Chromium smoke for Asset Library mounting, saved cue selection, official privacy embed host, sandbox/referrer policy, cue display, stop/teardown and uncaught page errors.
+- Limits: no provider network playback is asserted in offline CI; the test validates the generated official iframe URL and local integration only. Provider availability, user account restrictions and actual playback/listening remain manual checks.
+
+
+## P145.4 local background music composer — hosted candidate checks added
+
+- Unit suite covers four presets, BPM/bar clamps, chord progression, deterministic mood plans, PCM WAV header/format and peak normalization.
+- Hosted browser suite renders all four moods with OfflineAudioContext, checks non-silent output, -1 dBFS peak normalization, 4-bar duration at 96 BPM, imports WAV via the canonical Video Engine importer, downloads/decodes WAV using ffprobe, and exercises loop preview/stop.
+- This is procedural synthesized music, not a curated/licensed music library. Listening quality, musical suitability and mix review on actual user projects remain manual.

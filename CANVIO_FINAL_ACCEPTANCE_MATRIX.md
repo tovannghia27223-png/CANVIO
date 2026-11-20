@@ -25,3 +25,7 @@
 12. Physical target-device GPU/VRAM, performance and long-render testing.
 13. Cross-origin backup/restore and independent-device recovery.
 14. Rollback, release observability, alerting and production incident drill.
+
+| P145.4b embedded music preview | HTTPS host/path allowlist, sandboxed iframe generation, cue display and hosted local smoke | Provider playback/region/account access and precise Spotify/SoundCloud seek remain manual; no capture/download |
+
+| P145.4 local BGM composer | Four-mood local synthesis, BPM/bar bounds, WAV/ffprobe, loop preview and canonical timeline import | Manual listening/mix review and device performance remain open; not a curated music pack or stems |
