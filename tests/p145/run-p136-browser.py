@@ -33,6 +33,13 @@ with sync_playwright() as p:
       function px(img){var c=document.createElement('canvas');c.width=300;c.height=200;var x=c.getContext('2d');x.drawImage(img,0,0,300,200);return x.getImageData(0,0,300,200).data}
       var a=px(src),b=px(im),bad=0;for(var i=0;i<a.length;i+=4){var dd=Math.abs(a[i]-b[i])+Math.abs(a[i+1]-b[i+1])+Math.abs(a[i+2]-b[i+2]);if(dd>150)bad++}return bad/(a.length/4)}""" % json.dumps(png), svg)
     c['roundTripClose'] = score < 0.04
+    page.locator('#cv136-s').evaluate("(el)=>{el.value='65';el.dispatchEvent(new Event('input',{bubbles:true}))}")
+    c['smoothnessControlUpdatesLabel'] = page.locator('#cv136-sv').inner_text() == '65%'
+    page.click('#cv136-run'); page.wait_for_function("!document.getElementById('cv136-run').disabled", timeout=30000)
+    with page.expect_download(timeout=15000) as d2: page.click('#cv136-dl')
+    sp2 = os.path.join(tmp, 'smooth.svg'); d2.value.save_as(sp2); svg2 = open(sp2, encoding='utf-8').read()
+    c['smoothExportContainsCubicSegments'] = bool(__import__('re').search(r'd="[^"]*C[-0-9.]', svg2))
+    c['smoothExportKeepsSafeSvg'] = svg2.startswith('<svg') and '<script' not in svg2 and 'javascript:' not in svg2
     b.close()
 res = {'checks': c, 'mismatchRatio': score, 'svgKB': round(len(svg) / 1024, 1), 'pageErrors': errs, 'failed': [k for k, v in c.items() if not v]}
 print(json.dumps(res, ensure_ascii=False, indent=1)); sys.exit(1 if res['failed'] or errs else 0)

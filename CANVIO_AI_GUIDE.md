@@ -3524,3 +3524,11 @@ P125.3: `CVScrollFramesP125.PRESETS`, `decimate(frames,maxBytes)`; `buildHtml` n
 - Export uses the existing offline HTML builder with parallax 0–24, scroll easing linear/ease-out/ease-in-out, page length 3–12 screens and reduced-motion first-frame fallback. Caption data is sanitized/escaped.
 - No external runtime, network request, cloud store or new media owner. Editor state is browser-session only; output is portable standalone HTML.
 - Hosted unit/browser tests include frame extraction, caption editor, export settings, scroll mapping and reduced motion. Real project/touch/mobile QA remains manual.
+
+## P136.2 — Optional Bezier contour smoothing (2026-11-20)
+
+- Updated owner \`canvio-p136-trace.js\`, embedded lot \`canvio-lot136t\`, API \`window.CVTraceP136\` version 136.2.0.
+- Added optional 0–100% closed-contour cubic Bezier smoothing. A value of 0 retains the previous polygon output; higher values use bounded Catmull–Rom-derived cubic paths. Palette, layer count, loop count and evenodd fill remain with the existing tracer.
+- SVG remains local, static and script-free; no external assets or paid dependencies.
+- Unit and hosted Chromium coverage check default compatibility, cubic path output, clamped finite coordinates, preserved layer/loop counts, safe SVG export. Manual review on varied production artwork remains open.
+- Not included: single-line stroke tracing, brush/pattern fills or gradient mesh.
