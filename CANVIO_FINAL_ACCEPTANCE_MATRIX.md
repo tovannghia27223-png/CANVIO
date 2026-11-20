@@ -30,8 +30,3 @@
 12. Physical target-device GPU/VRAM, performance and long-render testing.
 13. Cross-origin backup/restore and independent-device recovery.
 14. Rollback, release observability, alerting and production incident drill.
-
-
-
-| P136.4 SVG pattern fills | Six local SVG patterns; full hosted workflow #312 PASS (PR #39 merged; Node + Chromium + whole-candidate integration checks) | Manual production artwork/design review remains; no brush authoring, gradient mesh, topology editor or physical GPU certification |
-| P131.3 safe HTML import | 5 MiB local HTML import, existing P131 allow-list sanitizer, no external image/source fetch, canonical Website Engine add/save path; Node and Chromium coverage added | Candidate PR #41; hosted verification pending. Imported CSS/style tags, scripts, forms, iframes and remote images are deliberately not imported |
