@@ -3643,3 +3643,11 @@ P125.3: `CVScrollFramesP125.PRESETS`, `decimate(frames,maxBytes)`; `buildHtml` n
 - The post-merge main build is `782aa562f5341172330d114ccb21a3269efbbb37`, retaining candidate `23.3.111-github-runtime-ci`. Mainline workflow #282 (`44799501341`) concluded success; the configured PR-event-only candidate-branch commit step was skipped, not failed.
 - Integration does not imply full production acceptance. P145.9/.10 still needs the canonical live Asset Vault provider to prove complete enumeration and hash coverage. The icon/illustration sets remain starter packs and typography uses system-font fallbacks.
 - P70 remains `releaseCertified:false` / `BLOCKED_PENDING_REAL_WORLD_ACCEPTANCE`; fourteen real-world gates remain open. Do not label CANVIO 1.0 Stable or production-certified until each gate has evidence and sign-off.
+
+
+## P132.3 — Animated WebP export (candidate; hosted re-verification pending)
+
+- Owner: `canvio-p132-gif.js`; existing global owner `window.CVGifP132`, version `132.3.0`. UI action is added beside the existing GIF/APNG controls in the canonical Video Engine quality panel; the existing GIF and APNG paths are retained.
+- Encodes each captured frame with the browser's native `canvas.toBlob('image/webp')`, then builds an animated RIFF WebP container locally (`VP8X`, `ANIM`, `ANMF`). No paid package, remote encoder, upload, duplicate timeline or new project store.
+- Bounds: maximum 180 frames, maximum 640 px per side, 64 MiB raw frame budget and 64 MiB output; animation frame delay is clamped to 20–60,000 ms. Audio is not packaged. Browsers without native WebP encoding keep GIF/APNG as the alternatives.
+- Tests remain in `tests/p127/run-p132g-tests.cjs` and `tests/p127/run-p132g-browser.py`. The first hosted attempt surfaced a backwards RIFF test parser and ffprobe metadata that omitted WebP dimensions/frame count. The rebased browser test now parses FourCC then little-endian chunk size, validates RIFF/VP8X/ANIM/ANMF and embedded frame payloads, derives output height from the editor canvas, and requests an actual Chromium `createImageBitmap` decode. The corrected hosted run is pending; do not mark P132.3 accepted until it passes.
