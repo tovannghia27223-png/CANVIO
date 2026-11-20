@@ -154,3 +154,10 @@ The candidate is built and verified by the hosted runtime workflow. Runtime vend
 - Use the existing FPS/width controls and the separate Export APNG action. Limit: 600 frames / 64 MiB raw scanline data; output has no audio.
 - Verify source/embedded parity and format structure with `node tests/p127/run-p132g-tests.cjs`; verify actual Chromium download/decode with `tests/p127/run-p132g-browser.py`.
 - Animated WebP and real-device long-timeline validation are not included.
+
+
+## P127.2 — Caption-guided Talking-head Director
+- Uses the existing subtitle text track and canonical Video Engine timeline to report cue/pause regions and apply bounded punch-in keyframes.
+- AutoCut delegates to the existing silence-cut path; it does not create a second timeline or project store.
+- Run `node tests/p127/run-p1272-tests.cjs` and `tests/p127/run-p1272-browser.py`. The browser fixture uses synthetic speech-like audio bursts, not Whisper-quality transcription.
+- Real dialogue, face tracking, multi-speaker editing and final editorial quality still need project-media review.

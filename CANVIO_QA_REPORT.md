@@ -248,3 +248,10 @@ The candidate workflow runs standalone/embedded source parity and API tests for 
 - Unit checks cover PNG signature/IEND, APNG frame/play counts, sequence layout, IDAT/fdAT placement, CRC-32 on every chunk, frame delay and invalid/oversize rejection.
 - Hosted Chromium test downloads both GIF and APNG from the Video Engine UI; FFprobe checks codec, width and decoded frame count for each.
 - Synthetic timeline fixture only. Real timeline footage, transparency gradients, long animations and memory/performance on ordinary devices remain manual.
+
+
+## P127.2 — Caption-guided Director hosted acceptance
+
+- Node checks cover subtitle cue filtering, pause-boundary analysis, valid/invalid clip selection and bounded motion/keyframe output.
+- Hosted Chromium test imports a generated 5-second WebM with deterministic 440 Hz audio bursts separated by silence, seeds caption cues, verifies the pause report, applies/persists punch-in keyframes, runs the canonical AutoCut route and checks Undo availability.
+- The synthetic audio fixture is a deterministic UI/code-path test only. Whisper transcription accuracy, real speech, face tracking, multi-speaker editorial decisions and human review on project footage remain manual acceptance.
