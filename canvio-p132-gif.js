@@ -1,6 +1,6 @@
 /* P132 (phần xuất GIF động) · bộ mã hoá GIF89a thuần JS: bảng màu 3-3-2 + dither Bayer 4x4, LZW, vòng lặp NETSCAPE2.0.
    Thêm nút "Xuất GIF từ timeline" vào thẻ #cv127-quality: tua timeline, chụp #vtCanvas, mã hoá, tải .gif. Chỉ đọc timeline.
-   Giới hạn: 256 màu cố định (ảnh động gradient có thể bị vân), tối đa 600 khung, rộng ≤ 640 px. Chưa có APNG/WebP động. */
+   GIF 256 màu; APNG RGBA; WebP động dùng bộ mã hoá WebP tĩnh native của trình duyệt + RIFF muxer. Không có tiếng. */
 (function () {
 'use strict';
 if (window.CVGifP132) return;
@@ -129,11 +129,100 @@ function inspectApng(bytes) {
   return { ok: pos === bytes.length && rows.length > 0 && rows[rows.length - 1].type === 'IEND' && rows.every(function (x) { return x.crcOk; }), chunks: rows };
 }
 
+/* ---- Animated WebP muxer: browser-encoded VP8/VP8L frames + RIFF animation container ---- */
+var MAX_WEBP_FRAMES = 180, MAX_WEBP_RAW = 64 * 1024 * 1024;
+function webpRead32(a, p) { return (a[p] | (a[p + 1] << 8) | (a[p + 2] << 16) | (a[p + 3] << 24)) >>> 0; }
+function webpWrite24(a, p, n) { a[p] = n & 255; a[p + 1] = (n >>> 8) & 255; a[p + 2] = (n >>> 16) & 255; }
+function webpWrite32(a, p, n) { a[p] = n & 255; a[p + 1] = (n >>> 8) & 255; a[p + 2] = (n >>> 16) & 255; a[p + 3] = (n >>> 24) & 255; }
+function webpAscii(s) { var a = new Uint8Array(s.length); for (var i = 0; i < s.length; i++) a[i] = s.charCodeAt(i); return a; }
+function webpJoin(parts) { var n = 0, i, p, at = 0; for (i = 0; i < parts.length; i++) n += parts[i].length; var out = new Uint8Array(n); for (i = 0; i < parts.length; i++) { p = parts[i]; out.set(p, at); at += p.length; } return out; }
+function webpChunk(tag, data) {
+  var pad = data.length & 1, out = new Uint8Array(8 + data.length + pad);
+  out.set(webpAscii(tag), 0); webpWrite32(out, 4, data.length); out.set(data, 8); return out;
+}
+function webpFile(chunks) {
+  var body = webpJoin([webpAscii('WEBP')].concat(chunks)), out = new Uint8Array(8 + body.length);
+  out.set(webpAscii('RIFF'), 0); webpWrite32(out, 4, body.length); out.set(body, 8); return out;
+}
+function parseStaticWebp(bytes) {
+  if (!(bytes instanceof Uint8Array)) bytes = new Uint8Array(bytes || []);
+  if (bytes.length < 20 || String.fromCharCode.apply(null, bytes.subarray(0, 4)) !== 'RIFF' || String.fromCharCode.apply(null, bytes.subarray(8, 12)) !== 'WEBP' || webpRead32(bytes, 4) !== bytes.length - 8) throw new Error('Khung WebP tĩnh không hợp lệ.');
+  var pos = 12, chunks = [], alpha = false, hasImage = false;
+  while (pos + 8 <= bytes.length) {
+    var tag = String.fromCharCode(bytes[pos], bytes[pos + 1], bytes[pos + 2], bytes[pos + 3]), len = webpRead32(bytes, pos + 4), end = pos + 8 + len;
+    if (end > bytes.length) throw new Error('Chunk WebP vượt kích thước tệp.');
+    var data = bytes.slice(pos + 8, end);
+    if (tag === 'VP8X') { if (len < 10) throw new Error('VP8X không hợp lệ.'); alpha = alpha || !!(data[0] & 0x10); }
+    if (tag === 'ALPH' || tag === 'VP8 ' || tag === 'VP8L') { chunks.push(webpChunk(tag, data)); if (tag === 'VP8 ' || tag === 'VP8L') hasImage = true; }
+    pos = end + (len & 1);
+  }
+  if (pos !== bytes.length || !hasImage) throw new Error('Thiếu dữ liệu ảnh VP8/VP8L.');
+  return { chunks: chunks, alpha: alpha };
+}
+function inspectAnimatedWebp(bytes) {
+  var rows = [], frames = [], pos = 12, valid = bytes instanceof Uint8Array && bytes.length >= 30 && String.fromCharCode.apply(null, bytes.subarray(0, 4)) === 'RIFF' && String.fromCharCode.apply(null, bytes.subarray(8, 12)) === 'WEBP' && webpRead32(bytes, 4) === bytes.length - 8;
+  if (!valid) return { ok: false, chunks: rows, frames: frames };
+  var width = 0, height = 0, loop = null, animation = false;
+  while (pos + 8 <= bytes.length) {
+    var tag = String.fromCharCode(bytes[pos], bytes[pos + 1], bytes[pos + 2], bytes[pos + 3]), len = webpRead32(bytes, pos + 4), end = pos + 8 + len;
+    if (end > bytes.length) return { ok: false, chunks: rows, frames: frames };
+    var data = bytes.subarray(pos + 8, end); rows.push(tag);
+    if (tag === 'VP8X' && len >= 10) { animation = !!(data[0] & 2); width = data[4] | (data[5] << 8) | (data[6] << 16); height = data[7] | (data[8] << 8) | (data[9] << 16); width++; height++; }
+    if (tag === 'ANIM' && len === 6) loop = data[4] | (data[5] << 8);
+    if (tag === 'ANMF' && len >= 16) frames.push({ width: 1 + data[6] + (data[7] << 8) + (data[8] << 16), height: 1 + data[9] + (data[10] << 8) + (data[11] << 16), duration: data[12] | (data[13] << 8) | (data[14] << 16), flags: data[15] });
+    pos = end + (len & 1);
+  }
+  return { ok: pos === bytes.length && animation && loop !== null && frames.length > 0 && frames.every(function (f) { return f.width === width && f.height === height && f.duration > 0; }), chunks: rows, frames: frames, width: width, height: height, loop: loop, animation: animation };
+}
+function muxAnimatedWebp(staticFrames, opt) {
+  opt = opt || {};
+  if (!Array.isArray(staticFrames) || !staticFrames.length || staticFrames.length > MAX_WEBP_FRAMES) throw new Error('WebP động cần 1–' + MAX_WEBP_FRAMES + ' khung.');
+  var w = Number(opt.width), h = Number(opt.height);
+  if (!Number.isInteger(w) || !Number.isInteger(h) || w < 1 || h < 1 || w > MAX_W || h > MAX_W) throw new Error('Kích thước WebP động không hợp lệ.');
+  var parsed = staticFrames.map(parseStaticWebp), alpha = parsed.some(function (x) { return x.alpha; }), vp8x = new Uint8Array(10);
+  vp8x[0] = 2 | (alpha ? 16 : 0); webpWrite24(vp8x, 4, w - 1); webpWrite24(vp8x, 7, h - 1);
+  var anim = new Uint8Array(6), loop = opt.loop === false ? 1 : Math.max(0, Math.min(65535, Math.round(Number(opt.loop) || 0)));
+  anim[4] = loop & 255; anim[5] = (loop >>> 8) & 255;
+  var chunks = [webpChunk('VP8X', vp8x), webpChunk('ANIM', anim)], delay = Math.max(20, Math.min(60000, Math.round(Number(opt.delayMs) || 100)));
+  parsed.forEach(function (frame) {
+    var header = new Uint8Array(16); webpWrite24(header, 6, w - 1); webpWrite24(header, 9, h - 1); webpWrite24(header, 12, delay); header[15] = 2;
+    chunks.push(webpChunk('ANMF', webpJoin([header].concat(frame.chunks))));
+  });
+  var out = webpFile(chunks);
+  if (out.length > MAX_WEBP_RAW) throw new Error('WebP động vượt giới hạn gói 64 MiB.');
+  return out;
+}
+function encodeAnimatedWebp(frames, opt) {
+  opt = opt || {};
+  if (!Array.isArray(frames) || !frames.length || frames.length > MAX_WEBP_FRAMES) return Promise.reject(new Error('WebP động giới hạn tối đa ' + MAX_WEBP_FRAMES + ' khung; hãy giảm FPS hoặc thời lượng.'));
+  var w = Number(frames[0].w), h = Number(frames[0].h), raw = w * h * 4 * frames.length;
+  if (!Number.isInteger(w) || !Number.isInteger(h) || w < 1 || h < 1 || w > MAX_W || h > MAX_W || raw > MAX_WEBP_RAW || frames.some(function (f) { return !f || f.w !== w || f.h !== h || !f.data || f.data.length < w * h * 4; })) return Promise.reject(new Error('Khung WebP không hợp lệ hoặc vượt ngân sách 64 MiB; hãy giảm FPS/chiều rộng.'));
+  if (typeof document === 'undefined' || !document.createElement || !document.createElement('canvas').toBlob) return Promise.reject(new Error('Trình duyệt không hỗ trợ mã hoá WebP.'));
+  var canvas = document.createElement('canvas'); canvas.width = w; canvas.height = h;
+  var ctx = canvas.getContext('2d'), encoded = [], i = 0, quality = Math.max(0.45, Math.min(1, Number(opt.quality) || 0.82));
+  if (!ctx) return Promise.reject(new Error('Không tạo được canvas WebP.'));
+  return new Promise(function (resolve, reject) {
+    function next() {
+      if (i >= frames.length) { try { resolve(muxAnimatedWebp(encoded, { width: w, height: h, delayMs: Math.round((Number(opt.delayCs) || 10) * 10), loop: opt.loop })); } catch (e) { reject(e); } return; }
+      try {
+        var image = ctx.createImageData(w, h); image.data.set(frames[i].data); ctx.putImageData(image, 0, 0);
+        canvas.toBlob(function (blob) {
+          if (!blob || blob.type !== 'image/webp') { reject(new Error('Trình duyệt không tạo được ảnh WebP; hãy dùng GIF/APNG.')); return; }
+          var reader = new FileReader(); reader.onerror = function () { reject(new Error('Không đọc được khung WebP.')); };
+          reader.onload = function () { try { encoded.push(new Uint8Array(reader.result)); i++; next(); } catch (e) { reject(e); } };
+          reader.readAsArrayBuffer(blob);
+        }, 'image/webp', quality);
+      } catch (e) { reject(e); }
+    }
+    next();
+  });
+}
+
 function captureTimeline(opt, onProgress) {
   var v = window.CV && CV.engines && CV.engines.video, s = v && v._state && v._state(), cv = document.getElementById('vtCanvas');
   if (!s || !cv || !v.seek) return Promise.reject(new Error('Mở Video Engine trước.'));
-  var dur = Math.max(1, Number(s.duration) || 1), fps = Math.max(1, Math.min(15, Number(opt && opt.fps) || 8)), n = Math.min(MAX_FRAMES, Math.max(1, Math.round(dur * fps))), w = Math.min(MAX_W, Math.max(64, Math.round(Number(opt && opt.width) || 400))), h = Math.round(w * cv.height / cv.width), c = document.createElement('canvas'), x, frames = [], i = 0, old = s.time;
-  c.width = w; c.height = h; x = c.getContext('2d', { willReadFrequently: true });
+  var dur = Math.max(1, Number(s.duration) || 1), fps = Math.max(1, Math.min(15, Number(opt && opt.fps) || 8)), n = Math.min(MAX_FRAMES, Math.max(1, Math.round(dur * fps))), w = Math.min(MAX_W, Math.max(64, Math.round(Number(opt && opt.width) || 400))), h = Math.max(1, Math.round(w * cv.height / cv.width)), c = document.createElement('canvas'), x, frames = [], i = 0, old = s.time; if (h > MAX_W) { w = Math.max(1, Math.round(MAX_W * cv.width / cv.height)); h = MAX_W; }
+  if (opt && opt.maxFrames && n > opt.maxFrames) return Promise.reject(new Error('Định dạng này giới hạn ' + opt.maxFrames + ' khung; hãy giảm FPS hoặc thời lượng.')); if (opt && opt.maxRawBytes && w * h * 4 * n > opt.maxRawBytes) return Promise.reject(new Error('Dữ liệu khung vượt ngân sách 64 MiB; hãy giảm FPS hoặc chiều rộng.')); c.width = w; c.height = h; x = c.getContext('2d', { willReadFrequently: true });
   return new Promise(function (ok, no) {
     (function step() {
       if (i >= n) { try { v.seek(old); } catch (e) {} ok({ frames: frames, delayCs: Math.round(100 / fps) }); return; }
@@ -146,14 +235,20 @@ function mount() {
   var page = document.querySelector('#page-videoEngine'), card = page && page.querySelector('#cv127-quality');
   if (!card || card.querySelector('#cv132-gif')) return false;
   var row = document.createElement('div'); row.className = 'row'; row.style.cssText = 'margin-top:10px;align-items:center;flex-wrap:wrap;gap:8px';
-  row.innerHTML = '<b class="tiny">Ảnh động (P132)</b><label class="tiny">FPS <input type="number" id="cv132-fps" value="8" min="1" max="15" style="width:52px"></label><label class="tiny">Rộng px <input type="number" id="cv132-w" value="400" min="64" max="640" style="width:64px"></label><button type="button" class="btn btn-soft sm" id="cv132-gif">Xuất GIF</button><button type="button" class="btn btn-soft sm" id="cv132-apng">Xuất APNG</button><span class="tiny" id="cv132-out" role="status" aria-live="polite">GIF 256 màu hoặc APNG RGBA; không có tiếng.</span>';
+  row.innerHTML = '<b class="tiny">Ảnh động (P132)</b><label class="tiny">FPS <input type="number" id="cv132-fps" value="8" min="1" max="15" style="width:52px"></label><label class="tiny">Rộng px <input type="number" id="cv132-w" value="400" min="64" max="640" style="width:64px"></label><button type="button" class="btn btn-soft sm" id="cv132-gif">Xuất GIF</button><button type="button" class="btn btn-soft sm" id="cv132-apng">Xuất APNG</button><button type="button" class="btn btn-soft sm" id="cv132-webp">Xuất WebP động</button><span class="tiny" id="cv132-out" role="status" aria-live="polite">GIF, APNG RGBA hoặc WebP động; không có tiếng.</span>';
   card.insertBefore(row, card.querySelector('#cv127q-list'));
   function runExport(format, button) {
     var out = row.querySelector('#cv132-out'); button.disabled = true; out.textContent = 'Đang chụp khung…';
-    captureTimeline({ fps: row.querySelector('#cv132-fps').value, width: row.querySelector('#cv132-w').value }, function (a, b) { out.textContent = 'Chụp khung ' + a + '/' + b + '…'; }).then(function (r) {
+    var captureOpt = { fps: row.querySelector('#cv132-fps').value, width: row.querySelector('#cv132-w').value };
+    if (format === 'webp') { captureOpt.maxFrames = MAX_WEBP_FRAMES; captureOpt.maxRawBytes = MAX_WEBP_RAW; }
+    if (format === 'apng') captureOpt.maxRawBytes = MAX_APNG_RAW;
+    captureTimeline(captureOpt, function (a, b) { out.textContent = 'Chụp khung ' + a + '/' + b + '…'; }).then(function (r) {
       out.textContent = 'Đang mã hoá…';
-      return new Promise(function (ok) { setTimeout(function () { ok(format === 'apng' ? encodeApng(r.frames, { delayCs: r.delayCs }) : encode(r.frames, { delayCs: r.delayCs })); }, 20); }).then(function (bytes) {
-        var ext = format === 'apng' ? 'apng' : 'gif', mime = format === 'apng' ? 'image/apng' : 'image/gif';
+      return new Promise(function (ok) { setTimeout(ok, 20); }).then(function () {
+        if (format === 'webp') return encodeAnimatedWebp(r.frames, { delayCs: r.delayCs });
+        return format === 'apng' ? encodeApng(r.frames, { delayCs: r.delayCs }) : encode(r.frames, { delayCs: r.delayCs });
+      }).then(function (bytes) {
+        var ext = format === 'apng' ? 'apng' : (format === 'webp' ? 'webp' : 'gif'), mime = format === 'apng' ? 'image/apng' : (format === 'webp' ? 'image/webp' : 'image/gif');
         var u = URL.createObjectURL(new Blob([bytes], { type: mime })), a = document.createElement('a'); a.href = u; a.download = 'canvio-' + Date.now().toString(36) + '.' + ext; document.body.appendChild(a); a.click(); a.remove(); setTimeout(function () { URL.revokeObjectURL(u); }, 4000);
         out.textContent = 'Đã xuất ' + ext.toUpperCase() + ' ' + r.frames.length + ' khung (' + (bytes.length / 1048576).toFixed(2) + ' MB).' + (bytes.length > 15 * 1048576 ? ' Khá nặng: giảm FPS/chiều rộng.' : '');
       });
@@ -161,11 +256,13 @@ function mount() {
   }
   row.querySelector('#cv132-gif').addEventListener('click', function () { runExport('gif', this); });
   row.querySelector('#cv132-apng').addEventListener('click', function () { runExport('apng', this); });
+  row.querySelector('#cv132-webp').addEventListener('click', function () { runExport('webp', this); });
   return true;
 }
 function ready() { try { mount(); var pg = document.querySelector('#page-videoEngine'); if (pg && !pg.__cv132Obs && window.MutationObserver) { pg.__cv132Obs = new MutationObserver(function () { if (!pg.querySelector('#cv132-gif')) mount(); }); pg.__cv132Obs.observe(pg, { childList: true, subtree: true }); } } catch (e) {} }
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', ready, { once: true }); else ready();
 function solid(w, h, r, g, b) { var d = new Uint8ClampedArray(w * h * 4); for (var i = 0; i < w * h; i++) { d[i * 4] = r; d[i * 4 + 1] = g; d[i * 4 + 2] = b; d[i * 4 + 3] = 255; } return { w: w, h: h, data: d }; }
+function staticWebpFixture() { return webpFile([webpChunk('VP8 ', new Uint8Array([1, 2, 3, 4]))]); }
 function tests() {
   var g = encode([solid(16, 8, 255, 0, 0), solid(16, 8, 0, 0, 255)], { delayCs: 20 }), s = String.fromCharCode.apply(null, g.slice(0, 6)), thrown = 0;
   [function () { encode([]); }, function () { encode([solid(4, 4, 0, 0, 0), solid(5, 4, 0, 0, 0)]); }, function () { encode([{ w: 2, h: 2, data: new Uint8ClampedArray(3) }]); }, function () { encode(null); }].forEach(function (f) { try { f(); } catch (e) { thrown++; } });
@@ -174,6 +271,7 @@ function tests() {
   var ap = encodeApng([solid(16, 8, 255, 0, 0), solid(16, 8, 0, 0, 255)], { delayCs: 20 }), parsed = inspectApng(ap), types = parsed.chunks.map(function (x) { return x.type; });
   var actl = parsed.chunks.filter(function (x) { return x.type === 'acTL'; })[0], ctrls = parsed.chunks.filter(function (x) { return x.type === 'fcTL'; });
   var apngThrown = 0; [function () { encodeApng([]); }, function () { encodeApng([solid(4, 4, 0, 0, 0), solid(5, 4, 0, 0, 0)]); }, function () { encodeApng([{ w: 2, h: 2, data: new Uint8ClampedArray(3) }]); }, function () { encodeApng([{ w: 4096, h: 4096, data: new Uint8Array(1) }]); }].forEach(function (f) { try { f(); } catch (e) { apngThrown++; } });
+  var webp = muxAnimatedWebp([staticWebpFixture(), staticWebpFixture()], { width: 16, height: 8, delayMs: 200, loop: 0 }), webpInfo = inspectAnimatedWebp(webp), webpThrown = 0; [function () { muxAnimatedWebp([new Uint8Array([1, 2, 3])], { width: 16, height: 8 }); }, function () { muxAnimatedWebp(new Array(MAX_WEBP_FRAMES + 1).fill(staticWebpFixture()), { width: 16, height: 8 }); }, function () { muxAnimatedWebp([staticWebpFixture()], { width: MAX_W + 1, height: 8 }); }].forEach(function (f) { try { f(); } catch (e) { webpThrown++; } });
   return {
     headerAndTrailer: s === 'GIF89a' && g[g.length - 1] === 0x3B, sizeFields: g[6] === 16 && g[8] === 8,
     hasLoopExtension: String.fromCharCode.apply(null, g.slice(0, 900)).indexOf('NETSCAPE2.0') > 0,
@@ -185,8 +283,13 @@ function tests() {
     apngSequenceAndFrameData: ctrls.length === 2 && types.filter(function (x) { return x === 'IDAT'; }).length === 1 && types.filter(function (x) { return x === 'fdAT'; }).length === 1,
     apngEveryChunkHasValidCrc: parsed.chunks.every(function (x) { return x.crcOk; }),
     apngDelayWritten: ctrls[0] && ctrls[0].data[20] === 0 && ctrls[0].data[21] === 20 && ctrls[0].data[22] === 0 && ctrls[0].data[23] === 100,
-    rejectsBadApngInputAndOversize: apngThrown === 4
+    rejectsBadApngInputAndOversize: apngThrown === 4,
+    webpRiffHeaderAndFrameCount: webpInfo.ok && webpInfo.chunks[0] === 'VP8X' && webpInfo.frames.length === 2,
+    webpDimensionsAndDelay: webpInfo.width === 16 && webpInfo.height === 8 && webpInfo.frames.every(function (f) { return f.duration === 200; }),
+    webpAnimationFlagAndLoop: webpInfo.animation && webpInfo.loop === 0,
+    webpContainsVp8FramePayload: webpInfo.chunks.indexOf('ANMF') >= 0,
+    rejectsInvalidWebpFrameAndBounds: webpThrown === 3
   };
 }
-window.CVGifP132 = { version: '132.2.0', encode: encode, encodeApng: encodeApng, inspectApng: inspectApng, captureTimeline: captureTimeline, mount: mount, tests: tests };
+window.CVGifP132 = { version: '132.3.0', encode: encode, encodeApng: encodeApng, inspectApng: inspectApng, encodeAnimatedWebp: encodeAnimatedWebp, muxAnimatedWebp: muxAnimatedWebp, inspectAnimatedWebp: inspectAnimatedWebp, captureTimeline: captureTimeline, mount: mount, tests: tests };
 })();

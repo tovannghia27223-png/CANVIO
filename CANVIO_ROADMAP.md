@@ -717,3 +717,16 @@ Hosted verification after the ffmpeg repair is complete:
 - The post-merge main build is `782aa562f5341172330d114ccb21a3269efbbb37`, retaining candidate `23.3.111-github-runtime-ci`. Mainline workflow #282 (`44799501341`) concluded success; the configured PR-event-only candidate-branch commit step was skipped, not failed.
 - Integration does not imply full production acceptance. P145.9/.10 still needs the canonical live Asset Vault provider to prove complete enumeration and hash coverage. The icon/illustration sets remain starter packs and typography uses system-font fallbacks.
 - P70 remains `releaseCertified:false` / `BLOCKED_PENDING_REAL_WORLD_ACCEPTANCE`; fourteen real-world gates remain open. Do not label CANVIO 1.0 Stable or production-certified until each gate has evidence and sign-off.
+
+## 23.3.111 continuation — P132.3 Animated WebP export (2026-11-21; hosted re-verification pending)
+
+- Adds animated WebP to the existing Video Engine P132 export row beside GIF and APNG; retains the original formats and canonical timeline read path.
+- Uses native browser canvas WebP frame encoding and a local RIFF animation muxer (VP8X/ANIM/ANMF). No paid dependency, external request, upload, second timeline or additional store.
+- Bounds: 180 frames, 640 px maximum side, 64 MiB raw-frame budget and 64 MiB output; 20–60,000 ms frame delay. No audio.
+- Initial hosted run #300 passed the integrated Node suites, GIF/APNG acceptance and P145 regressions, but its WebP browser checks failed: the Python test reversed RIFF FourCC/size offsets, and runner ffprobe did not report WebP dimensions/frame count. The rebased test corrects RIFF parsing, validates frame payloads and derives canvas output dimensions, then decodes the actual downloaded WebP with Chromium `createImageBitmap`. Await new hosted CI before acceptance.
+- Real footage quality, target mobile browser support, alpha/profile handling, memory/performance and audio remain outside automated acceptance.
+
+
+### P132.3 hosted test follow-up — run #303 (2026-11-21)
+- RIFF parser, RIFF size, chunk boundaries, VP8X animation flag, ANIM, ten ANMF frames, each frame's VP8 payload, frame dimensions (200×113) and 200 ms durations all passed. Chromium `createImageBitmap` also decoded the downloaded file successfully at 200×113; pageErrors were empty.
+- The remaining failing boolean was a stale fixed-height assertion (`200`) instead of the editor-derived height (`113`). The test now asserts the actual expected height. ffprobe on this runner reports WebP width 0 and “image data not found”, so it is retained as diagnostic only; browser decode + container structure are the acceptance checks. Re-run pending.
