@@ -304,3 +304,8 @@ The candidate workflow runs standalone/embedded source parity and API tests for 
 - Corrective branch fixes RIFF chunk parsing, validates RIFF byte length, VP8X animation/canvas flags, ANIM and exactly ten ANMF chunks, checks each frame contains a VP8/VP8L image subchunk with matching dimensions and positive duration, and asks Chromium `createImageBitmap` to decode the downloaded WebP.
 - The test derives expected output height from the actual `#vtCanvas` aspect ratio. ffprobe output is retained as diagnostic metadata only, not used as a pass/fail check where the runner cannot report animated WebP frame count.
 - Status: implementation and browser test are rebased to current main; corrected hosted result pending. Do not mark P132.3 accepted until the full hosted workflow succeeds.
+
+
+### P132.3 run #303 diagnosis
+- The corrected parser verified valid RIFF size/chunk traversal, VP8X animation flag, ANIM, 10 ANMF frames, 10 VP8 frame payloads, dimensions 200×113 and 200 ms per frame. Chromium `createImageBitmap` returned `ok:true`, width 200, height 113; no page errors.
+- CI failed only because `webpChromiumDecoder` still compared height with 200 instead of the already-derived `expected_height` (113). That assertion is corrected. ffprobe logs “image data not found” and width 0 for WebP on this runner, while Chromium decodes it; ffprobe is no longer a required pass/fail check. Corrected rerun pending.
