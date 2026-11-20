@@ -3498,3 +3498,11 @@ P125.3: `CVScrollFramesP125.PRESETS`, `decimate(frames,maxBytes)`; `buildHtml` n
 - WebGL 1 shader rendering has bounded output dimensions and low/medium/high quality caps; unsupported WebGL uses a Canvas2D crossfade/wipe fallback with shader-only effects explicitly disabled. User-selected images are processed locally through object URLs.
 - PNG frame export is available. Optional short H.264 MP4 transition export delegates encoding output muxing to existing `CANVIOWebCodecsExport.muxMP4` (P79), is video-only, and is limited to 10 seconds / 600 frames / 1920×1080. It is not a replacement for the canonical multi-track video export path and adds no audio.
 - Verification: `node tests/p145/run-p1452-tests.cjs` and hosted Chromium `tests/p145/run-p1452-browser.py`. Hosted WebGL uses SwiftShader; this is not physical GPU or 60 fps target-device certification.
+
+
+## P145.4b — Official embedded music preview (2026-11-20 continuation)
+
+- New standalone owner: \`canvio-p145-music-preview.js\`; canonical embedded lot: \`canvio-lot1454b\`; API: \`window.CVMusicPreviewP1454B\`. It reads existing cue metadata from \`canvio145:music\` and mounts a preview panel in the existing Asset Library / Content Factory page.
+- Supports official YouTube privacy-enhanced embeds, Spotify embeds and SoundCloud widgets. Only HTTPS URLs on the exact supported hosts and recognized content paths are accepted; unsupported hosts, protocols and malformed paths are rejected.
+- Preview is user-triggered, with no autoplay, capture, recording, download, or media extraction. Cue position/source in/out remain metadata; precise seeking is only passed as start/end for YouTube. Spotify and SoundCloud seeking remains under the platform player controls.
+- Hosted acceptance is added to the candidate workflow. This does not certify platform availability, account entitlements, cross-device cue sync, or that every provider permits embedding in every region/browser.

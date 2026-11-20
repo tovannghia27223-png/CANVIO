@@ -606,3 +606,11 @@ Hosted verification after the ffmpeg repair is complete:
 - Uses the existing Video Engine page as the UI host and existing P79 muxer as the export owner; no third-party dependency, external fetch, new timeline, store or media database.
 - Canvas2D fallback preserves crossfade/wipe only and clearly disables shader-specific FX. Hosted browser coverage is SwiftShader/software rendering.
 - Still open: 60 fps/performance acceptance on representative physical devices, WebCodecs H.264 support matrix, professional review on real project footage, full multi-track/timeline transition editing and audio-inclusive export through the existing canonical exporter.
+
+
+## 23.3.111 continuation — P145.4b official music preview
+
+- Added a standalone embedded preview panel to Asset Library using the existing P145 cue list; no new timeline, media store, server, API key or download mechanism.
+- HTTPS allowlist: YouTube privacy-enhanced embed, Spotify official embed, SoundCloud official widget. Rejects unsupported hosts, non-HTTPS schemes and malformed provider paths.
+- User-triggered only; autoplay disabled. Cue video position and source in/out are displayed. YouTube accepts start/end query parameters; Spotify/SoundCloud use provider controls and do not promise frame-accurate seeking.
+- No capture, recording, ripping or download. Platform/network/browser restrictions remain external dependencies.

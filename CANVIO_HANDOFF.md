@@ -105,3 +105,10 @@ Phạm vi: nhánh ứng viên `canvio/23-3-111-github-runtime-ci`; không thay t
 ## CANVIO 23.3.111 hosted runtime handoff
 
 The candidate is built and verified by the hosted runtime workflow. Runtime vendor binaries are pinned and same-origin; model weights stay outside git and download only when a user runs the feature. Review hosted reports before promotion. Main-branch Pages auto-deploy is disabled; deployment remains manual and requires a certified P70 manifest. This version does not claim physical GPU, two-device Project Vault sync or Stable release acceptance.
+
+
+## P145.4b continuation
+- Added the official embedded music preview panel, reusing P145 cue metadata in Asset Library.
+- Supported providers: YouTube (privacy-enhanced), Spotify, SoundCloud. Only HTTPS URLs with validated provider paths are embedded.
+- Preview is click-to-play; no autoplay, recording, capture or download. Cue metadata remains local and Spotify/SoundCloud seek is controlled by provider UI.
+- Candidate workflow runs unit and hosted browser checks before promotion.
