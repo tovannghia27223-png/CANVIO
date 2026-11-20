@@ -744,3 +744,12 @@ Hosted verification after the ffmpeg repair is complete:
 - Adds explicit, read-only SHA-256 of decoded bytes from local base64 data URLs. Session-only hashes feed the shared P145.1 quality gate; no vault or metadata mutation.
 - Limits: 40 rows, 25 MiB/file, 64 MiB total. Unsupported, missing, Web Crypto-unavailable or over-budget items remain unverified. No upload, external request, second store or background hashing.
 - Original PR #37 hosted workflow #305 passed; this current-main rebase needs its own hosted rerun before acceptance.
+
+
+
+## P136.4 — Local SVG pattern fills (2026-11-21; candidate)
+
+- Extends the existing Image Trace owner only; no second vector editor or asset store. Six native SVG pattern presets are available per colour layer: dots, diagonal hatch, grid, cross, wave and checker.
+- Existing no-pattern output is preserved exactly; pattern definitions are local SVG defs/pattern nodes with no remote references. The UI disables pattern selection in single-line Stroke mode; multicolour trace and optional Bezier remain intact.
+- Node coverage includes embedded-source parity and static/self-contained SVG; Chromium coverage downloads the pattern SVG, checks local pattern references, decodes the preview and rechecks Stroke behavior. Current status: candidate pending hosted CI on this branch.
+- P136 remains partial: no brush authoring, gradient mesh, topology/branch editor, handwriting OCR or reliable photo-to-vector cleanup. Real artwork/design review remains manual.
