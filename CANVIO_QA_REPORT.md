@@ -308,3 +308,11 @@ The candidate workflow runs standalone/embedded source parity and API tests for 
 ### P132.3 run #303 diagnosis
 - The corrected parser verified valid RIFF size/chunk traversal, VP8X animation flag, ANIM, 10 ANMF frames, 10 VP8 frame payloads, dimensions 200×113 and 200 ms per frame. Chromium `createImageBitmap` returned `ok:true`, width 200, height 113; no page errors.
 - CI failed only because `webpChromiumDecoder` still compared height with 200 instead of the already-derived `expected_height` (113). That assertion is corrected. ffprobe logs “image data not found” and width 0 for WebP on this runner, while Chromium decodes it; ffprobe is no longer a required pass/fail check. Corrected rerun pending.
+
+
+## P132.3 final verification — hosted run #304 PASS (2026-11-21)
+
+- Corrected candidate on PR #36 completed workflow #304 (`44809678883`) with job `verify` conclusion `success`; browser/runtime acceptance passed.
+- WebP checks: download/status/button reset, RIFF+WEBP signature and declared RIFF size, chunk walk and padding, VP8X animation flag/canvas dimensions, ANIM, exactly 10 ANMF frames, each with VP8 payload, 200×113 per-frame dimensions, 200 ms delay and Chromium `createImageBitmap` decode all true. Browser report ended with `pageErrors: []` and `failed: []`.
+- GIF and APNG controls, signatures and decoding also passed. Workflow-wide HTML/JS audit, P47–P70 regressions, integrated source contracts/P107 ZIP round-trip, vendor SHA verification, compressed GLB fixtures and same-origin P85/ONNX/worker browser acceptance passed.
+- Hosted artifact `CANVIO-23.3.111-GITHUB-RUNTIME-VERIFIED-304` uploaded (21,573,301 bytes). Human acceptance still needed for actual footage, alpha/color profile, mobile browser support and long-form memory/performance; P70 remains uncertified.
