@@ -3607,3 +3607,9 @@ P125.3: `CVScrollFramesP125.PRESETS`, `decimate(frames,maxBytes)`; `buildHtml` n
 - The first full hosted pass failed because `#page-assets` intercepted the P145.7 Apply control. The card is now a foreground isolated stacking context while its shell stays pointer-transparent and child controls explicitly accept pointer events.
 - Keep the Playwright pointer click in `tests/p145/run-p1457-browser.py`; it is the regression guard. Do not replace it with a synthetic DOM `.click()` to make CI pass.
 - Confirmed status before re-run: failure reproduced in hosted Chromium logs; correction is pending a fresh CI result.
+
+
+### P145.7 follow-up — exclude typography panel from global card tilt (2026-11-21)
+- Root cause identified in the base app: a MutationObserver adds `data-tilt` to every `.card` in `#page-assets`; pointer movement rotates the P145.7 card immediately before a real mouse click. A z-index-only patch did not fix the hit test.
+- P145.7 now uses a dedicated `cv1457-card` shell with equivalent inline visual styling, deliberately not `.card`, so it is excluded from the global tilt selector. Keep the real Playwright click regression test.
+- Status: awaiting a fresh green hosted run after this correction.
