@@ -3459,3 +3459,6 @@ The hosted workflow provisions native test tools in the “Verify native test ut
 - Keep the distinction between synthetic/fixture verification and user-media acceptance. SwiftShader is not physical GPU; synthetic audio/frames do not validate actual production media quality. No verified two-device Project Vault cloud sync exists.
 - The prior note saying the ffmpeg repair was pending is superseded by workflow #125. Run #116 remains a historical failed run; do not erase that history.
 - Continue from the live source owners and test harnesses. Remaining roadmap work is not complete: P122 wider content/icon and history scope; P125.2–P125.4; P127 timestamp-led director, jump cuts/zoom, SFX/music/ducking/true-peak and real-media checks; P130 only after real backend/RLS/recovery infrastructure; P131 owner-by-owner HTML/PPTX/ZIP and export-redaction integration. P70 remains fail-closed until all fourteen manual gates have actual reviewed evidence.
+
+P125.3: `CVScrollFramesP125.PRESETS`, `decimate(frames,maxBytes)`; `buildHtml` nhận `captions:[{from,to,text}]` (0..1) và `marquee`. Lưu ý: không viết chuỗi `</script>` thật trong mã nhúng, dùng `<\/script>`.
+

@@ -541,3 +541,9 @@ Hosted verification after the ffmpeg repair is complete:
 - Workflow refreshed the manifest for `23.3.111-github-runtime-ci`: 184 files; index SHA-256 `a371b7ebbdfce8632c69e49ad836232fddf9734a41c86d0399cccaa5f1994cbf`.
 
 **Roadmap disposition remains partial:** P122.2, P125.2–P125.4, P127.2 advanced director/audio functions, P130 real cloud sync and P131 broad import/export hardening remain open. The fourteen P70 real-world acceptance gates remain pending; no physical GPU, real-media quality, production security-header, accessibility, clean-machine offline, cross-origin recovery or two-device sync certification is implied.
+
+### P125.3 + P125.4 (phần giảm dung lượng) — Mẫu chữ và ngân sách dung lượng
+- Thẻ "Web cuộn từ video" thêm chọn mẫu: Không chữ, Hero video (3 dòng lộ theo tiến độ cuộn), Chữ lộ dần (4 ý), Marquee + ghim (băng chữ chạy theo cuộn). Chữ được làm sạch, tối đa 12 dòng, thoát `<` trong JSON nhúng.
+- Ô "Tối đa MB": `decimate` bỏ khung xen kẽ cho tới khi vừa ngân sách (không dưới 8 khung, giữ khung cuối). Test đơn vị + Chrome thật (chữ giữa/cuối đúng theo cuộn).
+- Còn mở: P125.2 editor storyboard cuộn (kéo thả mốc chữ, parallax, easing chung); tách khung thành tệp WebP riêng/gói zip; kiểm trên điện thoại thật.
+

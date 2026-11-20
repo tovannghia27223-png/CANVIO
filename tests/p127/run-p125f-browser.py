@@ -23,11 +23,11 @@ with sync_playwright() as p:
     c['cardMounted'] = page.evaluate("!!document.getElementById('cv125-card')")
     page.click('#cv125-run'); page.wait_for_timeout(200)
     c['noFileMessage'] = page.evaluate("/Chọn/.test(document.getElementById('cv125-out').textContent)")
-    page.set_input_files('#cv125-file', vid); page.fill('#cv125-n', '20'); page.fill('#cv125-w', '320')
+    page.set_input_files('#cv125-file', vid); page.fill('#cv125-n', '20'); page.fill('#cv125-w', '320'); page.select_option('#cv125-preset', 'hero')
     with page.expect_download(timeout=90000) as d: page.click('#cv125-run')
     path = os.path.join(tmp, 'out.html'); d.value.save_as(path)
     c['exported'] = os.path.getsize(path) > 2000
-    c['statusReportsFrames'] = page.evaluate("/Đã xuất 20 khung/.test(document.getElementById('cv125-out').textContent)")
+    c['statusReportsFrames'] = page.evaluate("/Đã xuất 20\/20 khung/.test(document.getElementById('cv125-out').textContent)")
     html = open(path, encoding='utf-8').read()
     c['noExternalRefs'] = 'http://' not in html.replace('http://www.w3.org', '') and 'https://' not in html
     pg = ctx.new_page(); pg.on('pageerror', lambda e: errs.append(str(e)[:200]))
@@ -40,7 +40,9 @@ with sync_playwright() as p:
     pg2.evaluate('window.scrollTo(0, (document.documentElement.scrollHeight-innerHeight)/2)'); pg2.wait_for_timeout(600)
     mid = pg2.evaluate('__scrollFrames.current()')
     c['scrollMidIsMid'] = 7 <= mid <= 12
-    pg2.wait_for_timeout(500)
+    c['midCaptionShown'] = pg2.evaluate("document.getElementById('cap').textContent") == 'Một câu mô tả ngắn'
+    pg2.evaluate('window.scrollTo(0, document.documentElement.scrollHeight)'); pg2.wait_for_timeout(500)
+    c['endCaptionShown'] = pg2.evaluate("document.getElementById('cap').textContent") == 'Bắt đầu ngay'
     c['canvasDrawn'] = pg2.evaluate("(()=>{var x=document.getElementById('c').getContext('2d').getImageData(10,10,40,40).data;var s=0;for(var i=0;i<x.length;i+=4)s+=x[i]+x[i+1]+x[i+2];return s>0})()")
     pg3 = ctx.new_page(); pg3.on('pageerror', lambda e: errs.append(str(e)[:200]))
     pg3.goto('file://' + path); pg3.wait_for_function('window.__scrollFrames', timeout=15000)
