@@ -5,6 +5,7 @@ on:
     branches:
       - canvio/23-3-111-github-runtime-ci
       - work/p127-7-ducking-p145-continuation
+      - work/p131-export-hardening
       - work/p145-5-template-factory
       - work/p136-bezier-smoothing
       - work/p125-2-scroll-storyboard
@@ -163,6 +164,35 @@ jobs:
           if((html.match(/id="canvio-lot127k"/g)||[]).length!==1)throw new Error('P127.7 duplicate or missing script tag');
           fs.writeFileSync(file,html,'utf8');
           console.log('P127.7 integrated into canonical index.html');
+          NODE
+
+      - name: Integrate P131 shared sanitizer and export redaction boundaries
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs=require('node:fs');
+          const file='index.html';
+          let html=fs.readFileSync(file,'utf8');
+          const specs=[
+            {name:'P67 Print Production',file:'canvio-p63-p67.js',id:'canvio-p63-p67-main'},
+            {name:'P73 Offline Website',file:'canvio-p73-offline-site.js',id:'canvio-p73-offline-site'},
+            {name:'P145 Content Factory',file:'canvio-p145-core.js',id:'canvio-lot145c'}
+          ];
+          for(const spec of specs){
+            const source=fs.readFileSync(spec.file,'utf8').trim();
+            const openTag='<script id="'+spec.id+'">';
+            const open=html.indexOf(openTag);
+            if(open<0||html.indexOf(openTag,open+1)>=0)throw new Error(spec.name+' expected one canonical '+openTag);
+            const bodyStart=open+openTag.length,close=html.indexOf('</script>',bodyStart);
+            if(close<0)throw new Error(spec.name+' closing script tag missing');
+            const end=close+'</script>'.length;
+            html=html.slice(0,open)+openTag+'\n'+source+'\n</script>'+html.slice(end);
+            const verifyStart=html.indexOf(openTag)+openTag.length,verifyEnd=html.indexOf('</script>',verifyStart);
+            if(html.slice(verifyStart,verifyEnd).trim()!==source)throw new Error(spec.name+' embedded source sync verification failed');
+          }
+          fs.writeFileSync(file,html,'utf8');
+          console.log('P131 P67/P73/P145 owners synced by verified canonical script IDs');
           NODE
 
       - name: Integrate P145.2 shader transitions and effects
@@ -370,6 +400,7 @@ jobs:
           node tests/p115/run-p127-tests.cjs
           node tests/p127/run-p127k-tests.cjs
           node tests/p131/run-p131-tests.cjs
+          node tests/p131/run-p131-export-contracts.cjs
           node tests/p127/run-p127q-tests.cjs
           node tests/p127/run-p127l-tests.cjs
           node tests/p127/run-p127t-tests.cjs

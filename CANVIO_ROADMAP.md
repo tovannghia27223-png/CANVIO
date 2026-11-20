@@ -644,3 +644,11 @@ Hosted verification after the ffmpeg repair is complete:
 - Five original local starter layouts: Business Brief, Finance Snapshot, HR Recruitment, Professional Profile and Social Story. Four local palettes; edit title/subtitle/body, three metrics/labels and footer.
 - Sandboxed preview, save up to 20 browser-local templates, standalone offline HTML export, validated JSON import/export. User text is escaped and bounded; no remote fonts or images.
 - Unit + hosted Chromium tests passed on feature run #44773327159. Native Poster/Slide bundles, manual typography/print proof and cloud sync remain open.
+
+## 23.3.111 continuation — P131 export-boundary hardening
+
+- Connected P131 HTML allow-list sanitization to P67 Print Production after its existing print-specific checks; safe inline CSS is cleaned and retained.
+- Connected shared secret redaction to the P145 Content Factory text/HTML/JSONL Blob boundary; export is refused without the redactor.
+- Connected redaction to P73 Offline Website HTML before ZIP packaging; missing redactor fails closed and package report records the redaction count.
+- Hosted browser smoke and source-contract tests passed after DOMParser-scope correction.
+- Still open: generic hostile HTML/PPTX/ZIP imports, complete archive expansion quotas, all binary export owners and server-side CSP/SRI response headers.
