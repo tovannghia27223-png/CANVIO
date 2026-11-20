@@ -3494,7 +3494,7 @@ P125.3: `CVScrollFramesP125.PRESETS`, `decimate(frames,maxBytes)`; `buildHtml` n
 ## P145.2 — Shader transitions and effects (23.3.111 continuation)
 
 - Standalone owner: `canvio-p145-shader.js`; canonical embedded lot: `canvio-lot1452`; API: `window.CVShaderP145`. UI mounts once inside the existing Video Engine page and does not add a timeline, project store, or media owner.
-- Nine transitions: crossfade, four directional wipes, dissolve, radial, zoom and glitch. Nine local effects: grain, light leak, vignette, chromatic aberration, zoom blur, shake, speed lines and bloom (plus none).
+- Nine transitions: crossfade, four directional wipes, dissolve, radial, zoom and glitch. Eight shader FX: grain, light leak, vignette, chromatic aberration, zoom blur, shake, speed lines and bloom, plus the “Không hiệu ứng” option.
 - WebGL 1 shader rendering has bounded output dimensions and low/medium/high quality caps; unsupported WebGL uses a Canvas2D crossfade/wipe fallback with shader-only effects explicitly disabled. User-selected images are processed locally through object URLs.
 - PNG frame export is available. Optional short H.264 MP4 transition export delegates encoding output muxing to existing `CANVIOWebCodecsExport.muxMP4` (P79), is video-only, and is limited to 10 seconds / 600 frames / 1920×1080. It is not a replacement for the canonical multi-track video export path and adds no audio.
 - Verification: `node tests/p145/run-p1452-tests.cjs` and hosted Chromium `tests/p145/run-p1452-browser.py`. Hosted WebGL uses SwiftShader; this is not physical GPU or 60 fps target-device certification.

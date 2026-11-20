@@ -193,7 +193,7 @@ Workflow: https://github.com/tovannghia27223-png/CANVIO/actions/runs/44747930420
 
 ## P145.2 shader verification
 
-The candidate workflow runs standalone/embedded source parity and API tests for the nine transitions, nine effects, bounded resolution and P79 muxer handoff. Hosted Chromium smoke verifies the Video Engine panel, all transition start/end frames, crossfade midpoint, module checks and PNG download. This exercises WebGL through CI SwiftShader or the documented Canvas2D fallback; it does not certify physical GPU performance, a 60 fps target on mid-range hardware, user-footage visual quality or MP4 H.264 availability on every browser. MP4 output is a short video-only transition segment with no audio.
+The candidate workflow runs standalone/embedded source parity and API tests for the nine transitions, eight shader FX plus the no-effect option, bounded resolution and P79 muxer handoff. Hosted Chromium smoke verifies the Video Engine panel, all transition start/end frames, crossfade midpoint, module checks and PNG download. This exercises WebGL through CI SwiftShader or the documented Canvas2D fallback; it does not certify physical GPU performance, a 60 fps target on mid-range hardware, user-footage visual quality or MP4 H.264 availability on every browser. MP4 output is a short video-only transition segment with no audio.
 
 
 ## P145.4b — Official embedded music preview
