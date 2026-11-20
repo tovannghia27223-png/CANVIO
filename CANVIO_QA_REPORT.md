@@ -347,3 +347,15 @@ The candidate workflow runs standalone/embedded source parity and API tests for 
 - Standalone security hub adds bounded `prepareHtmlImport` and async `importHtmlText`; local user file picker restricted to .html/.htm and text/html/application/xhtml+xml. Hard cap 5 MiB.
 - Uses existing allow-list sanitizer, removes remote image/source URLs but keeps local raster data URLs, strips active HTML and confirms before adding to current Website Engine. Uses only `CVWeb.addComponents` and `CV.engines.web.save`.
 - Workflow explicitly syncs standalone/embedded lot before P131 parity tests. New browser assertions cover safe content, removed scripts/handlers/forms/iframes, remote asset stripping, save result, save failure reporting and actual file picker path. Hosted result pending; do not merge until full P131 workflow passes.
+
+
+
+## P131.3 — final hosted and mainline verification PASS (2026-11-21)
+
+- PR #41 merged at `1ac185d7aea7b14ad13a0517f51e72292cc42162`; workflow #315 (`44816184861`) completed success. P131 Chromium suite: 31 passed, zero failures, zero page errors. P131 app smoke: 21 passed across 48 pages, no console/navigation errors.
+- Mainline push build commit `4fdaae3219cde7ebc6c4c9358bf40b3d57812f16` wrote generated `index.html` and Manifest. The main blob was re-read and verified to include P131.3's `prepareHtmlImport`, version `131.3.0` and **Nhập HTML an toàn · Website Studio** action. Manifest index SHA-256 `e419b50f1bd459201ad19d94f6a2cd5ea08c03b539be3c0a3b7899b8b925a7ac`; bytes 5,358,886; 237 files.
+- All P131 browser assertions passed: dangerous active elements and unsafe attributes removed, Vietnamese content and normal hyperlinks retained, local base64 raster retained, remote image source removed, cap enforced, canonical Website Engine add/save used, imported script not executed, no remote image request, save failure warning, actual file-picker flow.
+- Run #315 also passed full source/syntax, HTML/inline-JS audit, P47–P70 regressions, integrated source contracts/all Node suites, P107 ZIP round-trip, pinned Three.js r187/P85 vendor manifests, compressed Draco/Meshopt/KTX2 GLB runtime, OpenCV Lucas–Kanade, and full Chromium browser smoke. SwiftShader software rendering was used, not a physical GPU; full model inference was not performed.
+- Artifact `CANVIO-23.3.111-GITHUB-RUNTIME-VERIFIED-315`: 21,590,752 bytes; SHA-256 `12305d7990ed16b93d6d653cd3fd1d662a3cd90144b9800773e560a5a55fa06c`.
+- Previous “P131.3 pending/candidate/main-index promotion pending” entries are superseded by this PASS. P70 remains fail-closed with 14 manual gates pending and release certification false.
+
