@@ -11,7 +11,7 @@ win.window=win;vm.createContext(sb);vm.runInContext(src,sb,{filename:'canvio-p12
 const api=win.CVScrollFramesP125, good='data:image/jpeg;base64,/9j/AAAA';
 (async()=>{
  const validHtml=api.buildHtml([good,good],{width:320,height:180,framePaths:['frames/frame-001.jpg','frames/frame-002.jpg']});
- assert.ok(validHtml.includes('frames/frame-001.jpg')&&validHtml.includes('frames/frame-002.jpg'),'external frame references embedded');
+ assert.ok(validHtml.includes('frames/frame-001.jpg')&&validHtml.includes('frames/frame-002.jpg'),'safe relative frame references embedded');
  assert.ok(!validHtml.includes('data:image/jpeg;base64'),'external html does not inline frame payloads');
  const unsafeHtml=api.buildHtml([good,good],{framePaths:['../evil.jpg','https://example.test/a.jpg']});
  assert.ok(!unsafeHtml.includes('../evil.jpg')&&!unsafeHtml.includes('https://example.test/a.jpg'),'untrusted frame paths rejected');
