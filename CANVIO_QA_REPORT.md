@@ -257,3 +257,7 @@ The candidate workflow runs standalone/embedded source parity and API tests for 
 - P145.8 verifies eight first-party illustrations, four palettes, group/search filtering, theme preview and SVG export safety.
 - P145.9/.10 verifies the shared P145 content quality gate (license, source, name, size, duplicate hash), local search/filter and read-only UX using an injected fixture provider.
 - Fixture-based tests are not proof that every production Asset Vault item is enumerable. Live acceptance requires the host's canonical asset provider and verified metadata/hash coverage.
+
+ 
+### P145.7 pointer-interaction regression
+- Added a targeted regression for the status live region overlay: after selecting Editorial and receiving the status message, the Apply button remains reachable and status has `pointer-events:none`.

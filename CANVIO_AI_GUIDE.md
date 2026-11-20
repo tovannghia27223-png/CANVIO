@@ -3591,3 +3591,8 @@ P125.3: `CVScrollFramesP125.PRESETS`, `decimate(frames,maxBytes)`; `buildHtml` n
 - Standalone owner: `canvio-p145-search-gate.js`; embedded lot: `canvio-lot145910`; API: `window.CVAssetSearchGateP145910`. Reuses `CVContentCoreP145.qualityGate` and `canvio145:meta`; read-only filter/search by name, ID, type, license/source and status. Detects duplicate hashes only when a real asset entry supplies a hash.
 - Provider contract: uses `CV.assets.list()` when exposed by the host and provides `setAssetProvider(fn)` for an explicit canonical bridge. The feature must not claim complete inventory coverage if the host does not expose a provider; the hosted browser suite injects a deterministic fixture provider and is not proof of a production asset backend.
 - Tests: `tests/p145/run-p145910-tests.cjs` and `tests/p145/run-p145910-browser.py`. These cover the shared license/source/size/hash gate, filters, detail panel and read-only behavior. Hashing every uploaded binary and archive-level scanning are not implemented here.
+
+ 
+### P145.7 interaction refinement
+- Typography preset status is a polite, non-interactive live region (`pointer-events:none`) so its feedback text cannot intercept pointer input intended for adjacent controls.
+- Hosted Chromium verifies the Editorial selection/status/declared CSS stack and confirms the Apply button remains clickable after the status changes.
