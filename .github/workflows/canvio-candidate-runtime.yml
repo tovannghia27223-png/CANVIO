@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - canvio/23-3-111-github-runtime-ci
+      - work/p127-7-ducking-p145-continuation
       - main
   pull_request:
     branches:
@@ -81,6 +82,26 @@ jobs:
             echo "Using committed CANVIO candidate index."
           fi
 
+      - name: Integrate P127.7 subtitle-led music ducking
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs=require('node:fs');
+          const file='index.html';
+          let html=fs.readFileSync(file,'utf8');
+          const source=fs.readFileSync('canvio-p127-duck.js','utf8').trim();
+          if(!source.includes('window.CVDuckSubP127'))throw new Error('P127.7 source contract missing');
+          if(!html.includes('id="canvio-lot127k"')){
+            const at=html.lastIndexOf('</body>');
+            if(at<0)throw new Error('index.html has no closing body tag');
+            html=html.slice(0,at)+'<script id="canvio-lot127k">\\n'+source+'\\n</script>\\n'+html.slice(at);
+          }
+          if((html.match(/id="canvio-lot127k"/g)||[]).length!==1)throw new Error('P127.7 duplicate or missing script tag');
+          fs.writeFileSync(file,html,'utf8');
+          console.log('P127.7 integrated into canonical index.html');
+          NODE
+
       - name: Verify native test utilities
         shell: bash
         run: |
@@ -148,7 +169,7 @@ jobs:
         run: |
           set -euo pipefail
           node scripts/extract-integrated-modules.mjs
-          for file in canvio-p74-p81-three-viewer.js canvio-p85-studio.js canvio-p102-background-removal.js canvio-p105-p107-depth-parallax.js canvio-p68-p70.js canvio-p72-glb-viewer.js canvio-p73-offline-site.js canvio-p82-p84-vector-pdf.js canvio-p87-cv-docx.js canvio-p90-p96.js canvio-p97-p101.js canvio-p104.js assets/canvio-rmbg-worker.js assets/canvio-depth-worker.js assets/canvio-whisper-worker.js; do node --check "$file"; done
+          for file in canvio-p74-p81-three-viewer.js canvio-p85-studio.js canvio-p102-background-removal.js canvio-p105-p107-depth-parallax.js canvio-p68-p70.js canvio-p72-glb-viewer.js canvio-p73-offline-site.js canvio-p82-p84-vector-pdf.js canvio-p87-cv-docx.js canvio-p90-p96.js canvio-p97-p101.js canvio-p104.js canvio-p127-duck.js assets/canvio-rmbg-worker.js assets/canvio-depth-worker.js assets/canvio-whisper-worker.js; do node --check "$file"; done
 
       - name: Audit complete HTML and all inline JavaScript
         shell: bash
@@ -220,6 +241,7 @@ jobs:
           node tests/p115/run-p122-p123-tests.cjs
           node tests/p115/run-p1222-tests.cjs
           node tests/p115/run-p127-tests.cjs
+          node tests/p127/run-p127k-tests.cjs
           node tests/p131/run-p131-tests.cjs
           node tests/p127/run-p127q-tests.cjs
           node tests/p127/run-p127l-tests.cjs
