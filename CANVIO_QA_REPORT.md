@@ -152,3 +152,10 @@ The GitHub-hosted Node 24 runner provisions same-origin Three.js r187 and P85 ru
 - No new runtime tests were executed in this checkpoint. The combined status response for commit `9290d128ca553b06195500d37210c8ffcc45dbbb` returned an empty status list; therefore no new CI PASS is claimed.
 - Manifest was not manually rewritten because a trustworthy full-file SHA-256/package rebuild was not performed. The repository workflow must refresh manifest entries after any subsequent tracked-file update.
 - Release disposition remains BLOCKED pending real-world acceptance; do not call CANVIO 1.0 Stable or production-certified.
+
+
+## CI follow-up — missing ffmpeg dependency (2026-11-20)
+
+- Root cause from failed hosted run [#116](https://github.com/tovannghia27223-png/CANVIO/actions/runs/44689280423): all preceding source contracts, P131 browser security checks, 48-page navigation smoke, P127 UI smoke and P85/GLB runtime checks passed; the job failed only when `tests/p127/run-p125f-browser.py` attempted to spawn `ffmpeg`, which was not installed on the Ubuntu runner.
+- Workflow fix committed at `ccd4f2a0c9d17e617e4cfb09c4ff2cbaaff8e755`: add `ffmpeg` to the existing apt-provisioned native test utilities alongside `zip`. This should unblock the P125.1 real-browser test; it is not yet a PASS until the new hosted run completes.
+- Existing run #116 remains FAILED. Do not rewrite its conclusion or report the workflow fix as validated before the rerun.
