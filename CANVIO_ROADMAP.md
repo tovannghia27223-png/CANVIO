@@ -767,3 +767,13 @@ Hosted verification after the ffmpeg repair is complete:
 - Adds Node API parity checks and Chromium tests for malicious markup, local raster retention, remote image removal, Vietnamese content, project save and user file picker.
 - Current status: candidate PR #41; hosted CI required before merge. Real external-page fidelity, CSS/assets, third-party runtime, mobile and production accessibility remain separate manual acceptance items.
 
+
+
+
+## P131.3 hosted acceptance and index promotion — 2026-11-21
+
+- PR #41 merged the P131.3 standalone security/import API and test coverage at `1ac185d7aea7b14ad13a0517f51e72292cc42162`. Hosted run #315 (`44816184861`) completed success. P131 browser suite: 31/31, zero page errors; app smoke: 21/21 across 48 pages; full candidate/runtime workflow passed.
+- The merge commit did not contain an `index.html` blob update. This follow-up branch adds its own push-build trigger so CI embeds the merged module into canonical `canvio-lot131`, commits generated `index.html`/Manifest to this branch, and runs a final PR workflow before mainline activation.
+- Supported scope: .html/.htm body fragment ≤5 MiB; existing allow-list sanitizer; removes active HTML, unsafe attributes and remote image/source URLs; preserves local raster data URLs; adds via existing Website Engine and saves through existing owner. Does not import stylesheet files, scripts, forms, iframes, remote media or third-party app runtime.
+- No cloud sync, upload or new data store. P70 remains blocked with 14/14 manual real-world gates pending.
+
