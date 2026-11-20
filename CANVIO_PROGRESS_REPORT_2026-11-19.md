@@ -93,3 +93,12 @@ This batch is not a completion claim for P115–P145 and does not certify CANVIO
 - P136.4 merged through PR #39 at `1eb4129f4252b31c41f819d23f1cd9dd02948d68`. Hosted run #312 (`44813838108`) passed 33 steps; full P47–P70 regression, source audits, P107 round-trip, Chromium/GLB/P85/ONNX acceptance passed. Artifact `CANVIO-23.3.111-GITHUB-RUNTIME-VERIFIED-312`, 21,583,636 bytes.
 - P131.3 extends the P131 security hub with safe local HTML import into the existing Website Engine. 5 MiB cap, allow-list sanitization, no external image fetch, canonical add/save path, explicit confirmation. Candidate PR #41 awaits CI.
 - Automated CI does not close the fourteen P70 real-world acceptance gates. No production certification, physical GPU, full model-inference, cross-device/cloud sync, real-media quality, or accessibility sign-off is implied.
+
+
+
+## 2026-11-21 continuation — P131.3 hosted acceptance and canonical index promotion
+
+- P131.3 standalone source/test/workflow merged in PR #41 at `1ac185d7aea7b14ad13a0517f51e72292cc42162`; run #315 (`44816184861`) succeeded. P131 Chromium 31/31 with zero page errors; P131 app smoke 21/21 across 48 pages; full source, regression, P107, Three/P85/GLB and runtime checks passed.
+- Artifact #315: `CANVIO-23.3.111-GITHUB-RUNTIME-VERIFIED-315`, 21,590,752 bytes; SHA-256 `12305d7990ed16b93d6d653cd3fd1d662a3cd90144b9800773e560a5a55fa06c`.
+- Run #315 proves a generated candidate build, not a main-index update by itself. The PR merge did not alter the large canonical index blob; this follow-up branch uses the verified push-build workflow to embed the standalone security module into `canvio-lot131` and commit the resulting candidate index/Manifest.
+- P70 still has fourteen real-world acceptance gates pending; no production certification, physical GPU, full model-inference, cloud/two-device sync, real-media quality or accessibility sign-off is implied.
