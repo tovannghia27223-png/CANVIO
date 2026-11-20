@@ -142,3 +142,8 @@ The candidate is built and verified by the hosted runtime workflow. Runtime vend
 - P145 Content Factory text downloads and P73 Offline Website HTML packages use the shared P131 redactor. These flows fail closed if redaction is unavailable.
 - Tests: \`run-p131-tests.cjs\`, \`run-p131-export-contracts.cjs\`, hosted \`run-p131-app-smoke.py\`.
 - Do not describe P131 as fully complete: general HTML/PPTX/ZIP import, archive expansion limits and HTTP CSP/SRI response headers remain open.
+
+## P136.3 continuation — Single-line Stroke Trace
+- Image Studio now has Filled / Single-line Stroke modes. Stroke mode produces editable open SVG line paths from high-contrast input using local Otsu thresholding and skeleton thinning.
+- Existing filled multi-colour trace and Bezier smoothing are preserved.
+- Verify with node tests/p127/run-p136t-tests.cjs and tests/p145/run-p136-browser.py.

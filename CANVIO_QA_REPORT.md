@@ -236,3 +236,9 @@ The candidate workflow runs standalone/embedded source parity and API tests for 
 - P73 Offline Website: tested final HTML redaction and refusal to package without P131 redactor; package report includes redacted count.
 - Source-contract test validates P67/P73/P145 standalone owners and sync configuration. Hosted workflow run #44774969271 passed before the merge-base-only refresh.
 - Manual acceptance remains for hostile HTML/PPTX/ZIP importers, archive-bomb quotas on every import route and deployment HTTP CSP headers.
+
+## P136.3 — Single-line Stroke Trace tests added
+
+- Unit suite now checks optional filled Bezier output plus stroke-only output (fill="none"), rounded line ends, reduced skeleton pixel count, stroke-width clamp and invalid-input rejection.
+- Hosted Chrome suite runs existing filled trace round-trip, checks Bezier export, then selects Stroke mode, verifies preview/status and downloads a static open-path SVG without filled colour layers.
+- Synthetic fixture demonstrates the code path on high-contrast artwork only; complex illustrations, photographs, handwriting and print production remain manual review items.
