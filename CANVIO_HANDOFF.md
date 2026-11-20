@@ -219,3 +219,11 @@ The candidate is built and verified by the hosted runtime workflow. Runtime vend
 - Hosted workflow #304 (`44809678883`) completed success. The WebP browser report shows a valid RIFF animation with VP8X/ANIM/10 ANMF chunks, valid VP8 data in every frame, dimensions 200×113, 200 ms frame delay and successful Chromium native decode; no browser page errors or failed assertions.
 - GIF/APNG browser checks plus full candidate syntax, regression, ZIP/P107, GLB/P85/ONNX and worker acceptance also passed. Artifact `CANVIO-23.3.111-GITHUB-RUNTIME-VERIFIED-304` uploaded at 21,573,301 bytes.
 - Merge readiness is established for automated CI only. No audio in WebP; real footage, color/alpha, touch/mobile and long-duration performance remain manual.
+
+
+## P145.10 — bounded local Asset Library hash scan (rebased candidate, 2026-11-21)
+
+- Uses the existing `CV.assets.list()` local vault and `LS('assets')`; no second provider/database.
+- Manual SHA-256 over decoded local base64 bytes. Hashes are ephemeral and feed the shared Quality Gate without mutating records.
+- Limits: 40 assets, 25 MiB per file, 64 MiB aggregate. Unsupported or over-budget rows remain unverified. No network, upload or background scan.
+- Original PR #37 full hosted run passed; current-main rebased run pending.
