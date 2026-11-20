@@ -219,3 +219,13 @@ The candidate is built and verified by the hosted runtime workflow. Runtime vend
 - Hosted workflow #304 (`44809678883`) completed success. The WebP browser report shows a valid RIFF animation with VP8X/ANIM/10 ANMF chunks, valid VP8 data in every frame, dimensions 200×113, 200 ms frame delay and successful Chromium native decode; no browser page errors or failed assertions.
 - GIF/APNG browser checks plus full candidate syntax, regression, ZIP/P107, GLB/P85/ONNX and worker acceptance also passed. Artifact `CANVIO-23.3.111-GITHUB-RUNTIME-VERIFIED-304` uploaded at 21,573,301 bytes.
 - Merge readiness is established for automated CI only. No audio in WebP; real footage, color/alpha, touch/mobile and long-duration performance remain manual.
+
+## P145.10 — local Asset Library hash scan candidate (2026-11-21)
+
+- Actual provider: `CV.assets.list()` is already the canonical local Asset Library owner; base `addBlob()` reads files to data URLs and stores rows through existing `LS('assets')`. P145.9/.10 fallback reads it automatically; no separate provider/DB is required.
+- Added user-triggered, read-only SHA-256 of binary bytes in local base64 data URLs. Session-only duplicate hashes feed the shared quality gate; they are not persisted. Filtering keeps current session results.
+- Caps: 40 assets, 25 MiB per file, 64 MiB per scan. Anything unsupported or over limits is clearly left without a hash. No network, upload, new store or background hashing.
+- Await the new hosted Node/Chromium workflow before treating this update as accepted. Complete hashing is not claimed for any skipped items.
+
+- Hosted acceptance run #308 (`44811157725`) passed: Node 10/10, Chromium 14/14; native `CV.assets.list()` provider, valid SHA-256, byte-level duplicate detection and zero Asset Library mutation confirmed; `pageErrors: []`, `failed: []`.
+

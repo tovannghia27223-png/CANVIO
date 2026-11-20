@@ -38,3 +38,8 @@
 
 
 | P132.3 animated WebP | Hosted run #304 PASS; 10 image-bearing ANMF/VP8 frames, 200×113, 200 ms, Chromium native decode; GIF/APNG and full candidate workflow also PASS | Manual real footage, alpha/color profile, touch/mobile and long-animation memory/performance remain open; no audio |
+
+| P145.10 live local-vault SHA-256 | Default reads native `CV.assets.list()`; manual byte-level Web Crypto scan, session-only results, no storage mutation; budgets 40 rows / 25 MiB per file / 64 MiB per scan | Node + Chromium checks added; hosted run #308 PASS (Node 10/10, Chromium 14/14). Rows skipped by data/crypto/budget constraints remain unverified; cloud sync is not included |
+
+- Hosted acceptance run #308 (`44811157725`) passed: Node 10/10, Chromium 14/14; native `CV.assets.list()` provider, valid SHA-256, byte-level duplicate detection and zero Asset Library mutation confirmed; `pageErrors: []`, `failed: []`.
+

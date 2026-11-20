@@ -736,3 +736,13 @@ Hosted verification after the ffmpeg repair is complete:
 - PR #36 corrected the browser test's stale fixed-height expectation (200) to match the actual editor canvas-derived 113 px; output remained 200 px wide.
 - Workflow #304 (`44809678883`) completed success. WebP browser checks all passed: RIFF length/chunks, VP8X animation feature, ANIM, 10 ANMF frames, valid VP8 payload per frame, 200×113 frame dimensions, 200 ms duration, Chromium native `createImageBitmap` decode. Browser report `failed: []`, `pageErrors: []`. GIF/APNG acceptance and full GLB/P85/ONNX same-origin browser checks also passed.
 - Limits unchanged: no audio mux; target mobile browser matrix, real footage/visual quality, alpha/color-profile, and long timeline memory/performance need manual review. P70 remains blocked with fourteen real-world gates open.
+
+## 23.3.111 continuation — P145.10 native Asset Library SHA-256 scan (candidate, 2026-11-21)
+
+- Corrected source discovery: the existing `index.html` already defines the local Asset Library owner `CV.assets.list()/addBlob()` using the existing `LS('assets')` record; the P145.9/.10 fallback is wired to this owner by default. This is not remote/cloud sync; the native owner is local-first and capped at 40 records.
+- Adds an explicit read-only SHA-256 scan on the existing “Làm mới & rà soát” action. It hashes exact bytes decoded from local base64 data URLs using Web Crypto, then supplies ephemeral hashes to the shared P145.1 quality gate. No vault record or metadata is modified.
+- Limits are 40 assets, 25 MiB per asset, 64 MiB total per scan. Items with unavailable/non-base64 data, unavailable Web Crypto, or over-budget size remain visibly unverified. Hashes live only in current page memory and are recalculated on the next manual scan.
+- Browser tests confirm native default provider parity with `CV.assets.list()`, byte-identical payload detection across different MIME labels, and no asset-row mutation. Node tests add transient-hash duplicate and immutability checks. hosted run #308 PASS (Node 10/10, Chromium 14/14); P145 is not certified for complete hashing when any item is skipped.
+
+- Hosted acceptance run #308 (`44811157725`) passed: Node 10/10, Chromium 14/14; native `CV.assets.list()` provider, valid SHA-256, byte-level duplicate detection and zero Asset Library mutation confirmed; `pageErrors: []`, `failed: []`.
+

@@ -316,3 +316,13 @@ The candidate workflow runs standalone/embedded source parity and API tests for 
 - WebP checks: download/status/button reset, RIFF+WEBP signature and declared RIFF size, chunk walk and padding, VP8X animation flag/canvas dimensions, ANIM, exactly 10 ANMF frames, each with VP8 payload, 200×113 per-frame dimensions, 200 ms delay and Chromium `createImageBitmap` decode all true. Browser report ended with `pageErrors: []` and `failed: []`.
 - GIF and APNG controls, signatures and decoding also passed. Workflow-wide HTML/JS audit, P47–P70 regressions, integrated source contracts/P107 ZIP round-trip, vendor SHA verification, compressed GLB fixtures and same-origin P85/ONNX/worker browser acceptance passed.
 - Hosted artifact `CANVIO-23.3.111-GITHUB-RUNTIME-VERIFIED-304` uploaded (21,573,301 bytes). Human acceptance still needed for actual footage, alpha/color profile, mobile browser support and long-form memory/performance; P70 remains uncertified.
+
+## P145.10 — live local-vault hash implementation (candidate; hosted run #308 PASS (Node 10/10, Chromium 14/14), 2026-11-21)
+
+- Inspected canonical `index.html`: Asset Library owner is `CV.assets.list()` / `CV.assets.addBlob()`, with existing rows stored in `LS('assets')` (maximum 40). P145.9/.10 already uses `CV.assets.list()` as its default source when no provider fixture is injected. Previous QA wording that suggested the provider itself was missing is corrected: the live local owner is connected; it is not a cloud/remote vault.
+- P145.10 now explicitly hashes local base64 data URLs by decoding to bytes and calling Web Crypto SHA-256 when the user requests a scan. Results are session-only; no write to the existing asset list or metadata. Filters reuse session results.
+- Guardrails: maximum 40 rows, 25 MiB per file, 64 MiB aggregate per scan. Missing/unsupported data, disabled Web Crypto and over-budget items are counted as skipped and remain unverified. No external request, upload, second store or automatic background scan.
+- Node tests add transient hash duplicate and no-mutation assertions. Chromium test checks native `CV.assets.list()` fallback, duplicate content where MIME types differ, and unchanged vault records. Corrected hosted run #308 passed: Node 10/10 and Chromium 14/14, with no page errors or failed checks.
+
+- Hosted acceptance run #308 (`44811157725`) passed: Node 10/10, Chromium 14/14; native `CV.assets.list()` provider, valid SHA-256, byte-level duplicate detection and zero Asset Library mutation confirmed; `pageErrors: []`, `failed: []`.
+

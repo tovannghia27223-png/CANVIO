@@ -14,3 +14,8 @@
 - P132.3 verification follow-up: run #303 confirmed 10 valid ANMF/VP8 frame chunks and Chromium decoded 200×113; fixed final browser assertion to use canvas-derived height (the prior test incorrectly expected 200 px). ffprobe WebP output remains diagnostic only on this runner; corrected hosted rerun pending.
 
 - P132.3 animated WebP hosted acceptance passed in run #304 (`44809678883`): RIFF/VP8X/ANIM/10×ANMF validation, per-frame VP8 payloads, 200×113 canvas/frame dimensions, 200 ms delay and Chromium `createImageBitmap` decode; no browser failures/page errors. Full hosted candidate workflow passed. Manual real-media/mobile/color/memory checks remain open.
+
+- P145.10 candidate: bounded, user-triggered SHA-256 over actual bytes in the canonical local `CV.assets.list()` data URLs; session-only duplicate detection, no asset mutation, no network or new store (40 rows / 25 MiB per row / 64 MiB per scan). Corrected earlier note: default provider already reads the existing local Asset Library; what was missing was automatic byte hashing. hosted verification PASS in run #308.
+
+- Hosted acceptance run #308 (`44811157725`) passed: Node 10/10, Chromium 14/14; native `CV.assets.list()` provider, valid SHA-256, byte-level duplicate detection and zero Asset Library mutation confirmed; `pageErrors: []`, `failed: []`.
+
