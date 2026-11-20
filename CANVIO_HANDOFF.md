@@ -227,3 +227,11 @@ The candidate is built and verified by the hosted runtime workflow. Runtime vend
 - Manual SHA-256 over decoded local base64 bytes. Hashes are ephemeral and feed the shared Quality Gate without mutating records.
 - Limits: 40 assets, 25 MiB per file, 64 MiB aggregate. Unsupported or over-budget rows remain unverified. No network, upload or background scan.
 - Original PR #37 full hosted run passed; current-main rebased run pending.
+
+
+
+## P136.4 — Image Trace pattern-fill candidate (2026-11-21)
+
+- Updated canonical P136 owner canvio-p136-trace.js / embedded lot canvio-lot136t to version 136.4.0. Existing multicolour and single-line trace modes remain; Bezier support retained.
+- Adds local SVG pattern presets: dots, diagonal hatch, grid, cross, wave and checker. none maintains prior fill SVG output; pattern UI is disabled for Stroke mode. No remote assets, paid dependency or new store.
+- Verification is pending the branch hosted workflow. If merged, retain the limitations: not brush authoring/gradient mesh/topology editing and still needs review on real production artwork.
