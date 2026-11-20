@@ -30642,5 +30642,426 @@ function tests(){
 window.CVCaptionDirectorP1272={version:'127.2.1',cuesFrom:cuesFrom,analyze:analyze,buildMotion:buildMotion,applyZoom:applyZoom,autoCut:autoCut,mount:mount,tests:tests};
 })();
 </script>
+<script id="canvio-lot1456">
+/* P145.6 — Original offline SVG icon pack. All paths are first-party CANVIO vector work; no remote assets. */
+(function(){
+'use strict';
+if(window.CVOriginalIconPackP1456)return;
+var CATS={
+ business:{label:'Kinh doanh',glyphs:['briefcase','handshake','target','calendar','clipboard']},
+ finance:{label:'Tài chính',glyphs:['chart','wallet','receipt','calculator','coins']},
+ hr:{label:'Nhân sự',glyphs:['people','user-plus','award','id-card','heart']},
+ social:{label:'Social / Media',glyphs:['megaphone','video','image','play','layout']},
+ utility:{label:'Tiện ích',glyphs:['search','settings','check','shield-check','file-text']}
+};
+var ICONS=[
+ {id:'briefcase',label:'Cặp công việc',cat:'business',d:'M3 8.5h18v11H3z M8 8.5V5h8v3.5 M3 12h18 M10 12v2h4v-2'},
+ {id:'handshake',label:'Hợp tác',cat:'business',d:'M3 9l4-3 4 2 2-1 4 1 4 3-3 4-3-1-3 2-3-2-3 1-3-3z M7 6l-2-2-3 3 2 2 M17 6l2-2 3 3-2 2 M8 12l3 3 2-1 2 1 3-3'},
+ {id:'target',label:'Mục tiêu',cat:'business',d:'M12 3a9 9 0 1 0 9 9 M12 7a5 5 0 1 0 5 5 M12 12l8-8 M17 4h3v3'},
+ {id:'calendar',label:'Lịch',cat:'business',d:'M4 5h16v16H4z M8 3v4 M16 3v4 M4 9h16 M8 13h3 M8 17h3 M14 13h2'},
+ {id:'clipboard',label:'Bảng công việc',cat:'business',d:'M8 5H5v16h14V5h-3 M9 3h6v4H9z M8 12h8 M8 16h8'},
+ {id:'chart',label:'Biểu đồ tăng trưởng',cat:'finance',d:'M4 20V4 M4 20h17 M7 16l4-5 3 2 6-8 M16 5h4v4'},
+ {id:'wallet',label:'Ví',cat:'finance',d:'M4 6h15a2 2 0 0 1 2 2v11H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z M3 8l2-3h12 M15 11h6v4h-6a2 2 0 0 1 0-4z M17 13h.01'},
+ {id:'receipt',label:'Hóa đơn',cat:'finance',d:'M6 3l2 2 2-2 2 2 2-2 2 2 2-2v18l-2-2-2 2-2-2-2 2-2-2-2 2z M9 9h6 M9 13h6 M9 17h3'},
+ {id:'calculator',label:'Máy tính',cat:'finance',d:'M5 3h14v18H5z M8 7h8v3H8z M8 14h2 M14 14h2 M8 18h2 M14 18h2'},
+ {id:'coins',label:'Đồng xu',cat:'finance',d:'M12 4c4 0 7 1.3 7 3s-3 3-7 3-7-1.3-7-3 3-3 7-3z M5 7v5c0 1.7 3 3 7 3s7-1.3 7-3V7 M5 12v5c0 1.7 3 3 7 3s7-1.3 7-3v-5'},
+ {id:'people',label:'Đội ngũ',cat:'hr',d:'M9 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6z M17 10a2.5 2.5 0 1 0 0-5 M3 20c0-3.2 2.5-5 6-5s6 1.8 6 5 M15 15c3.5-.2 6 1.5 6 4'},
+ {id:'user-plus',label:'Thêm nhân sự',cat:'hr',d:'M9 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z M3 20c0-3.4 2.5-5.5 6-5.5s6 2.1 6 5.5 M18 8v6 M15 11h6'},
+ {id:'award',label:'Thành tích',cat:'hr',d:'M12 3a6 6 0 1 0 0 12 6 6 0 0 0 0-12z M8 14l-2 7 6-3 6 3-2-7'},
+ {id:'id-card',label:'Thẻ nhân sự',cat:'hr',d:'M3 5h18v14H3z M8 12a2.3 2.3 0 1 0 0-4.6A2.3 2.3 0 0 0 8 12z M5 16c.7-1.5 1.7-2 3-2s2.3.5 3 2 M13 9h5 M13 13h5'},
+ {id:'heart',label:'Phúc lợi',cat:'hr',d:'M12 20S4 15 4 9a4 4 0 0 1 8-1 4 4 0 0 1 8 1c0 6-8 11-8 11z'},
+ {id:'megaphone',label:'Truyền thông',cat:'social',d:'M3 10v4h4l11 5V5L7 10z M7 14l2 6h4l-3-5 M18 9h3 M18 12h3 M18 15h3'},
+ {id:'video',label:'Video',cat:'social',d:'M3 6h13v12H3z M16 10l5-3v10l-5-3z M7 10h4'},
+ {id:'image',label:'Hình ảnh',cat:'social',d:'M3 4h18v16H3z M4 17l5-5 4 4 3-3 4 4 M8 9h.01 M15 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4z'},
+ {id:'play',label:'Phát',cat:'social',d:'M6 4l13 8-13 8z'},
+ {id:'layout',label:'Bố cục',cat:'social',d:'M3 4h18v16H3z M3 10h18 M10 10v10 M15 10v10'},
+ {id:'search',label:'Tìm kiếm',cat:'utility',d:'M10.5 3a7.5 7.5 0 1 0 0 15 7.5 7.5 0 0 0 0-15z M16 16l5 5'},
+ {id:'settings',label:'Thiết lập',cat:'utility',d:'M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z M12 2v3 M12 19v3 M2 12h3 M19 12h3 M4.9 4.9L7 7 M17 17l2.1 2.1 M19.1 4.9L17 7 M7 17l-2.1 2.1'},
+ {id:'check',label:'Hoàn tất',cat:'utility',d:'M4 12l5 5L20 6'},
+ {id:'shield-check',label:'Bảo mật',cat:'utility',d:'M12 3l8 3v5c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z M8 12l3 3 5-6'},
+ {id:'file-text',label:'Tài liệu',cat:'utility',d:'M6 3h8l4 4v14H6z M14 3v5h5 M9 12h6 M9 16h6'}
+];
+function esc(s){return String(s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function iconSvg(id,color){
+ var item=ICONS.filter(function(x){return x.id===id;})[0];if(!item)throw new Error('Icon không tồn tại.');
+ return '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="'+(color==='ink'?'#14243a':'#2457a7')+'" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="'+esc(item.label)+'"><path d="'+item.d+'"/></svg>';
+}
+function sprite(){
+ return '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="display:none">'+ICONS.map(function(x){return'<symbol id="canvio-'+x.id+'" viewBox="0 0 24 24"><path d="'+x.d+'" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>';}).join('')+'</svg>';
+}
+function standaloneSheet(){
+ var cols=4,cellW=180,cellH=118,rows=Math.ceil(ICONS.length/cols),width=cols*cellW,height=rows*cellH+50;
+ var body=ICONS.map(function(x,i){var cx=(i%cols)*cellW+cellW/2,cy=Math.floor(i/cols)*cellH+46;return'<g transform="translate('+cx+' '+cy+')"><g transform="translate(-12 -18)"><path d="'+x.d+'" fill="none" stroke="#2457a7" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></g><text y="34" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#14243a">'+esc(x.label)+'</text></g>';}).join('');
+ return '<svg xmlns="http://www.w3.org/2000/svg" width="'+width+'" height="'+height+'" viewBox="0 0 '+width+' '+height+'"><rect width="100%" height="100%" fill="#f4f6fa"/><text x="24" y="30" font-family="Arial,sans-serif" font-size="18" font-weight="700" fill="#14243a">CANVIO Original Icon Pack · P145.6</text>'+body+'</svg>';
+}
+function download(name,text){
+ var url=URL.createObjectURL(new Blob([text],{type:'image/svg+xml;charset=utf-8'})),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url);},4000);
+}
+function mount(){
+ var page=document.querySelector('#page-assets');if(!page||page.querySelector('#cv1456-card'))return false;
+ var card=document.createElement('section');card.id='cv1456-card';card.className='card';card.style.marginTop='12px';
+ card.innerHTML='<div class="cardTop"><h3>Original Icon Pack · bộ SVG CANVIO (P145.6)</h3><span class="sub">25 biểu tượng vector tự tạo · offline · không dùng stock</span></div>'+
+ '<div class="row" style="gap:8px;flex-wrap:wrap;align-items:end"><label class="tiny">Danh mục<select class="input" id="cv1456-cat"><option value="all">Tất cả</option>'+Object.keys(CATS).map(function(k){return'<option value="'+k+'">'+CATS[k].label+'</option>';}).join('')+'</select></label><label class="tiny">Tìm biểu tượng<input class="input" id="cv1456-search" placeholder="Tìm tên biểu tượng…"></label><button type="button" class="btn btn-soft sm" id="cv1456-sprite">Tải SVG Sprite</button><button type="button" class="btn btn-ghost sm" id="cv1456-sheet">Tải bảng tổng hợp</button></div>'+
+ '<div id="cv1456-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:8px;margin-top:12px"></div>'+
+ '<div class="row" style="gap:12px;align-items:center;flex-wrap:wrap;margin-top:12px;padding:10px;border:1px solid var(--line,rgba(128,140,160,.2));border-radius:10px"><div id="cv1456-selected" style="width:68px;height:68px;display:grid;place-items:center;background:#f4f6fa;border-radius:10px"></div><div style="flex:1;min-width:160px"><b id="cv1456-title">Chọn một biểu tượng</b><div class="tiny" id="cv1456-meta">Có thể tải từng SVG để nhập vào Asset Library.</div></div><button type="button" class="btn btn-soft sm" id="cv1456-one" disabled>Tải SVG này</button><button type="button" class="btn btn-ghost sm" id="cv1456-copy" disabled>Sao chép SVG</button></div>'+
+ '<div class="tiny" id="cv1456-out" role="status" aria-live="polite" style="margin-top:8px">SVG không có script, font nhúng, ảnh ngoài hoặc URL từ xa. Tải SVG để dùng trong các thiết kế khác.</div>';
+ var after=page.querySelector('#cv1455-card')||page.querySelector('#cv145-card');
+ if(after&&after.parentNode)after.parentNode.insertBefore(card,after.nextSibling);else page.appendChild(card);
+ var $=function(sel){return card.querySelector(sel);},selected=null;
+ function filtered(){
+  var cat=$('#cv1456-cat').value,q=$('#cv1456-search').value.trim().toLowerCase();
+  return ICONS.filter(function(x){return(cat==='all'||x.cat===cat)&&(!q||(x.label+' '+x.id+' '+CATS[x.cat].label).toLowerCase().indexOf(q)>=0);});
+ }
+ function draw(){
+  var root=$('#cv1456-grid');root.replaceChildren();
+  filtered().forEach(function(x){
+   var b=document.createElement('button');b.type='button';b.className='btn btn-ghost';b.style.cssText='display:grid;gap:6px;justify-items:center;padding:10px;min-height:82px';
+   b.setAttribute('data-cv1456-id',x.id);b.setAttribute('aria-label',x.label);
+   b.innerHTML=iconSvg(x.id)+'<span class="tiny">'+esc(x.label)+'</span>';
+   if(selected===x.id)b.style.outline='2px solid var(--accent,#2457a7)';
+   b.addEventListener('click',function(){selected=x.id;$('#cv1456-selected').innerHTML=iconSvg(x.id);$('#cv1456-title').textContent=x.label;$('#cv1456-meta').textContent=CATS[x.cat].label+' · 24×24 · SVG path';$('#cv1456-one').disabled=false;$('#cv1456-copy').disabled=false;draw();});
+   root.appendChild(b);
+  });
+ }
+ $('#cv1456-cat').addEventListener('change',draw);$('#cv1456-search').addEventListener('input',draw);
+ $('#cv1456-one').addEventListener('click',function(){if(!selected)return;download('canvio-'+selected+'.svg',iconSvg(selected));$('#cv1456-out').textContent='Đã xuất SVG: canvio-'+selected+'.svg';});
+ $('#cv1456-copy').addEventListener('click',function(){if(!selected)return;var s=iconSvg(selected);if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(s).then(function(){$('#cv1456-out').textContent='Đã sao chép SVG.';},function(){$('#cv1456-out').textContent='Không thể sao chép tại ngữ cảnh này; hãy tải SVG.';});else $('#cv1456-out').textContent='Clipboard không khả dụng; hãy tải SVG.';});
+ $('#cv1456-sprite').addEventListener('click',function(){download('canvio-original-icons-sprite.svg',sprite());$('#cv1456-out').textContent='Đã xuất SVG Sprite gồm '+ICONS.length+' symbol. Dùng <use href="#canvio-id"> trong tài liệu cùng sprite.';});
+ $('#cv1456-sheet').addEventListener('click',function(){download('canvio-original-icons-sheet.svg',standaloneSheet());$('#cv1456-out').textContent='Đã xuất bảng tổng hợp SVG.';});
+ draw();return true;
+}
+function ready(){try{mount();var p=document.querySelector('#page-assets');if(p&&!p.__cv1456Obs&&window.MutationObserver){p.__cv1456Obs=new MutationObserver(function(){if(!p.querySelector('#cv1456-card'))mount();});p.__cv1456Obs.observe(p,{childList:true});}}catch(e){if(window.console)console.warn('P145.6 icon pack',e);}}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',ready,{once:true});else ready();
+function tests(){
+ var ids=ICONS.map(function(x){return x.id;}),svg=iconSvg('briefcase'),sp=sprite(),sheet=standaloneSheet();
+ return{twentyFiveOriginalIcons:ICONS.length===25,allIdsUnique:new Set(ids).size===ids.length,fiveCategories:Object.keys(CATS).length===5,allPathsPresent:ICONS.every(function(x){return /^[a-z0-9-]+$/.test(x.id)&&/^[A-Za-z0-9 .,+\-]+$/.test(x.d);}),standaloneSvgValid:svg.indexOf('<svg')===0&&svg.indexOf('<path')>0&&svg.indexOf('https://')<0&&svg.indexOf('<script')<0,spriteHasEverySymbol:ids.every(function(id){return sp.indexOf('id="canvio-'+id+'"')>=0;}),sheetIncludesAllLabels:ICONS.every(function(x){return sheet.indexOf(esc(x.label))>=0;}),noExternalAssets:!/(?:href|src)=["']?https?:|@import|url\(/i.test(svg+sp+sheet),unknownIconRejected:(function(){try{iconSvg('nope');return false;}catch(e){return true;}})()};
+}
+window.CVOriginalIconPackP1456={version:'145.6.0',categories:CATS,icons:ICONS,iconSvg:iconSvg,sprite:sprite,standaloneSheet:standaloneSheet,mount:mount,tests:tests};
+})();
+</script>
+<script id="canvio-lot1457">
+/* P145.7 — local system-font typography presets; no bundled font binaries or remote requests. */
+(function(){
+'use strict';
+if(window.CVTypographyPresetsP1457)return;
+var FONTS={
+ system:'system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif',
+ editorial:'Georgia,"Times New Roman",serif',
+ corporate:'"Segoe UI",Arial,sans-serif',
+ humanist:'"Trebuchet MS",Verdana,sans-serif',
+ modern:'Arial,Helvetica,sans-serif',
+ mono:'ui-monospace,SFMono-Regular,Consolas,monospace'
+};
+var PRESETS={
+ business:{label:'Business Clarity',heading:'system',body:'corporate',headingWeight:750,bodyWeight:400,headingSize:42,bodySize:16,lineHeight:1.65,tracking:-.025},
+ finance:{label:'Financial Editorial',heading:'editorial',body:'system',headingWeight:700,bodyWeight:400,headingSize:44,bodySize:16,lineHeight:1.7,tracking:-.02},
+ hr:{label:'People First',heading:'humanist',body:'system',headingWeight:700,bodyWeight:400,headingSize:40,bodySize:17,lineHeight:1.7,tracking:-.015},
+ social:{label:'Modern Social',heading:'modern',body:'system',headingWeight:800,bodyWeight:500,headingSize:46,bodySize:16,lineHeight:1.55,tracking:-.035},
+ editorial:{label:'Editorial Serif',heading:'editorial',body:'editorial',headingWeight:700,bodyWeight:400,headingSize:48,bodySize:17,lineHeight:1.8,tracking:-.02},
+ dashboard:{label:'Data Dashboard',heading:'system',body:'system',headingWeight:700,bodyWeight:450,headingSize:32,bodySize:14,lineHeight:1.5,tracking:-.01}
+};
+function clamp(v,a,b,d){v=Number(v);return isFinite(v)?Math.max(a,Math.min(b,v)):d;}
+function normalize(key,input){
+ if(!PRESETS[key])throw new Error('Preset typography không tồn tại.');
+ var base=PRESETS[key],o=input||{},heading=FONTS[base.heading],body=FONTS[base.body];
+ return{
+  id:key,label:base.label,headingFont:heading,bodyFont:body,
+  headingSize:clamp(o.headingSize,24,72,base.headingSize),
+  bodySize:clamp(o.bodySize,12,24,base.bodySize),
+  headingWeight:Math.round(clamp(o.headingWeight,400,900,base.headingWeight)),
+  bodyWeight:Math.round(clamp(o.bodyWeight,300,800,base.bodyWeight)),
+  lineHeight:clamp(o.lineHeight,1.2,2.2,base.lineHeight),
+  tracking:clamp(o.tracking,-.06,.12,base.tracking)
+ };
+}
+function css(key,input){
+ var p=normalize(key,input);
+ return ':root{--cv-heading-font:'+p.headingFont+';--cv-body-font:'+p.bodyFont+';--cv-heading-size:'+p.headingSize+'px;--cv-body-size:'+p.bodySize+'px;--cv-heading-weight:'+p.headingWeight+';--cv-body-weight:'+p.bodyWeight+';--cv-line-height:'+p.lineHeight+';--cv-heading-tracking:'+p.tracking+'em}'+
+ '.cv-typography h1,.cv-typography h2,.cv-typography .heading{font-family:var(--cv-heading-font);font-size:var(--cv-heading-size);font-weight:var(--cv-heading-weight);letter-spacing:var(--cv-heading-tracking);line-height:1.12}'+
+ '.cv-typography p,.cv-typography li,.cv-typography .body{font-family:var(--cv-body-font);font-size:var(--cv-body-size);font-weight:var(--cv-body-weight);line-height:var(--cv-line-height)}';
+}
+function supportMap(doc){
+ doc=doc||document;var out={};
+ Object.keys(FONTS).forEach(function(k){
+  var family=FONTS[k].split(',')[0].replace(/^["']|["']$/g,'');
+  try{out[k]=!!(doc.fonts&&doc.fonts.check('16px "'+family+'"'));}catch(e){out[k]=null;}
+ });
+ return out;
+}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function mount(){
+ var page=document.querySelector('#page-assets');if(!page||page.querySelector('#cv1457-card'))return false;
+ var card=document.createElement('section');card.id='cv1457-card';card.className='cv1457-card';card.style.cssText='margin-top:12px;position:relative;z-index:6;isolation:isolate;background:var(--surface,#fff);border:1px solid var(--line,#e7ecf5);border-radius:var(--r-lg,14px);box-shadow:var(--sh-1,0 3px 12px rgba(27,39,72,.07));padding:18px;min-width:0;';
+ card.innerHTML='<div class="cardTop"><h3>Typography Presets · bộ kiểu chữ hệ thống (P145.7)</h3><span class="sub">Font local có sẵn · không tải font từ xa</span></div>'+
+ '<div class="row" style="gap:8px;flex-wrap:wrap;align-items:end"><label class="tiny">Phong cách<select class="input" id="cv1457-preset">'+Object.keys(PRESETS).map(function(k){return'<option value="'+k+'">'+PRESETS[k].label+'</option>';}).join('')+'</select></label><label class="tiny">Cỡ tiêu đề <input class="input" id="cv1457-hsize" type="number" min="24" max="72" value="42" style="width:76px"></label><label class="tiny">Cỡ nội dung <input class="input" id="cv1457-bsize" type="number" min="12" max="24" value="16" style="width:76px"></label><label class="tiny">Giãn dòng <input class="input" id="cv1457-line" type="number" min="1.2" max="2.2" step=".05" value="1.65" style="width:76px"></label><label class="tiny">Tracking <input class="input" id="cv1457-track" type="number" min="-.06" max=".12" step=".005" value="-.025" style="width:76px"></label></div>'+
+ '<div id="cv1457-preview" class="cv-typography" style="margin-top:12px;padding:22px;border:1px solid var(--line,rgba(128,140,160,.2));border-radius:12px;background:#fff;color:#17243a"><div class="tiny" id="cv1457-kicker">CANVIO · TYPOGRAPHY SAMPLE</div><h2 class="heading" id="cv1457-heading" style="margin:10px 0">Thiết kế rõ ràng, quyết định tự tin</h2><p class="body" id="cv1457-body">Dữ liệu kinh doanh cần được trình bày mạch lạc. Kết hợp nhịp điệu chữ, khoảng trắng và độ tương phản để người đọc tập trung vào điều quan trọng.</p><div class="tiny" id="cv1457-note" style="margin-top:12px">Mẫu hiển thị sử dụng font hệ thống; máy khác có thể thay font fallback.</div></div>'+
+ '<div class="row" style="gap:8px;flex-wrap:wrap;margin-top:10px"><button type="button" class="btn btn-soft sm" id="cv1457-apply">Cập nhật xem trước</button><button type="button" class="btn btn-primary sm" id="cv1457-css">Tải CSS</button><button type="button" class="btn btn-ghost sm" id="cv1457-copy">Sao chép CSS</button><button type="button" class="btn btn-ghost sm" id="cv1457-check">Kiểm tra font hệ thống</button></div>'+
+ '<div class="tiny" id="cv1457-status" role="status" aria-live="polite" style="margin-top:8px;pointer-events:none">Không chứa font binary, không yêu cầu font online. Chỉ xuất CSS preset.</div>';
+ // The app's global card-tilt decoration can cover controls on this dynamic panel.
+ // Keep the card visual but let the real form controls receive pointer events.
+ card.style.pointerEvents='auto';
+ var after=page.querySelector('#cv1456-card')||page.querySelector('#cv1455-card')||page.querySelector('#cv145-card');
+ if(after&&after.parentNode)after.parentNode.insertBefore(card,after.nextSibling);else page.appendChild(card);
+ card.querySelectorAll('button,input,select,textarea,a,label').forEach(function(el){el.style.pointerEvents='auto';el.style.position='relative';el.style.zIndex='2';});
+
+ var $=function(s){return card.querySelector(s);},lastCss='';
+ function current(){
+  var p=normalize($('#cv1457-preset').value,{headingSize:$('#cv1457-hsize').value,bodySize:$('#cv1457-bsize').value,lineHeight:$('#cv1457-line').value,tracking:$('#cv1457-track').value});
+  lastCss=css(p.id,p);return p;
+ }
+ function apply(){
+  var p=current(),h=$('#cv1457-heading'),b=$('#cv1457-body');
+  h.style.fontFamily=p.headingFont;h.style.fontSize=p.headingSize+'px';h.style.fontWeight=p.headingWeight;h.style.letterSpacing=p.tracking+'em';
+  b.style.fontFamily=p.bodyFont;b.style.fontSize=p.bodySize+'px';b.style.fontWeight=p.bodyWeight;b.style.lineHeight=p.lineHeight;
+  $('#cv1457-status').textContent='Đã áp dụng preset '+PRESETS[p.id].label+' cho bản xem trước. CSS có thể nhập vào vùng thiết kế hỗ trợ class .cv-typography.';
+  return lastCss;
+ }
+ function download(name,value){var u=URL.createObjectURL(new Blob([value],{type:'text/css;charset=utf-8'})),a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u);},4000);}
+ $('#cv1457-preset').addEventListener('change',function(){var p=normalize(this.value);$('#cv1457-hsize').value=p.headingSize;$('#cv1457-bsize').value=p.bodySize;$('#cv1457-line').value=p.lineHeight;$('#cv1457-track').value=p.tracking;apply();});
+ $('#cv1457-apply').addEventListener('click',apply);
+ $('#cv1457-css').addEventListener('click',function(){var p=normalize($('#cv1457-preset').value);download('canvio-typography-'+p.id+'.css',apply());$('#cv1457-status').textContent='Đã xuất CSS cho preset '+p.label+'.';});
+ $('#cv1457-copy').addEventListener('click',function(){var value=apply();if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(value).then(function(){$('#cv1457-status').textContent='Đã sao chép CSS.';},function(){$('#cv1457-status').textContent='Không sao chép được; hãy tải CSS.';});else $('#cv1457-status').textContent='Clipboard không khả dụng; hãy tải CSS.';});
+ $('#cv1457-check').addEventListener('click',function(){var map=supportMap(),ok=Object.keys(map).filter(function(k){return map[k]===true;});$('#cv1457-status').textContent='Font-family được trình duyệt xác nhận có sẵn: '+ok.join(', ')+'. Font không được xác nhận sẽ dùng fallback của hệ thống.';});
+ apply();return true;
+}
+function ready(){try{mount();var p=document.querySelector('#page-assets');if(p&&!p.__cv1457Obs&&window.MutationObserver){p.__cv1457Obs=new MutationObserver(function(){if(!p.querySelector('#cv1457-card'))mount();});p.__cv1457Obs.observe(p,{childList:true});}}catch(e){if(window.console)console.warn('P145.7 typography',e);}}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',ready,{once:true});else ready();
+function tests(){
+ var p=normalize('business',{headingSize:99,bodySize:5,tracking:1,lineHeight:4}),t=normalize('editorial'),out=css('finance');
+ var bad=false;try{normalize('unknown');}catch(e){bad=true;}
+ return{
+  sixPresets:Object.keys(PRESETS).length===6,
+  fontStacksAreAllowListed:Object.keys(PRESETS).every(function(k){return !!FONTS[PRESETS[k].heading]&&!!FONTS[PRESETS[k].body];}),
+  controlsClamped:p.headingSize===72&&p.bodySize===12&&p.tracking===.12&&p.lineHeight===2.2,
+  fontStackFallbackExists:t.headingFont.indexOf('serif')>=0,
+  cssContainsNoRemoteResources:!/(?:src|href)=["']?https?:|@import|url\(/i.test(out),
+  exportsResponsiveCustomProperties:out.indexOf('--cv-heading-font')>=0&&out.indexOf('--cv-body-font')>=0&&out.indexOf('.cv-typography')>=0,
+  unknownPresetRejected:bad
+ };
+}
+window.CVTypographyPresetsP1457={version:'145.7.0',fonts:FONTS,presets:PRESETS,normalize:normalize,css:css,supportMap:supportMap,mount:mount,tests:tests};
+})();
+</script>
+<script id="canvio-lot1458">
+/* P145.8 — original offline SVG illustration starter pack; no stock, model download or network. */
+(function(){
+'use strict';
+if(window.CVOriginalVectorAssetsP1458)return;
+var THEMES={
+ ocean:{label:'Ocean',bg:'#eef5fb',ink:'#18344d',primary:'#337bb8',secondary:'#80b9cb',accent:'#f2b45b',soft:'#d7e8f2',panel:'#ffffff'},
+ jade:{label:'Jade',bg:'#edf6f2',ink:'#183d35',primary:'#2d8873',secondary:'#8bc6ad',accent:'#e3a15a',soft:'#d6eee4',panel:'#ffffff'},
+ plum:{label:'Plum',bg:'#f4eff8',ink:'#38294a',primary:'#8159a7',secondary:'#c2a7d8',accent:'#e6a56e',soft:'#e9def2',panel:'#ffffff'},
+ ember:{label:'Ember',bg:'#fbf2eb',ink:'#493022',primary:'#c06b3c',secondary:'#e0ab83',accent:'#e6c45e',soft:'#f3dfcf',panel:'#ffffff'}
+};
+var GROUPS={
+ business:{label:'Business',ids:['business-growth','strategy-target']},
+ finance:{label:'Finance',ids:['finance-dashboard','budget-planning']},
+ hr:{label:'People & HR',ids:['team-collaboration','talent-search']},
+ creative:{label:'Creative & Social',ids:['social-campaign','remote-work']}
+};
+var ART=[
+ {id:'business-growth',title:'Business Growth',group:'business',desc:'Bảng tăng trưởng và xu hướng tích cực',
+  art:'<ellipse cx="326" cy="370" rx="218" ry="36" fill="var(--soft)"/><rect x="126" y="190" width="74" height="170" rx="14" fill="var(--secondary)"/><rect x="235" y="142" width="74" height="218" rx="14" fill="var(--primary)" opacity=".78"/><rect x="344" y="92" width="74" height="268" rx="14" fill="var(--primary)"/><path d="M118 220L235 155 300 184 448 68" fill="none" stroke="var(--ink)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/><path d="M409 68h39v39" fill="none" stroke="var(--ink)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/><circle cx="118" cy="220" r="13" fill="var(--accent)"/><circle cx="235" cy="155" r="13" fill="var(--accent)"/><circle cx="300" cy="184" r="13" fill="var(--accent)"/><circle cx="448" cy="68" r="13" fill="var(--accent)"/><rect x="468" y="144" width="94" height="126" rx="18" fill="var(--soft)"/><path d="M492 230l23-30 19 13 16-30" fill="none" stroke="var(--primary)" stroke-width="9" stroke-linecap="round"/>'
+ },
+ {id:'strategy-target',title:'Strategy Target',group:'business',desc:'Mục tiêu, định hướng và bước tiến',
+  art:'<circle cx="310" cy="238" r="174" fill="var(--soft)"/><circle cx="310" cy="238" r="132" fill="none" stroke="var(--secondary)" stroke-width="20"/><circle cx="310" cy="238" r="84" fill="none" stroke="var(--primary)" stroke-width="20"/><circle cx="310" cy="238" r="34" fill="var(--accent)"/><path d="M308 238L498 48" stroke="var(--ink)" stroke-width="16" stroke-linecap="round"/><path d="M448 48h50v50" fill="none" stroke="var(--ink)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/><path d="M115 372h390" stroke="var(--ink)" stroke-width="14" stroke-linecap="round"/><rect x="115" y="400" width="390" height="28" rx="14" fill="var(--secondary)" opacity=".55"/>'
+ },
+ {id:'finance-dashboard',title:'Finance Dashboard',group:'finance',desc:'Báo cáo tài chính và phân bổ',
+  art:'<rect x="86" y="74" width="468" height="324" rx="28" fill="var(--soft)" stroke="var(--ink)" stroke-width="10"/><path d="M86 140h468" stroke="var(--ink)" stroke-width="10"/><circle cx="126" cy="108" r="10" fill="var(--accent)"/><circle cx="160" cy="108" r="10" fill="var(--secondary)"/><circle cx="194" cy="108" r="10" fill="var(--primary)"/><path d="M168 300a92 92 0 0 1 184 0" fill="none" stroke="var(--secondary)" stroke-width="34" stroke-linecap="round"/><path d="M168 300a92 92 0 0 1 133-82" fill="none" stroke="var(--primary)" stroke-width="34" stroke-linecap="round"/><path d="M260 300l75-82" stroke="var(--ink)" stroke-width="12" stroke-linecap="round"/><circle cx="260" cy="300" r="17" fill="var(--accent)"/><rect x="390" y="212" width="24" height="108" rx="9" fill="var(--primary)"/><rect x="434" y="176" width="24" height="144" rx="9" fill="var(--secondary)"/><rect x="478" y="150" width="24" height="170" rx="9" fill="var(--accent)"/>'
+ },
+ {id:'budget-planning',title:'Budget Planning',group:'finance',desc:'Ngân sách và kế hoạch chi tiêu',
+  art:'<rect x="100" y="100" width="440" height="286" rx="28" fill="var(--soft)" stroke="var(--ink)" stroke-width="10"/><rect x="100" y="142" width="440" height="68" fill="var(--primary)"/><path d="M100 210h440" stroke="var(--ink)" stroke-width="8"/><rect x="350" y="238" width="190" height="82" rx="15" fill="var(--accent)"/><circle cx="390" cy="279" r="12" fill="var(--ink)"/><path d="M138 258h152M138 300h110M138 342h188" stroke="var(--secondary)" stroke-width="15" stroke-linecap="round"/><circle cx="455" cy="92" r="48" fill="var(--secondary)"/><path d="M455 66v28l20 13" stroke="var(--ink)" stroke-width="8" stroke-linecap="round"/>'
+ },
+ {id:'team-collaboration',title:'Team Collaboration',group:'hr',desc:'Đội ngũ cùng làm việc và phối hợp',
+  art:'<ellipse cx="320" cy="400" rx="230" ry="28" fill="var(--soft)"/><circle cx="207" cy="150" r="52" fill="var(--accent)"/><circle cx="320" cy="118" r="58" fill="var(--secondary)"/><circle cx="435" cy="153" r="52" fill="var(--primary)"/><path d="M118 342c0-82 36-128 89-128s89 46 89 128" fill="var(--secondary)"/><path d="M218 350c0-98 40-154 102-154s102 56 102 154" fill="var(--primary)"/><path d="M346 342c0-82 36-128 89-128s89 46 89 128" fill="var(--accent)"/><path d="M242 270l55 38 83-83" fill="none" stroke="var(--ink)" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/><circle cx="380" cy="225" r="20" fill="var(--ink)"/>'
+ },
+ {id:'talent-search',title:'Talent Search',group:'hr',desc:'Tìm kiếm và kết nối nhân tài',
+  art:'<circle cx="280" cy="204" r="112" fill="var(--soft)"/><circle cx="280" cy="165" r="46" fill="var(--accent)"/><path d="M190 315c10-67 42-101 90-101s80 34 90 101" fill="var(--primary)"/><circle cx="420" cy="290" r="76" fill="none" stroke="var(--ink)" stroke-width="18"/><path d="M474 346l66 66" stroke="var(--ink)" stroke-width="22" stroke-linecap="round"/><path d="M389 290l21 21 42-48" fill="none" stroke="var(--secondary)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>'
+ },
+ {id:'social-campaign',title:'Social Campaign',group:'creative',desc:'Truyền thông và nội dung sáng tạo',
+  art:'<rect x="124" y="90" width="330" height="290" rx="26" fill="var(--soft)" stroke="var(--ink)" stroke-width="10"/><path d="M124 158h330" stroke="var(--ink)" stroke-width="10"/><circle cx="164" cy="124" r="9" fill="var(--accent)"/><circle cx="194" cy="124" r="9" fill="var(--secondary)"/><path d="M200 298l73-82 50 48 70-88" fill="none" stroke="var(--primary)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/><path d="M370 176h23v24" fill="none" stroke="var(--primary)" stroke-width="12" stroke-linecap="round"/><path d="M190 338h194" stroke="var(--secondary)" stroke-width="14" stroke-linecap="round"/><circle cx="486" cy="134" r="58" fill="var(--accent)"/><path d="M464 105l48 29-48 29z" fill="var(--ink)"/>'
+ },
+ {id:'remote-work',title:'Remote Work',group:'creative',desc:'Không gian làm việc số từ xa',
+  art:'<rect x="110" y="84" width="420" height="260" rx="24" fill="var(--soft)" stroke="var(--ink)" stroke-width="12"/><rect x="136" y="112" width="368" height="204" rx="12" fill="var(--secondary)" opacity=".6"/><path d="M64 384h512l-42 42H106z" fill="var(--ink)"/><circle cx="320" cy="204" r="49" fill="var(--accent)"/><path d="M236 290c12-52 39-76 84-76s72 24 84 76" fill="var(--primary)"/><path d="M190 158l38-22 25 25M450 156l-32-22-26 25" fill="none" stroke="var(--ink)" stroke-width="10" stroke-linecap="round"/>'
+ }
+];
+function esc(s){
+ return String(s==null?'':s).replace(/[&<>"']/g,function(c){
+  if(c==='&')return'&amp;';
+  if(c==='<')return'&lt;';
+  if(c==='>')return'&gt;';
+  if(c==='"')return'&quot;';
+  if(c==="'")return'&#39;';
+  return c;
+ });
+}
+function svg(id,theme){
+ var a=ART.filter(function(x){return x.id===id;})[0],p=THEMES[theme]||THEMES.ocean;
+ if(!a)throw new Error('Minh họa không tồn tại.');
+ var inner=a.art.replace(/var\(--([a-z]+)\)/g,function(m,k){return p[k]||p.ink;});
+ return '<svg xmlns="http://www.w3.org/2000/svg" width="640" height="480" viewBox="0 0 640 480" role="img" aria-label="'+esc(a.title)+'"><rect width="640" height="480" rx="24" fill="'+p.bg+'"/>'+inner+'</svg>';
+}
+function sprite(theme){
+ var p=THEMES[theme]||THEMES.ocean;
+ return '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="display:none">'+ART.map(function(a){return'<symbol id="canvio-art-'+a.id+'" viewBox="0 0 640 480">'+a.art.replace(/var\(--([a-z]+)\)/g,function(m,k){return p[k]||p.ink;})+'</symbol>';}).join('')+'</svg>';
+}
+function contactSheet(theme){
+ var p=THEMES[theme]||THEMES.ocean,cellW=320,cellH=264,width=cellW*2,height=cellH*4+54;
+ var nodes=ART.map(function(a,i){var x=(i%2)*cellW,y=Math.floor(i/2)*cellH+48,inner=a.art.replace(/var\(--([a-z]+)\)/g,function(m,k){return p[k]||p.ink;});return'<g transform="translate('+x+' '+y+')"><rect x="12" y="8" width="296" height="238" rx="18" fill="'+p.panel+'"/><g transform="translate(28 22) scale(.41 .41)">'+inner+'</g><text x="160" y="232" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" font-weight="700" fill="'+p.ink+'">'+esc(a.title)+'</text></g>';}).join('');
+ return'<svg xmlns="http://www.w3.org/2000/svg" width="'+width+'" height="'+height+'" viewBox="0 0 '+width+' '+height+'"><rect width="100%" height="100%" fill="'+p.bg+'"/><text x="24" y="32" font-family="Arial,sans-serif" font-size="20" font-weight="700" fill="'+p.ink+'">CANVIO Original Vector Pack · P145.8</text>'+nodes+'</svg>';
+}
+function download(name,value){var u=URL.createObjectURL(new Blob([value],{type:'image/svg+xml;charset=utf-8'})),a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u);},4000);}
+function mount(){
+ var page=document.querySelector('#page-assets');if(!page||page.querySelector('#cv1458-card'))return false;
+ var card=document.createElement('section');card.id='cv1458-card';card.className='card';card.style.marginTop='12px';
+ card.innerHTML='<div class="cardTop"><h3>Original Vector Assets · bộ minh họa SVG CANVIO (P145.8)</h3><span class="sub">8 minh họa gốc · offline · không phải stock</span></div>'+
+ '<div class="row" style="gap:8px;flex-wrap:wrap;align-items:end"><label class="tiny">Danh mục<select class="input" id="cv1458-cat"><option value="all">Tất cả</option>'+Object.keys(GROUPS).map(function(k){return'<option value="'+k+'">'+GROUPS[k].label+'</option>';}).join('')+'</select></label><label class="tiny">Bảng màu<select class="input" id="cv1458-theme">'+Object.keys(THEMES).map(function(k){return'<option value="'+k+'">'+THEMES[k].label+'</option>';}).join('')+'</select></label><label class="tiny">Tìm minh họa<input class="input" id="cv1458-search" placeholder="Tìm tên minh họa…"></label><button type="button" class="btn btn-soft sm" id="cv1458-sprite">Tải Sprite</button><button type="button" class="btn btn-ghost sm" id="cv1458-sheet">Tải bảng tổng hợp</button></div>'+
+ '<div id="cv1458-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;margin-top:12px"></div>'+
+ '<div class="row" style="gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px;padding:10px;border:1px solid var(--line,rgba(128,140,160,.2));border-radius:10px"><div id="cv1458-selected" style="width:min(100%,320px);aspect-ratio:4/3;display:grid;place-items:center;background:#f4f6fa;border-radius:10px;overflow:hidden"></div><div style="flex:1;min-width:170px"><b id="cv1458-title">Chọn minh họa</b><div class="tiny" id="cv1458-desc">Tải SVG để nhập vào các bề mặt thiết kế hỗ trợ.</div></div><button type="button" class="btn btn-primary sm" id="cv1458-one" disabled>Tải SVG</button></div>'+
+ '<div class="tiny" id="cv1458-out" role="status" aria-live="polite" style="margin-top:8px">Tài sản vector gốc CANVIO; không chứa ảnh ngoài, font nhúng, script hoặc yêu cầu tải từ xa.</div>';
+ var after=page.querySelector('#cv1457-card')||page.querySelector('#cv1456-card')||page.querySelector('#cv1455-card')||page.querySelector('#cv145-card');
+ if(after&&after.parentNode)after.parentNode.insertBefore(card,after.nextSibling);else page.appendChild(card);
+ var $=function(s){return card.querySelector(s);},selected=null;
+ function filtered(){
+  var cat=$('#cv1458-cat').value,q=$('#cv1458-search').value.trim().toLowerCase();
+  return ART.filter(function(a){return(cat==='all'||a.group===cat)&&(!q||(a.title+' '+a.id+' '+a.desc+' '+GROUPS[a.group].label).toLowerCase().indexOf(q)>=0);});
+ }
+ function draw(){
+  var root=$('#cv1458-grid'),theme=$('#cv1458-theme').value;root.replaceChildren();
+  filtered().forEach(function(a){
+   var button=document.createElement('button');button.type='button';button.className='btn btn-ghost';button.style.cssText='display:grid;gap:6px;text-align:left;padding:8px;border:1px solid var(--line,rgba(128,140,160,.2));border-radius:12px';
+   var im=document.createElement('div');im.style.cssText='width:100%;aspect-ratio:4/3;overflow:hidden;border-radius:8px';im.innerHTML=svg(a.id,theme);
+   var name=document.createElement('b');name.textContent=a.title;
+   var desc=document.createElement('span');desc.className='tiny';desc.textContent=a.desc;
+   button.appendChild(im);button.appendChild(name);button.appendChild(desc);
+   button.setAttribute('data-cv1458-id',a.id);button.addEventListener('click',function(){selected=a;$('#cv1458-selected').innerHTML=svg(a.id,$('#cv1458-theme').value);$('#cv1458-title').textContent=a.title;$('#cv1458-desc').textContent=a.desc+' · '+GROUPS[a.group].label;$('#cv1458-one').disabled=false;});
+   root.appendChild(button);
+  });
+ }
+ $('#cv1458-cat').addEventListener('change',draw);$('#cv1458-search').addEventListener('input',draw);
+ $('#cv1458-theme').addEventListener('change',function(){draw();if(selected)$('#cv1458-selected').innerHTML=svg(selected.id,this.value);});
+ $('#cv1458-one').addEventListener('click',function(){if(!selected)return;download('canvio-illustration-'+selected.id+'.svg',svg(selected.id,$('#cv1458-theme').value));$('#cv1458-out').textContent='Đã xuất '+selected.title+'.svg';});
+ $('#cv1458-sprite').addEventListener('click',function(){download('canvio-original-vector-sprite.svg',sprite($('#cv1458-theme').value));$('#cv1458-out').textContent='Đã xuất sprite gồm '+ART.length+' symbol.';});
+ $('#cv1458-sheet').addEventListener('click',function(){download('canvio-original-vector-contact-sheet.svg',contactSheet($('#cv1458-theme').value));$('#cv1458-out').textContent='Đã xuất bảng tổng hợp vector.';});
+ draw();return true;
+}
+function ready(){try{mount();var p=document.querySelector('#page-assets');if(p&&!p.__cv1458Obs&&window.MutationObserver){p.__cv1458Obs=new MutationObserver(function(){if(!p.querySelector('#cv1458-card'))mount();});p.__cv1458Obs.observe(p,{childList:true});}}catch(e){if(window.console)console.warn('P145.8 vector pack',e);}}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',ready,{once:true});else ready();
+function tests(){
+ var ids=ART.map(function(x){return x.id;}),one=svg(ids[0]),sp=sprite('jade'),sheet=contactSheet('plum'),bad=false;
+ try{svg('unknown');}catch(e){bad=true;}
+ return{eightOriginalIllustrations:ART.length===8,uniqueAssetIds:new Set(ids).size===ART.length,fourCategories:Object.keys(GROUPS).length===4,fourThemes:Object.keys(THEMES).length===4,eachCategoryHasTwoAssets:Object.keys(GROUPS).every(function(k){return GROUPS[k].ids.length===2;}),standaloneSvgSafe:one.indexOf('<svg')===0&&one.indexOf('<script')<0&&one.indexOf('https://')<0,spriteContainsAllSymbols:ids.every(function(id){return sp.indexOf('id="canvio-art-'+id+'"')>=0;}),contactSheetContainsAllTitles:ART.every(function(a){return sheet.indexOf(esc(a.title))>=0;}),paletteResolvesNoPlaceholders:!/(?:var\(--|undefined)/.test(one),unknownIllustrationRejected:bad,noRemoteAssets:!/(?:href|src)=["']?https?:|@import|url\(/i.test(one+sp+sheet)};
+}
+window.CVOriginalVectorAssetsP1458={version:'145.8.0',themes:THEMES,groups:GROUPS,assets:ART,svg:svg,sprite:sprite,contactSheet:contactSheet,mount:mount,tests:tests};
+})();
+</script>
+<script id="canvio-lot145910">
+/* P145.9/.10 — read-only Asset Library quality gate + local search, reuses existing assets and license metadata. */
+(function(){
+'use strict';
+if(window.CVAssetSearchGateP145910)return;
+var META_KEY='canvio145:meta',assetProvider=null;
+function setAssetProvider(fn){assetProvider=typeof fn==='function'?fn:null;return !!assetProvider;}
+function safeMeta(){
+ try{var x=JSON.parse(localStorage.getItem(META_KEY)||'{}');return x&&typeof x==='object'&&!Array.isArray(x)?x:{};}catch(e){return{};}
+}
+function getAssets(input){
+ if(Array.isArray(input))return input.slice(0,10000);
+ try{var a=assetProvider?assetProvider():(window.CV&&CV.assets&&typeof CV.assets.list==='function'?CV.assets.list():[]);return Array.isArray(a)?a.slice(0,10000):[];}catch(e){return[];}
+}
+function kindOf(a){
+ var t=String(a&& (a.type||a.mime||a.mimeType)||'').toLowerCase(),n=String(a&&(a.name||a.filename)||'').toLowerCase();
+ if(t.indexOf('image/')===0||/\.(png|jpe?g|gif|webp|svg|avif)$/.test(n))return'image';
+ if(t.indexOf('video/')===0||/\.(mp4|mov|webm|mkv)$/.test(n))return'video';
+ if(t.indexOf('audio/')===0||/\.(mp3|wav|m4a|ogg|flac)$/.test(n))return'audio';
+ if(/pdf|word|officedocument|text\//.test(t)||/\.(pdf|docx?|pptx?|xlsx?|txt|md|csv)$/.test(n))return'document';
+ return'other';
+}
+function textOf(a,m){
+ return[a&&a.id,a&&a.name,a&&a.filename,a&&a.type,a&&a.mime,a&&a.mimeType,m&&m.license,m&&m.author,m&&m.source,m&&m.url].map(function(x){return String(x==null?'':x);}).join(' ').toLowerCase();
+}
+function evaluateAssets(assets,meta,gate){
+ var list=getAssets(assets),m=meta||{},seen=[],out=[];
+ list.forEach(function(a){
+  var id=String(a&&a.id||''),am=m[id]||{},result=typeof gate==='function'?gate(a,am,seen.slice()):{pass:false,issues:['Quality Gate P145 chưa khả dụng']};
+  var hash=String(a&&a.hash||'').trim();
+  out.push({asset:a,meta:am,gate:result||{pass:false,issues:['Không có kết quả kiểm tra']},kind:kindOf(a),hasHash:!!hash});
+  if(hash)seen.push(hash);
+ });
+ return{items:out,total:out.length,ready:out.filter(function(x){return x.gate.pass;}).length,warn:out.filter(function(x){return !x.gate.pass;}).length,withoutHash:out.filter(function(x){return !x.hasHash;}).length};
+}
+function searchAssets(report,query,kind,status){
+ var q=String(query||'').trim().toLowerCase();
+ return(report&&report.items||[]).filter(function(x){
+  if(kind&&kind!=='all'&&x.kind!==kind)return false;
+  if(status==='ready'&&!x.gate.pass)return false;
+  if(status==='warning'&&x.gate.pass)return false;
+  return !q||textOf(x.asset,x.meta).indexOf(q)>=0;
+ });
+}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function mount(){
+ var page=document.querySelector('#page-assets');if(!page||page.querySelector('#cv145910-card'))return false;
+ var core=window.CVContentCoreP145;if(!core||typeof core.qualityGate!=='function')return false;
+ var card=document.createElement('section');card.id='cv145910-card';card.className='card';card.style.marginTop='12px';
+ card.innerHTML='<div class="cardTop"><h3>Asset Search &amp; Quality Gate · P145.9/10</h3><span class="sub">Tìm kiếm cục bộ · rà soát chỉ đọc</span></div>'+
+ '<div class="row" style="gap:8px;align-items:end;flex-wrap:wrap"><label class="tiny" style="flex:1;min-width:190px">Tìm tài nguyên<input class="input" id="cv145910-q" placeholder="Tên, ID, loại, giấy phép, nguồn…"></label><label class="tiny">Loại<select class="input" id="cv145910-kind"><option value="all">Tất cả</option><option value="image">Ảnh / SVG</option><option value="video">Video</option><option value="audio">Âm thanh</option><option value="document">Tài liệu</option><option value="other">Khác</option></select></label><label class="tiny">Quality Gate<select class="input" id="cv145910-status"><option value="all">Tất cả</option><option value="ready">Đạt</option><option value="warning">Cần xử lý</option></select></label><button type="button" class="btn btn-soft sm" id="cv145910-refresh">Làm mới &amp; rà soát</button></div>'+
+ '<div class="row" style="gap:8px;flex-wrap:wrap;margin:10px 0"><span class="tiny" id="cv145910-summary" role="status" aria-live="polite">Chưa rà soát.</span><span class="tiny" id="cv145910-hash-note"></span></div>'+
+ '<div id="cv145910-list" style="display:grid;gap:6px"></div><div class="tiny" id="cv145910-detail" role="status" aria-live="polite" style="margin-top:10px">Chọn tài nguyên để xem kết quả Quality Gate. Không có thao tác sửa, xóa hoặc tải lên ở đây.</div>';
+ var after=page.querySelector('#cv1458-card')||page.querySelector('#cv1457-card')||page.querySelector('#cv1456-card')||page.querySelector('#cv1455-card')||page.querySelector('#cv145-card');
+ if(after&&after.parentNode)after.parentNode.insertBefore(card,after.nextSibling);else page.appendChild(card);
+ var $=function(sel){return card.querySelector(sel);},report=null,visible=[],selected=null;
+ function run(){
+  report=evaluateAssets(null,safeMeta(),core.qualityGate);
+  visible=searchAssets(report,$('#cv145910-q').value,$('#cv145910-kind').value,$('#cv145910-status').value);
+  $('#cv145910-summary').textContent='Tổng '+report.total+' · Đạt '+report.ready+' · Cần xử lý '+report.warn+' · Đang hiển thị '+visible.length;
+  $('#cv145910-hash-note').textContent=report.withoutHash?report.withoutHash+' tệp chưa có hash trong metadata; chưa thể kiểm trùng nội dung đầy đủ.':'Tất cả mục có hash trong danh sách.';
+  draw();
+ }
+ function draw(){
+  var root=$('#cv145910-list');root.replaceChildren();
+  visible.slice(0,500).forEach(function(x){
+   var a=x.asset||{},b=document.createElement('button');b.type='button';b.className='btn btn-ghost';b.style.cssText='display:flex;justify-content:space-between;align-items:center;gap:10px;text-align:left;flex-wrap:wrap;padding:9px;border:1px solid var(--line,rgba(128,140,160,.18))';
+   var left=document.createElement('span');left.textContent=String(a.name||a.filename||a.id||'Tài nguyên không tên')+' · '+x.kind;
+   var right=document.createElement('span');right.className='tiny';right.textContent=x.gate.pass?'Đạt':'Cần xử lý: '+(x.gate.issues||[]).join('; ');
+   b.appendChild(left);b.appendChild(right);b.addEventListener('click',function(){selected=x;showDetail();});
+   root.appendChild(b);
+  });
+  if(!visible.length){var empty=document.createElement('p');empty.className='tiny';empty.textContent='Không tìm thấy tài nguyên khớp bộ lọc.';root.appendChild(empty);}
+  if(visible.length>500){var more=document.createElement('p');more.className='tiny';more.textContent='Đang giới hạn hiển thị 500 kết quả; thu hẹp tìm kiếm để xem các mục tiếp theo.';root.appendChild(more);}
+ }
+ function showDetail(){
+  if(!selected){$('#cv145910-detail').textContent='Chọn tài nguyên để xem kết quả.';return;}
+  var a=selected.asset||{},g=selected.gate||{},m=selected.meta||{};
+  $('#cv145910-detail').textContent=(a.name||a.id||'Tài nguyên')+' — '+(g.pass?'QUALITY GATE: PASS':'QUALITY GATE: CẦN XỬ LÝ')+
+   (g.issues&&g.issues.length?'\n'+g.issues.join('\n'):'\nĐủ các trường kiểm tra hiện có.')+
+   '\nGiấy phép: '+(m.license||'chưa khai báo')+' · Nguồn: '+(m.source||m.author||'chưa khai báo')+
+   '\nDung lượng: '+(Number(a.size)>0?(Number(a.size)/1048576).toFixed(2)+' MB':'chưa có')+
+   '\nHash: '+(a.hash||'chưa có; không khẳng định đã kiểm trùng');
+ }
+ ['input','change'].forEach(function(ev){$('#cv145910-q').addEventListener(ev,run);$('#cv145910-kind').addEventListener(ev,run);$('#cv145910-status').addEventListener(ev,run);});
+ $('#cv145910-refresh').addEventListener('click',run);
+ run();return true;
+}
+function ready(){try{mount();var p=document.querySelector('#page-assets');if(p&&!p.__cv145910Obs&&window.MutationObserver){p.__cv145910Obs=new MutationObserver(function(){if(!p.querySelector('#cv145910-card'))mount();});p.__cv145910Obs.observe(p,{childList:true});}}catch(e){if(window.console)console.warn('P145.9/10 Search Gate',e);}}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',ready,{once:true});else ready();
+function tests(){
+ var a=[{id:'1',name:'Finance Report.PDF',type:'application/pdf',size:10,hash:'a'},{id:'2',name:'Brand.svg',type:'image/svg+xml',size:20,hash:'b'},{id:'3',name:'Duplicate.svg',type:'image/svg+xml',size:20,hash:'b'}];
+ var m={1:{license:'cc0'},2:{license:'own'},3:{license:'unknown'}};
+ var r=evaluateAssets(a,m,function(x,meta,seen){var issues=[];if(!meta.license||meta.license==='unknown')issues.push('thiếu giấy phép');if(x.size<=0)issues.push('tệp rỗng');if(x.hash&&seen.indexOf(x.hash)>=0)issues.push('trùng nội dung');return{pass:!issues.length,issues:issues};});
+ return{
+  assetListCappedAndStable:getAssets(a).length===3,
+  typeDetectionWorks:r.items[0].kind==='document'&&r.items[1].kind==='image',
+  duplicateHashDetectedOnlyAfterFirstOccurrence:r.items[1].gate.pass&&r.items[2].gate.issues.indexOf('trùng nội dung')>=0,
+  unknownLicenseFailsGate:r.items[2].gate.pass===false,
+  searchMatchesName:r.total===3&&searchAssets(r,'finance','all','all').length===1,
+  typeFilterWorks:searchAssets(r,'','image','all').length===2,
+  gateFiltersWork:searchAssets(r,'','all','ready').length===2&&searchAssets(r,'','all','warning').length===1,
+  invalidInputSafe:searchAssets(null,'x').length===0
+ };
+}
+window.CVAssetSearchGateP145910={version:'145.9.11',getAssets:getAssets,setAssetProvider:setAssetProvider,kindOf:kindOf,evaluateAssets:evaluateAssets,searchAssets:searchAssets,mount:mount,tests:tests};
+})();
+</script>
 </body>
 </html>
