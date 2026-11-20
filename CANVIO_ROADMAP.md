@@ -630,3 +630,10 @@ Hosted verification after the ffmpeg repair is complete:
 - Adds a visual frame preview, editable caption timeline (0–100% start/end), add/remove and native drag reorder, position (top/center/bottom), entrance effect (fade/slide/zoom), parallax, scroll easing and page length.
 - Reuses P125.1 local extraction, decimation and standalone offline HTML builder; reduced-motion fallback remains first-frame only.
 - Hosted unit/browser tests are in the candidate workflow. Touch-device drag, real project editorial review and physical mobile performance remain manual.
+
+## 23.3.111 continuation — P136.2 optional Bezier smoothing
+
+- Added optional closed-contour cubic Bezier smoothing (0–100%) to Image Trace. Default 0 retains prior polygon output; positive values smooth traced contours without changing quantization or contour extraction.
+- Keeps evenodd fill and palette/layer/loop counts. Output remains static SVG with no script or external references.
+- Unit suite and hosted browser test cover the default output, cubic smooth export, clamping, finite coordinates and SVG safety.
+- Single-line stroke tracing, brush/pattern/gradient mesh and review on varied production artwork remain open.

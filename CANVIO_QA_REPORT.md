@@ -215,3 +215,9 @@ The candidate workflow runs standalone/embedded source parity and API tests for 
 - Unit tests cover caption range clamping, text limit, position/animation allow-lists and drag-order data behavior.
 - Chromium test extracts a generated video, opens editor, edits/adds captions, sets position/animation, parallax/easing and exports standalone HTML. It checks scroll mapping, caption settings and reduced-motion fallback.
 - P125.1 browser test now follows the two-stage extraction/editor/export flow. Real-project and physical touch/mobile review remain manual.
+
+## P136.2 Bezier smoothing — hosted acceptance
+
+- Unit checks cover optional cubic output, default compatibility, finite/clamped coordinates and preserved layer/loop counts.
+- Chromium smoke keeps the existing unsmoothed pixel round-trip baseline and exports a second 65% smooth SVG; checks the slider, cubic paths and script-free safe SVG.
+- Review on diverse production artwork remains manual.

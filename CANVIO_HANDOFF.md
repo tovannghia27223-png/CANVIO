@@ -124,3 +124,9 @@ The candidate is built and verified by the hosted runtime workflow. Runtime vend
 - Added caption timeline editing to the P125.1 video-to-scroll workflow, up to 12 markers, drag reorder, position/effect, preview, parallax/easing and standalone offline HTML export.
 - Reuses existing frame extraction and exporter; browser-session editor state only, no cloud sync.
 - Tests: \`run-p125f-tests.cjs\`, \`run-p1252-tests.cjs\`, \`run-p125f-browser.py\`, \`run-p1252-browser.py\`.
+
+## P136.2 — Bezier smoothing
+
+- Added optional 0–100% closed cubic Bezier smoothing to Image Trace; default 0 keeps legacy polygon contours.
+- No new dependency. SVG stays local, script-free and no external references.
+- Tests: \`node tests/p127/run-p136t-tests.cjs\` and \`tests/p145/run-p136-browser.py\`. Single-line strokes and brush/pattern/gradient mesh remain unimplemented.

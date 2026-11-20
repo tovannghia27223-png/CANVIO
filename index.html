@@ -29050,11 +29050,24 @@ function simplifyLoop(loop, eps) {
   return res.length >= 3 ? res : loop;
 }
 function hex(c) { return '#' + c.map(function (v) { return ('0' + Math.max(0, Math.min(255, v)).toString(16)).slice(-2); }).join(''); }
+function loopPath(pts, smooth) {
+  var n = pts.length, t = Math.max(0, Math.min(1, Number(smooth) || 0));
+  if (t <= 0 || n < 4) return 'M' + pts.map(function (p) { return p[0] + ' ' + p[1]; }).join('L') + 'Z';
+  function f(v) { return (Math.round(v * 1000) / 1000).toString(); }
+  var out = 'M' + f(pts[0][0]) + ' ' + f(pts[0][1]);
+  for (var i = 0; i < n; i++) {
+    var p0 = pts[i], p1 = pts[(i + 1) % n], prev = pts[(i + n - 1) % n], next = pts[(i + 2) % n];
+    var c1x = p0[0] + (p1[0] - prev[0]) * t / 6, c1y = p0[1] + (p1[1] - prev[1]) * t / 6;
+    var c2x = p1[0] - (next[0] - p0[0]) * t / 6, c2y = p1[1] - (next[1] - p0[1]) * t / 6;
+    out += 'C' + f(c1x) + ' ' + f(c1y) + ' ' + f(c2x) + ' ' + f(c2y) + ' ' + f(p1[0]) + ' ' + f(p1[1]);
+  }
+  return out + 'Z';
+}
 function traceImageData(img, opt) {
   opt = opt || {};
   var w = img && img.width, h = img && img.height, d = img && img.data;
   if (!(w >= 1 && h >= 1 && w <= 4096 && h <= 4096) || !d || d.length < w * h * 4) throw new Error('Ảnh không hợp lệ.');
-  var q = quantize(d, w, h, opt.colors), eps = opt.detail == null ? 1 : Math.max(0, Math.min(5, Number(opt.detail))), counts = new Array(q.palette.length).fill(0), i;
+  var q = quantize(d, w, h, opt.colors), eps = opt.detail == null ? 1 : Math.max(0, Math.min(5, Number(opt.detail))), smooth = Math.max(0, Math.min(1, Number(opt.smooth) || 0)), counts = new Array(q.palette.length).fill(0), i;
   for (i = 0; i < q.idx.length; i++) if (q.idx[i] >= 0) counts[q.idx[i]]++;
   var order = q.palette.map(function (_, j) { return j; }).sort(function (a, b) { return counts[b] - counts[a]; }), paths = [], total = 0;
   var opaque = counts.reduce(function (s, c) { return s + c; }, 0), bg = null;
@@ -29062,7 +29075,7 @@ function traceImageData(img, opt) {
   order.forEach(function (j) {
     if (counts[j] === 0 || j === bg) return;
     var mask = new Uint8Array(w * h); for (var p = 0; p < mask.length; p++) mask[p] = q.idx[p] === j ? 1 : 0;
-    var loops = traceMask(mask, w, h).map(function (l) { return simplifyLoop(l, eps); }), dstr = loops.map(function (l) { return 'M' + l.map(function (pt) { return pt[0] + ' ' + pt[1]; }).join('L') + 'Z'; }).join('');
+    var loops = traceMask(mask, w, h).map(function (l) { return simplifyLoop(l, eps); }), dstr = loops.map(function (l) { return loopPath(l, smooth); }).join('');
     if (dstr) { paths.push({ color: hex(q.palette[j]), d: dstr, area: counts[j], loops: loops.length }); total += loops.length; }
   });
   var svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + w + ' ' + h + '" width="' + w + '" height="' + h + '" shape-rendering="geometricPrecision">' + (bg != null ? '<rect width="' + w + '" height="' + h + '" fill="' + hex(q.palette[bg]) + '"/>' : '') + paths.map(function (p) { return '<path fill="' + p.color + '" stroke="' + p.color + '" stroke-width="0.5" fill-rule="evenodd" d="' + p.d + '"/>'; }).join('') + '</svg>';
@@ -29083,16 +29096,17 @@ function loadFile(file) {
 function mount() {
   var page = document.querySelector('#page-imageStudio'); if (!page || page.querySelector('#cv136-card')) return false;
   var card = document.createElement('div'); card.className = 'card'; card.id = 'cv136-card'; card.style.marginTop = '12px';
-  card.innerHTML = '<div class="row" style="gap:8px;flex-wrap:wrap;align-items:center"><b>Ảnh → Vector (P136)</b><input type="file" id="cv136-file" accept="image/*" aria-label="Chọn ảnh"><label class="tiny">Số màu <input type="range" id="cv136-k" min="2" max="12" value="6"> <span id="cv136-kv">6</span></label><label class="tiny">Chi tiết <select id="cv136-d" class="input"><option value="0.5">Cao</option><option value="1" selected>Vừa</option><option value="2">Thấp (nhẹ hơn)</option></select></label><button type="button" class="btn btn-soft sm" id="cv136-run">Chuyển sang SVG</button><button type="button" class="btn btn-ghost sm" id="cv136-dl" disabled>Tải SVG</button><span class="tiny" id="cv136-out" role="status" aria-live="polite">Logo, icon, hình ít màu cho kết quả tốt nhất; ảnh chụp sẽ thành dạng poster.</span></div><div id="cv136-prev" style="margin-top:8px;max-height:260px;overflow:auto"></div>';
+  card.innerHTML = '<div class="row" style="gap:8px;flex-wrap:wrap;align-items:center"><b>Ảnh → Vector (P136)</b><input type="file" id="cv136-file" accept="image/*" aria-label="Chọn ảnh"><label class="tiny">Số màu <input type="range" id="cv136-k" min="2" max="12" value="6"> <span id="cv136-kv">6</span></label><label class="tiny">Chi tiết <select id="cv136-d" class="input"><option value="0.5">Cao</option><option value="1" selected>Vừa</option><option value="2">Thấp (nhẹ hơn)</option></select></label><label class="tiny">Làm mượt Bezier <input type="range" id="cv136-s" min="0" max="100" value="0"><span id="cv136-sv">0%</span></label><button type="button" class="btn btn-soft sm" id="cv136-run">Chuyển sang SVG</button><button type="button" class="btn btn-ghost sm" id="cv136-dl" disabled>Tải SVG</button><span class="tiny" id="cv136-out" role="status" aria-live="polite">Logo, icon, hình ít màu cho kết quả tốt nhất; ảnh chụp sẽ thành dạng poster.</span></div><div id="cv136-prev" style="margin-top:8px;max-height:260px;overflow:auto"></div>';
   page.appendChild(card);
   var $ = function (s) { return card.querySelector(s); }, last = null;
   $('#cv136-k').addEventListener('input', function () { $('#cv136-kv').textContent = this.value; });
+  $('#cv136-s').addEventListener('input', function () { $('#cv136-sv').textContent = this.value + '%'; });
   $('#cv136-run').addEventListener('click', function () {
     var f = $('#cv136-file').files[0], out = $('#cv136-out'), btn = this; if (!f) { out.textContent = 'Chọn một ảnh trước.'; return; }
     btn.disabled = true; out.textContent = 'Đang dò đường biên…';
-    loadFile(f).then(function (im) { return new Promise(function (ok) { setTimeout(function () { ok(fromBitmap(im, { colors: $('#cv136-k').value, detail: $('#cv136-d').value })); }, 20); }); }).then(function (r) {
+    loadFile(f).then(function (im) { return new Promise(function (ok) { setTimeout(function () { ok(fromBitmap(im, { colors: $('#cv136-k').value, detail: $('#cv136-d').value, smooth: Number($('#cv136-s').value) / 100 })); }, 20); }); }).then(function (r) {
       last = r; var u = URL.createObjectURL(new Blob([r.svg], { type: 'image/svg+xml' })), im = new Image(); im.alt = 'Kết quả vector'; im.style.maxWidth = '100%'; im.onload = function () { URL.revokeObjectURL(u); }; im.src = u; var pv = $('#cv136-prev'); pv.innerHTML = ''; pv.appendChild(im); $('#cv136-dl').disabled = false;
-      out.textContent = r.colors + ' màu, ' + r.paths + ' lớp, ' + r.loops + ' đường viền, ' + (r.bytes / 1024).toFixed(0) + ' KB' + (r.bytes > 800000 ? '. Nặng: giảm số màu hoặc chọn Chi tiết thấp.' : '.');
+      out.textContent = r.colors + ' màu, ' + r.paths + ' lớp, ' + r.loops + ' đường viền, Bezier ' + Math.round(Number($('#cv136-s').value)) + '%, ' + (r.bytes / 1024).toFixed(0) + ' KB' + (r.bytes > 800000 ? '. Nặng: giảm số màu hoặc chọn Chi tiết thấp.' : '.');
     }).catch(function (e) { out.textContent = String(e && e.message || e).slice(0, 140); }).then(function () { btn.disabled = false; });
   });
   $('#cv136-dl').addEventListener('click', function () { if (!last) return; var u = URL.createObjectURL(new Blob([last.svg], { type: 'image/svg+xml' })), a = document.createElement('a'); a.href = u; a.download = 'trace-' + Date.now().toString(36) + '.svg'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(function () { URL.revokeObjectURL(u); }, 4000); });
@@ -29117,10 +29131,13 @@ function tests() {
     colorsEncoded: /fill="#dc1e1e"/.test(r.svg) && /fill="#143cc8"/.test(r.svg),
     transparentIgnored: (function () { try { var t = traceImageData(tr, { colors: 3 }); return t.paths === 0 && t.background === null; } catch (e) { return false; } })(),
     rejectsBadInput: thrown === 3,
-    detailReducesPoints: traceImageData(fixture(), { colors: 3, detail: 5 }).bytes <= r.bytes
+    detailReducesPoints: traceImageData(fixture(), { colors: 3, detail: 5 }).bytes <= r.bytes,
+    bezierSmoothingIsOptional: !/C[-0-9.]+ [-0-9.]+/.test(r.svg) && /C[-0-9.]+ [-0-9.]+/.test(traceImageData(fixture(), { colors: 3, detail: 0, smooth: 0.65 }).svg),
+    smoothKeepsLayerAndLoopCounts: (function () { var z = traceImageData(fixture(), { colors: 3, detail: 0, smooth: 0.65 }); return z.paths === r.paths && z.loops === r.loops; })(),
+    smoothnessClampedAndFinite: (function () { var a = loopPath([[0,0],[10,0],[10,10],[0,10]], 99), b = loopPath([[0,0],[10,0],[10,10],[0,10]], -2); return a.indexOf('C') >= 0 && !/NaN|Infinity/.test(a) && b.indexOf('C') < 0; })()
   };
 }
-window.CVTraceP136 = { version: '136.1.0', quantize: quantize, traceMask: traceMask, simplify: simplifyLoop, traceImageData: traceImageData, fromBitmap: fromBitmap, mount: mount, tests: tests };
+window.CVTraceP136 = { version: '136.2.0', quantize: quantize, traceMask: traceMask, simplify: simplifyLoop, loopPath: loopPath, traceImageData: traceImageData, fromBitmap: fromBitmap, mount: mount, tests: tests };
 })();
 </script>
 <script id="canvio-lot134s">

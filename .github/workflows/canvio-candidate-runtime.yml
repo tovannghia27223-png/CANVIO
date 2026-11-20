@@ -5,6 +5,7 @@ on:
     branches:
       - canvio/23-3-111-github-runtime-ci
       - work/p127-7-ducking-p145-continuation
+      - work/p136-bezier-smoothing
       - work/p125-2-scroll-storyboard
       - main
   pull_request:
@@ -104,6 +105,24 @@ jobs:
           if((html.match(/id="canvio-lot1252"/g)||[]).length!==1)throw new Error('P125.2 duplicate/missing lot');
           fs.writeFileSync(file,html,'utf8');
           console.log('P125.1/P125.2 storyboard modules integrated');
+          NODE
+
+      - name: Integrate P136 optional Bezier contour smoothing
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs=require('node:fs');
+          const file='index.html';
+          let html=fs.readFileSync(file,'utf8');
+          const source=fs.readFileSync('canvio-p136-trace.js','utf8').trim();
+          if(!source.includes('window.CVTraceP136'))throw new Error('P136 source contract missing');
+          const re=/(<script\b(?=[^>]*\bid=["']canvio-lot136t["'])[^>]*>)[\s\S]*?(<\/script\s*>)/i;
+          if(!re.test(html))throw new Error('P136 embedded lot missing');
+          html=html.replace(re,'<script id="canvio-lot136t">\n'+source+'\n</script>');
+          if((html.match(/id="canvio-lot136t"/g)||[]).length!==1)throw new Error('P136 embedded lot duplicate/missing');
+          fs.writeFileSync(file,html,'utf8');
+          console.log('P136 updated to optional Bezier mode');
           NODE
 
       - name: Integrate P127.7 subtitle-led music ducking
