@@ -401,7 +401,7 @@
           return window.CANVIOSecurity.cleanCss ? window.CANVIOSecurity.cleanCss(node.textContent || '') : '';
         }).filter(function (css) { return !!String(css || '').trim(); });
         var secured = window.CANVIOSecurity.sanitizeHtml(fragment);
-        var safeDoc = parser.parseFromString('<!doctype html><html><body>' + secured.html + '</body></html>', 'text/html');
+        var safeDoc = new DOMParser().parseFromString('<!doctype html><html><body>' + secured.html + '</body></html>', 'text/html');
         safeStyles.forEach(function (css) { var style = safeDoc.createElement('style'); style.textContent = css; safeDoc.body.insertBefore(style, safeDoc.body.firstChild); });
         return safeDoc.body.innerHTML;
       }
