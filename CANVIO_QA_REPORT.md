@@ -264,3 +264,11 @@ The candidate workflow runs standalone/embedded source parity and API tests for 
 - P145.8 verifies eight first-party illustrations, four palettes, filters, preview and vector export safety.
 - P145.9/.10 verifies shared license/source/size/hash quality gate, local search/filter and read-only UX using a fixture provider.
 - Fixture-based testing is not proof every production Asset Vault item is enumerable; live acceptance needs the actual canonical asset provider and verified metadata/hash coverage.
+
+
+## P145.7 — Pointer interception correction (2026-11-21)
+
+- Hosted Chromium run exposed a real pointer hit-testing failure: the typography controls rendered, but the outer Asset Library page intercepted the Playwright pointer on the Apply button.
+- Corrective change: place the dynamic typography card in an isolated foreground stacking context (`position:relative`, `z-index:40`, `isolation:isolate`) while retaining `pointer-events:none` for the decorative card shell and explicitly re-enabling pointer events on controls.
+- Browser acceptance now asserts the foreground stacking context and continues to use a physical Playwright click on Apply/preset controls; DOM-triggered clicks are not substituted for the interaction test.
+- The previous hosted run is recorded as failed at P145.7. This fix is pending a fresh green hosted run; it is not pre-certified.
