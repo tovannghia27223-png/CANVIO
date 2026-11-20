@@ -130,3 +130,9 @@ The candidate is built and verified by the hosted runtime workflow. Runtime vend
 - Added optional 0–100% closed cubic Bezier smoothing to Image Trace; default 0 keeps legacy polygon contours.
 - No new dependency. SVG stays local, script-free and no external references.
 - Tests: \`node tests/p127/run-p136t-tests.cjs\` and \`tests/p145/run-p136-browser.py\`. Single-line strokes and brush/pattern/gradient mesh remain unimplemented.
+
+
+## P145.5 — Template Factory
+- Added five original editable template presets (business, finance, HR, profile, social) and four palettes.
+- Sandbox preview, up to 20 local saves, standalone offline HTML and validated JSON export/import. No external font/image/runtime.
+- Tests: \`run-p1455-tests.cjs\`, \`run-p1455-browser.py\`. Manual print/typography and native Poster/Slide integration remain open.

@@ -3532,3 +3532,12 @@ P125.3: `CVScrollFramesP125.PRESETS`, `decimate(frames,maxBytes)`; `buildHtml` n
 - SVG remains local, static and script-free; no external assets or paid dependencies.
 - Unit and hosted Chromium coverage check default compatibility, cubic path output, clamped finite coordinates, preserved layer/loop counts, safe SVG export. Manual review on varied production artwork remains open.
 - Not included: single-line stroke tracing, brush/pattern fills or gradient mesh.
+
+
+## P145.5 — Local Template Factory (2026-11-20 continuation)
+
+- Standalone owner: \`canvio-p145-templates.js\`; embedded lot: \`canvio-lot1455\`; API: \`window.CVTemplateFactoryP1455\`. Mounts after Content Factory in the existing Asset Library; no new asset/project store.
+- Five original editable templates: Business Brief, Finance Snapshot, HR Recruitment, Professional Profile and Social Story. Editable title, subtitle, body, three metrics/labels and footer with four local palettes.
+- Sandboxed \`srcdoc\` preview; user text is bounded and escaped; palettes are allow-listed. Export is standalone offline HTML/CSS without scripts, remote fonts, external images or requests.
+- Save up to 20 templates in localStorage; export/import validated portable \`CANVIO_TEMPLATE_V1\` JSON (64 KB max). Local saved templates do not sync across devices.
+- Hosted unit/browser checks cover render/escaping/schema, preview, save, HTML/JSON export and import. Manual typography/print proofing and native Poster/Slide integration remain separate acceptance work.
