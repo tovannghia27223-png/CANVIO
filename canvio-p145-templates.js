@@ -120,7 +120,7 @@ function tests(){
  return{
   fiveBuiltInTemplates:Object.keys(TPL).length===5,
   allTemplatesRenderHtml:Object.keys(TPL).every(function(k){return renderHtml(k,{},'navy').indexOf('<!doctype html>')===0;}),
-  userHtmlEscaped:html.indexOf('&lt;script&gt;')>0&&html.indexOf('<scr'+'ipt')<0&&! /\\sonload\\s*=/.test(html),
+  userHtmlEscaped:html.indexOf('&lt;script&gt;')>0&&html.indexOf('<scr'+'ipt')<0&&html.indexOf(' onload="')<0,
   textEscapedAndBounded:html.indexOf('&amp;')>0&&long.title.length===MAX_TEXT,
   paletteWhitelisted:smooth.indexOf(PALETTES.navy.accent)>0,
   noExternalAssetsOrScripts:hasNoRemote&&html.indexOf('<script')<0&&smooth.indexOf('<scr'+'ipt')<0,
