@@ -726,3 +726,8 @@ Hosted verification after the ffmpeg repair is complete:
 - Bounds: 180 frames, 640 px maximum side, 64 MiB raw-frame budget and 64 MiB output; 20–60,000 ms frame delay. No audio.
 - Initial hosted run #300 passed the integrated Node suites, GIF/APNG acceptance and P145 regressions, but its WebP browser checks failed: the Python test reversed RIFF FourCC/size offsets, and runner ffprobe did not report WebP dimensions/frame count. The rebased test corrects RIFF parsing, validates frame payloads and derives canvas output dimensions, then decodes the actual downloaded WebP with Chromium `createImageBitmap`. Await new hosted CI before acceptance.
 - Real footage quality, target mobile browser support, alpha/profile handling, memory/performance and audio remain outside automated acceptance.
+
+
+### P132.3 hosted test follow-up — run #303 (2026-11-21)
+- RIFF parser, RIFF size, chunk boundaries, VP8X animation flag, ANIM, ten ANMF frames, each frame's VP8 payload, frame dimensions (200×113) and 200 ms durations all passed. Chromium `createImageBitmap` also decoded the downloaded file successfully at 200×113; pageErrors were empty.
+- The remaining failing boolean was a stale fixed-height assertion (`200`) instead of the editor-derived height (`113`). The test now asserts the actual expected height. ffprobe on this runner reports WebP width 0 and “image data not found”, so it is retained as diagnostic only; browser decode + container structure are the acceptance checks. Re-run pending.
