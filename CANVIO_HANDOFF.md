@@ -112,3 +112,9 @@ The candidate is built and verified by the hosted runtime workflow. Runtime vend
 - Supported providers: YouTube (privacy-enhanced), Spotify, SoundCloud. Only HTTPS URLs with validated provider paths are embedded.
 - Preview is click-to-play; no autoplay, recording, capture or download. Cue metadata remains local and Spotify/SoundCloud seek is controlled by provider UI.
 - Candidate workflow runs unit and hosted browser checks before promotion.
+
+
+## P145.4 continuation — local background music composer
+- Added four original procedural moods with 60–140 BPM and 4/8 bars.
+- Preview/stop, WAV export and canonical Video Engine audio import are supported; no external assets or sample files are used.
+- Verify with \`node tests/p145/run-p1454-tests.cjs\` and \`tests/p145/run-p1454-browser.py\`. The hosted check includes ffprobe decode; listening review remains a manual task.

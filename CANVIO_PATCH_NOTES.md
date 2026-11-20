@@ -8,3 +8,5 @@
 - Stable release remains fail-closed at P70; no physical GPU or two-device certification is implied.
 
 - P145.4b: add user-triggered official YouTube/Spotify/SoundCloud music preview using existing cue metadata; HTTPS allowlist, sandboxed iframe, no autoplay/capture/download; add hosted acceptance.
+
+- P145.4: add locally synthesized mood/BPM background loop composer, WAV export, preview/stop and canonical Video Engine import; add unit and hosted browser/ffprobe coverage.

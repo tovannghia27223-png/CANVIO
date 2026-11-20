@@ -146,6 +146,26 @@ jobs:
           console.log('P145.4b official music preview integrated');
           NODE
 
+      - name: Integrate P145.4 local background music composer
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs=require('node:fs');
+          const file='index.html';
+          let html=fs.readFileSync(file,'utf8');
+          const source=fs.readFileSync('canvio-p145-music.js','utf8').trim();
+          if(!source.includes('window.CVMusicComposerP1454'))throw new Error('P145.4 music source contract missing');
+          const re=/(<script\b(?=[^>]*\bid=["']canvio-lot1454["'])[^>]*>)[\s\S]*?(<\/script\s*>)/i;
+          const tag='<script id="canvio-lot1454">\n'+source+'\n</script>';
+          const found=html.match(re);
+          if(found)html=html.replace(re,tag);
+          else{const at=html.lastIndexOf('</body>');if(at<0)throw new Error('index.html has no closing body tag');html=html.slice(0,at)+tag+'\n'+html.slice(at);}
+          if((html.match(/id="canvio-lot1454"/g)||[]).length!==1)throw new Error('P145.4 embedded lot duplicate/missing');
+          fs.writeFileSync(file,html,'utf8');
+          console.log('P145.4 local background music composer integrated');
+          NODE
+
       - name: Verify native test utilities
         shell: bash
         run: |
@@ -296,6 +316,7 @@ jobs:
           node tests/p127/run-p145s-tests.cjs
           node tests/p145/run-p1452-tests.cjs
           node tests/p145/run-p1454b-tests.cjs
+          node tests/p145/run-p1454-tests.cjs
           node tests/p127/run-p136t-tests.cjs
           node tests/p127/run-p134s-tests.cjs
           node tests/p127/run-p138d-tests.cjs
@@ -344,6 +365,7 @@ jobs:
           /tmp/canvio-playwright/bin/python tests/p145/run-p145s-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p1452-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p1454b-browser.py
+          /tmp/canvio-playwright/bin/python tests/p145/run-p1454-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p136-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p134-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p138-browser.py

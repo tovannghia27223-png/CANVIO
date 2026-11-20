@@ -614,3 +614,11 @@ Hosted verification after the ffmpeg repair is complete:
 - HTTPS allowlist: YouTube privacy-enhanced embed, Spotify official embed, SoundCloud official widget. Rejects unsupported hosts, non-HTTPS schemes and malformed provider paths.
 - User-triggered only; autoplay disabled. Cue video position and source in/out are displayed. YouTube accepts start/end query parameters; Spotify/SoundCloud use provider controls and do not promise frame-accurate seeking.
 - No capture, recording, ripping or download. Platform/network/browser restrictions remain external dependencies.
+
+
+## 23.3.111 continuation — P145.4 local background music composer
+
+- Added the missing mood/BPM background-loop generator using deterministic local Web Audio synthesis. Four moods (corporate/calm/uplifting/focus), BPM 60–140, 4/8 bars; output is mono 44.1 kHz WAV.
+- Preview loops locally, stop, download WAV or add the generated result to the existing Video Engine timeline via \`importFiles\`. This complements P145.3 synthetic SFX and P145.4b official third-party previews; it is not a curated commercial music pack.
+- Original oscillator synthesis only: no sample libraries, remote API or unverified assets. Does not claim stems, MIDI, live instrumental recording, or cross-device Project Vault sync.
+- Added deterministic unit assertions and hosted browser checks for all four moods, duration, non-silence, peak normalization, WAV decode, preview/stop and timeline import. Human listening review remains a separate manual acceptance.

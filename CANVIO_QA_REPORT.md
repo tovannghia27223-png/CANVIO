@@ -201,3 +201,10 @@ The candidate workflow runs standalone/embedded source parity and API tests for 
 - Added standalone/embedded parity and unit assertions for YouTube, Spotify, SoundCloud, unsafe protocol rejection, host/path validation, cue formatting and no-autoplay defaults.
 - Added hosted Chromium smoke for Asset Library mounting, saved cue selection, official privacy embed host, sandbox/referrer policy, cue display, stop/teardown and uncaught page errors.
 - Limits: no provider network playback is asserted in offline CI; the test validates the generated official iframe URL and local integration only. Provider availability, user account restrictions and actual playback/listening remain manual checks.
+
+
+## P145.4 local background music composer — hosted candidate checks added
+
+- Unit suite covers four presets, BPM/bar clamps, chord progression, deterministic mood plans, PCM WAV header/format and peak normalization.
+- Hosted browser suite renders all four moods with OfflineAudioContext, checks non-silent output, -1 dBFS peak normalization, 4-bar duration at 96 BPM, imports WAV via the canonical Video Engine importer, downloads/decodes WAV using ffprobe, and exercises loop preview/stop.
+- This is procedural synthesized music, not a curated/licensed music library. Listening quality, musical suitability and mix review on actual user projects remain manual.
