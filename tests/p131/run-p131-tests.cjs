@@ -1,0 +1,23 @@
+'use strict';
+const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
+const root=path.resolve(__dirname,'../..'),html=fs.readFileSync(path.join(root,'index.html'),'utf8'),m=html.match(/<script id="canvio-lot131">([\s\S]*?)<\/script>/);
+assert.ok(m,'P131 module is embedded in index.html');
+assert.ok(/<style id="canvio-lot131-css">/.test(html),'P131 CSS block present');
+const norm=t=>t.replace(/\r\n/g,'\n').trim();
+assert.equal(norm(m[1]),norm(fs.readFileSync(path.join(root,'canvio-p131-security.js'),'utf8')),'standalone copy matches embedded module');
+assert.equal((html.match(/id="canvio-lot131"/g)||[]).length,1,'unique module id');
+const sandbox={window:{},document:{readyState:'loading',addEventListener(){}},console,Object,Array,String,Number,Math,JSON,Date,RegExp,Error,URL};
+sandbox.window.window=sandbox.window;vm.createContext(sandbox);vm.runInContext(m[1],sandbox);
+const api=sandbox.window.CANVIOSecurity;assert.ok(api,'CANVIOSecurity exposed');
+const flags=api.tests();for(const [k,v] of Object.entries(flags))assert.equal(v,true,k);
+// boundary cases
+assert.equal(api.scanStorage([['local',{length:0,key(){return null},getItem(){return null}}]]).found.length,0,'empty storage');
+assert.equal(api.scanStorage([['local',{get length(){throw new Error('blocked')},key(){},getItem(){}}]]).scanned,0,'blocked storage does not throw');
+assert.equal(api.redact('').count,0,'empty redact');
+assert.equal(api.redact('Tiếng Việt có dấu: đường, ơ, ư').text,'Tiếng Việt có dấu: đường, ơ, ư','Vietnamese text unchanged');
+assert.throws(()=>api.sanitizeSvg('<svg/>'),/môi trường|DOM|SVG/,'SVG sanitizer fails closed without DOM');
+assert.throws(()=>api.sanitizeSvg('<html/>'),/không phải SVG/,'non-SVG rejected');
+assert.equal(api.cleanCss('a{background:url(javascript:alert(1))}').includes('javascript'),false,'css javascript url removed');
+assert.equal(api.cleanCss('a{color:red}'),'a{color:red}','safe css kept');
+assert.equal(api.cleanCss('a{width:expr\\65ssion(1)}'),'','escaped css dropped');
+console.log(JSON.stringify({suite:'P131 security hub (source/VM)',passed:Object.keys(flags).length+9,flags},null,2));
