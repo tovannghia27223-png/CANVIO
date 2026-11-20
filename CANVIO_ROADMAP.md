@@ -695,3 +695,9 @@ Hosted verification after the ffmpeg repair is complete:
 - All four modules are inserted into the candidate `index.html` by the runtime integration workflow. Node and hosted Chromium test commands are included for each module.
 - Previous run #263 exposed the P145.7 pointer-interception defect; this rebase contains the non-`.card` fix and preserves real mouse-click testing. Fresh CI on the rebased PR is the acceptance gate.
 - Free/offline implementation: no remote fonts, stock images, paid package or duplicate project/timeline store. Remaining work: inspect the live Asset Vault provider, real production metadata/hash coverage and human design review.
+
+
+### P145.6–P145.10 prior run evidence and rebase gate (2026-11-21)
+- Prior superseded branch CI run #276 completed success with P145.6 9/9, P145.7 7/7, P145.8 11/11 Node suites and all four browser suites clear of failures/page errors.
+- P145.7 real pointer interaction now passes after removing the global `.card` tilt hook from its custom panel wrapper.
+- Current-main rebase additionally orders the P145.9/.10 search panel after P145.8. Re-run the whole candidate workflow on this rebased branch before merging.
