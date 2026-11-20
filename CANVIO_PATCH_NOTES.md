@@ -6,3 +6,8 @@
 - Added portable P107 parser/import/rollback tests and explicit documentation that Project Vault cloud sync is not implemented.
 - Added P145.2 local WebGL shader transitions/effects, Canvas2D fallback, PNG export and an optional P79-muxed video-only transition MP4 path with hosted Chromium coverage.
 - Stable release remains fail-closed at P70; no physical GPU or two-device certification is implied.
+
+- P145.6: original offline SVG icon pack with categories, filtering, preview and export.
+- P145.7: six typography presets using local system font stacks and CSS export.
+- P145.8: original offline SVG illustration pack with themes and exports.
+- P145.9/.10: read-only local asset search and shared license/source/size/hash Quality Gate.

@@ -25,3 +25,8 @@
 12. Physical target-device GPU/VRAM, performance and long-render testing.
 13. Cross-origin backup/restore and independent-device recovery.
 14. Rollback, release observability, alerting and production incident drill.
+
+| P145.6 original icon pack | 25 unique local SVGs, filters, preview, SVG/sprite/contact-sheet output | Original vector quality review and use inside each design surface remain manual |
+| P145.7 typography presets | Six local presets, bounded settings, fallback stacks and CSS export | System-font availability varies by OS; no full font pack or binary licensing bundle |
+| P145.8 original vector illustrations | Eight SVGs, four themes, filtering, preview and safe exports | First-party starter set only; not a comprehensive stock library |
+| P145.9/.10 asset search and gate | Shared license/source/size/hash gate and fixture-based Chromium search/filter checks | Production Asset Vault provider and full binary hash coverage must be verified |

@@ -236,3 +236,12 @@ The candidate workflow runs standalone/embedded source parity and API tests for 
 - P73 Offline Website: tested final HTML redaction and refusal to package without P131 redactor; package report includes redacted count.
 - Source-contract test validates P67/P73/P145 standalone owners and sync configuration. Hosted workflow run #44774969271 passed before the merge-base-only refresh.
 - Manual acceptance remains for hostile HTML/PPTX/ZIP importers, archive-bomb quotas on every import route and deployment HTTP CSP headers.
+
+
+## P145.6–P145.10 — hosted verification suites wired
+
+- P145.6 verifies 25 unique first-party SVG icons, categories, search/filter, selected preview and individual/sprite/contact-sheet downloads.
+- P145.7 verifies six allow-listed typography presets, bounded settings, local font stacks, CSS exports and live preview.
+- P145.8 verifies eight first-party illustrations, four palettes, group/search filtering, theme preview and SVG export safety.
+- P145.9/.10 verifies the shared P145 content quality gate (license, source, name, size, duplicate hash), local search/filter and read-only UX using an injected fixture provider.
+- Fixture-based tests are not proof that every production Asset Vault item is enumerable. Live acceptance requires the host's canonical asset provider and verified metadata/hash coverage.

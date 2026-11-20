@@ -142,3 +142,9 @@ The candidate is built and verified by the hosted runtime workflow. Runtime vend
 - P145 Content Factory text downloads and P73 Offline Website HTML packages use the shared P131 redactor. These flows fail closed if redaction is unavailable.
 - Tests: \`run-p131-tests.cjs\`, \`run-p131-export-contracts.cjs\`, hosted \`run-p131-app-smoke.py\`.
 - Do not describe P131 as fully complete: general HTML/PPTX/ZIP import, archive expansion limits and HTTP CSP/SRI response headers remain open.
+
+
+## P145.6–P145.10 Asset Library continuation
+- Added original local SVG icon and illustration packs plus six system-font typography presets.
+- Added read-only Asset Search & Quality Gate using the shared P145 license/credit rules and hash metadata. The host must expose \`CV.assets.list()\` or call \`CVAssetSearchGateP145910.setAssetProvider(fn)\` to provide a real list; do not interpret an empty fallback list as an accepted full inventory.
+- Verify using \`run-p1456-tests.cjs\`, \`run-p1457-tests.cjs\`, \`run-p1458-tests.cjs\`, \`run-p145910-tests.cjs\` plus their four hosted browser scripts.
