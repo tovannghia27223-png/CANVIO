@@ -1,11 +1,11 @@
-# CANVIO — Roadmap trạng thái tích hợp (P70 baseline + 23.3.111 continuation; 2026-11-20)
+# CANVIO — Roadmap trạng thái tích hợp (P70 baseline + 23.3.111 continuation; 2026-11-21)
 
-> Tài liệu này giữ nguyên trạng thái nền P70 và lịch sử nghiệm thu. Các cập nhật mới hơn nằm trong phần continuation ở cuối file (hiện tới 23.3.111/P127.7). “Đã tích hợp” mô tả code path hiện diện; không thay thế nghiệm thu dự án thật, media thật, provider thật hoặc production. Không mở rộng feature giả để làm đẹp checklist.
+> Tài liệu này giữ nguyên trạng thái nền P70 và lịch sử nghiệm thu. Các cập nhật mới hơn nằm trong phần continuation ở cuối file (hiện tới 23.3.111/P125.4 và P145.6–P145.10). “Đã tích hợp” mô tả code path hiện diện; không thay thế nghiệm thu dự án thật, media thật, provider thật hoặc production. Không mở rộng feature giả để làm đẹp checklist.
 
 ## Tổng quan
 
 - **P70 baseline:** `index.html` — `23.3.84-p70` application marker; PhaseSuite `70.0.0` (P68–P70 final milestone implementation on P67).
-- **Latest hosted continuation:** `23.3.111-github-runtime-ci`; P127.7 and P145 verification details are recorded in the continuation section below.
+- **Latest hosted continuation:** `23.3.111-github-runtime-ci`; P125.4 and P145.6–P145.10 are merged to `main`; their hosted verification and limits are recorded in the continuation section below.
 - **SHA-256:** See `CANVIO_MANIFEST.json` for final P70 source and package hashes.
 - **Trạng thái phát hành:** P70 (`23.3.84-p70`) is integrated on GitHub `main` and the GitHub Pages deployment completed successfully. P47–P70 source/regression/Chromium synthetic smoke pass; fourteen real-world acceptance gates remain OPEN. It remains a Stable Release Candidate, not CANVIO 1.0 Stable or production-certified.
 - **Nguyên tắc:** một canonical Video Engine timeline, một Asset Library, một Project Vault, một Unified Layers history owner; không cloud giả, không API key nhúng trong source, không request nền.
@@ -708,3 +708,12 @@ Hosted verification after the ffmpeg repair is complete:
 - Node suites: P145.6 9/9; P145.7 7/7; P145.8 11/11; P145.9/.10 8/8. Chromium reports for all four suites returned no failed checks and no uncaught page errors.
 - Run #298 also passed candidate HTML/JS audit, P47–P70 regression suites, source contracts, P107 ZIP round-trip, local Three.js r187/P85 runtime SHA verification, GLB Draco/Meshopt/KTX2 fixtures and synthetic P80/P102/P105 ONNX worker/browser acceptance.
 - Boundaries remain: test provider is a fixture, not complete live Asset Vault coverage; no automatic hashing of every real uploaded binary; fonts are system fallbacks; SVG packs are starter assets. Physical GPU, real-media/mobile/print/accessibility and the 14 P70 manual gates remain open.
+
+
+### 23.3.111 main-branch integration snapshot — 2026-11-21
+
+- P125.4 was merged through PR #32 (merge commit `0f485fcfbdcc19cc19acf09320ee90eaefd46e17`). Hosted run #271 (`44798663309`) passed the 14-assertion Node package suite and Chromium offline ZIP acceptance, including integrity, manifest/README, separate image entries and final relative-image decoding.
+- P145.6–P145.10 was merged through PR #33 (merge commit `4f56fcb002e4ef9f10c08b7fc920c50457ecc6e1`). Hosted run #298 (`44800999215`) passed Node suites P145.6 9/9, P145.7 7/7, P145.8 11/11 and P145.9/.10 8/8; all four Chromium suites reported no failed assertions or uncaught page errors. The P145.7 browser suite uses physical Playwright mouse interaction.
+- The post-merge main build is `782aa562f5341172330d114ccb21a3269efbbb37`, retaining candidate `23.3.111-github-runtime-ci`. Mainline workflow #282 (`44799501341`) concluded success; the configured PR-event-only candidate-branch commit step was skipped, not failed.
+- Integration does not imply full production acceptance. P145.9/.10 still needs the canonical live Asset Vault provider to prove complete enumeration and hash coverage. The icon/illustration sets remain starter packs and typography uses system-font fallbacks.
+- P70 remains `releaseCertified:false` / `BLOCKED_PENDING_REAL_WORLD_ACCEPTANCE`; fourteen real-world gates remain open. Do not label CANVIO 1.0 Stable or production-certified until each gate has evidence and sign-off.

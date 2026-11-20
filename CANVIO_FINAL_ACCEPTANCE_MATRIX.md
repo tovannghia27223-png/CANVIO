@@ -15,6 +15,11 @@
 | P145.9/.10 Asset Search & Quality Gate | Read-only local search/filter and shared license/source/size/hash gate | Full live Asset Vault enumeration and hashing every uploaded binary require canonical provider |
 | P70 Stable release | Fourteen fail-closed manual gates | releaseCertified:false until every gate has reviewed production evidence |
 
+
+### Main-branch integration record (2026-11-21)
+
+P125.4 merged in PR #32 and P145.6–P145.10 merged in PR #33. Hosted verification: P125.4 run #271 passed the 14-assertion Node suite and offline ZIP/image decode browser check; P145 run #298 passed Node suites 9/7/11/8 and four Chromium suites without failures/page errors. Main build commit is `782aa562f5341172330d114ccb21a3269efbbb37`. These results establish integration and automated-path coverage only; they do not close the fourteen real-world P70 manual gates or certify live Asset Vault coverage.
+
 ## Required manual gates
 1. HTTPS and supported browser matrix on deployed origin.
 2. Native IndexedDB persistence, restore and quota behavior.

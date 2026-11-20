@@ -8,3 +8,5 @@
 - Added P125.4 optional split-asset storyboard ZIP alongside the original self-contained HTML export; hosted Chromium verifies ZIP integrity and final relative-frame decoding offline. Audio and mobile/real-media acceptance remain open.
 - Added P145.6–P145.10 Asset Library tools: 25 original SVG icons, six local typography presets, eight original SVG illustrations, and read-only asset search/quality gate, with Node and hosted Chromium acceptance.
 - Stable release remains fail-closed at P70; no physical GPU or two-device certification is implied.
+
+- Mainline consolidation (2026-11-21): P125.4 merged via PR #32 and P145.6–P145.10 via PR #33; their hosted Node/Chromium acceptance evidence is recorded in QA and the AI Guide. P70 remains fail-closed with fourteen manual production gates open.
