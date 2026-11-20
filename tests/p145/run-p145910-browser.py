@@ -10,12 +10,14 @@ httpd=socketserver.ThreadingTCPServer(('127.0.0.1',0),functools.partial(Q,direct
 threading.Thread(target=httpd.serve_forever,daemon=True).start()
 url='http://127.0.0.1:%d/index.html'%httpd.server_address[1]
 checks={};errors=[]
+live_owner_ok=False
 with sync_playwright() as p:
  b=p.chromium.launch(executable_path=CHROME,headless=True,args=['--no-sandbox','--disable-dev-shm-usage','--host-resolver-rules=MAP * ~NOTFOUND , EXCLUDE 127.0.0.1'])
  page=b.new_context(viewport={'width':1280,'height':900}).new_page()
  page.on('pageerror',lambda e:errors.append(str(e)[:220]))
  page.goto(url,wait_until='commit',timeout=60000)
  page.wait_for_function('!!(window.CV&&CV.go&&window.CVContentCoreP145&&window.CVAssetSearchGateP145910)',timeout=90000,polling=500)
+ live_owner_ok=page.evaluate("""()=>Array.isArray(CV.assets.list()) && Array.isArray(CVAssetSearchGateP145910.getAssets()) && CVAssetSearchGateP145910.getAssets().length===CV.assets.list().length && (!CV.assets.list().length || CVAssetSearchGateP145910.getAssets()[0].id===CV.assets.list()[0].id)""")
  page.evaluate("""()=>{
    window.__cv145910Assets=[
     {id:'a1',name:'Finance-Report.pdf',type:'application/pdf',size:5,data:'data:application/pdf;base64,SGVsbG8='},
@@ -29,6 +31,7 @@ with sync_playwright() as p:
  }""")
  page.evaluate("CV.go('assets')");page.wait_for_timeout(1000)
  panel=page.locator('#cv145910-card')
+ checks['native live provider defaults to CV.assets.list']=live_owner_ok
  checks['search and gate panel mounts']=panel.is_visible()
  # The module may mount before the fixture provider is installed. Explicitly refresh
  # after injection so the assertions inspect the seeded fixture, not the host's
