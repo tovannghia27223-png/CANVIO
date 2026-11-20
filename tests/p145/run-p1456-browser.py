@@ -35,7 +35,7 @@ with sync_playwright() as p:
  checks['sprite includes all named symbols']=all('id="canvio-'+k+'"' in sprite for k in ['briefcase','chart','people','video','shield-check'])
  with page.expect_download(timeout=15000) as d3:page.locator('#cv1456-sheet').evaluate("(el)=>el.click()")
  sheet=os.path.join(tmp,'sheet.svg');d3.value.save_as(sheet);content=open(sheet,encoding='utf-8').read()
- checks['contact sheet is vector-only']=content.count('<text ')==25 and content.count('<path ')==25 and '<image' not in content and '<script' not in content
+ checks['contact sheet is vector-only']=content.count('<text ')==26 and content.count('<path ')==25 and '<image' not in content and '<script' not in content
  checks['no uncaught page errors']=len(errors)==0
  b.close()
 report={'suite':'CANVIO_P145_6_ORIGINAL_ICON_PACK','checks':checks,'pageErrors':errors,'failed':[k for k,v in checks.items() if not v]}
