@@ -142,3 +142,13 @@ Phạm vi: nhánh ứng viên `canvio/23-3-111-github-runtime-ci`; không thay t
 ## Hosted runtime verification — CANVIO 23.3.111
 
 The GitHub-hosted Node 24 runner provisions same-origin Three.js r187 and P85 runtimes, verifies every vendored file against SHA-256 manifests, checks extracted module/worker syntax, runs P47–P70 regressions, validates P107 ZIP import rollback and runs Chromium against a same-origin HTTP origin. Browser inference checks execute actual P80 Whisper Tiny, P102 ORMBG and P105 Depth Anything ONNX WASM workers using synthetic test data; this verifies execution plumbing, not accuracy on real user data. SwiftShader is software, not a physical GPU. Real two-device Project Vault synchronization is not claimed. P70 remains releaseCertified:false with fourteen manual acceptance gates open.
+
+
+## 2026-11-20 continuation audit — documentation checkpoint
+
+- Reviewed current GitHub main commit `9290d128ca553b06195500d37210c8ffcc45dbbb` and the current Guide, Roadmap, Progress Report, QA Report and Manifest.
+- Confirmed P131.2's latest source change is limited to the P66 SVG ingestion path delegating to `CANVIOSecurity.sanitizeSvg`. This does not establish that every import/export path is sanitized.
+- Confirmed P127 capabilities and limitations as recorded in the Roadmap: edit plan, quality gate/EDL, silence-cut UI, LUFS measurement and text templates are partial implementations; real-media/audio acceptance and advanced director behavior remain open.
+- No new runtime tests were executed in this checkpoint. The combined status response for commit `9290d128ca553b06195500d37210c8ffcc45dbbb` returned an empty status list; therefore no new CI PASS is claimed.
+- Manifest was not manually rewritten because a trustworthy full-file SHA-256/package rebuild was not performed. The repository workflow must refresh manifest entries after any subsequent tracked-file update.
+- Release disposition remains BLOCKED pending real-world acceptance; do not call CANVIO 1.0 Stable or production-certified.
