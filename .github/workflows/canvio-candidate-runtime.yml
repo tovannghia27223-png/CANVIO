@@ -5,6 +5,7 @@ on:
     branches:
       - canvio/23-3-111-github-runtime-ci
       - work/p127-7-ducking-p145-continuation
+      - work/p136-bezier-smoothing
       - main
   pull_request:
     branches:
@@ -81,6 +82,24 @@ jobs:
             grep -q '23.3.111-github-runtime-ci' index.html || { echo "No staged candidate chunks or pinned 23.3.111 index found." >&2; exit 1; }
             echo "Using committed CANVIO candidate index."
           fi
+
+      - name: Integrate P136 optional Bezier contour smoothing
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs=require('node:fs');
+          const file='index.html';
+          let html=fs.readFileSync(file,'utf8');
+          const source=fs.readFileSync('canvio-p136-trace.js','utf8').trim();
+          if(!source.includes('window.CVTraceP136'))throw new Error('P136 source contract missing');
+          const re=/(<script\b(?=[^>]*\bid=["']canvio-lot136t["'])[^>]*>)[\s\S]*?(<\/script\s*>)/i;
+          if(!re.test(html))throw new Error('P136 embedded lot missing');
+          html=html.replace(re,'<script id="canvio-lot136t">\n'+source+'\n</script>');
+          if((html.match(/id="canvio-lot136t"/g)||[]).length!==1)throw new Error('P136 embedded lot duplicate/missing');
+          fs.writeFileSync(file,html,'utf8');
+          console.log('P136 updated to optional Bezier mode');
+          NODE
 
       - name: Integrate P127.7 subtitle-led music ducking
         shell: bash

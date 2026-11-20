@@ -606,3 +606,11 @@ Hosted verification after the ffmpeg repair is complete:
 - Uses the existing Video Engine page as the UI host and existing P79 muxer as the export owner; no third-party dependency, external fetch, new timeline, store or media database.
 - Canvas2D fallback preserves crossfade/wipe only and clearly disables shader-specific FX. Hosted browser coverage is SwiftShader/software rendering.
 - Still open: 60 fps/performance acceptance on representative physical devices, WebCodecs H.264 support matrix, professional review on real project footage, full multi-track/timeline transition editing and audio-inclusive export through the existing canonical exporter.
+
+
+## 23.3.111 continuation — P136.2 optional Bezier smoothing
+
+- Added optional closed-contour cubic Bezier smoothing (0–100%) to Image Trace. Default 0 retains the previous polygon rendering; the setting is opt-in and does not change quantization or contour extraction.
+- Keeps evenodd fill and the same palette/layer/loop counts. Export remains a static SVG without scripts or external references.
+- Unit suite and hosted browser test cover the default output, smooth cubic export, clamping, finite coordinates and SVG safety.
+- Still open: single-line stroke tracing, brush/pattern/gradient mesh, and quality review on varied production artwork.

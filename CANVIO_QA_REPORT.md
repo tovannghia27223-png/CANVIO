@@ -194,3 +194,11 @@ Workflow: https://github.com/tovannghia27223-png/CANVIO/actions/runs/44747930420
 ## P145.2 shader verification
 
 The candidate workflow runs standalone/embedded source parity and API tests for the nine transitions, nine effects, bounded resolution and P79 muxer handoff. Hosted Chromium smoke verifies the Video Engine panel, all transition start/end frames, crossfade midpoint, module checks and PNG download. This exercises WebGL through CI SwiftShader or the documented Canvas2D fallback; it does not certify physical GPU performance, a 60 fps target on mid-range hardware, user-footage visual quality or MP4 H.264 availability on every browser. MP4 output is a short video-only transition segment with no audio.
+
+
+## P136.2 Bezier smoothing — hosted checks added
+
+- Unit assertions cover smoothness disabled by default, cubic segment emission when enabled, values outside 0–1 clamped safely, no NaN/Infinity coordinates and preserved palette layer/loop counts.
+- Existing Chrome trace round-trip remains on default smoothing 0 so its pixel-difference baseline is unchanged.
+- Extended Chrome smoke runs the same image again at 65%, checks slider state, downloads the SVG and confirms cubic segments plus script-free/no-javascript export.
+- Real-world artwork review remains a manual quality gate; very small loops are deliberately left polygonal.

@@ -105,3 +105,9 @@ Phạm vi: nhánh ứng viên `canvio/23-3-111-github-runtime-ci`; không thay t
 ## CANVIO 23.3.111 hosted runtime handoff
 
 The candidate is built and verified by the hosted runtime workflow. Runtime vendor binaries are pinned and same-origin; model weights stay outside git and download only when a user runs the feature. Review hosted reports before promotion. Main-branch Pages auto-deploy is disabled; deployment remains manual and requires a certified P70 manifest. This version does not claim physical GPU, two-device Project Vault sync or Stable release acceptance.
+
+
+## P136.2 — Bezier smoothing
+- Added optional 0–100% smoothing slider to Image Trace; 0% preserves existing output, higher values export closed cubic Bezier contours.
+- No new dependency; SVG remains local and script-free. Single-line strokes and brush/pattern/gradient mesh are still out of scope.
+- Tests: \`node tests/p127/run-p136t-tests.cjs\` and \`tests/p145/run-p136-browser.py\`.

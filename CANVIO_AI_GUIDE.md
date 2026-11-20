@@ -3498,3 +3498,12 @@ P125.3: `CVScrollFramesP125.PRESETS`, `decimate(frames,maxBytes)`; `buildHtml` n
 - WebGL 1 shader rendering has bounded output dimensions and low/medium/high quality caps; unsupported WebGL uses a Canvas2D crossfade/wipe fallback with shader-only effects explicitly disabled. User-selected images are processed locally through object URLs.
 - PNG frame export is available. Optional short H.264 MP4 transition export delegates encoding output muxing to existing `CANVIOWebCodecsExport.muxMP4` (P79), is video-only, and is limited to 10 seconds / 600 frames / 1920×1080. It is not a replacement for the canonical multi-track video export path and adds no audio.
 - Verification: `node tests/p145/run-p1452-tests.cjs` and hosted Chromium `tests/p145/run-p1452-browser.py`. Hosted WebGL uses SwiftShader; this is not physical GPU or 60 fps target-device certification.
+
+
+## P136.2 — Optional Bezier contour smoothing (2026-11-20)
+
+- Updated owner \`canvio-p136-trace.js\`, embedded lot \`canvio-lot136t\`, API \`window.CVTraceP136\` version 136.2.0.
+- Added an optional 0–100% closed-contour cubic Bezier smoothing control. A value of 0 preserves the prior polygon output byte-for-byte; higher values use a bounded Catmull–Rom-derived cubic path on closed contours. The palette, layer count, loop count and evenodd fill rule remain owned by the existing tracer.
+- SVG remains local, static and script-free. No external asset or paid dependency is added.
+- Checks: standalone/embedded parity and unit assertions cover disabled/default behavior, cubic path output, clamped finite coordinates and preserved layer/loop counts. Hosted Chromium browser test exports both unsmoothed and smoothed SVG from the same test image and checks the output remains safe.
+- Not included: single-line stroke tracing, brush/pattern fills, gradient mesh or photorealistic vectorization.

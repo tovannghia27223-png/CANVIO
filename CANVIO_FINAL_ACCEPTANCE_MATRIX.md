@@ -25,3 +25,5 @@
 12. Physical target-device GPU/VRAM, performance and long-render testing.
 13. Cross-origin backup/restore and independent-device recovery.
 14. Rollback, release observability, alerting and production incident drill.
+
+| P136.2 Bezier smoothing | Default compatibility, cubic output, clamped finite values, preserved layers/loops, Chromium export and SVG safety | Review on diverse logos/illustrations and hand-drawn artwork remains manual |
