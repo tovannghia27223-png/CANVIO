@@ -136,28 +136,26 @@ jobs:
           const file='index.html';
           let html=fs.readFileSync(file,'utf8');
           const specs=[
-            {name:'P67 Print Production',file:'canvio-p63-p67.js',marker:'/* CANVIO P63–P67 · Creative Production Expansion.'},
-            {name:'P73 Offline Website',file:'canvio-p73-offline-site.js',marker:'/* CANVIO P73 — Explicit user-triggered website offline packager.'},
-            {name:'P145 Content Factory',file:'canvio-p145-core.js',marker:'/* P145 core (thêm mới, không sửa kho cũ):'}
+            {name:'P67 Print Production',file:'canvio-p63-p67.js',id:'canvio-p63-p67-main'},
+            {name:'P73 Offline Website',file:'canvio-p73-offline-site.js',id:'canvio-p73-offline-site'},
+            {name:'P145 Content Factory',file:'canvio-p145-core.js',id:'canvio-lot145c'}
           ];
           for(const spec of specs){
             const source=fs.readFileSync(spec.file,'utf8').trim();
-            if(!source.startsWith(spec.marker))throw new Error(spec.name+' source header contract missing');
-            const at=html.indexOf(spec.marker);
-            if(at<0||html.indexOf(spec.marker,at+1)>=0)throw new Error(spec.name+' expected one existing source marker');
-            const open=html.lastIndexOf('<script',at),openEnd=html.indexOf('>',open);
-            const close=html.indexOf('</script',at),closeEnd=html.indexOf('>',close);
-            if(open<0||openEnd<at||close<at||closeEnd<0)throw new Error(spec.name+' embedded script boundaries invalid');
-            const body=html.slice(openEnd+1,close);
-            if(body.trimStart().slice(0,spec.marker.length)!==spec.marker)throw new Error(spec.name+' marker is not at the script body start');
-            const openingTag=html.slice(open,openEnd+1);
-            html=html.slice(0,open)+openingTag+'\n'+source+'\n'+html.slice(close);
-          }
-          for(const marker of ['/* CANVIO P63–P67 · Creative Production Expansion.','/* CANVIO P73 — Explicit user-triggered website offline packager.','/* P145 core (thêm mới, không sửa kho cũ):']){
-            if(!html.includes(marker))throw new Error('Embedded owner missing after sync: '+marker);
+            const openTag='<script id="'+spec.id+'">';
+            const open=html.indexOf(openTag);
+            if(open<0||html.indexOf(openTag,open+1)>=0)throw new Error(spec.name+' expected one canonical '+openTag);
+            const bodyStart=open+openTag.length;
+            const close=html.indexOf('</script>',bodyStart);
+            if(close<0)throw new Error(spec.name+' closing script tag missing');
+            const end=close+'</script>'.length;
+            html=html.slice(0,open)+openTag+'\n'+source+'\n</script>'+html.slice(end);
+            const verifyStart=html.indexOf(openTag)+openTag.length;
+            const verifyEnd=html.indexOf('</script>',verifyStart);
+            if(html.slice(verifyStart,verifyEnd).trim()!==source)throw new Error(spec.name+' embedded source sync verification failed');
           }
           fs.writeFileSync(file,html,'utf8');
-          console.log('P131 hardened export consumers synced into their existing canonical script owners');
+          console.log('P131 P67/P73/P145 owners synced by verified canonical script IDs');
           NODE
 
       - name: Integrate P145.2 shader transitions and effects
