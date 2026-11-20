@@ -3465,3 +3465,6 @@ P125.3: `CVScrollFramesP125.PRESETS`, `decimate(frames,maxBytes)`; `buildHtml` n
 ## P145 core
 `window.CVContentCoreP145` {LICENSES, licenseReport, creditLines, reportText, qualityGate, sha256Hex, parseMusicLink, cueSheet, fontVietCoverage, parseCsv, mergeTemplate, toJsonl, mount, tests}. Lot `canvio-lot145c` khớp `canvio-p145-core.js`. Test: `tests/p127/run-p145c-tests.cjs`, `tests/p145/run-p145-browser.py`.
 
+## P132 GIF
+`window.CVGifP132` {encode(frames[{w,h,data:RGBA}],{delayCs,loop}), captureTimeline, mount, tests}. Lot `canvio-lot132g` khớp `canvio-p132-gif.js`.
+

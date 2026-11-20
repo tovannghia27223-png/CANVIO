@@ -554,3 +554,8 @@ Hosted verification after the ffmpeg repair is complete:
 - Test: `node tests/p127/run-p145c-tests.cjs`, Chrome thật `python3 tests/p145/run-p145-browser.py`.
 - Chưa làm: manifest cho gói tải offline (OPFS), băm/phát hiện trùng khi tải lên, template factory, SFX/nhạc tổng hợp, shader, pack icon/font/stock, trình phát nhúng tự phát.
 
+### P132 (phần xuất GIF động)
+- `canvio-p132-gif.js` (lot `canvio-lot132g`): bộ mã hoá GIF89a thuần JS (bảng 3-3-2 + dither Bayer, LZW, lặp vô hạn). Nút "Xuất GIF từ timeline" (FPS 1–15, rộng ≤ 640) trong thẻ Video Engine; chụp `#vtCanvas` bằng cách tua timeline rồi trả về vị trí cũ.
+- Test: `node tests/p127/run-p132g-tests.cjs`; Chrome thật + ffprobe (`tests/p127/run-p132g-browser.py`): giải mã đúng codec gif, đúng rộng và số khung.
+- Chưa làm: APNG/WebP động, nhập PDF/PPTX/PSD, xuất PPTX; bảng màu cố định 256 nên gradient có thể vân; chưa thử với timeline có media thật.
+
