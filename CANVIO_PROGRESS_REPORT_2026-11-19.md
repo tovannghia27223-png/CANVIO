@@ -50,3 +50,10 @@ This batch is not a completion claim for P115–P145 and does not certify CANVIO
 - Fixed the hosted browser navigation wait after the initial `load` and `DOMContentLoaded` signals timed out on bundled/third-party page resources. It now proceeds at response commit and waits for the required CANVIO APIs explicitly.
 - As of 2026-11-19 11:27 UTC, hosted workflow run `44508333096` was still executing its same-origin Chromium runtime/model acceptance step; no final result was available. Do not label the browser/model run as passed until GitHub reports a final conclusion. Static/source checks and the Pages deployment were green; actual ONNX, video and physical-device/manual gates remain separate acceptance areas.
 - P122.2 was added after that report snapshot. Workflow runtime was capped at 90 minutes and ONNX/Whisper-heavy inference became an explicit manual `workflow_dispatch` option (default off) to prevent ordinary pushes from consuming long runner time. The previous workflow ref uses `cancel-in-progress` on main pushes, so the next main update supersedes the stalled run.
+
+
+## 2026-11-20 continuation checkpoint
+
+- Inspected GitHub main at `9290d128ca553b06195500d37210c8ffcc45dbbb`; P131.2 latest commit wires P66 SVG ingestion through the shared security allow-list sanitizer.
+- Reconciled current status: P131 remains partial (HTML/PPTX/ZIP paths and export redaction still open); P127 remains partial (Whisper director/jump-cut/zoom and audio ducking/SFX/music plus real media checks open); P125.1 exists while P125.2–P125.4 remain open; P122.2 remains website CSS scoped; P130 cloud sync is blocked pending real infrastructure.
+- No new code/test run is claimed. The current commit status response contained no status entries. Manifest/hash refresh must be performed by the repository's verified build workflow.
