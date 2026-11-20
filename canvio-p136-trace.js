@@ -1,6 +1,6 @@
-/* P136 · Image Trace: ảnh -> SVG nhiều màu, chạy cục bộ. Lượng tử hoá median-cut (2–12 màu), tách lớp theo màu, dò đường biên theo cạnh điểm ảnh,
-   gộp điểm thẳng hàng, đơn giản hoá Douglas-Peucker, tô evenodd. Ảnh lớn được thu nhỏ (≤ 512 px cạnh dài). Pixel trong suốt (alpha < 128) bị bỏ.
-   Giới hạn: không làm mượt cong Bezier (đường gấp khúc), không tách nét đơn (stroke), ảnh chụp nhiều chuyển sắc cho kết quả dạng poster. */
+/* P136.4 · Image Trace: vector hoá ảnh cục bộ, đa màu, Bezier kín, nét đơn và tô họa tiết SVG.
+   Median-cut (2–12 màu), đường biên pixel + Douglas-Peucker, Zhang–Suen stroke skeleton, pattern nội bộ: dots/diagonal/grid/cross/wave/checker.
+   Giới hạn: ảnh thu nhỏ tối đa 512 px cạnh; pattern chỉ áp dụng cho chế độ mảng màu; ảnh chụp nhiều chuyển sắc vẫn có thể ra poster, nhánh stroke có thể phân mảnh. */
 (function () {
 'use strict';
 if (window.CVTraceP136) return;
