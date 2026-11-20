@@ -275,3 +275,9 @@ The candidate workflow runs standalone/embedded source parity and API tests for 
 - Root-cause history: run #263 failed P145.7 because the global MutationObserver tagged every `.card` under `#page-assets` with `data-tilt`; pointer movement rotated the typography panel and caused the real Playwright click to be intercepted. A z-index-only patch failed. Current branch removes the `.card` class from the P145.7 shell and the regression test asserts no `data-tilt`/transform while still using a physical click.
 - Status: the corrective source and tests have been rebased onto current main; the new hosted workflow result is pending. P145.6–P145.10 are not yet marked accepted from this branch.
 - Live vault boundary: browser fixtures use a test provider. Production asset listing and hash coverage are not certified until a canonical live provider is wired and reviewed.
+
+
+### P145.6–P145.10 — prior hosted run #276 evidence (2026-11-20)
+- Superseded pre-rebase branch run #276 (`44799265880`) completed success. Node suites passed: P145.6 9/9, P145.7 7/7, P145.8 11/11 and P145.9/.10 PASS. All four hosted Chromium suites returned no failed assertions and no uncaught page errors.
+- P145.7 specifically passed the real Playwright pointer interaction after replacing the `.card` shell with the dedicated `cv1457-card` wrapper. This confirms the global tilt pointer-interception fix on that branch.
+- The current-main rebased branch adds one integration-order correction so P145.9/.10 is placed after P145.8. A fresh hosted run on the rebased branch is still required; this historic pass does not substitute for it.
