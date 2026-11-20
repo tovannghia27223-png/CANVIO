@@ -43,8 +43,11 @@ with sync_playwright() as p:
   extracted=os.path.join(tmp,'extracted');z.extractall(extracted)
  c=b.new_context(viewport={'width':800,'height':500},reduced_motion='no-preference');pg=c.new_page();pg.on('pageerror',lambda e:errors.append(str(e)[:200]))
  pg.goto('file://'+os.path.join(extracted,'index.html'));pg.wait_for_function('window.__scrollFrames&&window.__scrollFrames.count>=2',timeout=20000)
- pg.evaluate('window.scrollTo(0,document.documentElement.scrollHeight)');pg.wait_for_timeout(700)
+ pg.evaluate('window.scrollTo(0,document.documentElement.scrollHeight)')
+ pg.wait_for_function('window.__scrollFrames&&window.__scrollFrames.current()===window.__scrollFrames.count-1',timeout=15000)
+ pg.wait_for_function('window.__scrollFrames&&window.__scrollFrames.ready(window.__scrollFrames.count-1)',timeout=20000)
  checks['split asset package opens and scrolls offline']=pg.evaluate('__scrollFrames.current()')==manifest['frameCount']-1
+ checks['last relative frame image is decoded offline']=pg.evaluate('__scrollFrames.ready(__scrollFrames.count-1)') is True
  checks['no uncaught page errors']=len(errors)==0
  b.close()
 report={'suite':'CANVIO_P125_4_SPLIT_ASSET_PACKAGE','checks':checks,'manifest':manifest,'zipBytes':os.path.getsize(zpath),'pageErrors':errors,'failed':[k for k,v in checks.items() if not v]}
