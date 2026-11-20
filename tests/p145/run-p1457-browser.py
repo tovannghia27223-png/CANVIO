@@ -21,7 +21,7 @@ with sync_playwright() as p:
  checks['six presets available']=page.locator('#cv1457-preset option').count()==6
  checks['unit suite passes']=page.evaluate("Object.values(CVTypographyPresetsP1457.tests()).every(Boolean)")
  page.select_option('#cv1457-preset','editorial')
- checks['preset updates typography preview']=page.locator('#cv1457-heading').evaluate("(el)=>el.style.fontFamily.toLowerCase().includes('georgia') and parseFloat(getComputedStyle(el).fontSize)>=24")
+ checks['preset updates typography preview']=page.locator('#cv1457-heading').evaluate("(el)=>el.style.fontFamily.toLowerCase().includes('georgia') && parseFloat(getComputedStyle(el).fontSize)>=24")
  page.fill('#cv1457-hsize','52');page.fill('#cv1457-bsize','18');page.fill('#cv1457-line','1.8');page.fill('#cv1457-track','-.03')
  page.click('#cv1457-apply')
  checks['custom controls update live preview']=page.locator('#cv1457-heading').evaluate("(el)=>parseFloat(getComputedStyle(el).fontSize)===52") and page.locator('#cv1457-body').evaluate("(el)=>parseFloat(getComputedStyle(el).fontSize)===18")
