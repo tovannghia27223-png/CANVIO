@@ -5,4 +5,5 @@
 - Corrected P80/P102/P105 workers to import the local Transformers.js runtime and preserve the application message contracts.
 - Added portable P107 parser/import/rollback tests and explicit documentation that Project Vault cloud sync is not implemented.
 - Added P145.2 local WebGL shader transitions/effects, Canvas2D fallback, PNG export and an optional P79-muxed video-only transition MP4 path with hosted Chromium coverage.
+- Added P125.4 optional split-asset storyboard ZIP alongside the original self-contained HTML export; hosted Chromium verifies ZIP integrity and final relative-frame decoding offline. Audio and mobile/real-media acceptance remain open.
 - Stable release remains fail-closed at P70; no physical GPU or two-device certification is implied.

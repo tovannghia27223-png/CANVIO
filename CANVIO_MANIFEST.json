@@ -2,7 +2,7 @@
   "format": "CANVIO_DELIVERY_MANIFEST",
   "schemaVersion": 2,
   "candidate": "23.3.111-github-runtime-ci",
-  "generatedAt": "2026-11-20T18:56:14.764Z",
+  "generatedAt": "2026-11-20T19:08:04.202Z",
   "hashAlgorithm": "SHA-256",
   "indexSha256": "d8b9bc8251697f8fa87b00b1ab51207e0ea3b62c26a43756112a5a584e2065a0",
   "indexBytes": 5286118,
@@ -32,8 +32,8 @@
     },
     {
       "path": ".github/workflows/canvio-candidate-runtime.yml",
-      "bytes": 43080,
-      "sha256": "2f43e09e2a9254d3ea4a8cb4648c3b65482f11d59fbe66a26c97295beb25e869"
+      "bytes": 43606,
+      "sha256": "a727d0fd5c0ad155e5e168c592db05bf32a8e88aa9b3c2b690a8a85e8dfbedfb"
     },
     {
       "path": ".github/workflows/canvio-pages-node24.yml",
@@ -382,18 +382,18 @@
     },
     {
       "path": "CANVIO_AI_GUIDE.md",
-      "bytes": 367992,
-      "sha256": "e195d69105c1f30bda746916b11008c6a6c3dcad1b16b2faeaed2bc9b252b999"
+      "bytes": 368392,
+      "sha256": "840ce69c36295e0fd13e0297691c77026810a4174b4d1f8353776762617c5398"
     },
     {
       "path": "CANVIO_FINAL_ACCEPTANCE_MATRIX.md",
-      "bytes": 2243,
-      "sha256": "fb0cd8094d97a52b2ad4d12d414f0bacd7cd7f530bdcb9f0db51daaa953797e2"
+      "bytes": 2513,
+      "sha256": "74148e1fc6e2718ce3202621b177266c4c58479271bf2eb75925a87ad55749f1"
     },
     {
       "path": "CANVIO_HANDOFF.md",
-      "bytes": 17044,
-      "sha256": "32988b11bba5b9210b510cbbf49d42db30cddf4ccbd31d994f12d8a83bdc0267"
+      "bytes": 17208,
+      "sha256": "748235d9da4512e587978162a6a2bd59bb5006fa8deb92bc07800ce65ff8dacc"
     },
     {
       "path": "CANVIO_NEXT_AI_PROMPT.md",
@@ -402,8 +402,8 @@
     },
     {
       "path": "CANVIO_PATCH_NOTES.md",
-      "bytes": 895,
-      "sha256": "d86036dea14663968ab6c138169cd0356718483c98a4a82a26051eabb15136cb"
+      "bytes": 1131,
+      "sha256": "e8642d7abe3f237e1fc7c35dbb824788a95f239da8a058ea6c2f09a78c98b97a"
     },
     {
       "path": "CANVIO_PHASES_1_6_STATUS.md",
@@ -417,13 +417,13 @@
     },
     {
       "path": "CANVIO_QA_REPORT.md",
-      "bytes": 27976,
-      "sha256": "51fcb21e5b157fd42e9d069ce391c47bb7a40a4bd90b0a94429a656b412c3fb1"
+      "bytes": 28278,
+      "sha256": "7d79e4d94ad0decdbd9818e3eae4858217d78e1907e5f40cbede57a73678e2eb"
     },
     {
       "path": "CANVIO_ROADMAP.md",
-      "bytes": 79210,
-      "sha256": "34a6b45a9d493b41c633eae4a620d47d2d1f24a8258d46173c4d12878100fa01"
+      "bytes": 79301,
+      "sha256": "6ca18d0f55f4ea9c0dd8d5c5acb7c6d2228be792f249bff2c608b1fe004612e5"
     },
     {
       "path": "canvio-p102-background-removal.js",
@@ -707,8 +707,8 @@
     },
     {
       "path": "tests/hosted/hosted-runtime-report.json",
-      "bytes": 16378,
-      "sha256": "bf316226f5340ae26ead752acc79b1c3a0c7b0e6313931f9bcf135a9cb9a52c1"
+      "bytes": 16376,
+      "sha256": "65481e88a9dc233332f5e0d1cf322f70cb2e13d85c4e00275dcd9384c657f758"
     },
     {
       "path": "tests/hosted/integrated-source-contracts.cjs",
