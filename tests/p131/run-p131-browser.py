@@ -115,7 +115,7 @@ with sync_playwright() as p:
     c['safeHtmlImportSavesExistingProject'] = page.evaluate('window.__saved===1')
     c['safeHtmlImportNeverExecutesImportedScript'] = page.evaluate('window.__importX===undefined')
     c['safeHtmlImportDoesNotCreateRemoteImageRequest'] = page.evaluate("Array.from(document.querySelectorAll('#p131-import-sink img')).every(x=>!/^https?:/i.test(x.getAttribute('src')||''))")
-    page.locator('#p131-import-sink').remove()
+    page.locator('#p131-import-sink').evaluate('(e)=>e.remove()')
     save_failure = page.evaluate('''async()=>{try{await CANVIOSecurity.importHtmlText('<p>Save fail check</p>',{addComponents:()=>true},{confirmed:true,save:()=>{throw new Error('save test')}});return false}catch(e){return /đã được chèn.*lưu dự án thất bại/i.test(e.message)}}''')
     c['safeHtmlImportReportsSaveFailureRatherThanClaimingSuccess'] = save_failure
     entry = page.evaluate_handle("CV.palette.build().find(x=>x&&x.label==='Nhập HTML an toàn · Website Studio')")
