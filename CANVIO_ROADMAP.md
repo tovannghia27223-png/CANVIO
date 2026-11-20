@@ -495,3 +495,8 @@ Phạm vi: nhánh ứng viên `canvio/23-3-111-github-runtime-ci`; không thay t
 - Test: `node tests/p127/run-p127l-tests.cjs` (sine chuẩn -3,01 LUFS, stereo +3 dB, gate, im lặng).
 - Giới hạn: chỉ đỉnh mẫu (chưa true-peak), tối đa 80 MB / 30 phút, chưa ducking/map SFX; chưa kiểm với audio thật trên Chrome.
 
+### P127.5 — Mẫu dàn dựng
+- `canvio-p127-templates.js` (lot `canvio-lot127t`): `CVTemplatesP127.apply(key)` với 4 mẫu: Short/Reel 9:16, YouTube dài, Recap sự kiện, Video vui. Chỉ THÊM khung chữ gợi ý trên track chữ (nối sau chữ hiện có), có undo, từ chối nếu track chữ khóa.
+- Hàng nút trong thẻ `#cv127-quality`. Test: `node tests/p127/run-p127t-tests.cjs`.
+- Giới hạn: engine chưa có trạng thái tỉ lệ khung, nên mẫu chỉ nhắc tỉ lệ trong ghi chú; chưa gắn media/nhạc tự động; chưa kiểm trên Chrome thật.
+

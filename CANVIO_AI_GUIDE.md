@@ -3428,3 +3428,6 @@ Phạm vi: nhánh ứng viên `canvio/23-3-111-github-runtime-ci`; không thay t
 ## P127.3 Loudness
 `window.CVLoudnessP127` {measure(channels,fs), measureClip(state,clip), advice(m), mount, tests}. Embedded `canvio-lot127l` phải khớp `canvio-p127-loudness.js` (CRLF khi nhúng). Test: `node tests/p127/run-p127l-tests.cjs`.
 
+## P127.5 Templates
+`window.CVTemplatesP127` {templates, plan(key,offset), apply(key,state,api), mount, tests}. Embedded `canvio-lot127t` khớp `canvio-p127-templates.js`. Test: `node tests/p127/run-p127t-tests.cjs`.
+
