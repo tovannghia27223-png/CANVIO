@@ -3669,3 +3669,13 @@ P125.3: `CVScrollFramesP125.PRESETS`, `decimate(frames,maxBytes)`; `buildHtml` n
 - P145.10 adds an explicit, read-only SHA-256 scan for local `data:...;base64` payloads. The user triggers **Làm mới & rà soát**. Hashes are computed from decoded bytes using Web Crypto, held only in page memory, and passed to the existing P145.1 Quality Gate; asset rows and metadata are not mutated.
 - Limits: 40 assets, 25 MiB per asset, 64 MiB aggregate. Unsupported/missing data URLs, unavailable Web Crypto and over-budget assets remain visibly unverified. No upload, network call, second store or background hashing.
 - Original PR #37 hosted run #305 (`44811157725`) passed the complete candidate workflow, including Chromium browser acceptance. This rebased PR requires its own hosted rerun before acceptance on the current mainline. P70 remains blocked with fourteen real-world gates open.
+
+
+
+## P136.4 — Local SVG pattern fills (candidate, 2026-11-21)
+
+- Owner remains canvio-p136-trace.js, embedded lot remains canvio-lot136t, API window.CVTraceP136 version 136.4.0; hosted workflow syncs the standalone source into the existing canonical index lot.
+- Adds six bounded fill presets: dots, diagonal hatch, grid, cross, wave and checker. Each traced colour layer gets its own deterministic, local SVG pattern definition with a contrast mark selected from the layer colour. Pattern geometry is SVG-native and self-contained; no external image/font/script, remote request, new editor, project store or timeline.
+- Default none preserves the previous SVG output. Pattern selection is available only in multi-colour fill mode and disabled in single-line Stroke mode. Existing Bezier smoothing and stroke skeletonization remain available.
+- Tests: node tests/p127/run-p136t-tests.cjs verifies standalone/embedded parity, all existing trace regressions, unchanged no-pattern output, per-layer local defs, safe static SVG and invalid-option fallback. Hosted Chromium tests/p145/run-p136-browser.py downloads and inspects the pattern SVG, decodes the preview, then verifies the pattern control is disabled for Stroke and Stroke export still works.
+- Limits: six repeatable pattern presets only; not a brush authoring engine, gradient mesh, topology editor or photographic restoration. Review output on production artwork; raster input is downscaled to 512 px maximum side.
