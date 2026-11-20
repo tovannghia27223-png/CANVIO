@@ -296,3 +296,11 @@ The candidate workflow runs standalone/embedded source parity and API tests for 
 - PR #33 merged P145.6–P145.10 to `main` (merge commit `4f56fcb002e4ef9f10c08b7fc920c50457ecc6e1`). Hosted run #298 (`44800999215`) passed P145.6 9/9, P145.7 7/7, P145.8 11/11, P145.9/.10 8/8; all four Chromium suites had `failed: []` and `pageErrors: []`.
 - Current post-merge main build commit: `782aa562f5341172330d114ccb21a3269efbbb37`. Mainline workflow #282 (`44799501341`) concluded success. The candidate-branch commit step was skipped because the run was PR-triggered; it is not counted as a failure.
 - Remaining non-automated scope: canonical live Asset Vault provider coverage/hash verification, real user media, mobile/touch, OS font/print review and the fourteen P70 production acceptance gates. None is certified by synthetic CI fixtures.
+
+
+## P132.3 Animated WebP — corrective verification in progress (2026-11-21)
+
+- Original run #300 (`44804824106`) failed only at the WebP browser assertions: the test interpreted RIFF chunks as size-then-FourCC instead of FourCC-then-size; ffprobe recognized the WebP codec but did not provide dimensions or frame count. GIF/APNG and all P145 browser suites in that same run passed with no page errors.
+- Corrective branch fixes RIFF chunk parsing, validates RIFF byte length, VP8X animation/canvas flags, ANIM and exactly ten ANMF chunks, checks each frame contains a VP8/VP8L image subchunk with matching dimensions and positive duration, and asks Chromium `createImageBitmap` to decode the downloaded WebP.
+- The test derives expected output height from the actual `#vtCanvas` aspect ratio. ffprobe output is retained as diagnostic metadata only, not used as a pass/fail check where the runner cannot report animated WebP frame count.
+- Status: implementation and browser test are rebased to current main; corrected hosted result pending. Do not mark P132.3 accepted until the full hosted workflow succeeds.
