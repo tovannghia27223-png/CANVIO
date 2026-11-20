@@ -25,3 +25,6 @@
 12. Physical target-device GPU/VRAM, performance and long-render testing.
 13. Cross-origin backup/restore and independent-device recovery.
 14. Rollback, release observability, alerting and production incident drill.
+
+
+| P125.4 Split-asset ZIP | Offline ZIP with HTML + relative frame assets, manifest/README, budgeted decimation, safe path validation, ZIP and signature verification, extracted offline scroll test | Physical mobile memory/performance, touch QA, audio package and large real-media tests remain open |

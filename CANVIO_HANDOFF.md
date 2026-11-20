@@ -154,3 +154,11 @@ The candidate is built and verified by the hosted runtime workflow. Runtime vend
 - Use the existing FPS/width controls and the separate Export APNG action. Limit: 600 frames / 64 MiB raw scanline data; output has no audio.
 - Verify source/embedded parity and format structure with `node tests/p127/run-p132g-tests.cjs`; verify actual Chromium download/decode with `tests/p127/run-p132g-browser.py`.
 - Animated WebP and real-device long-timeline validation are not included.
+
+
+## P125.4 — Split-asset offline ZIP export
+- The storyboard editor keeps the single-file HTML export and adds a second ZIP option. ZIP layout: `index.html`, `frames/frame-NNN.webp|jpg|png`, manifest and README.
+- The generated HTML uses relative frame paths; keep the `frames` folder beside the HTML. Extract the ZIP before opening `index.html`.
+- Uses the existing MB budget to decimate frames and refuses output above the selected budget. No audio is packaged and the offline site does not call a server.
+- Verify with `node tests/p127/run-p1254-tests.cjs` and hosted `tests/p127/run-p1254-browser.py`.
+- Real mobile devices, large footage and touch-editor acceptance remain manual.
