@@ -13,3 +13,7 @@
 
 - P136.4 SVG pattern fills merged and hosted verified in workflow #312: six local pattern presets for the existing Image Trace multicolour mode; no paid dependency or external asset.
 - P131.3 candidate adds bounded, sanitized local HTML import to Website Studio through the existing editor/save owner; 5 MiB cap, active content and remote image URLs removed. Hosted verification pending.
+
+
+
+- P131.3 source/security import tests merged via PR #41; hosted run #315 PASS (31 Chromium checks, 0 page errors; app smoke 21/21 across 48 pages; full runtime workflow success). The generated mainline `index.html` embed is being promoted in the follow-up build PR.
