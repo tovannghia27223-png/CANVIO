@@ -10,6 +10,10 @@ const sandbox={window:{},document:{readyState:'loading',addEventListener(){}},co
 sandbox.window.window=sandbox.window;vm.createContext(sandbox);vm.runInContext(m[1],sandbox);
 const api=sandbox.window.CANVIOSecurity;assert.ok(api,'CANVIOSecurity exposed');
 const flags=api.tests();for(const [k,v] of Object.entries(flags))assert.equal(v,true,k);
+assert.equal(typeof api.prepareHtmlImport,'function','P131.3 exposes safe HTML preparation');
+assert.equal(typeof api.importHtmlText,'function','P131.3 exposes async Website Engine import');
+assert.equal(typeof api.chooseHtmlImport,'function','P131.3 exposes user-driven local file picker');
+assert.equal(api.version,'131.3.0','P131 version updated');
 // boundary cases
 assert.equal(api.scanStorage([['local',{length:0,key(){return null},getItem(){return null}}]]).found.length,0,'empty storage');
 assert.equal(api.scanStorage([['local',{get length(){throw new Error('blocked')},key(){},getItem(){}}]]).scanned,0,'blocked storage does not throw');
@@ -20,4 +24,4 @@ assert.throws(()=>api.sanitizeSvg('<html/>'),/không phải SVG/,'non-SVG reject
 assert.equal(api.cleanCss('a{background:url(javascript:alert(1))}').includes('javascript'),false,'css javascript url removed');
 assert.equal(api.cleanCss('a{color:red}'),'a{color:red}','safe css kept');
 assert.equal(api.cleanCss('a{width:expr\\65ssion(1)}'),'','escaped css dropped');
-console.log(JSON.stringify({suite:'P131 security hub (source/VM)',passed:Object.keys(flags).length+9,flags},null,2));
+console.log(JSON.stringify({suite:'P131 security hub (source/VM)',passed:Object.keys(flags).length+13,flags},null,2));

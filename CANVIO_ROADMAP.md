@@ -753,3 +753,17 @@ Hosted verification after the ffmpeg repair is complete:
 - Existing no-pattern output is preserved exactly; pattern definitions are local SVG defs/pattern nodes with no remote references. The UI disables pattern selection in single-line Stroke mode; multicolour trace and optional Bezier remain intact.
 - Node coverage includes embedded-source parity and static/self-contained SVG; Chromium coverage downloads the pattern SVG, checks local pattern references, decodes the preview and rechecks Stroke behavior. Current status: candidate pending hosted CI on this branch.
 - P136 remains partial: no brush authoring, gradient mesh, topology/branch editor, handwriting OCR or reliable photo-to-vector cleanup. Real artwork/design review remains manual.
+
+
+
+## 2026-11-21 verification correction — P136.4 PASS
+
+- The earlier P136.4 entry that said hosted CI was pending is superseded. PR #39 merged into main (`1eb4129f4252b31c41f819d23f1cd9dd02948d68`); hosted workflow #312 (`44813838108`) completed success, 33 steps, no failed steps.
+- P136.4 adds six local SVG pattern fills to the existing Image Trace multi-colour mode. Existing no-pattern SVG output, Bezier and single-line Stroke remain. Limits are unchanged: no brush authoring, gradient mesh, topology editor or photo-restoration quality claim.
+
+## P131.3 — Safe local HTML import (candidate; 2026-11-21)
+
+- Adds explicit `.html/.htm` import to the existing Website Engine. Import passes through `CANVIOSecurity.sanitizeHtml`, strips non-data image/source URLs, rejects files over 5 MiB and inserts through the existing `CVWeb.addComponents` + `CV.engines.web.save` owner. No new editor/store, upload or remote dependency.
+- Adds Node API parity checks and Chromium tests for malicious markup, local raster retention, remote image removal, Vietnamese content, project save and user file picker.
+- Current status: candidate PR #41; hosted CI required before merge. Real external-page fidelity, CSS/assets, third-party runtime, mobile and production accessibility remain separate manual acceptance items.
+

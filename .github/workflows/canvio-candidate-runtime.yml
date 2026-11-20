@@ -201,6 +201,27 @@ jobs:
           console.log('P127.7 integrated into canonical index.html');
           NODE
 
+      - name: Integrate P131.3 safe HTML import into canonical security hub
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs=require('node:fs');
+          const file='index.html', source=fs.readFileSync('canvio-p131-security.js','utf8').trim();
+          let html=fs.readFileSync(file,'utf8');
+          const id='canvio-lot131', open='<script id="'+id+'">';
+          const first=html.indexOf(open);
+          if(first<0||html.indexOf(open,first+1)>=0)throw new Error('P131.3 expected exactly one canonical '+open);
+          const start=first+open.length, close=html.indexOf('</script>',start);
+          if(close<0)throw new Error('P131.3 security lot closing script missing');
+          html=html.slice(0,start)+'\n'+source+'\n'+html.slice(close);
+          const verifyStart=html.indexOf(open)+open.length, verifyEnd=html.indexOf('</script>',verifyStart);
+          if(html.slice(verifyStart,verifyEnd).trim()!==source)throw new Error('P131.3 standalone/embedded security source mismatch');
+          if((html.match(/id="canvio-lot131"/g)||[]).length!==1)throw new Error('P131.3 duplicate security lot');
+          fs.writeFileSync(file,html,'utf8');
+          console.log('P131.3 security hub safely synced into canonical index.html');
+          NODE
+
       - name: Integrate P131 shared sanitizer and export redaction boundaries
         shell: bash
         run: |

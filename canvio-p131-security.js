@@ -3,7 +3,7 @@
 (function () {
 'use strict';
 if (window.CANVIOSecurity) return;
-var VERSION = '131.0.0';
+var VERSION = '131.3.0';
 var STRONG_NAME = /(api[-_. ]?key|secret|passw(?:or)?d|token|credential|service[-_.]?role|authorization|bearer)/i;
 var WEAK_NAME = /(^|[-_.:])key$/i;
 var KNOWN_SECRET_KEYS = ['canvio10:gemini_key', 'canvio18:google-font-key', 'canvio16:gh_tok'];
@@ -165,6 +165,96 @@ function sanitizeHtml(raw, opts) {
   return { html: body.innerHTML, removed: stats };
 }
 
+/* ---------- safe local HTML import into the existing Website Engine ---------- */
+var MAX_HTML_IMPORT_BYTES = 5 * 1024 * 1024;
+function utf8Bytes(value) {
+  var x = String(value == null ? '' : value);
+  try { return new TextEncoder().encode(x).length; } catch (e) { return x.length * 3; }
+}
+function prepareHtmlImport(raw, opts) {
+  opts = opts || {};
+  var max = Math.min(MAX_HTML_IMPORT_BYTES, Math.max(1, Number(opts.maxBytes) || MAX_HTML_IMPORT_BYTES));
+  var source = String(raw == null ? '' : raw), bytes = utf8Bytes(source);
+  if (!source.trim()) throw new Error('File HTML đang trống.');
+  if (bytes > max) throw new Error('HTML vượt giới hạn 5 MiB; hãy rút gọn tệp trước khi nhập.');
+  var safe = sanitizeHtml(source, { maxBytes: max });
+  var doc = new DOMParser().parseFromString('<!doctype html><body>' + safe.html, 'text/html');
+  var remoteSourcesRemoved = 0;
+  Array.prototype.forEach.call(doc.body.querySelectorAll('img[src],source[src]'), function (node) {
+    var value = String(node.getAttribute('src') || '').trim();
+    if (!/^data:image\/(?:png|jpe?g|gif|webp);base64,[a-z0-9+/=]+$/i.test(squash(value))) {
+      node.removeAttribute('src'); remoteSourcesRemoved++;
+    }
+  });
+  var html = doc.body.innerHTML;
+  if (!html.trim()) throw new Error('Không còn nội dung HTML an toàn để nhập.');
+  return {
+    html: html, bytes: bytes, insertedChars: html.length,
+    removed: safe.removed || { elements: 0, attrs: 0 },
+    remoteSourcesRemoved: remoteSourcesRemoved
+  };
+}
+async function importHtmlText(raw, editor, opts) {
+  opts = opts || {};
+  var target = editor || window.CVWeb;
+  if (!target || typeof target.addComponents !== 'function') throw new Error('Website Studio chưa sẵn sàng. Hãy mở Website Studio rồi thử lại.');
+  var cv = window.CV, save = opts.save || (cv && cv.engines && cv.engines.web && cv.engines.web.save);
+  if (typeof save !== 'function') throw new Error('Không tìm thấy bộ lưu Website Engine; từ chối nhập để tránh mất nội dung.');
+  var prepared = prepareHtmlImport(raw, opts);
+  if (!opts.confirmed && typeof window.confirm === 'function') {
+    var accepted = window.confirm('Đã làm sạch HTML trước khi nhập. Script, form, iframe, CSS không an toàn và ảnh tải từ URL ngoài sẽ bị loại. Tiếp tục chèn vào Website Engine hiện tại?');
+    if (!accepted) return { ok: false, cancelled: true, removed: prepared.removed, remoteSourcesRemoved: prepared.remoteSourcesRemoved };
+  }
+  var inserted = target.addComponents(prepared.html);
+  if (inserted === false) throw new Error('Website Engine từ chối nội dung HTML đã làm sạch.');
+  try {
+    var saved = save.call(cv && cv.engines && cv.engines.web || target);
+    if (saved && typeof saved.then === 'function') await saved;
+    if (saved === false) throw new Error('Website Engine trả về trạng thái lưu thất bại.');
+  } catch (e) {
+    throw new Error('Nội dung đã được chèn trong phiên hiện tại nhưng lưu dự án thất bại; hãy hoàn tác trong Website Studio. ' + (e && e.message ? e.message : ''));
+  }
+  return {
+    ok: true, bytes: prepared.bytes, insertedChars: prepared.insertedChars,
+    removedElements: Number(prepared.removed.elements) || 0,
+    removedAttributes: Number(prepared.removed.attrs) || 0,
+    remoteSourcesRemoved: prepared.remoteSourcesRemoved,
+    owner: 'CVWeb.addComponents / CV.engines.web.save', noNewStore: true
+  };
+}
+var htmlPicker = null;
+function chooseHtmlImport() {
+  if (!window.CVWeb || typeof window.CVWeb.addComponents !== 'function' ||
+      !window.CV || !CV.engines || !CV.engines.web || typeof CV.engines.web.save !== 'function') {
+    toast('Hãy mở Website Studio trước khi nhập HTML an toàn.'); return false;
+  }
+  if (!htmlPicker) {
+    htmlPicker = el('input'); htmlPicker.type = 'file'; htmlPicker.accept = '.html,.htm,text/html,application/xhtml+xml';
+    htmlPicker.id = 'cv131-html-file'; htmlPicker.hidden = true;
+    htmlPicker.addEventListener('change', async function () {
+      var file = htmlPicker.files && htmlPicker.files[0]; if (!file) return;
+      var name = String(file.name || '').toLowerCase(), type = String(file.type || '').toLowerCase();
+      if (!/\.html?$/.test(name) || (type && type !== 'text/html' && type !== 'application/xhtml+xml')) {
+        toast('Chỉ nhận tệp .html hoặc .htm.'); htmlPicker.value = ''; return;
+      }
+      if (Number(file.size) > MAX_HTML_IMPORT_BYTES) {
+        toast('HTML vượt giới hạn 5 MiB.'); htmlPicker.value = ''; return;
+      }
+      try {
+        var raw = await file.text();
+        var result = await importHtmlText(raw, window.CVWeb, { sourceName: file.name });
+        if (result.cancelled) toast('Đã hủy nhập HTML.');
+        else toast('Đã nhập HTML an toàn: ' + result.insertedChars + ' ký tự; loại ' +
+          (result.removedElements + result.removedAttributes) + ' thành phần/thuộc tính nguy hiểm và ' +
+          result.remoteSourcesRemoved + ' ảnh ngoài.');
+      } catch (e) { toast('Không thể nhập HTML: ' + (e && e.message ? e.message : 'lỗi không xác định')); }
+      htmlPicker.value = '';
+    });
+    document.body.appendChild(htmlPicker);
+  }
+  htmlPicker.click(); return true;
+}
+
 /* ---------- page audit and report ---------- */
 function auditPage(doc) {
   doc = doc || document;
@@ -253,6 +343,7 @@ function installPalette(tries) {
     cv.palette.build = function () {
       var items = orig.apply(this, arguments) || [];
       if (!items.some(function (x) { return x && x.label === 'Kiểm tra bảo mật · khóa API'; })) items.push({ label: 'Kiểm tra bảo mật · khóa API', hint: 'bao mat security api key token sri csp khoa', icon: '◆', run: openPanel });
+      if (!items.some(function (x) { return x && x.label === 'Nhập HTML an toàn · Website Studio'; })) items.push({ label: 'Nhập HTML an toàn · Website Studio', hint: 'html htm import nhap website sanitize clean', icon: '⇧', run: chooseHtmlImport });
       return items;
     };
     cv.palette.build.__p131 = true; return;
@@ -297,5 +388,5 @@ function tests() {
   return flags;
 }
 
-window.CANVIOSecurity = { version: VERSION, scanStorage: scanStorage, migrateToSession: migrateToSession, redact: redact, hasSecret: hasSecret, sanitizeSvg: sanitizeSvg, sanitizeHtml: sanitizeHtml, cleanCss: cleanCss, auditPage: auditPage, report: report, open: openPanel, tests: tests };
+window.CANVIOSecurity = { version: VERSION, scanStorage: scanStorage, migrateToSession: migrateToSession, redact: redact, hasSecret: hasSecret, sanitizeSvg: sanitizeSvg, sanitizeHtml: sanitizeHtml, prepareHtmlImport: prepareHtmlImport, importHtmlText: importHtmlText, chooseHtmlImport: chooseHtmlImport, cleanCss: cleanCss, auditPage: auditPage, report: report, open: openPanel, tests: tests };
 })();

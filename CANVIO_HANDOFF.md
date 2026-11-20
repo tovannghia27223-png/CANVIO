@@ -235,3 +235,15 @@ The candidate is built and verified by the hosted runtime workflow. Runtime vend
 - Updated canonical P136 owner canvio-p136-trace.js / embedded lot canvio-lot136t to version 136.4.0. Existing multicolour and single-line trace modes remain; Bezier support retained.
 - Adds local SVG pattern presets: dots, diagonal hatch, grid, cross, wave and checker. none maintains prior fill SVG output; pattern UI is disabled for Stroke mode. No remote assets, paid dependency or new store.
 - Verification is pending the branch hosted workflow. If merged, retain the limitations: not brush authoring/gradient mesh/topology editing and still needs review on real production artwork.
+
+
+
+## P136.4 — merged and hosted-verified
+
+- PR #39 is merged to main at `1eb4129f4252b31c41f819d23f1cd9dd02948d68`; workflow #312 (`44813838108`) passed all 33 steps. Artifact: `CANVIO-23.3.111-GITHUB-RUNTIME-VERIFIED-312` (21,583,636 bytes).
+- Six SVG pattern presets are available in Image Trace multicolour fill mode. Default output, Bezier and Stroke retained. Automated CI used SwiftShader software rendering, not physical GPU.
+
+## P131.3 — safe HTML import candidate
+
+- P131 security module now supports user-triggered local HTML import into the existing Website Engine. Source size ≤5 MiB; dangerous tags/attributes removed; remote image/source URLs stripped; local raster data URLs preserved.
+- Workflow syncs standalone module to `canvio-lot131` before source-parity tests. PR #41 awaits full hosted acceptance. No second store, backend, external package or network import.

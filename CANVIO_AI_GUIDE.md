@@ -3679,3 +3679,20 @@ P125.3: `CVScrollFramesP125.PRESETS`, `decimate(frames,maxBytes)`; `buildHtml` n
 - Default none preserves the previous SVG output. Pattern selection is available only in multi-colour fill mode and disabled in single-line Stroke mode. Existing Bezier smoothing and stroke skeletonization remain available.
 - Tests: node tests/p127/run-p136t-tests.cjs verifies standalone/embedded parity, all existing trace regressions, unchanged no-pattern output, per-layer local defs, safe static SVG and invalid-option fallback. Hosted Chromium tests/p145/run-p136-browser.py downloads and inspects the pattern SVG, decodes the preview, then verifies the pattern control is disabled for Stroke and Stroke export still works.
 - Limits: six repeatable pattern presets only; not a brush authoring engine, gradient mesh, topology editor or photographic restoration. Review output on production artwork; raster input is downscaled to 512 px maximum side.
+
+
+
+## P136.4 hosted acceptance and mainline merge — 2026-11-21
+
+- PR #39 merged to main at `1eb4129f4252b31c41f819d23f1cd9dd02948d68`. Workflow #312 (`44813838108`) completed success with 33 workflow steps and no failed steps.
+- Node P136 tests and hosted Chromium pattern-fill checks passed alongside full source extraction/syntax audit, HTML/inline-JS audit, P47–P70 regressions, integration contracts/P107 ZIP round-trip, pinned Three/P85 provisioning and same-origin GLB/P85/ONNX worker runtime acceptance.
+- Artifact `CANVIO-23.3.111-GITHUB-RUNTIME-VERIFIED-312` uploaded (21,583,636 bytes). Hosted browser used software rendering (SwiftShader), not a physical GPU. This artifact is automated CI evidence, not production sign-off.
+- The P136.4 status recorded earlier as “candidate pending CI” is superseded by this PASS. Feature limits remain: six fixed SVG pattern presets only; no brush authoring, gradient mesh, topology editing or photo restoration.
+
+## P131.3 — bounded safe local HTML import (candidate, 2026-11-21)
+
+- Adds a user-triggered `.html/.htm` file picker to the existing P131 security palette and an API to prepare/import HTML into the canonical Website Engine via `CVWeb.addComponents()` and `CV.engines.web.save()`. No new project store, network fetch, external package or server.
+- Uses the existing P131 allow-list sanitizer; removes scripts, forms, inputs, iframes, style elements, event handlers and unsafe CSS/URLs. For privacy/offline safety, non-data image/source URLs are stripped; local raster data URLs remain. External hyperlinks may remain as explicit user navigation.
+- Enforces a 5 MiB source cap, checks extension/MIME, requires the current Website Engine and save owner, then asks before insertion. Reports sanitizer counts. If persistence fails after insertion, it reports that content may remain in the current editor session and instructs the user to undo; it does not claim success.
+- Workflow synchronizes the standalone security module into the existing `canvio-lot131` before the P131 source-parity/Node/Chromium suites. Hosted acceptance is pending. Import is body-fragment content: remote assets, stylesheets, scripts, forms and interactive app runtimes are not imported.
+

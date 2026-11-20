@@ -14,7 +14,7 @@ SERVE = tempfile.mkdtemp(prefix='p131-')
 open(os.path.join(SERVE, 'index.html'), 'w', encoding='utf-8').write(
   '<!doctype html><html lang="vi"><head><meta charset="utf-8"><title>P131 harness</title><style>' + CSS + '</style></head><body>'
   '<div id="row"><input id="geminiKey" type="password" aria-label="Gemini key"></div>'
-  '<script>window.CV={toast:function(m){(window.__toasts=window.__toasts||[]).push(m)},palette:{build:function(){return [{label:"Mở Brand Kit"}]}}};</script>'
+  '<script>window.__saved=0;window.__imports=[];window.CV={toast:function(m){(window.__toasts=window.__toasts||[]).push(m)},palette:{build:function(){return [{label:"Mở Brand Kit"}]}},engines:{web:{save:function(){window.__saved++;return true}}}};window.CVWeb={addComponents:function(h){window.__imports.push(h);return true}};</script>'
   '<script>' + MOD + '</script></body></html>')
 CHROME = os.environ.get('CHROME_BIN') or shutil.which('google-chrome') or shutil.which('chromium')
 OUT = os.environ.get('P131_OUT', os.path.join(tempfile.gettempdir(), 'p131-out'))
@@ -99,6 +99,31 @@ with sync_playwright() as p:
     page.keyboard.press('Escape'); page.wait_for_timeout(100)
     c['escapeCloses'] = not page.locator('#cv131-security').is_visible()
     c['paletteEntry'] = page.evaluate("CV.palette.build().some(x=>x&&x.label==='Kiểm tra bảo mật · khóa API')")
+    c['safeHtmlImportPaletteEntry'] = page.evaluate("CV.palette.build().some(x=>x&&x.label==='Nhập HTML an toàn · Website Studio')")
+    log('P131.3 prepare and import malicious HTML fixture')
+    payload = '<h2>Chào CANVIO</h2><script>window.__importX=1</script><form><input name="x"></form><iframe src="https://evil.test"></iframe><img src="https://tracker.test/pixel.png" onerror="window.__importX=2" alt="remote"><img src="data:image/png;base64,AAAA" alt="local"><a href="https://example.test">Liên kết</a><p style="background:url(https://evil.test/x)">Nội dung</p>'
+    prepared = page.evaluate('(s)=>CANVIOSecurity.prepareHtmlImport(s)', payload)
+    c['safeHtmlPreparationRemovesActiveElements'] = not re.search(r'<script|<form|<input|<iframe|onerror|evil\.test|tracker\.test', prepared['html'], re.I)
+    c['safeHtmlKeepsVietnameseAndExternalLinks'] = 'Chào CANVIO' in prepared['html'] and 'https://example.test' in prepared['html']
+    c['safeHtmlKeepsLocalRasterAndDropsRemoteImageSource'] = 'data:image/png;base64,AAAA' in prepared['html'] and 'tracker.test' not in prepared['html'] and prepared['remoteSourcesRemoved'] == 1
+    c['safeHtmlReportsRemovedContent'] = prepared['removed']['elements'] > 0 and prepared['removed']['attrs'] > 0
+    c['safeHtmlRejectsOversizedContent'] = page.evaluate("()=>{try{CANVIOSecurity.prepareHtmlImport('123456789',{maxBytes:8});return false}catch(e){return /vượt giới hạn/.test(e.message)}}")
+    imported = page.evaluate('(s)=>CANVIOSecurity.importHtmlText(s,window.CVWeb,{confirmed:true})', payload)
+    page.evaluate('''(h)=>{const sink=document.createElement('div');sink.id='p131-import-sink';sink.innerHTML=h;document.body.appendChild(sink)}''', page.evaluate("window.__imports[window.__imports.length-1]"))
+    page.wait_for_timeout(150)
+    c['safeHtmlImportUsesCanonicalWebsiteOwner'] = imported['ok'] and imported['owner']=='CVWeb.addComponents / CV.engines.web.save' and imported['noNewStore']
+    c['safeHtmlImportSavesExistingProject'] = page.evaluate('window.__saved===1')
+    c['safeHtmlImportNeverExecutesImportedScript'] = page.evaluate('window.__importX===undefined')
+    c['safeHtmlImportDoesNotCreateRemoteImageRequest'] = page.evaluate("Array.from(document.querySelectorAll('#p131-import-sink img')).every(x=>!/^https?:/i.test(x.getAttribute('src')||''))")
+    page.locator('#p131-import-sink').evaluate('(e)=>e.remove()')
+    save_failure = page.evaluate('''async()=>{try{await CANVIOSecurity.importHtmlText('<p>Save fail check</p>',{addComponents:()=>true},{confirmed:true,save:()=>{throw new Error('save test')}});return false}catch(e){return /đã được chèn.*lưu dự án thất bại/i.test(e.message)}}''')
+    c['safeHtmlImportReportsSaveFailureRatherThanClaimingSuccess'] = save_failure
+    entry = page.evaluate_handle("CV.palette.build().find(x=>x&&x.label==='Nhập HTML an toàn · Website Studio')")
+    entry.evaluate("(x)=>x.run()")
+    page.locator('#cv131-html-file').set_input_files({'name':'sample.html','mimeType':'text/html','buffer':b'<h3>Nhap file</h3><script>window.__fileX=1</script><img src="https://external.test/x.png">'})
+    page.wait_for_function("window.__imports.length===2 && window.__saved===2",timeout=10000)
+    c['safeHtmlImportFilePickerAcceptsHTMLAndUsesSamePipeline'] = page.evaluate("window.__imports[1].includes('Nhap file') && !window.__imports[1].includes('<script') && !window.__imports[1].includes('external.test') && window.__fileX===undefined")
+    c['safeHtmlImportFileFlowAnnouncesSuccess'] = page.evaluate("window.__toasts.some(x=>String(x).includes('Đã nhập HTML an toàn'))")
     c['linkMounted'] = page.evaluate("!!document.getElementById('cv131-open')")
     page.evaluate('sessionStorage.removeItem("canvio10:gemini_key");localStorage.removeItem("canvio10:gemini_session")')
     b.close()
