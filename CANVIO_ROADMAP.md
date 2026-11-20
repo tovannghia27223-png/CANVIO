@@ -730,3 +730,9 @@ Hosted verification after the ffmpeg repair is complete:
 ### P132.3 hosted test follow-up — run #303 (2026-11-21)
 - RIFF parser, RIFF size, chunk boundaries, VP8X animation flag, ANIM, ten ANMF frames, each frame's VP8 payload, frame dimensions (200×113) and 200 ms durations all passed. Chromium `createImageBitmap` also decoded the downloaded file successfully at 200×113; pageErrors were empty.
 - The remaining failing boolean was a stale fixed-height assertion (`200`) instead of the editor-derived height (`113`). The test now asserts the actual expected height. ffprobe on this runner reports WebP width 0 and “image data not found”, so it is retained as diagnostic only; browser decode + container structure are the acceptance checks. Re-run pending.
+
+
+### P132.3 — hosted acceptance PASS (2026-11-21, run #304)
+- PR #36 corrected the browser test's stale fixed-height expectation (200) to match the actual editor canvas-derived 113 px; output remained 200 px wide.
+- Workflow #304 (`44809678883`) completed success. WebP browser checks all passed: RIFF length/chunks, VP8X animation feature, ANIM, 10 ANMF frames, valid VP8 payload per frame, 200×113 frame dimensions, 200 ms duration, Chromium native `createImageBitmap` decode. Browser report `failed: []`, `pageErrors: []`. GIF/APNG acceptance and full GLB/P85/ONNX same-origin browser checks also passed.
+- Limits unchanged: no audio mux; target mobile browser matrix, real footage/visual quality, alpha/color-profile, and long timeline memory/performance need manual review. P70 remains blocked with fourteen real-world gates open.
