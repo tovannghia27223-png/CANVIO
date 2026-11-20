@@ -247,3 +247,12 @@ The candidate is built and verified by the hosted runtime workflow. Runtime vend
 
 - P131 security module now supports user-triggered local HTML import into the existing Website Engine. Source size ≤5 MiB; dangerous tags/attributes removed; remote image/source URLs stripped; local raster data URLs preserved.
 - Workflow syncs standalone module to `canvio-lot131` before source-parity tests. PR #41 awaits full hosted acceptance. No second store, backend, external package or network import.
+
+
+
+## P131.3 — mainline integration verified
+
+- PR #41 merged at `1ac185d7aea7b14ad13a0517f51e72292cc42162`; hosted workflow #315 (`44816184861`) PASS. P131 Chromium 31/31 with zero page errors; app smoke 21 checks across 48 pages, no console/navigation errors.
+- Main build commit `4fdaae3219cde7ebc6c4c9358bf40b3d57812f16` committed the built canonical `index.html` and Manifest. Verified the main index blob contains the new P131.3 API, version `131.3.0` and **Nhập HTML an toàn · Website Studio** palette entry.
+- Manifest index SHA-256 `e419b50f1bd459201ad19d94f6a2cd5ea08c03b539be3c0a3b7899b8b925a7ac`, 5,358,886 bytes; 237 files. Artifact #315 (21,590,752 bytes), SHA-256 `12305d7990ed16b93d6d653cd3fd1d662a3cd90144b9800773e560a5a55fa06c`.
+- Import remains intentionally limited to sanitized .html/.htm body fragments ≤5 MiB; remote media, stylesheets, scripts, forms and iframes are excluded. Existing Website Engine store/owner reused.

@@ -3696,3 +3696,15 @@ P125.3: `CVScrollFramesP125.PRESETS`, `decimate(frames,maxBytes)`; `buildHtml` n
 - Enforces a 5 MiB source cap, checks extension/MIME, requires the current Website Engine and save owner, then asks before insertion. Reports sanitizer counts. If persistence fails after insertion, it reports that content may remain in the current editor session and instructs the user to undo; it does not claim success.
 - Workflow synchronizes the standalone security module into the existing `canvio-lot131` before the P131 source-parity/Node/Chromium suites. Hosted acceptance is pending. Import is body-fragment content: remote assets, stylesheets, scripts, forms and interactive app runtimes are not imported.
 
+
+
+
+## P131.3 — mainline integration PASS (2026-11-21)
+
+- P131.3 source/test PR #41 merged at `1ac185d7aea7b14ad13a0517f51e72292cc42162`. Hosted workflow #315 (`44816184861`) completed success. The P131 Chromium suite passed 31/31 checks with `failed: []` and `pageErrors: 0`; P131 app smoke passed 21 checks across 48 pages with no console/navigation errors.
+- The merge-triggered mainline build commit `4fdaae3219cde7ebc6c4c9358bf40b3d57812f16` then committed the generated canonical `index.html` and Manifest. Main index blob was checked and contains `prepareHtmlImport`, API version `131.3.0`, and palette entry **Nhập HTML an toàn · Website Studio**. Manifest: generated `2026-11-20T21:08:55.974Z`, `index.html` SHA-256 `e419b50f1bd459201ad19d94f6a2cd5ea08c03b539be3c0a3b7899b8b925a7ac`, 5,358,886 bytes, 237 files.
+- Artifact `CANVIO-23.3.111-GITHUB-RUNTIME-VERIFIED-315` uploaded (21,590,752 bytes; SHA-256 `12305d7990ed16b93d6d653cd3fd1d662a3cd90144b9800773e560a5a55fa06c`). Full hosted workflow passed source integration/syntax, full HTML/inline-JS audit, P47–P70 regressions, all integrated Node suites, P107 ZIP round-trip, pinned Three/P85 vendors, GLB Draco/Meshopt/KTX2 decode, OpenCV Lucas–Kanade and Chromium acceptance. This is CI evidence, not production sign-off.
+- Import behavior: user-selected .html/.htm body fragment, max 5 MiB, existing allow-list sanitizer, explicit confirmation, existing `CVWeb.addComponents()` + `CV.engines.web.save()`. Active HTML and unsafe attributes are removed; remote image/source URLs are stripped; local base64 raster data URLs and ordinary hyperlinks remain. Stylesheet files, scripts, forms, iframes, remote media and third-party runtimes are not imported. If saving fails after insertion, the UI warns that in-session content may remain and tells the user to undo.
+- This supersedes prior entries saying “candidate”, “CI pending”, or “main index embed pending” for P131.3.
+- P70 still remains `releaseCertified:false` / `BLOCKED_PENDING_REAL_WORLD_ACCEPTANCE`: 14/14 real-world gates pending, 0 passed. SwiftShader software rendering was used; no physical GPU, full ONNX/Whisper model-inference, production accessibility, two-device/cloud sync or real-media sign-off is implied.
+

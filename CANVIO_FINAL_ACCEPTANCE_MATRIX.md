@@ -30,3 +30,7 @@
 12. Physical target-device GPU/VRAM, performance and long-render testing.
 13. Cross-origin backup/restore and independent-device recovery.
 14. Rollback, release observability, alerting and production incident drill.
+
+
+
+| P131.3 local safe HTML import | Mainline verified: PR #41 merged; run #315 PASS (31 Chromium checks, 0 page errors; app smoke 21 checks across 48 pages); main build `4fdaae3` embeds v131.3.0 in canonical `index.html`; Manifest SHA `e419b50f…` | .html/.htm body fragment ≤5 MiB only; stylesheets, scripts, forms, iframes, remote images/media and third-party app runtimes excluded; real production-site fidelity remains manual |
