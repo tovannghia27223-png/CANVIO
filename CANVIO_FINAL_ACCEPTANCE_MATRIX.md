@@ -13,6 +13,8 @@
 | P145.7 Typography presets | Six system-font presets, bounded controls, CSS export and physical Playwright hit-test | No bundled commercial fonts; OS typography review remains manual |
 | P145.8 Vector illustrations | Eight original SVG illustrations, four palettes, filter/preview/vector export; Node + Chromium | Starter pack only; not stock photography or a large illustration catalogue |
 | P145.9/.10 Asset Search & Quality Gate | Read-only local search/filter and shared license/source/size/hash gate | Full live Asset Vault enumeration and hashing every uploaded binary require canonical provider |
+
+| P132.3 animated WebP | Node RIFF/ANMF metadata + hosted Chromium export and ffprobe frame decode | CI pending; no audio, alpha/profile/browser compatibility and real-media/mobile performance remain manual |
 | P70 Stable release | Fourteen fail-closed manual gates | releaseCertified:false until every gate has reviewed production evidence |
 
 ## Required manual gates
