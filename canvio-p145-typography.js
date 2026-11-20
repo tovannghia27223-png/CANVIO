@@ -49,7 +49,7 @@ function supportMap(doc){
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 function mount(){
  var page=document.querySelector('#page-assets');if(!page||page.querySelector('#cv1457-card'))return false;
- var card=document.createElement('section');card.id='cv1457-card';card.className='card';card.style.marginTop='12px';card.style.position='relative';card.style.zIndex='40';card.style.isolation='isolate';
+ var card=document.createElement('section');card.id='cv1457-card';card.className='cv1457-card';card.style.cssText='margin-top:12px;position:relative;z-index:6;isolation:isolate;background:var(--surface,#fff);border:1px solid var(--line,#e7ecf5);border-radius:var(--r-lg,14px);box-shadow:var(--sh-1,0 3px 12px rgba(27,39,72,.07));padding:18px;min-width:0;';
  card.innerHTML='<div class="cardTop"><h3>Typography Presets · bộ kiểu chữ hệ thống (P145.7)</h3><span class="sub">Font local có sẵn · không tải font từ xa</span></div>'+
  '<div class="row" style="gap:8px;flex-wrap:wrap;align-items:end"><label class="tiny">Phong cách<select class="input" id="cv1457-preset">'+Object.keys(PRESETS).map(function(k){return'<option value="'+k+'">'+PRESETS[k].label+'</option>';}).join('')+'</select></label><label class="tiny">Cỡ tiêu đề <input class="input" id="cv1457-hsize" type="number" min="24" max="72" value="42" style="width:76px"></label><label class="tiny">Cỡ nội dung <input class="input" id="cv1457-bsize" type="number" min="12" max="24" value="16" style="width:76px"></label><label class="tiny">Giãn dòng <input class="input" id="cv1457-line" type="number" min="1.2" max="2.2" step=".05" value="1.65" style="width:76px"></label><label class="tiny">Tracking <input class="input" id="cv1457-track" type="number" min="-.06" max=".12" step=".005" value="-.025" style="width:76px"></label></div>'+
  '<div id="cv1457-preview" class="cv-typography" style="margin-top:12px;padding:22px;border:1px solid var(--line,rgba(128,140,160,.2));border-radius:12px;background:#fff;color:#17243a"><div class="tiny" id="cv1457-kicker">CANVIO · TYPOGRAPHY SAMPLE</div><h2 class="heading" id="cv1457-heading" style="margin:10px 0">Thiết kế rõ ràng, quyết định tự tin</h2><p class="body" id="cv1457-body">Dữ liệu kinh doanh cần được trình bày mạch lạc. Kết hợp nhịp điệu chữ, khoảng trắng và độ tương phản để người đọc tập trung vào điều quan trọng.</p><div class="tiny" id="cv1457-note" style="margin-top:12px">Mẫu hiển thị sử dụng font hệ thống; máy khác có thể thay font fallback.</div></div>'+
@@ -57,7 +57,7 @@ function mount(){
  '<div class="tiny" id="cv1457-status" role="status" aria-live="polite" style="margin-top:8px;pointer-events:none">Không chứa font binary, không yêu cầu font online. Chỉ xuất CSS preset.</div>';
  // The app's global card-tilt decoration can cover controls on this dynamic panel.
  // Keep the card visual but let the real form controls receive pointer events.
- card.style.pointerEvents='none';
+ card.style.pointerEvents='auto';
  var after=page.querySelector('#cv1456-card')||page.querySelector('#cv1455-card')||page.querySelector('#cv145-card');
  if(after&&after.parentNode)after.parentNode.insertBefore(card,after.nextSibling);else page.appendChild(card);
  card.querySelectorAll('button,input,select,textarea,a,label').forEach(function(el){el.style.pointerEvents='auto';el.style.position='relative';el.style.zIndex='2';});
