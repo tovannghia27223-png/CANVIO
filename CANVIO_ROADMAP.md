@@ -569,3 +569,8 @@ Hosted verification after the ffmpeg repair is complete:
 - Test: `node tests/p127/run-p136t-tests.cjs`; Chrome thật `python3 tests/p145/run-p136-browser.py` (vẽ ảnh, trace qua giao diện, kết xuất lại và so pixel: lệch 0,15%).
 - Chưa làm: làm mượt Bezier, tách nét đơn (stroke), pattern/brush/gradient mesh (phần còn lại của P136); ảnh chụp nhiều chuyển sắc ra dạng poster.
 
+### P134 (phần đo màu) — Histogram, Waveform, Vectorscope
+- `canvio-p134-scopes.js` (lot `canvio-lot134s`): ba đồng hồ đo cho khung đang xem của Video Engine (đọc `#vtCanvas`, BT.709), kèm nhận xét cháy sáng/đen kịt/khung tối. Cập nhật bằng nút và khi kéo thanh tua.
+- Test: `node tests/p127/run-p134s-tests.cjs`; Chrome thật `tests/p145/run-p134-browser.py`.
+- Chưa làm: Auto Reframe 16:9→9:16/1:1 (cần dò mặt/vật thể và tracking), đo trên clip video thật.
+

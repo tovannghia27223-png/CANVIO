@@ -3474,3 +3474,6 @@ P125.3: `CVScrollFramesP125.PRESETS`, `decimate(frames,maxBytes)`; `buildHtml` n
 ## P136 Image Trace
 `window.CVTraceP136` {quantize, traceMask, simplify, traceImageData({width,height,data},{colors,detail}) -> {svg,paths,loops,...}, fromBitmap, mount, tests}. Lot `canvio-lot136t` khớp `canvio-p136-trace.js`.
 
+## P134 Scopes
+`window.CVScopesP134` {histogram, waveform, vectorscope, stats, advice, update(row), mount, tests}. Lot `canvio-lot134s` khớp `canvio-p134-scopes.js`.
+
