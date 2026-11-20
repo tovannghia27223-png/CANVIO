@@ -270,7 +270,10 @@
         if (/@import|url\s*\(|expression\s*\(|javascript:/i.test(css)) node.remove();
       });
       if (!doc.documentElement.getAttribute('xmlns')) doc.documentElement.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-      return new XMLSerializer().serializeToString(doc.documentElement);
+      var cleaned = new XMLSerializer().serializeToString(doc.documentElement);
+      /* P131: defense in depth through the shared allow-list sanitizer (SMIL href animation, CSS escapes, DTD). */
+      if (window.CANVIOSecurity && typeof window.CANVIOSecurity.sanitizeSvg === 'function') cleaned = window.CANVIOSecurity.sanitizeSvg(cleaned).svg;
+      return cleaned;
     }
     async function ingest(file, options) {
       options = options || {}; if (!file || file.size <= 0 || file.size > 50 * 1024 * 1024) throw new Error('Tệp ảnh phải có dung lượng từ 1 byte đến 50 MB.');
