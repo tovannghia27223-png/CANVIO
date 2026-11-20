@@ -6,4 +6,5 @@
 - Added portable P107 parser/import/rollback tests and explicit documentation that Project Vault cloud sync is not implemented.
 - Added P145.2 local WebGL shader transitions/effects, Canvas2D fallback, PNG export and an optional P79-muxed video-only transition MP4 path with hosted Chromium coverage.
 - Added P125.4 optional split-asset storyboard ZIP alongside the original self-contained HTML export; hosted Chromium verifies ZIP integrity and final relative-frame decoding offline. Audio and mobile/real-media acceptance remain open.
+- Added P145.6–P145.10 Asset Library increments: 25 offline SVG icons, six system typography presets, eight original SVG illustrations and read-only asset search/license Quality Gate. Added four Node and four hosted Chromium suites. P145.7 uses a dedicated non-.card shell to avoid the global 3D tilt pointer-hit issue; current-main CI acceptance is pending.
 - Stable release remains fail-closed at P70; no physical GPU or two-device certification is implied.
