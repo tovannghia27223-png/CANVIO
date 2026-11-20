@@ -39,7 +39,7 @@ var ART=[
  {id:'remote-work',title:'Remote Work',group:'creative',desc:'Không gian làm việc số từ xa',
   art:'<rect x="110" y="84" width="420" height="260" rx="24" fill="var(--soft)" stroke="var(--ink)" stroke-width="12"/><rect x="136" y="112" width="368" height="204" rx="12" fill="var(--secondary)" opacity=".6"/><path d="M64 384h512l-42 42H106z" fill="var(--ink)"/><circle cx="320" cy="204" r="49" fill="var(--accent)"/><path d="M236 290c12-52 39-76 84-76s72 24 84 76" fill="var(--primary)"/><path d="M190 158l38-22 25 25M450 156l-32-22-26 25" fill="none" stroke="var(--ink)" stroke-width="10" stroke-linecap="round"/>'
  }
-};
+];
 function esc(s){
  return String(s==null?'':s).replace(/[&<>"']/g,function(c){
   if(c==='&')return'&amp;';
