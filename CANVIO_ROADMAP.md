@@ -676,3 +676,6 @@ Hosted verification after the ffmpeg repair is complete:
 - Uses the existing maximum-MB control (1–50 MB), adaptive frame decimation and fail-closed size check; no cloud store, external request or new timeline.
 - Unit + hosted Chromium test verifies ZIP integrity, separate image payloads/signatures, manifest metadata and opening/scrolling the extracted package offline.
 - Still open: physical mobile performance, memory pressure on long/high-resolution source video, touch editing review, and audio-inclusive storyboard packages.
+
+ 
+- Path validator correction: the split-asset HTML now validates `frames/` + `frame-NNN` + a literal extension separator + one of WebP/JPEG/PNG without a double-escaped regex dot. Unsafe external paths still fail closed to the original data-URL output.

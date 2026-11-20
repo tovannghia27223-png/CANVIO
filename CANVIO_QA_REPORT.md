@@ -256,3 +256,7 @@ The candidate workflow runs standalone/embedded source parity and API tests for 
 - Hosted Chromium imports a synthetic WebM, extracts storyboard frames, exports the ZIP, and Python `zipfile` checks archive integrity, required files, manifest/size budget, frame count, and JPEG/WebP/PNG signatures.
 - The extracted `index.html` is then opened via `file://` in Chromium; the test scrolls to the last frame to verify relative asset loading offline.
 - This remains synthetic video/desktop browser evidence. Target-device mobile memory, touch UI and large real-media testing remain manual.
+
+ 
+### P125.4 path-validator regression correction
+- The first integrated Node suite exposed an over-escaped literal extension separator, which incorrectly rejected generated `frames/frame-001.jpg` paths. The validator now checks the generated basename structure and allowed extension explicitly; the tests assert both accepted generated paths and rejected traversal/remote paths.

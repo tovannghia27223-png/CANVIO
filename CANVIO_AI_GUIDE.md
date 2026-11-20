@@ -3575,3 +3575,7 @@ P125.3: `CVScrollFramesP125.PRESETS`, `decimate(frames,maxBytes)`; `buildHtml` n
 - The current MB field is the package image-data budget (1–50 MB). The encoder decimates frames to fit and fails closed if the result still exceeds the budget or if the canonical `CVZip.build` owner is unavailable. No server, cloud sync or extra project store is introduced.
 - Tests: `tests/p127/run-p1254-tests.cjs` checks safe relative paths, embedded-vs-split HTML, binary frame payload entries, manifest and package bounds. `tests/p127/run-p1254-browser.py` verifies ZIP integrity, image signatures, manifest/file count, and opens the extracted package offline in hosted Chromium.
 - Limitations: the ZIP is larger than HTML-only for the same frames if compression is weak; browser support for the source video codec still controls frame extraction; audio is not packaged. Touch/mobile performance and clean-machine target-device review remain manual.
+
+ 
+### P125.4 path-validation correction
+- The generated frame-path allow-list validates the basename segments without an over-escaped dot expression. The canonical pattern is restricted to `frames/frame-NNN.webp|jpg|png`; reject traversal/URL paths and fall back to embedded image data.

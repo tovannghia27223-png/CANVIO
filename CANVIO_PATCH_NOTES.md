@@ -9,3 +9,6 @@
 
 
 - P125.4: add split-asset ZIP export beside the original HTML-only storyboard; includes relative frame assets, manifest/README, 1–50 MB budget/decimation, path allow-list and offline Chromium/ZIP verification.
+
+ 
+- P125.4 follow-up: correct generated relative frame path validation so split-asset references pass for allowed extensions while traversal and remote paths remain rejected.
