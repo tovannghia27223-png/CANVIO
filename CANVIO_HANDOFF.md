@@ -200,3 +200,11 @@ The candidate is built and verified by the hosted runtime workflow. Runtime vend
 - Main candidate build: `23.3.111-github-runtime-ci`, commit `782aa562f5341172330d114ccb21a3269efbbb37`. Mainline workflow #282 completed successfully.
 - Do not represent Asset Search/Quality Gate as full live-vault coverage until the canonical provider is connected and its inventory/hash behavior is verified. Keep the four P145 tools described as local/offline panels, not cloud services.
 - Release remains blocked: `releaseCertified:false`, `BLOCKED_PENDING_REAL_WORLD_ACCEPTANCE`, fourteen P70 manual gates open.
+
+
+## P145.10 — local Asset Library hash scan candidate (2026-11-21)
+
+- Actual provider: `CV.assets.list()` is already the canonical local Asset Library owner; base `addBlob()` reads files to data URLs and stores rows through existing `LS('assets')`. P145.9/.10 fallback reads it automatically; no separate provider/DB is required.
+- Added user-triggered, read-only SHA-256 of binary bytes in local base64 data URLs. Session-only duplicate hashes feed the shared quality gate; they are not persisted. Filtering keeps current session results.
+- Caps: 40 assets, 25 MiB per file, 64 MiB per scan. Anything unsupported or over limits is clearly left without a hash. No network, upload, new store or background hashing.
+- Await the new hosted Node/Chromium workflow before treating this update as accepted. Complete hashing is not claimed for any skipped items.
