@@ -559,3 +559,8 @@ Hosted verification after the ffmpeg repair is complete:
 - Test: `node tests/p127/run-p132g-tests.cjs`; Chrome thật + ffprobe (`tests/p127/run-p132g-browser.py`): giải mã đúng codec gif, đúng rộng và số khung.
 - Chưa làm: APNG/WebP động, nhập PDF/PPTX/PSD, xuất PPTX; bảng màu cố định 256 nên gradient có thể vân; chưa thử với timeline có media thật.
 
+### P145.3 (phần SFX tổng hợp)
+- `canvio-p145-sfx.js` (lot `canvio-lot145s`): 6 SFX bằng Web Audio offline (Whoosh, Hit, Riser, Click UI, Glitch, Pop), có seed, WAV 16-bit mono 44,1 kHz, đỉnh −1 dBFS. Hàng nút trong thẻ Video Engine: Nghe, Thêm vào timeline (qua `importFiles`), Tải WAV.
+- Test: `node tests/p127/run-p145s-tests.cjs`; Chrome thật `tests/p145/run-p145s-browser.py` (không im lặng, đỉnh đúng, xác định theo seed, thêm clip audio, ffprobe giải mã WAV).
+- Chưa làm: nhạc nền loop theo mood/BPM, stems, ducking, nhạc bằng model cục bộ; nút "Nghe" chưa được kiểm bằng tai thật (chỉ kiểm đường dữ liệu).
+

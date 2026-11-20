@@ -3468,3 +3468,6 @@ P125.3: `CVScrollFramesP125.PRESETS`, `decimate(frames,maxBytes)`; `buildHtml` n
 ## P132 GIF
 `window.CVGifP132` {encode(frames[{w,h,data:RGBA}],{delayCs,loop}), captureTimeline, mount, tests}. Lot `canvio-lot132g` khớp `canvio-p132-gif.js`.
 
+## P145.3 SFX
+`window.CVSfxP145` {recipes, render(kind,{duration,seed}) -> {samples,wav,duration}, wav, normalize, mount, tests}. Lot `canvio-lot145s` khớp `canvio-p145-sfx.js`.
+
