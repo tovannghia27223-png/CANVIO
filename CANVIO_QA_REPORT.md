@@ -272,3 +272,11 @@ The candidate workflow runs standalone/embedded source parity and API tests for 
 - Corrective change: place the dynamic typography card in an isolated foreground stacking context (`position:relative`, `z-index:40`, `isolation:isolate`) while retaining `pointer-events:none` for the decorative card shell and explicitly re-enabling pointer events on controls.
 - Browser acceptance now asserts the foreground stacking context and continues to use a physical Playwright click on Apply/preset controls; DOM-triggered clicks are not substituted for the interaction test.
 - The previous hosted run is recorded as failed at P145.7. This fix is pending a fresh green hosted run; it is not pre-certified.
+
+
+### P145.7 follow-up — confirmed global tilt hit-test conflict (2026-11-21)
+
+- The z-index-only correction was insufficient: hosted run #263 still reproduced the pointer interception on the Apply button.
+- Inspection of the base app's global tilt MutationObserver showed it automatically tags every `.card` under `#page-assets` with `data-tilt`; pointer movement rotates the whole typography card immediately before Playwright clicks, making the hit-test coordinates unreliable and allowing the parent page to be reported as the hit target.
+- Corrective change: P145.7 now uses a dedicated `cv1457-card` class and its own visual styles instead of `.card`, so it opts out of the global 3D tilt handler. Controls remain pointer-active; the hosted test verifies absence of `data-tilt`/transform and still performs a real mouse click.
+- The previous run remains failed; this fix requires a fresh hosted rerun and is not yet certified.
