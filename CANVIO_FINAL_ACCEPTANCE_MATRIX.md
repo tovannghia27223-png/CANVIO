@@ -25,3 +25,5 @@
 12. Physical target-device GPU/VRAM, performance and long-render testing.
 13. Cross-origin backup/restore and independent-device recovery.
 14. Rollback, release observability, alerting and production incident drill.
+
+| P145.9/10 Asset Search & Quality Gate | Local Asset Library search, type/status filters, existing metadata quality rules, hash duplicate check and hosted browser acceptance | Not global cross-module search; no automatic hashing for assets without hash, no cloud search/sync |

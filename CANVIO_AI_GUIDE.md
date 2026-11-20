@@ -3532,3 +3532,12 @@ P125.3: `CVScrollFramesP125.PRESETS`, `decimate(frames,maxBytes)`; `buildHtml` n
 - SVG remains local, static and script-free; no external assets or paid dependencies.
 - Unit and hosted Chromium coverage check default compatibility, cubic path output, clamped finite coordinates, preserved layer/loop counts, safe SVG export. Manual review on varied production artwork remains open.
 - Not included: single-line stroke tracing, brush/pattern fills or gradient mesh.
+
+
+## P145.9/.10 — Asset Search & Quality Gate integration (2026-11-20 continuation)
+
+- Standalone owner: \`canvio-p145-search-gate.js\`; embedded lot: \`canvio-lot145910\`; API: \`window.CVAssetSearchGateP145910\`. Read-only adapter for existing \`CV.assets.list()\`, \`canvio145:meta\` and \`CVContentCoreP145.qualityGate\`; no new asset store.
+- Adds local search across asset ID/name/MIME/type/license/author/source, kind filters, pass/warning filters, one-click refresh, and per-item gate details.
+- Quality checks reuse the existing P145.9 rules: declared license/source, name, non-empty file, 25 MB limit and duplicate hash when the existing asset record already has a hash. It explicitly reports files without hashes; it does not pretend content-hash analysis has happened.
+- No asset mutation, upload, delete, cloud sync or external search. Results are limited to the existing browser-local Asset Library.
+- Verification: unit tests and hosted Chromium smoke cover types, text search, filters, duplicate-hash behavior and read-only UI. This is Asset Library search, not a global cross-module command palette.

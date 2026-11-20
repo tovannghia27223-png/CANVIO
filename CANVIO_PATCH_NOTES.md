@@ -6,3 +6,5 @@
 - Added portable P107 parser/import/rollback tests and explicit documentation that Project Vault cloud sync is not implemented.
 - Added P145.2 local WebGL shader transitions/effects, Canvas2D fallback, PNG export and an optional P79-muxed video-only transition MP4 path with hosted Chromium coverage.
 - Stable release remains fail-closed at P70; no physical GPU or two-device certification is implied.
+
+- P145.9/10: add read-only local Asset Library search, type/status filters and per-asset P145 Quality Gate results using existing metadata and known hashes.

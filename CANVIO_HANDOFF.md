@@ -130,3 +130,10 @@ The candidate is built and verified by the hosted runtime workflow. Runtime vend
 - Added optional 0–100% closed cubic Bezier smoothing to Image Trace; default 0 keeps legacy polygon contours.
 - No new dependency. SVG stays local, script-free and no external references.
 - Tests: \`node tests/p127/run-p136t-tests.cjs\` and \`tests/p145/run-p136-browser.py\`. Single-line strokes and brush/pattern/gradient mesh remain unimplemented.
+
+
+## P145.9/10 — Asset Search & Quality Gate
+- Added read-only local search and quality review over existing Asset Library data; no new store.
+- Search name/ID/type/license/source/author, filter file type and pass/warning, inspect P145 quality issues.
+- Duplicate detection is based on hashes already present on assets. Missing hashes are flagged as not verified; no background file hashing or cloud search claim.
+- Tests: \`run-p145910-tests.cjs\`, \`run-p145910-browser.py\`.

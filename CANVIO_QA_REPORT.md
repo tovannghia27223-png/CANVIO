@@ -221,3 +221,10 @@ The candidate workflow runs standalone/embedded source parity and API tests for 
 - Unit checks cover optional cubic output, default compatibility, finite/clamped coordinates and preserved layer/loop counts.
 - Chromium smoke keeps the existing unsmoothed pixel round-trip baseline and exports a second 65% smooth SVG; checks the slider, cubic paths and script-free safe SVG.
 - Review on diverse production artwork remains manual.
+
+
+## P145.9/10 Asset Search & Quality Gate — hosted tests added
+
+- Unit suite covers type detection, license gate, duplicate hash after first occurrence, text search, kind filters and pass/warning filters.
+- Hosted Chromium test injects a controlled Asset Library fixture, verifies panel mount, two passing/one failing result, duplicate detection, name search, type/status filters, detail view and read-only UI.
+- Hash-based duplicate detection only works when the existing asset record supplies a hash. Files without hashes are reported as unverified; this increment does not hash opaque local asset data or claim global cloud search.
