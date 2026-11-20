@@ -3601,3 +3601,9 @@ P125.3: `CVScrollFramesP125.PRESETS`, `decimate(frames,maxBytes)`; `buildHtml` n
 - Provider contract: uses `CV.assets.list()` if exposed or requires the host to set an explicit asset provider. Duplicate detection only checks hashes already supplied; it does not hash every uploaded binary automatically.
 - Tests: `tests/p145/run-p145910-tests.cjs` and `tests/p145/run-p145910-browser.py`. Fixture-based browser acceptance is not proof of full production Asset Vault inventory.
 
+
+
+### P145.7 hosted pointer-hit fix (2026-11-21)
+- The first full hosted pass failed because `#page-assets` intercepted the P145.7 Apply control. The card is now a foreground isolated stacking context while its shell stays pointer-transparent and child controls explicitly accept pointer events.
+- Keep the Playwright pointer click in `tests/p145/run-p1457-browser.py`; it is the regression guard. Do not replace it with a synthetic DOM `.click()` to make CI pass.
+- Confirmed status before re-run: failure reproduced in hosted Chromium logs; correction is pending a fresh CI result.
