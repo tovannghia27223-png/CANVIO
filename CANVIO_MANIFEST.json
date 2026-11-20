@@ -2,11 +2,11 @@
   "format": "CANVIO_DELIVERY_MANIFEST",
   "schemaVersion": 2,
   "candidate": "23.3.111-github-runtime-ci",
-  "generatedAt": "2026-11-20T09:18:57.955Z",
+  "generatedAt": "2026-11-20T13:48:58.242Z",
   "hashAlgorithm": "SHA-256",
-  "indexSha256": "73d2b1f8e73c5617f7dc48e412823e02f52cd634a0c79fce1188b418ba5fda3c",
-  "indexBytes": 5168969,
-  "fileCount": 202,
+  "indexSha256": "214be762106c7c7344d1772247a09feccf3fb00b7d4a742efeb22a2160f8ddc9",
+  "indexBytes": 5178704,
+  "fileCount": 204,
   "releaseCertified": false,
   "releaseStatus": "BLOCKED_PENDING_REAL_WORLD_ACCEPTANCE",
   "p70ManualGates": {
@@ -32,8 +32,8 @@
     },
     {
       "path": ".github/workflows/canvio-candidate-runtime.yml",
-      "bytes": 26196,
-      "sha256": "8abf84f2648aeec88a9b726c303627c232bc3ff2c21dd78d5f2d806872d43671"
+      "bytes": 27332,
+      "sha256": "2121220780ad1477b209a6a8af0461062ff3850df90e8006973b288bb3fbf5fd"
     },
     {
       "path": ".github/workflows/canvio-pages-node24.yml",
@@ -446,6 +446,11 @@
       "sha256": "9f0f2505a5dac4137d6f8c2208eb558023909214179d4c68f474563aae1baafb"
     },
     {
+      "path": "canvio-p127-duck.js",
+      "bytes": 9696,
+      "sha256": "ef169c5318a1355483e7e31bd8d02c769567bc18e71b098230f037e23ad6fab0"
+    },
+    {
       "path": "canvio-p127-loudness.js",
       "bytes": 9180,
       "sha256": "0b37e0ce7852aa868b306c2ecd046882740dc6d135b40a770d5ab7faf46f1ed1"
@@ -557,8 +562,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 5168969,
-      "sha256": "73d2b1f8e73c5617f7dc48e412823e02f52cd634a0c79fce1188b418ba5fda3c"
+      "bytes": 5178704,
+      "sha256": "214be762106c7c7344d1772247a09feccf3fb00b7d4a742efeb22a2160f8ddc9"
     },
     {
       "path": "patches/canvio-p42-r6.patch",
@@ -673,7 +678,7 @@
     {
       "path": "tests/hosted/hosted-runtime-report.json",
       "bytes": 16378,
-      "sha256": "cec91fc06452bc5ef7f9ce372f7518f0f9468372057bfc25d929c5849f5000a8"
+      "sha256": "6e1a89e962dcf4d3f410fa5b6f127849c21dfe1e1616a040cc3e332039c3f3f8"
     },
     {
       "path": "tests/hosted/integrated-source-contracts.cjs",
@@ -764,6 +769,11 @@
       "path": "tests/p127/run-p125f-tests.cjs",
       "bytes": 925,
       "sha256": "542a36ecc6dde877c35f5496eb67c1ea8f26fc6fd1a38ed49a0f8c494517a5ec"
+    },
+    {
+      "path": "tests/p127/run-p127k-tests.cjs",
+      "bytes": 529,
+      "sha256": "ea31ed639858a964d07c248e0d31a752e586a9e2d8705cf11ae15101fc1a5f00"
     },
     {
       "path": "tests/p127/run-p127l-tests.cjs",
