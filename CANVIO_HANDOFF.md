@@ -105,3 +105,10 @@ Phạm vi: nhánh ứng viên `canvio/23-3-111-github-runtime-ci`; không thay t
 ## CANVIO 23.3.111 hosted runtime handoff
 
 The candidate is built and verified by the hosted runtime workflow. Runtime vendor binaries are pinned and same-origin; model weights stay outside git and download only when a user runs the feature. Review hosted reports before promotion. Main-branch Pages auto-deploy is disabled; deployment remains manual and requires a certified P70 manifest. This version does not claim physical GPU, two-device Project Vault sync or Stable release acceptance.
+
+
+## P125.2 continuation — Scroll Storyboard
+- Added a two-stage P125 flow: extract frames, then edit captions/timing/position/entrance treatment and export.
+- Global scroll controls: parallax 0–24, easing linear/ease-out/ease-in-out, page length 3–12 screens; reduced-motion still shows the first frame only.
+- Reuses the P125.1 offline builder and local frame extraction. State is session-local; the exported HTML is portable.
+- Tests: \`run-p125f-tests.cjs\`, \`run-p1252-tests.cjs\`, \`run-p125f-browser.py\`, \`run-p1252-browser.py\`.

@@ -5,6 +5,7 @@ on:
     branches:
       - canvio/23-3-111-github-runtime-ci
       - work/p127-7-ducking-p145-continuation
+      - work/p125-2-scroll-storyboard
       - main
   pull_request:
     branches:
@@ -81,6 +82,29 @@ jobs:
             grep -q '23.3.111-github-runtime-ci' index.html || { echo "No staged candidate chunks or pinned 23.3.111 index found." >&2; exit 1; }
             echo "Using committed CANVIO candidate index."
           fi
+
+      - name: Integrate P125.2 scroll storyboard editor
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs=require('node:fs');
+          const file='index.html';
+          let html=fs.readFileSync(file,'utf8');
+          const frameSource=fs.readFileSync('canvio-p125-scrollframes.js','utf8').trim();
+          const storySource=fs.readFileSync('canvio-p125-storyboard.js','utf8').trim();
+          if(!frameSource.includes('window.CVScrollFramesP125'))throw new Error('P125 frame source missing');
+          if(!storySource.includes('window.CVScrollStoryboardP1252'))throw new Error('P125.2 storyboard source missing');
+          const re=/(<script\b(?=[^>]*\bid=["']canvio-lot125f["'])[^>]*>)[\s\S]*?(<\/script\s*>)/i;
+          if(!re.test(html))throw new Error('P125.1 embedded lot missing');
+          html=html.replace(re,'<script id="canvio-lot125f">\n'+frameSource+'\n</script>');
+          const tag='<script id="canvio-lot1252">\n'+storySource+'\n</script>';
+          if(html.includes('id="canvio-lot1252"'))html=html.replace(/<script\b(?=[^>]*\bid=["']canvio-lot1252["'])[^>]*>[\s\S]*?<\/script\s*>/i,tag);
+          else{const at=html.lastIndexOf('</body>');if(at<0)throw new Error('index.html has no closing body tag');html=html.slice(0,at)+tag+'\n'+html.slice(at);}
+          if((html.match(/id="canvio-lot1252"/g)||[]).length!==1)throw new Error('P125.2 duplicate/missing lot');
+          fs.writeFileSync(file,html,'utf8');
+          console.log('P125.1/P125.2 storyboard modules integrated');
+          NODE
 
       - name: Integrate P127.7 subtitle-led music ducking
         shell: bash
@@ -271,6 +295,7 @@ jobs:
           node tests/p127/run-p127l-tests.cjs
           node tests/p127/run-p127t-tests.cjs
           node tests/p127/run-p125f-tests.cjs
+          node tests/p127/run-p1252-tests.cjs
           node tests/p127/run-p145c-tests.cjs
           node tests/p127/run-p132g-tests.cjs
           node tests/p127/run-p145s-tests.cjs
@@ -318,6 +343,7 @@ jobs:
           /tmp/canvio-playwright/bin/python tests/p131/run-p131-browser.py
           /tmp/canvio-playwright/bin/python tests/p131/run-p131-app-smoke.py
           /tmp/canvio-playwright/bin/python tests/p127/run-p125f-browser.py
+          /tmp/canvio-playwright/bin/python tests/p127/run-p1252-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p145-browser.py
           /tmp/canvio-playwright/bin/python tests/p127/run-p132g-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p145s-browser.py

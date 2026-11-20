@@ -194,3 +194,11 @@ Workflow: https://github.com/tovannghia27223-png/CANVIO/actions/runs/44747930420
 ## P145.2 shader verification
 
 The candidate workflow runs standalone/embedded source parity and API tests for the nine transitions, nine effects, bounded resolution and P79 muxer handoff. Hosted Chromium smoke verifies the Video Engine panel, all transition start/end frames, crossfade midpoint, module checks and PNG download. This exercises WebGL through CI SwiftShader or the documented Canvas2D fallback; it does not certify physical GPU performance, a 60 fps target on mid-range hardware, user-footage visual quality or MP4 H.264 availability on every browser. MP4 output is a short video-only transition segment with no audio.
+
+
+## P125.2 Scroll Storyboard — hosted acceptance added
+
+- Unit checks cover caption range clamping, 160-character text limit, position/animation allow-lists and stable drag reorder.
+- Existing P125.1 test still checks standalone/embedded source parity and HTML safety after the candidate workflow synchronizes the P125.1 lot.
+- New Chromium browser test extracts a generated video fixture, edits/adds a caption marker, changes position and animation, sets parallax/easing, exports the standalone HTML, checks scroll reaches the last frame, verifies eased mapping and caption attributes, and confirms reduced-motion remains on frame zero.
+- This is synthetic video fixture coverage; it does not replace review of real user footage, mobile touch interactions or performance on physical devices.

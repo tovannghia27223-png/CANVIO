@@ -606,3 +606,11 @@ Hosted verification after the ffmpeg repair is complete:
 - Uses the existing Video Engine page as the UI host and existing P79 muxer as the export owner; no third-party dependency, external fetch, new timeline, store or media database.
 - Canvas2D fallback preserves crossfade/wipe only and clearly disables shader-specific FX. Hosted browser coverage is SwiftShader/software rendering.
 - Still open: 60 fps/performance acceptance on representative physical devices, WebCodecs H.264 support matrix, professional review on real project footage, full multi-track/timeline transition editing and audio-inclusive export through the existing canonical exporter.
+
+
+## 23.3.111 continuation — P125.2 Scroll Storyboard Editor
+
+- Replaced the single-step extract-and-export action with two stages: extract frames, then edit/export the storyboard. Uses the existing P125.1 extraction, decimation and offline HTML builder; no new video engine or storage owner.
+- Added a visual frame preview, editable caption timeline (0–100% start/end), add/remove and drag-reorder, position (top/center/bottom), text entrance treatment (fade/slide/zoom), parallax amount, common scroll easing and page length.
+- Export preserves offline behavior, sanitizes caption options, and retains the reduced-motion first-frame fallback. The new preview is session-local; the exported standalone HTML is portable.
+- Added unit and hosted browser suites. Manual acceptance still required for real editorial projects, touch drag behavior and target mobile performance.

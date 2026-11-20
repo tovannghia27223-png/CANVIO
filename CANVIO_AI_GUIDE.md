@@ -3498,3 +3498,12 @@ P125.3: `CVScrollFramesP125.PRESETS`, `decimate(frames,maxBytes)`; `buildHtml` n
 - WebGL 1 shader rendering has bounded output dimensions and low/medium/high quality caps; unsupported WebGL uses a Canvas2D crossfade/wipe fallback with shader-only effects explicitly disabled. User-selected images are processed locally through object URLs.
 - PNG frame export is available. Optional short H.264 MP4 transition export delegates encoding output muxing to existing `CANVIOWebCodecsExport.muxMP4` (P79), is video-only, and is limited to 10 seconds / 600 frames / 1920×1080. It is not a replacement for the canonical multi-track video export path and adds no audio.
 - Verification: `node tests/p145/run-p1452-tests.cjs` and hosted Chromium `tests/p145/run-p1452-browser.py`. Hosted WebGL uses SwiftShader; this is not physical GPU or 60 fps target-device certification.
+
+
+## P125.2 — Scroll Storyboard Editor (2026-11-20 continuation)
+
+- Standalone owner: \`canvio-p125-storyboard.js\`; embedded lot: \`canvio-lot1252\`; API: \`window.CVScrollStoryboardP1252\`. It extends the existing \`CVScrollFramesP125\` exporter and \`#cv125-card\`; it does not add a second video extraction engine.
+- Workflow: choose video and frame count/width, extract frames, then edit up to twelve caption markers with text, start/end progress, vertical position and fade/slide/zoom treatment. Markers can be reordered by native drag-and-drop. Preview uses the extracted frame and selected progress.
+- Export uses the existing offline HTML builder with global scroll easing (linear/ease-out/ease-in-out), parallax intensity (0–24), scroll length (3–12 screens), and reduced-motion first-frame fallback. Caption content is text-only and escaped in the exported file.
+- No external runtime, network request, cloud store or second project owner is introduced. Storyboard state remains in the current browser session; the final HTML is the portable deliverable.
+- Tests: \`node tests/p127/run-p125f-tests.cjs\`, \`node tests/p127/run-p1252-tests.cjs\`, \`tests/p127/run-p125f-browser.py\` and \`tests/p127/run-p1252-browser.py\`. Hosted Chromium acceptance covers frame extraction, editor controls, caption editing, export, scroll/easing behavior and reduced-motion fallback. Mobile-device/real-project review remains manual.
