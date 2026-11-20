@@ -24,10 +24,13 @@ with sync_playwright() as p:
  page.set_input_files('#vtFiles',vid)
  page.wait_for_function("CV.engines.video._state().clips.some(c=>c.type==='video')",timeout=30000)
  state=page.evaluate("""()=>{const v=CV.engines.video,s=v._state(),c=s.clips.find(x=>x.type==='video');return{id:c.id,mediaId:c.mediaId,duration:c.duration,start:c.start};}""")
+ # The default pause threshold is 0.65 s. Keep fixture gaps at 0.80 s so
+ # the browser test validates the intended detected-pause UI, not borderline
+ # timing rounded by the video import path.
  page.evaluate("""id=>{const s=CV.engines.video._state();s.clips.push(
  {id:'p1272-cue1',name:'Cue 1',type:'text',track:3,start:0.25,duration:0.8,text:'Xin chào, đây là phần mở đầu.'},
- {id:'p1272-cue2',name:'Cue 2',type:'text',track:3,start:1.65,duration:0.9,text:'Chúng ta bắt đầu phân tích.'},
- {id:'p1272-cue3',name:'Cue 3',type:'text',track:3,start:3.15,duration:0.8,text:'Đây là phần kết luận.'}
+ {id:'p1272-cue2',name:'Cue 2',type:'text',track:3,start:1.85,duration:0.9,text:'Chúng ta bắt đầu phân tích.'},
+ {id:'p1272-cue3',name:'Cue 3',type:'text',track:3,start:3.55,duration:0.8,text:'Đây là phần kết luận.'}
  );CV.engines.video.commit();}""",state['id'])
  page.click('#cv1272-analyze');page.select_option('#cv1272-video',state['id']);page.click('#cv1272-analyze')
  checks['subtitle pause report appears']='3 cue phụ đề' in page.locator('#cv1272-status').inner_text()
