@@ -10,8 +10,6 @@
 | P145.2 shader transitions/FX | Standalone/embedded parity + hosted Chromium render endpoints and PNG smoke | SwiftShader/software rendering only; physical 60 fps and real-footage acceptance remain open; optional MP4 is video-only |
 | P70 Stable release | Fourteen fail-closed manual gates | releaseCertified:false until every gate has reviewed production evidence |
 
-| P125.4 split-asset storyboard ZIP | Node parity/path/manifest tests + hosted Chromium ZIP integrity, image signature and offline-open test | Synthetic WebM/desktop CI only; audio, touch/mobile and long high-resolution source footage remain manual |
-
 ## Required manual gates
 1. HTTPS and supported browser matrix on deployed origin.
 2. Native IndexedDB persistence, restore and quota behavior.
