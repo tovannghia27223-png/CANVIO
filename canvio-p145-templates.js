@@ -113,17 +113,17 @@ function mount(){
 function ready(){try{mount();var p=document.querySelector('#page-assets');if(p&&!p.__cv1455Obs&&window.MutationObserver){p.__cv1455Obs=new MutationObserver(function(){if(!p.querySelector('#cv1455-card'))mount();});p.__cv1455Obs.observe(p,{childList:true});}}catch(e){if(window.console)console.warn('P145.5 mount',e);}}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',ready,{once:true});else ready();
 function tests(){
- var html=renderHtml('business',{title:'<script>alert(1)</script>',body:'" onload="bad',subtitle:'Revenue & risk'},'navy');
+ var html=renderHtml('business',{title:'<scr'+'ipt>alert(1)</scr'+'ipt>',body:'" onload="bad',subtitle:'Revenue & risk'},'navy');
  var smooth=renderHtml('social',{title:'A<>'},'invalid'),item=exportItem('hr',{title:'Hiring <b>'},'teal','Hiring pack'),parsed=parseImport(JSON.stringify(item)),bad=false;
  try{parseImport('{"format":"bad","version":1}');}catch(e){bad=true;}
  var long=normFields({title:'x'.repeat(700)}),hasNoRemote=!/(?:src|href)=["']?https?:|@import|url\(/i.test(html+smooth);
  return{
   fiveBuiltInTemplates:Object.keys(TPL).length===5,
   allTemplatesRenderHtml:Object.keys(TPL).every(function(k){return renderHtml(k,{},'navy').indexOf('<!doctype html>')===0;}),
-  userHtmlEscaped:html.indexOf('&lt;script&gt;')>0&&html.indexOf('<script')<0&&html.indexOf('onload=')<0,
+  userHtmlEscaped:html.indexOf('&lt;script&gt;')>0&&html.indexOf('<scr'+'ipt')<0&&html.indexOf('onload=')<0,
   textEscapedAndBounded:html.indexOf('&amp;')>0&&long.title.length===MAX_TEXT,
   paletteWhitelisted:smooth.indexOf(PALETTES.navy.accent)>0,
-  noExternalAssetsOrScripts:hasNoRemote&&html.indexOf('<script')<0&&smooth.indexOf('<script')<0,
+  noExternalAssetsOrScripts:hasNoRemote&&html.indexOf('<script')<0&&smooth.indexOf('<scr'+'ipt')<0,
   portableSchemaRoundTrip:parsed.format===FORMAT&&parsed.key==='hr'&&parsed.palette==='teal'&&parsed.fields.title==='Hiring <b>',
   rejectsUnknownSchema:bad,
   htmlContainsVietnameseAndPrintCss:html.indexOf('lang="vi"')>0&&html.indexOf('@media print')>0
