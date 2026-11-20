@@ -6,6 +6,3 @@
 - Added portable P107 parser/import/rollback tests and explicit documentation that Project Vault cloud sync is not implemented.
 - Added P145.2 local WebGL shader transitions/effects, Canvas2D fallback, PNG export and an optional P79-muxed video-only transition MP4 path with hosted Chromium coverage.
 - Stable release remains fail-closed at P70; no physical GPU or two-device certification is implied.
-
-
-- P127.2: add caption-guided Director panel on the canonical Video Engine, pause/caption cue report, bounded punch-in keyframes, existing AutoCut delegation and Undo coverage; hosted Chromium uses synthetic WebM audio and does not certify transcription quality.
