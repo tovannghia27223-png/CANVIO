@@ -35,3 +35,6 @@ P125.4 merged in PR #32 and P145.6–P145.10 merged in PR #33. Hosted verificati
 12. Physical target-device GPU/VRAM, performance and long-render testing.
 13. Cross-origin backup/restore and independent-device recovery.
 14. Rollback, release observability, alerting and production incident drill.
+
+
+| P132.3 animated WebP | Browser-native WebP frame encode + RIFF animation mux; browser test checks RIFF chunks, frame count/payload/dimensions and Chromium decode | Corrected hosted workflow pending; run #300 failed its WebP test assertions. Real-footage quality, alpha/profile, mobile and long-file performance remain manual |
