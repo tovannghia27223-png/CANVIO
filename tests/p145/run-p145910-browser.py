@@ -22,7 +22,7 @@ with sync_playwright() as p:
     {id:'a2',name:'Brand-Logo.svg',type:'image/svg+xml',size:512,hash:'hash-two'},
     {id:'a3',name:'Duplicate-Clip.mp4',type:'video/mp4',size:2048,hash:'hash-one'}
    ];
-   const old=CV.assets.list;CV.assets.list=()=>window.__cv145910Assets;
+   CVAssetSearchGateP145910.setAssetProvider(()=>window.__cv145910Assets);
    localStorage.setItem('canvio145:meta',JSON.stringify({
     a1:{license:'cc0'},a2:{license:'own'},a3:{license:'unknown'}
    }));

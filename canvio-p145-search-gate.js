@@ -2,13 +2,14 @@
 (function(){
 'use strict';
 if(window.CVAssetSearchGateP145910)return;
-var META_KEY='canvio145:meta';
+var META_KEY='canvio145:meta',assetProvider=null;
+function setAssetProvider(fn){assetProvider=typeof fn==='function'?fn:null;return !!assetProvider;}
 function safeMeta(){
  try{var x=JSON.parse(localStorage.getItem(META_KEY)||'{}');return x&&typeof x==='object'&&!Array.isArray(x)?x:{};}catch(e){return{};}
 }
 function getAssets(input){
  if(Array.isArray(input))return input.slice(0,10000);
- try{var a=window.CV&&CV.assets&&typeof CV.assets.list==='function'?CV.assets.list():[];return Array.isArray(a)?a.slice(0,10000):[];}catch(e){return[];}
+ try{var a=assetProvider?assetProvider():(window.CV&&CV.assets&&typeof CV.assets.list==='function'?CV.assets.list():[]);return Array.isArray(a)?a.slice(0,10000):[];}catch(e){return[];}
 }
 function kindOf(a){
  var t=String(a&& (a.type||a.mime||a.mimeType)||'').toLowerCase(),n=String(a&&(a.name||a.filename)||'').toLowerCase();
@@ -101,5 +102,5 @@ function tests(){
   invalidInputSafe:searchAssets(null,'x').length===0
  };
 }
-window.CVAssetSearchGateP145910={version:'145.9.10',getAssets:getAssets,kindOf:kindOf,evaluateAssets:evaluateAssets,searchAssets:searchAssets,mount:mount,tests:tests};
+window.CVAssetSearchGateP145910={version:'145.9.11',getAssets:getAssets,setAssetProvider:setAssetProvider,kindOf:kindOf,evaluateAssets:evaluateAssets,searchAssets:searchAssets,mount:mount,tests:tests};
 })();
