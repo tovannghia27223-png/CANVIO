@@ -8,3 +8,5 @@
 - Added P125.4 optional split-asset storyboard ZIP alongside the original self-contained HTML export; hosted Chromium verifies ZIP integrity and final relative-frame decoding offline. Audio and mobile/real-media acceptance remain open.
 - Added P145.6–P145.10 Asset Library tools: 25 original SVG icons, six local typography presets, eight original SVG illustrations, and read-only asset search/quality gate, with Node and hosted Chromium acceptance.
 - Stable release remains fail-closed at P70; no physical GPU or two-device certification is implied.
+
+- P145.10 candidate: bounded, user-triggered SHA-256 over actual bytes in the canonical local `CV.assets.list()` data URLs; session-only duplicate detection, no asset mutation, no network or new store (40 rows / 25 MiB per row / 64 MiB per scan). Corrected earlier note: default provider already reads the existing local Asset Library; what was missing was automatic byte hashing. Hosted verification pending.
