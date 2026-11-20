@@ -24,3 +24,6 @@
 12. Physical target-device GPU/VRAM, performance and long-render testing.
 13. Cross-origin backup/restore and independent-device recovery.
 14. Rollback, release observability, alerting and production incident drill.
+
+| P127.7 subtitle ducking | 7/7 source regression + hosted inline syntax audit | Real project A/B listening and export verification remain open |
+| P145.1 / P145.3 Content Core and SFX | Unit and hosted browser tests in workflow #136 | Does not certify full P145 packs, shader transitions, template factory or curated music |
