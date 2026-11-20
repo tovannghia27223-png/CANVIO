@@ -95,7 +95,7 @@ jobs:
           if(!html.includes('id="canvio-lot127k"')){
             const at=html.lastIndexOf('</body>');
             if(at<0)throw new Error('index.html has no closing body tag');
-            html=html.slice(0,at)+'<script id="canvio-lot127k">\\n'+source+'\\n</script>\\n'+html.slice(at);
+            html=html.slice(0,at)+'<script id="canvio-lot127k">\n'+source+'\n</script>\n'+html.slice(at);
           }
           if((html.match(/id="canvio-lot127k"/g)||[]).length!==1)throw new Error('P127.7 duplicate or missing script tag');
           fs.writeFileSync(file,html,'utf8');
