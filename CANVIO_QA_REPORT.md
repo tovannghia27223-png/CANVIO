@@ -324,3 +324,12 @@ The candidate workflow runs standalone/embedded source parity and API tests for 
 - Adds manual byte-level SHA-256 for base64 data URLs. Results are session-only and passed into the shared quality gate; no asset mutation or metadata write.
 - Bounded at 40 rows, 25 MiB per file and 64 MiB aggregate. Unsupported or over-budget items remain unverified. No network/upload/background scan.
 - Original PR #37 run #305 (`44811157725`) passed full hosted runtime and Chromium acceptance. Rebased current-main run pending.
+
+
+
+## P136.4 — SVG pattern fill test coverage (candidate; 2026-11-21)
+
+- Added six local SVG pattern fills (dots, diagonal, grid, cross, wave, checker) per traced colour layer; default none preserves the prior vector SVG. Pattern is disabled in single-line Stroke mode.
+- Node test suite extends CVTraceP136.tests() while retaining standalone/embedded parity; assertions cover exact default output parity, one local pattern definition/reference per colour path, static/self-contained SVG and invalid preset fallback.
+- Hosted Chromium test exercises the actual Image Studio control, downloads SVG, checks defs/pattern and local fragment references, awaits preview decode, and verifies single-line Stroke remains usable with pattern disabled.
+- Status: source and test changes are on work/p136-pattern-fill-20261121; hosted workflow result pending. Do not mark accepted until both Node and Chromium checks pass.
