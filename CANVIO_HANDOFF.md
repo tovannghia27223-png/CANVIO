@@ -247,3 +247,12 @@ The candidate is built and verified by the hosted runtime workflow. Runtime vend
 
 - P131 security module now supports user-triggered local HTML import into the existing Website Engine. Source size ≤5 MiB; dangerous tags/attributes removed; remote image/source URLs stripped; local raster data URLs preserved.
 - Workflow syncs standalone module to `canvio-lot131` before source-parity tests. PR #41 awaits full hosted acceptance. No second store, backend, external package or network import.
+
+
+
+## P131.3 — hosted acceptance and index promotion
+
+- PR #41 source and tests merged at `1ac185d7aea7b14ad13a0517f51e72292cc42162`. Run #315 (`44816184861`) PASS: P131 Chromium 31/31, no page errors, app smoke 21 checks across 48 pages, full candidate/runtime workflow successful.
+- Artifact `CANVIO-23.3.111-GITHUB-RUNTIME-VERIFIED-315`, 21,590,752 bytes; SHA-256 `12305d7990ed16b93d6d653cd3fd1d662a3cd90144b9800773e560a5a55fa06c`.
+- The PR merge did not alter the large canonical index blob. This follow-up build branch is running the standard push workflow to embed P131.3 into `canvio-lot131` and commit the built index/Manifest before the next merge.
+- P131.3 only imports a sanitized body fragment (5 MiB cap). It does not import stylesheet files, scripts, forms, iframes, remote images/media or third-party app runtime. Uses existing Website Engine and save owner.
