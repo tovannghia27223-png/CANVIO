@@ -221,3 +221,10 @@ The candidate workflow runs standalone/embedded source parity and API tests for 
 - Unit checks cover optional cubic output, default compatibility, finite/clamped coordinates and preserved layer/loop counts.
 - Chromium smoke keeps the existing unsmoothed pixel round-trip baseline and exports a second 65% smooth SVG; checks the slider, cubic paths and script-free safe SVG.
 - Review on diverse production artwork remains manual.
+
+
+## P145.6 Original SVG icon pack — hosted checks added
+
+- Unit checks verify 25 unique icons, five categories, path data, static standalone SVG, all sprite symbols, all contact-sheet labels, no external assets and unknown-ID rejection.
+- Hosted Chromium checks Asset Library mount, catalogue count, category filter/search, selected icon preview, individual SVG download, full sprite and contact sheet. Browser errors are release-gating.
+- These are original CANVIO geometric icons, not a third-party stock collection; no auto-insertion into external engines or cloud-sync claim.

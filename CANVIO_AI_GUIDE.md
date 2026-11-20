@@ -3532,3 +3532,12 @@ P125.3: `CVScrollFramesP125.PRESETS`, `decimate(frames,maxBytes)`; `buildHtml` n
 - SVG remains local, static and script-free; no external assets or paid dependencies.
 - Unit and hosted Chromium coverage check default compatibility, cubic path output, clamped finite coordinates, preserved layer/loop counts, safe SVG export. Manual review on varied production artwork remains open.
 - Not included: single-line stroke tracing, brush/pattern fills or gradient mesh.
+
+
+## P145.6 — Original offline SVG icon pack (2026-11-20 continuation)
+
+- Owner: \`canvio-p145-icons.js\`; embedded lot: \`canvio-lot1456\`; API: \`window.CVOriginalIconPackP1456\`. Mounts in Asset Library after existing Content Factory/Template Factory if present; does not create an additional asset store.
+- Includes 25 original static SVG icons across five categories: business, finance, HR, social/media and utility. Local category filtering and text search; selection preview; download one SVG, the SVG symbol sprite or a labelled vector contact sheet.
+- No external images, font files, script, remote URL or paid dependency. SVG source is static path geometry. Icons are downloadable to import into other existing CANVIO design surfaces; this module does not claim automatic insertion into every engine.
+- Tests: \`node tests/p145/run-p1456-tests.cjs\` and hosted Chromium \`tests/p145/run-p1456-browser.py\` cover catalogue integrity, category/search, preview, file downloads and no external resources.
+- Not included: third-party stock icon sets, illustration/3D models, multi-colour/variable icon editor or cloud library sync.

@@ -130,3 +130,10 @@ The candidate is built and verified by the hosted runtime workflow. Runtime vend
 - Added optional 0–100% closed cubic Bezier smoothing to Image Trace; default 0 keeps legacy polygon contours.
 - No new dependency. SVG stays local, script-free and no external references.
 - Tests: \`node tests/p127/run-p136t-tests.cjs\` and \`tests/p145/run-p136-browser.py\`. Single-line strokes and brush/pattern/gradient mesh remain unimplemented.
+
+
+## P145.6 — Original offline SVG icon pack
+
+- Added 25 original vector icons in five categories to Asset Library. Search/filter, preview, individual SVG, symbol sprite and contact-sheet downloads.
+- No remote images/fonts. Exported SVG can be imported manually into other design surfaces. No new asset store or cloud sync.
+- Tests: \`run-p1456-tests.cjs\` and \`run-p1456-browser.py\`.
