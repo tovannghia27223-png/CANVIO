@@ -169,3 +169,15 @@ The candidate is built and verified by the hosted runtime workflow. Runtime vend
 - The ZIP needs its index.html and frames/ directory kept together. The manifest describes source/kept frame counts, dimensions and each separate image file. The package has no audio.
 - Implementation owners: canvio-p125-scrollframes.js / CVScrollFramesP125.buildPackage and canvio-p125-storyboard.js / existing P125.2 editor. Compression uses the existing CVZip.build.
 - Verify with node tests/p127/run-p1254-tests.cjs and tests/p127/run-p1254-browser.py. Hosted runtime run #271 passed the 14-assertion Node package suite and Chromium offline ZIP checks, including final relative-image decoding; this supersedes run #255. Real-media, audio, touch/mobile and long high-resolution device review remain required before treating this as fully production accepted.
+
+
+## P145.6–P145.10 — Asset Library handoff
+
+- Open Asset Library to use the four additional panels: **Original Icon Pack**, **Typography Presets**, **Original Vector Assets**, and **Asset Search & Quality Gate**.
+- P145.6: filter by category or text, select an icon, then export its SVG, the whole symbol sprite or the contact sheet.
+- P145.7: choose Business/Finance/HR/Social/Editorial/Dashboard, tune heading/body sizes, line height and tracking, preview Vietnamese text and export CSS. Fonts are system fallbacks; no font binary is included.
+- P145.8: choose category and palette, preview one of eight original illustrations, then export its SVG, sprite or contact sheet.
+- P145.9/.10: search/filter existing assets and inspect license/source/size/hash warnings. This panel is read-only. It consumes `CV.assets.list()` if provided by the host; otherwise a canonical provider must be configured. Missing hash metadata is reported rather than silently treated as verified.
+- Implementation files: `canvio-p145-icons.js`, `canvio-p145-typography.js`, `canvio-p145-visual-assets.js`, `canvio-p145-search-gate.js`. Tests are in `tests/p145/run-p1456-*.{cjs,py}`, `run-p1457-*.{cjs,py}`, `run-p1458-*.{cjs,py}` and `run-p145910-*.{cjs,py}`.
+- Important: P145.7’s card intentionally does not use the global `.card` class to avoid the app-wide 3D tilt pointer hit-test bug. Do not re-add that class or replace real Playwright pointer checks with synthetic DOM clicks.
+- Limitations: the original vector/icon sets are starter packs; no remote font service is used; P145.9/.10 cannot claim all production assets are enumerated or hashed without the live canonical provider. Fresh rebased CI is required before acceptance.
