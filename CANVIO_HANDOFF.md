@@ -208,3 +208,8 @@ The candidate is built and verified by the hosted runtime workflow. Runtime vend
 - Native browser WebP encoding plus local RIFF frame mux; no paid dependency or remote request. Caps: 180 frames, 640 px maximum side, 64 MiB raw-frame and output budgets. Output is video-only (no audio).
 - Corrective test checks RIFF chunks, ten image-bearing frames, canvas-derived dimensions and Chromium native decode. The first run #300's browser verification failed because of a test parser/ffprobe assertion; the corrected hosted run is pending. Do not merge before it passes.
 - Human acceptance still needed for real footage, alpha/color profile, target mobile browsers and long-timeline memory/performance.
+
+
+### P132.3 latest hosted diagnosis — run #303
+- Structural checks: RIFF/chunk layout, VP8X/ANIM, ten ANMF frames, VP8 payloads and 200×113 frame dimensions passed. Chromium decoded the downloaded file at 200×113, and there were no page errors.
+- Run failure came from the final assertion retaining height=200; the measured canvas height is 113. Fixed to compare with `expected_height`; hosted rerun pending. ffprobe metadata is diagnostic only because the runner does not decode this animated WebP output.
