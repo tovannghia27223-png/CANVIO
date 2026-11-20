@@ -75,3 +75,13 @@ This batch is not a completion claim for P115–P145 and does not certify CANVIO
 - Workflow refreshed candidate `23.3.111-github-runtime-ci` manifest: 184 files; index SHA-256 `a371b7ebbdfce8632c69e49ad836232fddf9734a41c86d0399cccaa5f1994cbf`; release remains blocked with fourteen manual P70 gates pending.
 - Artifact `CANVIO-23.3.111-GITHUB-RUNTIME-VERIFIED-125` is available from run #125; size 21,310,667 bytes; digest `7f912f905db6158f77671b91205d912cfd8d72a0d5d4d80d8c61acaaaa0815d2`.
 - This is a hosted CI result, not a claim that P122/P125/P127/P130/P131–P145 or the full CANVIO roadmap are complete.
+
+
+
+## 2026-11-21 continuation — verified mainline and P136.4 candidate
+
+- P125.4 split-asset storyboard ZIP is merged and hosted-tested (workflow #271, 14 package assertions plus offline Chromium relative-frame decode).
+- P145.6–P145.10 Asset Library starter tools are merged and hosted-tested (workflow #298: Node 9/7/11/8 assertions; all four Chromium suites with no failed assertions/page errors). P145.10 local SHA-256 scan then received a current-main rebased update in PR #38, merged as commit c0ee9749dbfda84abcf43466a034dfa5539222c9; workflow #310 (44812233871) completed success and uploaded artifact CANVIO-23.3.111-GITHUB-RUNTIME-VERIFIED-310 (21,579,190 bytes). The scan is manual, local, session-only and bounded to 40 assets / 25 MiB per asset / 64 MiB total; skipped items remain unverified.
+- P132.3 animated WebP is merged and hosted-tested in workflow #304; it is video-only with no audio. Real footage, alpha/color profile, mobile browser and long-animation performance remain manual.
+- P136.4 pattern-fill work is a separate candidate branch: six static local SVG patterns for multicolour Image Trace only. Existing none, Bezier and single-line Stroke behavior is preserved; hosted verification is pending and brush/gradient mesh remain out of scope.
+- Do not use this report snapshot as a release certification. CANVIO_MANIFEST.json is refreshed by the hosted main-branch workflow; P70 remains fail-closed with fourteen real-world acceptance gates pending.

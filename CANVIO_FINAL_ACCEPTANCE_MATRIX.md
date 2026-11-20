@@ -30,3 +30,18 @@
 12. Physical target-device GPU/VRAM, performance and long-render testing.
 13. Cross-origin backup/restore and independent-device recovery.
 14. Rollback, release observability, alerting and production incident drill.
+
+| P132.3 animated WebP | Browser-native WebP frame encode + RIFF animation mux; browser test checks RIFF chunks, frame count/payload/dimensions and Chromium decode | Corrected hosted workflow pending; run #300 failed its WebP test assertions. Real-footage quality, alpha/profile, mobile and long-file performance remain manual |
+
+
+| P132.3 latest run #303 | RIFF layout, 10 ANMF/VP8 payloads, dimensions/timing and Chromium decode 200×113 passed | Only stale hard-coded height assertion failed; corrected to editor-derived expected height; hosted rerun pending |
+
+
+| P132.3 animated WebP | Hosted run #304 PASS; 10 image-bearing ANMF/VP8 frames, 200×113, 200 ms, Chromium native decode; GIF/APNG and full candidate workflow also PASS | Manual real footage, alpha/color profile, touch/mobile and long-animation memory/performance remain open; no audio |
+
+
+| P145.10 local-vault SHA-256 | Manual read-only byte-level Web Crypto scan on `CV.assets.list()`; session-only hashes; 40 rows / 25 MiB per file / 64 MiB aggregate | Original PR #37 hosted workflow passed; rebased current-main rerun pending. Skipped items remain unverified; no cloud sync |
+
+
+
+| P136.4 local SVG pattern fills | Six first-party SVG patterns (dots, diagonal, grid, cross, wave, checker), per-colour-layer local definitions; Node parity and Chromium preview/download checks | Candidate pending hosted CI; no brush engine, gradient mesh, topology editing, photo-quality or production-art review implied |
