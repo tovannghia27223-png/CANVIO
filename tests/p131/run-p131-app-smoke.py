@@ -55,6 +55,24 @@ with sync_playwright() as p:
             '<svg xmlns="http://www.w3.org/2000/svg"><style>rect{fill:url(\\68ttp://e.test/x)}</style><rect width="3" height="3"/></svg>']
     outs = page.evaluate("(l)=>l.map(s=>{try{return CANVIOAICreativeWorkflow.sanitizeSvg(s)}catch(e){return 'ERR'}})", evil)
     c['appSvgImportHardened'] = all(('javascript:' not in o and '<animate' not in o and '<set' not in o and 'e.test' not in o) for o in outs)
+    c['printHtmlUsesSharedSanitizer'] = page.evaluate("""()=>{
+      var p=window.CANVIOPrintProduction;
+      if(!p||typeof p.sanitizePrintFragment!=='function'||!window.CANVIOSecurity)return false;
+      var out=p.sanitizePrintFragment('<style>.safe{color:red}</style><p>Keep this text<script>alert(1)</script><img src="x" onerror="bad()"><iframe src="https://evil.test"></iframe><a href="javascript:alert(1)">bad link</a><a href="https://safe.test" target="_blank">safe link</a></p>');
+      return /Keep this text/.test(out)&&!/script|iframe|onerror|javascript:/i.test(out)&&/rel="noopener noreferrer"/.test(out)&&/\\.safe\\{color:red\\}/.test(out);
+    }""")
+    c['contentFactoryDownloadRedactsSecrets'] = page.evaluate("""()=>{
+      var p=window.CVContentCoreP145;if(!p||typeof p.safeExportText!=='function')return false;
+      var secret='AIza'+'x'.repeat(35),r=p.safeExportText('payload='+secret);
+      return r.available&&r.redacted===1&&r.text.indexOf(secret)<0&&r.text.indexOf('[ĐÃ ẨN KHÓA]')>=0;
+    }""")
+    c['offlineWebsiteExportRedactsAndFailsClosed'] = page.evaluate("""()=>{
+      var p=window.CANVIOOfflineSiteP73;if(!p||typeof p.redactPackageOutput!=='function')return false;
+      var secret='AIza'+'x'.repeat(35),r=p.redactPackageOutput('<script>const key="'+secret+'"</script>');
+      var refused=false;try{p.redactPackageOutput('sample',{});}catch(e){refused=true;}
+      return r.redacted===1&&r.html.indexOf(secret)<0&&refused;
+    }""")
+
     page.evaluate("CV.go('videoEngine')"); page.wait_for_timeout(1500)
     c['p127qMounted'] = page.evaluate("!!document.getElementById('cv127-quality')")
     if c['p127qMounted']:

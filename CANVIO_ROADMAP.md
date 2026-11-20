@@ -637,3 +637,12 @@ Hosted verification after the ffmpeg repair is complete:
 - Keeps evenodd fill and palette/layer/loop counts. Output remains static SVG with no script or external references.
 - Unit suite and hosted browser test cover the default output, cubic smooth export, clamping, finite coordinates and SVG safety.
 - Single-line stroke tracing, brush/pattern/gradient mesh and review on varied production artwork remain open.
+
+
+## 23.3.111 continuation — P131 export-boundary hardening
+
+- Connected P131 HTML allow-list sanitization to P67 Print Production after its existing print-specific checks; safe inline CSS is cleaned and retained.
+- Connected shared secret redaction to the P145 Content Factory text/HTML/JSONL Blob boundary; export is refused without the redactor.
+- Connected redaction to P73 Offline Website HTML before ZIP packaging; missing redactor fails closed and package report records the redaction count.
+- Hosted browser smoke and source-contract tests pass on this P131 increment (see candidate workflow run in PR #19).
+- Still open: generic hostile HTML/PPTX/ZIP imports, complete archive expansion quotas, all binary export owners and server-side CSP/SRI response headers.

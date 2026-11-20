@@ -130,3 +130,10 @@ The candidate is built and verified by the hosted runtime workflow. Runtime vend
 - Added optional 0–100% closed cubic Bezier smoothing to Image Trace; default 0 keeps legacy polygon contours.
 - No new dependency. SVG stays local, script-free and no external references.
 - Tests: \`node tests/p127/run-p136t-tests.cjs\` and \`tests/p145/run-p136-browser.py\`. Single-line strokes and brush/pattern/gradient mesh remain unimplemented.
+
+
+## P131 — Export boundary hardening
+- P67 Print HTML applies the shared HTML allow-list sanitizer and preserves only CSS cleaned by P131.
+- P145 Content Factory text downloads and P73 Offline Website HTML packages use the shared P131 redactor. These flows fail closed if redaction is unavailable.
+- Tests: \`run-p131-tests.cjs\`, \`run-p131-export-contracts.cjs\`, hosted \`run-p131-app-smoke.py\`.
+- Do not describe P131 as fully complete: general HTML/PPTX/ZIP import, archive expansion limits and HTTP CSP/SRI response headers remain open.

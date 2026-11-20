@@ -56,6 +56,12 @@
     if (old) old.remove();
     var meta = doc.createElement('meta'); meta.httpEquiv = 'Content-Security-Policy'; meta.content = "default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline' data:; img-src data: blob:; font-src data:; media-src data: blob:; frame-src data: blob:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'"; head.insertBefore(meta, head.firstChild);
   }
+  function redactPackageOutput(raw, security) {
+    var hub = security || window.CANVIOSecurity;
+    if (!hub || typeof hub.redact !== 'function') fail('Bộ redaction P131 chưa sẵn sàng; từ chối xuất gói website để tránh rò rỉ khóa.');
+    var result = hub.redact(String(raw == null ? '' : raw));
+    return { html: String(result && result.text != null ? result.text : ''), redacted: Math.max(0, Number(result && result.count) || 0) };
+  }
   async function build(snapshot, options) {
     options = options || {}; if (!snapshot || typeof snapshot.html !== 'string') fail('Website Engine snapshot chưa sẵn sàng.');
     var html = snapshot.html, css = snapshot.css || '', parser = new DOMParser(), doc = parser.parseFromString(/^\s*<!doctype|<html[\s>]/i.test(html) ? html : '<!doctype html><html lang="vi"><head></head><body>' + html + '</body></html>', 'text/html');
@@ -85,9 +91,11 @@
     Array.from(doc.querySelectorAll('[src],[href], [poster]')).forEach(function (el) { ['src', 'href', 'poster'].forEach(function (attr) { var v = el.getAttribute(attr), tag = el.tagName.toLowerCase(); if (attr === 'href' && tag === 'a') return; if (v && isHttp(v)) residual.push({ tag: tag, attr: attr, url: v }); }); });
     if (residual.length) fail('Vẫn còn ' + residual.length + ' resource HTTP(S) chưa inline.');
     addCsp(doc);
-    var output = '<!doctype html>\n' + doc.documentElement.outerHTML;
+    var rawOutput = '<!doctype html>\n' + doc.documentElement.outerHTML;
+    var securedOutput = redactPackageOutput(rawOutput);
+    var output = securedOutput.html;
     if (/<script\b[^>]*\bsrc\s*=/i.test(output) || /<link\b[^>]*\brel=["']?stylesheet/i.test(output) || forbiddenRuntime(inlineScripts)) fail('Offline package preflight thất bại: còn external runtime/network.');
-    var report = { format: 'CANVIO_P73_OFFLINE_SITE_PACKAGE', createdAt: new Date().toISOString(), sourceReadOnly: true, networkOnlyDuringExplicitUserAction: true, resources: state.list, totalResourceBytes: state.total, resourceCount: state.resources, csp: 'default-src none; connect-src none', runtimeNetworkCalls: false, externalStylesheets: 0, externalScripts: 0, residualRemoteResources: residual.length, licenseStatus: 'Resource bytes are packaged; third-party license/attribution must still be reviewed by the site owner.', limitations: ['CORS-protected URLs, ESM/importmap, iframes, embedded app runtimes or runtime network calls are rejected rather than silently broken.', 'External links clicked by a visitor remain external navigation; the page itself does not need those resources for rendering.', 'Font files are embedded only when referenced by fetched CSS and allowed by CORS.', 'This tool does not replace a clean-machine, network-disabled acceptance test.'] };
+    var report = { format: 'CANVIO_P73_OFFLINE_SITE_PACKAGE', createdAt: new Date().toISOString(), sourceReadOnly: true, networkOnlyDuringExplicitUserAction: true, resources: state.list, totalResourceBytes: state.total, resourceCount: state.resources, csp: 'default-src none; connect-src none', runtimeNetworkCalls: false, externalStylesheets: 0, externalScripts: 0, residualRemoteResources: residual.length, redactionApplied: true, redactedSecretCount: securedOutput.redacted, licenseStatus: 'Resource bytes are packaged; third-party license/attribution must still be reviewed by the site owner.', limitations: ['CORS-protected URLs, ESM/importmap, iframes, embedded app runtimes or runtime network calls are rejected rather than silently broken.', 'External links clicked by a visitor remain external navigation; the page itself does not need those resources for rendering.', 'Font files are embedded only when referenced by fetched CSS and allowed by CORS.', 'This tool does not replace a clean-machine, network-disabled acceptance test.'] };
     return { html: output, report: report };
   }
   async function exportZip(snapshot) {
@@ -111,9 +119,11 @@
   function tests() {
     var sample = '<!doctype html><html><head><title>Offline</title></head><body><h1>CANVIO</h1><img src="data:image/png;base64,AA=="><script>window.demo=1<\/script></body></html>';
     var runtimeCallsDetected = forbiddenRuntime('fetch("https://example.com")'), moduleDetected = /type=["']module/.test('<script type="module">');
-    return { explicitClickFlowOnly: true, sourceSnapshotReadOnly: true, noCredentialsFetch: true, resourceCaps: MAX_RESOURCES === 32 && MAX_SINGLE === 8 * 1024 * 1024 && MAX_TOTAL === 32 * 1024 * 1024, CSPConnectNone: true, runtimeNetworkScanner: runtimeCallsDetected, ESMExplicitlyRejected: moduleDetected, zipOwnerAvailable: !!(window.CVZip && CVZip.build), noNewStore: true };
+    var redacted = redactPackageOutput('token=' + 'AIza' + new Array(36).join('x'), { redact: function (s) { var q = s.replace(/AIza[0-9A-Za-z_-]{30,}/g, '[ĐÃ ẨN KHÓA]'); return { text: q, count: q === s ? 0 : 1 }; } });
+    var refusedWithoutHub = false; try { redactPackageOutput('example', {}); } catch (e) { refusedWithoutHub = true; }
+    return { sharedRedactionWorks: redacted.redacted === 1 && redacted.html.indexOf('AIza') < 0, failsClosedWithoutRedactor: refusedWithoutHub, explicitClickFlowOnly: true, sourceSnapshotReadOnly: true, noCredentialsFetch: true, resourceCaps: MAX_RESOURCES === 32 && MAX_SINGLE === 8 * 1024 * 1024 && MAX_TOTAL === 32 * 1024 * 1024, CSPConnectNone: true, runtimeNetworkScanner: runtimeCallsDetected, ESMExplicitlyRejected: moduleDetected, zipOwnerAvailable: !!(window.CVZip && CVZip.build), noNewStore: true };
   }
-  window.CANVIOOfflineSiteP73 = { version: '73.0.0', build: build, exportZip: exportZip, mount: mount, tests: tests, limits: { resources: MAX_RESOURCES, singleBytes: MAX_SINGLE, totalBytes: MAX_TOTAL } };
+  window.CANVIOOfflineSiteP73 = { version: '73.1.0', build: build, redactPackageOutput: redactPackageOutput, exportZip: exportZip, mount: mount, tests: tests, limits: { resources: MAX_RESOURCES, singleBytes: MAX_SINGLE, totalBytes: MAX_TOTAL } };
   function boot() { mount(); }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot, { once: true }); else boot();
   var prior = window.CANVIO_BUILD || {};

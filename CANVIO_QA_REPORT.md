@@ -221,3 +221,12 @@ The candidate workflow runs standalone/embedded source parity and API tests for 
 - Unit checks cover optional cubic output, default compatibility, finite/clamped coordinates and preserved layer/loop counts.
 - Chromium smoke keeps the existing unsmoothed pixel round-trip baseline and exports a second 65% smooth SVG; checks the slider, cubic paths and script-free safe SVG.
 - Review on diverse production artwork remains manual.
+
+
+## P131 — export-boundary hardening hosted acceptance
+
+- P67: tested script/iframe/event-handler/javascript URL removal while retaining safe visible text, safe HTTPS links and cleaned inline CSS.
+- P145 Content Factory: tested shared P131 key redaction before text/HTML/JSONL Blob creation, fail-closed behavior and redaction count.
+- P73 Offline Website: tested final HTML redaction and refusal to package without P131 redactor; package report includes redacted count.
+- Static source-contract test validates P67/P73/P145 standalone owners and candidate sync. Latest hosted run after DOMParser scope fix passed all workflow steps.
+- Manual acceptance remains for all hostile HTML/PPTX/ZIP importers, archive-bomb quotas on every import route and deployment HTTP CSP headers.

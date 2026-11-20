@@ -3532,3 +3532,12 @@ P125.3: `CVScrollFramesP125.PRESETS`, `decimate(frames,maxBytes)`; `buildHtml` n
 - SVG remains local, static and script-free; no external assets or paid dependencies.
 - Unit and hosted Chromium coverage check default compatibility, cubic path output, clamped finite coordinates, preserved layer/loop counts, safe SVG export. Manual review on varied production artwork remains open.
 - Not included: single-line stroke tracing, brush/pattern fills or gradient mesh.
+
+
+## P131 — Export-boundary hardening (2026-11-20 continuation)
+
+- P67 Print Production runs its existing print-fragment checks, then delegates the fragment to the shared P131 HTML allow-list sanitizer. Safe inline CSS is separately cleaned through P131 \`cleanCss\` and restored after sanitization because the shared HTML sanitizer removes raw style elements. The public Print API exposes \`sanitizePrintFragment\`.
+- P145 Content Factory routes textual Blob downloads through the P131 secret redactor. Downloads fail closed when the redactor is unavailable; \`CVContentCoreP145.safeExportText\` exposes the redaction count for diagnostics.
+- P73 Offline Website redacts the final HTML before ZIP creation, fails closed without the shared redactor and records redaction count in its package report.
+- Hosted smoke covers hostile Print HTML, safe CSS/link preservation, Content Factory key redaction and P73 redaction/fail-closed. Source-contract suite validates the three standalone owners.
+- Still open: generic HTML/PPTX/ZIP import hardening, comprehensive ZIP expansion quotas on every importer, unrelated binary exports that may include secrets, and deployment HTTP CSP/SRI response headers. Meta CSP is not a replacement for server response headers.
