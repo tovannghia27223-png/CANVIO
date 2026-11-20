@@ -3,10 +3,10 @@
 'use strict';
 if(window.CVOriginalVectorAssetsP1458)return;
 var THEMES={
- ocean:{label:'Ocean',bg:'#eef5fb',ink:'#18344d',primary:'#337bb8',secondary:'#80b9cb',accent:'#f2b45b',soft:'#d7e8f2'},
- jade:{label:'Jade',bg:'#edf6f2',ink:'#183d35',primary:'#2d8873',secondary:'#8bc6ad',accent:'#e3a15a',soft:'#d6eee4'},
- plum:{label:'Plum',bg:'#f4eff8',ink:'#38294a',primary:'#8159a7',secondary:'#c2a7d8',accent:'#e6a56e',soft:'#e9def2'},
- ember:{label:'Ember',bg:'#fbf2eb',ink:'#493022',primary:'#c06b3c',secondary:'#e0ab83',accent:'#e6c45e',soft:'#f3dfcf'}
+ ocean:{label:'Ocean',bg:'#eef5fb',ink:'#18344d',primary:'#337bb8',secondary:'#80b9cb',accent:'#f2b45b',soft:'#d7e8f2',panel:'#ffffff'},
+ jade:{label:'Jade',bg:'#edf6f2',ink:'#183d35',primary:'#2d8873',secondary:'#8bc6ad',accent:'#e3a15a',soft:'#d6eee4',panel:'#ffffff'},
+ plum:{label:'Plum',bg:'#f4eff8',ink:'#38294a',primary:'#8159a7',secondary:'#c2a7d8',accent:'#e6a56e',soft:'#e9def2',panel:'#ffffff'},
+ ember:{label:'Ember',bg:'#fbf2eb',ink:'#493022',primary:'#c06b3c',secondary:'#e0ab83',accent:'#e6c45e',soft:'#f3dfcf',panel:'#ffffff'}
 };
 var GROUPS={
  business:{label:'Business',ids:['business-growth','strategy-target']},
@@ -40,7 +40,16 @@ var ART=[
   art:'<rect x="110" y="84" width="420" height="260" rx="24" fill="var(--soft)" stroke="var(--ink)" stroke-width="12"/><rect x="136" y="112" width="368" height="204" rx="12" fill="var(--secondary)" opacity=".6"/><path d="M64 384h512l-42 42H106z" fill="var(--ink)"/><circle cx="320" cy="204" r="49" fill="var(--accent)"/><path d="M236 290c12-52 39-76 84-76s72 24 84 76" fill="var(--primary)"/><path d="M190 158l38-22 25 25M450 156l-32-22-26 25" fill="none" stroke="var(--ink)" stroke-width="10" stroke-linecap="round"/>'
  }
 };
-function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function esc(s){
+ return String(s==null?'':s).replace(/[&<>"']/g,function(c){
+  if(c==='&')return'&amp;';
+  if(c==='<')return'&lt;';
+  if(c==='>')return'&gt;';
+  if(c==='"')return'&quot;';
+  if(c==="'")return'&#39;';
+  return c;
+ });
+}
 function svg(id,theme){
  var a=ART.filter(function(x){return x.id===id;})[0],p=THEMES[theme]||THEMES.ocean;
  if(!a)throw new Error('Minh họa không tồn tại.');
