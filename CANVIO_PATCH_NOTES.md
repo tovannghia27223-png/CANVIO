@@ -16,3 +16,7 @@
 - P132.3 animated WebP hosted acceptance passed in run #304 (`44809678883`): RIFF/VP8X/ANIM/10×ANMF validation, per-frame VP8 payloads, 200×113 canvas/frame dimensions, 200 ms delay and Chromium `createImageBitmap` decode; no browser failures/page errors. Full hosted candidate workflow passed. Manual real-media/mobile/color/memory checks remain open.
 
 - P145.10 follow-up: bounded manual SHA-256 over actual bytes in the existing local Asset Library; session-only duplicate detection, no record mutation/network/new store (40 rows / 25 MiB per file / 64 MiB aggregate). Rebased hosted verification pending.
+
+
+
+- P136.4 candidate: added six local SVG pattern-fill presets to the existing Image Trace fill mode; default output remains unchanged, Stroke mode disables the pattern control, and no remote assets/dependencies are used. Hosted verification pending.
