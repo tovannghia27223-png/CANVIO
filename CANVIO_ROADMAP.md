@@ -708,3 +708,12 @@ Hosted verification after the ffmpeg repair is complete:
 - Node suites: P145.6 9/9; P145.7 7/7; P145.8 11/11; P145.9/.10 8/8. Chromium reports for all four suites returned no failed checks and no uncaught page errors.
 - Run #298 also passed candidate HTML/JS audit, P47–P70 regression suites, source contracts, P107 ZIP round-trip, local Three.js r187/P85 runtime SHA verification, GLB Draco/Meshopt/KTX2 fixtures and synthetic P80/P102/P105 ONNX worker/browser acceptance.
 - Boundaries remain: test provider is a fixture, not complete live Asset Vault coverage; no automatic hashing of every real uploaded binary; fonts are system fallbacks; SVG packs are starter assets. Physical GPU, real-media/mobile/print/accessibility and the 14 P70 manual gates remain open.
+
+ 
+## 23.3.111 continuation — P132.3 Animated WebP export (2026-11-21)
+
+- Adds animated WebP as a third format beside the existing GIF and APNG exports in the existing Video Engine P132 panel.
+- Uses native browser canvas WebP encoding per frame and a local RIFF WebP animation muxer (VP8X/ANIM/ANMF). No new package, external service, remote asset or duplicate timeline.
+- Enforces 180 frames, 640 px maximum side, 64 MiB raw-frame budget and 20–60,000 ms frame delay; oversized jobs fail before frame allocation. GIF/APNG remain available as alternatives.
+- Existing P132 Node and hosted Chromium workflow now tests the new format; browser acceptance includes ffprobe decode and exact animation frame count.
+- Pending: hosted CI result, target mobile browsers, visual quality on real footage, alpha/profile behavior and memory/performance on long source media. No audio is packaged.
