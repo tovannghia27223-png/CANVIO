@@ -736,3 +736,11 @@ Hosted verification after the ffmpeg repair is complete:
 - PR #36 corrected the browser test's stale fixed-height expectation (200) to match the actual editor canvas-derived 113 px; output remained 200 px wide.
 - Workflow #304 (`44809678883`) completed success. WebP browser checks all passed: RIFF length/chunks, VP8X animation feature, ANIM, 10 ANMF frames, valid VP8 payload per frame, 200×113 frame dimensions, 200 ms duration, Chromium native `createImageBitmap` decode. Browser report `failed: []`, `pageErrors: []`. GIF/APNG acceptance and full GLB/P85/ONNX same-origin browser checks also passed.
 - Limits unchanged: no audio mux; target mobile browser matrix, real footage/visual quality, alpha/color-profile, and long timeline memory/performance need manual review. P70 remains blocked with fourteen real-world gates open.
+
+
+## 23.3.111 continuation — P145.10 local Asset Library SHA-256 scan (rebased candidate, 2026-11-21)
+
+- The canonical local owner already exists: `CV.assets.list()` / `CV.assets.addBlob()` backed by existing `LS('assets')`; P145.9/.10 reads it by default. This is local browser storage, not cloud sync.
+- Adds explicit, read-only SHA-256 of decoded bytes from local base64 data URLs. Session-only hashes feed the shared P145.1 quality gate; no vault or metadata mutation.
+- Limits: 40 rows, 25 MiB/file, 64 MiB total. Unsupported, missing, Web Crypto-unavailable or over-budget items remain unverified. No upload, external request, second store or background hashing.
+- Original PR #37 hosted workflow #305 passed; this current-main rebase needs its own hosted rerun before acceptance.
