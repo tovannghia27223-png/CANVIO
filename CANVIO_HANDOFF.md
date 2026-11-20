@@ -124,3 +124,10 @@ The candidate is built and verified by the hosted runtime workflow. Runtime vend
 - Added caption timeline editing to the P125.1 video-to-scroll workflow, up to 12 markers, drag reorder, position/effect, preview, parallax/easing and standalone offline HTML export.
 - Reuses existing frame extraction and exporter; browser-session editor state only, no cloud sync.
 - Tests: \`run-p125f-tests.cjs\`, \`run-p1252-tests.cjs\`, \`run-p125f-browser.py\`, \`run-p1252-browser.py\`.
+
+## P131 — Export boundary
+
+- Shared sanitizer added as a final defense for P67 Print HTML; safe CSS is cleaned and preserved.
+- Shared redactor runs at P145 Content Factory download and P73 Offline Website HTML package creation. Those paths fail closed when the P131 redactor is unavailable.
+- Verify with \`node tests/p131/run-p131-tests.cjs\`, \`node tests/p131/run-p131-export-contracts.cjs\` and hosted \`tests/p131/run-p131-app-smoke.py\`.
+- Do not describe P131 as fully complete: HTML/PPTX/ZIP import, ZIP expansion controls and HTTP CSP headers remain separate work.

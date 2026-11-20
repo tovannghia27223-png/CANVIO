@@ -394,7 +394,18 @@
         });
       });
       Array.from(doc.body.querySelectorAll('style')).forEach(function (node) { if (/@import|url\s*\(\s*["']?https?:/i.test(node.textContent || '')) node.remove(); });
-      return doc.body.innerHTML;
+      var fragment = doc.body.innerHTML;
+      /* P131 shared allow-list sanitizer: second pass for SVG href/SMIL, CSS URL/escape and active HTML. */
+      if (window.CANVIOSecurity && typeof window.CANVIOSecurity.sanitizeHtml === 'function') {
+        var safeStyles = Array.prototype.slice.call(doc.body.querySelectorAll('style')).map(function (node) {
+          return window.CANVIOSecurity.cleanCss ? window.CANVIOSecurity.cleanCss(node.textContent || '') : '';
+        }).filter(function (css) { return !!String(css || '').trim(); });
+        var secured = window.CANVIOSecurity.sanitizeHtml(fragment);
+        var safeDoc = parser.parseFromString('<!doctype html><html><body>' + secured.html + '</body></html>', 'text/html');
+        safeStyles.forEach(function (css) { var style = safeDoc.createElement('style'); style.textContent = css; safeDoc.body.insertBefore(style, safeDoc.body.firstChild); });
+        return safeDoc.body.innerHTML;
+      }
+      return fragment;
     }
     function buildPrintHtml(options) {
       options = options || {}; var report = inspect(options), data = snapshot(); if (report.summary.fail) throw new Error('Print preflight đang BLOCKED. Sửa script, embed hoặc URL nguy hiểm trước khi xuất.');
@@ -403,7 +414,7 @@
       var css = '@page{size:' + size + ';margin:0' + (report.print.cropMarksRequested ? ';marks:crop' : '') + '}*{box-sizing:border-box}html,body{margin:0;padding:0;background:#fff;color:#111}body{font:10pt/1.5 Arial,sans-serif}.page{width:' + size.split(' ')[0] + ';min-height:' + size.split(' ')[1] + ';padding:' + safe + 'mm;page-break-after:always;break-after:page;overflow:hidden}.doc-page{min-height:calc(' + size.split(' ')[1] + ' - ' + (safe * 2) + 'mm);overflow-wrap:anywhere}img{max-width:100%;height:auto}table{max-width:100%;border-collapse:collapse}h1,h2,h3{break-after:avoid}p{orphans:3;widows:3}@media screen{body{background:#e9edf4}.page{margin:12px auto;background:white;box-shadow:0 2px 16px #17203322}}';
       return '<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>CANVIO Print Production</title><style>' + css + '</style></head><body>' + pages + '</body></html>';
     }
-    return { version: '67.0.0', applyMaster: applyMaster, applyTypography: applyTypography, inspect: inspect, buildPrintHtml: buildPrintHtml,
+    return { version: '67.0.1', applyMaster: applyMaster, applyTypography: applyTypography, inspect: inspect, buildPrintHtml: buildPrintHtml, sanitizePrintFragment: safePrintFragment,
       tests: function () { return { layoutOwner: !!(layout() && layout().snapshotState && layout().restoreState), masterPage: typeof applyMaster === 'function', typographyCSS: typeof applyTypography === 'function', printPreflight: typeof inspect === 'function', printHtml: typeof buildPrintHtml === 'function', noNewStore: true, noPDFXClaim: true }; } };
   })();
   window.CANVIOPrintProduction = P67;

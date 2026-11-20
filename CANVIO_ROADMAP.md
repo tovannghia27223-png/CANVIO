@@ -630,3 +630,11 @@ Hosted verification after the ffmpeg repair is complete:
 - Adds a visual frame preview, editable caption timeline (0–100% start/end), add/remove and native drag reorder, position (top/center/bottom), entrance effect (fade/slide/zoom), parallax, scroll easing and page length.
 - Reuses P125.1 local extraction, decimation and standalone offline HTML builder; reduced-motion fallback remains first-frame only.
 - Hosted unit/browser tests are in the candidate workflow. Touch-device drag, real project editorial review and physical mobile performance remain manual.
+
+## 23.3.111 continuation — P131 export-boundary hardening
+
+- Connected the P131 shared HTML sanitizer to P67 Print Production after its existing print-specific sanitization; safe inline CSS is cleaned and retained.
+- Connected P131 secret redaction to the common P145 Content Factory download boundary. Download refuses to proceed without the redaction service.
+- Connected P131 redaction to P73 Offline Website HTML before ZIP packaging; missing redactor fails closed and the package report records the number of removed secrets.
+- Added unit source-contract and hosted full-app smoke checks for these three export paths.
+- Not complete: general HTML/PPTX/ZIP import path coverage, comprehensive archive expansion quotas, all binary exporters, and HTTP response-header CSP/SRI. These need dedicated importer/deployment acceptance rather than a generic string filter.

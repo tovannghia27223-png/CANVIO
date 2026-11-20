@@ -5,6 +5,7 @@ on:
     branches:
       - canvio/23-3-111-github-runtime-ci
       - work/p127-7-ducking-p145-continuation
+      - work/p131-export-hardening
       - work/p125-2-scroll-storyboard
       - main
   pull_request:
@@ -124,6 +125,39 @@ jobs:
           if((html.match(/id="canvio-lot127k"/g)||[]).length!==1)throw new Error('P127.7 duplicate or missing script tag');
           fs.writeFileSync(file,html,'utf8');
           console.log('P127.7 integrated into canonical index.html');
+          NODE
+
+      - name: Integrate P131 shared sanitizer and export redaction boundaries
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs=require('node:fs');
+          const file='index.html';
+          let html=fs.readFileSync(file,'utf8');
+          const specs=[
+            {name:'P67 Print Production',file:'canvio-p63-p67.js',marker:'/* CANVIO P63–P67 · Creative Production Expansion.'},
+            {name:'P73 Offline Website',file:'canvio-p73-offline-site.js',marker:'/* CANVIO P73 — Explicit user-triggered website offline packager.'},
+            {name:'P145 Content Factory',file:'canvio-p145-core.js',marker:'/* P145 core (thêm mới, không sửa kho cũ):'}
+          ];
+          for(const spec of specs){
+            const source=fs.readFileSync(spec.file,'utf8').trim();
+            if(!source.startsWith(spec.marker))throw new Error(spec.name+' source header contract missing');
+            const at=html.indexOf(spec.marker);
+            if(at<0||html.indexOf(spec.marker,at+1)>=0)throw new Error(spec.name+' expected one existing source marker');
+            const open=html.lastIndexOf('<script',at),openEnd=html.indexOf('>',open);
+            const close=html.indexOf('</script',at),closeEnd=html.indexOf('>',close);
+            if(open<0||openEnd<at||close<at||closeEnd<0)throw new Error(spec.name+' embedded script boundaries invalid');
+            const body=html.slice(openEnd+1,close);
+            if(body.trimStart().slice(0,spec.marker.length)!==spec.marker)throw new Error(spec.name+' marker is not at the script body start');
+            const openingTag=html.slice(open,openEnd+1);
+            html=html.slice(0,open)+openingTag+'\n'+source+'\n'+html.slice(close);
+          }
+          for(const marker of ['/* CANVIO P63–P67 · Creative Production Expansion.','/* CANVIO P73 — Explicit user-triggered website offline packager.','/* P145 core (thêm mới, không sửa kho cũ):']){
+            if(!html.includes(marker))throw new Error('Embedded owner missing after sync: '+marker);
+          }
+          fs.writeFileSync(file,html,'utf8');
+          console.log('P131 hardened export consumers synced into their existing canonical script owners');
           NODE
 
       - name: Integrate P145.2 shader transitions and effects
@@ -331,6 +365,7 @@ jobs:
           node tests/p115/run-p127-tests.cjs
           node tests/p127/run-p127k-tests.cjs
           node tests/p131/run-p131-tests.cjs
+          node tests/p131/run-p131-export-contracts.cjs
           node tests/p127/run-p127q-tests.cjs
           node tests/p127/run-p127l-tests.cjs
           node tests/p127/run-p127t-tests.cjs

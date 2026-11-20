@@ -215,3 +215,11 @@ The candidate workflow runs standalone/embedded source parity and API tests for 
 - Unit tests cover caption range clamping, text limit, position/animation allow-lists and drag-order data behavior.
 - Chromium test extracts a generated video, opens editor, edits/adds captions, sets position/animation, parallax/easing and exports standalone HTML. It checks scroll mapping, caption settings and reduced-motion fallback.
 - P125.1 browser test now follows the two-stage extraction/editor/export flow. Real-project and physical touch/mobile review remain manual.
+
+## P131 — export-boundary hardening checks
+
+- P67 Print Production: browser smoke feeds script/iframe/event-handler/javascript URL content through the exported fragment sanitizer. It also checks safe visible text, HTTPS link rel attributes and safe inline CSS preservation.
+- P145 Content Factory: browser smoke confirms the shared P131 redactor detects a Google-style API key pattern before a text/HTML/JSONL Blob download is constructed. The common download boundary blocks when the redactor is unavailable.
+- P73 Offline Website: tests exercise the redaction helper, verify the secret is absent and verify the helper fails closed without a redactor; the final package report includes \`redactedSecretCount\`.
+- Source contract suite checks all three standalone owners and the embedded candidate sync.
+- Manual acceptance remains for importing hostile HTML/PPTX/ZIP fixtures, archive-bomb behavior in each importer and deployment HTTP CSP headers. This increment does not claim those gates complete.

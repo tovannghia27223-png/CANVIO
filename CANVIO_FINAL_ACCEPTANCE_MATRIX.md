@@ -25,3 +25,5 @@
 12. Physical target-device GPU/VRAM, performance and long-render testing.
 13. Cross-origin backup/restore and independent-device recovery.
 14. Rollback, release observability, alerting and production incident drill.
+
+| P131 export boundary | P67 HTML allow-list sanitizer, P145 text-download redaction, P73 offline HTML redaction/fail-closed, hosted checks | General HTML/PPTX/ZIP import coverage, ZIP-bomb quotas across importers and HTTP CSP/SRI headers remain open |

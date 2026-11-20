@@ -3524,3 +3524,11 @@ P125.3: `CVScrollFramesP125.PRESETS`, `decimate(frames,maxBytes)`; `buildHtml` n
 - Export uses the existing offline HTML builder with parallax 0–24, scroll easing linear/ease-out/ease-in-out, page length 3–12 screens and reduced-motion first-frame fallback. Caption data is sanitized/escaped.
 - No external runtime, network request, cloud store or new media owner. Editor state is browser-session only; output is portable standalone HTML.
 - Hosted unit/browser tests include frame extraction, caption editor, export settings, scroll mapping and reduced motion. Real project/touch/mobile QA remains manual.
+
+## P131 — Export-boundary hardening (2026-11-20 continuation)
+
+- P67 Print Production now runs the existing print-fragment safety checks, then delegates the resulting fragment to the shared P131 HTML allow-list sanitizer. Safe inline CSS is separately passed through P131 \`cleanCss\` and restored after HTML sanitization because the shared HTML sanitizer intentionally removes raw \`style\` elements. The public API exposes \`sanitizePrintFragment\` for regression checks.
+- P145 Content Factory text/HTML/JSONL downloads pass through \`CANVIOSecurity.redact\` at the common Blob download boundary. The download is blocked when the P131 redactor is unavailable; redaction count is available through \`CVContentCoreP145.safeExportText\`.
+- P73 Offline Website packaging redacts the final standalone HTML before ZIP creation. It fails closed if the P131 redactor is missing and records the number of redactions in its package report. This does not change the explicit-click resource fetch, offline preflight or license review rules.
+- Hosted P131 browser smoke covers unsafe print fragments, safe CSS/link preservation, Content Factory token redaction and fail-closed Website export. Unit contract tests verify that standalone source owners and the candidate workflow remain synchronized.
+- Still open: actual external HTML/PPTX/ZIP import hardening, archive expansion/ZIP-bomb limits on every importer, redaction in unrelated binary export owners where secrets could be embedded, and server response CSP/SRI policy. A meta CSP is not a substitute for a deployment HTTP header.
