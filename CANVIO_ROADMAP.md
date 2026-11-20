@@ -767,3 +767,13 @@ Hosted verification after the ffmpeg repair is complete:
 - Adds Node API parity checks and Chromium tests for malicious markup, local raster retention, remote image removal, Vietnamese content, project save and user file picker.
 - Current status: candidate PR #41; hosted CI required before merge. Real external-page fidelity, CSS/assets, third-party runtime, mobile and production accessibility remain separate manual acceptance items.
 
+
+
+
+## P131.3 — Safe HTML import: mainline integration PASS (2026-11-21)
+
+- PR #41 source/test/workflow merged at `1ac185d7aea7b14ad13a0517f51e72292cc42162`; hosted run #315 (`44816184861`) success. P131 Chromium: 31/31, zero page errors; app smoke: 21 passed across 48 pages.
+- Mainline push build commit `4fdaae3219cde7ebc6c4c9358bf40b3d57812f16` updated canonical `index.html` and Manifest. Verified main index includes `prepareHtmlImport`, `131.3.0` and palette action **Nhập HTML an toàn · Website Studio**. Manifest index SHA-256 `e419b50f1bd459201ad19d94f6a2cd5ea08c03b539be3c0a3b7899b8b925a7ac`, 5,358,886 bytes; 237 files.
+- Supersedes previous P131.3 pending/candidate notes. Import is limited to sanitized .html/.htm body fragment, ≤5 MiB, no scripts/forms/iframes/stylesheets/remote images/media or third-party runtime; uses existing Website Engine add/save path and creates no new store/backend.
+- P70 stays blocked: 14/14 real-world acceptance gates remain open.
+
