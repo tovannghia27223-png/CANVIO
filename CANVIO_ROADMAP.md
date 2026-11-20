@@ -717,3 +717,11 @@ Hosted verification after the ffmpeg repair is complete:
 - The post-merge main build is `782aa562f5341172330d114ccb21a3269efbbb37`, retaining candidate `23.3.111-github-runtime-ci`. Mainline workflow #282 (`44799501341`) concluded success; the configured PR-event-only candidate-branch commit step was skipped, not failed.
 - Integration does not imply full production acceptance. P145.9/.10 still needs the canonical live Asset Vault provider to prove complete enumeration and hash coverage. The icon/illustration sets remain starter packs and typography uses system-font fallbacks.
 - P70 remains `releaseCertified:false` / `BLOCKED_PENDING_REAL_WORLD_ACCEPTANCE`; fourteen real-world gates remain open. Do not label CANVIO 1.0 Stable or production-certified until each gate has evidence and sign-off.
+
+
+## 23.3.111 continuation — P145.10 native Asset Library SHA-256 scan (candidate, 2026-11-21)
+
+- Corrected source discovery: the existing `index.html` already defines the local Asset Library owner `CV.assets.list()/addBlob()` using the existing `LS('assets')` record; the P145.9/.10 fallback is wired to this owner by default. This is not remote/cloud sync; the native owner is local-first and capped at 40 records.
+- Adds an explicit read-only SHA-256 scan on the existing “Làm mới & rà soát” action. It hashes exact bytes decoded from local base64 data URLs using Web Crypto, then supplies ephemeral hashes to the shared P145.1 quality gate. No vault record or metadata is modified.
+- Limits are 40 assets, 25 MiB per asset, 64 MiB total per scan. Items with unavailable/non-base64 data, unavailable Web Crypto, or over-budget size remain visibly unverified. Hashes live only in current page memory and are recalculated on the next manual scan.
+- Browser tests confirm native default provider parity with `CV.assets.list()`, byte-identical payload detection across different MIME labels, and no asset-row mutation. Node tests add transient-hash duplicate and immutability checks. Hosted run pending; P145 is not certified for complete hashing when any item is skipped.
