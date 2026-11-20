@@ -2,10 +2,10 @@
   "format": "CANVIO_DELIVERY_MANIFEST",
   "schemaVersion": 2,
   "candidate": "23.3.111-github-runtime-ci",
-  "generatedAt": "2026-11-20T07:28:05.644Z",
+  "generatedAt": "2026-11-20T08:26:48.767Z",
   "hashAlgorithm": "SHA-256",
-  "indexSha256": "a371b7ebbdfce8632c69e49ad836232fddf9734a41c86d0399cccaa5f1994cbf",
-  "indexBytes": 5089054,
+  "indexSha256": "63fdeaf7c238ea632279b38f93a325cd18a1478c85db72cc96f2ea1ab542ff38",
+  "indexBytes": 5092764,
   "fileCount": 184,
   "releaseCertified": false,
   "releaseStatus": "BLOCKED_PENDING_REAL_WORLD_ACCEPTANCE",
@@ -382,8 +382,8 @@
     },
     {
       "path": "CANVIO_AI_GUIDE.md",
-      "bytes": 350762,
-      "sha256": "8a0a1b3f7aac795739fb57fe50ef161079d68c75d7aa065b21fe6a15307b245d"
+      "bytes": 350992,
+      "sha256": "0284d45218f5625653952012210cc751107a3b102c905561a38f2b1a2415f10a"
     },
     {
       "path": "CANVIO_FINAL_ACCEPTANCE_MATRIX.md",
@@ -422,8 +422,8 @@
     },
     {
       "path": "CANVIO_ROADMAP.md",
-      "bytes": 62115,
-      "sha256": "8d3bfb54dc5aa080b46021c34cdbc8a1063baa66d4bfd71f8005ca993d308d6b"
+      "bytes": 62873,
+      "sha256": "619662f474d531227fc76f1788f195caa0392c484459d18f8306da85580f7385"
     },
     {
       "path": "canvio-p102-background-removal.js",
@@ -442,8 +442,8 @@
     },
     {
       "path": "canvio-p125-scrollframes.js",
-      "bytes": 10254,
-      "sha256": "73d922f011a29b247b7d73011891c463d8b32204e319328aeec4d62b07439945"
+      "bytes": 13950,
+      "sha256": "9f0f2505a5dac4137d6f8c2208eb558023909214179d4c68f474563aae1baafb"
     },
     {
       "path": "canvio-p127-loudness.js",
@@ -527,8 +527,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 5089054,
-      "sha256": "a371b7ebbdfce8632c69e49ad836232fddf9734a41c86d0399cccaa5f1994cbf"
+      "bytes": 5092764,
+      "sha256": "63fdeaf7c238ea632279b38f93a325cd18a1478c85db72cc96f2ea1ab542ff38"
     },
     {
       "path": "patches/canvio-p42-r6.patch",
@@ -643,7 +643,7 @@
     {
       "path": "tests/hosted/hosted-runtime-report.json",
       "bytes": 16378,
-      "sha256": "3b2a405db863304d1077d8143f9c22588e61664585e9a672e30cd3fdb24b7477"
+      "sha256": "cc2889c8186264f84c1b422eee83e2c56f2565c4e61360ff999e2791d500e406"
     },
     {
       "path": "tests/hosted/integrated-source-contracts.cjs",
@@ -727,8 +727,8 @@
     },
     {
       "path": "tests/p127/run-p125f-browser.py",
-      "bytes": 4304,
-      "sha256": "1ecb680c6032b53e77dd278ed5b666b082f613c3fbc394cb1fc56e85176d3426"
+      "bytes": 4655,
+      "sha256": "bc46586cf114ead8180ec695b2d9e3fbcdb7b1b4fad64466d1f90adeb33ca3a4"
     },
     {
       "path": "tests/p127/run-p125f-tests.cjs",
