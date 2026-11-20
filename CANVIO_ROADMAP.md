@@ -502,3 +502,8 @@ Phạm vi: nhánh ứng viên `canvio/23-3-111-github-runtime-ci`; không thay t
 
 - Xác nhận trên Chrome thật (smoke test, 18/18): nút LUFS và 4 nút mẫu hiện đúng, mẫu Short thêm 5 khung và undo được. Đo LUFS với audio thật vẫn chưa kiểm.
 
+### P125.1 — Video thành web cuộn
+- `canvio-p125-scrollframes.js` (lot `canvio-lot125f`): thẻ trong Website Engine; chọn video, trích N khung (8–240) lên canvas, xuất 1 tệp HTML offline: khung chạy theo vị trí cuộn, nạp lười khung lân cận, `prefers-reduced-motion` chỉ hiện khung đầu, không gọi mạng.
+- Test: `node tests/p127/run-p125f-tests.cjs` và Chrome thật `python3 tests/p127/run-p125f-browser.py` (ffmpeg tạo video thử, trích khung, cuộn đầu/giữa/cuối, reduced-motion).
+- Giới hạn: khung nhúng base64 nên tệp nặng (cảnh báo >20 MB); chưa có editor storyboard cuộn (P125.2), preset (P125.3) hay tối ưu gói/di động (P125.4); chưa tách WebP/JPEG thành tệp riêng.
+

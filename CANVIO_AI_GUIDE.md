@@ -3431,3 +3431,6 @@ Phạm vi: nhánh ứng viên `canvio/23-3-111-github-runtime-ci`; không thay t
 ## P127.5 Templates
 `window.CVTemplatesP127` {templates, plan(key,offset), apply(key,state,api), mount, tests}. Embedded `canvio-lot127t` khớp `canvio-p127-templates.js`. Test: `node tests/p127/run-p127t-tests.cjs`.
 
+## P125.1 Scroll frames
+`window.CVScrollFramesP125` {plan, buildHtml(frames,opts), extract(file,opts,cb), estimateBytes, mount, tests}. Embedded `canvio-lot125f` khớp `canvio-p125-scrollframes.js`. Chỉ nhận frame dạng data:image/(webp|jpeg|png);base64. Test: `tests/p127/run-p125f-tests.cjs`, `tests/p127/run-p125f-browser.py`.
+
