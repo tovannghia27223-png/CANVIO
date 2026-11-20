@@ -1,6 +1,6 @@
-/* P136 · Image Trace: ảnh -> SVG nhiều màu, chạy cục bộ. Lượng tử hoá median-cut (2–12 màu), tách lớp theo màu, dò đường biên theo cạnh điểm ảnh,
-   gộp điểm thẳng hàng, đơn giản hoá Douglas-Peucker, tô evenodd. Ảnh lớn được thu nhỏ (≤ 512 px cạnh dài). Pixel trong suốt (alpha < 128) bị bỏ.
-   Giới hạn: không làm mượt cong Bezier (đường gấp khúc), không tách nét đơn (stroke), ảnh chụp nhiều chuyển sắc cho kết quả dạng poster. */
+/* P136.4 · Image Trace: vector hoá ảnh cục bộ, đa màu, Bezier kín, nét đơn và tô họa tiết SVG.
+   Median-cut (2–12 màu), đường biên pixel + Douglas-Peucker, Zhang–Suen stroke skeleton, pattern nội bộ: dots/diagonal/grid/cross/wave/checker.
+   Giới hạn: ảnh thu nhỏ tối đa 512 px cạnh; pattern chỉ áp dụng cho chế độ mảng màu; ảnh chụp nhiều chuyển sắc vẫn có thể ra poster, nhánh stroke có thể phân mảnh. */
 (function () {
 'use strict';
 if (window.CVTraceP136) return;
@@ -83,6 +83,21 @@ function loopPath(pts, smooth) {
   }
   return out + 'Z';
 }
+function patternDefinition(id, color, kind) {
+  var m = /^#([0-9a-fA-F]{6})$/.exec(String(color || ''));
+  if (!m) return '';
+  var rgb = [parseInt(m[1].slice(0, 2), 16), parseInt(m[1].slice(2, 4), 16), parseInt(m[1].slice(4, 6), 16)];
+  var mark = (rgb[0] * 0.2126 + rgb[1] * 0.7152 + rgb[2] * 0.0722) > 145 ? '#172033' : '#f8fafc';
+  var shape = '';
+  if (kind === 'dots') shape = '<circle cx="2" cy="2" r="1.1" fill="' + mark + '"/><circle cx="6" cy="6" r="1.1" fill="' + mark + '"/>';
+  else if (kind === 'diagonal') shape = '<path d="M-2 2L2 -2M0 8L8 0M6 10L10 6" fill="none" stroke="' + mark + '" stroke-width="1"/>';
+  else if (kind === 'grid') shape = '<path d="M0 0H8M0 0V8" fill="none" stroke="' + mark + '" stroke-width=".7"/>';
+  else if (kind === 'cross') shape = '<path d="M-1 4H9M4 -1V9" fill="none" stroke="' + mark + '" stroke-width=".7"/>';
+  else if (kind === 'wave') shape = '<path d="M0 4Q2 1 4 4T8 4" fill="none" stroke="' + mark + '" stroke-width=".8"/>';
+  else if (kind === 'checker') shape = '<rect width="4" height="4" fill="' + mark + '"/><rect x="4" y="4" width="4" height="4" fill="' + mark + '"/>';
+  else return '';
+  return '<pattern id="' + id + '" width="8" height="8" patternUnits="userSpaceOnUse"><rect width="8" height="8" fill="' + color + '"/>' + shape + '</pattern>';
+}
 function traceImageData(img, opt) {
   opt = opt || {};
   var w = img && img.width, h = img && img.height, d = img && img.data;
@@ -98,8 +113,23 @@ function traceImageData(img, opt) {
     var loops = traceMask(mask, w, h).map(function (l) { return simplifyLoop(l, eps); }), dstr = loops.map(function (l) { return loopPath(l, smooth); }).join('');
     if (dstr) { paths.push({ color: hex(q.palette[j]), d: dstr, area: counts[j], loops: loops.length }); total += loops.length; }
   });
-  var svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + w + ' ' + h + '" width="' + w + '" height="' + h + '" shape-rendering="geometricPrecision">' + (bg != null ? '<rect width="' + w + '" height="' + h + '" fill="' + hex(q.palette[bg]) + '"/>' : '') + paths.map(function (p) { return '<path fill="' + p.color + '" stroke="' + p.color + '" stroke-width="0.5" fill-rule="evenodd" d="' + p.d + '"/>'; }).join('') + '</svg>';
-  return { svg: svg, width: w, height: h, colors: q.palette.length, paths: paths.length, loops: total, background: bg != null ? hex(q.palette[bg]) : null, bytes: svg.length };
+  var allowedPatterns = ['none', 'dots', 'diagonal', 'grid', 'cross', 'wave', 'checker'];
+  var pattern = allowedPatterns.indexOf(String(opt.pattern || 'none')) >= 0 ? String(opt.pattern || 'none') : 'none';
+  var defs = '', fillMarkup;
+  if (pattern === 'none') {
+    fillMarkup = paths.map(function (p) { return '<path fill="' + p.color + '" stroke="' + p.color + '" stroke-width="0.5" fill-rule="evenodd" d="' + p.d + '"/>'; }).join('');
+  } else {
+    fillMarkup = paths.map(function (p, j) {
+      var id = 'cv136-pattern-' + j;
+      defs += patternDefinition(id, p.color, pattern);
+      return '<path fill="url(#' + id + ')" stroke="' + p.color + '" stroke-width="0.5" fill-rule="evenodd" d="' + p.d + '"/>';
+    }).join('');
+  }
+  var svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + w + ' ' + h + '" width="' + w + '" height="' + h + '" shape-rendering="geometricPrecision">' +
+    (defs ? '<defs>' + defs + '</defs>' : '') +
+    (bg != null ? '<rect width="' + w + '" height="' + h + '" fill="' + hex(q.palette[bg]) + '"/>' : '') +
+    fillMarkup + '</svg>';
+  return { svg: svg, width: w, height: h, colors: q.palette.length, paths: paths.length, loops: total, background: bg != null ? hex(q.palette[bg]) : null, pattern: pattern, bytes: svg.length };
 }
 
 /* Single-line mode: Otsu threshold + Zhang–Suen thinning + vectorized skeleton graph. */
@@ -186,17 +216,18 @@ function loadFile(file) {
 function mount() {
   var page = document.querySelector('#page-imageStudio'); if (!page || page.querySelector('#cv136-card')) return false;
   var card = document.createElement('div'); card.className = 'card'; card.id = 'cv136-card'; card.style.marginTop = '12px';
-  card.innerHTML = '<div class="row" style="gap:8px;flex-wrap:wrap;align-items:center"><b>Ảnh → Vector (P136)</b><input type="file" id="cv136-file" accept="image/*" aria-label="Chọn ảnh"><label class="tiny">Số màu <input type="range" id="cv136-k" min="2" max="12" value="6"> <span id="cv136-kv">6</span></label><label class="tiny">Kiểu vector <select id="cv136-mode" class="input"><option value="fill">Mảng màu</option><option value="stroke">Nét đơn (Stroke)</option></select></label><label class="tiny">Độ dày nét <input type="number" id="cv136-sw" min="0.5" max="12" step="0.5" value="2" style="width:64px"></label><label class="tiny">Chi tiết <select id="cv136-d" class="input"><option value="0.5">Cao</option><option value="1" selected>Vừa</option><option value="2">Thấp (nhẹ hơn)</option></select></label><label class="tiny">Làm mượt Bezier <input type="range" id="cv136-s" min="0" max="100" value="0"><span id="cv136-sv">0%</span></label><button type="button" class="btn btn-soft sm" id="cv136-run">Chuyển sang SVG</button><button type="button" class="btn btn-ghost sm" id="cv136-dl" disabled>Tải SVG</button><span class="tiny" id="cv136-out" role="status" aria-live="polite">Logo, icon, hình ít màu cho kết quả tốt nhất; ảnh chụp sẽ thành dạng poster.</span></div><div id="cv136-prev" style="margin-top:8px;max-height:260px;overflow:auto"></div>';
+  card.innerHTML = '<div class="row" style="gap:8px;flex-wrap:wrap;align-items:center"><b>Ảnh → Vector (P136)</b><input type="file" id="cv136-file" accept="image/*" aria-label="Chọn ảnh"><label class="tiny">Số màu <input type="range" id="cv136-k" min="2" max="12" value="6"> <span id="cv136-kv">6</span></label><label class="tiny">Kiểu vector <select id="cv136-mode" class="input"><option value="fill">Mảng màu</option><option value="stroke">Nét đơn (Stroke)</option></select></label><label class="tiny">Họa tiết <select id="cv136-pattern" class="input"><option value="none">Không</option><option value="dots">Chấm</option><option value="diagonal">Sọc chéo</option><option value="grid">Lưới</option><option value="cross">Ô chéo</option><option value="wave">Sóng</option><option value="checker">Bàn cờ</option></select></label><label class="tiny">Độ dày nét <input type="number" id="cv136-sw" min="0.5" max="12" step="0.5" value="2" style="width:64px"></label><label class="tiny">Chi tiết <select id="cv136-d" class="input"><option value="0.5">Cao</option><option value="1" selected>Vừa</option><option value="2">Thấp (nhẹ hơn)</option></select></label><label class="tiny">Làm mượt Bezier <input type="range" id="cv136-s" min="0" max="100" value="0"><span id="cv136-sv">0%</span></label><button type="button" class="btn btn-soft sm" id="cv136-run">Chuyển sang SVG</button><button type="button" class="btn btn-ghost sm" id="cv136-dl" disabled>Tải SVG</button><span class="tiny" id="cv136-out" role="status" aria-live="polite">Logo, icon, hình ít màu cho kết quả tốt nhất; ảnh chụp sẽ thành dạng poster.</span></div><div id="cv136-prev" style="margin-top:8px;max-height:260px;overflow:auto"></div>';
   page.appendChild(card);
   var $ = function (s) { return card.querySelector(s); }, last = null;
   $('#cv136-k').addEventListener('input', function () { $('#cv136-kv').textContent = this.value; });
   $('#cv136-s').addEventListener('input', function () { $('#cv136-sv').textContent = this.value + '%'; });
+  $('#cv136-mode').addEventListener('change', function () { $('#cv136-pattern').disabled = this.value === 'stroke'; });
   $('#cv136-run').addEventListener('click', function () {
     var f = $('#cv136-file').files[0], out = $('#cv136-out'), btn = this; if (!f) { out.textContent = 'Chọn một ảnh trước.'; return; }
     btn.disabled = true; out.textContent = 'Đang dò đường biên…';
-    loadFile(f).then(function (im) { return new Promise(function (ok) { setTimeout(function () { var opt={colors:$('#cv136-k').value,detail:$('#cv136-d').value,smooth:Number($('#cv136-s').value)/100,strokeWidth:$('#cv136-sw').value};ok($('#cv136-mode').value==='stroke'?fromBitmapStroke(im,opt):fromBitmap(im,opt)); }, 20); }); }).then(function (r) {
+    loadFile(f).then(function (im) { return new Promise(function (ok) { setTimeout(function () { var opt={colors:$('#cv136-k').value,detail:$('#cv136-d').value,smooth:Number($('#cv136-s').value)/100,strokeWidth:$('#cv136-sw').value,pattern:$('#cv136-pattern').value};ok($('#cv136-mode').value==='stroke'?fromBitmapStroke(im,opt):fromBitmap(im,opt)); }, 20); }); }).then(function (r) {
       last = r; var u = URL.createObjectURL(new Blob([r.svg], { type: 'image/svg+xml' })), im = new Image(); im.alt = 'Kết quả vector'; im.style.maxWidth = '100%'; im.onload = function () { URL.revokeObjectURL(u); }; im.src = u; var pv = $('#cv136-prev'); pv.innerHTML = ''; pv.appendChild(im); $('#cv136-dl').disabled = false;
-      out.textContent = r.mode==='stroke' ? 'Stroke: '+r.paths+' nét vector · '+r.foreground+' pixel tiền cảnh · '+r.iterations+' vòng làm mảnh · '+(r.bytes/1024).toFixed(0)+' KB.' : r.colors + ' màu, ' + r.paths + ' lớp, ' + r.loops + ' đường viền, Bezier ' + Math.round(Number($('#cv136-s').value)) + '%, ' + (r.bytes / 1024).toFixed(0) + ' KB' + (r.bytes > 800000 ? '. Nặng: giảm số màu hoặc chọn Chi tiết thấp.' : '.');
+      out.textContent = r.mode==='stroke' ? 'Stroke: '+r.paths+' nét vector · '+r.foreground+' pixel tiền cảnh · '+r.iterations+' vòng làm mảnh · '+(r.bytes/1024).toFixed(0)+' KB.' : r.colors + ' màu, ' + r.paths + ' lớp, ' + r.loops + ' đường viền, Bezier ' + Math.round(Number($('#cv136-s').value)) + '%, ' + (r.pattern && r.pattern!=='none' ? 'Họa tiết '+r.pattern+', ' : '') + (r.bytes / 1024).toFixed(0) + ' KB' + (r.bytes > 800000 ? '. Nặng: giảm số màu hoặc chọn Chi tiết thấp.' : '.');
     }).catch(function (e) { out.textContent = String(e && e.message || e).slice(0, 140); }).then(function () { btn.disabled = false; });
   });
   $('#cv136-dl').addEventListener('click', function () { if (!last) return; var u = URL.createObjectURL(new Blob([last.svg], { type: 'image/svg+xml' })), a = document.createElement('a'); a.href = u; a.download = 'trace-' + Date.now().toString(36) + '.svg'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(function () { URL.revokeObjectURL(u); }, 4000); });
@@ -227,8 +258,12 @@ function tests() {
     smoothnessClampedAndFinite: (function () { var a = loopPath([[0,0],[10,0],[10,10],[0,10]], 99), b = loopPath([[0,0],[10,0],[10,10],[0,10]], -2); return a.indexOf('C') >= 0 && !/NaN|Infinity/.test(a) && b.indexOf('C') < 0; })(),
     strokeModeProducesOpenPaths: (function(){var w=24,h=24,d=new Uint8ClampedArray(w*h*4);for(var y=0;y<h;y++)for(var x=0;x<w;x++){var i=(y*w+x)*4,on=(x>=10&&x<=13)||(y>=10&&y<=13&&x>=4&&x<=19);d[i]=d[i+1]=d[i+2]=on?0:255;d[i+3]=255;}var z=traceStrokeImageData({width:w,height:h,data:d},{detail:.2,strokeWidth:2});return z.mode==='stroke'&&z.paths>=1&&z.skeleton>0&&z.skeleton<z.foreground&&/<path d="M/.test(z.svg)&&/fill="none"/.test(z.svg)&&/stroke-linecap="round"/.test(z.svg);})(),
     strokeWidthIsBounded: (function(){var w=8,h=8,d=new Uint8ClampedArray(w*h*4);for(var i=0;i<w*h;i++){d[i*4]=d[i*4+1]=d[i*4+2]=i%8<4?0:255;d[i*4+3]=255;}var z=traceStrokeImageData({width:w,height:h,data:d},{strokeWidth:99});return z.svg.indexOf('stroke-width="12"')>=0&&z.mode==='stroke';})(),
-    invalidStrokeImageRejected: (function(){try{traceStrokeImageData({width:2,height:2,data:new Uint8ClampedArray(16)});return false;}catch(e){return true;}})()
+    invalidStrokeImageRejected: (function(){try{traceStrokeImageData({width:2,height:2,data:new Uint8ClampedArray(16)});return false;}catch(e){return true;}})(),
+    defaultPatternKeepsOriginalSvg: (function(){return traceImageData(fixture(),{colors:3,detail:0}).svg===traceImageData(fixture(),{colors:3,detail:0,pattern:'none'}).svg;})(),
+    patternFillAddsLocalPatternPerLayer: (function(){var z=traceImageData(fixture(),{colors:3,detail:0,pattern:'diagonal'}),defs=(z.svg.match(/<pattern /g)||[]).length,refs=(z.svg.match(/fill="url\(#cv136-pattern-\d+\)"/g)||[]).length;return z.pattern==='diagonal'&&defs===z.paths&&refs===z.paths&&z.paths>0;})(),
+    patternSvgContainsOnlyLocalSafeShapes: (function(){var z=traceImageData(fixture(),{colors:3,detail:0,pattern:'dots'});return /<defs><pattern/.test(z.svg)&&/<circle/.test(z.svg)&&!/<script|foreignObject|<image|href=|javascript:/i.test(z.svg);})(),
+    unknownPatternFallsBackToPlainFill: (function(){var a=traceImageData(fixture(),{colors:3,detail:0}),b=traceImageData(fixture(),{colors:3,detail:0,pattern:'<script>'});return b.pattern==='none'&&b.svg===a.svg;})()
   };
 }
-window.CVTraceP136 = { version: '136.3.0', quantize: quantize, traceMask: traceMask, simplify: simplifyLoop, loopPath: loopPath, traceImageData: traceImageData, traceStrokeImageData:traceStrokeImageData, skeletonize:skeletonize, skeletonPaths:skeletonPaths, fromBitmap: fromBitmap, fromBitmapStroke:fromBitmapStroke, mount: mount, tests: tests };
+window.CVTraceP136 = { version: '136.4.0', patternDefinition: patternDefinition, quantize: quantize, traceMask: traceMask, simplify: simplifyLoop, loopPath: loopPath, traceImageData: traceImageData, traceStrokeImageData:traceStrokeImageData, skeletonize:skeletonize, skeletonPaths:skeletonPaths, fromBitmap: fromBitmap, fromBitmapStroke:fromBitmapStroke, mount: mount, tests: tests };
 })();
