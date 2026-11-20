@@ -264,3 +264,27 @@ The candidate workflow runs standalone/embedded source parity and API tests for 
 - The current 1–50 MB control is explicitly documented as an encoded-frame data budget. Final ZIP bytes are reported separately; manifest records frame bytes and package structure.
 - Hosted runtime run #271 (2026-11-20, GitHub Actions run 44798663309) passed the P125.4 Node package suite (14 assertions) and Chromium acceptance. Browser checks passed ZIP integrity, manifest/README presence, separate image files and image signatures, relative frame references, final-frame scroll and final relative-image decode; no page errors were reported. This later run supersedes the initial #255 confirmation. The synthetic WebM/desktop browser scope does not replace real-media/mobile acceptance.
 - Manual acceptance remains for real user footage, audio requirements, mobile/touch controls and large-file memory/performance.
+
+
+## P145.6–P145.10 — Asset Library candidate test plan (rebased to current main)
+
+- P145.6 Node/browser tests: 25 icon catalogue and unique IDs, category/search, preview, safe standalone SVG, sprite and contact sheet; verifies no remote assets and no uncaught page errors.
+- P145.7 Node/browser tests: six presets, numeric bounds, local font support reporting, CSS output without remote fonts, live preview and physical Playwright mouse clicks on Apply/preset controls. The card is intentionally excluded from the global `.card` tilt observer.
+- P145.8 Node/browser tests: eight illustrations, four categories/themes, SVG palette resolution, category/search, preview, individual export, sprite and contact-sheet output.
+- P145.9/.10 Node/browser tests: shared license/source/size/hash gate, duplicate hash behavior, search/type/status filters, read-only behavior and local provider fixture.
+- Root-cause history: run #263 failed P145.7 because the global MutationObserver tagged every `.card` under `#page-assets` with `data-tilt`; pointer movement rotated the typography panel and caused the real Playwright click to be intercepted. A z-index-only patch failed. Current branch removes the `.card` class from the P145.7 shell and the regression test asserts no `data-tilt`/transform while still using a physical click.
+- Status: hosted runtime run #298 (`44800999215`) completed success on the current-main rebase. P145.6 9/9, P145.7 7/7, P145.8 11/11, P145.9/.10 8/8 Node suites passed; the four Chromium suites returned `failed: []` and `pageErrors: []`.
+- Live vault boundary: browser fixtures use a test provider. Production asset listing and hash coverage are not certified until a canonical live provider is wired and reviewed.
+
+
+### P145.6–P145.10 — prior hosted run #276 evidence (2026-11-20)
+- Superseded pre-rebase branch run #276 (`44799265880`) completed success. Node suites passed: P145.6 9/9, P145.7 7/7, P145.8 11/11 and P145.9/.10 PASS. All four hosted Chromium suites returned no failed assertions and no uncaught page errors.
+- P145.7 specifically passed the real Playwright pointer interaction after replacing the `.card` shell with the dedicated `cv1457-card` wrapper. This confirms the global tilt pointer-interception fix on that branch.
+- The newer current-main run #298 includes the P145.9/.10 insertion-order correction after P145.8 and supersedes this historical pre-rebase result.
+
+
+### P145.6–P145.10 current-main hosted QA — run #298 (2026-11-20)
+- Workflow #298 (`44800999215`) completed success (all 33 job steps closed; commit-on-branch is skipped for pull_request events by design). Candidate restoration, source/module integration, Three.js r187 and P85 SHA manifests, module extraction, full HTML/inline-JS audit, P47–P70 regression suites and P107 portable ZIP tests passed.
+- Node results: P145.6 9/9, P145.7 7/7, P145.8 11/11, P145.9/.10 8/8.
+- Chromium results: P145.6 icon preview/search/download/sprite/contact sheet; P145.7 system typography presets, live controls, CSS export and real mouse interaction; P145.8 eight illustration cards/theme/search/vector exports; P145.9/.10 read-only search, provider fixture, license/hash gate and filter behavior. All four suites reported `failed: []`, `pageErrors: []`.
+- Same-origin GLB Draco/Meshopt/KTX2, P85 runtime and synthetic P80 Whisper/P102 ORMBG/P105 Depth Anything ONNX worker inference completed successfully. This validates execution plumbing on synthetic data and CI renderer only, not production model accuracy or physical GPU/performance.

@@ -3589,3 +3589,48 @@ P125.3: `CVScrollFramesP125.PRESETS`, `decimate(frames,maxBytes)`; `buildHtml` n
 ### P125.4 hosted acceptance record (2026-11-20)
 - GitHub Actions run #271 (`44798663309`) passed the P125.4 Node suite (14 assertions) and hosted Chromium ZIP/offline test, including final-frame image decode. This is the latest verified P125.4 run. The last relative frame image was explicitly awaited until decoded (`naturalWidth > 0`).
 - Do not interpret this synthetic desktop run as audio support, mobile/touch acceptance or performance certification for long high-resolution footage.
+
+
+## P145.6 — Original offline SVG icon pack
+
+- Owner: `canvio-p145-icons.js`; embedded lot: `canvio-lot1456`; API: `window.CVOriginalIconPackP1456`.
+- Adds 25 first-party SVG icons across business, finance, HR, social/media and utility categories. Includes local category/search filtering, preview, individual SVG, sprite and contact-sheet export.
+- No remote image, font, script or paid asset dependency. This is an original starter pack, not an exhaustive stock catalogue.
+- Tests: `tests/p145/run-p1456-tests.cjs`, `tests/p145/run-p1456-browser.py`.
+
+## P145.7 — System typography presets
+
+- Owner: `canvio-p145-typography.js`; embedded lot: `canvio-lot1457`; API: `window.CVTypographyPresetsP1457`.
+- Adds six system-font presets for business, finance, HR, social, editorial and dashboard layouts; bounded heading/body size, weight, line-height and tracking controls; live Vietnamese preview; font availability report; standalone CSS export.
+- No bundled font binaries or remote font service. Machines may use different system fallbacks. The panel deliberately uses a dedicated `cv1457-card` class rather than the global `.card` class so the application-wide 3D tilt observer cannot rotate the controls during pointer interaction.
+- Browser test retains real Playwright mouse clicks for Apply/preset controls and asserts the card is not tagged with `data-tilt`. Tests: `tests/p145/run-p1457-tests.cjs`, `tests/p145/run-p1457-browser.py`.
+
+## P145.8 — Original vector illustration pack
+
+- Owner: `canvio-p145-visual-assets.js`; embedded lot: `canvio-lot1458`; API: `window.CVOriginalVectorAssetsP1458`.
+- Adds eight original SVG illustrations across business/finance/HR/social themes, four local palettes, category/search filtering, preview, single SVG, sprite and contact-sheet export.
+- No stock photo, remote asset or embedded script dependency. It is a starter illustration pack, not a large commercial illustration library.
+- Tests: `tests/p145/run-p1458-tests.cjs`, `tests/p145/run-p1458-browser.py`.
+
+## P145.9/.10 — Asset Search and Quality Gate
+
+- Owner: `canvio-p145-search-gate.js`; embedded lot: `canvio-lot145910`; API: `window.CVAssetSearchGateP145910`.
+- Provides read-only local asset search and filters by asset name/ID/type/license/source/status, reusing `CVContentCoreP145.qualityGate` and existing `canvio145:meta` metadata. No upload, edit or delete action is added.
+- Uses `CV.assets.list()` when the host exposes it; otherwise the host must set an explicit provider. Duplicate detection only compares hashes already supplied by the asset provider. It does not hash all uploaded binaries automatically or certify complete production Asset Vault coverage.
+- Tests: `tests/p145/run-p145910-tests.cjs`, `tests/p145/run-p145910-browser.py`.
+
+### P145.6–P145.10 current integration status (2026-11-21)
+
+- The four standalone modules are added to the current-main rebased branch and integrated into the candidate `index.html` by the hosted workflow. Four Node suites and four hosted Chromium suites are wired into CI.
+- Earlier run #263 caught a genuine P145.7 pointer hit-test failure. A z-index-only adjustment did not solve it. The follow-up excludes the P145.7 panel from the global card-tilt observer using the dedicated `cv1457-card` class; the new browser regression keeps physical Playwright clicks. The current-main rebase is awaiting its fresh hosted result; do not mark P145.7–P145.10 accepted until that run passes.
+
+
+### P145.6–P145.10 prior hosted run record (2026-11-20)
+- Superseded branch run #276 (`44799265880`) completed success. Node suites: P145.6 9/9, P145.7 7/7, P145.8 11/11 and P145.9/.10 all reported PASS. Hosted Chromium reports for all four modules had no failed assertions or uncaught page errors; importantly P145.7 confirmed the non-`.card` shell received real Apply/preset pointer clicks after excluding the global tilt observer.
+- The newer current-main rebase is now verified by run #298 (`44800999215`), which includes the P145.9/.10 insertion-order correction after P145.8. Run #276 is retained only as historical evidence.
+
+
+### P145.6–P145.10 current-main hosted acceptance — run #298 (2026-11-20)
+- Full candidate workflow run #298 (`44800999215`) completed success. It restored the 23.3.111 candidate, integrated all P145 modules, verified vendor SHA manifests, passed the full HTML/inline-JS audit, P47–P70 regressions and integrated source/P107 ZIP tests, then passed hosted browser/runtime verification.
+- Node results: P145.6 9/9, P145.7 7/7, P145.8 11/11, P145.9/.10 8/8. Hosted Chromium results: all four P145 suites returned `failed: []` and `pageErrors: []`; P145.7 confirmed actual pointer interaction without the global tilt observer.
+- Hosted GLB/P85/ONNX inference checks used synthetic fixtures and CI software rendering. They verify integration/execution paths, not production accuracy, physical GPU performance or target-device FPS.
