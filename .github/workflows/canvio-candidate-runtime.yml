@@ -102,6 +102,30 @@ jobs:
           console.log('P127.7 integrated into canonical index.html');
           NODE
 
+      - name: Integrate P145.2 shader transitions and effects
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs=require('node:fs');
+          const file='index.html';
+          let html=fs.readFileSync(file,'utf8');
+          const source=fs.readFileSync('canvio-p145-shader.js','utf8').trim();
+          if(!source.includes('window.CVShaderP145'))throw new Error('P145.2 source contract missing');
+          const re=/(<script\b(?=[^>]*\bid=["']canvio-lot1452["'])[^>]*>)[\s\S]*?(<\/script\s*>)/i;
+          const tag='<script id="canvio-lot1452">\n'+source+'\n</script>';
+          const found=html.match(re);
+          if(found)html=html.replace(re,tag);
+          else{
+            const at=html.lastIndexOf('</body>');
+            if(at<0)throw new Error('index.html has no closing body tag');
+            html=html.slice(0,at)+tag+'\n'+html.slice(at);
+          }
+          if((html.match(/id="canvio-lot1452"/g)||[]).length!==1)throw new Error('P145.2 embedded lot duplicate/missing');
+          fs.writeFileSync(file,html,'utf8');
+          console.log('P145.2 shader module integrated into canonical index.html');
+          NODE
+
       - name: Verify native test utilities
         shell: bash
         run: |
@@ -169,7 +193,7 @@ jobs:
         run: |
           set -euo pipefail
           node scripts/extract-integrated-modules.mjs
-          for file in canvio-p74-p81-three-viewer.js canvio-p85-studio.js canvio-p102-background-removal.js canvio-p105-p107-depth-parallax.js canvio-p68-p70.js canvio-p72-glb-viewer.js canvio-p73-offline-site.js canvio-p82-p84-vector-pdf.js canvio-p87-cv-docx.js canvio-p90-p96.js canvio-p97-p101.js canvio-p104.js canvio-p127-duck.js assets/canvio-rmbg-worker.js assets/canvio-depth-worker.js assets/canvio-whisper-worker.js; do node --check "$file"; done
+          for file in canvio-p74-p81-three-viewer.js canvio-p85-studio.js canvio-p102-background-removal.js canvio-p105-p107-depth-parallax.js canvio-p68-p70.js canvio-p72-glb-viewer.js canvio-p73-offline-site.js canvio-p82-p84-vector-pdf.js canvio-p87-cv-docx.js canvio-p90-p96.js canvio-p97-p101.js canvio-p104.js canvio-p127-duck.js canvio-p145-shader.js assets/canvio-rmbg-worker.js assets/canvio-depth-worker.js assets/canvio-whisper-worker.js; do node --check "$file"; done
 
       - name: Audit complete HTML and all inline JavaScript
         shell: bash
@@ -250,6 +274,7 @@ jobs:
           node tests/p127/run-p145c-tests.cjs
           node tests/p127/run-p132g-tests.cjs
           node tests/p127/run-p145s-tests.cjs
+          node tests/p145/run-p1452-tests.cjs
           node tests/p127/run-p136t-tests.cjs
           node tests/p127/run-p134s-tests.cjs
           node tests/p127/run-p138d-tests.cjs
@@ -296,6 +321,7 @@ jobs:
           /tmp/canvio-playwright/bin/python tests/p145/run-p145-browser.py
           /tmp/canvio-playwright/bin/python tests/p127/run-p132g-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p145s-browser.py
+          /tmp/canvio-playwright/bin/python tests/p145/run-p1452-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p136-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p134-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p138-browser.py
@@ -347,6 +373,7 @@ jobs:
           | P80/P102/P105 inference | Hosted model inference reports | Synthetic inputs prove pipeline execution only, not model accuracy |
           | P106 rendering | Chromium WebGL/SwiftShader | Software GPU only; physical GPU and target-device performance remain open |
           | P107 portability | ZIP CRC, independent Asset Library import and rollback tests | No cloud Project Vault sync or physical two-device acceptance claimed |
+          | P145.2 shader transitions/FX | Standalone/embedded parity + hosted Chromium render endpoints and PNG smoke | SwiftShader/software rendering only; physical 60 fps and real-footage acceptance remain open; optional MP4 is video-only |
           | P70 Stable release | Fourteen fail-closed manual gates | releaseCertified:false until every gate has reviewed production evidence |
 
           ## Required manual gates
@@ -380,8 +407,40 @@ jobs:
           - Added local same-origin runtime packages and SHA-256 manifests for Three.js r187, Draco, Meshopt, Basis/KTX2, PostFX, OpenCV, dotLottie, Rive, Transformers.js and ONNX WASM.
           - Corrected P80/P102/P105 workers to import the local Transformers.js runtime and preserve the application message contracts.
           - Added portable P107 parser/import/rollback tests and explicit documentation that Project Vault cloud sync is not implemented.
+          - Added P145.2 local WebGL shader transitions/effects, Canvas2D fallback, PNG export and an optional P79-muxed video-only transition MP4 path with hosted Chromium coverage.
           - Stable release remains fail-closed at P70; no physical GPU or two-device certification is implied.
           PATCH
+          if ! grep -q '## P145.2 — Shader transitions and effects' CANVIO_AI_GUIDE.md; then
+            cat >> CANVIO_AI_GUIDE.md <<'GUIDE'
+
+          ## P145.2 — Shader transitions and effects (23.3.111 continuation)
+
+          - Standalone owner: `canvio-p145-shader.js`; canonical embedded lot: `canvio-lot1452`; API: `window.CVShaderP145`. UI mounts once inside the existing Video Engine page and does not add a timeline, project store, or media owner.
+          - Nine transitions: crossfade, four directional wipes, dissolve, radial, zoom and glitch. Nine local effects: grain, light leak, vignette, chromatic aberration, zoom blur, shake, speed lines and bloom (plus none).
+          - WebGL 1 shader rendering has bounded output dimensions and low/medium/high quality caps; unsupported WebGL uses a Canvas2D crossfade/wipe fallback with shader-only effects explicitly disabled. User-selected images are processed locally through object URLs.
+          - PNG frame export is available. Optional short H.264 MP4 transition export delegates encoding output muxing to existing `CANVIOWebCodecsExport.muxMP4` (P79), is video-only, and is limited to 10 seconds / 600 frames / 1920×1080. It is not a replacement for the canonical multi-track video export path and adds no audio.
+          - Verification: `node tests/p145/run-p1452-tests.cjs` and hosted Chromium `tests/p145/run-p1452-browser.py`. Hosted WebGL uses SwiftShader; this is not physical GPU or 60 fps target-device certification.
+          GUIDE
+          fi
+          if ! grep -q 'P145.2 shader verification' CANVIO_QA_REPORT.md; then
+            cat >> CANVIO_QA_REPORT.md <<'QA'
+
+          ## P145.2 shader verification
+
+          The candidate workflow runs standalone/embedded source parity and API tests for the nine transitions, nine effects, bounded resolution and P79 muxer handoff. Hosted Chromium smoke verifies the Video Engine panel, all transition start/end frames, crossfade midpoint, module checks and PNG download. This exercises WebGL through CI SwiftShader or the documented Canvas2D fallback; it does not certify physical GPU performance, a 60 fps target on mid-range hardware, user-footage visual quality or MP4 H.264 availability on every browser. MP4 output is a short video-only transition segment with no audio.
+          QA
+          fi
+          if ! grep -q '23.3.111 continuation — P145.2 shader transitions' CANVIO_ROADMAP.md; then
+            cat >> CANVIO_ROADMAP.md <<'ROADMAP'
+
+          ## 23.3.111 continuation — P145.2 shader transitions
+
+          - Integrated first P145.2 increment: nine shader transitions, nine effect options, quality caps, local image input, PNG frame export and optional P79 WebCodecs video-only MP4 transition segment.
+          - Uses the existing Video Engine page as the UI host and existing P79 muxer as the export owner; no third-party dependency, external fetch, new timeline, store or media database.
+          - Canvas2D fallback preserves crossfade/wipe only and clearly disables shader-specific FX. Hosted browser coverage is SwiftShader/software rendering.
+          - Still open: 60 fps/performance acceptance on representative physical devices, WebCodecs H.264 support matrix, professional review on real project footage, full multi-track/timeline transition editing and audio-inclusive export through the existing canonical exporter.
+          ROADMAP
+          fi
           node <<'NODE'
           const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
           const files=[];
