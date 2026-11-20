@@ -37,7 +37,24 @@ with sync_playwright() as p:
     c['ffprobeDecodesApng'] = ainfo.get('codec_name') == 'apng' and ainfo.get('width') == 200 and int(ainfo.get('nb_read_frames', 0)) == 10
     c['headerIsPng'] = open(apng, 'rb').read(8) == bytes([137,80,78,71,13,10,26,10])
     c['apngAnimationControlPresent'] = b'acTL' in open(apng, 'rb').read()
-    info['apng'] = ainfo
+    with page.expect_download(timeout=60000) as d3: page.click('#cv132-webp')
+    webp = os.path.join(tmp, 'o.webp'); d3.value.save_as(webp)
+    c['webpStatusOk'] = page.evaluate("/Đã xuất WEBP 10 khung/.test(document.getElementById('cv132-out').textContent)")
+    c['webpButtonReenabled'] = page.evaluate("!document.getElementById('cv132-webp').disabled")
+    wdata = open(webp, 'rb').read()
+    c['webpRiffHeader'] = len(wdata) > 32 and wdata[:4] == b'RIFF' and wdata[8:12] == b'WEBP'
+    c['webpAnimationFlag'] = c['webpRiffHeader'] and bool(wdata[20] & 2)
+    pos = 12; anmf = 0
+    while pos + 8 <= len(wdata):
+        tag = wdata[pos + 4:pos + 8]; size = int.from_bytes(wdata[pos:pos + 4], 'little')
+        if pos + 8 + size > len(wdata): break
+        if tag == b'ANMF': anmf += 1
+        pos += 8 + size + (size & 1)
+    c['webpFrameCount'] = anmf == 10
+    wr = subprocess.run(['ffprobe', '-v', 'error', '-count_frames', '-select_streams', 'v:0', '-show_entries', 'stream=codec_name,width,nb_read_frames', '-of', 'json', webp], capture_output=True, text=True)
+    winfo = json.loads(wr.stdout or '{}').get('streams', [{}])[0]
+    c['ffprobeDecodesAnimatedWebp'] = winfo.get('codec_name') == 'webp' and winfo.get('width') == 200 and int(winfo.get('nb_read_frames', 0)) == 10
+    info['apng'] = ainfo; info['webp'] = winfo
     b.close()
 res = {'checks': c, 'ffprobe': info, 'pageErrors': errs, 'failed': [k for k, v in c.items() if not v]}
 print(json.dumps(res, ensure_ascii=False, indent=1)); sys.exit(1 if res['failed'] or errs else 0)
