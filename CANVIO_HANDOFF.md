@@ -161,3 +161,11 @@ The candidate is built and verified by the hosted runtime workflow. Runtime vend
 - AutoCut delegates to the existing silence-cut path; it does not create a second timeline or project store.
 - Run `node tests/p127/run-p1272-tests.cjs` and `tests/p127/run-p1272-browser.py`. The browser fixture uses synthetic speech-like audio bursts, not Whisper-quality transcription.
 - Real dialogue, face tracking, multi-speaker editing and final editorial quality still need project-media review.
+
+
+## P125.4 — Split-asset storyboard package
+
+- Use the existing Web Engine → Scroll Storyboard editor. After extracting frames and editing captions/parallax/easing, choose “Xuất ZIP gọn + ảnh rời”. The original one-file HTML export remains available.
+- The ZIP needs its index.html and frames/ directory kept together. The manifest describes source/kept frame counts, dimensions and each separate image file. The package has no audio.
+- Implementation owners: canvio-p125-scrollframes.js / CVScrollFramesP125.buildPackage and canvio-p125-storyboard.js / existing P125.2 editor. Compression uses the existing CVZip.build.
+- Verify with node tests/p127/run-p1254-tests.cjs and tests/p127/run-p1254-browser.py. A hosted CI pass and manual real-device review are required before calling this fully accepted.
