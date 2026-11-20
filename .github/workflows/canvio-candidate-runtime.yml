@@ -271,10 +271,10 @@ jobs:
           let html=fs.readFileSync(file,'utf8');
           const source=fs.readFileSync('canvio-p132-gif.js','utf8').trim();
           if(!source.includes('window.CVGifP132')||!source.includes('encodeApng: encodeApng'))throw new Error('P132 APNG source contract missing');
-          const id='canvio-lot132g',tag='<script id="'+id+'">\\n'+source+'\\n</script>';
-          const re=/(<script\\b(?=[^>]*\\bid=["']canvio-lot132g["'])[^>]*>)[\\s\\S]*?(<\\/script\\s*>)/i;
+          const id='canvio-lot132g',tag='<script id="'+id+'">\n'+source+'\n</script>';
+          const re=/(<script\b(?=[^>]*\bid=["']canvio-lot132g["'])[^>]*>)[\s\S]*?(<\/script\s*>)/i;
           if(re.test(html))html=html.replace(re,tag);
-          else{const at=html.lastIndexOf('</body>');if(at<0)throw new Error('index.html has no closing body tag');html=html.slice(0,at)+tag+'\\n'+html.slice(at);}
+          else{const at=html.lastIndexOf('</body>');if(at<0)throw new Error('index.html has no closing body tag');html=html.slice(0,at)+tag+'\n'+html.slice(at);}
           if((html.match(/id="canvio-lot132g"/g)||[]).length!==1)throw new Error('P132 embedded lot duplicate/missing');
           fs.writeFileSync(file,html,'utf8');
           console.log('P132 GIF + APNG encoder integrated');

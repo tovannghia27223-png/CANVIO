@@ -242,3 +242,9 @@ The candidate workflow runs standalone/embedded source parity and API tests for 
 - Unit suite now checks optional filled Bezier output plus stroke-only output (fill="none"), rounded line ends, reduced skeleton pixel count, stroke-width clamp and invalid-input rejection.
 - Hosted Chrome suite runs existing filled trace round-trip, checks Bezier export, then selects Stroke mode, verifies preview/status and downloads a static open-path SVG without filled colour layers.
 - Synthetic fixture demonstrates the code path on high-contrast artwork only; complex illustrations, photographs, handwriting and print production remain manual review items.
+
+ 
+## P132.2 APNG — automated coverage added
+- Unit checks cover PNG signature/IEND, APNG frame/play counts, sequence layout, IDAT/fdAT placement, CRC-32 on every chunk, frame delay and invalid/oversize rejection.
+- Hosted Chromium test downloads both GIF and APNG from the Video Engine UI; FFprobe checks codec, width and decoded frame count for each.
+- Synthetic timeline fixture only. Real timeline footage, transparency gradients, long animations and memory/performance on ordinary devices remain manual.

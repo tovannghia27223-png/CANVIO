@@ -3557,3 +3557,12 @@ P125.3: `CVScrollFramesP125.PRESETS`, `decimate(frames,maxBytes)`; `buildHtml` n
 - UI: Image Studio adds “Mảng màu” / “Nét đơn (Stroke)” mode and stroke-width control; export stays the existing SVG download path.
 - Tests: extended tests/p127/run-p136t-tests.cjs API checks and tests/p145/run-p136-browser.py real Chrome UI/export checks. The hosted fixture covers filled-vector regression and single-line stroke output on simple high-contrast illustration.
 - Limits: this is a centreline vectorizer for clean, high-contrast art, not handwriting recognizer, font OCR, multi-stroke recovery or topology-perfect skeletonizer. Photographs, anti-aliased colour art and noisy scans may produce fragmented or branched strokes; inspect before production use.
+
+ 
+## P132.2 — Animated PNG export
+- Standalone owner: `canvio-p132-gif.js`; canonical embedded lot: `canvio-lot132g`; API: `window.CVGifP132.encodeApng(frames, options)` and `inspectApng(bytes)`. Existing GIF89a encoder remains available.
+- Adds APNG 8-bit RGBA output using PNG `IHDR/acTL/fcTL/IDAT/fdAT/IEND` chunks, per-chunk CRC-32 and zlib/DEFLATE stored blocks. Delay is carried as hundredths of a second; default playback loops indefinitely.
+- Capture continues to reuse the current Video Engine canvas and restores its previous playhead. APNG export shares existing FPS/width controls and emits a separate `.apng` file; no audio is embedded.
+- Safety limit: max 600 frames, dimensions at most 4096×4096 and uncompressed scanline budget at most 64 MiB per animation. Reduce FPS/width when the limit is reached. The stored-DEFLATE encoder favours portability/simple verification over smallest file size.
+- Tests: `node tests/p127/run-p132g-tests.cjs`; hosted Chromium + FFprobe: `tests/p127/run-p132g-browser.py`. These verify source/embedded parity, PNG/APNG CRCs, sequence/frame metadata, browser download and actual APNG decode.
+- Still open: animated WebP, animated timeline audio, 256-colour GIF banding, large-file/performance optimization and validation on representative real-world media.

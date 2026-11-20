@@ -147,3 +147,10 @@ The candidate is built and verified by the hosted runtime workflow. Runtime vend
 - Image Studio now has Filled / Single-line Stroke modes. Stroke mode produces editable open SVG line paths from high-contrast input using local Otsu thresholding and skeleton thinning.
 - Existing filled multi-colour trace and Bezier smoothing are preserved.
 - Verify with node tests/p127/run-p136t-tests.cjs and tests/p145/run-p136-browser.py.
+
+ 
+## P132.2 — Animated PNG
+- P132 retains GIF and now adds APNG from the existing Video Engine canvas.
+- Use the existing FPS/width controls and the separate Export APNG action. Limit: 600 frames / 64 MiB raw scanline data; output has no audio.
+- Verify source/embedded parity and format structure with `node tests/p127/run-p132g-tests.cjs`; verify actual Chromium download/decode with `tests/p127/run-p132g-browser.py`.
+- Animated WebP and real-device long-timeline validation are not included.

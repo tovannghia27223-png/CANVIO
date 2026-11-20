@@ -659,3 +659,11 @@ Hosted verification after the ffmpeg repair is complete:
 - Added bounded stroke width and retained existing local processing/PNG→SVG flow. Does not use stock assets, remote font files, OpenCV download or external trace service.
 - Unit and hosted Chrome acceptance extend existing P136 suites; P136.2 filled-mode and Bezier regression are retained.
 - Still open: topology/branch editing, handwriting OCR, pattern/brush, gradient mesh and complex photographic edge cleanup. Stroke mode works best on high-contrast logos/line art.
+
+ 
+## 23.3.111 continuation — P132.2 animated PNG (APNG)
+- Extended the existing P132 export row with a distinct APNG download while retaining GIF. Frames come from the existing Video Engine canvas; the current playhead is restored after capture.
+- Encodes PNG RGBA frames with APNG `acTL/fcTL/IDAT/fdAT`, per-chunk CRC-32, zlib stored DEFLATE and hundredth-second frame delay. No audio and no second timeline.
+- Boundaries: 600 frames maximum, dimensions ≤4096×4096 and raw filtered frame data ≤64 MiB. Stored DEFLATE may produce larger files than optimized encoders; the UI reports file size.
+- Tests extended in `run-p132g-tests.cjs` and hosted `run-p132g-browser.py` (Chromium download + FFprobe APNG decode).
+- Still open: animated WebP, export with audio, real-media/performance and large-animation memory review. P132 is therefore still partial.
