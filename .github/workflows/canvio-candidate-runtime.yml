@@ -394,7 +394,13 @@ jobs:
                   x=subprocess.run(['node','--check',str(p)],capture_output=True,text=True)
                   if x.returncode: failures.append((i,x.stderr))
           if failures:
-              for i,e in failures: print('inline script',i,e,file=sys.stderr)
+              for i,e in failures:
+                  print('inline script',i,e,file=sys.stderr)
+                  lines=blocks[i].splitlines()
+                  print('INLINE_SCRIPT_CONTEXT_BEGIN',i, 'CHARS',len(blocks[i]),file=sys.stderr)
+                  for n,line in enumerate(lines[max(0,35):min(len(lines),50)],start=max(1,36)):
+                      print(f'{n}: {line}',file=sys.stderr)
+                  print('INLINE_SCRIPT_CONTEXT_END',i,file=sys.stderr)
               raise SystemExit(f'{len(failures)} inline script syntax errors')
           print(f'PASS: {audit.scripts} inline scripts; {len(counts)} unique IDs; zero duplicates; no external script tags.')
           PY
