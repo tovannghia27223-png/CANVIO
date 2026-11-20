@@ -89,23 +89,26 @@ function mount(){
  '<div id="cv145910-list" style="display:grid;gap:6px"></div><div class="tiny" id="cv145910-detail" role="status" aria-live="polite" style="margin-top:10px">Chọn tài nguyên để xem kết quả Quality Gate. Không có thao tác sửa, xóa hoặc tải lên ở đây.</div>';
  var after=page.querySelector('#cv1458-card')||page.querySelector('#cv1457-card')||page.querySelector('#cv1456-card')||page.querySelector('#cv1455-card')||page.querySelector('#cv145-card');
  if(after&&after.parentNode)after.parentNode.insertBefore(card,after.nextSibling);else page.appendChild(card);
- var $=function(sel){return card.querySelector(sel);},report=null,visible=[],selected=null,scanSeq=0;
+ var $=function(sel){return card.querySelector(sel);},report=null,visible=[],selected=null,scanSeq=0,sessionHashes=Object.create(null),lastHashStats=null;
  function run(shouldHash){
   var assets=getAssets(null),meta=safeMeta(),button=$('#cv145910-refresh'),note=$('#cv145910-hash-note'),seq=++scanSeq;
   function show(hashes,stats){
    if(seq!==scanSeq)return;
-   report=evaluateAssets(assets,meta,core.qualityGate,hashes||{});
+   if(hashes)sessionHashes=hashes;
+   if(stats)lastHashStats=stats;
+   report=evaluateAssets(assets,meta,core.qualityGate,sessionHashes);
    visible=searchAssets(report,$('#cv145910-q').value,$('#cv145910-kind').value,$('#cv145910-status').value);
    $('#cv145910-summary').textContent='Tổng '+report.total+' · Đạt '+report.ready+' · Cần xử lý '+report.warn+' · Đang hiển thị '+visible.length;
    var parts=[];
-   if(stats&&stats.computed)parts.push(stats.computed+' SHA-256 tạm tính trong phiên (không ghi vào kho)');
+   if(lastHashStats&&lastHashStats.computed)parts.push(lastHashStats.computed+' SHA-256 tạm tính trong phiên (không ghi vào kho)');
    if(report.withoutHash)parts.push(report.withoutHash+' mục chưa có hash');
-   if(stats&&stats.skipped)parts.push(stats.skipped+' mục bỏ qua do thiếu data URL, vượt giới hạn hoặc Web Crypto không khả dụng');
+   if(lastHashStats&&lastHashStats.skipped)parts.push(lastHashStats.skipped+' mục bỏ qua do thiếu data URL, vượt giới hạn hoặc Web Crypto không khả dụng');
    note.textContent=parts.join(' · ')||'Tất cả mục có hash trong metadata.';
    note.dataset.state='done';note.dataset.scanId=String(seq);
    draw();
   }
-  if(!shouldHash){button.disabled=false;show({},null);return;}
+  if(!shouldHash){button.disabled=false;show(sessionHashes,lastHashStats);return;}
+  sessionHashes=Object.create(null);lastHashStats=null;
   button.disabled=true;note.dataset.state='busy';note.dataset.scanId=String(seq);note.textContent='Đang tính SHA-256 cục bộ…';
   hashMissingAssets(assets,function(done,total,computed,skipped){note.textContent='SHA-256 '+done+'/'+total+' · đã tính '+computed+' · bỏ qua '+skipped;})
    .then(function(result){show(result.hashes,result);})
