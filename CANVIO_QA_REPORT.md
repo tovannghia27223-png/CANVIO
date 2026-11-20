@@ -261,3 +261,7 @@ The candidate workflow runs standalone/embedded source parity and API tests for 
  
 ### P145.7 pointer-interaction regression
 - Added a targeted regression for the status live region overlay: after selecting Editorial and receiving the status message, the Apply button remains reachable and status has `pointer-events:none`.
+
+ 
+### P145.7 card hit-testing regression follow-up
+- Earlier hosted run exposed the card decoration itself intercepting the Apply button, even after the status region was made pointer-transparent. The dynamic typography panel now disables pointer hit-testing on its decorative shell while explicitly enabling all interactive descendants. Browser acceptance asserts this contract and exercises the visible controls.

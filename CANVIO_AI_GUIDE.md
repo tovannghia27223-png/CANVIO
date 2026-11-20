@@ -3596,3 +3596,7 @@ P125.3: `CVScrollFramesP125.PRESETS`, `decimate(frames,maxBytes)`; `buildHtml` n
 ### P145.7 interaction refinement
 - Typography preset status is a polite, non-interactive live region (`pointer-events:none`) so its feedback text cannot intercept pointer input intended for adjacent controls.
 - Hosted Chromium verifies the Editorial selection/status/declared CSS stack and confirms the Apply button remains clickable after the status changes.
+
+ 
+### P145.7 pointer-event layer correction
+- The dynamic typography card opts out of the global decorative card hit layer; actual buttons, labels and inputs restore pointer events with a local stacking order. This addresses the hosted Chromium hit-test result where the card surface intercepted the Apply button despite the status region already having `pointer-events:none`.
