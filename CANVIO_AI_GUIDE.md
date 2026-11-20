@@ -3726,3 +3726,6 @@ P125.3: `CVScrollFramesP125.PRESETS`, `decimate(frames,maxBytes)`; `buildHtml` n
 - P124/P133/P143 have no standalone source/test owner in the current main tree. P133 must reuse/coordinate with existing Project Vault/IndexedDB/media stores; do not introduce a second source of truth. P143 must be staged and parity-tested, not an all-at-once rewrite.
 - P142 Pages pipeline is confirmed successful on main run #192 (`44819441586`), including build, report and deploy jobs. This does not close real-origin Playwright, Windows/GTX 1650, Firefox/WebKit, touch or physical GPU acceptance.
 - PR #44 documentation reconciliation hosted verify run #320 (`44859258258`) succeeded. Artifact `CANVIO-23.3.111-GITHUB-RUNTIME-VERIFIED-320` SHA-256 `74cb03f31a7c55d94f69376b74f46a22bef1538b473aeca1165c42296f2e69ba`; PR-event branch commit step skipped by workflow design.
+## P140 Charts
+`window.CVChartsP140` {parseTable, build(table,{type,title,colors}), fromCsv, mount, tests}. Lot `canvio-lot140c` khớp `canvio-p140-charts.js`.
+

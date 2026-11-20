@@ -795,3 +795,7 @@ Hosted verification after the ffmpeg repair is complete:
 - P144 Command Palette is partially covered by P109's existing palette/command-search owner and tests. Do not create a second palette; first reconcile original P144 acceptance against P109.
 - P142 GitHub Pages deployment on main succeeded in workflow #192 (`44819441586`), all three build/report/deploy jobs passed. This closes the Pages deployment step only; real-origin browser checks and Windows/GTX 1650/RAM 7 GB, Firefox/WebKit/touch/physical-GPU acceptance remain open.
 - PR #44 documentation reconciliation passed hosted verify run #320 (`44859258258`); artifact SHA-256 `74cb03f31a7c55d94f69376b74f46a22bef1538b473aeca1165c42296f2e69ba`. This run does not change the P70 disposition.
+### P140 (phần biểu đồ dữ liệu)
+- `canvio-p140-charts.js` (lot `canvio-lot140c`): thẻ "Biểu đồ từ dữ liệu" ở trang Tài nguyên. CSV/TSV (hỗ trợ ô có dấu ngoặc kép, số kiểu 1.234,5 và 1,234.5) → SVG cột/đường/tròn/donut, có title/desc, văn bản được thoát; tải SVG hoặc lưu thẳng vào Tài nguyên. Test: `node tests/p127/run-p140c-tests.cjs`, Chrome thật `tests/p145/run-p140-browser.py` (4 kiểu vẽ được, lưu vào kho).
+- Chưa làm: mockup thiết bị/QR (đã có sẵn một phần), chế độ trình chiếu mở rộng, biểu đồ xếp chồng/scatter.
+
