@@ -28277,7 +28277,7 @@ function mount() {
   if (!page || page.querySelector('#cv127-quality')) return false;
   var anchor = page.querySelector('#cv127-edit-plan'); if (!anchor) return false;
   var card = document.createElement('section'); card.id = 'cv127-quality'; card.className = 'card'; card.style.marginTop = '12px';
-  card.innerHTML = '<div class="cardTop"><div><h3>Cổng chất lượng dựng · P127.4</h3><span class="sub">Kiểm nhịp cắt, khoảng đen, thời gian đọc chữ · xuất EDL</span></div><span class="badgeSoft">CHỈ ĐỌC</span></div><div class="row"><button type="button" class="btn btn-primary sm" id="cv127q-run">Kiểm tra chất lượng</button><button type="button" class="btn btn-soft sm" id="cv127q-edl">Xuất EDL (Premiere/Resolve)</button></div><ul id="cv127q-list" class="tiny" style="list-style:none;padding:0;margin:10px 0 0;display:grid;gap:4px"></ul><div class="tiny" id="cv127q-status" role="status" aria-live="polite" style="margin-top:8px">Chưa kiểm tra.</div>';
+  card.innerHTML = '<div class="cardTop"><div><h3>Cổng chất lượng dựng · P127.4</h3><span class="sub">Kiểm nhịp cắt, khoảng đen, thời gian đọc chữ · xuất EDL</span></div><span class="badgeSoft">CHỈ ĐỌC</span></div><div class="row"><button type="button" class="btn btn-primary sm" id="cv127q-run">Kiểm tra chất lượng</button><button type="button" class="btn btn-soft sm" id="cv127q-edl">Xuất EDL (Premiere/Resolve)</button></div><div class="row" style="margin-top:10px;align-items:center;flex-wrap:wrap;gap:8px"><b class="tiny">Cắt khoảng lặng (P127.2)</b><label class="tiny">Ngưỡng <input type="number" id="cv127q-thr" class="input" value="-35" min="-60" max="-10" step="1" style="width:68px" aria-label="Ngưỡng khoảng lặng dB"> dB</label><label class="tiny">Tối thiểu <input type="number" id="cv127q-min" class="input" value="0.5" min="0.2" max="5" step="0.1" style="width:62px" aria-label="Khoảng lặng tối thiểu giây"> s</label><label class="tiny"><input type="checkbox" id="cv127q-rm" checked> Xoá và dồn clip</label><button type="button" class="btn btn-soft sm" id="cv127q-cut">Cắt khoảng lặng clip đang chọn</button></div><ul id="cv127q-list" class="tiny" style="list-style:none;padding:0;margin:10px 0 0;display:grid;gap:4px"></ul><div class="tiny" id="cv127q-status" role="status" aria-live="polite" style="margin-top:8px">Chưa kiểm tra.</div>';
   anchor.insertAdjacentElement('afterend', card);
   function st() { var a = window.CV && CV.engines && CV.engines.video; return a && a._state && a._state(); }
   var color = { pass: '#07603f', warn: '#7a4b00', fail: '#9a1030' }, tag = { pass: 'Đạt', warn: 'Lưu ý', fail: 'Lỗi' };
@@ -28286,6 +28286,15 @@ function mount() {
     var r = analyze(s); ul.textContent = '';
     r.checks.forEach(function (c) { var li = document.createElement('li'); li.style.color = color[c.level]; var b = document.createElement('b'); b.textContent = tag[c.level] + ' · ' + c.label; li.appendChild(b); li.appendChild(document.createTextNode(' — ' + c.detail)); ul.appendChild(li); });
     box.textContent = (r.status === 'pass' ? 'Đạt cổng chất lượng' : r.status === 'warn' ? 'Có lưu ý cần xem' : 'Có lỗi cần sửa') + ' · ' + r.meta.clips + ' clip · ' + r.meta.duration + ' s. ' + r.note;
+  });
+  card.querySelector('#cv127q-cut').addEventListener('click', function () {
+    var box = card.querySelector('#cv127q-status'), v = window.CV && CV.engines && CV.engines.video;
+    if (!v || typeof v.autoCut !== 'function') { box.textContent = 'Mở Video Engine trước.'; return; }
+    var btn = this; btn.disabled = true; box.textContent = 'Đang phân tích âm thanh…';
+    Promise.resolve(v.autoCut({ thr: card.querySelector('#cv127q-thr').value, min: card.querySelector('#cv127q-min').value, remove: card.querySelector('#cv127q-rm').checked }))
+      .then(function (n) { box.textContent = n ? 'Đã cắt ' + n + ' điểm. Dùng Hoàn tác nếu chưa ưng ý.' : 'Chưa cắt: chọn clip có tiếng trên timeline hoặc nâng ngưỡng (xem thông báo).'; })
+      .catch(function (e) { box.textContent = 'Không cắt được: ' + String(e && e.message || e).slice(0, 120); })
+      .then(function () { btn.disabled = false; });
   });
   card.querySelector('#cv127q-edl').addEventListener('click', function () {
     var s = st(), box = card.querySelector('#cv127q-status'); if (!s) { box.textContent = 'Mở Video Engine trước.'; return; }

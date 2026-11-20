@@ -60,6 +60,8 @@ with sync_playwright() as p:
     if c['p127qMounted']:
         page.click('#cv127q-run'); page.wait_for_timeout(300)
         c['p127qRuns'] = page.evaluate("document.querySelectorAll('#cv127q-list li').length")>0
+        page.click('#cv127q-cut'); page.wait_for_timeout(500)
+        c['p127qCutHandlesNoSelection'] = page.evaluate("!document.getElementById('cv127q-cut').disabled && /Chưa cắt|Đã cắt|Không cắt/.test(document.getElementById('cv127q-status').textContent)")
         page.screenshot(path=os.path.join(OUT, 'p127q.png'))
     page.evaluate("CV.go('home')"); page.wait_for_timeout(300)
     page.evaluate('CANVIOSecurity.open()')
