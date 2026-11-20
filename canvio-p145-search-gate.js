@@ -93,6 +93,7 @@ function mount(){
  function run(shouldHash){
   var assets=getAssets(null),meta=safeMeta(),button=$('#cv145910-refresh'),note=$('#cv145910-hash-note'),seq=++scanSeq;
   function show(hashes,stats){
+   if(seq!==scanSeq)return;
    report=evaluateAssets(assets,meta,core.qualityGate,hashes||{});
    visible=searchAssets(report,$('#cv145910-q').value,$('#cv145910-kind').value,$('#cv145910-status').value);
    $('#cv145910-summary').textContent='Tổng '+report.total+' · Đạt '+report.ready+' · Cần xử lý '+report.warn+' · Đang hiển thị '+visible.length;
@@ -104,12 +105,12 @@ function mount(){
    note.dataset.state='done';note.dataset.scanId=String(seq);
    draw();
   }
-  if(!shouldHash){show({},null);return;}
+  if(!shouldHash){button.disabled=false;show({},null);return;}
   button.disabled=true;note.dataset.state='busy';note.dataset.scanId=String(seq);note.textContent='Đang tính SHA-256 cục bộ…';
   hashMissingAssets(assets,function(done,total,computed,skipped){note.textContent='SHA-256 '+done+'/'+total+' · đã tính '+computed+' · bỏ qua '+skipped;})
    .then(function(result){show(result.hashes,result);})
    .catch(function(error){show({}, {computed:0,skipped:assets.length});note.textContent='Không thể tính hash: '+String(error&&error.message||error).slice(0,120);})
-   .then(function(){button.disabled=false;});
+   .then(function(){if(seq===scanSeq)button.disabled=false;});
  }
  function draw(){
   var root=$('#cv145910-list');root.replaceChildren();
