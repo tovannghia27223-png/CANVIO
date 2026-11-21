@@ -264,3 +264,9 @@ The candidate is built and verified by the hosted runtime workflow. Runtime vend
 - P136.4 PR #39/run #312 and P131.3 PR #41/run #315 are merged and accepted on main; see their Roadmap/QA entries for exact limits.
 - The former PR #43 attempt was closed as a stale duplicate: P145.10 was already merged through PR #38 and the PR #43 documentation snapshot lagged behind newer mainline P131.3/P136.4 records. No code was lost.
 - For the full remaining backlog and manual release gates, use `CANVIO_ALL_P_COMPLETION_TRACKER.md`. Do not merge stale branches or report “all P complete” while partial scopes and P70 real-world gates remain.
+
+## Additional backlog boundary — 2026-11-21
+
+- Newly reconciled explicit open items from the existing handoff/roadmap: P122.3 MCP (not implemented/no transport-security contract), P124 Auto Layout/Component (P123 static starters are not equivalent), P133 OPFS/proxy (no owner/test; must coordinate with current storage), P143 full code split (not performed), and P144 (basic palette already in P109; parity audit before extending).
+- P142 Pages deployment is confirmed by run #192 (`44819441586`), but real-origin, Windows/GTX 1650/RAM 7 GB, Firefox/WebKit/touch and physical GPU acceptance have not been performed.
+- PR #44 docs update hosted run #320 passed; artifact SHA-256 `74cb03f31a7c55d94f69376b74f46a22bef1538b473aeca1165c42296f2e69ba`. Do not interpret docs/CI success as all-P or Stable certification.
