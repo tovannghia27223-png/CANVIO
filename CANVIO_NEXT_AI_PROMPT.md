@@ -208,3 +208,11 @@ Chỉ kiểm bằng tín hiệu/tệp tổng hợp và Chromium headless; chưa 
 
 - New P135.2 candidate stores the editable adjustment stack inside the existing Pixel PNG snapshot via a CRC-checked tEXt chunk; it wraps native snapshotState/restoreState, adds no second database and keeps the image raster unchanged.
 - Verify P135 Node/Chromium tests and P143 parity before merge. Do not claim cloud/two-device sync; third-party PNG re-encoding can discard ancillary metadata.
+
+
+## Current mainline handoff — 2026-11-21
+
+- Mainline includes P137.2 (PR #76, #535 51/51), P119.2 (PR #78, #538 52/52) and P135.2 (PR #81, #549 53/53). P143 parity now covers 32 standalone/embedded pairs.
+- Continue P143.4 from the clean current-main branch: run current CI, inspect lexical scanner evidence and keep semantic-DAG / Phase 3 claims bounded. No runtime script reordering.
+- P135.2 embeds the editable adjustment stack in the existing Pixel PNG snapshot; this is local snapshot persistence, not a two-device/cloud sync claim.
+- Keep P70 fail-closed (14 manual gates), P130 blocked on real Supabase/two-device evidence, P122.3 unimplemented pending approved security contract.
