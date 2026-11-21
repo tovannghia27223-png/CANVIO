@@ -864,3 +864,10 @@ Hosted verification after the ffmpeg repair is complete:
 - P144.3 contextual help uses the existing CVUxP144 owner and covers all 38 registered CVWS routes; hosted Chromium route-coverage test PASS.
 - P143 remains in Phase 1 candidate branch: a 20-module standalone/embedded parity audit has passed pre-browser hosted gates in run #363; wait for the full workflow result before merge. This is not full index modularization.
 - P70 still has fourteen open manual gates; not production-certified.
+
+## P143 Phase 1 — source registry and parity gate (rebased to current main, 2026-11-21)
+
+- Reapplies tests/p143/source-module-map.json and tests/p143/run-p143-source-parity.cjs after the mainline P124/P133/P144 reconciliation.
+- Covers 20 workflow-managed JS sources: unique inline lot, syntax on both forms, CRLF-normalized source parity, no ES-module imports and no literal </script>.
+- Prior candidate run #363 passed all 39 steps, including P143 parity. This rebased branch reruns hosted acceptance against the latest main.
+- P143 full split remains OPEN; see CANVIO_P143_SOURCE_SPLIT_PLAN.md for inventory, dependency DAG, reversible extraction and offline/CSP/rollback stages.
