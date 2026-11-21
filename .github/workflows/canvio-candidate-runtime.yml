@@ -211,17 +211,20 @@ jobs:
           if(!source.includes('window.CVAutoLayoutP124'))throw new Error('P124 source contract missing');
           let html=fs.readFileSync(file,'utf8');
           const id='canvio-lot124', open='<script id="'+id+'">';
-          const re=/(<script\\b(?=[^>]*\\bid=["']canvio-lot124["'])[^>]*>)[\\s\\S]*?(<\\/script\\s*>)/i;
-          const tag=open+'\\n'+source+'\\n</script>';
-          if(re.test(html))html=html.replace(re,tag);
-          else{
+          const first=html.indexOf(open);
+          if(first<0){
             const at=html.lastIndexOf('</body>');
             if(at<0)throw new Error('P124: canonical index has no closing body');
-            html=html.slice(0,at)+tag+'\\n'+html.slice(at);
+            html=html.slice(0,at)+open+'\n'+source+'\n</script>\n'+html.slice(at);
+          }else{
+            if(html.indexOf(open,first+open.length)>=0)throw new Error('P124 duplicate script lot');
+            const start=first+open.length, close=html.indexOf('</script>',start);
+            if(close<0)throw new Error('P124 closing script tag missing');
+            html=html.slice(0,start)+'\n'+source+'\n'+html.slice(close);
           }
+          const verifyStart=html.indexOf(open)+open.length, verifyEnd=html.indexOf('</script>',verifyStart);
+          if(verifyStart<open.length||verifyEnd<0||html.slice(verifyStart,verifyEnd).trim()!==source)throw new Error('P124 embedded source parity mismatch');
           if((html.match(/id="canvio-lot124"/g)||[]).length!==1)throw new Error('P124 duplicate/missing script lot');
-          const m=html.match(new RegExp('<script id="'+id+'">([\\\\s\\\\S]*?)<\\\\/script>'));
-          if(!m||m[1].trim()!==source)throw new Error('P124 embedded source parity mismatch');
           fs.writeFileSync(file,html,'utf8');
           console.log('P124 responsive Auto Layout and component variants integrated into canonical Website Engine');
           NODE
