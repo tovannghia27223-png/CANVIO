@@ -959,3 +959,13 @@ Hosted verification after the ffmpeg repair is complete:
 - Style definitions: whitelisted CSS properties only, localStorage `canvio137:styles` (UI convenience, not in exported files).
 - Tests: `tests/p127/run-p137s-tests.cjs` (Node, sanitising/escaping/fallback) and `tests/p145/run-p137-browser.py` (real Chrome, 11 checks: apply, switch clears old props, redefine → other page restyled, TOC entries+pages, rebuild without duplicate, undo, empty TOC message, zero page errors). Smoke 21/21.
 - Limits: no multi-frame text flow, no nested character styles, tables stay with the existing Layout Foundry insert (no table styles); TOC page numbers are document page order, not print pagination; style set is fixed to the five defaults plus edits (no UI to create new names yet); TOC entries are static until rebuilt.
+
+
+## Verified update — 2026-11-21 — P124.3
+
+- PR #63 (selected Website Engine component responsive breakpoints) merged to `main` as `ed6679faec689483db62eb718aa55e068866618b` after hosted candidate workflow run #444 succeeded.
+- Hosted Chromium evidence: P124 UI interaction **15/15**; selected component received a scoped class, desktop/tablet/mobile rules were written through GrapesJS CSS Manager, canonical `CV.engines.web.save()` was called, save failure was surfaced, mobile viewport had no overflow, and page errors were zero.
+- The workflow also completed its existing regression/runtime steps successfully, including the P133.2 proxy and P133.4 OPFS checks in run #444. This does not close remaining P124 advanced component editing or P133 migration work.
+- PR #64 P135.1 is NOT merged: its hosted run #467 failed at the unrelated P133.2 proxy gate with UI status `Tạo proxy vượt thời gian cho phép.`; no page errors were reported. Its head is now non-mergeable against the updated main and must be rebased/cleaned before another acceptance run. Do not mark P135 complete.
+- PR #65 is a duplicate/stale P139 candidate (mergeable=false; no hosted run). PR #66 is the clean P139.1 candidate stacked on the P135 branch (no hosted run yet); keep P139 partial and do not merge before the P135 base is accepted.
+- P135.1 remains a partial non-destructive adjustment stack; reload persistence, masks/local corrections, smart objects, clone/patch and liquify remain open. P139.1 remains partial; precomp, physical motion blur, word/range selector, expanded keyframe editor and real-project/export acceptance remain open.
