@@ -125,3 +125,33 @@ Quy tắc nhúng: mỗi lot là `<script id="canvio-lotNNN">` + bản độc l�
 - Continue updating this Guide, Roadmap, Tracker, QA report, acceptance matrix and session summary in the same branch/turn after each verified increment.
 - Defer P70 real-world gates until the user schedules them. P130 still needs the user's Supabase project/schema/RLS/credentials and cross-device restore proof. P122.3 MCP still needs an approved transport/authentication/consent/permissions/threat model before implementation.
 
+
+
+## Bàn giao cập nhật — 2026-11-21 (sau commit 76711cb)
+
+### Đã làm trong phiên này (mỗi mục: module standalone + lot nhúng `canvio-lotNNN` + test Node + test Chrome + docs; smoke 21/21, 0 page error)
+| P | Module | Lot | Vị trí UI | Test |
+|---|---|---|---|---|
+| P119 | `canvio-p119-easing.js` (CVEasingP119) | `canvio-lot119e` | Trang Chuyển động, cạnh `#motionEase`: đồ thị bezier kéo được, preset, lò xo `linear()`, xuất Lottie JSON 1 lớp | `run-p119e-tests.cjs`, `run-p119-browser.py` |
+| P118 | `canvio-p118-wordmark.js` (CVWordmarkP118) | `canvio-lot118w` | Trang Thương hiệu: .ttf → outline SVG, kerning thật (kern + GPOS PairPos), tải SVG / lưu Asset Library | `run-p118w-tests.cjs`, `run-p118-browser.py` (so với chữ Chrome: lệch 0 px bề rộng) |
+| P141 | `canvio-p141-fonts.js` (CVFontsP141) | `canvio-lot141f` | Trang Thương hiệu: kiểm 146 ký tự tiếng Việt, font biến thiên, gợi ý cặp font, báo cáo JSON (dùng bộ đọc của P118, P118 phải nạp trước) | `run-p141f-tests.cjs`, `run-p141-browser.py` |
+| P128.2/.4 | `canvio-p128-orchestrator.js` (CVOrchestratorP128) | `canvio-lot128o` | Platform → tab **API Hub**: điều phối local → Gemini, 1 lần gọi/tầng, timeout, cache, thống kê độ trễ; ảnh/video báo "chưa cấu hình" (P128.1 đã có sẵn ở API Hub/Local AI Studio) | `run-p128o-tests.cjs`, `run-p128-browser.py` (server OpenAI giả) |
+| P137 | `canvio-p137-styles.js` (CVStylesP137) | `canvio-lot137s` | Dàn trang: kiểu đoạn (5 kiểu), cập nhật kiểu cho mọi trang, mục lục tự động có số trang, Hoàn tác (qua `CVNativeEngines.layout.snapshotState/restoreState`) | `run-p137s-tests.cjs`, `run-p137-browser.py` |
+Bỏ lại: bản Auto Reframe của mình (trùng P134.2 do AI khác đã merge, PR #46). Tất cả dòng CI đã thêm vào `.github/workflows/canvio-candidate-runtime.yml`; hosted CI chưa quan sát cho 5 commit này.
+
+### Việc còn lại (theo thứ tự đề xuất)
+1. **Kiểm CI hosted** cho các commit P119/P118/P141/P128/P137 (`gh api repos/tovannghia27223-png/CANVIO/actions/runs`); nếu đỏ thì sửa trước khi làm mới. Lưu ý test P118/P141 cần Liberation Sans và Caladea (gói `fonts-liberation`, `fonts-crosextra-caladea`) hoặc biến môi trường `CANVIO_TEST_TTF`, `CANVIO_TEST_TTF_PARTIAL`.
+2. **P135** lớp điều chỉnh không phá hủy cho Pixel Atelier (chưa bắt đầu; quét trước xem có `CVNativeEngines.pixel` API nào).
+3. **P139** lớp hình, parent/null, text animator cho Motion Lab (dùng chung easing của P119).
+4. Phần dở của P133 (PR #58 OPFS), P124.2 (PR #59): merge khi CI xanh; PR #56 là nhánh cũ `mergeable=false`, không merge.
+5. P137 còn thiếu: luồng chữ nhiều khung, kiểu ký tự, tạo kiểu tên mới, kiểu bảng. P118: .otf/CFF, woff, ligature, Paper.js boolean. P119: kiểm Lottie với lottie-web thật, dùng chung easing với Video Engine.
+6. P120/P126 (ComfyUI, RIFE, Real-ESRGAN) cần GPU: chỉ làm adapter; đăng ký qua `CVOrchestratorP128.register(kind,tier,fn)`.
+
+### Bị chặn (cần người dùng / môi trường thật)
+P130 Cloud Sync (Supabase thật + RLS + 2 thiết bị); P122.3 MCP (cần hợp đồng bảo mật được duyệt); P142 đa trình duyệt (Safari/Firefox thật); 14 cổng P70 (nghiệm thu thiết bị/media thật); P143 tách mã (đã giao AI khác, tránh xung đột).
+
+### Cách làm đã dùng (giữ nguyên)
+Đọc `CANVIO_AI_GUIDE.md`, không dò cả `index.html`. Chỉ thêm. Lot mới chèn trước `<style id="canvio-lot131-css">`, nội dung CRLF, không chứa `</script>` thật (dùng `<\/script>`); khi sửa module phải nhúng lại lot (thay từ `<script id="…">` đến `</script>`) và test kiểm bản nhúng == bản standalone. Chrome test: Playwright python trên http.server localhost, cờ `--no-sandbox --disable-gpu --disable-dev-shm-usage --host-resolver-rules=MAP * ~NOTFOUND , EXCLUDE 127.0.0.1`, `reduced_motion='reduce'`. `gh` GraphQL bị chặn: dùng REST `gh api`. Trước khi push: `git pull --rebase origin main`; xung đột docs giữ cả hai phía; xung đột workflow lấy upstream rồi thêm lại dòng của mình.
+
+### Giới hạn trung thực chung
+Chỉ kiểm bằng tín hiệu/tệp tổng hợp và Chromium headless; chưa kiểm footage dài, thiết bị thật, Safari/Firefox, Lottie player thật, Ollama/LM Studio thật. Không ghi "đạt nghiệm thu" cho bất kỳ mục nào trong danh sách trên.
