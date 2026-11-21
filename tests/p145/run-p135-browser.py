@@ -54,7 +54,7 @@ with sync_playwright() as p:
     pixel=page.evaluate("""async (src)=>{const im=new Image();im.src='data:image/png;base64,'+src;await im.decode();const c=document.createElement('canvas');c.width=im.width;c.height=im.height;const x=c.getContext('2d');x.drawImage(im,0,0);return Array.from(x.getImageData(5,5,1,1).data)}""",encoded)
     checks['exportContainsAdjustedPixels']=pixel[0]>48 and pixel[1]>48 and pixel[2]>48
     # Stub only the existing Asset Library write owner in this isolated browser run.
-    page.evaluate("window.__p135AssetWrite=null;const old=CV.assets.addBlob;CV.assets.addBlob=async f=>{window.__p135AssetWrite={name:f.name,type:f.type,size:f.size};return {id:'p135-test'}};")
+    page.evaluate("window.__p135AssetCalls=[];window.__p135OriginalAddBlob=CV.assets.addBlob;CV.assets.addBlob=async f=>{window.__p135AssetCalls.push({isFile:f instanceof File,name:f&&f.name,type:f&&f.type,size:f&&f.size});return {id:'p135-test'}};")
     page.click('#cv135-panel [data-cv135="asset"]')
     page.wait_for_function("!!window.__p135AssetWrite",timeout=30000)
     checks['assetSaveUsesExistingOwner']=page.evaluate("window.__p135AssetWrite.type==='image/png' && window.__p135AssetWrite.size>24")
