@@ -3786,3 +3786,11 @@ P144 tour: thêm bước bằng cách thêm vào mảng `STEPS` ({sel,title,text
 - Added page-specific guidance for all 13, using Guide-documented behavior and explicit boundaries (e.g. collab is local notes/activity, Prompt Forge is prompt handoff, Shield does not certify server headers).
 - P133.2 passed all 11 Chromium checks in the same run, including actual timeline import, clip duration, audio, full decode and original preservation. P124 passed 9/9.
 - Rerun required to verify all 38 CVWS routes have contextual help; no merge claim until that coverage check passes.
+
+## P143 Phase 1 — standalone source parity gate (2026-11-21 · candidate)
+
+- Manifest: tests/p143/source-module-map.json. Audit: tests/p143/run-p143-source-parity.cjs. Plan: CANVIO_P143_SOURCE_SPLIT_PLAN.md.
+- The gate covers 20 workflow-managed standalone modules and their canonical inline lots. It verifies a unique embedded lot, JavaScript syntax for standalone and embedded copies, normalized content equality, and rejects ES-module imports/literal closing script tags in classic inline source.
+- Workflow step is placed after candidate module integration and before the full inline HTML/JavaScript audit.
+- Scope is intentionally Phase 1 only. It does not claim the whole large index.html has been modularized; a full inline script/style inventory, dependency/boot-order map and reversible staged extraction remain open.
+- Maintain one canonical HTML build artifact, preserve deterministic initialization order and offline/PWA/CSP/print behavior. Do not bulk-convert scripts to async external src or create duplicate CV/store/timeline owners.
