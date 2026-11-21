@@ -67,11 +67,11 @@ function createOffscreenScaler(width,height,onFrame,onError){
   "};"
  ].join(String.fromCharCode(10));
  var blob=new Blob([code],{type:'text/javascript'}),workerUrl=URL.createObjectURL(blob),worker=null;
- var readyResolve,readySettled=false,state={ready:false,pending:false,closed:false};
+ var readyResolve,readySettled=false,frameTimer=0,state={ready:false,pending:false,closed:false};
  var ready=new Promise(function(resolve){readyResolve=resolve;});
  function fail(message){
   if(state.closed)return;
-  state.pending=false;
+  state.pending=false;clearTimeout(frameTimer);frameTimer=0;
   if(!readySettled){readySettled=true;readyResolve(false);}
   try{if(onError)onError(message||'Offscreen worker failed');}catch(e){}
  }
@@ -79,7 +79,7 @@ function createOffscreenScaler(width,height,onFrame,onError){
  worker.onmessage=function(event){
   var d=event.data||{};
   if(d.type==='ready'){state.ready=true;if(!readySettled){readySettled=true;readyResolve(true);}return;}
-  if(d.type==='frame'){state.pending=false;try{if(onFrame)onFrame(d.bitmap);}catch(e){fail(e&&e.message);}return;}
+  if(d.type==='frame'){clearTimeout(frameTimer);frameTimer=0;state.pending=false;try{if(onFrame)onFrame(d.bitmap);}catch(e){fail(e&&e.message);}return;}
   if(d.type==='error')fail(d.message||'Offscreen scaler error');
  };
  worker.onerror=function(event){try{event.preventDefault();}catch(e){}fail(event&&event.message||'Offscreen worker error');};
@@ -91,13 +91,13 @@ function createOffscreenScaler(width,height,onFrame,onError){
   send:function(frame){
    if(state.closed||!state.ready||state.pending||!worker)return false;
    state.pending=true;
-   try{worker.postMessage({type:'frame',frame:frame,width:width,height:height},[frame]);return true;}
+   try{worker.postMessage({type:'frame',frame:frame,width:width,height:height},[frame]);frameTimer=setTimeout(function(){fail('Offscreen worker frame timed out');},3000);return true;}
    catch(e){state.pending=false;fail(e&&e.message);return false;}
   },
   close:function(){
    if(state.closed)return;
    state.closed=true;state.pending=false;
-   try{worker.terminate();}catch(e){}
+   clearTimeout(frameTimer);frameTimer=0;try{worker.terminate();}catch(e){}
    try{URL.revokeObjectURL(workerUrl);}catch(e){}
   }
  };
@@ -186,7 +186,7 @@ async function renderProxy(blob,clip,onProgress){
     raf=requestAnimationFrame(draw);
    }
    video.addEventListener('ended',onEnded,{once:true});
-   timer=setTimeout(function(){finish(new Error('Tạo proxy vượt thời gian cho phép.'));},range.duration*2500+20000);
+   timer=setTimeout(function(){finish(new Error('Tạo proxy vượt thời gian cho phép.'));},Math.min(300000,range.duration*5000+60000));
    raf=requestAnimationFrame(draw);
   });
   await stopped;
