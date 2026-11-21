@@ -163,3 +163,8 @@ No honest all-P completion claim is possible yet. In addition to P70's 14 open r
 | P130 | **Blocked externally**: no verified Supabase project/schema/RLS/credentials/two-device environment. | Requires a user-owned deployed backend and independent-device restore test. |
 | P122.3 | **Not implemented**: roadmap has no feature/security/transport/permission contract. | Define and approve exact MCP contract/threat model before implementation. |
 | P70 | **Not certified**: fourteen real-world acceptance gates remain open. | Actual browser/device/media/provider/hosting/accessibility/recovery/release-operation evidence and review. |
+
+## P143 Phase 1 — candidate based on main 6481d83 (2026-11-21)
+
+- Carries the 20-module source registry/parity gate onto current main after the hosted package/manifest bot commit. Prior run #363 passed 39/39, including source parity and same-origin browser acceptance; new current-main hosted run is pending.
+- Full P143 remains OPEN until all inline JS/CSS is inventoried, dependencies/boot order mapped and staged extraction passes app/rollback/offline/CSP acceptance.
