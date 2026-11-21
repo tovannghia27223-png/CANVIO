@@ -151,3 +151,9 @@ No honest all-P completion claim is possible yet. In addition to P70's 14 open r
 - Added page-specific guidance for all 13, using Guide-documented behavior and explicit boundaries (e.g. collab is local notes/activity, Prompt Forge is prompt handoff, Shield does not certify server headers).
 - P133.2 passed all 11 Chromium checks in the same run, including actual timeline import, clip duration, audio, full decode and original preservation. P124 passed 9/9.
 - Rerun required to verify all 38 CVWS routes have contextual help; no merge claim until that coverage check passes.
+
+## P143 source split — Phase 1 candidate (2026-11-21)
+
+- Added a 20-module standalone source registry and parity/syntax audit. Integrated in hosted runtime workflow after source integration and before full HTML audit.
+- Added CANVIO_P143_SOURCE_SPLIT_PLAN.md with staged extraction and dependency/boot-order safeguards.
+- Status: Phase 1 candidate pending hosted CI. Full P143 remains OPEN until all inline script/style blocks are inventoried, dependency DAG documented and staged extractions pass application/rollback/offline/CSP acceptance.
