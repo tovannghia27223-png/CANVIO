@@ -92,3 +92,9 @@ Reduce CANVIO's single-file authoring burden without breaking the canonical app 
 - Regex scanning receives the current source line instead of rescanning all bytes before each regex token, keeping this lexer operation linear.
 - Candidate tests cover comments, strings, regex literals, template bodies, static writes/reads and line tracking. No app runtime or boot order is modified.
 - This is not semantic dependency resolution: alias/data flow, destructuring, computed property names, template interpolation, eval, conditional execution and call timing require manual review. Phase 3 extraction remains gated by reviewed boundaries and rollback/offline/CSP acceptance.
+
+
+## P143.4 verified mainline — 2026-11-21
+
+- PR #83 / commit 29acd119; post-merge mainline #551 passed 53/53; Pages #275 passed. Central parity 32/32, scanner 14/14, style/template/loader verifier 17/17. Inventory includes 456 lexical order candidates, 33 unresolved reads, 209 same-script references, 119 style blocks, 1,490 inline style attributes and 78 dynamic loader sites.
+- The report is not semantic proof. Human review, runtime invocation order, dynamic loader construction and dependency-bounded Phase 3 extraction with rollback/offline/PWA/CSP remain open.

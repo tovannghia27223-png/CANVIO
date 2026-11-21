@@ -216,3 +216,9 @@ Chỉ kiểm bằng tín hiệu/tệp tổng hợp và Chromium headless; chưa 
 - Continue P143.4 from the clean current-main branch: run current CI, inspect lexical scanner evidence and keep semantic-DAG / Phase 3 claims bounded. No runtime script reordering.
 - P135.2 embeds the editable adjustment stack in the existing Pixel PNG snapshot; this is local snapshot persistence, not a two-device/cloud sync claim.
 - Keep P70 fail-closed (14 manual gates), P130 blocked on real Supabase/two-device evidence, P122.3 unimplemented pending approved security contract.
+
+
+## Current mainline and candidate handoff — 2026-11-21
+
+- P143.4 is merged at #83 / 29acd119; post-merge #551 passed 53/53, Pages #275 passed. P143 parity 32/32, scanner 14/14, verifier 17/17. The lexical dependency map is not semantic dependency resolution; Phase 3 extraction remains open.
+- P119.3 candidate integrates the existing CVEasingP119 preset registry with native Video Engine keyframe controls and Motion custom cubic-bezier. Verify candidate CI before merge. Do not create a second timeline/store; commit through the native Apply/Undo/snapshot owner.

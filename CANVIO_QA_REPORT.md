@@ -535,3 +535,13 @@ Node tests round-trip the private PNG tEXt metadata and enforce CRC/version/safe
 ## P143.4 candidate QA — lexical global-reference evidence — 2026-11-21
 
 - Candidate adds static lexical evidence only; scanner fixtures and generated ordering map will be accepted only after current-main hosted CI. It is not an AST or semantic runtime dependency graph and does not change application execution order.
+
+
+## Verified P143.4 post-merge QA — 2026-11-21
+
+- Mainline #551 passed 53/53 and Pages #275 passed. P143 parity 32/32, scanner fixtures 14/14, inventory validation 17/17; 119 style blocks, 1,490 inline style attributes and 78 dynamic-loader sites. Its 456 lexical edges are candidates only; 33 references remain unresolved.
+
+## P119.3 candidate QA — Video Engine shared keyframe easing
+
+- Node tests verify the six P119 presets, curve matching, native custom-Bezier field mapping, Motion cubic-bezier import and rejection of linear() spring strings. The source is a UI adapter only; it creates no second timeline/store.
+- Hosted Chromium uses a real image clip through CV.engines.video.importFiles(), applies a preset via the existing keyframe inspector and native Apply path, checks motionAt against CVEasingP119.bez, round-trips the existing Video Engine snapshot, then imports a Motion curve. Website CSS timeline and physical GPU/performance remain open until separately verified.
