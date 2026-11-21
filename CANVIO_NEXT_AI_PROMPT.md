@@ -175,3 +175,8 @@ Chỉ kiểm bằng tín hiệu/tệp tổng hợp và Chromium headless; chưa 
 - Next candidate PR #70: wire P139.1 text animator into the actual Motion Lab draw path. PR #71: local-only ComfyUI API workflow bridge through P128 for P120/P126. Validate both on current main and keep actual ComfyUI/GPU/model and P70 real-world acceptance open until tested.
 - Continue to preserve AI Guide/Roadmap/tracker/session/QA/acceptance history on every merge; no full P70 release certification unless all fourteen gates have evidence.
 
+
+## P139.1 live renderer bridge — 2026-11-21
+
+- P139.1 now wraps existing Motion Lab draw and routes matching text-layer Canvas2D fillText calls through the per-character animator; verify P139 Node + Chromium CI before merge.
+- P139 is partial until real project/export/target device review. Do not add a second canvas/timeline/store; preserve existing Motion Lab snapshot/restore as owner.

@@ -980,3 +980,10 @@ Hosted verification after the ffmpeg repair is complete:
 - P133 real long footage, unusual codecs, physical devices; P135 reload persistence/real edit documents remain follow-up.
 - PR #70 P139.1 and PR #71 P120/P126 are separate candidates, not mainline-complete until their own CI and merge.
 
+
+## P139.1 — Motion Lab live renderer continuation
+
+- Parent/Null hierarchy and per-character Text Animator are now wired into the actual existing Motion Lab draw pass, instead of only persisting metadata.
+- The renderer adapter uses the existing #mlCanvas context and the existing motionLab.draw/snapshot/restore owners; no extra timeline, rendering canvas or state store is introduced.
+- Null parenting preserves world position; cycle checks and nested transforms are bounded. Animator modes: rise, fade, scale, wave, tracking; P119 easing presets are reused.
+- Hosted Chromium tests must confirm a rendered output difference between active/inactive animator states. Keep real project/export, precomp, word/range selection, advanced keyframes, motion blur and physical GPU performance as open follow-up scope.

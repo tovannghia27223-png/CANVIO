@@ -149,3 +149,8 @@ Pull trước (`git pull --rebase origin main`; CI bot hay push commit build). A
 - P135 adjustment stack metadata remains memory-only because the existing Pixel source snapshot is flattened PNG. This is documented, not represented as persistent editable adjustment layers.
 - P139.1 and P120/P126 are follow-on PR candidates #70/#71; no merge or full feature completion claimed yet.
 
+
+## P139.1 renderer bridge — candidate 2026-11-21
+
+- Added the first live rendering adapter for P139: wraps existing Motion Lab draw, applies Null parent transforms and runs grapheme Text Animator through the current #mlCanvas context, restoring the original fillText method after each draw.
+- Node/browser/source-parity tests are included in hosted candidate CI. P139 remains partial until real projects, exports, precomp, advanced selectors and physical target-device performance receive review.

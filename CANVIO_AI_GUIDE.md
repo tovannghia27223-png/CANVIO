@@ -3917,3 +3917,13 @@ P144 tour: thêm bước bằng cách thêm vào mảng `STEPS` ({sel,title,text
 - P139.1 live Motion Lab renderer and P120/P126 ComfyUI connector remain PR candidates (#70 and #71 respectively) until their own hosted runs pass and they are merged.
 - Release boundary remains releaseCertified:false; the 14 P70 real-world acceptance gates remain open.
 
+
+## P139.1 — Motion Lab hierarchy and live text animator
+
+- Source owner: `canvio-p139-motionlab.js`; embedded canonical lot `canvio-lot139`; public API `window.CVMotionLabP139`, version 139.1.1. This module uses existing `CVNativeEngines.motionLab`, `snapshotState()/restoreState()`, and the existing `#mlCanvas` drawing context. It does not create another timeline, canvas or persistence store.
+- Null Controller metadata (`type:'null'`, `parentId`, group scale and rotation) is stored within the existing Motion Lab objects array. Parent assignment preserves world position, rejects cycles, supports nested transform composition, unparent and delete-null child unparenting.
+- Text Animator supports per-grapheme rise/fade/scale/wave/tracking with bounded stagger/duration/strength and P119 curve presets. The P139.1.1 renderer adapter wraps the real `ml.draw(time)` pass and temporarily routes matching text-layer Canvas2D `fillText` calls through the per-character renderer, then restores the original context method after each draw.
+- Renderer bridge is deliberately scoped to the existing Motion Lab canvas context and text objects whose text matches a current text layer. Keep integration tests for real text-layer output whenever the native Motion Lab renderer changes; it is not a general-purpose canvas interception layer.
+- Data map: Motion Lab `snapshotState()/restoreState()` is still the sole persistence owner. Null transforms, parent references and animator metadata round-trip inside its `objs`; no localStorage key, project DB or second sync mechanism is introduced.
+- Tests: `tests/p127/run-p139-tests.cjs` (source/inline parity, model contracts, animator normalization) and `tests/p145/run-p139-browser.py` (same-origin Chromium checks for rendered PNG difference, null-parent creation, metadata round-trip and zero page errors). The source module is registered in `tests/p143/source-module-map.json` for centralized P143 parity.
+- Limitations: precomposition, physical motion blur, word/range selection, advanced keyframe editing and complex text shaping/RTL remain out of scope. Headless Chromium uses software rendering; real project, real footage, target-device frame rate and human UX/accessibility review remain separate acceptance.

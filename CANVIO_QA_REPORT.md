@@ -483,3 +483,7 @@ Status: pending hosted PR verification. Do not treat this section as a PASS repo
 - P135 persistent editable stack state is not claimed: source document remains flattened PNG; adjustments reset on reload/new image. Masks/local adjustments, smart objects, clone/patch and liquify are not covered.
 - CI uses a generated short synthetic video and headless Chromium. This is not long real-footage compatibility, real multi-hour export, physical GPU throughput or cross-device acceptance.
 
+
+## P139.1 live renderer adapter QA
+
+Automated checks validate source/embedded parity and the existing Motion Lab canvas render path. The browser acceptance creates a real text layer, adds a Null parent, applies an animator, compares rendered PNG output with the animator enabled/disabled, and confirms object metadata survives the existing Motion Lab snapshot/restore. This validates adapter execution in headless Chromium, not physical GPU frame-rate performance, production footage quality, complex font shaping, precomp or motion blur.
