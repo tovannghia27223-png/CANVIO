@@ -1,0 +1,16 @@
+'use strict';
+const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
+const html=fs.readFileSync('index.html','utf8');
+const standalone=fs.readFileSync('canvio-home-creative-flow.js','utf8').trim();
+const scripts=[...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script\s*>/gi)];
+const lots=scripts.filter(m=>/\bid=["']canvio-lot146["']/.test(m[1]));
+assert.equal(lots.length,1,'exactly one P146 inline owner');
+assert.equal(lots[0][2].trim(),standalone,'standalone source matches embedded Home module');
+new vm.Script(standalone,{filename:'canvio-home-creative-flow.js'});
+assert.equal((standalone.match(/id:'(?:hr|business|training|marketing|video)'/g)||[]).length,5,'five workflow definitions');
+for(const id of ['homePrompt','homeKind','hrPrompt','studioPrompt','chBrief','vidScript'])assert.ok(html.includes('id="'+id+'"')||html.includes("id='"+id+"'"),'existing field '+id);
+assert.ok(standalone.includes('CVCreativeCore.context()'),'reuses Shared Core context');
+assert.ok(standalone.includes('CVCreativeCore.setBrief')&&standalone.includes('CVCreativeCore.create'),'reuses existing Shared Core mutation APIs');
+assert.ok(!/\bfetch\s*\(|XMLHttpRequest|localStorage\.setItem|indexedDB\.open/.test(standalone),'no provider/network/new storage owner');
+assert.ok(standalone.includes('Giữ nguyên brief đang có'),'does not overwrite non-empty Shared Core brief');
+console.log(JSON.stringify({suite:'P146 Home Guided Workflows source contract',passed:11,failed:0,inlineLot:'canvio-lot146'},null,2));

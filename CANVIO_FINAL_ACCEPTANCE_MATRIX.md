@@ -45,3 +45,5 @@
 | P119.4 Website Motion shared easing | Node derives six curves from CVEasingP119; Chromium checks import/apply/clear, canonical component attributes/styles, Website save hook and reduced-motion export; P143 34-pair parity | Real authored projects, production publish host/CSP, keyboard/screen-reader and physical device review remain manual. |
 
 | P135.2 editable Pixel adjustment stack | Node PNG metadata/CRC/32-layer round-trip; hosted Chromium snapshot → reload → native restore and unchanged raster check; P143 standalone/embedded parity | Independent two-device/cloud sync, third-party PNG re-encoding, masks/local corrections, smart objects, clone/patch and liquify remain unverified/out of scope. |
+
+| P146.1 Home Guided Creative Workflows | Node: source/inline parity, syntax, five workflow definitions, existing route fields, no new storage/network owner; Chromium: workflow selection, Home prompt/kind reuse, HR/Video destination handoff, Shared Core no-overwrite and no page errors | Replace bracketed brief placeholders with verified content; manual keyboard/screen-reader, mobile and real-project review remain. |

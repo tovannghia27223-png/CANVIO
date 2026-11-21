@@ -234,3 +234,9 @@ Chỉ kiểm bằng tín hiệu/tệp tổng hợp và Chromium headless; chưa 
 - Share CVEasingP119.PRESETS and Motion cubic-Bezier with the existing P47 Website Motion Builder. Apply only via existing selected GrapesJS component and Website Engine save/export handlers; do not create a second timeline/store.
 - Accept only canonical cubic-bezier from CVEasingP119.css(); do not treat spring linear() as Bezier.
 - Re-run Node, Chromium and P143 34-pair parity. Manual authored-project, published-host CSP/headers, keyboard/screen-reader and physical-device acceptance remain open.
+
+
+## P146.1 Home Guided Creative Workflows — follow-up scope
+
+- Home now offers five goal-based brief/workflow starters using existing Home fields and Studio destinations. Preserve the single Shared Core and existing persistence owners; do not add a duplicate project/asset/prompt store.
+- Inspect hosted Node/Chromium evidence before final acceptance and manually review keyboard/focus, screen-reader, small-screen layout, user-authored project behavior and whether the five sample briefs fit real HR/business workflows.

@@ -4032,3 +4032,13 @@ P144 tour: thêm bước bằng cách thêm vào mảng `STEPS` ({sel,title,text
 - Tests: tests/p127/run-p119w-tests.cjs checks registry contract, canonical preset values and rejection rules; tests/p145/run-p119w-browser.py checks the real Chromium panel, six values, Motion import, Apply/Clear contract, export runtime and zero page errors using a deterministic component contract fixture.
 - Website Engine does not yet have a graph editor of its own; it reuses the Motion graph as the single authoring surface. Real GrapesJS component selection, publish-host CSP/headers, keyboard review and target-device reduced-motion review remain manual acceptance.
 
+
+
+## P146.1 — Guided Creative Workflows trên Home (2026-11-22)
+
+- Owner: `canvio-home-creative-flow.js`, canonical inline lot `canvio-lot146`, API `window.CVHomeCreativeFlowP146` version `146.1.0`. Panel `#cvhs-workflows` được gắn sau `.cvQuick` trên `#page-home`; đây là lớp điều phối UI, không tạo page/engine mới.
+- Năm luồng có brief mẫu: HR & tuyển dụng → `hrvisual/#hrPrompt`; kinh doanh & tài chính → `studio/#studioPrompt`; đào tạo & nội bộ → `creativeHub/#chBrief`; marketing & thương hiệu → `creativeHub/#chBrief`; video & nội dung → `videoStudio/#vidScript`. Mỗi luồng điền `#homePrompt` và tái sử dụng `#homeKind` hiện có.
+- Shared Core: đọc `CVCreativeCore.context()` và chỉ lưu brief qua API hiện có khi chưa có project hoặc project đang trống. Nếu project đã có brief khác, giữ nguyên, không ghi đè; brief mới chỉ được chuyển vào Studio. Project/asset persistence vẫn do Shared Core và Project Vault hiện hữu quản lý.
+- Người dùng chủ động mở Studio và bấm tạo; không có AI tự động, network request, API key, localStorage namespace, asset store, timeline hoặc history store mới.
+- Tests: `tests/p146/run-p146-tests.cjs` kiểm tra source/inline parity và hợp đồng module; `tests/p146/run-p146-browser.py` kiểm tra 5 luồng, Home kind, HR/Video handoff, Shared Core không bị ghi đè và page errors.
+- Giới hạn: brief là template có placeholder; người dùng phải thay bằng dữ liệu đã xác minh. Không phải AI recommendation model, cloud sync, real-time collaboration hay nghiệm thu accessibility/thiết bị thật.

@@ -561,3 +561,10 @@ Mainline workflow #551 passed 53/53; Pages #275 passed build/deploy. P143 parity
 - Node contract suite verifies all six preset options are derived from CVEasingP119.PRESETS, each value is canonical CSS cubic-bezier, arbitrary CSS and spring linear() are rejected, and the module has no independent persistence owner.
 - Hosted Chromium verifies the existing Website Motion Builder panel receives six P119 options, a custom cubic-Bezier can be staged from Motion, the existing Apply/Clear callbacks write/remove component attributes/styles and use CV.engines.web.save(), and exported HTML retains the easing CSS variable plus prefers-reduced-motion fallback.
 - The browser component is a deterministic GrapesJS-compatible fixture; this is an adapter-contract test, not manual review of an authored user project, deployed publish origin, or physical mobile accessibility.
+
+
+## P146.1 Home Guided Creative Workflows — candidate test scope
+
+- Node source-contract checks exactly one canonical inline P146 lot, byte-normalized standalone/embedded parity, syntax, five flow definitions, existing destination fields, Shared Core API reuse and absence of a new network/storage owner.
+- Chromium acceptance covers five workflow entries, brief prefill through the existing Home prompt, HR Visual and Video Studio handoff, Shared Core ownership and no-overwrite behavior for a non-empty project brief.
+- Successful automated checks validate deterministic local routing only; they do not certify content quality, accessibility, physical-device UX or cloud sync.

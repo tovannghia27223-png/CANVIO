@@ -690,10 +690,14 @@ jobs:
           console.log('P119.4 uses the single P119 preset/curve registry in Website Motion Builder; P143 pairs:',map.totalModules);
           NODE
 
+      - name: Inject P146 guided creative workflows into the canonical Home page
+        run: node scripts/inject-home-creative-flow.mjs
+
       - name: Extract and syntax-check integrated modules and workers
         run: |
           set -euo pipefail
           node scripts/extract-integrated-modules.mjs
+          node tests/p146/run-p146-tests.cjs
           for file in canvio-p74-p81-three-viewer.js canvio-p85-studio.js canvio-p102-background-removal.js canvio-p105-p107-depth-parallax.js canvio-p68-p70.js canvio-p72-glb-viewer.js canvio-p73-offline-site.js canvio-p82-p84-vector-pdf.js canvio-p87-cv-docx.js canvio-p90-p96.js canvio-p97-p101.js canvio-p104.js canvio-p127-duck.js canvio-p145-shader.js canvio-p119-video.js canvio-p119-website.js assets/canvio-rmbg-worker.js assets/canvio-depth-worker.js assets/canvio-whisper-worker.js; do node --check "$file"; done
 
       - name: P143 standalone source and canonical lot parity audit
@@ -872,6 +876,7 @@ jobs:
           /tmp/canvio-playwright/bin/python tests/p127/run-p1254-browser.py
           /tmp/canvio-playwright/bin/python tests/p127/run-p1272-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p145-browser.py
+          /tmp/canvio-playwright/bin/python tests/p146/run-p146-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p1455-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p1456-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p1457-browser.py

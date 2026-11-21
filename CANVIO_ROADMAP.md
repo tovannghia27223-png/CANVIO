@@ -1066,3 +1066,11 @@ Hosted verification after the ffmpeg repair is complete:
 - Reuse CVEasingP119.PRESETS and the existing #motionEase cubic-Bezier graph in Website Motion Builder. A selected component receives the curve through the original P47 Apply/Save path and exports it through the original Website Publish QC runtime.
 - There is one source of truth for named curves; CSS linear() spring remains a separate representation and is not coerced into Bezier. Reduced-motion fallback remains enabled.
 - The graph remains in Motion; Website Engine intentionally shares the curve rather than opening a second graph or timeline. Manual author-project, deployed-host CSP and accessibility checks remain open.
+
+
+## P146.1 — Home Guided Creative Workflows (2026-11-22)
+
+- Nâng cấp Home CANVIO hiện hữu bằng bộ chọn 5 quy trình theo mục tiêu: HR, Business/Finance, Training/Internal, Marketing/Brand và Video/Content.
+- Mỗi quy trình dùng brief mẫu có placeholder, đưa về `#homePrompt` / `#homeKind`, rồi điều hướng tới đúng trang và trường nhập hiện có. Shared Core được tái sử dụng; brief dự án hiện tại không bị ghi đè khi đã có nội dung khác.
+- Đây là orchestration UI; không bổ sung editor, template database, provider AI, network request hoặc persistence namespace. Việc tạo sản phẩm vẫn do người dùng thực hiện trong Studio.
+- Automated acceptance: P146 Node source/inline contract và hosted Chromium route/brief tests. Real user content, keyboard/screen reader, physical mobile and real-project acceptance remain manual.

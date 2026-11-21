@@ -333,3 +333,6 @@ PR #71 was closed as superseded by clean-main PR #73; the latter carries the cor
 - Candidate acceptance: P119.4 Node contract, hosted Chromium adapter/export test, P143 34-pair source parity and full hosted runtime workflow.
 - No second easing registry, graph, animation timeline, store, local persistence or paid dependency is added. The UI reuses the Motion graph and original reduced-motion export.
 - Real authored project, external publish host CSP/headers, keyboard/screen-reader and physical-device checks remain manual.
+
+
+| P146.1 | **Integrated candidate — QA added** | Home guided workflow panel with five HR/business/training/marketing/video routes, existing Home prompt + Shared Core handoff; Node source-parity and hosted Chromium tests added. | Await hosted CI result after commit; human keyboard/screen-reader/mobile review and real-project acceptance remain. |
