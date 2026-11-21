@@ -201,6 +201,32 @@ jobs:
           console.log('P127.7 integrated into canonical index.html');
           NODE
 
+      - name: Integrate P134.2 local Auto Reframe
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs=require('node:fs');
+          const file='index.html', source=fs.readFileSync('canvio-p134-reframe.js','utf8').trim();
+          const id='canvio-lot134r', open='<script id="'+id+'">';
+          if(!source.includes('window.CVAutoReframeP134'))throw new Error('P134.2 source contract missing');
+          let html=fs.readFileSync(file,'utf8');
+          const first=html.indexOf(open);
+          if(first>=0){
+            if(html.indexOf(open,first+1)>=0)throw new Error('P134.2 duplicate embedded lot');
+            const start=first+open.length, end=html.indexOf('</script>',start);
+            if(end<0)throw new Error('P134.2 embedded script closing tag missing');
+            html=html.slice(0,start)+'\n'+source+'\n'+html.slice(end);
+          }else{
+            const at=html.lastIndexOf('</body>');
+            if(at<0)throw new Error('P134.2 index.html has no closing body tag');
+            html=html.slice(0,at)+open+'\n'+source+'\n</script>\n'+html.slice(at);
+          }
+          if((html.match(/id="canvio-lot134r"/g)||[]).length!==1)throw new Error('P134.2 embedded lot duplicate/missing');
+          fs.writeFileSync(file,html,'utf8');
+          console.log('P134.2 local Auto Reframe integrated into canonical index.html');
+          NODE
+
       - name: Integrate P131.3 safe HTML import into canonical security hub
         shell: bash
         run: |
@@ -516,6 +542,7 @@ jobs:
           node tests/p145/run-p1454-tests.cjs
           node tests/p127/run-p136t-tests.cjs
           node tests/p127/run-p134s-tests.cjs
+          node tests/p127/run-p134r-tests.cjs
           node tests/p127/run-p138d-tests.cjs
           node tests/p127/run-p140c-tests.cjs
           node tests/p127/run-p133r-tests.cjs
@@ -576,6 +603,7 @@ jobs:
           /tmp/canvio-playwright/bin/python tests/p145/run-p1454-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p136-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p134-browser.py
+          /tmp/canvio-playwright/bin/python tests/p145/run-p134r-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p138-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p140-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p133-browser.py

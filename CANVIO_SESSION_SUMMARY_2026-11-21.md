@@ -31,3 +31,12 @@ CI trên GitHub: các commit P138, P133, P144 đều chạy thành công (xanh) 
 
 ## Việc cho người/AI tiếp theo
 Pull trước (`git pull --rebase origin main`; CI bot hay push commit build). AI kia đang giữ PR #45 (P124 Auto Layout), P143 (tách mã) và P145.6–10; không dẫm chân. Xem `CANVIO_NEXT_AI_PROMPT.md` để biết quy tắc nhúng (CRLF, không viết `</script>` thật trong mã) và lệnh chạy test.
+
+
+## Tiếp tục 2026-11-21 — P134.2 Auto Reframe candidate
+
+- Tạo branch riêng work/p134-auto-reframe-20261121 từ main 907b62b; không thay đổi PR #45.
+- Thêm canvio-p134-reframe.js và Node suite tests/p127/run-p134r-tests.cjs (11 kiểm tra), Chromium/ffmpeg/ffprobe harness tests/p145/run-p134r-browser.py.
+- Bản nhẹ phân tích chuyển động + cạnh/độ tương phản, chọn crop 9:16 hoặc 1:1; xuất WebM tại 720×1280 / 1080×1080. File cục bộ ≤100 MiB, ≤60 giây; không dùng face model, không gửi mạng, không thay timeline/store.
+- Đã thêm bước tích hợp lot canvio-lot134r và lệnh Node/browser test vào hosted workflow. Kết quả CI/PR chưa được xác nhận trong báo cáo này.
+- Chưa nghiệm thu: full-app same-origin CI, footage đời thực dài, âm thanh bằng tai người, Firefox/WebKit và mobile thật. Auto Reframe có thể bám texture/contrast không phải chủ thể.

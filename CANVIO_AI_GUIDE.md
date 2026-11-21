@@ -3723,7 +3723,7 @@ P125.3: `CVScrollFramesP125.PRESETS`, `decimate(frames,maxBytes)`; `buildHtml` n
 - `CANVIO_NEXT_AI_PROMPT.md` confirms the remaining P122.3 MCP item, P124 Auto Layout/Component, P133 OPFS/proxy, P143 code extraction and P144 Command Palette work were not all closed. P109 already owns the basic command palette; extend that owner after checking P144 parity rather than creating a second palette.
 - P122.1/P123 source suite passed 13/13 and P122.2 passed 14/14 in run #310. P122.2 remains Website Engine CSS-only; it does not edit content/icons, Poster/Slide or Project Vault version history.
 - P122.3 is explicitly described in the Roadmap as “MCP chưa làm”. No source/test or MCP threat/transport/permission contract is present. Do not invent network endpoints or broaden local data exposure.
-- P124/P133/P143 have no standalone source/test owner in the current main tree. P133 must reuse/coordinate with existing Project Vault/IndexedDB/media stores; do not introduce a second source of truth. P143 must be staged and parity-tested, not an all-at-once rewrite.
+- P133 now has standalone owners and tests on main: canvio-p133-resilience.js / canvio-lot133r for OPFS/IndexedDB recovery and CVDenoiseP138.denoiseAsync for denoise Worker. Its remaining work is 720p proxy, applicable OffscreenCanvas paths and moving selected large media assets only after quota/migration/rollback design. P124 Auto Layout remains under PR #45 (not merged at this snapshot); P143 staged source extraction remains open. Do not create duplicate data owners.
 - P142 Pages pipeline is confirmed successful on main run #192 (`44819441586`), including build, report and deploy jobs. This does not close real-origin Playwright, Windows/GTX 1650, Firefox/WebKit, touch or physical GPU acceptance.
 - PR #44 documentation reconciliation hosted verify run #320 (`44859258258`) succeeded. Artifact `CANVIO-23.3.111-GITHUB-RUNTIME-VERIFIED-320` SHA-256 `74cb03f31a7c55d94f69376b74f46a22bef1538b473aeca1165c42296f2e69ba`; PR-event branch commit step skipped by workflow design.
 ## P140 Charts
@@ -3739,3 +3739,13 @@ P133 Worker: `CVDenoiseP138.denoiseAsync(Float32Array,{strength})` -> `{samples,
 
 P144 tour: thêm bước bằng cách thêm vào mảng `STEPS` ({sel,title,text}); `sel` null = giữa màn hình. Overlay `pointer-events:none`, chỉ thẻ tour nhận chuột.
 
+
+
+## P134.2 Auto Reframe — lightweight local workflow (2026-11-21)
+
+- Standalone source: canvio-p134-reframe.js; canonical embed ID canvio-lot134r; API window.CVAutoReframeP134 exposes ratios, cropSize, analyzeFrames, focusAt, cropAt, sampleVideo, exportWebM, mount and tests.
+- Extends the existing P134 Scopes/Video Engine quality card. User selects a local video (≤100 MiB, ≤60 seconds); analysis samples up to 48 frames scaled to at most 192×108 and combines grayscale edge contrast with inter-frame difference. It evaluates crop windows for 9:16 or 1:1 and temporally smooths the focus path.
+- Export uses Canvas captureStream + MediaRecorder: portrait 720×1280 or square 1080×1080 WebM. Audio is copied only when browser HTMLVideoElement.captureStream() exposes an audio track; UI reports absence instead of claiming preserved sound.
+- No face/object ML model, model download, network upload, timeline mutation, project-store mutation or new persistence owner. User manually imports the resulting WebM if needed.
+- Known limits: saliency heuristic can follow background texture/high contrast instead of the intended subject; no manual tracking-point correction, no MP4/H.264 export, max 60 seconds/100 MiB, browser codec/captureStream support varies. This is a lightweight reframing helper, not AI subject recognition.
+- Tests added: Node source regression tests/p127/run-p134r-tests.cjs (11 assertions) and same-origin Chromium + ffmpeg/ffprobe workflow tests/p145/run-p134r-browser.py. Hosted PR result is the acceptance gate; no full-app runtime PASS is claimed before the hosted run completes.

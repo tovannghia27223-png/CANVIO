@@ -121,3 +121,11 @@ The following backlog entries were omitted or understated in the first inventory
 ## Updated completion decision
 
 No honest all-P completion claim is possible yet. In addition to P70's 14 open real-world gates, P122.3 MCP, P124 Auto Layout/Component, P130 cloud sync, P133 OPFS/proxy and P143 full code split are not implemented in the reviewed main tree; P144 is only partially covered by P109; P142 is deployed but not target-device certified. Work on these needs defined contracts and/or real infrastructure rather than placeholder modules.
+
+
+## P134.2 incremental update — Auto Reframe (2026-11-21)
+
+- Candidate branch work/p134-auto-reframe-20261121: local lightweight Auto Reframe source/API, Node regression suite (11 assertions) and hosted same-origin Chromium export harness added.
+- P134 base scopes remain the existing histogram/waveform/vectorscope implementation; this increment adds a separate aspect-ratio workflow inside the existing Video Engine quality card.
+- Scope boundary: 9:16 / 1:1 saliency crop from edge contrast + frame difference; WebM export; no face-recognition model, no upload, no timeline or store mutation.
+- Acceptance status: pending hosted PR verification. Do not mark merged/automated PASS until the workflow result is inspected. Real footage, mobile/browser matrix and audio listening remain manual.
