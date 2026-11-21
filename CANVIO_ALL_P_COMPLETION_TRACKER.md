@@ -240,3 +240,16 @@ These are branch candidates, not merged or PASS. Previous mainline status remain
 | Editable stack project persistence | OPEN | Existing Pixel snapshot is flattened PNG data URL; no second store was added |
 | P139 Motion Lab | OPEN | Shape parent/null and text animator not yet implemented in this branch |
 | P70 acceptance | OPEN | Fourteen real-world gates remain unaccepted |
+
+## 2026-11-21 — P139.1 candidate tracking
+
+| Item | Status | Evidence / boundary |
+|---|---|---|
+| Null Controller | Candidate branch | Existing Motion Lab object record (type:null), hidden control object |
+| Parent/unparent | Candidate branch | Missing/cycle/non-null parent validation; child world position retained |
+| Parent transform | Candidate branch | Nested translation/rotation/scale helper wired into existing render loop |
+| Text Animator | Candidate branch | 5 per-grapheme modes, stagger/duration/strength, CVEasingP119 reuse |
+| Existing persistence | Candidate branch | Metadata stored within existing Motion Lab objs snapshot |
+| Node/browser tests | Node contract passed in prior run; browser pending | Chromium tests check render and snapshot/restore |
+| Precomp/motion blur | OPEN | Not included in P139.1 |
+| P139 full acceptance | OPEN | Real project and export playback remain pending |
