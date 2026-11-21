@@ -831,3 +831,14 @@ Hosted verification after the ffmpeg repair is complete:
 - Giới hạn: ≤100 MiB, ≤60 giây, tối đa 48 frame phân tích ở kích cỡ tối đa 192×108. Heuristic có thể bám vào vùng nhiều texture/contrast thay vì chủ thể; cảnh ít chi tiết sẽ kém ổn định. Không nhận diện mặt/AI object detection; chưa có manual focus override.
 - Test bổ sung: Node tests/p127/run-p134r-tests.cjs (11 assertion); Chromium UI/export và ffprobe tests/p145/run-p134r-browser.py. Kết quả hosted CI phải được kiểm trước khi đánh dấu merged/PASS. Nếu localhost bị chặn trong sandbox, ghi rõ môi trường, không tính là test ứng dụng thất bại.
 - Trạng thái: candidate trên branch riêng, chưa merge. Việc tiếp theo: hosted run xác nhận Node, same-origin app boot, UI analysis, WebM decode/duration/audio; sau đó rà lại bằng video thật dài hơn và điện thoại thật.
+
+
+## P133.2 — Proxy 720p cục bộ cho clip 4K (2026-11-21 · candidate)
+
+- Thêm canvio-p133-proxy.js / lot canvio-lot133p vào thẻ chất lượng hiện có của Video Engine.
+- Đọc media của clip đang chọn từ fileRefs hoặc object store media hiện hữu; không tạo kho media thứ hai. Dùng trimIn/duration để xuất đúng đoạn đã chọn.
+- Tạo WebM 30 fps, bitrate mục tiêu 3.5 Mbps; giữ tỷ lệ, cạnh dài tối đa 1280 px (ngang 1280×720, dọc 720×1280). Giới hạn đầu vào 500 MiB / 180 giây, chỉ chấp nhận nguồn 4K.
+- Đưa proxy vào timeline bằng CV.engines.video.importFiles() dưới dạng clip mới; clip gốc giữ nguyên để người dùng kiểm tra và thay thủ công. Không tự relink vì timeline hiện chưa có hợp đồng proxy/source mapping.
+- Âm thanh chỉ được giữ nếu captureStream() cung cấp audio track; WebM/codec phụ thuộc trình duyệt. Không hứa MP4/H.264 hay parity âm thanh tuyệt đối.
+- Test: Node tests/p127/run-p133p-tests.cjs; Chromium same-origin + fixture 4K + ffprobe/full decode tests/p145/run-p133-proxy-browser.py. Hosted workflow phải PASS trước khi đóng mục.
+- Trạng thái: candidate branch work/p133-proxy720p-rebased-20261121; chưa merge. OffscreenCanvas nền tách/upscale và migration media lớn sang OPFS vẫn còn mở, cần quota/migration/rollback.
