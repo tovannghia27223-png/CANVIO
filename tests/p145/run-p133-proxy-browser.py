@@ -48,5 +48,5 @@ with tempfile.TemporaryDirectory(prefix='canvio-p133p-') as td:
         checks['noPageErrors']=not errors
         browser.close()
     server.shutdown()
-    result={'suite':'P133.2 4K-to-720p proxy Chromium acceptance','checks':checks,'selectedSource':selected,'downloadBytes':out.stat().st_size if out.exists() else 0,'videoStream':video,'audioStream':audio,'status':details.get('status',''),'pageErrors':errors,'failed':[k for k,v in checks.items() if not v]}
+    result={'suite':'P133.2 4K-to-720p proxy Chromium acceptance','checks':checks,'selectedSource':selected,'timelineDetails':details,'downloadBytes':out.stat().st_size if out.exists() else 0,'videoStream':video,'audioStream':audio,'status':details.get('status',''),'pageErrors':errors,'failed':[k for k,v in checks.items() if not v]}
     print(json.dumps(result,ensure_ascii=False,indent=2));sys.exit(1 if result['failed'] else 0)
