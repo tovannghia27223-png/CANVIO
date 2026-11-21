@@ -23,7 +23,7 @@ const scanner=require('./js-global-scanner.cjs').runSelfTests();
 assert.equal(scanner.passed,scanner.total,'lexical scanner fixtures must all pass');
 console.log(JSON.stringify({
  suite:'P143 style/template/loader inventory validation',
- passed:12,total:12,
+ passed:16,total:16,
  styleBlocks:report.styles.blockCount,
  inlineStyleAttributes:report.styles.inlineStyleAttributeCount,
  templateBlocks:report.templates.count,
