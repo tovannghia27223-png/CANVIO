@@ -3717,3 +3717,12 @@ P125.3: `CVScrollFramesP125.PRESETS`, `decimate(frames,maxBytes)`; `buildHtml` n
 - Scope remains local-only: manual user action, decoded local base64 data URLs, hashes kept in page memory, maximum 40 assets / 25 MiB per asset / 64 MiB aggregate. Skipped or unsupported assets remain unverified; this is not remote/cloud inventory or cross-device synchronization.
 - Mainline merge records also supersede older candidate notes for P136.4 (PR #39, run #312) and P131.3 (PR #41, run #315). See the current Roadmap/QA/Handoff addenda and `CANVIO_ALL_P_COMPLETION_TRACKER.md` for the consolidated P-by-P boundary.
 - P70 remains `releaseCertified:false` / `BLOCKED_PENDING_REAL_WORLD_ACCEPTANCE`; all fourteen gates remain open. Do not call CANVIO 1.0 Stable or production-certified based on CI alone.
+
+## 2026-11-21 — Additional open scope found in handoff audit
+
+- `CANVIO_NEXT_AI_PROMPT.md` confirms the remaining P122.3 MCP item, P124 Auto Layout/Component, P133 OPFS/proxy, P143 code extraction and P144 Command Palette work were not all closed. P109 already owns the basic command palette; extend that owner after checking P144 parity rather than creating a second palette.
+- P122.1/P123 source suite passed 13/13 and P122.2 passed 14/14 in run #310. P122.2 remains Website Engine CSS-only; it does not edit content/icons, Poster/Slide or Project Vault version history.
+- P122.3 is explicitly described in the Roadmap as “MCP chưa làm”. No source/test or MCP threat/transport/permission contract is present. Do not invent network endpoints or broaden local data exposure.
+- P124/P133/P143 have no standalone source/test owner in the current main tree. P133 must reuse/coordinate with existing Project Vault/IndexedDB/media stores; do not introduce a second source of truth. P143 must be staged and parity-tested, not an all-at-once rewrite.
+- P142 Pages pipeline is confirmed successful on main run #192 (`44819441586`), including build, report and deploy jobs. This does not close real-origin Playwright, Windows/GTX 1650, Firefox/WebKit, touch or physical GPU acceptance.
+- PR #44 documentation reconciliation hosted verify run #320 (`44859258258`) succeeded. Artifact `CANVIO-23.3.111-GITHUB-RUNTIME-VERIFIED-320` SHA-256 `74cb03f31a7c55d94f69376b74f46a22bef1538b473aeca1165c42296f2e69ba`; PR-event branch commit step skipped by workflow design.
