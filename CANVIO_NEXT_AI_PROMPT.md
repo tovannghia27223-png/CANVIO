@@ -36,3 +36,10 @@ Quy tắc nhúng: mỗi lot là `<script id="canvio-lotNNN">` + bản độc l�
 - Dò tương phản cạnh + sai khác frame; 9:16/1:1; WebM; giới hạn 60 giây/100 MiB. Không phải face/object AI; không upload/đụng timeline.
 - Đọc kết quả PR/hosted CI trước khi merge. Không sửa PR #45. Nếu CI pass, kiểm source parity/index build/manifest trước khi xác nhận main.
 - P133 trên main đã có OPFS/recovery + denoise Worker; chỉ còn proxy 720p, OffscreenCanvas use-case cụ thể và migration tài sản lớn có quota/rollback. P143 vẫn là tách mã theo từng lot và parity test.
+
+
+## P144.3 — Contextual Studio help candidate (2026-11-21)
+
+- Branch work/p144-studio-help-20261121; source canvio-p144-ux.js version 144.3.0, embedded lot canvio-lot144u.
+- Contextual TIPS expanded to all registered CVWS Studio routes and utility pages; existing F1 dialog/palette/shortcuts/tour owner retained.
+- Tests verify API route coverage and Chromium verifies every registered CVWS route has at least two tips. Wait for hosted CI before merge.
