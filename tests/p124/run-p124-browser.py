@@ -28,13 +28,27 @@ async def main():
         assert await buttons.count() == 5, "expected five layout preset controls"
         assert await panel.locator("select[aria-label='Biến thể component'] option").count() == 4
         await panel.locator("select[aria-label='Biến thể component']").select_option("soft")
+        for selector, value in [
+            ("#cv-p124-title", "Bố cục kiểm thử"),
+            ("#cv-p124-gap", "28"),
+            ("#cv-p124-break-mobile", "680"),
+            ("#cv-p124-break-tablet", "1024"),
+            ("#cv-p124-cols-mobile", "1"),
+            ("#cv-p124-cols-tablet", "2"),
+            ("#cv-p124-cols-desktop", "4")
+        ]:
+            await panel.locator(selector).fill(value)
+        assert await panel.locator("#cv-p124-break-mobile").input_value() == "680"
         await panel.locator("button[data-p124-kind='grid']").click()
         await page.wait_for_function("window.__p124Inserted.length === 1")
         await page.wait_for_function("window.__p124SaveCount === 1")
         first = await page.evaluate("window.__p124Inserted[0]")
         assert 'data-canvio-auto-layout="grid"' in first
         assert 'data-canvio-variant="soft"' in first
-        assert "repeat(auto-fit,minmax" in first
+        assert "grid-template-columns:repeat(4,minmax(0,1fr))" in first
+        assert "@media(max-width:680px)" in first
+        assert "@media(max-width:1024px)" in first
+        assert "Bố cục kiểm thử" in first
         assert await page.evaluate("window.__p124SaveCount") == 1
         await page.evaluate("""() => { window.CV.engines.web.save = () => { window.__p124SaveCount++; return false; }; }""")
         await panel.locator("button[data-p124-kind='card']").click()
@@ -46,13 +60,16 @@ async def main():
         assert not errors, errors
         print(json.dumps({
             "suite": "P124 Chromium UI interaction",
-            "passed": 9,
-            "total": 9,
+            "passed": 12,
+            "total": 12,
             "checks": {
                 "panelMountsInCanonicalHost": True,
                 "fiveLayoutControls": True,
                 "fourComponentVariants": True,
                 "gridInsertUsesResponsiveCSS": True,
+                "breakpointControlsAcceptUserValues": True,
+                "mobileAndTabletMediaQueriesApplied": True,
+                "customTitleAndDesktopColumnsApplied": True,
                 "variantSelectionApplied": True,
                 "canonicalSaveCalled": True,
                 "saveFailureReported": True,
