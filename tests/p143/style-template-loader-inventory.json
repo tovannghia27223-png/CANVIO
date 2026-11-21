@@ -1,10 +1,10 @@
 {
   "format": "CANVIO_P143_STYLE_TEMPLATE_LOADER_INVENTORY",
   "version": 1,
-  "generatedAt": "2026-11-21T14:53:50.089Z",
+  "generatedAt": "2026-11-21T15:07:42.144Z",
   "source": "restored canonical index.html after all workflow-managed module integration steps",
   "purpose": "Inventory inline styles, template elements and dynamic resource-loader call sites. Dependency candidates use known global reads/exports and execution order only; they are heuristic and are not a human-reviewed semantic boot-order DAG.",
-  "htmlBytes": 5616945,
+  "htmlBytes": 5619042,
   "styles": {
     "blockCount": 119,
     "inlineStyleAttributeCount": 1490,

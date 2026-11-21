@@ -503,3 +503,7 @@ Candidate CI runs Node contract/security tests and Chromium against a local mock
 ## P137.2 character/table style QA
 
 Hosted Node and Chromium checks cover five named character styles, three table presets, selection inside one paragraph, persisted data-cv137-char/data-cv137-table metadata, inline styles and restyleHtml reapplication. Table rows/cells are not replaced and use the existing Layout Foundry page HTML owner. Cross-paragraph character selection and advanced table editing remain out of scope.
+
+## P119.2 shared easing transition QA
+
+Hosted Node tests load both P119 and P145.2 and verify actual preset/custom curve resolution. Hosted Chromium checks the P145.2 easing selector and compares the output frame at equal raw progress with linear and custom P119 curves, verifying that the derived easing value affects both renderer paths. Video Engine clip/keyframe easing and Website Engine motion remain unverified and are not part of this increment.

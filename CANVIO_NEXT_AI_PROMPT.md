@@ -198,3 +198,8 @@ Chỉ kiểm bằng tín hiệu/tệp tổng hợp và Chromium headless; chưa 
 ## P137.2 rich formatting — 2026-11-21
 
 - Adds selected-character styling and table presets to the existing P137 Layout Foundry owner. Check P137 Node + Chromium and P143 source parity before merge. Keep selection restricted to one paragraph and do not create a second document store.
+
+## P119.2 shared easing integration — 2026-11-21
+
+- Candidate shares CVEasingP119 with P145.2 transitions and P79 video-only segment export. Default linear is backward compatible; named presets/custom curve from #motionEase use the original P119 API.
+- Verify P145.2 Node+Chromium and P143 source parity; P119 remains partial for Video Engine clip/keyframe and Website Engine timelines.

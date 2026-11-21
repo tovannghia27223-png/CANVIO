@@ -277,3 +277,8 @@ PR #71 was closed as superseded by clean-main PR #73; the latter carries the cor
 
 - Extends P137.1 in the existing Layout Foundry module with selected-character style spans and three table presets. Applied metadata stays in existing page HTML; no second store.
 - Candidate only until Node/Chromium and P143 source parity checks pass. Multi-block text styling and advanced table behavior remain open.
+
+## P119.2 shared easing in P145.2 candidate — 2026-11-21
+
+- P145.2 now reads the original P119 named presets and custom cubic-bezier from Motion; linear remains the default. Applies the same easedProgress to shader, Canvas2D preview and P79 video-only transition export.
+- Keep P119 partial for Video Engine clip/keyframe and Website Engine timeline integration; merge only after Node/Chromium verification on current main.

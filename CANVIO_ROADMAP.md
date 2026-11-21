@@ -1009,3 +1009,9 @@ Hosted verification after the ffmpeg repair is complete:
 - Extended the existing Layout Foundry style module with five character styles (bold, italic, highlight, code, small-caps) applied to selection within one paragraph, and three reusable table presets (grid, report, minimal).
 - Inline style metadata is stored inside existing page HTML; style definitions remain localStorage convenience. Rehydration reapplies paragraph, character and table definitions without adding another editor/store.
 - Multi-block selection, nested character styles, table formulas/merged cells/sort/filter and print pagination remain outside this increment.
+
+## P119.2 — Share easing with Video Engine transitions
+
+- Extends the existing P119 CVEasingP119 presets and cubic-bezier solver to P145.2 shader transitions and video-only MP4 transition export. Default stays linear to preserve current output.
+- Named presets and "custom from Motion" map to P119.PRESETS / P119.parse. The same derived easedProgress is used in WebGL and Canvas2D fallback; P79 export sequence passes the same options per frame.
+- P139.1 and P145.2 now consume the shared P119 easing module. Video Engine clip/keyframe easing and Website Engine/CSS timeline remain open.
