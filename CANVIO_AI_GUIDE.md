@@ -3749,3 +3749,12 @@ P144 tour: thêm bước bằng cách thêm vào mảng `STEPS` ({sel,title,text
 - No face/object ML model, model download, network upload, timeline mutation, project-store mutation or new persistence owner. User manually imports the resulting WebM if needed.
 - Known limits: saliency heuristic can follow background texture/high contrast instead of the intended subject; no manual tracking-point correction, no MP4/H.264 export, max 60 seconds/100 MiB, browser codec/captureStream support varies. This is a lightweight reframing helper, not AI subject recognition.
 - Tests added: Node source regression tests/p127/run-p134r-tests.cjs (11 assertions) and same-origin Chromium + ffmpeg/ffprobe workflow tests/p145/run-p134r-browser.py. Hosted PR result is the acceptance gate; no full-app runtime PASS is claimed before the hosted run completes.
+
+
+## P144.3 — Contextual help across registered Studio routes (2026-11-21 · candidate)
+
+- Updated standalone source canvio-p144-ux.js / lot canvio-lot144u to version 144.3.0. Existing palette, shortcuts, F1 dialog, tour, recent commands and storage key remain owned by CVUxP144; no second help/palette system.
+- TIPS now contains page-specific guidance for the registered Design, Website & Profile, and Media routes from CVWS, plus Hub, CapCut handoff, Projects, Project Vault, Export, Object and Settings pages. The help overlay still uses currentPage() and F1; route keys are derived from the existing workspace map, not a new router.
+- Added API assertions for all known Studio routes and a hosted Chromium assertion that every registered CVWS route has at least two contextual tips.
+- Tests: tests/p127/run-p144u-tests.cjs and tests/p145/run-p144-browser.py; workflow integration refreshes the embedded lot before source parity/runtime checks. CI pending.
+- Help text states important boundaries: capcutEngine is a workflow hub, Video Engine owns the canonical timeline; Project Center differs from Project Vault; WebM/OBJ/preflight checks do not claim full MP4/PDF-X/GLTF/FBX certification.
