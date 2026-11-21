@@ -160,20 +160,33 @@ async function renderProxy(blob,clip,onProgress){
      if(scaler){
       if(!workerPending){
        workerPending=true;
+       var captureFinished=false;
+       var captureTimer=setTimeout(function(){
+        if(captureFinished||finished)return;
+        captureFinished=true;workerPending=false;
+        if(scaler){scaler.close();scaler=null;}
+        if(renderPath==='offscreen-worker')renderPath='main-canvas-fallback';
+        fallbackFrame();
+        if(video.ended||video.currentTime>=range.end-.025)finish();
+       },8000);
        createImageBitmap(video).then(function(frame){
-        if(finished){if(frame&&frame.close)frame.close();workerPending=false;return;}
+        if(captureFinished||finished){if(frame&&frame.close)frame.close();return;}
+        captureFinished=true;clearTimeout(captureTimer);
         if(!scaler||!scaler.send(frame)){
          if(frame&&frame.close)frame.close();
          workerPending=false;
          if(scaler){scaler.close();scaler=null;}
          if(renderPath==='offscreen-worker')renderPath='main-canvas-fallback';
          fallbackFrame();
+         if(video.ended||video.currentTime>=range.end-.025)finish();
         }
        }).catch(function(){
-        workerPending=false;
+        if(captureFinished||finished)return;
+        captureFinished=true;clearTimeout(captureTimer);workerPending=false;
         if(scaler){scaler.close();scaler=null;}
         if(renderPath==='offscreen-worker')renderPath='main-canvas-fallback';
         fallbackFrame();
+        if(video.ended||video.currentTime>=range.end-.025)finish();
        });
       }
      }else fallbackFrame();
