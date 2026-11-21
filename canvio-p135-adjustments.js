@@ -199,7 +199,7 @@ function mount(){
  '#cv135-panel .cv135-empty{padding:18px;color:var(--muted,#657184);font-size:12px;border:1px dashed var(--border,#dce3ee);border-radius:9px}#cv135-panel .cv135-inspector label{display:flex;justify-content:space-between;gap:8px;margin:10px 0 5px;font-size:11px;font-weight:700}#cv135-panel .cv135-inspector input[type=range]{width:100%;accent-color:var(--brand,#1769e0)}#cv135-panel .cv135-inspector-actions{margin-top:12px}'+
  '#cv135-panel .cv135-export{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;border-top:1px solid var(--border,#e3e8f0);margin-top:14px;padding-top:14px}#cv135-panel .cv135-export small{display:block;color:var(--muted,#657184);font-size:10px;margin-top:3px;max-width:430px}#cv135-panel .cv135-note{margin-top:12px;padding:10px 12px;background:var(--surface,#f4f6fa);border-radius:9px}@media(max-width:760px){#cv135-panel .cv135-body{grid-template-columns:1fr}#cv135-panel .cv135-export{align-items:flex-start}#cv135-panel .cv135-export .cv135-toolbar{width:100%}}@media(prefers-reduced-motion:reduce){#cv135-panel *{scroll-behavior:auto!important;transition:none!important}}';
  if(!doc.getElementById('canvio-lot135-css'))doc.head.appendChild(style);
- const note=page.querySelector('.ne-note');if(note)page.insertBefore(panel,note);else page.appendChild(panel);
+ const note=page.querySelector('.ne-note');if(note&&note.parentNode)note.parentNode.insertBefore(panel,note);else page.appendChild(panel);
  canvas=px.canvas||doc.getElementById('pxCanvas');status=panel.querySelector('#cv135-status');
  bind();installPixelHooks();render();mounted=true;return true;
 }
