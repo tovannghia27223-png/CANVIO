@@ -47,7 +47,7 @@ with tempfile.TemporaryDirectory(prefix='canvio-p134r-') as td:
             page.click('#cv134r-download')
         download=event.value;out=tmp/'reframed.webm';download.save_as(str(out))
         checks['downloadCreated']=out.exists() and out.stat().st_size>10000
-        probe=subprocess.run([FFPROBE,'-v','error','-count_frames','-show_entries','stream=codec_type,codec_name,width,height,duration,nb_read_frames,avg_frame_rate:format=duration','-of','json',str(out)],check=True,capture_output=True,text=True)
+        probe=subprocess.run([FFPROBE,'-v','error','-count_frames','-show_entries','stream=codec_type,codec_name,width,height,duration,nb_read_frames,avg_frame_rate,r_frame_rate:format=duration','-of','json',str(out)],check=True,capture_output=True,text=True)
         probe_data=json.loads(probe.stdout)
         streams=probe_data.get('streams',[])
         video=next((s for s in streams if s.get('codec_type')=='video'),{});audio=next((s for s in streams if s.get('codec_type')=='audio'),{})
@@ -61,8 +61,17 @@ with tempfile.TemporaryDirectory(prefix='canvio-p134r-') as td:
                 if float(stream.get('duration',0))>0:return float(stream['duration'])
             except (TypeError,ValueError):pass
             try:
-                rate=stream.get('avg_frame_rate','0/1').split('/')
-                fps=float(rate[0])/max(float(rate[1]),1e-9)
+                rates=[stream.get('avg_frame_rate','0/1'),stream.get('r_frame_rate','0/1')]
+                fps=0
+                for value in rates:
+                    rate=value.split('/')
+                    candidate=float(rate[0])/max(float(rate[1]),1e-9)
+                    if candidate>0:
+                        fps=candidate
+                        break
+                # Canvas.captureStream(FPS) requests a 30 fps track; Chromium may report 0/0 for WebM.
+                if fps<=0 and stream.get('codec_type')=='video':
+                    fps=30
                 return int(stream.get('nb_read_frames',0))/fps if fps>0 else 0
             except (TypeError,ValueError,ZeroDivisionError):return 0
         measured=max([float(fmt.get('duration',0) or 0)]+[stream_duration(s) for s in streams])
