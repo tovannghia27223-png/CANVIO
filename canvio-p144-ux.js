@@ -56,7 +56,20 @@ var TIPS = {
   export: ['Chọn đúng định dạng và kiểm tra codec/kích thước thực tế sau khi xuất.', 'Dùng File QC và công cụ độc lập để mở thử artifact; Blob được tạo không đồng nghĩa file đã đạt chuẩn.'],
   object: ['Kiểm tra mô hình 3D, camera và khả năng tải asset trước khi chia sẻ.', 'Offline OBJ viewer chỉ bao phủ profile hình học được hỗ trợ; không mặc định hỗ trợ GLTF/FBX đầy đủ.'],
   entry: ['Bắt đầu từ Hub hoặc chọn Studio theo loại sản phẩm cần làm.', 'Nếu chưa biết công cụ, dùng Ctrl+K tìm tính năng hoặc F1 để xem mẹo của trang.'],
-  settings: ['Thẻ Bộ nhớ & phục hồi cho biết dung lượng và các bản tự lưu.', 'Nếu app đóng đột ngột, lần mở sau có thể xuất hiện thanh khôi phục; hãy xem nội dung trước khi xác nhận.']
+  settings: ['Thẻ Bộ nhớ & phục hồi cho biết dung lượng và các bản tự lưu.', 'Nếu app đóng đột ngột, lần mở sau có thể xuất hiện thanh khôi phục; hãy xem nội dung trước khi xác nhận.'],
+  templates: ['Lọc mẫu theo ngành, phong cách và tỷ lệ; mở preview trước khi áp dụng.', 'Thư viện thành phần chèn vào Poster Studio; kiểm tra font, ảnh và quyền sử dụng của từng asset.'],
+  brand: ['Thiết lập palette, vai trò màu, font tiêu đề/nội dung và quy tắc thương hiệu.', 'Dùng preview và kiểm tra tuân thủ trước khi áp dụng; lưu bộ thương hiệu sau khi rà logo và tài sản.'],
+  designSystem: ['Quản lý token màu, font, khoảng cách và style dùng chung; kiểm tra giá trị trước khi áp dụng.', 'Thay token có thể ảnh hưởng nhiều thiết kế; thử trên bản sao hoặc một artboard trước khi áp dụng rộng.'],
+  responsive: ['Tạo biến thể theo tỷ lệ/kênh từ thiết kế hiện có; kiểm tra nội dung bị cắt ở từng khung.', 'Tên và tỷ lệ đầu ra phải khớp kênh đích; mở từng biến thể ở kích thước thật trước khi xuất.'],
+  collab: ['Ghi chú và activity log được lưu cục bộ; có thể xuất ghi chú để chia sẻ.', 'Đây chưa phải cộng tác real-time nhiều người dùng hay đồng bộ hai chiều; không giả định thay đổi của người khác tự xuất hiện.'],
+  hub: ['Kho tài nguyên tổng hợp giúp tìm và tái sử dụng media/asset đã nhập.', 'Kiểm tra nguồn, giấy phép và thông tin mô tả trước khi dùng asset trong sản phẩm hoặc phát hành.'],
+  platform: ['Workbench là điểm điều phối workspace, module registry, Data Workspace, Report Studio và Provider Registry.', 'Kiểm tra trạng thái module và cấu hình provider; thao tác provider chỉ chạy khi người dùng chủ động và cấu hình hợp lệ.'],
+  one: ['Tạo trọn bộ bắt đầu từ brief: mục tiêu, đối tượng, nội dung, kênh và định dạng đầu ra.', 'Rà từng artifact và nguồn asset trước khi xuất; prompt/handoff không đồng nghĩa mọi nội dung đã được AI tạo hoặc kiểm chứng.'],
+  promptForge: ['Chọn target, task, tỷ lệ và đầu ra rồi viết brief cụ thể để tạo prompt có cấu trúc.', 'Prompt Forge chỉ chuẩn bị/copy/export prompt và handoff; việc sinh ảnh/video phụ thuộc provider ngoài được người dùng chủ động chọn.'],
+  insight: ['Đọc điểm thiết kế, 12 tiêu chí và attention map như gợi ý heuristic để rà bố cục.', 'Điểm số không phải chứng nhận WCAG, hiệu quả chuyển đổi hay đánh giá người dùng thật; cần kiểm tra thủ công.'],
+  hallmark: ['Dùng Design Intelligence để rà nguyên tắc, creative direction và các điểm cần cải thiện.', 'Đề xuất là heuristic; xác nhận lại theo brief, dữ liệu thương hiệu và yêu cầu của người duyệt.'],
+  guide: ['Dùng mục lục/tìm kiếm để mở đúng phần hướng dẫn và kiểm tra phiên bản tài liệu.', 'Nếu cần trợ giúp thao tác ngay trong Studio, nhấn F1 để mở mẹo theo trang hiện tại.'],
+  shield: ['Security Hub rà soát import/export, sanitizer, URL/CSS nguy hiểm và ranh giới dữ liệu nhạy cảm.', 'Kết quả audit trong trình duyệt không thay thế CSP/SRI, kiểm thử server headers hay security review trên hệ thống production.']
 };
 function lsGet(k, d) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }
 function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
@@ -149,7 +162,7 @@ function tests() {
     tourStepsWellFormed: STEPS.length === 4 && STEPS.every(function (x) { return x.title && x.text; }),
     readOnlyAutoRunOnly: CMDS.filter(function (c) { return c.run; }).every(function (c) { return /^(#cv127q-run|#cv134-run|#cv133-now)$/.test(c.run); }),
     navKeysUnique: Object.keys(NAV).length === 8 && Object.keys(NAV).every(function (k) { return NAV_LABEL[k] && k.length === 1; }),
-    tipsCoverAllKnownStudioRoutes: ['poster','layoutFoundry','vectorForge','designEngine','autodesign','cvstudio','web','webEngine','portfolioStudio','hrvisual','pixelStudio','colorStudio','clarityLab','imageStudio','artcraft','videoEngine','motionLab','videoStudio','shotcraft','motion','motionCut','creativeHub'].every(function (k) { return TIPS[k] && TIPS[k].length >= 2; }),
+    tipsCoverAllKnownStudioRoutes: ['poster','layoutFoundry','vectorForge','designEngine','templates','brand','designSystem','responsive','autodesign','cvstudio','web','webEngine','portfolioStudio','hrvisual','pixelStudio','colorStudio','clarityLab','imageStudio','artcraft','videoEngine','motionLab','videoStudio','shotcraft','motion','motionCut','creativeHub','collab','hub','platform','one','promptForge','insight','hallmark','guide','shield'].every(function (k) { return TIPS[k] && TIPS[k].length >= 2; }),
     tipsCoverProjectAndUtilityPages: ['home','projects','projectVault','export','object','entry','capcutEngine','assets','settings'].every(function (k) { return TIPS[k] && TIPS[k].length >= 2; }),
     tipsAvoidGenericFallbackForStudioRoutes: ['poster','layoutFoundry','vectorForge','designEngine','autodesign','cvstudio','web','webEngine','portfolioStudio','hrvisual','pixelStudio','colorStudio','clarityLab','imageStudio','artcraft','videoEngine','motionLab','videoStudio','shotcraft','motion','motionCut','creativeHub'].every(function (k) { return TIPS[k].some(function (t) { return t.length > 25; }); })
   };
