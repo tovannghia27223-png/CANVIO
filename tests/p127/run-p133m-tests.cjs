@@ -1,0 +1,15 @@
+'use strict';
+const fs=require('node:fs'),vm=require('node:vm'),path=require('node:path');
+const source=fs.readFileSync(path.join(__dirname,'..','..','canvio-p133-media-opfs.js'),'utf8');
+const html=fs.readFileSync(path.join(__dirname,'..','..','index.html'),'utf8');
+const match=html.match(/<script id="canvio-lot133m">([\s\S]*?)<\/script>/);
+if(!match)throw new Error('P133.4 embedded lot missing');
+if(match[1].trim()!==source.trim())throw new Error('P133.4 source/embedded parity mismatch');
+const sandbox={window:{},document:{readyState:'loading',addEventListener(){}},navigator:{},console,Promise,Math,Number,String,Object,Array,RegExp,Blob,Set,Map,Date,JSON,Uint8Array,Error};
+sandbox.window.window=sandbox.window;vm.createContext(sandbox);vm.runInContext(source,sandbox);
+const api=sandbox.window.CVMediaOPFSP133;if(!api)throw new Error('P133.4 API missing');
+const checks=api.tests();
+checks.fallbackWithoutOpfs=api.supportsOpfs()===false;
+const failed=Object.keys(checks).filter(k=>checks[k]!==true);
+console.log(JSON.stringify({suite:'P133.4 same-owner OPFS media sidecar',checks,failed},null,2));
+if(failed.length)process.exit(1);

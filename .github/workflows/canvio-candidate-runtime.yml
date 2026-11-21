@@ -255,6 +255,44 @@ jobs:
           if((html.match(/id="canvio-lot133p"/g)||[]).length!==1)throw new Error('P133.2 duplicate/missing lot');fs.writeFileSync(file,html,'utf8');
           NODE
 
+      - name: Integrate P133.4 same-owner large-media OPFS sidecar
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs=require('node:fs');
+          const file='index.html';let html=fs.readFileSync(file,'utf8');
+          const source=fs.readFileSync('canvio-p133-media-opfs.js','utf8').trim();
+          if(!source.includes('window.CVMediaOPFSP133'))throw new Error('P133.4 module contract missing');
+          const replacements=[
+            {
+              old:"function vPut(id,file){return new Promise(function(resolve,reject){if(!videoState.db){resolve(false);return}var tx;try{tx=videoState.db.transaction('media','readwrite');tx.objectStore('media').put({id:id,blob:file})}catch(e){reject(e);return}tx.oncomplete=function(){resolve(true)};tx.onerror=function(){reject(tx.error||new Error('Không lưu được media vào IndexedDB'))}})}",
+              next:"function vPut(id,file){var sidecar=window.CVMediaOPFSP133;if(sidecar&&typeof sidecar.put==='function')return sidecar.put(id,file,videoState).then(function(){return true});return new Promise(function(resolve,reject){if(!videoState.db){resolve(false);return}var tx;try{tx=videoState.db.transaction('media','readwrite');tx.objectStore('media').put({id:id,blob:file})}catch(e){reject(e);return}tx.oncomplete=function(){resolve(true)};tx.onerror=function(){reject(tx.error||new Error('Không lưu được media vào IndexedDB'))}})}"
+            },
+            {
+              old:"function vGet(id){return new Promise(function(resolve){if(!videoState.db){resolve(null);return}var q;try{q=videoState.db.transaction('media').objectStore('media').get(id)}catch(e){resolve(null);return}q.onsuccess=function(){resolve(q.result&&q.result.blob)};q.onerror=function(){resolve(null)}})}",
+              next:"function vGet(id){var sidecar=window.CVMediaOPFSP133;if(sidecar&&typeof sidecar.get==='function')return sidecar.get(id,videoState).then(function(blob){return blob||null});return new Promise(function(resolve){if(!videoState.db){resolve(null);return}var q;try{q=videoState.db.transaction('media').objectStore('media').get(id)}catch(e){resolve(null);return}q.onsuccess=function(){resolve(q.result&&q.result.blob)};q.onerror=function(){resolve(null)}})}"
+            },
+            {
+              old:"function vDelete(id){return new Promise(function(resolve){if(!videoState.db||!id){resolve(false);return}try{var tx=videoState.db.transaction('media','readwrite');tx.objectStore('media').delete(id);tx.oncomplete=function(){resolve(true)};tx.onerror=tx.onabort=function(){resolve(false)}}catch(e){resolve(false)}})}",
+              next:"function vDelete(id){var sidecar=window.CVMediaOPFSP133;if(sidecar&&typeof sidecar.remove==='function')return sidecar.remove(id,videoState);return new Promise(function(resolve){if(!videoState.db||!id){resolve(false);return}try{var tx=videoState.db.transaction('media','readwrite');tx.objectStore('media').delete(id);tx.oncomplete=function(){resolve(true)};tx.onerror=tx.onabort=function(){resolve(false)}}catch(e){resolve(false)}})}"
+            }
+          ];
+          for(const item of replacements){
+            if(html.includes(item.next))continue;
+            if(!html.includes(item.old))throw new Error('P133.4 canonical media owner hook not found');
+            html=html.replace(item.old,item.next);
+          }
+          const id='canvio-lot133m',tag='<script id="'+id+'">\n'+source+'\n</script>';
+          const re=/(<script\b(?=[^>]*\bid=["']canvio-lot133m["'])[^>]*>)[\s\S]*?(<\/script\s*>)/i;
+          if(re.test(html))html=html.replace(re,tag);
+          else{const at=html.lastIndexOf('</body>');if(at<0)throw new Error('P133.4 no closing body');html=html.slice(0,at)+tag+'\n'+html.slice(at);}
+          if((html.match(/id="canvio-lot133m"/g)||[]).length!==1)throw new Error('P133.4 duplicate/missing lot');
+          for(const marker of ["window.CVMediaOPFSP133","sidecar.put(id,file,videoState)","sidecar.get(id,videoState)","sidecar.remove(id,videoState)"])if(!html.includes(marker))throw new Error('P133.4 integration missing '+marker);
+          fs.writeFileSync(file,html,'utf8');
+          console.log('P133.4 staged OPFS media bytes through existing CANVIO_81_MEDIA metadata owner');
+          NODE
+
       - name: Integrate P144.3 contextual Studio help
         shell: bash
         run: |
@@ -614,6 +652,7 @@ jobs:
           node tests/p127/run-p140c-tests.cjs
           node tests/p124/run-p124-tests.cjs
           node tests/p127/run-p133p-tests.cjs
+          node tests/p127/run-p133m-tests.cjs
           node tests/p127/run-p133r-tests.cjs
           node tests/p127/run-p144u-tests.cjs
           node tests/hosted/p107-portable-roundtrip.cjs
@@ -678,6 +717,7 @@ jobs:
           /tmp/canvio-playwright/bin/python tests/p124/run-p124-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p133-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p133-proxy-browser.py
+          /tmp/canvio-playwright/bin/python tests/p145/run-p133m-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p144-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p144t-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p133w-browser.py

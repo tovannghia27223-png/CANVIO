@@ -26,6 +26,10 @@ function getBlob(state,clip){
  var id=clip.mediaId||clip.id,ref=state&&state.fileRefs&&state.fileRefs[id];
  if(ref&&typeof ref.arrayBuffer==='function')return Promise.resolve(ref);
  if(ref&&ref.blob)return Promise.resolve(ref.blob);
+ var sidecar=window.CVMediaOPFSP133;
+ if(sidecar&&typeof sidecar.get==='function'){
+  return sidecar.get(id,state).then(function(blob){return blob||null;}).catch(function(){return null;});
+ }
  return new Promise(function(resolve){
   if(!state||!state.db){resolve(null);return;}
   var req;try{req=state.db.transaction('media').objectStore('media').get(id);}catch(e){resolve(null);return;}
