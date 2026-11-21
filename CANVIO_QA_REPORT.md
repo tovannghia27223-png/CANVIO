@@ -376,3 +376,11 @@ The candidate workflow runs standalone/embedded source parity and API tests for 
 - P122.3 MCP, P124 Auto Layout/Component, P133 OPFS/proxy and P143 full code split have no source/test owner in the current main tree; P144 overlaps P109's existing palette and needs scope parity review. P130 remains blocked on real backend/RLS/two-device infrastructure.
 - P142 Pages deployment main run #192 (`44819441586`) passed build, report and deploy jobs; real-origin/browser/physical-device matrix remains manual.
 - P70 remains fail-closed with 14/14 real-world gates open.
+
+
+## P124 — Responsive Auto Layout candidate (2026-11-21)
+
+- Branch work/p124-autolayout-rebased-20261121; source canvio-p124-autolayout.js, lot canvio-lot124.
+- Existing Website Engine integration only: five layout presets, four card variants, CVWeb.addComponents() + CV.engines.web.save().
+- Node API/source parity and 390 px Chromium interaction tests are wired into hosted runtime workflow. Pending result; no PASS/merge claim yet.
+- Partial acceptance: arbitrary component conversion, visual breakpoint editor, nested variants, drag/resize constraints, keyboard/screen-reader and real GrapesJS screenshot remain open.
