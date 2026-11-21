@@ -13,3 +13,8 @@
 - P136.4 superseding status: merged PR #39; hosted run #312 PASS. Six static SVG pattern fills, limited to multicolour Image Trace.
 - P131.3 superseding status: merged PR #41; hosted run #315 PASS. Safe local HTML body-fragment import, max 5 MiB, with the existing sanitizer/Website Engine save path.
 - All three updates retain their stated scope limits. P70 remains fail-closed with fourteen manual real-world gates open.
+
+- PR #44 docs/release reconciliation: hosted workflow #320 PASS (all verify job steps succeeded; final PR-only commit step skipped by design). Artifact 21,602,814 bytes; SHA-256 `74cb03f31a7c55d94f69376b74f46a22bef1538b473aeca1165c42296f2e69ba`.
+- Scope audit correction: Roadmap explicitly says P122.3 MCP is not done; P124 Auto Layout/Component, P133 OPFS/proxy and P143 full modularization have no owner/tests in main; P144 is partly covered by P109 and needs parity review, not a duplicate palette.
+- P142 Pages deployment on main run #192 succeeded (build, status, deploy jobs); real-origin and target-device acceptance remain open.
+- P70 remains fail-closed; fourteen real-world gates are still pending.
