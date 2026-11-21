@@ -117,3 +117,14 @@ Pull trước (`git pull --rebase origin main`; CI bot hay push commit build). A
 - P133.2 4K proxy acceptance: source and proxy both remain in timeline, 1280×720 VP9 plus Opus, full decode, original unchanged.
 - Artifact #387: 21,753,092 bytes, SHA-256 `31a2ba6e7494fd8e6fdf65210ef2714e43bf49dae399d910b8f4fe5e84b1f958`.
 - Still externally/manual: P70 14 gates, P130 Supabase/RLS/two-device sync, P122.3 MCP security/transport contract, P124 advanced editor controls, P133 OffscreenCanvas/large media OPFS and full P143 semantic dependency/style/template extraction.
+
+
+## Follow-on work started — 2026-11-21 (candidate branch; not merged)
+
+- Branched from main at f8e476cc33c726c8c5a8ff6d5292e4b8ef1f270f into work/p133-offscreen-p143-style-audit-20261121.
+- P133.3: added OffscreenCanvas Worker scaling into the existing 4K proxy pipeline; worker uses transferred ImageBitmap frames, single-frame backpressure, cleanup and fallback. Updated Node/browser tests to require actual Worker usage and output integrity.
+- P124.2: added configurable responsive breakpoints and mobile/tablet/desktop columns plus content/gap/min-width controls; expanded source and Chromium tests.
+- P143.3: added stylesheet/inline-style/template/dynamic-loader inventory and heuristic dependency candidates, with validation wired into hosted CI and artifact upload.
+- Changes are not merged and no CI PASS is claimed yet. The next step is hosted PR verification, fix any failing assertions, then merge only if the full candidate suite passes.
+- Real-world manual testing is deferred as requested. P70's fourteen gates remain OPEN. P130 Supabase sync and P122.3 MCP remain blocked on the necessary real infrastructure/security contract.
+
