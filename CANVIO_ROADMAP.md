@@ -1033,3 +1033,19 @@ Hosted verification after the ffmpeg repair is complete:
 
 - Candidate PR #83 is being rebuilt on the latest mainline after P135.2. The dependency-free scanner records static global writes, reads, simple top-level declarations, source order and SHA evidence; it adds no runtime code and moves no script/style/template or boot order.
 - Its output is a lexical candidate map, not a semantic dependency/data-flow DAG. Template interpolation, destructured/aliased globals, computed names, eval, conditional execution and call-time ordering remain unproven. P143 Phase 3 staged extraction is still open until human-reviewed boundaries plus rollback, app regression, offline/PWA and CSP acceptance pass.
+
+
+## Verified mainline update — P143.4 — 2026-11-21
+
+- PR #83 merged to main as `29acd1192da8e42bad845248b1110d30a6cbfc44`. Post-merge workflow #551 passed 53/53; GitHub Pages #275 passed build/report/deploy.
+- P143 standalone/inline parity 32/32; lexical scanner fixtures 14/14; style/template/loader inventory verifier 17/17. Inventory: 119 style blocks, 1,490 inline style attributes, 78 dynamic loader sites, 456 lexical dependency candidates, 33 unresolved references and 209 same-script references.
+- The 456 edges are lexical order evidence, not semantic runtime dependencies or a reviewed AST/data-flow graph. Template interpolation, destructured/aliased names, computed properties, eval, conditional writes and call-time order remain unproven. P143 Phase 3 staged extraction/rollback/offline/PWA/CSP remains open.
+
+
+## P119.3 Video Engine keyframe easing — candidate — 2026-11-21
+
+- Adds the six existing `CVEasingP119.PRESETS` to the native Video Engine keyframe inspector and a safe "Lấy đường cong từ Motion" action for cubic-bezier values from the existing `#motionEase` control. `linear()` spring output is rejected as a non-Bezier curve rather than approximated silently.
+- Writes only the existing `#vtKFEasing` and `#vtKFCurveX1/Y1/X2/Y2` controls. The user still commits through native `CV.engines.video.apply()`; existing `vPushUndo`, clip motion, timeline save, `snapshotState()` and `restoreState()` remain the owners.
+- The canonical `vMotionEase` evaluator delegates to `CVEasingP119.bez` only when the stored values can be represented without P119 normalisation loss (Y >= -1 and at most three decimal places). Legacy Video Engine curves outside that domain use the original evaluator, preserving old projects.
+- Candidate files: `canvio-p119-video.js` / `canvio-lot119v`, `tests/p127/run-p119v-tests.cjs`, `tests/p145/run-p119v-browser.py`; P143 parity is extended from 32 to 33 module pairs.
+- No new timeline, project database, localStorage/IndexedDB key, history stack, editor or easing registry is introduced. Website Engine/CSS animation timeline integration, real footage, physical GPU and target-device frame-rate acceptance remain open pending hosted and manual checks.
