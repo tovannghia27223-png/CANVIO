@@ -353,10 +353,11 @@ jobs:
           const fs=require('node:fs');
           const file='index.html',source=fs.readFileSync('canvio-p139-motionlab.js','utf8').trim(),id='canvio-lot139',open='<script id="'+id+'">',close='</script>';
           if(!source.includes('root.CVMotionLabP139'))throw new Error('P139.1 source contract missing');
-          let html=fs.readFileSync(file,'utf8'),tag=open+'\\n'+source+'\\n'+close;
+          const nl=String.fromCharCode(10);
+          let html=fs.readFileSync(file,'utf8'),tag=open+nl+source+nl+close;
           const pos=html.indexOf(open);
           if(pos>=0){const end=html.indexOf(close,pos);if(end<0)throw new Error('P139.1 embedded lot is not closed');html=html.slice(0,pos)+tag+html.slice(end+close.length);}
-          else{const body=html.lastIndexOf('</body>');if(body<0)throw new Error('P139.1 index body close missing');html=html.slice(0,body)+tag+'\\n'+html.slice(body);}
+          else{const body=html.lastIndexOf('</body>');if(body<0)throw new Error('P139.1 index body close missing');html=html.slice(0,body)+tag+nl+html.slice(body);}
           if((html.match(/id="canvio-lot139"/g)||[]).length!==1)throw new Error('P139.1 duplicate/missing lot');
           fs.writeFileSync(file,html,'utf8');
           console.log('P139.1 Motion Lab hierarchy and renderer adapter embedded in canonical index.html');
