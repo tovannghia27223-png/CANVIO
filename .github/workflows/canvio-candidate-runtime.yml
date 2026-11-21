@@ -716,6 +716,7 @@ jobs:
           /tmp/canvio-playwright/bin/python tests/p145/run-p138-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p140-browser.py
           /tmp/canvio-playwright/bin/python tests/p124/run-p124-browser.py
+          /tmp/canvio-playwright/bin/python tests/p145/run-p135-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p133-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p133-proxy-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p144-browser.py
@@ -725,7 +726,6 @@ jobs:
           /tmp/canvio-playwright/bin/python tests/p145/run-p141-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p128-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p137-browser.py
-          /tmp/canvio-playwright/bin/python tests/p145/run-p135-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p133w-browser.py
 
       - name: Refresh Guide, Roadmap, QA, Acceptance Matrix and Manifest
