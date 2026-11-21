@@ -61,3 +61,10 @@ Pull trước (`git pull --rebase origin main`; CI bot hay push commit build). A
 - Added page-specific guidance for all 13, using Guide-documented behavior and explicit boundaries (e.g. collab is local notes/activity, Prompt Forge is prompt handoff, Shield does not certify server headers).
 - P133.2 passed all 11 Chromium checks in the same run, including actual timeline import, clip duration, audio, full decode and original preservation. P124 passed 9/9.
 - Rerun required to verify all 38 CVWS routes have contextual help; no merge claim until that coverage check passes.
+
+## P143 Phase 1 — standalone module parity candidate
+
+- Created work/p143-source-parity-audit-20261121.
+- Added a manifest and audit for 20 workflow-managed standalone sources vs canonical embedded lots, including unique lot, JS syntax, content parity and classic-script safety.
+- Integrated the new gate before full inline HTML/JS audit.
+- Added CANVIO_P143_SOURCE_SPLIT_PLAN.md and updated Guide, Roadmap, completion tracker, handoff prompt, QA and acceptance matrix. Hosted CI pending; full index modularization remains open.
