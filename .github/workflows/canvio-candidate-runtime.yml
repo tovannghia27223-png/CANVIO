@@ -227,6 +227,26 @@ jobs:
           console.log('P134.2 local Auto Reframe integrated into canonical index.html');
           NODE
 
+      - name: Integrate P144.3 contextual help for all registered Studio routes
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs=require('node:fs');
+          const file='index.html',source=fs.readFileSync('canvio-p144-ux.js','utf8').trim();
+          if(!source.includes("version: '144.3.0'"))throw new Error('P144.3 source version missing');
+          const id='canvio-lot144u',open='<script id="'+id+'">';
+          let html=fs.readFileSync(file,'utf8'),at=html.indexOf(open);
+          if(at<0)throw new Error('P144 embedded lot missing');
+          if(html.indexOf(open,at+1)>=0)throw new Error('P144 duplicate lot');
+          const start=at+open.length,end=html.indexOf('</script>',start);
+          if(end<0)throw new Error('P144 embedded script close missing');
+          html=html.slice(0,start)+'\n'+source+'\n'+html.slice(end);
+          if((html.match(/id="canvio-lot144u"/g)||[]).length!==1)throw new Error('P144 embedded lot duplicate/missing');
+          fs.writeFileSync(file,html,'utf8');
+          console.log('P144.3 contextual help integrated');
+          NODE
+
       - name: Integrate P131.3 safe HTML import into canonical security hub
         shell: bash
         run: |
