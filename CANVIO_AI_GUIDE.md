@@ -3749,3 +3749,25 @@ P144 tour: thêm bước bằng cách thêm vào mảng `STEPS` ({sel,title,text
 - No face/object ML model, model download, network upload, timeline mutation, project-store mutation or new persistence owner. User manually imports the resulting WebM if needed.
 - Known limits: saliency heuristic can follow background texture/high contrast instead of the intended subject; no manual tracking-point correction, no MP4/H.264 export, max 60 seconds/100 MiB, browser codec/captureStream support varies. This is a lightweight reframing helper, not AI subject recognition.
 - Tests added: Node source regression tests/p127/run-p134r-tests.cjs (11 assertions) and same-origin Chromium + ffmpeg/ffprobe workflow tests/p145/run-p134r-browser.py. Hosted PR result is the acceptance gate; no full-app runtime PASS is claimed before the hosted run completes.
+
+## P124 — Responsive Auto Layout & Component variants (2026-11-21 · candidate)
+
+- Source canvio-p124-autolayout.js; embedded lot canvio-lot124; API window.CVAutoLayoutP124 (inspect, normalize, render, insert, mount, tests).
+- Mounts only inside #page-webEngine and inserts through CVWeb.addComponents(); persists with CV.engines.web.save(). No second GrapesJS instance, project store or external dependency.
+- Presets: Stack, Row/Flex-wrap, Grid auto-fit/minmax, Split and Card. Four card variants: surface, outline, elevated and soft. Inputs are clamped and user text escaped.
+- Tests: tests/p124/run-p124-tests.cjs and tests/p124/run-p124-browser.py (390 px Chromium interaction). Partial boundary: no arbitrary selected-component conversion, visual breakpoint editor, nested variant sync, drag/resize constraints, or complete keyboard/screen-reader and real GrapesJS screenshot acceptance.
+
+## P133.2 — Local 4K to 720p proxy (2026-11-21 · candidate)
+
+- Source canvio-p133-proxy.js; embedded lot canvio-lot133p; API window.CVProxyP133 (is4k, outputSize, trimRange, getBlob, renderProxy, mount, tests).
+- UI mounts inside existing Video Engine P127 quality card. Reads selected clip through existing CV.engines.video._state() media refs/IndexedDB and uses existing CV.engines.video.importFiles() to add proxy as a new clip.
+- Source guard: 4K landscape/portrait, ≤500 MiB, ≤180 seconds selected trim. Output preserves ratio with longest dimension capped at 1280 px (1280×720 landscape or 720×1280 portrait).
+- Local Canvas captureStream + MediaRecorder WebM, 30 fps/3.5 Mbps targets. Audio only if HTMLVideoElement.captureStream() exposes an audio track. Original clip/timeline remain unchanged; no upload, new media DB, automatic relink or deletion.
+- Tests: tests/p127/run-p133p-tests.cjs and hosted same-origin Chromium + ffmpeg/ffprobe tests/p145/run-p133-proxy-browser.py. Pending hosted acceptance. Limits: WebM only, browser codec/audio variation, heavy 4K decode memory/GPU; no transparent source/proxy toggle or automatic relink.
+
+## P144.3 — Contextual help across registered Studio routes (2026-11-21 · candidate)
+
+- Updates existing CVUxP144 owner to 144.3.0; keeps palette, shortcuts, F1 dialog, first-run tour and recent-command storage in one module.
+- TIPS covers registered CVWS routes across Design, Website/Profile and Media, plus Hub, CapCut handoff, Projects, Project Vault, Export, Object and Settings. No second router/help/palette.
+- Help states boundaries: CapCut Engine is a workflow hub and Video Engine owns the canonical timeline; Project Center differs from Project Vault; WebM/OBJ/preflight do not imply full MP4/PDF-X/GLTF/FBX certification.
+- Tests: tests/p127/run-p144u-tests.cjs and hosted Chromium route coverage in tests/p145/run-p144-browser.py. Pending hosted CI; human wording/accessibility review remains manual.
