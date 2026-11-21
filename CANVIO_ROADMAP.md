@@ -819,3 +819,14 @@ Hosted verification after the ffmpeg repair is complete:
 - `CVUxP144.startTour/closeTour/tourDone`: tour 4 bước ở trang chủ (chào mừng, Ctrl+K, thẻ bắt đầu, F1/Alt+Shift/tự lưu), làm nổi bật mục tiêu bằng viền, phím Enter/Esc/Tab, lưu `canvio144:tour`; tự bật 3,5 giây sau khi vào trang chủ lần đầu (không bật khi có thanh khôi phục sự cố, khi palette mở, hoặc khi `navigator.webdriver` = true để không chặn test tự động). Lệnh palette "Xem lại hướng dẫn nhanh" bật lại. Test: `tests/p145/run-p144t-browser.py` (12 mục, ẩn webdriver để chạy đường tự bật).
 - Chưa làm: trợ giúp riêng cho từng Studio còn lại.
 
+
+
+## P133.2 — Proxy 720p cục bộ cho clip 4K (2026-11-21 · candidate)
+
+- Thêm canvio-p133-proxy.js / lot canvio-lot133p, gắn vào thẻ chất lượng hiện có của Video Engine.
+- Đọc media của clip video đang chọn từ fileRefs hoặc object store media hiện hữu; không tạo kho media thứ hai. Dùng trimIn/duration hiện tại để xuất đúng đoạn đã chọn.
+- Tạo WebM 30 fps, bitrate mục tiêu 3.5 Mbps; giữ tỷ lệ, cạnh dài tối đa 1280 px (ngang 1280×720, dọc 720×1280). Giới hạn đầu vào 500 MiB / 180 giây và chỉ chấp nhận nguồn 4K.
+- Đưa proxy trở lại timeline bằng CV.engines.video.importFiles() dưới dạng clip mới; giữ clip gốc nguyên vẹn để người dùng nghe/xem và thay thủ công. Không tự relink hay thay nguồn gốc vì chưa có hợp đồng proxy/source mapping trong timeline hiện tại.
+- Âm thanh chỉ được giữ nếu captureStream() cung cấp audio track; WebM/codec phụ thuộc trình duyệt. Không hứa MP4/H.264 hay parity âm thanh tuyệt đối.
+- Test mới: Node tests/p127/run-p133p-tests.cjs; Chromium same-origin + fixture 4K + ffprobe/full decode tests/p145/run-p133-proxy-browser.py. Workflow hosted phải PASS trước khi đóng mục.
+- Trạng thái: candidate branch work/p133-proxy720p-20261121; chưa merge. Các phần OffscreenCanvas nền tách/upscale và chuyển media lớn sang OPFS vẫn chưa làm; chỉ thực hiện sau khi xác định rõ owner, quota, migration và rollback.
