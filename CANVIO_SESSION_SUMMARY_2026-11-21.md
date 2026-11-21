@@ -40,3 +40,10 @@ Pull trước (`git pull --rebase origin main`; CI bot hay push commit build). A
 - Bản nhẹ phân tích chuyển động + cạnh/độ tương phản, chọn crop 9:16 hoặc 1:1; xuất WebM tại 720×1280 / 1080×1080. File cục bộ ≤100 MiB, ≤60 giây; không dùng face model, không gửi mạng, không thay timeline/store.
 - Đã thêm bước tích hợp lot canvio-lot134r và lệnh Node/browser test vào hosted workflow. Kết quả CI/PR chưa được xác nhận trong báo cáo này.
 - Chưa nghiệm thu: full-app same-origin CI, footage đời thực dài, âm thanh bằng tai người, Firefox/WebKit và mobile thật. Auto Reframe có thể bám texture/contrast không phải chủ thể.
+
+
+## P124 — rebased Auto Layout candidate
+
+- Tạo branch work/p124-autolayout-rebased-20261121 từ main mới nhất; mang source/tests của PR #45 sang để tránh base cũ diverged/dirty.
+- Giữ 5 preset Stack/Row/Grid/Split/Card và 4 variants; dùng Website Engine adapter/save hiện có.
+- Thêm integration step và Node/Chromium tests vào hosted workflow. CI pending; chưa merge. Các phần convert arbitrary component, breakpoint editor, nested variant sync, drag/resize và accessibility còn mở.
