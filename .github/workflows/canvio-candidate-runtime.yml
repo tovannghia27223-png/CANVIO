@@ -623,11 +623,45 @@ jobs:
           console.log('P85 vendor manifest SHA verified:',m.files.length,'files');
           NODE
 
+      - name: Integrate P119.3 shared presets with canonical Video Engine keyframes
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs=require('node:fs');
+          const file='index.html',source=fs.readFileSync('canvio-p119-video.js','utf8').trim(),open='<script id="canvio-lot119v">',close='</script>';
+          if(!source.includes("version:'119.3.0'")||!source.includes('window.CVVideoEasingP119'))throw new Error('P119.3 module contract missing');
+          let html=fs.readFileSync(file,'utf8');
+          const tag=open+'\n'+source+'\n'+close,pos=html.indexOf(open);
+          if(pos>=0){const end=html.indexOf(close,pos);if(end<0)throw new Error('P119.3 embedded lot is not closed');html=html.slice(0,pos)+tag+html.slice(end+close.length);}
+          else{const at=html.lastIndexOf('</body>');if(at<0)throw new Error('P119.3 body close missing');html=html.slice(0,at)+tag+'\n'+html.slice(at);}
+          const oldMotion="function vMotionEase(p,m,seg){var bz=vMotionBezier(m,seg);if(p<=0)return 0;if(p>=1)return 1;if(bz){var lo=0,hi=1,t=0,i;for(i=0;i<18;i++){t=(lo+hi)/2;var u=1-t,x=3*u*u*t*bz[0]+3*u*t*t*bz[2]+t*t*t;if(x<p)lo=t;else hi=t}var u0=1-t;return 3*u0*u0*t*bz[1]+3*u0*t*t*bz[3]+t*t*t}return p}";
+          const sharedMotion="function vMotionEase(p,m,seg){var bz=vMotionBezier(m,seg);if(p<=0)return 0;if(p>=1)return 1;if(bz){var p119=window.CVEasingP119;if(p119&&typeof p119.bez==='function'&&bz[1]>=-1&&bz[3]>=-1&&bz.every(function(v){return Math.abs(v-Math.round(v*1000)/1000)<1e-9})){try{return p119.bez(bz,p)}catch(e){}}var lo=0,hi=1,t=0,i;for(i=0;i<18;i++){t=(lo+hi)/2;var u=1-t,x=3*u*u*t*bz[0]+3*u*t*t*bz[2]+t*t*t;if(x<p)lo=t;else hi=t}var u0=1-t;return 3*u0*u0*t*bz[1]+3*u0*t*t*bz[3]+t*t*t}return p}";
+          const sharedMarker="p119.bez(bz,p)";
+          if(!html.includes(sharedMarker)){
+            const count=html.split(oldMotion).length-1;
+            if(count!==1)throw new Error('P119.3 expected one canonical vMotionEase function; found '+count);
+            html=html.replace(oldMotion,sharedMotion);
+          }
+          if((html.match(/id="canvio-lot119v"/g)||[]).length!==1)throw new Error('P119.3 duplicate/missing inline lot');
+          if(!html.includes(sharedMarker)||!html.includes('window.CVEasingP119'))throw new Error('P119.3 shared easing evaluator hook missing');
+          fs.writeFileSync(file,html,'utf8');
+          const mapPath='tests/p143/source-module-map.json',map=JSON.parse(fs.readFileSync(mapPath,'utf8'));
+          map.description=String(map.description||'').replace(/32 standalone/g,'33 standalone');
+          const item={source:'canvio-p119-video.js',scriptId:'canvio-lot119v'};
+          const at=map.modules.findIndex(x=>x.source===item.source||x.scriptId===item.scriptId);
+          if(at>=0)map.modules[at]=item;else map.modules.push(item);
+          map.totalModules=map.modules.length;
+          if(map.totalModules!==33||map.modules.filter(x=>x.source===item.source).length!==1)throw new Error('P119.3 P143 module registry must contain exactly 33 unique pairs');
+          fs.writeFileSync(mapPath,JSON.stringify(map,null,2)+'\n');
+          console.log('P119.3 integrated shared presets and P119 easing solver into the existing Video Engine; P143 pairs:',map.totalModules);
+          NODE
+
       - name: Extract and syntax-check integrated modules and workers
         run: |
           set -euo pipefail
           node scripts/extract-integrated-modules.mjs
-          for file in canvio-p74-p81-three-viewer.js canvio-p85-studio.js canvio-p102-background-removal.js canvio-p105-p107-depth-parallax.js canvio-p68-p70.js canvio-p72-glb-viewer.js canvio-p73-offline-site.js canvio-p82-p84-vector-pdf.js canvio-p87-cv-docx.js canvio-p90-p96.js canvio-p97-p101.js canvio-p104.js canvio-p127-duck.js canvio-p145-shader.js assets/canvio-rmbg-worker.js assets/canvio-depth-worker.js assets/canvio-whisper-worker.js; do node --check "$file"; done
+          for file in canvio-p74-p81-three-viewer.js canvio-p85-studio.js canvio-p102-background-removal.js canvio-p105-p107-depth-parallax.js canvio-p68-p70.js canvio-p72-glb-viewer.js canvio-p73-offline-site.js canvio-p82-p84-vector-pdf.js canvio-p87-cv-docx.js canvio-p90-p96.js canvio-p97-p101.js canvio-p104.js canvio-p127-duck.js canvio-p145-shader.js canvio-p119-video.js assets/canvio-rmbg-worker.js assets/canvio-depth-worker.js assets/canvio-whisper-worker.js; do node --check "$file"; done
 
       - name: P143 standalone source and canonical lot parity audit
         shell: bash
@@ -752,6 +786,7 @@ jobs:
           node tests/p127/run-p133r-tests.cjs
           node tests/p127/run-p144u-tests.cjs
           node tests/p127/run-p119e-tests.cjs
+          node tests/p127/run-p119v-tests.cjs
           node tests/p127/run-p118w-tests.cjs
           node tests/p127/run-p141f-tests.cjs
           node tests/p127/run-p128o-tests.cjs
@@ -825,6 +860,7 @@ jobs:
           /tmp/canvio-playwright/bin/python tests/p145/run-p144-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p144t-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p119-browser.py
+          /tmp/canvio-playwright/bin/python tests/p145/run-p119v-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p118-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p141-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p128-browser.py
@@ -1256,6 +1292,98 @@ jobs:
 
           | P119.2 shared easing in P145.2 | Node loads actual P119 and P145.2 sources; Chromium verifies preset/custom Motion curve changes equal-progress transition output | Video Engine clip/keyframe easing, Website Engine/CSS timeline, real GPU and target-device export performance remain open. |
           MATRIX
+          fi
+
+      - name: Record P119.3 Video Engine shared presets and verify P143.4 mainline
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! grep -q '## P119.3 — P119 presets in Video Engine keyframe inspector' CANVIO_AI_GUIDE.md; then
+            cat >> CANVIO_AI_GUIDE.md <<'GUIDE'
+
+          ## P119.3 — P119 presets in Video Engine keyframe inspector
+
+          - Extends the existing native Video Engine keyframe inspector with the six named presets from the single CVEasingP119.PRESETS owner and a "Lấy đường cong từ Motion" action that accepts only the existing #motionEase cubic-bezier value. CSS spring linear() output is not silently converted into a Bezier.
+          - The adapter writes only the existing #vtKFEasing and #vtKFCurveX1/Y1/X2/Y2 controls. The user commits through the existing Video Engine Apply action, which retains the canonical vPushUndo/save/clip-motion path; snapshotState/restoreState continue to own timeline project persistence.
+          - The canonical vMotionEase evaluator delegates eligible curves to CVEasingP119.bez. Legacy curves with Y below -1 or precision finer than P119's three-decimal normalisation keep the original Video Engine evaluator so existing projects are not rounded/clamped.
+          - Tests: tests/p127/run-p119v-tests.cjs covers preset mapping, Motion import/rejection, custom curves and adapter boundaries; tests/p145/run-p119v-browser.py creates a real image clip, applies a preset and Motion curve, verifies motionAt output and the existing Video Engine snapshot restore.
+          - No new timeline, editor, database, IndexedDB/localStorage key, history stack or easing registry is created. Website Engine/CSS animation timeline integration and physical target-device/GPU performance remain open.
+
+          ## Verified P143.4 mainline — 2026-11-21
+
+          - PR #83 merged as 29acd1192da8e42bad845248b1110d30a6cbfc44. Post-merge workflow #551 passed 53/53 and Pages #275 built/deployed successfully.
+          - P143 parity 32/32; lexical scanner 14/14; inventory verifier 17/17. Inventory: 119 style blocks, 1,490 inline style attributes, 78 dynamic-loader sites, 456 lexical dependency candidates, 33 unresolved references, 209 same-script references.
+          - This is lexical evidence only, not a semantic AST/data-flow graph. P143 Phase 3 extraction, manual dependency review, rollback, offline/PWA and CSP acceptance remain open.
+          GUIDE
+          fi
+          if ! grep -q '## P119.3 Video Engine easing QA' CANVIO_QA_REPORT.md; then
+            cat >> CANVIO_QA_REPORT.md <<'QA'
+
+          ## P119.3 Video Engine easing QA
+
+          - Node suite checks the six original P119 presets, custom Motion cubic-bezier parsing, rejection of linear() spring strings, native field mapping and absence of new storage/timeline owners.
+          - Chromium creates a real image clip on the canonical Video Engine, applies a P119 preset through existing keyframe fields, verifies vMotionAt against CVEasingP119.bez, round-trips the existing snapshot, imports a Motion custom curve and verifies invalid spring import does not mutate the clip.
+          - Shared evaluator delegates supported legacy curves to P119.bez; curves outside P119's normalisation domain or with greater stored precision retain the previous Video Engine solver. Website CSS timeline and target GPU/performance remain unverified.
+
+          ## Verified P143.4 hosted mainline QA
+
+          Mainline workflow #551 passed 53/53; Pages #275 passed build/deploy. P143 parity 32/32, lexical scanner 14/14 and inventory validator 17/17. The 456 edges are lexical candidates, not semantic runtime dependencies; 33 unresolved reads and 209 same-script references remain visible for human review.
+          QA
+          fi
+          if ! grep -q '## P119.3 — Video Engine keyframe easing' CANVIO_ROADMAP.md; then
+            cat >> CANVIO_ROADMAP.md <<'ROADMAP'
+
+          ## P119.3 — Video Engine keyframe easing (2026-11-21)
+
+          - Add the single P119 preset registry to the existing Video Engine motion inspector. Presets populate existing cubic-Bezier controls; user Apply persists via the existing canonical clip/timeline and undo path.
+          - Internal motion interpolation delegates to P119.bez where normalisation is lossless; unsupported legacy curve ranges retain the original evaluator. No second timeline or easing engine.
+          - Website Engine/CSS animation timeline integration remains a separate open P119 increment; hardware GPU/60 fps and real footage acceptance are not inferred from software Chromium.
+
+          ## Verified P143.4 mainline — 2026-11-21
+
+          - PR #83 / commit 29acd119; post-merge workflow #551 53/53 and Pages #275 PASS. P143 parity 32/32, scanner 14/14, inventory verifier 17/17.
+          - 456 lexical provider/consumer candidates, 33 unresolved reads, 209 same-script references. Not a semantic dependency graph; Phase 3 extraction/rollback/offline/CSP remains open.
+          ROADMAP
+          fi
+          if ! grep -q 'P119.3 shared easing with Video Engine' CANVIO_ALL_P_COMPLETION_TRACKER.md; then
+            cat >> CANVIO_ALL_P_COMPLETION_TRACKER.md <<'TRACKER'
+
+          ## P119.3 shared easing with Video Engine — 2026-11-21
+
+          - Candidate integrates the six P119 named presets and custom cubic-Bezier import from Motion into the existing Video Engine keyframe inspector.
+          - It reuses vtKFEasing/Bezier inputs and existing native Apply/Undo/snapshot contracts. The vMotionEase evaluator shares P119.bez for compatible normalized curves; legacy curves outside P119's exact normalisation domain retain the previous evaluator.
+          - Acceptance: Node P119.3 contract tests, real Chromium image clip → preset/custom Motion → motionAt output → existing snapshot restore, P143 33-module parity. Website Engine/CSS timeline remains open.
+
+          ## P143.4 verified mainline — 2026-11-21
+
+          - PR #83 mainline workflow #551 passed 53/53; Pages #275 deployed. P143 parity 32/32, scanner 14/14, verifier 17/17. Lexical 456 candidates are not a semantic DAG.
+          TRACKER
+          fi
+          if ! grep -q '| P119.3 Video Engine keyframe easing |' CANVIO_FINAL_ACCEPTANCE_MATRIX.md; then
+            cat >> CANVIO_FINAL_ACCEPTANCE_MATRIX.md <<'MATRIX'
+
+          | P119.3 Video Engine keyframe easing | Node P119 preset/custom-Motion contracts; Chromium applies P119 to a real image clip, verifies motionAt output and existing snapshot restore; P143 source parity | Website Engine/CSS timeline, legacy curves outside P119 normalisation range, physical GPU and 60 fps target-device acceptance remain open. |
+          | P143.4 lexical global evidence | PR #83 post-merge #551 53/53; Pages #275; 32/32 parity, 14/14 scanner, 17/17 inventory verifier | Lexical candidates only; semantic data flow and Phase 3 staged extraction/rollback/offline/CSP remain open. |
+          MATRIX
+          fi
+          if ! grep -q '## P119.3 Video Engine keyframe easing — 2026-11-21' CANVIO_NEXT_AI_PROMPT.md; then
+            cat >> CANVIO_NEXT_AI_PROMPT.md <<'PROMPT'
+
+          ## P119.3 Video Engine keyframe easing — 2026-11-21
+
+          - P119.3 adds the shared six-preset registry to the existing Video Engine motion inspector; custom cubic-bezier from #motionEase maps into the native vtKFEasing/Bezier inputs. Use native Apply/Undo/snapshot only.
+          - The evaluator delegates to CVEasingP119.bez only when its three-decimal normalisation is lossless and its Y range is representable; older curves use the original solver. Spring linear() is not treated as a cubic-Bezier.
+          - Verify Node P119.3 and real Chromium image-clip acceptance; keep Website Engine/CSS timeline open.
+          PROMPT
+          fi
+          if ! grep -q '## P119.3 Video Engine keyframe easing — candidate' CANVIO_SESSION_SUMMARY_2026-11-21.md; then
+            cat >> CANVIO_SESSION_SUMMARY_2026-11-21.md <<'SESSION'
+
+          ## P119.3 Video Engine keyframe easing — candidate
+
+          - Shared P119 presets/custom curve are presented inside existing Video Engine keyframe inspector; selected values are written into the native cubic-Bezier controls and saved only by native Apply. Existing timeline undo/snapshot path remains owner.
+          - Node + Chromium acceptance and P143 parity are required before merge; CSS Website Engine timeline and hardware/GPU performance are not claimed.
+          SESSION
           fi
 
       - name: Record P135.2 editable adjustment stack in project snapshots
