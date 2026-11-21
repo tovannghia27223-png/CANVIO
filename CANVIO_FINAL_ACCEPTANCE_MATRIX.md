@@ -13,6 +13,7 @@
 | P145.7 Typography presets | Six system-font presets, bounded controls, CSS export and physical Playwright hit-test | No bundled commercial fonts; OS typography review remains manual |
 | P145.8 Vector illustrations | Eight original SVG illustrations, four palettes, filter/preview/vector export; Node + Chromium | Starter pack only; not stock photography or a large illustration catalogue |
 | P145.9/.10 Asset Search & Quality Gate | Read-only local search/filter and shared license/source/size/hash gate | Full live Asset Vault enumeration and hashing every uploaded binary require canonical provider |
+| P124 Auto Layout / Component | Node source/embedded parity + API tests for 5 responsive presets, 4 card variants, bounds, escaping, canonical insert/save and failure paths | First increment only; selected-component conversion, breakpoint editor, nested instance sync, drag/resize controls and real browser visual/accessibility review remain open |
 | P70 Stable release | Fourteen fail-closed manual gates | releaseCertified:false until every gate has reviewed production evidence |
 
 ## Required manual gates
