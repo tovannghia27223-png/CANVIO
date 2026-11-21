@@ -2,11 +2,11 @@
   "format": "CANVIO_DELIVERY_MANIFEST",
   "schemaVersion": 2,
   "candidate": "23.3.111-github-runtime-ci",
-  "generatedAt": "2026-11-21T18:18:55.067Z",
+  "generatedAt": "2026-11-21T19:24:55.567Z",
   "hashAlgorithm": "SHA-256",
-  "indexSha256": "a04b8a718ec73a9bae080ea92fd18a78b3f70fff36062b33e805061332bd2259",
-  "indexBytes": 5641178,
-  "fileCount": 302,
+  "indexSha256": "6209b2f27abe7ae8032c5403f5baf9726089c2ed175cbca40582836eec8fe523",
+  "indexBytes": 5656904,
+  "fileCount": 306,
   "releaseCertified": false,
   "releaseStatus": "BLOCKED_PENDING_REAL_WORLD_ACCEPTANCE",
   "p70ManualGates": {
@@ -32,8 +32,8 @@
     },
     {
       "path": ".github/workflows/canvio-candidate-runtime.yml",
-      "bytes": 121240,
-      "sha256": "315382dc76d4ddb1af110559f4c0aec52d9303423fd0cad0574ed43cedb792dc"
+      "bytes": 121624,
+      "sha256": "11f81438770a70e7bd5a3bc92699fdc8b043e28ef175a4c0793b0d6371fa19d9"
     },
     {
       "path": ".github/workflows/canvio-pages-node24.yml",
@@ -382,13 +382,13 @@
     },
     {
       "path": "CANVIO_AI_GUIDE.md",
-      "bytes": 432951,
-      "sha256": "8100db167035dd0e0ca6560cee4776841bd7bc4ae675c60b7e72f8e747864324"
+      "bytes": 436437,
+      "sha256": "beaa01f0bbb7c42cf05b1db2b130bed1f910bf22fea5dffbc6750f6e4dad8266"
     },
     {
       "path": "CANVIO_ALL_P_COMPLETION_TRACKER.md",
-      "bytes": 44137,
-      "sha256": "03e0b94ff8749bcccbab84c72111c915119f6237f592dc2db724cf1e0cfb9800"
+      "bytes": 45200,
+      "sha256": "5a96f5f61957cbc6b9113725e161e817c15b6df5f3b7f763cade1000890834d5"
     },
     {
       "path": "CANVIO_FINAL_ACCEPTANCE_MATRIX.md",
@@ -402,8 +402,8 @@
     },
     {
       "path": "CANVIO_NEXT_AI_PROMPT.md",
-      "bytes": 25822,
-      "sha256": "ec0776d9817f14411f7eca86ba3812f9facfed62bcb5304ae3a0c15e34056e16"
+      "bytes": 26903,
+      "sha256": "93e8c6d0029a44e1c9bab2ac6bae5bc6884de725232871cc8c88cf3caae2e40d"
     },
     {
       "path": "CANVIO_P143_SOURCE_SPLIT_PLAN.md",
@@ -427,18 +427,23 @@
     },
     {
       "path": "CANVIO_QA_REPORT.md",
-      "bytes": 63443,
-      "sha256": "de82071abe6567df675da140e257c2bb454e18c58d6ed28f35ecf2a61e342aac"
+      "bytes": 65117,
+      "sha256": "c9bc341f97e3be7b9fbca5ee3b108c3cdeac773cbe780a2fc14276558c948b9c"
     },
     {
       "path": "CANVIO_ROADMAP.md",
-      "bytes": 129306,
-      "sha256": "f72797e7bcd7514226690095037ff8549f0c011b9c2a254b4425f88f3fec9ed0"
+      "bytes": 130920,
+      "sha256": "c0fe5d0eae4575695e35ba6dda8743cd90cb545d7ed69fcbadb0c5812818837a"
     },
     {
       "path": "CANVIO_SESSION_SUMMARY_2026-11-21.md",
-      "bytes": 23196,
-      "sha256": "2af5815decc0e06b053f4aeedb06ea70cfcfcebd070841f8e0e1f350f387357a"
+      "bytes": 24214,
+      "sha256": "483a0efb03886997ffb71cba5a5e8072251d1360c35401f5410ee40c80169cb5"
+    },
+    {
+      "path": "canvio-home-creative-flow.js",
+      "bytes": 15689,
+      "sha256": "31291c4b059578924b3162510be03c152ff95d75fec82657a1c030d048d951d1"
     },
     {
       "path": "canvio-p102-background-removal.js",
@@ -712,8 +717,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 5641178,
-      "sha256": "a04b8a718ec73a9bae080ea92fd18a78b3f70fff36062b33e805061332bd2259"
+      "bytes": 5656904,
+      "sha256": "6209b2f27abe7ae8032c5403f5baf9726089c2ed175cbca40582836eec8fe523"
     },
     {
       "path": "patches/canvio-p42-r6.patch",
@@ -806,6 +811,11 @@
       "sha256": "b34cafea64cbea875875744a711aba7c76d920fdadcf49ef3837b7f8d8e39879"
     },
     {
+      "path": "scripts/inject-home-creative-flow.mjs",
+      "bytes": 1055,
+      "sha256": "865287061f7e2dd32257f4f1835c1fb4f90cc2d09f632119e9c765819bb0b554"
+    },
+    {
       "path": "scripts/p85-opencv.entry.mjs",
       "bytes": 139,
       "sha256": "9568334f80ae8a87cfa10383977f8f39fd17c4374d5c79e89506647154150049"
@@ -828,7 +838,7 @@
     {
       "path": "tests/hosted/hosted-runtime-report.json",
       "bytes": 16378,
-      "sha256": "c035536af8f251e4161a2779043e2a88f9c16532118c8baaf2973f7c90752907"
+      "sha256": "c550b405e3c576930b9b9ba8324d9be25b6412255ca245144bd1c0362d3a5aa5"
     },
     {
       "path": "tests/hosted/integrated-source-contracts.cjs",
@@ -1132,8 +1142,8 @@
     },
     {
       "path": "tests/p143/inline-source-inventory.json",
-      "bytes": 408311,
-      "sha256": "729d6b0d3711b56c5a6b2c41fa158f29109654922afb07f9de51efcb8802d0e7"
+      "bytes": 410396,
+      "sha256": "7ed4f5ca6815c4c466e6b735d1c5dc6bdf089997733d7802a3c6e81724324206"
     },
     {
       "path": "tests/p143/js-global-scanner.cjs",
@@ -1157,8 +1167,8 @@
     },
     {
       "path": "tests/p143/style-template-loader-inventory.json",
-      "bytes": 811750,
-      "sha256": "ec2d968e0e54ec280afbd611a354613cb3339f9872a1f555bc6d8582e4c2aab3"
+      "bytes": 813367,
+      "sha256": "fd2aa180d2eefbbc2209473ac7ecb25dce24cb45fc607ca528a86a3c3ee69734"
     },
     {
       "path": "tests/p143/verify-style-template-inventory.cjs",
@@ -1359,6 +1369,16 @@
       "path": "tests/p145/run-p145s-browser.py",
       "bytes": 3888,
       "sha256": "4cb4c395aa061877d97c1728953588621919da592c54e2121d6e64ed6a5348ea"
+    },
+    {
+      "path": "tests/p146/run-p146-browser.py",
+      "bytes": 4104,
+      "sha256": "89e091c9cb60dd162abec212187d390d9bcc2ca0ecdc83bab9b95b3af0b6017f"
+    },
+    {
+      "path": "tests/p146/run-p146-tests.cjs",
+      "bytes": 1542,
+      "sha256": "2e0dd351be6dab200b9c42baec6db951d7c06a651964f7be11f0d1a1fd2add06"
     },
     {
       "path": "tests/p47/fixtures/restore-fixture-corrupt.zip",

@@ -238,3 +238,8 @@ Pull trước (`git pull --rebase origin main`; CI bot hay push commit build). A
 - Added shared P119 preset/curve adapter for the existing Website Motion Builder; Motion custom Bezier imports explicitly and user commits with existing Apply.
 - Reuses existing GrapesJS component attributes/styles, Website save and publish runtime with reduced-motion fallback. No duplicate registry/timeline/store.
 - Candidate requires successful Node/Chromium/P143 parity and post-merge hosted run; real authored project/publish-host/assistive technology/mobile acceptance remains open.
+
+## P120/P126 ComfyUI bridge — candidate 2026-11-21
+
+- Added the loopback-only local ComfyUI bridge, Node contract tests and Chromium mock-server acceptance. It registers image/video/upscale/interpolate handlers with P128 and imports result blobs through the existing Asset Library owner.
+- Model/custom-node execution and output quality remain unverified until the user's actual free local ComfyUI environment is available. This is not cloud sync or an AI model bundle.

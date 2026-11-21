@@ -1,10 +1,10 @@
 {
   "format": "CANVIO_P143_STYLE_TEMPLATE_LOADER_INVENTORY",
   "version": 1,
-  "generatedAt": "2026-11-21T18:13:48.446Z",
+  "generatedAt": "2026-11-21T19:18:31.185Z",
   "source": "restored canonical index.html after all workflow-managed module integration steps",
   "purpose": "Inventory inline styles, template elements, dynamic resource-loader call sites and lexical global-reference ordering candidates. Global references are not a human-reviewed semantic boot-order or runtime data-flow graph.",
-  "htmlBytes": 5641178,
+  "htmlBytes": 5656904,
   "styles": {
     "blockCount": 119,
     "inlineStyleAttributeCount": 1493,
@@ -13710,15 +13710,15 @@
     ]
   },
   "dependencyCandidates": {
-    "count": 456,
+    "count": 458,
     "confidence": "lexical-static-order-candidate-not-semantic",
     "summary": {
-      "staticReadReferenceCount": 700,
-      "resolvedEdgeCount": 456,
+      "staticReadReferenceCount": 703,
+      "resolvedEdgeCount": 458,
       "unresolvedReferenceCount": 35,
-      "sameScriptReferenceCount": 209,
-      "ambiguousMultiWriterEdges": 56,
-      "providerGlobals": 287
+      "sameScriptReferenceCount": 210,
+      "ambiguousMultiWriterEdges": 57,
+      "providerGlobals": 288
     },
     "edges": [
       {
@@ -19490,6 +19490,25 @@
         ]
       },
       {
+        "global": "CVCreativeCore",
+        "fromOrder": 56,
+        "fromId": "canvio17-shared-core",
+        "fromSha256": "f6272d44e0872cb96d1bcfc584079fd0e00144d4a0d1cea03e29c258b95bd742",
+        "providerKind": "window-or-globalThis-assignment",
+        "toOrder": 161,
+        "toId": "canvio-lot146",
+        "toSha256": "c8d839dce9bc61feadbd3e16400794898a7a804d830ebeaad6d05829a0cfade2",
+        "priorProviderCount": 1,
+        "priorProviderOrders": [
+          56
+        ],
+        "executionOrder": "provider-before-consumer",
+        "confidence": "lexical-single-prior-provider",
+        "evidenceKinds": [
+          "window-property-reference"
+        ]
+      },
+      {
         "global": "CVNativeEngines",
         "fromOrder": 57,
         "fromId": "canvio18-native-engines",
@@ -21799,6 +21818,27 @@
         "toOrder": 158,
         "toId": "canvio-lot120126",
         "toSha256": "8b3d78a3ba43126ec6a7c8e8895ae9e27b22ece8e305b27a3245e07125444114",
+        "priorProviderCount": 2,
+        "priorProviderOrders": [
+          1,
+          78
+        ],
+        "executionOrder": "provider-before-consumer",
+        "confidence": "lexical-multiple-prior-writers-last-in-order",
+        "evidenceKinds": [
+          "known-global-identifier-read",
+          "window-property-reference"
+        ]
+      },
+      {
+        "global": "CV",
+        "fromOrder": 78,
+        "fromId": null,
+        "fromSha256": "04654c2cec9e1230c499533710944375179b6d5843c5b97e981e051646504c49",
+        "providerKind": "window-or-globalThis-assignment",
+        "toOrder": 161,
+        "toId": "canvio-lot146",
+        "toSha256": "c8d839dce9bc61feadbd3e16400794898a7a804d830ebeaad6d05829a0cfade2",
         "priorProviderCount": 2,
         "priorProviderOrders": [
           1,
@@ -24707,6 +24747,14 @@
         "global": "CVComfyP120P126",
         "scriptOrder": 158,
         "scriptId": "canvio-lot120126",
+        "evidenceKinds": [
+          "window-property-reference"
+        ]
+      },
+      {
+        "global": "CVHomeCreativeFlowP146",
+        "scriptOrder": 161,
+        "scriptId": "canvio-lot146",
         "evidenceKinds": [
           "window-property-reference"
         ]

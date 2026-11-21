@@ -1,17 +1,17 @@
 {
   "format": "CANVIO_P143_INLINE_SOURCE_INVENTORY",
   "version": 1,
-  "generatedAt": "2026-11-21T18:13:48.264Z",
+  "generatedAt": "2026-11-21T19:18:30.932Z",
   "source": "restored canonical index.html after hosted workflow integration steps",
   "purpose": "Complete script-tag inventory in browser execution order; known global reference detection is heuristic, not a semantic dependency DAG.",
-  "htmlBytes": 5641178,
-  "scriptTagCount": 161,
-  "inlineScriptCount": 161,
+  "htmlBytes": 5656904,
+  "scriptTagCount": 162,
+  "inlineScriptCount": 162,
   "externalScriptCount": 0,
   "moduleScriptCount": 0,
   "asyncScriptCount": 0,
   "deferScriptCount": 0,
-  "uniqueScriptIds": 158,
+  "uniqueScriptIds": 159,
   "duplicateScriptIds": [],
   "modules": [
     {
@@ -16668,6 +16668,88 @@
         "propertyReads": [],
         "knownReads": [],
         "writes": [],
+        "scannerLimitations": [
+          "Template literal bodies and interpolation expressions are skipped as one lexical region.",
+          "Destructured globals, alias flow, computed property names, eval and dynamically assembled identifiers are not resolved.",
+          "Top-level bindings are detected only for simple var/let/const/function/class declarations.",
+          "This scanner is lexical evidence, not a JavaScript AST or proof of runtime data flow."
+        ]
+      }
+    },
+    {
+      "order": 161,
+      "id": "canvio-lot146",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 15689,
+      "sha256": "c8d839dce9bc61feadbd3e16400794898a7a804d830ebeaad6d05829a0cfade2",
+      "exportedGlobals": [
+        "CVHomeCreativeFlowP146"
+      ],
+      "globalDeclarations": [],
+      "globalPropertyReads": [
+        "CV",
+        "CVCreativeCore",
+        "CVHomeCreativeFlowP146",
+        "setTimeout"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ],
+      "globalReferenceEvidence": {
+        "propertyReads": [
+          {
+            "name": "CV",
+            "count": 1,
+            "lines": [
+              103
+            ]
+          },
+          {
+            "name": "CVCreativeCore",
+            "count": 3,
+            "lines": [
+              20,
+              75,
+              119
+            ]
+          },
+          {
+            "name": "CVHomeCreativeFlowP146",
+            "count": 1,
+            "lines": [
+              7
+            ]
+          },
+          {
+            "name": "setTimeout",
+            "count": 2,
+            "lines": [
+              99,
+              106
+            ]
+          }
+        ],
+        "knownReads": [
+          {
+            "name": "CV",
+            "count": 2,
+            "lines": [
+              103,
+              105
+            ]
+          }
+        ],
+        "writes": [
+          {
+            "name": "CVHomeCreativeFlowP146",
+            "line": 120,
+            "kind": "window.property"
+          }
+        ],
         "scannerLimitations": [
           "Template literal bodies and interpolation expressions are skipped as one lexical region.",
           "Destructured globals, alias flow, computed property names, eval and dynamically assembled identifiers are not resolved.",
