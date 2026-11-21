@@ -23,7 +23,7 @@ ck('snapshot round-trip preserves layer values',decoded.state&&decoded.state.lay
 ck('snapshot round-trip preserves selected layer',decoded.state&&decoded.state.selectedId==='persist-1');
 const corruptBytes=Buffer.from(packed.slice('data:image/png;base64,'.length),'base64');
 let chunkAt=8,crcDamaged=false;
-while(chunkAt+12<=corruptBytes.length){const size=corruptBytes.readUInt32BE(chunkAt),type=corruptBytes.toString('ascii',chunkAt+4,chunkAt+8),end=chunkAt+12+size;if(end>corruptBytes.length)break;if(type==='tEXt'&&corruptBytes.toString('ascii',chunkAt+8,chunkAt+8+size).startsWith('CANVIO.P135\\0')){corruptBytes[end-1]^=1;crcDamaged=true;break;}chunkAt=end;}
+while(chunkAt+12<=corruptBytes.length){const size=corruptBytes.readUInt32BE(chunkAt),type=corruptBytes.toString('ascii',chunkAt+4,chunkAt+8),end=chunkAt+12+size;if(end>corruptBytes.length)break;if(type==='tEXt'&&corruptBytes.toString('ascii',chunkAt+8,chunkAt+8+size).startsWith('CANVIO.P135')){corruptBytes[end-1]^=1;crcDamaged=true;break;}chunkAt=end;}
 const corruptUrl='data:image/png;base64,'+corruptBytes.toString('base64'),corruptDecoded=api.unpackSnapshot(corruptUrl);
 ck('corrupt metadata CRC is ignored safely',crcDamaged&&corruptDecoded.embedded===false&&corruptDecoded.dataUrl===corruptUrl);
 ck('PNG raster payload is byte-identical after metadata stripping',decoded.dataUrl===fixture);
