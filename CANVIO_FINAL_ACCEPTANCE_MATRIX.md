@@ -39,3 +39,5 @@
 | P144.3 contextual help | 38/38 CVWS routes; F1 focus trap/Escape, palette and tour tests | Merged PR #51. Human wording/accessibility review remains manual. |
 | P143 Phase 1/2 | PR #54; candidate #384 and main #385 PASS 41/41; 20 module pairs; 150 inline script tags, zero external src/duplicate IDs | Source inventory complete. Semantic dependency/boot-order DAG, CSS/template/dynamic-loader inventory and staged project-wide extraction remain open. |
 | P70 release gate | Fail-closed | Fourteen real-world acceptance gates remain OPEN; CANVIO 1.0 Stable/production certification not granted. |
+
+| P143 parity extension | 27 standalone sources vs canonical inline lots; syntax, unique lot, normalized equality and classic-script safety | Candidate extension; hosted workflow pending. No runtime code changes. Full semantic dependency/style/template DAG and staged extraction remain open. |

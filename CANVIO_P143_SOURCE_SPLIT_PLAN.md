@@ -49,3 +49,9 @@ Reduce CANVIO's single-file authoring burden without breaking the canonical app 
 - Package the JSON with candidate source/evidence.
 - The report is an exhaustive script-tag inventory only. Heuristic references do not establish a semantic dependency DAG. CSS, inline styles, HTML template payloads and dynamically constructed script paths must be separately catalogued before extraction.
 - Do not move/reorder scripts based on this report alone. Next step is human-reviewed boot-order and dependency analysis.
+
+## Phase 1 parity coverage extension — 27 pairs (2026-11-21)
+
+- The source registry now lists 27 standalone feature modules and canonical inline lot IDs.
+- Added P127 Loudness, P127 Templates, P133 Resilience, P134 Scopes, P138 Denoise, P140 Charts and P145 SFX; each already has its own individual parity test.
+- No runtime code or script order changed. Central gate remains data-driven from source-module-map.json; hosted acceptance required before merge.
