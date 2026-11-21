@@ -50,3 +50,14 @@
 
 P70's fourteen real-world gates are deliberately deferred at the user's instruction and remain OPEN.
 
+ 
+## P135.1 — Pixel Atelier (candidate; 2026-11-21)
+
+| Area | Evidence | Status |
+|---|---|---|
+| Adjustment stack model/UI | Nine filter types, order, enable/disable, rename, undo/redo | Candidate branch; hosted tests pending |
+| Non-destructive preview | CSS filter on existing canvas; PNG snapshot unchanged | Candidate browser test wired |
+| Export | Derived canvas PNG/WebP; new Asset Library asset | Candidate browser test wired |
+| Editable project persistence | No stack metadata in existing Pixel snapshot/restore contract | OPEN |
+| Layer masks/local adjustments | Not implemented | OPEN |
+| P70 release certification | Fourteen manual gates | OPEN |
