@@ -452,3 +452,14 @@ The candidate workflow runs standalone/embedded source parity and API tests for 
 - P144.3: 38/38 CVWS route help; palette, keyboard, F1 focus trap/Escape and first-run tour pass.
 - P133 resilience and denoise Worker acceptance pass (OPFS round-trip/recovery; Worker matches main-thread output with maxDiff=0 and page responsive).
 - **P70 remains NOT CERTIFIED**: fourteen real-world gates are still open. Hosted fixtures do not prove physical target hardware, production provider, all media, screen-reader/accessibility, security headers, cross-origin restore or release operations.
+
+
+## Follow-on engineering candidate — 2026-11-21 (P124.2 / P133.3 / P143.3)
+
+Status: pending hosted PR verification. Do not treat this section as a PASS report.
+
+- P124.2: source now exposes five layouts, four surface variants and configurable title/description/gap/minimum-width/mobile/tablet breakpoints and column counts. Node suite updated to 16 module checks plus direct CSS and save-path assertions; Chromium suite updated to 12 UI checks.
+- P133.3: proxy scaler attempts a same-origin Blob Worker with OffscreenCanvas and ImageBitmap transfer; it falls back to main-thread canvas when unavailable or failed. Browser acceptance now explicitly expects renderPath === 'offscreen-worker' in hosted Chromium and checks fallback API, 720p dimensions, audio, full decode, source preservation and timeline insertion.
+- P143.3: new style/template/dynamic-loader report generator and validator are wired into the candidate workflow and artifact. CSS/global dependency candidates are heuristic, not semantic.
+- No hosted test result has been observed for this branch at the time of this note. First candidate workflow must be inspected before merge. P70 remains uncertified; its fourteen real-world gates are deferred, not passed.
+
