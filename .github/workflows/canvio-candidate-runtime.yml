@@ -619,6 +619,9 @@ jobs:
           const pos=html.indexOf(open);
           if(pos>=0){const end=html.indexOf(close,pos);if(end<0)throw new Error('P139.1 embedded lot is not closed');html=html.slice(0,pos)+tag+html.slice(end+close.length);}
           else{const body=html.lastIndexOf('</body>');if(body<0)throw new Error('index.html body close missing');html=html.slice(0,body)+tag+'\n'+html.slice(body);}
+          const addHook='function add(type){const o={id:uid(),type,';
+          if(html.split(addHook).length-1!==1)throw new Error('P139 add-layer source anchor count mismatch');
+          html=html.replace(addHook,'function add(type){size();const o={id:uid(),type,x:canvas.width*.5,y:canvas.height*.5,');
           const frameHook="ctx.textAlign='center';objs.filter(o=>!o.hidden).forEach(o=>{";
           const transformHook="ctx.translate(x,y);ctx.rotate(rot);ctx.scale(scale,scale);ctx.fillStyle=o.color;";
           const textHook="ctx.fillText(o.text,0,0)";
