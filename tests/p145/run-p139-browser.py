@@ -28,6 +28,7 @@ with sync_playwright() as p:
  child=next(x for x in state['objs'] if x['id']==text_id)
  parent=next((x for x in state['objs'] if x.get('id')==child.get('parentId')),None)
  checks['nullParentCreated']=bool(parent and parent.get('type')=='null' and parent.get('hidden') is True)
+ checks['newTextLayerHasFiniteCoordinates']=bool(child and isinstance(child.get('x'),(int,float)) and isinstance(child.get('y'),(int,float)))
  if parent:
   page.evaluate("""([id])=>CVMotionLabP139.setNullTransform(id,{x:450,y:260,scale:1.4,rotation:20})""",[parent['id']])
   page.evaluate("""([id])=>CVMotionLabP139.configureTextAnimator(id,{enabled:true,mode:'rise',stagger:.06,duration:.8,strength:70,curve:[.2,.8,.3,1]})""",[text_id])
