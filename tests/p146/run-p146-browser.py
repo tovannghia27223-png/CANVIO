@@ -29,7 +29,7 @@ with sync_playwright() as p:
  checks['hrPromptTabOpened']= 'btn-primary' in (page.locator('#hrTabs button[data-t=ai]').get_attribute('class') or '')
  checks['noPollinationsCall']=len(provider_requests)==0
  checks['noImageGenerationTriggered']=page.locator('#hrGo').count()==1 and page.locator('#hrGo').is_visible()
- checks['hrStatusExplainsOptionalTab']='chưa gọi Pollinations' in page.locator('#cvhs-status').inner_text().lower()
+ checks['hrStatusExplainsOptionalTab']='chưa gọi pollinations' in page.locator('#cvhs-status').inner_text().lower()
  core_brief=page.evaluate('CVCreativeCore.context().brief')
  checks['sharedCoreOwner']=bool(core_brief) and core_brief==brief
  page.evaluate("CV.go('home')");page.wait_for_function("document.querySelector('#page-home.active')",timeout=10000)
