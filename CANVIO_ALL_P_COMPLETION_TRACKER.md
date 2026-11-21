@@ -213,3 +213,18 @@ No honest all-P completion claim is possible yet. In addition to P70's 14 open r
 | P130 cloud sync | **BLOCKED EXTERNAL** | Real Supabase project, schema/RLS, credentials and two-device recovery acceptance. |
 | P122.3 MCP | **NOT IMPLEMENTED** | Requires approved feature, transport, auth, consent, permission and threat-model contract. |
 | P70 release | **NOT CERTIFIED** | Fourteen real-world gates remain open. |
+
+
+## 2026-11-21 — follow-on implementation candidate (not yet accepted)
+
+| P item | Candidate implementation on work/p133-offscreen-p143-style-audit-20261121 | Acceptance boundary / remaining |
+|---|---|---|
+| P124.2 | Added editable breakpoints, mobile/tablet/desktop column counts, content/gap/min-width controls and scoped responsive CSS in the existing Website Engine panel. | Candidate only until Node + Chromium hosted checks pass. Arbitrary selected-component conversion, nested variants, drag/resize and accessibility review remain. |
+| P133.3 | Added Blob-backed OffscreenCanvas Worker scaler to the local 4K proxy, with one-frame backpressure and main-canvas fallback. Preserves canonical Video Engine import and source clip. | Candidate only until Chromium proves Worker use and full proxy decode/import. Does not migrate large media into OPFS; real long media and target hardware are deferred. |
+| P143.3 | Added style/inline-attribute/template/dynamic-loader inventory plus heuristic global producer-consumer candidates and validation. | Candidate only until hosted workflow passes. The report is not a semantic dependency DAG and does not extract/reorder application code. |
+| P130 | No code change. | Blocked on user-owned deployed Supabase, schema/RLS, secrets configuration and two-device restore proof. |
+| P122.3 MCP | No connector/service fabricated. | Not implementable safely without approved feature contract, transport, authentication, consent, permissions and threat model. |
+| P70 / P142 real-world gates | Deliberately deferred per user request. | Keep all fourteen P70 manual gates open until a later real browser/device/media/provider/accessibility/hosting/recovery/operations review. |
+
+These are branch candidates, not merged or PASS. Previous mainline status remains the accepted baseline until CI and merge are verified.
+

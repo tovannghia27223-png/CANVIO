@@ -3846,3 +3846,31 @@ P144 tour: thêm bước bằng cách thêm vào mảng `STEPS` ({sel,title,text
 - Latest verified source artifact: `CANVIO-23.3.111-GITHUB-RUNTIME-VERIFIED-387`, 21,753,092 bytes, SHA-256 `31a2ba6e7494fd8e6fdf65210ef2714e43bf49dae399d910b8f4fe5e84b1f958`. 
 - P143 is still not a full source split: semantic dependency/boot-order DAG, complete CSS/inline-style/template/dynamic-loader inventory, reversible extraction and offline/CSP/rollback acceptance remain.
 - Release disposition remains fail-closed: P70 has fourteen real-world gates open; P130 requires deployed Supabase/schema/RLS and two-device validation; P122.3 requires an approved MCP feature/transport/auth/consent/permission/threat contract. P124 advanced breakpoint/component interactions and P133 remaining OffscreenCanvas/large-media OPFS work remain partial.
+
+
+## Engineering continuation — candidate branch 2026-11-21 (P124.2 / P133.3 / P143 inventory)
+
+> **State at documentation time:** implementation is on branch work/p133-offscreen-p143-style-audit-20261121 and awaits the hosted candidate workflow. These changes are not merged and are not PASS until the PR workflow and post-merge mainline run complete.
+
+### P124.2 — configurable responsive Auto Layout
+
+- Standalone owner: canvio-p124-autolayout.js; canonical inline lot: canvio-lot124; API: window.CVAutoLayoutP124.
+- Version 124.2.0 adds editable title/description, gap, minimum card width, mobile/tablet breakpoints and mobile/tablet/desktop column counts to the existing Website Engine panel.
+- Generated grid/split/row breakpoint CSS is scoped to a unique cv-p124-layout-* instance. The insertion path remains CVWeb.addComponents() then CV.engines.web.save(); no second editor, project store, timeline or persistence owner is introduced.
+- Regression additions: normalization bounds and ordering, literal generated CSS/media-query checks, breakpoint input interaction, save failure behavior and mobile viewport checks. Hosted CI is the acceptance authority; selected arbitrary-component conversion, nested component variants, drag/resize and full editor accessibility are still open.
+
+### P133.3 — OffscreenCanvas Worker proxy scaler
+
+- Standalone owner: canvio-p133-proxy.js; canonical inline lot: canvio-lot133p; API: window.CVProxyP133, version 133.3.0.
+- The local proxy path now attempts a Blob-backed dedicated Worker using OffscreenCanvas and transferred ImageBitmap frames to perform scaling away from the UI thread. The existing visible canvas/MediaRecorder remains the output capture path.
+- Worker use is bounded to one in-flight frame; frame bitmaps, worker, object URLs and media streams are closed/stopped. Unsupported APIs, worker startup failure or runtime worker failure fall back to the prior main-thread canvas scaler.
+- The existing Video Engine import owner, 500 MB / 180-second cap and original-clip preservation remain unchanged. This does not complete large-media OPFS migration; it does not move the canonical timeline media store.
+- Node/browser checks now require worker-source contract, actual OffscreenCanvas Worker path in Chromium, fallback availability, generated 720p WebM, audio, full decode, timeline insertion and original preservation. Candidate checks remain pending until hosted CI results are reviewed.
+
+### P143.3 — style/template/dynamic loader inventory
+
+- New test tooling: tests/p143/build-styles-template-inventory.cjs and tests/p143/verify-style-template-inventory.cjs.
+- Output: tests/p143/style-template-loader-inventory.json; generated after the canonical script inventory in the candidate workflow and uploaded as evidence.
+- Records inline style blocks, inline style-attribute counts/hashes, template elements, dynamic resource-loader call sites and candidate global producer/consumer pairs derived from the existing heuristic script inventory.
+- Boundaries: these are inventories and heuristic dependency candidates, not a human-reviewed semantic dependency/boot-order DAG. No script/style/template was moved; full P143 staged extraction, offline/PWA/CSP and rollback acceptance remain open.
+

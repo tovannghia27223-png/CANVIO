@@ -68,3 +68,19 @@ Reduce CANVIO's single-file authoring burden without breaking the canonical app 
 - Phase 2 script-tag inventory is complete: 150 tags in exact source order, all inline; zero external src, module, async or defer; 147 unique IDs and no duplicate IDs.
 - Still required: inventory CSS and inline styles, HTML template payloads and dynamic script construction; human-reviewed semantic dependency/boot-order graph; then incremental reversible extraction with application regression, offline/PWA, CSP and rollback tests.
 - The global-reference list in the script inventory is heuristic only and must not be treated as a semantic dependency graph.
+
+
+## Phase 2.1 — styles, templates and dynamic loader inventory (candidate, 2026-11-21)
+
+- Added tests/p143/build-styles-template-inventory.cjs to inspect the reconstructed canonical index.html after all workflow integration steps.
+- Captures style block order/IDs/media/byte sizes/SHA and approximate selector samples; records inline style-attribute order/element/byte size/SHA; inventories literal template elements; detects common dynamic loader call sites (createElement('script'), script .src, importScripts, Worker/SharedWorker, dynamic import(), fetch, document.write, iframe .src).
+- Produces heuristic candidate dependency edges by linking knownGlobalReads to exportedGlobals in the P143 script inventory and preserves script order. Every edge is explicitly labeled heuristic.
+- Added tests/p143/verify-style-template-inventory.cjs to check the report against the canonical HTML and validate scope/limitations. Candidate workflow executes both and uploads the JSON report.
+- This step does not claim semantic dependency resolution: dynamically assembled markup/code, data flow, runtime listener registrations and call-time ordering still require review. No runtime code was moved or reordered.
+
+## Remaining P143 phases
+
+- Human-review and correct the candidate dependency pairs into a semantic boot-order/data-flow graph.
+- Inventory HTML templates embedded in JavaScript strings, runtime-created stylesheets and other dynamic asset construction that regex inspection cannot prove complete.
+- Choose dependency-bounded extraction units, add source/embedded parity for each, then extract one at a time with rollback, app regression, offline/PWA, CSP and deployment checks.
+

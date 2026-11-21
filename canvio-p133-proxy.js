@@ -1,11 +1,11 @@
-/* P133.2 · Local 720p proxy generator for selected 4K timeline clips.
+/* P133.3 · OffscreenCanvas Worker-assisted 720p proxy generator for selected 4K timeline clips.
  * Uses the existing Video Engine media owner and importFiles path. Original clip/timeline are never replaced.
  * Browser MediaRecorder exports WebM; audio is retained only when captureStream exposes it.
  */
 (function(){
 'use strict';
 if(window.CVProxyP133)return;
-var MAX_BYTES=500*1048576,MAX_SECONDS=180,FPS=30;
+var MAX_BYTES=500*1048576,MAX_SECONDS=180,FPS=30,lastRenderPath='not-run';
 function is4k(w,h){w=Number(w)||0;h=Number(h)||0;return(w>=2560&&h>=1440)||(h>=2560&&w>=1440);}
 function outputSize(w,h){
  w=Number(w);h=Number(h);
@@ -51,10 +51,57 @@ function mimeType(){
  for(var i=0;i<types.length;i++)if(!MediaRecorder.isTypeSupported||MediaRecorder.isTypeSupported(types[i]))return types[i];
  throw new Error('Không tìm thấy codec WebM phù hợp.');
 }
+function createOffscreenScaler(width,height,onFrame,onError){
+ if(typeof Worker!=='function'||typeof OffscreenCanvas!=='function'||typeof createImageBitmap!=='function'||typeof Blob!=='function'||!URL.createObjectURL)return null;
+ var code=[
+  "'use strict';",
+  "var canvas=null,ctx=null;",
+  "self.onmessage=function(event){",
+  " var d=event.data||{};",
+  " if(d.type==='init'){try{canvas=new OffscreenCanvas(d.width,d.height);ctx=canvas.getContext('2d',{alpha:false,desynchronized:true});if(!ctx)throw new Error('2D context unavailable');self.postMessage({type:'ready'});}catch(e){self.postMessage({type:'error',message:String(e&&e.message||e)});}return;}",
+  " if(d.type==='frame'){try{if(!ctx)throw new Error('Scaler is not initialized');ctx.drawImage(d.frame,0,0,d.width,d.height);if(d.frame&&d.frame.close)d.frame.close();var bitmap=canvas.transferToImageBitmap();self.postMessage({type:'frame',bitmap:bitmap},[bitmap]);}catch(e){try{if(d.frame&&d.frame.close)d.frame.close();}catch(_e){}self.postMessage({type:'error',message:String(e&&e.message||e)});}}",
+  "};"
+ ].join(String.fromCharCode(10));
+ var blob=new Blob([code],{type:'text/javascript'}),workerUrl=URL.createObjectURL(blob),worker=null;
+ var readyResolve,readySettled=false,state={ready:false,pending:false,closed:false};
+ var ready=new Promise(function(resolve){readyResolve=resolve;});
+ function fail(message){
+  if(state.closed)return;
+  state.pending=false;
+  if(!readySettled){readySettled=true;readyResolve(false);}
+  try{if(onError)onError(message||'Offscreen worker failed');}catch(e){}
+ }
+ try{worker=new Worker(workerUrl);}catch(e){URL.revokeObjectURL(workerUrl);return null;}
+ worker.onmessage=function(event){
+  var d=event.data||{};
+  if(d.type==='ready'){state.ready=true;if(!readySettled){readySettled=true;readyResolve(true);}return;}
+  if(d.type==='frame'){state.pending=false;try{if(onFrame)onFrame(d.bitmap);}catch(e){fail(e&&e.message);}return;}
+  if(d.type==='error')fail(d.message||'Offscreen scaler error');
+ };
+ worker.onerror=function(event){try{event.preventDefault();}catch(e){}fail(event&&event.message||'Offscreen worker error');};
+ worker.onmessageerror=function(){fail('Offscreen worker message could not be decoded');};
+ try{worker.postMessage({type:'init',width:width,height:height});}catch(e){fail(e&&e.message);}
+ return{
+  ready:ready,
+  pending:function(){return state.pending;},
+  send:function(frame){
+   if(state.closed||!state.ready||state.pending||!worker)return false;
+   state.pending=true;
+   try{worker.postMessage({type:'frame',frame:frame,width:width,height:height},[frame]);return true;}
+   catch(e){state.pending=false;fail(e&&e.message);return false;}
+  },
+  close:function(){
+   if(state.closed)return;
+   state.closed=true;state.pending=false;
+   try{worker.terminate();}catch(e){}
+   try{URL.revokeObjectURL(workerUrl);}catch(e){}
+  }
+ };
+}
 async function renderProxy(blob,clip,onProgress){
  if(!(blob instanceof Blob))throw new Error('Không đọc được media gốc của clip.');
  if(blob.size>MAX_BYTES)throw new Error('Media gốc vượt giới hạn 500 MB của proxy bản nhẹ.');
- var video=document.createElement('video'),url=URL.createObjectURL(blob),canvas=null,stream=null,sourceStream=null,recorder=null,raf=0,timer=0;
+ var video=document.createElement('video'),url=URL.createObjectURL(blob),canvas=null,stream=null,sourceStream=null,recorder=null,raf=0,timer=0,scaler=null,workerPending=false,finished=false,renderPath='main-canvas';
  video.muted=false;video.playsInline=true;video.preload='auto';video.src=url;
  try{
   await waitEvent(video,'loadedmetadata','error',30000);
@@ -76,27 +123,63 @@ async function renderProxy(blob,clip,onProgress){
    recorder.onerror=function(){reject(new Error('MediaRecorder lỗi trong khi tạo proxy.'));};
    recorder.onstop=resolve;
   });
+  scaler=createOffscreenScaler(size.width,size.height,function(bitmap){
+   try{ctx.drawImage(bitmap,0,0,size.width,size.height);}finally{if(bitmap&&bitmap.close)bitmap.close();workerPending=false;}
+  },function(){
+   workerPending=false;
+   if(scaler){scaler.close();scaler=null;}
+   if(renderPath==='offscreen-worker')renderPath='main-canvas-fallback';
+  });
+  if(scaler){
+   var ready=await Promise.race([scaler.ready,new Promise(function(resolve){setTimeout(function(){resolve(false);},1500);})]);
+   if(ready)renderPath='offscreen-worker';
+   else{scaler.close();scaler=null;renderPath='main-canvas-fallback';}
+  }else renderPath='main-canvas';
   await seek(video,range.start);
   recorder.start(500);
   await video.play();
   await new Promise(function(resolve,reject){
-   var finished=false;
    function finish(err){
     if(finished)return;finished=true;cancelAnimationFrame(raf);clearTimeout(timer);
     video.removeEventListener('ended',onEnded);
     try{if(recorder.state!=='inactive')recorder.stop();}catch(e){}
     err?reject(err):resolve();
    }
-   function onEnded(){finish();}
+   function onEnded(){if(workerPending){raf=requestAnimationFrame(draw);return;}finish();}
+   function fallbackFrame(){
+    try{if(video.readyState>=2)ctx.drawImage(video,0,0,video.videoWidth,video.videoHeight,0,0,size.width,size.height);}
+    catch(e){finish(e);}
+   }
    function draw(){
-    try{
-     if(video.readyState>=2){
-      ctx.drawImage(video,0,0,video.videoWidth,video.videoHeight,0,0,size.width,size.height);
-      if(onProgress)onProgress(Math.max(0,Math.min(1,(video.currentTime-range.start)/range.duration)));
-     }
-     if(video.ended||video.currentTime>=range.end-.025){finish();return;}
-     raf=requestAnimationFrame(draw);
-    }catch(e){finish(e);}
+    if(finished)return;
+    if(video.readyState>=2){
+     if(scaler){
+      if(!workerPending){
+       workerPending=true;
+       createImageBitmap(video).then(function(frame){
+        if(finished){if(frame&&frame.close)frame.close();workerPending=false;return;}
+        if(!scaler||!scaler.send(frame)){
+         if(frame&&frame.close)frame.close();
+         workerPending=false;
+         if(scaler){scaler.close();scaler=null;}
+         if(renderPath==='offscreen-worker')renderPath='main-canvas-fallback';
+         fallbackFrame();
+        }
+       }).catch(function(){
+        workerPending=false;
+        if(scaler){scaler.close();scaler=null;}
+        if(renderPath==='offscreen-worker')renderPath='main-canvas-fallback';
+        fallbackFrame();
+       });
+      }
+     }else fallbackFrame();
+     if(onProgress)onProgress(Math.max(0,Math.min(1,(video.currentTime-range.start)/range.duration)));
+    }
+    if(video.ended||video.currentTime>=range.end-.025){
+     if(workerPending){raf=requestAnimationFrame(draw);return;}
+     finish();return;
+    }
+    raf=requestAnimationFrame(draw);
    }
    video.addEventListener('ended',onEnded,{once:true});
    timer=setTimeout(function(){finish(new Error('Tạo proxy vượt thời gian cho phép.'));},range.duration*2500+20000);
@@ -105,9 +188,11 @@ async function renderProxy(blob,clip,onProgress){
   await stopped;
   var out=new Blob(chunks,{type:recorder.mimeType||mime});
   if(!out.size)throw new Error('Tệp proxy rỗng.');
-  return{blob:out,mime:out.type,width:size.width,height:size.height,duration:range.duration,audioPreserved:audioCount>0,bytes:out.size,sourceWidth:video.videoWidth,sourceHeight:video.videoHeight};
+  lastRenderPath=renderPath;
+  return{blob:out,mime:out.type,width:size.width,height:size.height,duration:range.duration,audioPreserved:audioCount>0,bytes:out.size,sourceWidth:video.videoWidth,sourceHeight:video.videoHeight,renderPath:renderPath};
  }finally{
   try{video.pause();}catch(e){}
+  if(scaler)scaler.close();
   try{if(stream)stream.getTracks().forEach(function(t){t.stop();});}catch(e){}
   try{if(sourceStream)sourceStream.getTracks().forEach(function(t){t.stop();});}catch(e){}
   if(raf)cancelAnimationFrame(raf);if(timer)clearTimeout(timer);URL.revokeObjectURL(url);
@@ -132,7 +217,7 @@ function mount(){
   try{
    var blob=await getBlob(state,clip);if(!blob)throw new Error('Không đọc được tệp nguồn từ media store.');
    say('Đang kiểm tra video nguồn…');
-   var proxy=await renderProxy(blob,clip,function(p){progress.value=p*90;say('Đang tạo proxy '+Math.round(p*100)+'%…');});
+   var proxy=await renderProxy(blob,clip,function(p){progress.value=p*90;say('Đang tạo proxy '+Math.round(p*100)+'%…');});lastRenderPath=proxy.renderPath;
    var base=String(clip.name||'video').replace(/\.[^.]+$/,'').slice(0,60)||'video';
    var file=new File([proxy.blob],base+'-proxy-720p.webm',{type:proxy.mime||'video/webm'});
    outputUrl=URL.createObjectURL(proxy.blob);download.href=outputUrl;result.style.display='block';
@@ -153,5 +238,7 @@ function mount(){
 }
 function ready(){try{mount();var p=document.querySelector('#page-videoEngine');if(p&&!p.__cv133pObs&&window.MutationObserver){p.__cv133pObs=new MutationObserver(function(){if(!p.querySelector('#cv133p-panel'))mount();});p.__cv133pObs.observe(p,{childList:true,subtree:true});}}catch(e){}}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',ready,{once:true});else ready();
-window.CVProxyP133={version:'133.2.0',is4k:is4k,outputSize:outputSize,trimRange:trimRange,getBlob:getBlob,renderProxy:renderProxy,mount:mount,tests:function(){return{detectsLandscape4k:is4k(3840,2160),detectsPortrait4k:is4k(2160,3840),rejects1080p:!is4k(1920,1080),landscape720:outputSize(3840,2160).width===1280&&outputSize(3840,2160).height===720,portrait720:outputSize(2160,3840).width===720&&outputSize(2160,3840).height===1280,neverUpscales:outputSize(640,480).width===640,trimClampsToSource:trimRange({duration:10},{trimIn:8,duration:9}).end===10,trimLimitEnforced:(function(){try{trimRange({duration:300},{trimIn:0,duration:181});return false;}catch(e){return true;}})(),localOnly:true,originalPreserved:true};}};
+window.CVProxyP133={version:'133.3.0',is4k:is4k,outputSize:outputSize,trimRange:trimRange,getBlob:getBlob,renderProxy:renderProxy,mount:mount,getLastRenderPath:function(){return lastRenderPath;},tests:function(){return{detectsLandscape4k:is4k(3840,2160),detectsPortrait4k:is4k(2160,3840),rejects1080p:!is4k(1920,1080),landscape720:outputSize(3840,2160).width===1280&&outputSize(3840,2160).height===720,portrait720:outputSize(2160,3840).width===720&&outputSize(2160,3840).height===1280,neverUpscales:outputSize(640,480).width===640,trimClampsToSource:trimRange({duration:10},{trimIn:8,duration:9}).end===10,trimLimitEnforced:(function(){try{trimRange({duration:300},{trimIn:0,duration:181});return false;}catch(e){return true;}})(),localOnly:true,originalPreserved:true,offscreenWorkerHasSafeFallback:sourceHasFallback(),offscreenScalerIsSelfContained:sourceHasWorkerScaler()};}};
+function sourceHasFallback(){return renderProxy.toString().indexOf('main-canvas-fallback')>=0&&renderProxy.toString().indexOf('fallbackFrame')>=0;}
+function sourceHasWorkerScaler(){return createOffscreenScaler.toString().indexOf('OffscreenCanvas')>=0&&createOffscreenScaler.toString().indexOf('new Worker')>=0&&createOffscreenScaler.toString().indexOf('new Blob')>=0;}
 })();

@@ -114,3 +114,14 @@ Quy tắc nhúng: mỗi lot là `<script id="canvio-lotNNN">` + bản độc l�
 - Latest verified artifact #387: 21,753,092 bytes, SHA-256 `31a2ba6e7494fd8e6fdf65210ef2714e43bf49dae399d910b8f4fe5e84b1f958`.
 - P124 advanced component/breakpoint editing and P133 OffscreenCanvas/large-media OPFS remain partial. Full P143 semantic dependency/style/template extraction is not complete.
 - P70 remains fail-closed (14 manual gates); P130 needs real Supabase/RLS/two-device validation; P122.3 needs approved MCP threat/security/transport contract. Do not claim CANVIO 1.0 Stable or production certification.
+
+
+## Handoff — follow-on candidate branch 2026-11-21
+
+- Start from branch work/p133-offscreen-p143-style-audit-20261121, based on main f8e476cc33c726c8c5a8ff6d5292e4b8ef1f270f.
+- Candidate changes: P124.2 configurable breakpoint/column panel; P133.3 OffscreenCanvas Worker proxy scaling with main-thread fallback; P143.3 CSS/style/template/dynamic-loader inventory and heuristic dependency candidate report.
+- Before merging, inspect candidate GitHub Actions. P124 expected Node API check count 16 and Chromium UI 12; P133 browser test requires renderPath === 'offscreen-worker'; P143 style inventory generator + validator run before HTML audit. These are planned checks, not yet PASS.
+- Do not claim that P143 is fully modularized: semantic dependency/boot-order review and reversible source extraction remain. Do not claim large-media OPFS migration: the canonical Video Engine media store is unchanged.
+- Continue updating this Guide, Roadmap, Tracker, QA report, acceptance matrix and session summary in the same branch/turn after each verified increment.
+- Defer P70 real-world gates until the user schedules them. P130 still needs the user's Supabase project/schema/RLS/credentials and cross-device restore proof. P122.3 MCP still needs an approved transport/authentication/consent/permissions/threat model before implementation.
+

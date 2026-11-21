@@ -5,5 +5,6 @@ const sandbox={window:{addEventListener(){}},document:{readyState:'loading',addE
 vm.runInNewContext(source,sandbox,{filename:'canvio-p133-proxy.js'});
 const api=sandbox.window.CVProxyP133;if(!api)throw new Error('P133.2 API missing');
 const results=api.tests();const failed=Object.keys(results).filter(k=>results[k]!==true);
-console.log(JSON.stringify({suite:'P133.2 proxy source regression',results,failed},null,2));
+if(api.getLastRenderPath()!=='not-run')failed.push('initialRenderPath');
+console.log(JSON.stringify({suite:'P133.3 proxy worker source regression',results,failed},null,2));
 if(failed.length)process.exit(1);

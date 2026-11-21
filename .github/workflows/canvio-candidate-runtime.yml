@@ -508,6 +508,14 @@ jobs:
           node tests/p143/build-inline-source-inventory.cjs
           test -s tests/p143/inline-source-inventory.json
 
+      - name: P143 stylesheet, template and dynamic-loader inventory
+        shell: bash
+        run: |
+          set -euo pipefail
+          node tests/p143/build-styles-template-inventory.cjs
+          test -s tests/p143/style-template-loader-inventory.json
+          node tests/p143/verify-style-template-inventory.cjs
+
       - name: Audit complete HTML and all inline JavaScript
         shell: bash
         run: |
@@ -834,6 +842,7 @@ jobs:
             CANVIO_MANIFEST.json
             tests/hosted/*.json
             tests/p143/inline-source-inventory.json
+            tests/p143/style-template-loader-inventory.json
             assets/three/THREE-VENDOR-MANIFEST.json
             assets/p85/P85-VENDOR-MANIFEST.json
             assets/three/THREE-VENDOR-NOTICE.md

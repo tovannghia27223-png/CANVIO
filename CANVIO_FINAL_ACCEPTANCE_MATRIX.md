@@ -38,3 +38,15 @@
 | P134.2 Auto Reframe | 4.076 s from 123 packet PTS values; VP9 720×1280 + Opus; full decode | Real-footage occlusion and physical device evaluation remain manual. |
 | P133.2 proxy | 1280×720 VP9 + Opus; source and proxy both on timeline; original unchanged; full decode | Real long-media and cross-browser/mobile acceptance remain. |
 | P70 release gate | Fail-closed | Fourteen real-world acceptance gates remain open; production certification not granted. |
+
+
+## Follow-on branch candidate — acceptance additions (2026-11-21)
+
+| Area | New automated candidate assertion | Current disposition |
+|---|---|---|
+| P124.2 breakpoints | 16 Node API checks and 12 Chromium UI assertions planned for editable breakpoints, columns, scoped media queries, canonical save and save-failure messaging. | Pending hosted CI. Advanced arbitrary-component conversion, nested variants, drag/resize and human accessibility remain open. |
+| P133.3 OffscreenCanvas | Chromium test requires the actual proxy run path to be offscreen-worker, verifies fallback contract, 1280×720 output, audio, full decode and original clip retention. | Pending hosted CI. No large-media OPFS migration or real long-footage/device acceptance claim. |
+| P143.3 inventory | Node workflow generates and validates styles/template/dynamic-loader report and packages it as evidence. | Pending hosted CI; heuristic candidate graph is not a semantic boot-order DAG and no code extraction has occurred. |
+
+P70's fourteen real-world gates are deliberately deferred at the user's instruction and remain OPEN.
+

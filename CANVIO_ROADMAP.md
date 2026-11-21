@@ -909,3 +909,13 @@ Hosted verification after the ffmpeg repair is complete:
 - P143 script-tag inventory: 150 tags, all inline, no external `src`, no module/async/defer, 147 unique IDs and zero duplicate IDs.
 - This does not close full P143. Semantic dependencies/boot order, all CSS/templates/dynamic loader inventory, reversible project-wide extraction, offline/PWA/CSP and rollback remain open.
 - P70 remains NOT certified (14 manual gates). P130 blocked on real Supabase/RLS and two-device tests. P122.3 waits for approved MCP security/transport contract.
+
+
+## Engineering continuation — 2026-11-21 candidate P124.2 / P133.3 / P143.3
+
+- P124.2 candidate: configurable breakpoint and column controls (mobile/tablet/desktop), title/description/gap/min-width controls and instance-scoped media queries. It remains on the existing Website Engine CVWeb.addComponents() → CV.engines.web.save() path. The increment does not add a store/editor.
+- P133.3 candidate: adds Blob Worker + OffscreenCanvas scaling for the existing 4K-to-720p proxy pipeline, with single-frame backpressure, cleanup and main-thread fallback. The Video Engine remains the media/timeline owner; source clip is preserved. Large-media OPFS migration remains open.
+- P143.3 candidate: adds CSS/style/template/dynamic-loader inventory and heuristic global producer/consumer candidate report to the hosted workflow. No runtime code order is changed and no source is extracted by this increment.
+- Acceptance: Node and Chromium assertions are expanded. Status remains candidate / hosted verification pending until PR and mainline CI are inspected. Do not update completion rows to PASS before the workflow evidence exists.
+- Still blocked or deferred: P130 Cloud Sync needs a deployed user-owned Supabase project/schema/RLS and credentials; P122.3 MCP needs an approved transport/auth/consent/permission/threat contract. P70's 14 production/manual gates are deliberately deferred by the user for later real-world testing.
+
