@@ -121,7 +121,7 @@ function selectedTargetClass(component){
  return 'cv-p124-selected-'+raw;
 }
 function selectedResponsiveCss(selector,options){
- if(!/^\\.cv-p124-selected-[a-z0-9_-]{1,64}$/.test(String(selector||'')))throw new Error('Selector P124 không hợp lệ.');
+ if(!/^\.cv-p124-selected-[a-z0-9_-]{1,64}$/.test(String(selector||'')))throw new Error('Selector P124 không hợp lệ.');
  var o=normalize('grid',options),rule=function(columns,gap){return 'display:grid;grid-template-columns:repeat('+columns+',minmax(0,1fr));gap:'+gap+'px;min-width:0;box-sizing:border-box;';};
  return selector+'{'+rule(o.desktopColumns,o.gap)+'}@media(max-width:'+o.tabletBreakpoint+'px){'+selector+'{'+rule(o.tabletColumns,o.gap)+'}}@media(max-width:'+o.mobileBreakpoint+'px){'+selector+'{'+rule(o.mobileColumns,o.gap)+'}}';
 }
