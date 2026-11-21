@@ -48,5 +48,5 @@ assert.throws(()=>api.render('unknown'),/không hợp lệ/i);
   assert.equal(failed.ok,false);
   assert.equal(failed.inserted,true);
   assert.equal(failed.saved,false);
-  console.log(JSON.stringify({suite:'P124 responsive auto-layout and component variants',passed:22,total:22,checks},null,2));
+  console.log(JSON.stringify({suite:'P124 responsive auto-layout and component variants',passed:32,total:32,checks},null,2));
 })().catch(error=>{console.error(error);process.exitCode=1;});
