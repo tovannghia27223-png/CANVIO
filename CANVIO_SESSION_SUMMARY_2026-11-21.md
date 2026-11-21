@@ -137,3 +137,11 @@ Pull trước (`git pull --rebase origin main`; CI bot hay push commit build). A
 - Source limitation recorded: existing Pixel snapshotState() is a flattened PNG data URL, so P135.1 does not pretend editable stack metadata is project-persistent. Reload/new source clears the in-memory stack; export to Asset Library creates a flattened copy while preserving the original.
 - PR for P135.1 and hosted results are still pending. The exact CI-font-fix branch run executed P119 OK, P118w OK, P141f OK, P128o OK and P137s OK. That run still failed later at the existing P133 proxy-browser gate, so it is not a whole-workflow PASS.
 - P139, P120/P126 GPU adapters and all external P70/P130/P122.3/P142 gates remain OPEN/blocked as documented.
+
+## P139.1 implementation started — candidate branch, not merged (2026-11-21)
+
+- Added canvio-p139-motionlab.js and canonical lot canvio-lot139 to branch work/canvio-p139-motionlab-20261121, stacked on the P135 branch.
+- P139.1 adds Null Controller parent hierarchy and per-grapheme Text Animator (rise/fade/scale/wave/tracking) with CVEasingP119 curves. Object metadata is stored inside the existing Motion Lab objects and therefore follows its snapshotState()/restoreState() contract.
+- The integration patches the existing draw loop at unique source anchors; it does not monkey-patch the CanvasRenderingContext2D or create another draw owner.
+- Node P139 source/model tests passed in hosted run #44905353707. That run failed in full-app P70/P85 browser smoke because the P135/P139 panels used page.insertBefore with a .ne-note located under a nested parent. Fixed both modules to insert via note.parentNode. New hosted run pending.
+- Remaining P139: precomp, motion blur and advanced word/range animator. P135 remains incomplete beyond its first adjustment stack (smart object, SAM, clone/patch and liquify).
