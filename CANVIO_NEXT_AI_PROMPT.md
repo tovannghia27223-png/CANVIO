@@ -59,3 +59,10 @@ Quy tắc nhúng: mỗi lot là `<script id="canvio-lotNNN">` + bản độc l�
 - Added page-specific guidance for all 13, using Guide-documented behavior and explicit boundaries (e.g. collab is local notes/activity, Prompt Forge is prompt handoff, Shield does not certify server headers).
 - P133.2 passed all 11 Chromium checks in the same run, including actual timeline import, clip duration, audio, full decode and original preservation. P124 passed 9/9.
 - Rerun required to verify all 38 CVWS routes have contextual help; no merge claim until that coverage check passes.
+
+## P143 — Source split Phase 1 candidate (2026-11-21)
+
+- Branch work/p143-source-parity-audit-20261121.
+- Registry tests/p143/source-module-map.json covers 20 workflow-managed standalone JS sources and canonical inline lot IDs.
+- Gate tests/p143/run-p143-source-parity.cjs verifies exact source/embedded parity, unique lot count, syntax and classic-script constraints. It runs after integration before full HTML audit.
+- Plan CANVIO_P143_SOURCE_SPLIT_PLAN.md. Await hosted run; do not mark P143 globally complete. Remaining: complete inline script/style inventory, dependency/boot-order DAG, incremental extraction with offline/CSP/rollback and app runtime acceptance.
