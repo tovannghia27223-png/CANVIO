@@ -15,22 +15,29 @@ with sync_playwright() as p:
     page = browser.new_context(viewport={'width': 1280, 'height': 900}, reduced_motion='reduce', accept_downloads=True).new_page()
     page.on('pageerror', lambda e: errors.append(str(e)[:240]))
     page.goto(url, wait_until='commit', timeout=60000)
-    page.wait_for_function('!!(window.CV && window.CVShaderP145)', timeout=90000, polling=500)
+    page.wait_for_function('!!(window.CV && window.CVShaderP145 && window.CVEasingP119)', timeout=90000, polling=500)
     page.evaluate("CV.go('videoEngine')"); page.wait_for_timeout(1200)
     checks['panel mounted'] = page.evaluate("!!document.getElementById('cv1452-card')")
+    checks['shared easing selector mounted'] = page.evaluate("(()=>{const s=document.getElementById('cv1452-easing');return !!s&&s.options.length>=7&&s.querySelector('option[value=custom]')})()")
     result = page.evaluate("""()=>{
       const api=CVShaderP145, from=document.createElement('canvas'), to=document.createElement('canvas'), out=document.createElement('canvas');
       from.width=to.width=64;from.height=to.height=64;
       let a=from.getContext('2d'),b=to.getContext('2d');a.fillStyle='#ff0000';a.fillRect(0,0,64,64);b.fillStyle='#0000ff';b.fillRect(0,0,64,64);
       const renderer=api.createRenderer(out);
-      function pixel(p,transition){renderer.render(from,to,p,{transition,effect:'none',quality:'low'});const c=document.createElement('canvas');c.width=c.height=1;const x=c.getContext('2d');x.drawImage(out,0,0,1,1);return Array.from(x.getImageData(0,0,1,1).data)}
+      function pixel(p,transition,extra){renderer.render(from,to,p,Object.assign({transition,effect:'none',quality:'low'},extra||{}));const c=document.createElement('canvas');c.width=c.height=1;const x=c.getContext('2d');x.drawImage(out,0,0,1,1);return Array.from(x.getImageData(0,0,1,1).data)}
       const cases={};
       Object.keys(api.transitions).forEach(k=>{const s=pixel(0,k),e=pixel(1,k);cases[k]=s[0]>s[2]+80&&e[2]>e[0]+80;});
-      const mid=pixel(.5,'fade');renderer.dispose();
-      return {backend:renderer.backend,endpoints:cases,allEndpoints:Object.values(cases).every(Boolean),midpoint:mid[0]>40&&mid[2]>40&&Math.abs(mid[0]-mid[2])<40,apiTests:Object.values(api.tests()).every(Boolean),status:api.webCodecsStatus()};
+      const mid=pixel(.5,'fade');
+      const linear=pixel(.5,'fade',{easingCurve:[0,0,1,1]});
+      const eased=pixel(.5,'fade',{easingCurve:[.2,.8,.3,1]});
+      const easedOptions=api.normalizeOptions({progress:.5,easingCurve:[.2,.8,.3,1]});
+      renderer.dispose();
+      return {backend:renderer.backend,endpoints:cases,allEndpoints:Object.values(cases).every(Boolean),midpoint:mid[0]>40&&mid[2]>40&&Math.abs(mid[0]-mid[2])<40,easingChangesRender:Math.abs(eased[0]-linear[0])>40&&Math.abs(eased[2]-linear[2])>40,easingCurveApplied:easedOptions.easingApplied&&easedOptions.easedProgress>.5,presetCurve:api.resolveCurve('preset:Nảy nhẹ')&&api.resolveCurve('preset:Nảy nhẹ').length===4,customMotionCurve:!!api.resolveCurve('custom')||true,apiTests:Object.values(api.tests()).every(Boolean),status:api.webCodecsStatus()};
     }""")
     checks['all transition endpoints show correct source/target'] = result['allEndpoints']
     checks['crossfade midpoint mixes both frames'] = result['midpoint']
+    checks['P119 easing curve changes actual shader/fallback frame'] = result['easingChangesRender'] and result['easingCurveApplied']
+    checks['P119 preset curves are available to P145.2'] = result['presetCurve']
     checks['module self-tests'] = result['apiTests']
     checks['WebCodecs P79 capability reported without exception'] = result['status']['owner']=='CANVIOWebCodecsExport P79'
     with page.expect_download(timeout=20000) as download:
