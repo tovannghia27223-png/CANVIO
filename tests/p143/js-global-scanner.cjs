@@ -154,7 +154,7 @@ function runSelfTests(){
   'window.WriteOnlyApi = 1;'
  ].join('\n');
  const result=scanGlobalReferences(fixture,['CVNativeEngines','ProviderApi','StringApi','CommentApi','BlockCommentApi','RegexApi']);
- const regexTokens=tokenize('const before = 1;\\n/regex/.test(value);').filter(x=>x.type==='regex');
+ const regexTokens=tokenize('const before = 1;\n/regex/.test(value);').filter(x=>x.type==='regex');
  const checks={
   tracksRegexStartLine:regexTokens.length===1&&regexTokens[0].line===2,
   detectsWindowExport:result.exportedGlobals.includes('ProviderApi'),
