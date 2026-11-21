@@ -10,7 +10,7 @@ function is4k(w,h){w=Number(w)||0;h=Number(h)||0;return(w>=2560&&h>=1440)||(h>=2
 function outputSize(w,h){
  w=Number(w);h=Number(h);
  if(!(w>0&&h>0))throw new Error('Kích thước video không hợp lệ.');
- var scale=Math.min(1,1280/w,720/h);
+ var scale=Math.min(1,1280/Math.max(w,h));
  return{width:Math.max(2,Math.round(w*scale/2)*2),height:Math.max(2,Math.round(h*scale/2)*2)};
 }
 function trimRange(video,clip){
