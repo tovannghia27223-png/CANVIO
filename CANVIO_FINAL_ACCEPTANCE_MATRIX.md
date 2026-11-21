@@ -35,3 +35,5 @@
 | P133.2 proxy (main) | Hosted synthetic 4K → 1280×720 WebM, Opus audio, second timeline clip, original retained, full decode | Merged by PR #51. WebM/browser variation, real long footage, OffscreenCanvas and OPFS migration remain open. |
 | P144.3 contextual help (main) | F1 route mapping and 38/38 registered CVWS route coverage in Chromium | Merged by PR #51. Human wording/accessibility review remains manual. |
 | P143 Phase 1 | 20-module source parity gate passed in hosted workflow #363 pre-browser steps | PR #52 candidate; full run pending. Does not close full index source split. |
+
+| P143 Phase 1 parity (rebased candidate) | Prior hosted run #363 success 39/39; 20 module pairs, inline audit, regressions, ZIP and browser matrix passed | Rebased branch reruns current-main CI. Full index script/style inventory, dependency DAG, staged extraction, offline/CSP and rollback remain open. |
