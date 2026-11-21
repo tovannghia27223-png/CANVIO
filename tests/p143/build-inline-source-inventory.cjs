@@ -4,7 +4,8 @@ const crypto=require('node:crypto');
 const html=fs.readFileSync('index.html','utf8');
 const re=/<script\b([^>]*)>([\s\S]*?)<\/script\s*>/gi;
 const attrRe=/([^\s=/>]+)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+)))?/g;
-const knownGlobals=['CV','CVWS','CVWeb','CVKit','CVAssets','CVDesignSystem','CVContext','CVTimeline','CANVIOSecurity','CANVIOPersistentProjects','CANVIOStudioSwitcherP109','CANVIOHubP110','CANVIOStudioShellP111','CVAutoLayoutP124','CVProxyP133','CVUxP144','LS','P7','P8','P30','P31'];
+const knownGlobals=['CV','CVWS','CVWeb','CVKit','CVAssets','CVDesignSystem','CVContext','CVTimeline','CVNativeEngines','CANVIOSecurity','CANVIOPersistentProjects','CANVIOStudioSwitcherP109','CANVIOHubP110','CANVIOStudioShellP111','CVAutoLayoutP124','CVProxyP133','CVUxP144','CVEasingP119','CVStylesP137','CVPixelAdjustmentsP135','CVMotionLabP139','CVShaderP145','CVComfyP120P126','CVResilienceP133','CVMediaOPFSP133','CVDenoiseP138','CVChartsP140','CVSFXP145','CVFontsP141','CVTraceP136','CVUnifiedLayers','GeminiAPI','LS','P7','P8','P30','P31'];
+const scanner=require('./js-global-scanner.cjs');
 const modules=[];
 let match,index=0;
 while((match=re.exec(html))){
@@ -18,14 +19,10 @@ while((match=re.exec(html))){
   }
   const id=typeof attrs.id==='string'?attrs.id:null;
   const src=typeof attrs.src==='string'?attrs.src:null;
-  const exports=new Set();
-  for(const m of source.matchAll(/\bwindow\.([A-Za-z_$][\w$]*)\s*=/g))exports.add(m[1]);
-  for(const m of source.matchAll(/\bwindow\[['"]([A-Za-z_$][\w$]*)['"]\]\s*=/g))exports.add(m[1]);
-  const reads=[];
-  for(const name of knownGlobals){
-    const rx=new RegExp('(?:\\bwindow\\.'+name+'\\b|\\b'+name+'\\s*(?:\\.|\\[))');
-    if(rx.test(source)&&!exports.has(name))reads.push(name);
-  }
+  const referenceScan=scanner.scanGlobalReferences(source,knownGlobals);
+  const exports=new Set(referenceScan.exportedGlobals);
+  const reads=referenceScan.knownGlobalReads.map(x=>x.name);
+  const globalPropertyReads=referenceScan.globalPropertyReads.map(x=>x.name);
   modules.push({
     order:index++,
     id,
@@ -37,7 +34,15 @@ while((match=re.exec(html))){
     bytes:Buffer.byteLength(source),
     sha256:crypto.createHash('sha256').update(source).digest('hex'),
     exportedGlobals:[...exports].sort(),
-    knownGlobalReads:reads.sort()
+    globalDeclarations:referenceScan.globalDeclarations,
+    globalPropertyReads:globalPropertyReads,
+    knownGlobalReads:reads.sort(),
+    globalReferenceEvidence:{
+      propertyReads:referenceScan.globalPropertyReads,
+      knownReads:referenceScan.knownGlobalReads,
+      writes:referenceScan.globalWrites,
+      scannerLimitations:referenceScan.limitations
+    }
   });
 }
 const counts=new Map();
