@@ -31,8 +31,9 @@ with tempfile.TemporaryDirectory(prefix='canvio-p133p-') as td:
         page.click('#cv133p-run')
         page.wait_for_function("document.querySelector('#cv133p-status').textContent.includes('Đã thêm')",timeout=90000)
         checks['proxyGeneratedAndImported']=True
-        details=page.evaluate("""()=>({status:document.querySelector('#cv133p-status').textContent,count:CV.engines.video._state().clips.length})""")
-        checks['timelineHasOriginalAndProxy']=details['count']>=selected['clipCount']+1
+        details=page.evaluate("""()=>{const clips=CV.engines.video._state().clips;const original=clips.find(c=>c.name==='4k-source.webm');const proxy=clips.find(c=>/proxy-720p\\.webm$/i.test(c.name||''));return{status:document.querySelector('#cv133p-status').textContent,count:clips.length,original:!!original,proxy:!!proxy,proxyDuration:proxy&&proxy.duration}}""")
+        checks['timelineHasOriginalAndProxy']=details['count']>=selected['clipCount']+1 and details['original'] and details['proxy']
+        checks['proxyDurationMatchesMedia']=details['proxyDuration'] is not None and abs(float(details['proxyDuration'])-3.0)<=0.5
         with page.expect_download(timeout=30000) as event:page.click('#cv133p-download')
         event.value.save_as(str(out))
         checks['downloadCreated']=out.exists() and out.stat().st_size>10000
