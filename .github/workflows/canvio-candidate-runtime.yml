@@ -834,6 +834,78 @@ jobs:
           /tmp/canvio-playwright/bin/python tests/p145/run-p135-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p133w-browser.py
 
+      - name: Record P135.2 persistent Pixel adjustment project round-trip
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! grep -Fq '## P135.2 — Verified Pixel adjustment Project Vault round-trip' CANVIO_AI_GUIDE.md; then
+            cat >> CANVIO_AI_GUIDE.md <<'P135GUIDE'
+
+          ## P135.2 — Verified Pixel adjustment Project Vault round-trip
+
+          - Adds a versioned Pixel project payload containing the existing raster snapshot plus ordered P135.2 adjustment layers and the selected-layer ID. The raw Pixel snapshotState contract remains an image data URL for older consumers.
+          - Routes only CVUnifiedLayers snapshotState/restoreState for pixelStudio through the versioned project payload; all other editors and legacy Pixel raster snapshots keep their prior paths.
+          - Project Vault remains the single persistence owner: its existing IndexedDB/localStorage fallback, backup/import and reopen flows save and restore the editable adjustment stack. No second database or cloud-sync claim is introduced.
+          - Hosted acceptance checks payload schema, source-raster preservation, Project Vault save, full page reload and restoration of the ordered adjustment stack and preview filter.
+          - Limitations: same-device Project Vault storage until a portable backup is moved manually; browser quota/private-mode behavior still applies. Masks/local corrections, smart objects, clone/patch and liquify remain outside P135.2.
+          P135GUIDE
+          fi
+          if ! grep -Fq '## P135.2 — Pixel adjustment project persistence' CANVIO_ROADMAP.md; then
+            cat >> CANVIO_ROADMAP.md <<'P135ROADMAP'
+
+          ## P135.2 — Pixel adjustment project persistence
+
+          - P135.2 extends the existing Project Vault payload for Pixel Atelier with a versioned sidecar for the editable adjustment stack, preserving the raw raster snapshot API for compatibility.
+          - The same IndexedDB/localStorage fallback and backup/import owners are used; no separate persistence service or cloud sync is added.
+          - CI verifies same-origin Chromium save, full reload and restore for layer type/value/selection and unchanged source raster pixels. Manual cross-device backup transfer and browser quota/private-mode behavior remain manual.
+          P135ROADMAP
+          fi
+          if ! grep -Fq '## P135.2 verified completion record' CANVIO_ALL_P_COMPLETION_TRACKER.md; then
+            cat >> CANVIO_ALL_P_COMPLETION_TRACKER.md <<'P135TRACKER'
+
+          ## P135.2 verified completion record
+
+          - P135.2 — Pixel adjustment stack in Project Vault: versioned project payload, Project Vault save/reopen and reload round-trip are covered by Node and Chromium CI. Raw raster snapshot compatibility is retained. Cloud sync and advanced retouch tools are not claimed.
+          P135TRACKER
+          fi
+          if ! grep -Fq '## P135.2 — Project Vault adjustment round-trip QA' CANVIO_QA_REPORT.md; then
+            cat >> CANVIO_QA_REPORT.md <<'P135QA'
+
+          ## P135.2 — Project Vault adjustment round-trip QA
+
+          - Node contract checks validate versioned project payload, raster validation, selected layer, stack values and legacy data-URL compatibility.
+          - Chromium acceptance saves Pixel Atelier through the existing Project Vault, reloads the full app, verifies the adjustment stack and CSS preview are restored, and compares a source raster pixel before and after restore.
+          - CI pass status is defined by the hosted P135.2 run that executes this record step; no device/GPU/cloud synchronization acceptance is implied.
+          P135QA
+          fi
+          if ! grep -Fq '## P135.2 — Pixel adjustment project persistence' CANVIO_FINAL_ACCEPTANCE_MATRIX.md; then
+            cat >> CANVIO_FINAL_ACCEPTANCE_MATRIX.md <<'P135ACCEPT'
+
+          ## P135.2 — Pixel adjustment project persistence
+
+          - Automated: Node payload contract; Project Vault IndexedDB save; full page reload; stack and preview restoration; source raster pixel preservation.
+          - Manual: copy backup to another device and import, browser quota/private browsing behavior, and human UX review.
+          P135ACCEPT
+          fi
+          if ! grep -Fq '## Verified handoff — P135.2 Project Vault persistence' CANVIO_NEXT_AI_PROMPT.md; then
+            cat >> CANVIO_NEXT_AI_PROMPT.md <<'P135HANDOFF'
+
+          ## Verified handoff — P135.2 Project Vault persistence
+
+          - P135.2 binds the editable Pixel adjustment stack to the existing Project Vault project snapshot while retaining the legacy raw-raster snapshot API. Do not create another project database.
+          - Follow-up scope: test manual cross-device backup transfer; later consider local masks and retouch tools only after source-layer semantics are designed.
+          P135HANDOFF
+          fi
+          if ! grep -Fq '## P135.2 — Project Vault round-trip' CANVIO_SESSION_SUMMARY_2026-11-21.md; then
+            cat >> CANVIO_SESSION_SUMMARY_2026-11-21.md <<'P135SESSION'
+
+          ## P135.2 — Project Vault round-trip
+
+          - Pixel adjustment stack metadata now travels with the Pixel project snapshot and is stored by the existing Project Vault; hosted Chromium verifies save, reload, restore and source raster preservation.
+          P135SESSION
+          fi
+          echo 'P135.2 persistence records appended without replacing prior Guide/Roadmap/QA history'
+
       - name: Refresh Guide, Roadmap, QA, Acceptance Matrix and Manifest
         shell: bash
         run: |
