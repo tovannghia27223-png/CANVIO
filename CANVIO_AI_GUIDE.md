@@ -3786,3 +3786,11 @@ P144 tour: thêm bước bằng cách thêm vào mảng `STEPS` ({sel,title,text
 - Added page-specific guidance for all 13, using Guide-documented behavior and explicit boundaries (e.g. collab is local notes/activity, Prompt Forge is prompt handoff, Shield does not certify server headers).
 - P133.2 passed all 11 Chromium checks in the same run, including actual timeline import, clip duration, audio, full decode and original preservation. P124 passed 9/9.
 - Rerun required to verify all 38 CVWS routes have contextual help; no merge claim until that coverage check passes.
+
+## Mainline reconciliation — PR #51 (2026-11-21)
+
+- PR #51 merged to main at e4e3647b8b49dcc931065c3f7893f68b48d9a071. Hosted candidate workflow #360 completed successfully (39/39 steps); mainline hosted workflow #362 also completed successfully (39/39).
+- P124 source owner: canvio-p124-autolayout.js / canvio-lot124 / CVAutoLayoutP124. Five responsive presets and four component variants use the existing Website Engine adapter/save owner; Chromium smoke 9/9. Advanced selected-component conversion, breakpoint editor, nested variants, drag/resize constraints and full accessibility/real-editor review remain open.
+- P133.2 source owner: canvio-p133-proxy.js / canvio-lot133p / CVProxyP133. 4K-to-WebM proxy adds a new clip through existing Video Engine importFiles and leaves the original untouched; 1280×720 synthetic 4K fixture, Opus audio and full decode passed hosted Chromium acceptance. Remaining P133: OffscreenCanvas use cases and selected large-media migration to OPFS with quota/migration/rollback tests.
+- P144.3 updates existing CVUxP144 to 144.3.0; contextual help covers all 38 routes registered through CVWS in hosted Chromium. Existing F1, palette, shortcuts, tour and recent-command owner are preserved; wording/accessibility review remains manual.
+- Do not mark CANVIO 1.0 Stable: P70 remains fail-closed with fourteen real-world gates open.
