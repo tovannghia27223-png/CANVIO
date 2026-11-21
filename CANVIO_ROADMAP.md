@@ -959,3 +959,12 @@ Hosted verification after the ffmpeg repair is complete:
 - Style definitions: whitelisted CSS properties only, localStorage `canvio137:styles` (UI convenience, not in exported files).
 - Tests: `tests/p127/run-p137s-tests.cjs` (Node, sanitising/escaping/fallback) and `tests/p145/run-p137-browser.py` (real Chrome, 11 checks: apply, switch clears old props, redefine → other page restyled, TOC entries+pages, rebuild without duplicate, undo, empty TOC message, zero page errors). Smoke 21/21.
 - Limits: no multi-frame text flow, no nested character styles, tables stay with the existing Layout Foundry insert (no table styles); TOC page numbers are document page order, not print pagination; style set is fixed to the five defaults plus edits (no UI to create new names yet); TOC entries are static until rebuilt.
+ 
+## P135.1 — Pixel Atelier adjustment stack (current-main candidate · 2026-11-21)
+
+- Candidate branch: `work/canvio-p135-mainline-20261121`; source `canvio-p135-adjustments.js`; embedded lot `canvio-lot135a`; API `window.CVPixelAdjustmentsP135`.
+- Nine bounded adjustment types: brightness, contrast, saturation, hue, blur, grayscale, sepia, invert and opacity. Supports ordered stack, enable/disable, rename, reorder, delete, reset and stack-local undo/redo; maximum 32.
+- Non-destructive preview uses CSS filters on the existing Pixel canvas. PNG/WebP exports render to a derived canvas; Asset Library saves a new flattened PNG via the existing `CV.assets.addBlob` owner. Original raster remains unchanged.
+- The editable stack is tab-memory only in this first increment because Pixel `snapshotState()` currently returns a flattened PNG data URL. Page reload/new source clears the stack; flattened exports are not reversible adjustment projects. No second store/DB/timeline/provider/CDN was added.
+- Node parity/model suite: `tests/p127/run-p135a-tests.cjs`; hosted same-origin browser suite: `tests/p145/run-p135-browser.py`. Current-main hosted result is pending; do not record PASS before reviewing its exact run.
+- P135 remains PARTIAL. Editable stack project persistence, masks/local adjustments, smart objects, clone/patch and liquify remain OPEN.
