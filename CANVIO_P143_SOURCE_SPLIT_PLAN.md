@@ -42,3 +42,10 @@ Reduce CANVIO's single-file authoring burden without breaking the canonical app 
 
 - Phase 1 is complete only when the 20-module parity test passes in hosted CI.
 - P143 as a full project-wide source split remains open until the full inventory, dependency DAG, staged extraction and app/rollback/browser acceptance are completed.
+## Phase 2 — canonical inline script inventory (added 2026-11-21)
+
+- Generate tests/p143/inline-source-inventory.json from the final rebuilt canonical index.html after workflow-managed integrations.
+- Record script order, ID/type/src/async/defer/nomodule, byte length, SHA-256, obvious window.* exports and heuristic references to known global owners.
+- Package the JSON with candidate source/evidence.
+- The report is an exhaustive script-tag inventory only. Heuristic references do not establish a semantic dependency DAG. CSS, inline styles, HTML template payloads and dynamically constructed script paths must be separately catalogued before extraction.
+- Do not move/reorder scripts based on this report alone. Next step is human-reviewed boot-order and dependency analysis.
