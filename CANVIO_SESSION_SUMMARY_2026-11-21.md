@@ -74,3 +74,10 @@ Pull trước (`git pull --rebase origin main`; CI bot hay push commit build). A
 - Main advanced to 6481d83 after hosted build artifact commit; previous P143 branches became stale.
 - Created work/p143-parity-current-main-final-20261121 from latest main, copied the 20-module registry/audit and split plan, and re-added the hosted workflow gate.
 - Documentation updated; hosted CI pending. Prior candidate #363 had full success 39/39, including parity audit and browser matrix.
+
+
+## P134.2 CI regression correction — 2026-11-21
+
+- P143 rebased run #371 failed only at P134.2 `durationWithinTolerance`: WebM had 123 frames but no format/stream duration and incorrect 60 fps nominal metadata, so the old test derived 2.05 s instead of ~4.1 s.
+- Updated browser test to measure packet presentation timestamp range plus median packet duration, with 30 fps fallback only when PTS missing. Added packet diagnostics. No tolerance was relaxed and exporter code was unchanged.
+- Latest-main rerun #373 is pending; PR #54 must remain open until full CI succeeds.
