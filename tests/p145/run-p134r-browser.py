@@ -47,18 +47,29 @@ with tempfile.TemporaryDirectory(prefix='canvio-p134r-') as td:
             page.click('#cv134r-download')
         download=event.value;out=tmp/'reframed.webm';download.save_as(str(out))
         checks['downloadCreated']=out.exists() and out.stat().st_size>10000
-        probe=subprocess.run([FFPROBE,'-v','error','-show_entries','stream=codec_type,codec_name,width,height:format=duration','-of','json',str(out)],check=True,capture_output=True,text=True)
-        streams=json.loads(probe.stdout).get('streams',[])
+        probe=subprocess.run([FFPROBE,'-v','error','-count_frames','-show_entries','stream=codec_type,codec_name,width,height,duration,nb_read_frames,avg_frame_rate:format=duration','-of','json',str(out)],check=True,capture_output=True,text=True)
+        probe_data=json.loads(probe.stdout)
+        streams=probe_data.get('streams',[])
         video=next((s for s in streams if s.get('codec_type')=='video'),{});audio=next((s for s in streams if s.get('codec_type')=='audio'),{})
         checks['videoStreamDecodes']=video.get('codec_type')=='video' and video.get('width')==720 and video.get('height')==1280
         checks['audioPreserved']=bool(audio)
         decode=subprocess.run([FFMPEG,'-v','error','-i',str(out),'-f','null','-'],capture_output=True,text=True)
         checks['fullDecode']=decode.returncode==0
-        fmt=json.loads(probe.stdout).get('format',{})
-        checks['durationWithinTolerance']=3.5<=float(fmt.get('duration',0))<=4.5
+        fmt=probe_data.get('format',{})
+        def stream_duration(stream):
+            try:
+                if float(stream.get('duration',0))>0:return float(stream['duration'])
+            except (TypeError,ValueError):pass
+            try:
+                rate=stream.get('avg_frame_rate','0/1').split('/')
+                fps=float(rate[0])/max(float(rate[1]),1e-9)
+                return int(stream.get('nb_read_frames',0))/fps if fps>0 else 0
+            except (TypeError,ValueError,ZeroDivisionError):return 0
+        measured=max([float(fmt.get('duration',0) or 0)]+[stream_duration(s) for s in streams])
+        checks['durationWithinTolerance']=3.5<=measured<=4.5
         checks['outputPreviewShown']=page.locator('#cv134r-result').evaluate("e => e.style.display !== 'none'")
         checks['localOnlyNoNetwork']=page.evaluate("() => window.CVAutoReframeP134.tests().noNetwork && window.CVAutoReframeP134.tests().noTimelineMutation")
         browser.close()
     server.shutdown()
-    result={'checks':checks,'downloadBytes':out.stat().st_size if out.exists() else 0,'videoStream':video,'audioStream':audio,'planSummary':details.get('plan',''),'pageErrors':errors,'failed':[k for k,v in checks.items() if not v]+(['pageErrors'] if errors else [])}
+    result={'checks':checks,'downloadBytes':out.stat().st_size if out.exists() else 0,'videoStream':video,'audioStream':audio,'measuredDurationSeconds':measured,'formatMetadata':fmt,'pageErrors':errors,'planSummary':details.get('plan',''),'failed':[k for k,v in checks.items() if not v]+(['pageErrors'] if errors else [])}
     print(json.dumps(result,ensure_ascii=False,indent=2));sys.exit(1 if result['failed'] else 0)
