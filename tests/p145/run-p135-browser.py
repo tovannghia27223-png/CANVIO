@@ -56,8 +56,8 @@ with sync_playwright() as p:
     # Stub only the existing Asset Library write owner in this isolated browser run.
     page.evaluate("window.__p135AssetCalls=[];window.__p135OriginalAddBlob=CV.assets.addBlob;CV.assets.addBlob=async f=>{window.__p135AssetCalls.push({isFile:f instanceof File,name:f&&f.name,type:f&&f.type,size:f&&f.size});return {id:'p135-test'}};")
     page.click('#cv135-panel [data-cv135="asset"]')
-    page.wait_for_function("!!window.__p135AssetWrite",timeout=30000)
-    checks['assetSaveUsesExistingOwner']=page.evaluate("window.__p135AssetWrite.type==='image/png' && window.__p135AssetWrite.size>24")
+    page.wait_for_function("window.__p135AssetCalls.some(x=>x.isFile && x.type==='image/png' && x.size>24)",timeout=30000)
+    checks['assetSaveUsesExistingOwner']=page.evaluate("window.__p135AssetCalls.some(x=>x.isFile && x.type==='image/png' && x.size>24)")
     checks['sourceCanvasStillUnchangedAfterExport']=before==page.evaluate("CVNativeEngines.pixel.snapshotState()")
     page.evaluate("CV.assets.addBlob=CV.assets.addBlob")
     b.close()
