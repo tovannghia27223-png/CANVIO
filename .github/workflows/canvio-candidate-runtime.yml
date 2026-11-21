@@ -514,6 +514,7 @@ jobs:
           set -euo pipefail
           node tests/p143/build-styles-template-inventory.cjs
           test -s tests/p143/style-template-loader-inventory.json
+          node tests/p143/verify-style-template-inventory.cjs
 
       - name: Audit complete HTML and all inline JavaScript
         shell: bash
