@@ -29,7 +29,10 @@ with tempfile.TemporaryDirectory(prefix='canvio-p133p-') as td:
         selected=page.evaluate("""()=>{const s=CV.engines.video._state();const c=s.clips.filter(x=>x.type==='video').slice(-1)[0];s.selected=c.id;return{name:c.name,id:c.id,clipCount:s.clips.length}}""")
         checks['4kSourceImported']=bool(selected.get('id'))
         page.click('#cv133p-run')
-        page.wait_for_function("document.querySelector('#cv133p-status').textContent.includes('Đã thêm')",timeout=90000)
+        page.wait_for_function("!!document.querySelector('#cv133p-run') && !document.querySelector('#cv133p-run').disabled",timeout=90000)
+        observedStatus=page.locator('#cv133p-status').inner_text()
+        if 'Đã thêm' not in observedStatus:
+            raise AssertionError('P133 proxy failed with UI status: '+observedStatus+'; pageErrors='+json.dumps(errors,ensure_ascii=False))
         checks['proxyGeneratedAndImported']=True
         details=page.evaluate("""()=>{const clips=CV.engines.video._state().clips;const original=clips.find(c=>c.name==='4k-source.webm');const proxy=clips.find(c=>/proxy-720p\\.webm$/i.test(c.name||''));return{status:document.querySelector('#cv133p-status').textContent,count:clips.length,original:!!original,proxy:!!proxy,proxyDuration:proxy&&proxy.duration,renderPath:CVProxyP133.getLastRenderPath()}}""")
         checks['offscreenCanvasWorkerUsed']=details['renderPath']=='offscreen-worker'
