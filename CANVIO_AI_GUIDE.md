@@ -3883,3 +3883,7 @@ P144 tour: thêm bước bằng cách thêm vào mảng `STEPS` ({sel,title,text
 
 ## P118 wordmark (2026-11-21)
 - `window.CVWordmarkP118`: `parse(ArrayBuffer)`, `layout(font,text,{size,tracking,kerning})`, `glyph`, `kernPair`, `toSvg`, `mount`. Card `#cv118-card` on `#page-brand`. Standalone must equal embedded `canvio-lot118w`.
+
+
+## P141 font manager (2026-11-21)
+- `window.CVFontsP141`: `VN` (146 chars), `analyze(ArrayBuffer,name)`, `suggest(list)`, `report(list)`, `mount`. Depends on `CVWordmarkP118.parse` (P118 lot must load first). Card `#cv141-card` on `#page-brand`. Standalone must equal embedded `canvio-lot141f`.

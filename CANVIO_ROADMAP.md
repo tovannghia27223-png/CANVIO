@@ -935,3 +935,10 @@ Hosted verification after the ffmpeg repair is complete:
 - Pure-JS TrueType reader: cmap 4/12, glyf (simple + composite), hmtx, `kern` format 0 and GPOS PairPos formats 1/2. Quadratic contours become SVG path.
 - Tests: `tests/p127/run-p118w-tests.cjs` (Node; needs Liberation Sans or `CANVIO_TEST_TTF`) and `tests/p145/run-p118-browser.py` (real Chrome: outline raster vs Chrome's own text — ink width 476 vs 476 px, area within 0.5%; kerning narrows; bad font rejected; zero page errors). Smoke 21/21.
 - Limits: .ttf only (no CFF .otf, .woff/.woff2, variable fonts); no GSUB ligatures, single line, no complex-script shaping; no Paper.js boolean ops/path editing; kerning from GPOS covers PairPos only (no mark/contextual).
+
+
+## P141 Font manager + Vietnamese coverage check (2026-11-21 · candidate)
+
+- New `canvio-p141-fonts.js` (CVFontsP141, embedded lot `canvio-lot141f`) on the Brand page, reusing the P118 TrueType reader. Choose up to 12 local .ttf files: family/style names, weight, serif/sans (OS/2 PANOSE), variable-font flag (fvar), kerning flag, and coverage of 146 precomposed Vietnamese characters with the missing list. Live preview line uses the loaded font; heading+body pair suggestions come only from fully covered serif+sans fonts; JSON report download.
+- Tests: `tests/p127/run-p141f-tests.cjs` (Node; Liberation Sans = complete, Caladea Bold = partial, override with `CANVIO_TEST_TTF` / `CANVIO_TEST_TTF_PARTIAL`) and `tests/p145/run-p141-browser.py` (real Chrome: two fonts, complete vs partial rows, preview font applied, report JSON, bad file skipped, zero page errors). Smoke 21/21.
+- Limits: .ttf only; "complete" means precomposed glyphs exist, not that mark placement is good; no license check; no bundled offline font pack (fonts must come from the user); pairing is heuristic.
