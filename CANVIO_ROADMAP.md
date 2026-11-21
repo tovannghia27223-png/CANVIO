@@ -815,3 +815,7 @@ Hosted verification after the ffmpeg repair is complete:
 - Đo trên Chrome thật (30 giây audio): kết quả giống hệt luồng chính (lệch 0), trang vẫn nhận sự kiện trong lúc xử lý. Test: `tests/p145/run-p133w-browser.py`.
 - Còn lại của P133: proxy 720p cho video 4K, OffscreenCanvas cho tách nền/upscale, chuyển tài sản lớn sang OPFS.
 
+### P144 (hướng dẫn lần đầu)
+- `CVUxP144.startTour/closeTour/tourDone`: tour 4 bước ở trang chủ (chào mừng, Ctrl+K, thẻ bắt đầu, F1/Alt+Shift/tự lưu), làm nổi bật mục tiêu bằng viền, phím Enter/Esc/Tab, lưu `canvio144:tour`; tự bật 3,5 giây sau khi vào trang chủ lần đầu (không bật khi có thanh khôi phục sự cố, khi palette mở, hoặc khi `navigator.webdriver` = true để không chặn test tự động). Lệnh palette "Xem lại hướng dẫn nhanh" bật lại. Test: `tests/p145/run-p144t-browser.py` (12 mục, ẩn webdriver để chạy đường tự bật).
+- Chưa làm: trợ giúp riêng cho từng Studio còn lại.
+

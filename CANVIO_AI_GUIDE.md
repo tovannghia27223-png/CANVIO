@@ -3737,3 +3737,5 @@ P125.3: `CVScrollFramesP125.PRESETS`, `decimate(frames,maxBytes)`; `buildHtml` n
 
 P133 Worker: `CVDenoiseP138.denoiseAsync(Float32Array,{strength})` -> `{samples, worker:boolean}`. Muốn đẩy xử lý nặng khác ra Worker, dùng cùng cách: dựng nguồn từ `fn.toString()` + hằng số, không tham chiếu `window`/DOM.
 
+P144 tour: thêm bước bằng cách thêm vào mảng `STEPS` ({sel,title,text}); `sel` null = giữa màn hình. Overlay `pointer-events:none`, chỉ thẻ tour nhận chuột.
+

@@ -29941,7 +29941,8 @@ var CMDS = [
   { label: 'Tài nguyên: Kiểm font tiếng Việt, data merge CSV', hint: 'Tài nguyên', icon: 'Ǻ', page: 'assets', sel: '#cv145-font' },
   { label: 'Cài đặt: Bộ nhớ và phục hồi sự cố', hint: 'Hệ thống', icon: '⛁', page: 'settings', sel: '#cv133-card' },
   { label: 'Hệ thống: Lưu bản phục hồi ngay', hint: 'Hành động', icon: '⛁', page: 'settings', sel: '#cv133-now', run: '#cv133-now' },
-  { label: 'Trợ giúp: Phím tắt và mẹo của trang này (F1)', hint: 'Trợ giúp', icon: '?', help: true }
+  { label: 'Trợ giúp: Phím tắt và mẹo của trang này (F1)', hint: 'Trợ giúp', icon: '?', help: true },
+  { label: 'Trợ giúp: Xem lại hướng dẫn nhanh', hint: 'Trợ giúp', icon: '?', tour: true }
 ];
 var NAV = { v: 'videoEngine', w: 'webEngine', p: 'poster', a: 'assets', i: 'imageStudio', h: 'home', s: 'settings', d: 'designEngine' };
 var NAV_LABEL = { v: 'Video Engine', w: 'Website Engine', p: 'Poster', a: 'Tài nguyên', i: 'Image Studio', h: 'Trang chủ', s: 'Cài đặt', d: 'Design Engine' };
@@ -29968,6 +29969,7 @@ function reveal(el) {
 }
 function runCmd(c) {
   if (c.help) { openHelp(); return; }
+  if (c.tour) { setTimeout(function () { startTour(true); }, 150); return; }
   if (window.CV && CV.go) CV.go(c.page);
   waitFor(c.sel).then(function (el) { reveal(el); if (c.run) { var b = document.querySelector(c.run); if (b && !b.disabled) b.click(); } });
 }
@@ -29996,12 +29998,43 @@ function openHelp() {
   helpEl.addEventListener('keydown', function (e) { if (e.key === 'Escape') { e.stopPropagation(); closeHelp(); } else if (e.key === 'Tab') { e.preventDefault(); x.focus(); } });
 }
 function closeHelp() { if (helpEl) { helpEl.remove(); helpEl = null; if (lastFocus && lastFocus.focus) try { lastFocus.focus(); } catch (e) {} } }
+/* ---- hướng dẫn lần đầu ---- */
+var TOUR_KEY = 'canvio144:tour', tourEl = null, tourIdx = 0, tourLast = null;
+var STEPS = [
+  { sel: null, title: 'Chào mừng đến CANVIO', text: 'Poster, website, video, CV 3D và nhiều công cụ trong một nơi. Hướng dẫn 4 bước, bỏ qua bất cứ lúc nào.' },
+  { sel: '.qbar', title: 'Tìm mọi thứ bằng Ctrl+K', text: 'Gõ tên trang, công cụ hoặc hành động (ví dụ "gif", "poster", "khử ồn") rồi nhấn Enter.' },
+  { sel: '.cvQuick, [data-go="poster"]', title: 'Bắt đầu từ đây', text: 'Chọn một thẻ để mở Studio tương ứng. Mọi thao tác thêm vào dự án đều hoàn tác được bằng Ctrl+Z.' },
+  { sel: null, title: 'Luôn có trợ giúp và an toàn', text: 'F1 mở mẹo của trang đang xem. Alt+Shift+V/W/P/A chuyển trang nhanh. App tự lưu bản phục hồi mỗi 30 giây.' }
+];
+function tourDone() { return lsGet(TOUR_KEY, null) !== null; }
+function closeTour(mark) { if (tourEl) { tourEl.remove(); tourEl = null; } if (tourLast) { tourLast.style.outline = tourLast.__o || ''; tourLast = null; } if (mark) lsSet(TOUR_KEY, { done: true, at: Date.now() }); }
+function showStep() {
+  var st = STEPS[tourIdx], target = st.sel ? document.querySelector(st.sel) : null, last = tourIdx === STEPS.length - 1;
+  if (tourLast) { tourLast.style.outline = tourLast.__o || ''; tourLast = null; }
+  if (target && target.getBoundingClientRect().width > 0) { tourLast = target; target.__o = target.style.outline; target.style.outline = '3px solid #2563eb'; try { target.scrollIntoView({ block: 'center' }); } catch (e) {} } else target = null;
+  var card = tourEl.querySelector('.cv144-tc'), r = target ? target.getBoundingClientRect() : null;
+  card.innerHTML = '<div style="font-size:12px;color:#64748b">Bước ' + (tourIdx + 1) + '/' + STEPS.length + '</div><b style="font-size:16px;display:block;margin:2px 0 6px">' + st.title + '</b><div>' + st.text + '</div><div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px"><button type="button" data-a="skip" style="border:1px solid #cbd5e1;background:#fff;border-radius:8px;padding:6px 12px;cursor:pointer">Bỏ qua</button><button type="button" data-a="next" style="border:0;background:#2563eb;color:#fff;border-radius:8px;padding:6px 14px;cursor:pointer">' + (last ? 'Xong' : 'Tiếp') + '</button></div>';
+  var w = 340, top, left;
+  if (r) { left = Math.max(12, Math.min(innerWidth - w - 12, r.left)); top = r.bottom + 14 + 170 > innerHeight ? Math.max(12, r.top - 190) : r.bottom + 14; } else { left = Math.max(12, (innerWidth - w) / 2); top = Math.max(12, innerHeight / 2 - 90); }
+  card.style.left = left + 'px'; card.style.top = top + 'px'; card.querySelector('[data-a=next]').focus();
+}
+function startTour(force) {
+  if (tourEl) return; if (!force && tourDone()) return;
+  if (window.CV && CV.go && currentPage() !== 'home') CV.go('home');
+  tourIdx = 0; tourEl = document.createElement('div'); tourEl.id = 'cv144-tour'; tourEl.setAttribute('role', 'dialog'); tourEl.setAttribute('aria-label', 'Hướng dẫn nhanh');
+  tourEl.style.cssText = 'position:fixed;inset:0;z-index:2147483050;pointer-events:none';
+  tourEl.innerHTML = '<div class="cv144-tc" style="position:fixed;width:340px;max-width:92vw;box-sizing:border-box;background:#fff;color:#0f172a;border-radius:14px;padding:14px 16px;font:14px/1.5 system-ui,sans-serif;box-shadow:0 12px 40px rgba(15,23,42,.35);pointer-events:auto"></div>';
+  document.body.appendChild(tourEl); showStep();
+  tourEl.addEventListener('click', function (e) { var a = e.target.closest && e.target.closest('[data-a]'); if (!a) return; if (a.dataset.a === 'skip') closeTour(true); else if (tourIdx >= STEPS.length - 1) closeTour(true); else { tourIdx++; showStep(); } });
+  tourEl.addEventListener('keydown', function (e) { if (e.key === 'Escape') { e.stopPropagation(); closeTour(true); } else if (e.key === 'Tab') { var b = tourEl.querySelectorAll('button'), f = b[0], l = b[b.length - 1]; if (e.shiftKey && document.activeElement === f) { e.preventDefault(); l.focus(); } else if (!e.shiftKey && document.activeElement === l) { e.preventDefault(); f.focus(); } } });
+}
+function autoTour() { try { if (navigator.webdriver || tourDone() || document.getElementById('cv133-banner')) return; setTimeout(function () { if (!tourDone() && !document.getElementById('cv133-banner') && !document.querySelector('#palette.open') && currentPage() === 'home') startTour(false); }, 3500); } catch (e) {} }
 function typing(t) { var tg = (t && t.tagName || '').toLowerCase(); return tg === 'input' || tg === 'textarea' || tg === 'select' || (t && t.isContentEditable); }
 function onKey(e) {
   if (e.key === 'F1') { e.preventDefault(); helpEl ? closeHelp() : openHelp(); return; }
   if (e.altKey && e.shiftKey && !e.ctrlKey && !e.metaKey) { var k = String(e.code || '').replace(/^Key/, '').toLowerCase(); if (NAV[k] && window.CV && CV.go) { e.preventDefault(); CV.go(NAV[k]); } }
 }
-function start() { wrapPalette(); if (!window.__cv144Keys) { window.__cv144Keys = 1; document.addEventListener('keydown', onKey); } }
+function start() { wrapPalette(); autoTour(); if (!window.__cv144Keys) { window.__cv144Keys = 1; document.addEventListener('keydown', onKey); } }
 function ready() { var n = 0; (function t() { if (wrapPalette() || n++ > 40) { start(); return; } setTimeout(t, 250); })(); }
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', ready, { once: true }); else ready();
 function tests() {
@@ -30010,13 +30043,14 @@ function tests() {
     recentPromoted: r.map(function (i) { return i.label; }).join('') === 'cabd',
     pushRecentDedupesAndCaps: p.join('') === 'yxzwv' && pushRecent(['a'], 'b', 1).join('') === 'b' && pushRecent(null, 'q').join('') === 'q',
     noDuplicateLabels: (function () { var s = {}; return CMDS.every(function (c) { if (s[c.label]) return false; s[c.label] = 1; return true; }); })(),
-    everyCommandHasTargetOrHelp: CMDS.every(function (c) { return c.help || (c.page && c.sel); }),
+    everyCommandHasTargetOrHelp: CMDS.every(function (c) { return c.help || c.tour || (c.page && c.sel); }),
+    tourStepsWellFormed: STEPS.length === 4 && STEPS.every(function (x) { return x.title && x.text; }),
     readOnlyAutoRunOnly: CMDS.filter(function (c) { return c.run; }).every(function (c) { return /^(#cv127q-run|#cv134-run|#cv133-now)$/.test(c.run); }),
     navKeysUnique: Object.keys(NAV).length === 8 && Object.keys(NAV).every(function (k) { return NAV_LABEL[k] && k.length === 1; }),
     tipsCoverMainPages: ['home', 'poster', 'videoEngine', 'webEngine', 'imageStudio', 'assets', 'settings'].every(function (k) { return TIPS[k] && TIPS[k].length; })
   };
 }
-window.CVUxP144 = { version: '144.1.0', commands: CMDS, nav: NAV, tips: TIPS, openHelp: openHelp, closeHelp: closeHelp, wrapPalette: wrapPalette, tests: tests };
+window.CVUxP144 = { version: '144.2.0', startTour: startTour, closeTour: closeTour, tourDone: tourDone, commands: CMDS, nav: NAV, tips: TIPS, openHelp: openHelp, closeHelp: closeHelp, wrapPalette: wrapPalette, tests: tests };
 })();
 </script>
 <style id="canvio-lot131-css">
