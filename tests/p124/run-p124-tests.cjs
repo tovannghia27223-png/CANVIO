@@ -31,6 +31,7 @@ assert.throws(()=>api.render('unknown'),/không hợp lệ/i);
   let inserted='',saved=0;
   sandbox.window.CVWeb={addComponents(markup){inserted=markup;}};
   sandbox.window.CV={engines:{web:{save(){saved++;}}}};
+sandbox.CV=sandbox.window.CV; // Browser global binding mirrors window.CV.
   sandbox.window.CVWeb.addComponents=()=>false;
   const rejected=await api.insert('grid');
   assert.equal(rejected.ok,false);
