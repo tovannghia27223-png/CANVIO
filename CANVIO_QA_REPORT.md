@@ -376,3 +376,10 @@ The candidate workflow runs standalone/embedded source parity and API tests for 
 - P122.3 MCP, P124 Auto Layout/Component, P133 OPFS/proxy and P143 full code split have no source/test owner in the current main tree; P144 overlaps P109's existing palette and needs scope parity review. P130 remains blocked on real backend/RLS/two-device infrastructure.
 - P142 Pages deployment main run #192 (`44819441586`) passed build, report and deploy jobs; real-origin/browser/physical-device matrix remains manual.
 - P70 remains fail-closed with 14/14 real-world gates open.
+
+## P124.1 automated verification (2026-11-21)
+
+- New source owner: `canvio-p124-autolayout.js`; canonical embed: `canvio-lot124`; CI integration step inserts/replaces the inline lot and enforces exact source parity.
+- `tests/p124/run-p124-tests.cjs` covers source parity, API surface, five layout kinds, auto-fit/minmax and flex-wrap behavior, four variants, HTML escaping, bounded input, editor-unavailable behavior, canonical insertion/save and save-failure reporting.
+- The PR's hosted run must be green before this increment is accepted. The test harness uses the canonical owner contracts; it does not certify live GrapesJS CDN, production user projects, responsive screenshots, keyboard or screen-reader quality.
+- P124 remains partial: no arbitrary selected-component conversion, breakpoint visual editor, nested component-instance synchronization or drag/resize constraint UI.
