@@ -67,3 +67,9 @@ Quy tắc nhúng: mỗi lot là `<script id="canvio-lotNNN">` + bản độc l�
 - P143 PR #52 branch work/p143-source-parity-audit-20261121 adds phase-1 parity gate for 20 workflow-managed standalone source modules. Pre-browser gates passed in run #363, full same-origin browser acceptance still pending.
 - Do not mark P143 full source split closed until script/style inventory, dependency/boot-order DAG and staged extraction are complete.
 - P122.3 cannot be invented without MCP feature/transport/authentication/permission/threat contract. P130 remains blocked without real Supabase + RLS/two-device test. P70 fourteen manual acceptance gates remain open.
+
+## P143 Phase 1 — rebased to latest main
+
+- Current branch work/p143-source-parity-rebased-20261121; manifest tests/p143/source-module-map.json; test tests/p143/run-p143-source-parity.cjs; plan CANVIO_P143_SOURCE_SPLIT_PLAN.md.
+- Previous source branch completed hosted run #363 success 39/39, including P143 parity. New branch is rebased on main after PR #51 and docs reconciliation; rerun CI before merge.
+- Do not state full P143 done: inventory all inline scripts/styles, dependency DAG and boot-order analysis, staged reversible extraction, offline/PWA/CSP and rollback acceptance remain.
