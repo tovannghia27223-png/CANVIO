@@ -106,7 +106,7 @@ async function renderProxy(blob,clip,onProgress){
  if(!(blob instanceof Blob))throw new Error('Không đọc được media gốc của clip.');
  if(blob.size>MAX_BYTES)throw new Error('Media gốc vượt giới hạn 500 MB của proxy bản nhẹ.');
  var video=document.createElement('video'),url=URL.createObjectURL(blob),canvas=null,stream=null,sourceStream=null,recorder=null,raf=0,timer=0,scaler=null,workerPending=false,finished=false,renderPath='main-canvas';
- video.muted=false;video.playsInline=true;video.preload='auto';video.src=url;
+ video.muted=false;video.playsInline=true;video.preload='auto';video.style.cssText='position:fixed;left:-10000px;top:0;width:2px;height:2px;opacity:0;pointer-events:none;';video.setAttribute('aria-hidden','true');video.src=url;try{document.body.appendChild(video);}catch(e){}
  try{
   await waitEvent(video,'loadedmetadata','error',30000);
   if(!video.videoWidth||!video.videoHeight)throw new Error('Nguồn không phải video hợp lệ.');
@@ -186,7 +186,7 @@ async function renderProxy(blob,clip,onProgress){
     raf=requestAnimationFrame(draw);
    }
    video.addEventListener('ended',onEnded,{once:true});
-   timer=setTimeout(function(){finish(new Error('Tạo proxy vượt thời gian cho phép.'));},Math.min(300000,range.duration*5000+60000));
+   timer=setTimeout(function(){finish(new Error('Tạo proxy vượt thời gian cho phép (t='+video.currentTime.toFixed(2)+'s, readyState='+video.readyState+', paused='+video.paused+', ended='+video.ended+', workerPending='+workerPending+').'));},Math.min(300000,range.duration*8000+90000));
    raf=requestAnimationFrame(draw);
   });
   await stopped;
@@ -195,7 +195,7 @@ async function renderProxy(blob,clip,onProgress){
   lastRenderPath=renderPath;
   return{blob:out,mime:out.type,width:size.width,height:size.height,duration:range.duration,audioPreserved:audioCount>0,bytes:out.size,sourceWidth:video.videoWidth,sourceHeight:video.videoHeight,renderPath:renderPath};
  }finally{
-  try{video.pause();}catch(e){}
+  try{video.pause();}catch(e){}try{if(video.parentNode)video.parentNode.removeChild(video);}catch(e){}
   if(scaler)scaler.close();
   try{if(stream)stream.getTracks().forEach(function(t){t.stop();});}catch(e){}
   try{if(sourceStream)sourceStream.getTracks().forEach(function(t){t.stop();});}catch(e){}
