@@ -43,8 +43,8 @@ with tempfile.TemporaryDirectory(prefix='canvio-p134r-') as td:
         checks['movingSubjectTracked']=bool(focus and int(focus.group(2))-int(focus.group(1))>=15)
         page.click('#cv134r-export')
         page.wait_for_function("document.querySelector('#cv134r-status').textContent.includes('Đã xuất WebM')",timeout=90000)
-        page.click('#cv134r-download')
-        with page.expect_download(timeout=30000) as event: pass
+        with page.expect_download(timeout=30000) as event:
+            page.click('#cv134r-download')
         download=event.value;out=tmp/'reframed.webm';download.save_as(str(out))
         checks['downloadCreated']=out.exists() and out.stat().st_size>10000
         probe=subprocess.run([FFPROBE,'-v','error','-show_entries','stream=codec_type,codec_name,width,height:format=duration','-of','json',str(out)],check=True,capture_output=True,text=True)
