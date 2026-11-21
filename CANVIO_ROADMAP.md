@@ -847,3 +847,11 @@ Hosted verification after the ffmpeg repair is complete:
 
 - CVUxP144 144.3.0 mở rộng TIPS theo các route CVWS đã đăng ký trong ba workspace Design, Website/Profile, Media và các trang utility. F1, palette, tour và navigation owner giữ nguyên.
 - Node route coverage + Chromium đối chiếu tất cả CVWS routes; pending CI. Manual keyboard/screen-reader/wording review vẫn mở.
+
+
+### P144.3 route-coverage correction — CI #354 (2026-11-21)
+
+- Hosted Chromium confirmed the workspace registry contains 38 routes, not only the 25 initially covered. It identified 13 missing help topics: templates, brand, designSystem, responsive, collab, hub, platform, one, promptForge, insight, hallmark, guide and shield.
+- Added page-specific guidance for all 13, using Guide-documented behavior and explicit boundaries (e.g. collab is local notes/activity, Prompt Forge is prompt handoff, Shield does not certify server headers).
+- P133.2 passed all 11 Chromium checks in the same run, including actual timeline import, clip duration, audio, full decode and original preservation. P124 passed 9/9.
+- Rerun required to verify all 38 CVWS routes have contextual help; no merge claim until that coverage check passes.
