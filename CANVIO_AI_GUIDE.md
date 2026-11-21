@@ -3931,7 +3931,7 @@ P144 tour: thêm bước bằng cách thêm vào mảng `STEPS` ({sel,title,text
 
 ## Verified mainline update — P120/P126 local ComfyUI connector — 2026-11-21
 
-- PR #73 merged to main as 1e2e0b1a. The hosted candidate workflow run 44914277311 completed successfully: 48/48 steps.
+- PR #73 merged to main as edd18a7abbed57e2. The hosted candidate workflow run 44914277311 completed successfully: 48/48 steps.
 - Module: canvio-p120-p126-comfyui.js; inline lot canvio-lot120126; API window.CVComfyP120P126; it registers local provider handlers (comfyui-local) for image, video, upscale and interpolate tasks through existing CVOrchestratorP128.
 - User workflow: import ComfyUI API-format workflow JSON (bounded size and node count); optionally choose local image/video media; map prompt node/input and media node/input explicitly; connect to local ComfyUI; queue and poll job; retrieve output; save through existing CV.assets.addBlob and expose download links.
 - Security/network boundary: only HTTP/HTTPS loopback origins (localhost, 127.0.0.1, ::1); no credentials/API keys, cloud endpoint, third-party runtime, auto-download or custom-node installation. Calls use /system_stats, optional /upload/image, /prompt, /history/{prompt_id}, and /view; workflow, input, output and time limits are enforced. The user must allow the exact CANVIO origin in ComfyUI CORS; hosted CANVIO may also be constrained by local-network browser policy or mixed-content rules.
