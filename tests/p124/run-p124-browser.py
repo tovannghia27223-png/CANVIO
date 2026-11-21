@@ -19,7 +19,7 @@ async def main():
           window.__p124Inserted = [];
           window.__p124SaveCount = 0;
           window.__p124Rules = [];
-          window.__p124Component = { getId() { return 'hero-selected'; }, addClass(name) { this.className = name; }, is() { return false; } };
+          window.__p124Component = { classes: [], attributes: {}, getId() { return 'hero-selected'; }, addClass(name) { if (!this.classes.includes(name)) this.classes.push(name); this.className = this.classes.join(' '); }, addAttributes(values) { Object.assign(this.attributes, values); }, is() { return false; } };
           window.CVWeb = {
             addComponents(markup) { window.__p124Inserted.push(markup); return true; },
             getSelected() { return window.__p124Component; },
@@ -60,6 +60,15 @@ async def main():
         await page.wait_for_function("window.__p124Rules.length === 3 && window.__p124SaveCount === 2")
         assert await page.evaluate("window.__p124Component.className === 'cv-p124-selected-hero-selected'")
         assert await page.evaluate("window.__p124Rules[1].options.atRuleParams.includes('1024px') && window.__p124Rules[2].options.atRuleParams.includes('680px')")
+        await panel.locator("#cv-p124-selected-layout").select_option("grid")
+        await panel.locator("button[data-p124-apply-layout]").click()
+        await page.wait_for_function("window.__p124Rules.length === 6 && window.__p124SaveCount === 3")
+        assert await page.evaluate("window.__p124Component.attributes['data-canvio-auto-layout'] === 'grid'")
+        assert await page.evaluate("window.__p124Component.attributes['data-canvio-layout-version'] === '124.4.0'")
+        assert await page.evaluate("window.__p124Component.className.includes('cv-p124-selected-hero-selected')")
+        await panel.locator("button[data-p124-apply-variant]").click()
+        await page.wait_for_function("window.__p124Rules.length === 7 && window.__p124SaveCount === 4")
+        assert await page.evaluate("window.__p124Component.attributes['data-canvio-variant'] === 'soft'")
         await page.evaluate("""() => { window.CV.engines.web.save = () => { window.__p124SaveCount++; return false; }; }""")
         await panel.locator("button[data-p124-kind='card']").click()
         await page.wait_for_function("window.__p124Inserted.length === 2")
@@ -70,8 +79,8 @@ async def main():
         assert not errors, errors
         print(json.dumps({
             "suite": "P124 Chromium UI interaction",
-            "passed": 15,
-            "total": 15,
+            "passed": 20,
+            "total": 20,
             "checks": {
                 "panelMountsInCanonicalHost": True,
                 "fiveLayoutControls": True,
@@ -84,6 +93,9 @@ async def main():
                 "canonicalSaveCalled": True,
                 "selectedComponentReceivesResponsiveClass": True,
                 "selectedComponentGetsThreeBreakpointRules": True,
+                "selectedComponentReceivesNativeGridLayoutMetadata": True,
+                "selectedComponentLayoutUsesResponsiveCssRules": True,
+                "selectedComponentReceivesReusableVariant": True,
                 "selectedComponentSaveCalled": True,
                 "saveFailureReported": True,
                 "mobileViewportNoOverflow": True,
