@@ -987,3 +987,12 @@ Hosted verification after the ffmpeg repair is complete:
 - The renderer adapter uses the existing #mlCanvas context and the existing motionLab.draw/snapshot/restore owners; no extra timeline, rendering canvas or state store is introduced.
 - Null parenting preserves world position; cycle checks and nested transforms are bounded. Animator modes: rise, fade, scale, wave, tracking; P119 easing presets are reused.
 - Hosted Chromium tests must confirm a rendered output difference between active/inactive animator states. Keep real project/export, precomp, word/range selection, advanced keyframes, motion blur and physical GPU performance as open follow-up scope.
+
+
+## Verified mainline update — P120/P126 — 2026-11-21
+
+- PR #73 merged as 1e2e0b1a; hosted CI #44914277311 passed 48/48.
+- Local ComfyUI bridge connects through existing P128, supports user-imported API-format workflow JSON, explicit prompt/media input mapping, optional image/video upload, queue/history polling, output retrieval and Asset Library addBlob handoff.
+- Endpoint is strict loopback-only; no cloud API keys, auto model download, custom-node installer or second provider/store. Browser local-network permission and exact ComfyUI CORS origin may still be required.
+- Mock CI validates connector plumbing, not actual ComfyUI, GPU inference, model compatibility/licensing, RIFE/Real-ESRGAN or video output quality. Keep P120/P126 partially complete until the real local model environment is tested.
+
