@@ -929,6 +929,77 @@ jobs:
           console.log('Manifest refreshed:',files.length,'files; index SHA-256:',index.sha256);
           NODE
 
+      - name: Record P139.1 renderer integration and acceptance scope
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! grep -q '## P139.1 — Motion Lab hierarchy and live text animator' CANVIO_AI_GUIDE.md; then
+            cat >> CANVIO_AI_GUIDE.md <<'GUIDE'
+
+          ## P139.1 — Motion Lab hierarchy and live text animator
+
+          - Source owner: `canvio-p139-motionlab.js`; embedded canonical lot `canvio-lot139`; public API `window.CVMotionLabP139`, version 139.1.1. This module uses existing `CVNativeEngines.motionLab`, `snapshotState()/restoreState()`, and the existing `#mlCanvas` drawing context. It does not create another timeline, canvas or persistence store.
+          - Null Controller metadata (`type:'null'`, `parentId`, group scale and rotation) is stored within the existing Motion Lab objects array. Parent assignment preserves world position, rejects cycles, supports nested transform composition, unparent and delete-null child unparenting.
+          - Text Animator supports per-grapheme rise/fade/scale/wave/tracking with bounded stagger/duration/strength and P119 curve presets. The P139.1.1 renderer adapter wraps the real `ml.draw(time)` pass and temporarily routes matching text-layer Canvas2D `fillText` calls through the per-character renderer, then restores the original context method after each draw.
+          - Renderer bridge is deliberately scoped to the existing Motion Lab canvas context and text objects whose text matches a current text layer. Keep integration tests for real text-layer output whenever the native Motion Lab renderer changes; it is not a general-purpose canvas interception layer.
+          - Data map: Motion Lab `snapshotState()/restoreState()` is still the sole persistence owner. Null transforms, parent references and animator metadata round-trip inside its `objs`; no localStorage key, project DB or second sync mechanism is introduced.
+          - Tests: `tests/p127/run-p139-tests.cjs` (source/inline parity, model contracts, animator normalization) and `tests/p145/run-p139-browser.py` (same-origin Chromium checks for rendered PNG difference, null-parent creation, metadata round-trip and zero page errors). The source module is registered in `tests/p143/source-module-map.json` for centralized P143 parity.
+          - Limitations: precomposition, physical motion blur, word/range selection, advanced keyframe editing and complex text shaping/RTL remain out of scope. Headless Chromium uses software rendering; real project, real footage, target-device frame rate and human UX/accessibility review remain separate acceptance.
+          GUIDE
+          fi
+          if ! grep -q 'P139.1 live renderer adapter QA' CANVIO_QA_REPORT.md; then
+            cat >> CANVIO_QA_REPORT.md <<'QA'
+
+          ## P139.1 live renderer adapter QA
+
+          Automated checks validate source/embedded parity and the existing Motion Lab canvas render path. The browser acceptance creates a real text layer, adds a Null parent, applies an animator, compares rendered PNG output with the animator enabled/disabled, and confirms object metadata survives the existing Motion Lab snapshot/restore. This validates adapter execution in headless Chromium, not physical GPU frame-rate performance, production footage quality, complex font shaping, precomp or motion blur.
+          QA
+          fi
+          if ! grep -q '## P139.1 — Motion Lab live renderer continuation' CANVIO_ROADMAP.md; then
+            cat >> CANVIO_ROADMAP.md <<'ROADMAP'
+
+          ## P139.1 — Motion Lab live renderer continuation
+
+          - Parent/Null hierarchy and per-character Text Animator are now wired into the actual existing Motion Lab draw pass, instead of only persisting metadata.
+          - The renderer adapter uses the existing #mlCanvas context and the existing motionLab.draw/snapshot/restore owners; no extra timeline, rendering canvas or state store is introduced.
+          - Null parenting preserves world position; cycle checks and nested transforms are bounded. Animator modes: rise, fade, scale, wave, tracking; P119 easing presets are reused.
+          - Hosted Chromium tests must confirm a rendered output difference between active/inactive animator states. Keep real project/export, precomp, word/range selection, advanced keyframes, motion blur and physical GPU performance as open follow-up scope.
+          ROADMAP
+          fi
+          if ! grep -q 'P139.1 live renderer integration candidate' CANVIO_ALL_P_COMPLETION_TRACKER.md; then
+            cat >> CANVIO_ALL_P_COMPLETION_TRACKER.md <<'TRACKER'
+
+          ## P139.1 live renderer integration candidate — 2026-11-21
+
+          - Candidate module `canvio-p139-motionlab.js` wraps the existing Motion Lab draw pass so per-grapheme Text Animator reaches the existing #mlCanvas renderer. Null-parent and animator data stay in existing Motion Lab snapshot objects.
+          - Keep P139.1 partial until the updated hosted browser render-difference assertion passes. Precomp, physical motion blur, word/range selectors, expanded keyframe editor and real-project export/target-device review remain open.
+          TRACKER
+          fi
+          if ! grep -q 'P139.1 live renderer bridge' CANVIO_NEXT_AI_PROMPT.md; then
+            cat >> CANVIO_NEXT_AI_PROMPT.md <<'PROMPT'
+
+          ## P139.1 live renderer bridge — 2026-11-21
+
+          - P139.1 now wraps existing Motion Lab draw and routes matching text-layer Canvas2D fillText calls through the per-character animator; verify P139 Node + Chromium CI before merge.
+          - P139 is partial until real project/export/target device review. Do not add a second canvas/timeline/store; preserve existing Motion Lab snapshot/restore as owner.
+          PROMPT
+          fi
+          if ! grep -q 'P139.1 renderer bridge' CANVIO_SESSION_SUMMARY_2026-11-21.md; then
+            cat >> CANVIO_SESSION_SUMMARY_2026-11-21.md <<'SESSION'
+
+          ## P139.1 renderer bridge — candidate 2026-11-21
+
+          - Added the first live rendering adapter for P139: wraps existing Motion Lab draw, applies Null parent transforms and runs grapheme Text Animator through the current #mlCanvas context, restoring the original fillText method after each draw.
+          - Node/browser/source-parity tests are included in hosted candidate CI. P139 remains partial until real projects, exports, precomp, advanced selectors and physical target-device performance receive review.
+          SESSION
+          fi
+          if ! grep -q 'P139.1 live Motion Lab renderer' CANVIO_FINAL_ACCEPTANCE_MATRIX.md; then
+            cat >> CANVIO_FINAL_ACCEPTANCE_MATRIX.md <<'MATRIX'
+
+          | P139.1 Motion Lab hierarchy/text animator | Node contract + centralized P143 source parity + hosted Chromium rendered-PNG comparison and snapshot round-trip | Real project/export review, precomp, word/range selection, advanced keyframes, motion blur and physical GPU/device performance remain manual. |
+          MATRIX
+          fi
+
       - name: Package full source handoff and runtime evidence
         shell: bash
         run: |
