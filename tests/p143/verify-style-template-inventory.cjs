@@ -16,6 +16,8 @@ assert.equal(report.styles.blocks.length,report.styles.blockCount);
 assert.equal(report.styles.inlineAttributes.length,report.styles.inlineStyleAttributeCount);
 assert.equal(report.templates.blocks.length,report.templates.count);
 assert.ok(Array.isArray(scripts.modules)&&scripts.modules.length>0);
+assert.ok(scripts.modules.every(item=>Array.isArray(item.globalDeclarations)&&Array.isArray(item.globalPropertyReads)&&Array.isArray(item.knownGlobalReads)&&item.globalReferenceEvidence&&Array.isArray(item.globalReferenceEvidence.writes)));
+require('./run-js-global-scanner-tests.cjs');
 assert.ok(report.dependencyCandidates.summary.staticReadReferenceCount===report.dependencyCandidates.edges.length+report.dependencyCandidates.unresolved.length+report.dependencyCandidates.sameScriptReferences.length);
 assert.ok(report.dependencyCandidates.edges.every(edge=>edge.fromOrder<edge.toOrder&&edge.executionOrder==='provider-before-consumer'&&['lexical-single-prior-provider','lexical-multiple-prior-writers-last-in-order'].includes(edge.confidence)&&edge.fromSha256&&edge.toSha256));
 assert.ok(report.dependencyCandidates.unresolved.every(item=>item.reason==='no-provider-before-consumer'||item.reason==='no-static-provider-detected'));
@@ -23,7 +25,7 @@ const scanner=require('./js-global-scanner.cjs').runSelfTests();
 assert.equal(scanner.passed,scanner.total,'lexical scanner fixtures must all pass');
 console.log(JSON.stringify({
  suite:'P143 style/template/loader inventory validation',
- passed:16,total:16,
+ passed:17,total:17,
  styleBlocks:report.styles.blockCount,
  inlineStyleAttributes:report.styles.inlineStyleAttributeCount,
  templateBlocks:report.templates.count,
