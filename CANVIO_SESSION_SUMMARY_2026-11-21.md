@@ -87,3 +87,14 @@ Pull trước (`git pull --rebase origin main`; CI bot hay push commit build). A
 - Added inventory generator tests/p143/build-inline-source-inventory.cjs to list every script tag from the restored canonical index.html in execution order, with IDs, type/src, async/defer, byte size, SHA-256 and heuristic known-global reads/exports.
 - It writes tests/p143/inline-source-inventory.json, included in the ZIP and uploaded evidence artifact. Hosted validation for this new step is pending.
 - Does not yet map CSS/templates or establish the full semantic dependency/boot-order DAG; no script reorder/extraction performed.
+
+## Final verified mainline state — 2026-11-21
+
+- PR #51 merged P124 Auto Layout, P133.2 4K proxy and P144.3 contextual help. PR #46 merged P134.2 Auto Reframe. PR #54 merged P143 Phase 1 parity and Phase 2 inline script inventory.
+- Hosted PR run #384 SUCCESS 41/41 and mainline run #385 SUCCESS 41/41. Pages #222 SUCCESS across build/deploy/report.
+- P134.2: 123 video packets; first PTS 0.049, last PTS 4.096, median packet interval 0.033; measured 4.063 s; 720×1280 VP9 + Opus, full decode, no page errors.
+- P133.2: 4K source → 1280×720 WebM; timeline contains source and proxy (2 clips), original untouched, proxy 3.008 s with Opus and full decode.
+- P144.3 help covers 38/38 registered CVWS routes; F1 focus trap/Escape and first-run tour pass.
+- P143 source parity: 20 standalone/embedded pairs. Inventory tests/p143/inline-source-inventory.json: canonical HTML 5,459,631 bytes, 150 inline scripts, 0 external, 147 script IDs, 0 duplicates, no async/defer/module scripts.
+- Artifact #384: 21,748,431 bytes, SHA-256 d07e7aa93e09357fae6c027578d6ece7d8d011f0e2019852ee72ece4d89dc17a.
+- Remaining external/manual limits: fourteen P70 acceptance gates, P130 Supabase/RLS/two-device sync, P122.3 MCP security/transport contract, P133 OffscreenCanvas/OPFS migration, advanced P124 controls and full P143 dependency/style/template extraction.

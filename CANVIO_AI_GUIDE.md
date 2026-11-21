@@ -3815,3 +3815,16 @@ P144 tour: thêm bước bằng cách thêm vào mảng `STEPS` ({sel,title,text
 - Output: tests/p143/inline-source-inventory.json. The report is included in the candidate source ZIP and uploaded acceptance artifact.
 - This is a complete script-tag inventory, but known-global detection is heuristic and not a semantic dependency/boot-order DAG. Inline CSS/stylesheets, template strings and dynamic script construction require a separate inventory. No scripts are moved or reordered in this phase.
 - Hosted CI must generate the report before this phase is marked PASS.
+
+## Mainline final verification — 2026-11-21
+
+- Current main at this reconciliation: c5dd364d057173a3e851e3cf4379b741e53dd8b6. P143 PR #54 merged at 0523a8c9691fd7d10436377c53b0e489d4c0f47b.
+- Hosted PR acceptance #384: SUCCESS 41/41. Mainline runtime acceptance #385: SUCCESS 41/41. GitHub Pages run #222: SUCCESS (build, deploy and report).
+- P124: canvio-p124-autolayout.js / lot canvio-lot124 / CVAutoLayoutP124 merged via PR #51. Five layouts, four variants, existing Website Engine add/save path; Chromium 9/9. Advanced arbitrary-component conversion, visual breakpoint editor, nested variants, drag/resize and accessibility remain partial.
+- P133.2: canvio-p133-proxy.js / lot canvio-lot133p / CVProxyP133 merged via PR #51. Hosted Chromium accepted 4K source, imported a new 1280×720 WebM proxy with Opus audio, verified timeline contains both clips, original untouched and full decode.
+- P144.3: CVUxP144 144.3.0 covers 38/38 CVWS routes; F1 focus trap/Escape, palette, shortcuts and tour tests passed.
+- P134.2 duration test now uses ffprobe packet PTS + median packet duration if WebM duration metadata is absent. Hosted output measured 4.063 s from 123 video packets; VP9 720×1280 + Opus, full decode and no page errors. Original 3.5–4.5 s tolerance retained.
+- P143 parity gate covers 20 standalone/embedded module pairs. Committed inventory tests/p143/inline-source-inventory.json: canonical HTML 5,459,631 bytes; 150 script tags (all inline), 0 external src, 0 module/async/defer, 147 script IDs, 0 duplicate IDs. Inventory records order, attributes, byte sizes, SHA-256 and heuristic globals.
+- P143 is not a full source split: semantic dependency/boot-order DAG, CSS/template/dynamic-loader inventory and reversible staged extraction remain open.
+- Artifact #384: 21,748,431 bytes; SHA-256 d07e7aa93e09357fae6c027578d6ece7d8d011f0e2019852ee72ece4d89dc17a. URL: https://github.com/tovannghia27223-png/CANVIO/actions/runs/44889536662/artifacts/14701064610.
+- Release boundary unchanged: P70 releaseCertified=false with fourteen manual gates open. P130 needs real Supabase/schema/RLS/two-device test; P122.3 MCP waits for an approved transport/auth/consent/permission/threat contract.

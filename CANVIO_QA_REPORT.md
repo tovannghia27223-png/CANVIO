@@ -422,3 +422,14 @@ The candidate workflow runs standalone/embedded source parity and API tests for 
 - Hosted workflow runs tests/p143/build-inline-source-inventory.cjs after integrations and before full HTML/JS audit.
 - Generates tests/p143/inline-source-inventory.json for all canonical script tags in execution order; the report is included in the source ZIP and evidence artifact.
 - Records script identity/attributes, bytes, SHA-256 and heuristic global references. This is not a semantic dependency graph or CSS/template inventory. Current hosted result pending.
+
+## Final hosted verification — 2026-11-21
+
+- PR #54 candidate run #384: SUCCESS 41/41. Mainline merge run #385: SUCCESS 41/41. Pages #222: SUCCESS build, deploy and report.
+- P143 parity gate: 20 standalone modules have exactly one canonical inline lot, syntax and normalized content parity pass. Complete script inventory committed: 150 tags, 150 inline, 0 external src, 0 module/async/defer, 147 script IDs, 0 duplicate IDs. Canonical HTML size 5,459,631 bytes.
+- P134 Auto Reframe: 123 video packets, measured duration 4.063 s using PTS, within unchanged 3.5–4.5 s assertion; 720×1280 VP9 + Opus, full decode, moving subject tracking, local-only and no page errors.
+- P133.2 Proxy: 4K fixture imported; timeline contains source and proxy; proxy duration 3.008 s, 1280×720 VP9 + Opus, full decode; source unchanged, no page errors.
+- P124 Auto Layout: Chromium 9/9, mobile viewport without overflow, canonical save and save-failure reporting.
+- P144.3 contextual help: all 38/38 CVWS routes have tips; palette, keyboard, F1 focus trap/Escape and first-run tour pass.
+- P133 resilience: OPFS 3 MB round-trip, path traversal rejection, crash banner, restore and settings pass. P133 denoise Worker parity maxDiff=0 and UI remains responsive.
+- P70 release disposition remains NOT CERTIFIED. Fourteen real-world gates in the original QA section are OPEN; hosted fixtures do not replace target hardware/media, provider, accessibility, hosting-header, cross-origin restore or operations evidence.

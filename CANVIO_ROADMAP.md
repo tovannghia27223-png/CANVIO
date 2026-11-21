@@ -883,3 +883,13 @@ Hosted verification after the ffmpeg repair is complete:
 - Added tests/p143/build-inline-source-inventory.cjs to enumerate all script tags from the rebuilt canonical index.html in exact browser order. Records each script's ID/type/src/async/defer flags, bytes, SHA-256, detected globals and heuristic known-global reads.
 - Generates tests/p143/inline-source-inventory.json, packaged into the candidate ZIP and hosted evidence artifact.
 - This is a full script-tag inventory, not semantic dependency graph. It does not inventory all CSS/template/dynamic script paths or change any loading order. Full P143 extraction remains open until dependencies/boot order are reviewed and extraction staged.
+
+## Final reconciliation — P124 / P133.2 / P134.2 / P143 / P144 (2026-11-21)
+
+- PR #51 merged P124/P133.2/P144.3. Candidate #360 and main #362 passed; post-P143 main run #385 passed 41/41. Pages #222 passed build/deploy/report.
+- P124: five responsive layouts/four variants, existing Website Engine adapter, Chromium 9/9. Advanced component conversion, visual breakpoint editor, nested variants, drag/resize and accessibility remain partial.
+- P133.2: 4K-to-720p WebM proxy inserted as new clip, original retained; hosted 4K fixture verified 1280×720, Opus, full decode, no page errors. OffscreenCanvas/large-media OPFS migration remains.
+- P134.2: packet timestamps measured 4.063 s from 123 packets, VP9 720×1280 + Opus, full decode and no page errors.
+- P144.3: contextual help covers all 38 CVWS routes; F1 and tour browser tests pass.
+- P143 Phase 1/2: parity gate covers 20 standalone modules; canonical inventory committed at tests/p143/inline-source-inventory.json (150 inline script tags, zero external src, zero duplicate IDs). Full semantic dependency DAG and reversible project-wide extraction remain open.
+- P70 is still NOT certified: fourteen manual real-world gates remain. P130 cloud sync needs real Supabase/RLS/two-device test; P122.3 MCP requires an approved security/transport contract.

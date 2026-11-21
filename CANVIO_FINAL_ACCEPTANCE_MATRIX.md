@@ -30,3 +30,12 @@
 12. Physical target-device GPU/VRAM, performance and long-render testing.
 13. Cross-origin backup/restore and independent-device recovery.
 14. Rollback, release observability, alerting and production incident drill.
+
+## Final mainline evidence — 2026-11-21
+
+| P124 Auto Layout | Main #385 PASS 41/41; Chromium 9/9 | Merged PR #51. Advanced breakpoint/selected-component/nested variants/drag-resize/accessibility remain partial. |
+| P133.2 proxy 4K→720p | 1280×720 VP9 + Opus; 3.008 s; source+proxy on timeline; original unchanged; full decode | Merged PR #51. Long real media, mobile/browser matrix and remaining OffscreenCanvas/OPFS migration open. |
+| P134.2 Auto Reframe | 4.063 s measured via packet PTS; 123 packets; VP9 720×1280 + Opus; full decode | Merged PR #46. Real footage/occlusion and physical-device review remain manual. |
+| P144.3 contextual help | 38/38 CVWS routes; F1 focus trap/Escape, palette and tour tests | Merged PR #51. Human wording/accessibility review remains manual. |
+| P143 Phase 1/2 | PR #54; candidate #384 and main #385 PASS 41/41; 20 module pairs; 150 inline script tags, zero external src/duplicate IDs | Source inventory complete. Semantic dependency/boot-order DAG, CSS/template/dynamic-loader inventory and staged project-wide extraction remain open. |
+| P70 release gate | Fail-closed | Fourteen real-world acceptance gates remain OPEN; CANVIO 1.0 Stable/production certification not granted. |

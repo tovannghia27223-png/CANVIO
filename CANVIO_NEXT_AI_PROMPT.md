@@ -86,3 +86,13 @@ Quy tắc nhúng: mỗi lot là `<script id="canvio-lotNNN">` + bản độc l�
 - Added tests/p143/build-inline-source-inventory.cjs. It runs after module integration and before full HTML audit, writes tests/p143/inline-source-inventory.json, and the JSON is included in package/evidence artifact.
 - Report enumerates script tags in source order and records ids/types/src/async/defer/bytes/SHA256 plus heuristic global dependencies. It is not a semantic dependency DAG; CSS, HTML templates and dynamic imports/loaders still need separate inventory.
 - Current hosted workflow must pass before treating this report as verified.
+
+## Final verified handoff — 2026-11-21
+
+- Main commit at handoff: c5dd364d057173a3e851e3cf4379b741e53dd8b6. PR #54 merged at 0523a8c9691fd7d10436377c53b0e489d4c0f47b.
+- PR candidate run #384 and mainline run #385 both PASS 41/41. Pages #222 PASS build/deploy/report.
+- P124 Auto Layout, P133.2 4K proxy and P144.3 contextual Studio help are merged (PR #51); P134.2 Auto Reframe is merged (PR #46). P134 duration QA uses packet timestamps.
+- P143 parity/inventory merged (PR #54). 20 standalone modules match canonical lots; tests/p143/inline-source-inventory.json records 150 inline script tags, 0 external src, 0 duplicate IDs. Full dependency DAG, style/template inventory and project-wide extraction remain open.
+- P133 OffscreenCanvas/media-to-OPFS migration and P124 advanced breakpoint/component interactions remain partial.
+- P130 cannot be completed without a real Supabase backend/schema/RLS and two-device test. P122.3 MCP must not be invented without an approved threat/transport/auth/consent contract.
+- P70 remains fail-closed with fourteen manual real-world gates; do not claim Stable/production-certified.

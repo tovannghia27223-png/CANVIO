@@ -180,3 +180,16 @@ No honest all-P completion claim is possible yet. In addition to P70's 14 open r
 - Added hosted inventory generator tests/p143/build-inline-source-inventory.cjs and JSON output tests/p143/inline-source-inventory.json covering all canonical script tags in execution order, with ID/type/src/async/defer/bytes/SHA256 and heuristic global references.
 - Report is included in packaged source and upload artifact. Current hosted run will verify generation.
 - Remaining P143: inline CSS/HTML templates/dynamic loaders inventory, semantic dependency DAG, initialization/DOM order review, staged reversible extraction, CSP/offline/rollback.
+
+## Final mainline verification snapshot — 2026-11-21
+
+| Item | Verified state | Remaining |
+|---|---|---|
+| P124 Auto Layout | MERGED PR #51. Candidate #360/main #362 and final main #385 PASS; final main 41/41. Chromium 9/9. | Selected-component conversion, breakpoint editor, nested variants, drag/resize and accessibility. |
+| P133.2 4K proxy | MERGED PR #51. 4K fixture: new 1280×720 WebM clip, Opus, full decode, original retained. | OffscreenCanvas and selected large-media OPFS migration with quota/rollback. |
+| P134.2 Auto Reframe | MERGED PR #46. Duration test corrected to use packet PTS; hosted measured 4.063 s, 123 packets, VP9 720×1280, Opus, full decode. | Real footage/occlusion/camera motion and physical-device review. |
+| P144.3 contextual help | MERGED PR #51. 38/38 CVWS routes; F1/tour/keyboard tests. | Human wording and screen-reader review. |
+| P143 Phase 1/2 | MERGED PR #54. Candidate #384 and main #385 PASS 41/41. 20 source/lot pairs; inventory: 150 script tags, 0 external src, 0 duplicates. | Full semantic dependency/boot-order DAG, CSS/template/dynamic-loader inventory, staged extraction/rollback/offline/CSP. |
+| P130 cloud sync | BLOCKED EXTERNAL | Real Supabase project, schema/RLS, credentials and two-device recovery. |
+| P122.3 MCP | NOT IMPLEMENTED BY DESIGN | Requires approved feature, transport, auth, consent, permission and threat-model contract. |
+| P70 release | NOT CERTIFIED | Fourteen real-world device, service, media, accessibility, hosting, recovery and operations gates remain open. |
