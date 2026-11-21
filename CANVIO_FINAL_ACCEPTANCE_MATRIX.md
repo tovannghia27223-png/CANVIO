@@ -30,3 +30,8 @@
 12. Physical target-device GPU/VRAM, performance and long-render testing.
 13. Cross-origin backup/restore and independent-device recovery.
 14. Rollback, release observability, alerting and production incident drill.
+
+| P145.10 mainline local Asset Library SHA-256 (run #310) | PR #38 merged; hosted Node 10/10 and Chromium 14/14; native `CV.assets.list()`, 64-char SHA-256, duplicate detection from local bytes, read-only/no-mutation checks | Local base64 data URLs only; 40 rows / 25 MiB per asset / 64 MiB aggregate; unscannable rows remain unverified; no remote/cloud vault or cross-device sync |
+| P136.4 local SVG pattern fill (run #312) | PR #39 merged; hosted workflow success; six SVG pattern presets in Image Trace multicolour fill mode | No brush authoring, gradient mesh, topology editing or physical GPU/performance certification |
+| P131.3 safe local HTML body-fragment import (run #315) | PR #41 merged; Chromium 31/31 and app smoke 21 checks / 48 pages, zero page errors | .html/.htm only, ≤5 MiB, sanitized fragment; stylesheets/scripts/forms/iframes/remote media are excluded |
+| P70 14 real-world release gates | **OPEN — 0/14 evidenced as passed in current manifest** | Must be separately reviewed on deployed origin, real media, supported physical devices and production infrastructure; CI success does not close these gates |
