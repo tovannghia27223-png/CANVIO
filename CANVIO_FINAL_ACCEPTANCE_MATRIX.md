@@ -34,3 +34,4 @@
 | P143 Phase 1 source parity on latest main | Prior run #363 PASS 39/39 incl. parity and browser matrix; current branch re-runs against main 6481d83 | Pending current-main run. Full script/style inventory, dependency DAG, extraction, offline/CSP and rollback remain open. |
 
 | P134.2 WebM duration test | Packet PTS span + median packet duration; container metadata preferred when available | Test method corrected after #371; unchanged 3.5–4.5 s assertion; latest-main run #373 pending. | 
+| P143 Phase 2 script inventory | Hosted generator enumerates all canonical script tags in execution order, attributes, bytes/SHA256 and heuristic globals | Candidate generates JSON report included in ZIP/evidence artifact; hosted step pending. Not a semantic dependency DAG or CSS/template inventory. |
