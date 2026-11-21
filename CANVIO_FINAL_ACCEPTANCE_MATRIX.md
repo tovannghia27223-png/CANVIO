@@ -46,3 +46,9 @@
 | P119.2 shared easing | PR #78 candidate #536 + mainline #538, 52/52; Node P119/P145.2 plus Chromium frame-output delta | Video Engine clip/keyframe easing, Website Engine/CSS timeline and physical GPU target performance remain open. |
 | P135.2 Pixel snapshot stack | PR #81 candidate #547 + mainline #549, 53/53; CRC metadata, 32-layer cap, Chromium snapshot→reload→restore 16/16 | Cloud/two-device sync, third-party PNG re-encoding, masks/local corrections and Photoshop-like features remain open. |
 | P143.4 lexical ordering map | Candidate only until current-main workflow passes scanner fixtures and inventory validation | Not semantic dependency resolution; Phase 3 staged extraction, rollback, offline/PWA and CSP remain open. |
+
+
+| P137.2 character/table styles | PR #76 candidate #534 + mainline #535, 51/51; Chromium selected-character, table preset and HTML rehydration checks | Cross-paragraph/nested styles, advanced table semantics and print pagination remain open. |
+| P119.2 shared easing | PR #78 candidate #536 + mainline #538, 52/52; Node P119/P145.2 plus Chromium frame-output delta | Video Engine clip/keyframe easing, Website Engine/CSS timeline and physical GPU target performance remain open. |
+| P135.2 Pixel snapshot stack | PR #81 candidate #547 + mainline #549, 53/53; CRC metadata, 32-layer cap, Chromium snapshot→reload→restore 16/16 | Independent cloud/two-device sync, third-party PNG re-encoding, masks/local corrections, smart objects, clone/patch and liquify remain unverified/out of scope. |
+| P143.4 lexical ordering map | Candidate only until current-main workflow passes scanner fixtures and inventory validation | Not semantic dependency resolution; Phase 3 staged extraction, rollback, offline/PWA and CSP remain open. |
