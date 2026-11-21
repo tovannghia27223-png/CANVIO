@@ -1,4 +1,4 @@
-/* P133.2 · Local 720p proxy generator for selected 4K timeline clips.
+/* P133.3 · OffscreenCanvas Worker-assisted 720p proxy generator for selected 4K timeline clips.
  * Uses the existing Video Engine media owner and importFiles path. Original clip/timeline are never replaced.
  * Browser MediaRecorder exports WebM; audio is retained only when captureStream exposes it.
  */
