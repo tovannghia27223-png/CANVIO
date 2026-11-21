@@ -3771,3 +3771,10 @@ P144 tour: thêm bước bằng cách thêm vào mảng `STEPS` ({sel,title,text
 - TIPS covers registered CVWS routes across Design, Website/Profile and Media, plus Hub, CapCut handoff, Projects, Project Vault, Export, Object and Settings. No second router/help/palette.
 - Help states boundaries: CapCut Engine is a workflow hub and Video Engine owns the canonical timeline; Project Center differs from Project Vault; WebM/OBJ/preflight do not imply full MP4/PDF-X/GLTF/FBX certification.
 - Tests: tests/p127/run-p144u-tests.cjs and hosted Chromium route coverage in tests/p145/run-p144-browser.py. Pending hosted CI; human wording/accessibility review remains manual.
+
+
+### P133.2 QA correction — CI #347 (2026-11-21)
+
+- First hosted Chromium run successfully generated a 1280×720 WebM, preserved Opus audio, fully decoded the file and confirmed the original clip remained unchanged.
+- It caught an actual integration race: the UI did not await the asynchronous Video Engine importFiles() promise, so the proxy download existed but the new timeline clip was not yet present when reported. Updated the module to await importFiles(), verify clip-count increase and retain the download link if timeline ingestion fails.
+- CI must be rerun on the corrected commit; no proxy acceptance/merge claim until timeline import passes.
