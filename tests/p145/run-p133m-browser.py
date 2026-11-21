@@ -27,6 +27,14 @@ with sync_playwright() as p:
       const restored=await api.get(id,state);
       const proxyBlob=await CVProxyP133.getBlob(state,{id,mediaId:id});
       const roundtrip={storage:stored.storage,metadataHasNoBlob:record.blob===null&&record.storage==='opfs',bytes:restored&&restored.size,proxyReaderBytes:proxyBlob&&proxyBlob.size};
+      const smallReplacement=new Blob([new Uint8Array(2*1048576)],{type:'video/webm'});
+      const replaced=await api.put(id,smallReplacement,state);
+      const replacementRecord=await new Promise((ok,no)=>{const r=db.transaction('media').objectStore('media').get(id);r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error)});
+      const replacementBlob=await api.get(id,state);
+      const dir=await (await navigator.storage.getDirectory()).getDirectoryHandle('canvio-video-media',{create:true});
+      let oldSidecarExists=false;
+      try{await dir.getFileHandle(record.opfsName);oldSidecarExists=true;}catch(e){if(!e||e.name!=='NotFoundError')throw e;}
+      const replacement={storage:replaced.storage,bytes:replacementBlob&&replacementBlob.size,metadataPointsToIndexedDb:replacementRecord.storage!=='opfs'&&replacementRecord.blob instanceof Blob,cleanup:replaced.sidecarCleanup,oldSidecarExists};
       await api.remove(id,state);
       const legacyId='p133-opfs-migrate';
       const legacy=new Blob([new Uint8Array(33*1048576)],{type:'video/webm'});
@@ -35,11 +43,13 @@ with sync_playwright() as p:
       const migrated=await new Promise((ok,no)=>{const r=db.transaction('media').objectStore('media').get(legacyId);r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error)});
       const migratedBlob=await api.get(legacyId,state);
       await api.remove(legacyId,state);
-      return{roundtrip,report,migratedStorage:migrated&&migrated.storage,migratedBlobBytes:migratedBlob&&migratedBlob.size};
+      return{roundtrip,replacement,report,migratedStorage:migrated&&migrated.storage,migratedBlobBytes:migratedBlob&&migratedBlob.size};
     }""")
     checks['largeBlobStoredInOpfs']=details['roundtrip']['storage']=='opfs' and details['roundtrip']['metadataHasNoBlob']
     checks['largeBlobRoundTripVerified']=details['roundtrip']['bytes']==34*1048576
     checks['proxyReaderSupportsOpfs']=details['roundtrip']['proxyReaderBytes']==34*1048576
+    checks['smallReplacementFallsBackToIndexedDb']=details['replacement']['storage']=='indexeddb' and details['replacement']['metadataPointsToIndexedDb'] and details['replacement']['bytes']==2*1048576
+    checks['replacedOpfsSidecarIsDeleted']=details['replacement']['cleanup']=='removed' and not details['replacement']['oldSidecarExists']
     checks['legacyIdbMediaMigrates']=details['report']['migrated']>=1 and details['migratedStorage']=='opfs'
     checks['migratedBlobCanBeRead']=details['migratedBlobBytes']==33*1048576
     rollback=page.evaluate("""async()=>{
