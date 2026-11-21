@@ -3874,6 +3874,17 @@ P144 tour: thêm bước bằng cách thêm vào mảng `STEPS` ({sel,title,text
 - Records inline style blocks, inline style-attribute counts/hashes, template elements, dynamic resource-loader call sites and candidate global producer/consumer pairs derived from the existing heuristic script inventory.
 - Boundaries: these are inventories and heuristic dependency candidates, not a human-reviewed semantic dependency/boot-order DAG. No script/style/template was moved; full P143 staged extraction, offline/PWA/CSP and rollback acceptance remain open.
 
+### P143.4 — lexical global-reference ordering map (candidate)
+
+- New scanner: tests/p143/js-global-scanner.cjs. It lexes classic inline-script text without executing it and skips line/block comments, quoted strings, regular-expression literals and complete template-literal bodies. It records static window.X/globalThis.X assignments and reads, plus simple top-level var/let/const/function/class declarations.
+- tests/p143/build-inline-source-inventory.cjs adds global declarations, direct global-property reads, known-global reads, write evidence and bounded line references to each existing script inventory record. This supplements, rather than replaces, the existing script order, id, bytes and SHA-256 inventory.
+- tests/p143/build-styles-template-inventory.cjs derives a candidate provider-before-consumer map. Each edge names the latest earlier static provider, its source order/id/SHA, previous provider orders, consumer order/id/SHA and evidence kinds. Same-script references and unresolved reads are reported separately.
+- Validation is part of the existing P143 inventory workflow: tests/p143/verify-style-template-inventory.cjs executes scanner fixtures and validates reference accounting, provider-before-consumer ordering, hashes and unresolved classifications. No extra runtime package or application script lot is needed.
+- Data / synchronization map: the report is generated from the final reconstructed index.html and bundled into tests/p143/style-template-loader-inventory.json. It is build evidence only; it adds no runtime state, localStorage/IndexedDB/OPFS key, API, project object or sync channel.
+- Limits: this is lexical static evidence, not a JavaScript AST or proof of runtime initialization/data flow. Template interpolation bodies, destructured/aliased globals, eval, computed names, dynamic imports, conditional writes, call-time ordering and browser lifecycle conditions still need manual review. It does not authorize any script/style reorder or extraction.
+- Status: candidate until hosted PR CI and post-merge mainline validation pass. P143 Phase 3 (dependency-bounded reversible extraction, rollback, offline/PWA/CSP and application regression) remains open.
+
+
 
 
 ## P119 easing editor (2026-11-21)
