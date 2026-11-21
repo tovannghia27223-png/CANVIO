@@ -620,6 +620,7 @@ jobs:
           node tests/p127/run-p118w-tests.cjs
           node tests/p127/run-p141f-tests.cjs
           node tests/p127/run-p128o-tests.cjs
+          node tests/p127/run-p137s-tests.cjs
           node tests/hosted/p107-portable-roundtrip.cjs
 
       - name: Install Chromium and Playwright for hosted runtime acceptance
@@ -688,6 +689,7 @@ jobs:
           /tmp/canvio-playwright/bin/python tests/p145/run-p118-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p141-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p128-browser.py
+          /tmp/canvio-playwright/bin/python tests/p145/run-p137-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p133w-browser.py
 
       - name: Refresh Guide, Roadmap, QA, Acceptance Matrix and Manifest

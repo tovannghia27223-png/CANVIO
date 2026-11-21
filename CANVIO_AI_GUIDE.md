@@ -3891,3 +3891,7 @@ P144 tour: thêm bước bằng cách thêm vào mảng `STEPS` ({sel,title,text
 
 ## P128 orchestrator (2026-11-21)
 - `window.CVOrchestratorP128`: `run({kind,prompt,tiers,timeoutMs,cache})` → `{ok,tier,text,ms,cached,tried}` or `{ok:false,status:'unconfigured'|'failed',message}`; `register(kind,tier,fn)`, `order/setOrder`, `stats`, `clearCache`. Text tiers call `CVAIProviderAdapter.call(prompt,{provider:'local'|'gemini'})`. Card is inside the hidden-by-default API Hub tab of `#page-platform` (tests must click `button[data-tab=api]` first). Standalone must equal embedded `canvio-lot128o`.
+
+
+## P137 paragraph styles + TOC (2026-11-21)
+- `window.CVStylesP137`: `load/clean/applyToSelection/restyleAll/buildToc/undo/entriesFrom/tocHtml/stripToc`. Layout Foundry editor root is `#lfDoc` (contenteditable, one page's HTML); pages live in `CVNativeEngines.layout.snapshotState()` = `{pages:[{id,html}],active}`; `restoreState(obj)` re-renders. Blocks carry `data-cv137-style`; TOC block carries `data-cv137-toc` (contenteditable=false). Standalone must equal embedded `canvio-lot137s`.

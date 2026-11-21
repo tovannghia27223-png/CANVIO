@@ -951,3 +951,11 @@ Hosted verification after the ffmpeg repair is complete:
 - Tests: `tests/p127/run-p128o-tests.cjs` (Node, 17 checks incl. fallback, timeout, cache eviction, bad input) and `tests/p145/run-p128-browser.py` (real Chrome against a local mock OpenAI-compatible server: answer, stats, cache without 2nd call, 503 fall-through reported, image unconfigured, order persists, no key stored). Smoke 21/21.
 - Limits: only latency/error rate is measured, not answer quality; no ComfyUI/image handler exists yet (P120/P126); Gemini tier needs the user's own key and network; not tested against real Ollama/LM Studio.
 - P128.3 (JSONL export) was already delivered earlier in P145 core.
+
+
+## P137 paragraph styles + automatic table of contents (2026-11-21 · candidate)
+
+- New `canvio-p137-styles.js` (CVStylesP137, embedded lot `canvio-lot137s`): row `#cv137-row` under the Layout Foundry toolbar. Five named paragraph styles (Tiêu đề 1/2, Thân bài, Trích dẫn, Chú thích); apply to the selected block(s) via `data-cv137-style`; "Cập nhật kiểu từ đoạn này" redefines the style from a sample paragraph and restyles every block carrying it on all pages; "Mục lục" collects h1–h3 / heading styles from all pages with real document page numbers and inserts/refreshes a TOC block at the top of page 1 (never counted in itself, no duplicates); one-step Undo. Works through the existing `CVNativeEngines.layout.snapshotState/restoreState` owner.
+- Style definitions: whitelisted CSS properties only, localStorage `canvio137:styles` (UI convenience, not in exported files).
+- Tests: `tests/p127/run-p137s-tests.cjs` (Node, sanitising/escaping/fallback) and `tests/p145/run-p137-browser.py` (real Chrome, 11 checks: apply, switch clears old props, redefine → other page restyled, TOC entries+pages, rebuild without duplicate, undo, empty TOC message, zero page errors). Smoke 21/21.
+- Limits: no multi-frame text flow, no nested character styles, tables stay with the existing Layout Foundry insert (no table styles); TOC page numbers are document page order, not print pagination; style set is fixed to the five defaults plus edits (no UI to create new names yet); TOC entries are static until rebuilt.
