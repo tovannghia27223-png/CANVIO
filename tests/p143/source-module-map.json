@@ -121,7 +121,11 @@
     {
       "source": "canvio-p120-p126-comfyui.js",
       "scriptId": "canvio-lot120126"
+    },
+    {
+      "source": "canvio-p137-styles.js",
+      "scriptId": "canvio-lot137s"
     }
   ],
-  "totalModules": 30
+  "totalModules": 31
 }
