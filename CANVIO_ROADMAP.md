@@ -855,3 +855,12 @@ Hosted verification after the ffmpeg repair is complete:
 - Added page-specific guidance for all 13, using Guide-documented behavior and explicit boundaries (e.g. collab is local notes/activity, Prompt Forge is prompt handoff, Shield does not certify server headers).
 - P133.2 passed all 11 Chromium checks in the same run, including actual timeline import, clip duration, audio, full decode and original preservation. P124 passed 9/9.
 - Rerun required to verify all 38 CVWS routes have contextual help; no merge claim until that coverage check passes.
+
+## Mainline reconciliation — PR #51 merged (2026-11-21)
+
+- PR #51 merged: e4e3647b8b49dcc931065c3f7893f68b48d9a071. Hosted workflow #360 on the candidate and mainline workflow #362 both completed PASS (39/39 steps).
+- P124 Auto Layout is now integrated: 5 layout presets + 4 component variants using the existing Website Engine add/save path. Chromium 9/9. Advanced breakpoint/component editing remains partial.
+- P133.2 local proxy is now integrated: selected 4K clip → WebM, longest edge ≤1280 px, new clip via canonical importFiles, original retained. Hosted 4K fixture confirmed video, Opus audio and full decode. OffscreenCanvas/large-media OPFS migration remains.
+- P144.3 contextual help uses the existing CVUxP144 owner and covers all 38 registered CVWS routes; hosted Chromium route-coverage test PASS.
+- P143 remains in Phase 1 candidate branch: a 20-module standalone/embedded parity audit has passed pre-browser hosted gates in run #363; wait for the full workflow result before merge. This is not full index modularization.
+- P70 still has fourteen open manual gates; not production-certified.
