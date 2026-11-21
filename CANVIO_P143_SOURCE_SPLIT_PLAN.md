@@ -84,3 +84,11 @@ Reduce CANVIO's single-file authoring burden without breaking the canonical app 
 - Inventory HTML templates embedded in JavaScript strings, runtime-created stylesheets and other dynamic asset construction that regex inspection cannot prove complete.
 - Choose dependency-bounded extraction units, add source/embedded parity for each, then extract one at a time with rollback, app regression, offline/PWA, CSP and deployment checks.
 
+
+
+## Phase 2.2 — lexical global-reference ordering evidence (candidate, 2026-11-21)
+
+- The lexical scanner and source-order evidence map are being rebased onto the P135.2-verified mainline. It records static writes/reads and simple top-level bindings, including evidence lines and hashes; this is a candidate ordering aid only.
+- Regex scanning receives the current source line instead of rescanning all bytes before each regex token, keeping this lexer operation linear.
+- Candidate tests cover comments, strings, regex literals, template bodies, static writes/reads and line tracking. No app runtime or boot order is modified.
+- This is not semantic dependency resolution: alias/data flow, destructuring, computed property names, template interpolation, eval, conditional execution and call timing require manual review. Phase 3 extraction remains gated by reviewed boundaries and rollback/offline/CSP acceptance.
