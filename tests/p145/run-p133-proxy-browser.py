@@ -11,7 +11,7 @@ class QuietHandler(http.server.SimpleHTTPRequestHandler):
     def log_message(self,*_):pass
 with tempfile.TemporaryDirectory(prefix='canvio-p133p-') as td:
     tmp=Path(td);fixture=tmp/'p133-proxy-fixture.webm'
-    subprocess.run([FFMPEG,'-hide_banner','-loglevel','error','-y','-f','lavfi','-i','testsrc2=size=3840x2160:rate=5:duration=3','-f','lavfi','-i','sine=frequency=440:sample_rate=48000:duration=3','-c:v','libvpx','-deadline','realtime','-cpu-used','8','-b:v','1500k','-c:a','libopus','-shortest',str(fixture)],check=True,capture_output=True)
+    subprocess.run([FFMPEG,'-hide_banner','-loglevel','error','-y','-f','lavfi','-i','color=c=0x203040:s=3840x2160:r=5:d=3','-f','lavfi','-i','sine=frequency=440:sample_rate=48000:duration=3','-c:v','libvpx','-deadline','realtime','-cpu-used','8','-b:v','1500k','-c:a','libopus','-shortest',str(fixture)],check=True,capture_output=True)
     server=socketserver.ThreadingTCPServer(('127.0.0.1',0),functools.partial(QuietHandler,directory=str(ROOT)));server.daemon_threads=True
     threading.Thread(target=server.serve_forever,daemon=True).start()
     checks={};errors=[];out=tmp/'proxy.webm';details={}
