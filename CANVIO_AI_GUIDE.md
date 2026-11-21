@@ -3739,3 +3739,14 @@ P133 Worker: `CVDenoiseP138.denoiseAsync(Float32Array,{strength})` -> `{samples,
 
 P144 tour: thêm bước bằng cách thêm vào mảng `STEPS` ({sel,title,text}); `sel` null = giữa màn hình. Overlay `pointer-events:none`, chỉ thẻ tour nhận chuột.
 
+
+
+## P133.2 — Local 4K to 720p proxy (2026-11-21 · candidate)
+
+- Source: canvio-p133-proxy.js; embedded lot: canvio-lot133p; API: window.CVProxyP133 (is4k, outputSize, trimRange, getBlob, renderProxy, mount, tests).
+- UI mounts inside the existing Video Engine P127 quality card. It reads the currently selected video clip through existing CV.engines.video._state() media references/IndexedDB media store and uses the existing CV.engines.video.importFiles() path to add the proxy as a new clip.
+- Source guard: 4K landscape or portrait only (minimum 2560×1440), ≤500 MiB, ≤180 seconds of selected clip trim range. Output preserves aspect ratio with longest dimension capped at 1280 px (1280×720 landscape or 720×1280 portrait).
+- Export is local Canvas captureStream + MediaRecorder WebM, target 30 fps and 3.5 Mbps video. Audio is copied only if browser exposes audio tracks via HTMLVideoElement.captureStream(); status reports whether audio was present.
+- Original clip and timeline are not replaced or mutated. Proxy is imported as a new timeline clip for manual review/replacement. No upload, cloud, duplicate timeline, new media database or automatic deletion.
+- Tests: tests/p127/run-p133p-tests.cjs; hosted same-origin Chromium + ffmpeg/ffprobe tests/p145/run-p133-proxy-browser.py. CI result pending; no pass/merge claim until workflow is inspected.
+- Limits: WebM only; browser decoder/codec/audio capture varies; 4K decoding can use substantial memory/GPU; no background generation, automatic relinking or transparent source/proxy toggle. Physical mobile, long 4K footage and real editing review remain manual.
