@@ -615,10 +615,22 @@ jobs:
           const fs=require('node:fs');
           const file='index.html',source=fs.readFileSync('canvio-p139-motionlab.js','utf8').trim(),open='<script id="canvio-lot139">',close='</script>';
           if(!source.includes('CVMotionLabP139'))throw new Error('P139.1 source contract missing');
-          let html=fs.readFileSync(file,'utf8'),tag=open+'\\n'+source+'\\n'+close;
+          let html=fs.readFileSync(file,'utf8'),tag=open+'\n'+source+'\n'+close;
           const pos=html.indexOf(open);
           if(pos>=0){const end=html.indexOf(close,pos);if(end<0)throw new Error('P139.1 embedded lot is not closed');html=html.slice(0,pos)+tag+html.slice(end+close.length);}
           else{const body=html.lastIndexOf('</body>');if(body<0)throw new Error('index.html body close missing');html=html.slice(0,body)+tag+'\\n'+html.slice(body);}
+          const frameHook="ctx.textAlign='center';objs.filter(o=>!o.hidden).forEach(o=>{";
+          const transformHook="ctx.translate(x,y);ctx.rotate(rot);ctx.scale(scale,scale);ctx.fillStyle=o.color;";
+          const textHook="ctx.fillText(o.text,0,0)";
+          for (const [needle,replacement,label] of [
+            [frameHook,"ctx.textAlign='center';if(window.CVMotionLabP139)window.CVMotionLabP139.beginFrame(objs,time);objs.filter(o=>!o.hidden).forEach(o=>{","beginFrame"],
+            [transformHook,"if(window.CVMotionLabP139)window.CVMotionLabP139.applyParentTransform(o,time,ctx);ctx.translate(x,y);ctx.rotate(rot);ctx.scale(scale,scale);ctx.fillStyle=o.color;","parent transform"],
+            [textHook,"if(window.CVMotionLabP139)window.CVMotionLabP139.drawText(ctx,o,time);else ctx.fillText(o.text,0,0)","text animator"]
+          ]) {
+            const count=html.split(needle).length-1;
+            if (count!==1) throw new Error("P139 "+label+" source anchor count="+count);
+            html=html.replace(needle,replacement);
+          }
           if((html.match(/id="canvio-lot139"/g)||[]).length!==1)throw new Error('P139.1 duplicate/missing lot');
           fs.writeFileSync(file,html,'utf8');
           console.log('P139.1 Motion Lab parent/null and text animator embedded');
