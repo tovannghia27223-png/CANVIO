@@ -61,7 +61,7 @@ function createOffscreenScaler(width,height,onFrame,onError){
   " if(d.type==='init'){try{canvas=new OffscreenCanvas(d.width,d.height);ctx=canvas.getContext('2d',{alpha:false,desynchronized:true});if(!ctx)throw new Error('2D context unavailable');self.postMessage({type:'ready'});}catch(e){self.postMessage({type:'error',message:String(e&&e.message||e)});}return;}",
   " if(d.type==='frame'){try{if(!ctx)throw new Error('Scaler is not initialized');ctx.drawImage(d.frame,0,0,d.width,d.height);if(d.frame&&d.frame.close)d.frame.close();var bitmap=canvas.transferToImageBitmap();self.postMessage({type:'frame',bitmap:bitmap},[bitmap]);}catch(e){try{if(d.frame&&d.frame.close)d.frame.close();}catch(_e){}self.postMessage({type:'error',message:String(e&&e.message||e)});}}",
   "};"
- ].join('\\n');
+ ].join(String.fromCharCode(10));
  var blob=new Blob([code],{type:'text/javascript'}),workerUrl=URL.createObjectURL(blob),worker=null;
  var readyResolve,readySettled=false,state={ready:false,pending:false,closed:false};
  var ready=new Promise(function(resolve){readyResolve=resolve;});
