@@ -40,6 +40,7 @@ with sync_playwright() as p:
     checks['crossfade midpoint mixes both frames'] = result['midpoint']
     checks['P119 easing curve changes actual shader/fallback frame'] = result['easingChangesRender'] and result['easingCurveApplied']
     checks['P119 preset curves are available to P145.2'] = result['presetCurve']
+    checks['P145.2 reads custom cubic-bezier from Motion'] = result['customMotionCurve']
     checks['module self-tests'] = result['apiTests']
     checks['WebCodecs P79 capability reported without exception'] = result['status']['owner']=='CANVIOWebCodecsExport P79'
     with page.expect_download(timeout=20000) as download:
