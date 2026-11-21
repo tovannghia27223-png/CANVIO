@@ -227,4 +227,12 @@ No honest all-P completion claim is possible yet. In addition to P70's 14 open r
 | P70 / P142 real-world gates | Deliberately deferred per user request. | Keep all fourteen P70 manual gates open until a later real browser/device/media/provider/accessibility/hosting/recovery/operations review. |
 
 These are branch candidates, not merged or PASS. Previous mainline status remains the accepted baseline until CI and merge are verified.
+ 
+## P135.1 — Pixel Atelier adjustment stack (current-main candidate · 2026-11-21)
 
+- Candidate branch: `work/canvio-p135-mainline-20261121`; source `canvio-p135-adjustments.js`; embedded lot `canvio-lot135a`; API `window.CVPixelAdjustmentsP135`.
+- Nine bounded adjustment types: brightness, contrast, saturation, hue, blur, grayscale, sepia, invert and opacity. Supports ordered stack, enable/disable, rename, reorder, delete, reset and stack-local undo/redo; maximum 32.
+- Non-destructive preview uses CSS filters on the existing Pixel canvas. PNG/WebP exports render to a derived canvas; Asset Library saves a new flattened PNG via the existing `CV.assets.addBlob` owner. Original raster remains unchanged.
+- The editable stack is tab-memory only in this first increment because Pixel `snapshotState()` currently returns a flattened PNG data URL. Page reload/new source clears the stack; flattened exports are not reversible adjustment projects. No second store/DB/timeline/provider/CDN was added.
+- Node parity/model suite: `tests/p127/run-p135a-tests.cjs`; hosted same-origin browser suite: `tests/p145/run-p135-browser.py`. Current-main hosted result is pending; do not record PASS before reviewing its exact run.
+- P135 remains PARTIAL. Editable stack project persistence, masks/local adjustments, smart objects, clone/patch and liquify remain OPEN.
