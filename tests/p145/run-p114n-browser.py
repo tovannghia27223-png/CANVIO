@@ -19,6 +19,10 @@ with sync_playwright() as p:
         page.wait_for_timeout(1500)
         c[label + ': shell mode on'] = page.evaluate("document.documentElement.dataset.nav") == 'shell'
         c[label + ': spatial button visible'] = page.evaluate("(()=>{const e=document.getElementById('cv229-open');const r=e.getBoundingClientRect();return getComputedStyle(e).display!=='none'&&r.width>20&&r.height>15&&r.right<=innerWidth+1&&r.left>=0})()")
+        c[label + ': more-options icon is SVG, not dots'] = page.evaluate("(()=>{const b=document.getElementById('l42-btn');const cs=getComputedStyle(b,'::before');return b.textContent.trim()==='⋯'&&cs.content!=='none'&&(cs.webkitMaskImage||cs.maskImage||'').indexOf('svg')>0&&parseFloat(getComputedStyle(b).fontSize)===0&&b.getAttribute('aria-label')==='Thêm tuỳ chọn'})()")
+        page.click('#l42-btn'); page.wait_for_timeout(300)
+        c[label + ': more-options button still opens its menu'] = page.evaluate("(()=>{const m=document.getElementById('l42-more');return !!m&&[...m.querySelectorAll('*')].some(e=>e!==document.getElementById('l42-btn')&&e.offsetHeight>0&&/\\S/.test(e.textContent))})()")
+        page.keyboard.press('Escape'); page.mouse.click(5, 450); page.wait_for_timeout(200)
         page.evaluate("document.getElementById('cv229-open').click()"); page.wait_for_timeout(600)
         c[label + ': spatial inspector opens'] = page.evaluate("(()=>{const i=document.getElementById('cv229-inspector');return !!i&&getComputedStyle(i).display!=='none'&&i.getBoundingClientRect().width>100})()")
         page.keyboard.press('Escape'); page.evaluate("window.CV229&&CV229.close&&CV229.close()"); page.wait_for_timeout(300)
