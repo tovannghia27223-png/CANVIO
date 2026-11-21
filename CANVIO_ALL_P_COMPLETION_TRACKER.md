@@ -120,4 +120,12 @@ The following backlog entries were omitted or understated in the first inventory
 
 ## Updated completion decision
 
-No honest all-P completion claim is possible yet. In addition to P70's 14 open real-world gates, P122.3 MCP, P124 Auto Layout/Component, P130 cloud sync, P133 OPFS/proxy and P143 full code split are not implemented in the reviewed main tree; P144 is only partially covered by P109; P142 is deployed but not target-device certified. Work on these needs defined contracts and/or real infrastructure rather than placeholder modules.
+No honest all-P completion claim is possible yet. In addition to P70's 14 open real-world gates, P122.3 MCP, P124 Auto Layout/Component is partial in PR #45; P130 cloud sync is blocked on real Supabase infrastructure; P133 OPFS/recovery and denoise Worker are implemented with proxy/OffscreenCanvas/large-media migration still open; P143 full code split remains open; P144 palette/shortcuts/F1/tour are implemented with per-Studio help still open; P142 is deployed but not target-device certified. Work on these needs defined contracts and/or real infrastructure rather than placeholder modules.
+
+
+## P133.2 proxy increment — 2026-11-21
+
+- Candidate branch work/p133-proxy720p-20261121: local 4K clip proxy generator integrated into the existing Video Engine quality card via canvio-lot133p.
+- Uses existing media refs/IndexedDB object store and existing importFiles timeline ingestion; outputs a new WebM clip at max 1280 px long edge; original source clip remains unchanged.
+- Node regression and hosted Chromium/ffmpeg/ffprobe acceptance added. CI is pending; this item is not yet marked PASS or merged.
+- Remaining P133 scope after this increment: OffscreenCanvas use cases for background removal/upscale and selected large-media OPFS migration with quota/migration/rollback tests. No duplicate project/media store should be created.
