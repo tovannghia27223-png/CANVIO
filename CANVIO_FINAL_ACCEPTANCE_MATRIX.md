@@ -30,3 +30,5 @@
 12. Physical target-device GPU/VRAM, performance and long-render testing.
 13. Cross-origin backup/restore and independent-device recovery.
 14. Rollback, release observability, alerting and production incident drill.
+
+| P143 Phase 1 source parity on latest main | Prior run #363 PASS 39/39 incl. parity and browser matrix; current branch re-runs against main 6481d83 | Pending current-main run. Full script/style inventory, dependency DAG, extraction, offline/CSP and rollback remain open. |
