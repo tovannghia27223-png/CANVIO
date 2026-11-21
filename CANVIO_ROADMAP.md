@@ -1049,3 +1049,14 @@ Hosted verification after the ffmpeg repair is complete:
 - The canonical `vMotionEase` evaluator delegates to `CVEasingP119.bez` only when the stored values can be represented without P119 normalisation loss (Y >= -1 and at most three decimal places). Legacy Video Engine curves outside that domain use the original evaluator, preserving old projects.
 - Candidate files: `canvio-p119-video.js` / `canvio-lot119v`, `tests/p127/run-p119v-tests.cjs`, `tests/p145/run-p119v-browser.py`; P143 parity is extended from 32 to 33 module pairs.
 - No new timeline, project database, localStorage/IndexedDB key, history stack, editor or easing registry is introduced. Website Engine/CSS animation timeline integration, real footage, physical GPU and target-device frame-rate acceptance remain open pending hosted and manual checks.
+
+## P119.3 — Video Engine keyframe easing (2026-11-21)
+
+- Add the single P119 preset registry to the existing Video Engine motion inspector. Presets populate existing cubic-Bezier controls; user Apply persists via the existing canonical clip/timeline and undo path.
+- Internal motion interpolation delegates to P119.bez where normalisation is lossless; unsupported legacy curve ranges retain the original evaluator. No second timeline or easing engine.
+- Website Engine/CSS animation timeline integration remains a separate open P119 increment; hardware GPU/60 fps and real footage acceptance are not inferred from software Chromium.
+
+## Verified P143.4 mainline — 2026-11-21
+
+- PR #83 / commit 29acd119; post-merge workflow #551 53/53 and Pages #275 PASS. P143 parity 32/32, scanner 14/14, inventory verifier 17/17.
+- 456 lexical provider/consumer candidates, 33 unresolved reads, 209 same-script references. Not a semantic dependency graph; Phase 3 extraction/rollback/offline/CSP remains open.

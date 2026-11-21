@@ -4008,3 +4008,17 @@ P144 tour: thêm bước bằng cách thêm vào mảng `STEPS` ({sel,title,text
 - The canonical `vMotionEase` evaluator delegates to `CVEasingP119.bez` only when the stored values can be represented without P119 normalisation loss (Y >= -1 and at most three decimal places). Legacy Video Engine curves outside that domain use the original evaluator, preserving old projects.
 - Candidate files: `canvio-p119-video.js` / `canvio-lot119v`, `tests/p127/run-p119v-tests.cjs`, `tests/p145/run-p119v-browser.py`; P143 parity is extended from 32 to 33 module pairs.
 - No new timeline, project database, localStorage/IndexedDB key, history stack, editor or easing registry is introduced. Website Engine/CSS animation timeline integration, real footage, physical GPU and target-device frame-rate acceptance remain open pending hosted and manual checks.
+
+## P119.3 — P119 presets in Video Engine keyframe inspector
+
+- Extends the existing native Video Engine keyframe inspector with the six named presets from the single CVEasingP119.PRESETS owner and a "Lấy đường cong từ Motion" action that accepts only the existing #motionEase cubic-bezier value. CSS spring linear() output is not silently converted into a Bezier.
+- The adapter writes only the existing #vtKFEasing and #vtKFCurveX1/Y1/X2/Y2 controls. The user commits through the existing Video Engine Apply action, which retains the canonical vPushUndo/save/clip-motion path; snapshotState/restoreState continue to own timeline project persistence.
+- The canonical vMotionEase evaluator delegates eligible curves to CVEasingP119.bez. Legacy curves with Y below -1 or precision finer than P119's three-decimal normalisation keep the original Video Engine evaluator so existing projects are not rounded/clamped.
+- Tests: tests/p127/run-p119v-tests.cjs covers preset mapping, Motion import/rejection, custom curves and adapter boundaries; tests/p145/run-p119v-browser.py creates a real image clip, applies a preset and Motion curve, verifies motionAt output and the existing Video Engine snapshot restore.
+- No new timeline, editor, database, IndexedDB/localStorage key, history stack or easing registry is created. Website Engine/CSS animation timeline integration and physical target-device/GPU performance remain open.
+
+## Verified P143.4 mainline — 2026-11-21
+
+- PR #83 merged as 29acd1192da8e42bad845248b1110d30a6cbfc44. Post-merge workflow #551 passed 53/53 and Pages #275 built/deployed successfully.
+- P143 parity 32/32; lexical scanner 14/14; inventory verifier 17/17. Inventory: 119 style blocks, 1,490 inline style attributes, 78 dynamic-loader sites, 456 lexical dependency candidates, 33 unresolved references, 209 same-script references.
+- This is lexical evidence only, not a semantic AST/data-flow graph. P143 Phase 3 extraction, manual dependency review, rollback, offline/PWA and CSP acceptance remain open.

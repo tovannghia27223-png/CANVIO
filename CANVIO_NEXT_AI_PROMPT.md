@@ -222,3 +222,9 @@ Chỉ kiểm bằng tín hiệu/tệp tổng hợp và Chromium headless; chưa 
 
 - P143.4 is merged at #83 / 29acd119; post-merge #551 passed 53/53, Pages #275 passed. P143 parity 32/32, scanner 14/14, verifier 17/17. The lexical dependency map is not semantic dependency resolution; Phase 3 extraction remains open.
 - P119.3 candidate integrates the existing CVEasingP119 preset registry with native Video Engine keyframe controls and Motion custom cubic-bezier. Verify candidate CI before merge. Do not create a second timeline/store; commit through the native Apply/Undo/snapshot owner.
+
+## P119.3 Video Engine keyframe easing — 2026-11-21
+
+- P119.3 adds the shared six-preset registry to the existing Video Engine motion inspector; custom cubic-bezier from #motionEase maps into the native vtKFEasing/Bezier inputs. Use native Apply/Undo/snapshot only.
+- The evaluator delegates to CVEasingP119.bez only when its three-decimal normalisation is lossless and its Y range is representable; older curves use the original solver. Spring linear() is not treated as a cubic-Bezier.
+- Verify Node P119.3 and real Chromium image-clip acceptance; keep Website Engine/CSS timeline open.

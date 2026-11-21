@@ -316,3 +316,13 @@ PR #71 was closed as superseded by clean-main PR #73; the latter carries the cor
 - The canonical `vMotionEase` evaluator delegates to `CVEasingP119.bez` only when the stored values can be represented without P119 normalisation loss (Y >= -1 and at most three decimal places). Legacy Video Engine curves outside that domain use the original evaluator, preserving old projects.
 - Candidate files: `canvio-p119-video.js` / `canvio-lot119v`, `tests/p127/run-p119v-tests.cjs`, `tests/p145/run-p119v-browser.py`; P143 parity is extended from 32 to 33 module pairs.
 - No new timeline, project database, localStorage/IndexedDB key, history stack, editor or easing registry is introduced. Website Engine/CSS animation timeline integration, real footage, physical GPU and target-device frame-rate acceptance remain open pending hosted and manual checks.
+
+## P119.3 shared easing with Video Engine — 2026-11-21
+
+- Candidate integrates the six P119 named presets and custom cubic-Bezier import from Motion into the existing Video Engine keyframe inspector.
+- It reuses vtKFEasing/Bezier inputs and existing native Apply/Undo/snapshot contracts. The vMotionEase evaluator shares P119.bez for compatible normalized curves; legacy curves outside P119's exact normalisation domain retain the previous evaluator.
+- Acceptance: Node P119.3 contract tests, real Chromium image clip → preset/custom Motion → motionAt output → existing snapshot restore, P143 33-module parity. Website Engine/CSS timeline remains open.
+
+## P143.4 verified mainline — 2026-11-21
+
+- PR #83 mainline workflow #551 passed 53/53; Pages #275 deployed. P143 parity 32/32, scanner 14/14, verifier 17/17. Lexical 456 candidates are not a semantic DAG.

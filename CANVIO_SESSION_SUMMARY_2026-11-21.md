@@ -217,3 +217,13 @@ Pull trước (`git pull --rebase origin main`; CI bot hay push commit build). A
 
 - P143.4 merged PR #83 (29acd119); post-merge #551 passed 53/53 and Pages #275 passed. Parity 32/32, lexical scanner 14/14 and inventory validator 17/17. This is lexical evidence, not a semantic dependency graph.
 - Started P119.3: native Video Engine keyframe inspector now receives a shared P119 preset adapter; writes into existing vtKFEasing/Bezier fields and relies on existing Apply/Undo/snapshot path. Candidate Node/Chromium suites added; awaiting full hosted result.
+
+## P120/P126 ComfyUI bridge — candidate 2026-11-21
+
+- Added the loopback-only local ComfyUI bridge, Node contract tests and Chromium mock-server acceptance. It registers image/video/upscale/interpolate handlers with P128 and imports result blobs through the existing Asset Library owner.
+- Model/custom-node execution and output quality remain unverified until the user's actual free local ComfyUI environment is available. This is not cloud sync or an AI model bundle.
+
+## P119.3 Video Engine keyframe easing — candidate
+
+- Shared P119 presets/custom curve are presented inside existing Video Engine keyframe inspector; selected values are written into the native cubic-Bezier controls and saved only by native Apply. Existing timeline undo/snapshot path remains owner.
+- Node + Chromium acceptance and P143 parity are required before merge; CSS Website Engine timeline and hardware/GPU performance are not claimed.

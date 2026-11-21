@@ -545,3 +545,13 @@ Node tests round-trip the private PNG tEXt metadata and enforce CRC/version/safe
 
 - Node tests verify the six P119 presets, curve matching, native custom-Bezier field mapping, Motion cubic-bezier import and rejection of linear() spring strings. The source is a UI adapter only; it creates no second timeline/store.
 - Hosted Chromium uses a real image clip through CV.engines.video.importFiles(), applies a preset via the existing keyframe inspector and native Apply path, checks motionAt against CVEasingP119.bez, round-trips the existing Video Engine snapshot, then imports a Motion curve. Website CSS timeline and physical GPU/performance remain open until separately verified.
+
+## P119.3 Video Engine easing QA
+
+- Node suite checks the six original P119 presets, custom Motion cubic-bezier parsing, rejection of linear() spring strings, native field mapping and absence of new storage/timeline owners.
+- Chromium creates a real image clip on the canonical Video Engine, applies a P119 preset through existing keyframe fields, verifies vMotionAt against CVEasingP119.bez, round-trips the existing snapshot, imports a Motion custom curve and verifies invalid spring import does not mutate the clip.
+- Shared evaluator delegates supported legacy curves to P119.bez; curves outside P119's normalisation domain or with greater stored precision retain the previous Video Engine solver. Website CSS timeline and target GPU/performance remain unverified.
+
+## Verified P143.4 hosted mainline QA
+
+Mainline workflow #551 passed 53/53; Pages #275 passed build/deploy. P143 parity 32/32, lexical scanner 14/14 and inventory validator 17/17. The 456 edges are lexical candidates, not semantic runtime dependencies; 33 unresolved reads and 209 same-script references remain visible for human review.

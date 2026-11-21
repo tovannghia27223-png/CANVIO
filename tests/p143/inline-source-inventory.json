@@ -1,17 +1,17 @@
 {
   "format": "CANVIO_P143_INLINE_SOURCE_INVENTORY",
   "version": 1,
-  "generatedAt": "2026-11-21T16:21:33.794Z",
+  "generatedAt": "2026-11-21T17:25:10.395Z",
   "source": "restored canonical index.html after hosted workflow integration steps",
   "purpose": "Complete script-tag inventory in browser execution order; known global reference detection is heuristic, not a semantic dependency DAG.",
-  "htmlBytes": 5624085,
-  "scriptTagCount": 159,
-  "inlineScriptCount": 159,
+  "htmlBytes": 5635518,
+  "scriptTagCount": 160,
+  "inlineScriptCount": 160,
   "externalScriptCount": 0,
   "moduleScriptCount": 0,
   "asyncScriptCount": 0,
   "deferScriptCount": 0,
-  "uniqueScriptIds": 156,
+  "uniqueScriptIds": 157,
   "duplicateScriptIds": [],
   "modules": [
     {
@@ -82,8 +82,8 @@
       "async": false,
       "defer": false,
       "noModule": false,
-      "bytes": 397167,
-      "sha256": "1e2d512ba1744a8fd687fc136d9ad5bf2618d31b0d20741e51fb5185391fe58b",
+      "bytes": 397366,
+      "sha256": "81831d5b6d5e7b83d4a7877ec52f60e8d74c6745e46ae2c55331b2fd9600f949",
       "exportedGlobals": [
         "CV",
         "CV190PosterSamples",
@@ -117,6 +117,7 @@
         "confirm",
         "CV11",
         "CVAudioMix",
+        "CVEasingP119",
         "CVHealth",
         "CVMediaOPFSP133",
         "CVPhotoTools",
@@ -197,6 +198,13 @@
             "count": 1,
             "lines": [
               3766
+            ]
+          },
+          {
+            "name": "CVEasingP119",
+            "count": 1,
+            "lines": [
+              3430
             ]
           },
           {
@@ -16600,6 +16608,32 @@
             "kind": "window.property"
           }
         ],
+        "scannerLimitations": [
+          "Template literal bodies and interpolation expressions are skipped as one lexical region.",
+          "Destructured globals, alias flow, computed property names, eval and dynamically assembled identifiers are not resolved.",
+          "Top-level bindings are detected only for simple var/let/const/function/class declarations.",
+          "This scanner is lexical evidence, not a JavaScript AST or proof of runtime data flow."
+        ]
+      }
+    },
+    {
+      "order": 159,
+      "id": "canvio-lot119v",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 11196,
+      "sha256": "98c31fa94436896042adac99f8dea05fad5e3d2c4687bbd24ec0b5f426134b62",
+      "exportedGlobals": [],
+      "globalDeclarations": [],
+      "globalPropertyReads": [],
+      "knownGlobalReads": [],
+      "globalReferenceEvidence": {
+        "propertyReads": [],
+        "knownReads": [],
+        "writes": [],
         "scannerLimitations": [
           "Template literal bodies and interpolation expressions are skipped as one lexical region.",
           "Destructured globals, alias flow, computed property names, eval and dynamically assembled identifiers are not resolved.",
