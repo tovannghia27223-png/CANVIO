@@ -3927,3 +3927,16 @@ P144 tour: thêm bước bằng cách thêm vào mảng `STEPS` ({sel,title,text
 - Data map: Motion Lab `snapshotState()/restoreState()` is still the sole persistence owner. Null transforms, parent references and animator metadata round-trip inside its `objs`; no localStorage key, project DB or second sync mechanism is introduced.
 - Tests: `tests/p127/run-p139-tests.cjs` (source/inline parity, model contracts, animator normalization) and `tests/p145/run-p139-browser.py` (same-origin Chromium checks for rendered PNG difference, null-parent creation, metadata round-trip and zero page errors). The source module is registered in `tests/p143/source-module-map.json` for centralized P143 parity.
 - Limitations: precomposition, physical motion blur, word/range selection, advanced keyframe editing and complex text shaping/RTL remain out of scope. Headless Chromium uses software rendering; real project, real footage, target-device frame rate and human UX/accessibility review remain separate acceptance.
+
+
+## Verified mainline update — P120/P126 local ComfyUI connector — 2026-11-21
+
+- PR #73 merged to main as 1e2e0b1a. The hosted candidate workflow run 44914277311 completed successfully: 48/48 steps.
+- Module: canvio-p120-p126-comfyui.js; inline lot canvio-lot120126; API window.CVComfyP120P126; it registers local provider handlers (comfyui-local) for image, video, upscale and interpolate tasks through existing CVOrchestratorP128.
+- User workflow: import ComfyUI API-format workflow JSON (bounded size and node count); optionally choose local image/video media; map prompt node/input and media node/input explicitly; connect to local ComfyUI; queue and poll job; retrieve output; save through existing CV.assets.addBlob and expose download links.
+- Security/network boundary: only HTTP/HTTPS loopback origins (localhost, 127.0.0.1, ::1); no credentials/API keys, cloud endpoint, third-party runtime, auto-download or custom-node installation. Calls use /system_stats, optional /upload/image, /prompt, /history/{prompt_id}, and /view; workflow, input, output and time limits are enforced. The user must allow the exact CANVIO origin in ComfyUI CORS; hosted CANVIO may also be constrained by local-network browser policy or mixed-content rules.
+- Owner map remains P128 for orchestration and existing Asset Library for output. The bridge adds no second provider registry, asset database, timeline or sync store.
+- Hosted Chromium mock-server evidence: workflowCompleted=true, inputMediaUploaded=true, promptNodeOverridden=true, mediaNodeOverridden=true, historyPolled=true, savedToAssetLibrary=true, outputDownloadLink=true, pageErrors=[]. Node and browser suites passed in the 48/48 workflow.
+- Important limitation: mock server verifies connector protocol only. It does not test a real ComfyUI installation, free custom-node/model compatibility, model licensing, GPU/VRAM, inference latency, or output visual/audio quality. Real-ESRGAN, RIFE and AI video workflows require the user to install compatible free local models/nodes and import their API-format graph. Keep P120/P126 partial for real model acceptance.
+- Release remains releaseCertified:false; the fourteen P70 real-world gates remain open.
+
