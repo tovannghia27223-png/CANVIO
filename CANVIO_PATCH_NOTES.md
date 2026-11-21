@@ -17,3 +17,11 @@
 - Non-destructive CSS preview on the existing canvas; derived-canvas PNG/WebP export; saves a new flattened Asset Library file without overwriting source.
 - Editable stack is session-only; project snapshot/restore integration remains open.
 - Node and hosted Chromium tests are wired; results pending.
+
+## P139.1 — Motion Lab parent/null + text animator (candidate)
+
+- Added canvio-p139-motionlab.js, embedded as canvio-lot139.
+- Adds Null Controller hierarchy, parent/unparent and composed transforms; adds per-grapheme rise/fade/scale/wave/tracking with P119 easing.
+- Metadata reuses existing Motion Lab snapshot/restore; no second timeline/store.
+- Node contracts passed in one hosted run; Chromium acceptance pending after DOM insertion fixes.
+- Precomp, motion blur and advanced animator selectors remain OPEN.
