@@ -96,31 +96,72 @@ for(let i=0;i<scriptBlocks.length;i++){
   }
 }
 const byGlobal=new Map();
-for(const module of scriptInventory.modules||[]){
-  for(const name of module.exportedGlobals||[]){
-    if(!byGlobal.has(name))byGlobal.set(name,[]);
-    byGlobal.get(name).push(module);
-  }
+function addProvider(name,module,kind){
+  if(!byGlobal.has(name))byGlobal.set(name,[]);
+  const list=byGlobal.get(name),same=list.find(x=>x.order===module.order);
+  if(same){if(!same.kind.split('|').includes(kind))same.kind+='|'+kind;return;}
+  list.push({order:module.order,id:module.id,sha256:module.sha256,kind});
 }
-const dependencyCandidates=[];
+for(const module of scriptInventory.modules||[]){
+  for(const name of module.exportedGlobals||[])addProvider(name,module,'window-or-globalThis-assignment');
+  for(const name of module.globalDeclarations||[])addProvider(name,module,'top-level-lexical-or-function-binding');
+}
+for(const providers of byGlobal.values())providers.sort((a,b)=>a.order-b.order);
+const dependencyEdges=[],unresolvedReferences=[],sameScriptReferences=[];
+let staticReadReferenceCount=0;
 for(const consumer of scriptInventory.modules||[]){
-  for(const name of consumer.knownGlobalReads||[]){
-    const producers=byGlobal.get(name)||[];
-    for(const producer of producers){
-      if(producer.order===consumer.order)continue;
-      dependencyCandidates.push({
-        global:name,
-        fromOrder:producer.order,
-        fromId:producer.id,
-        toOrder:consumer.order,
-        toId:consumer.id,
-        executionOrder:producer.order<consumer.order?'producer-before-consumer':'consumer-before-producer',
-        confidence:'heuristic'
-      });
+  const evidence=new Map();
+  for(const name of consumer.knownGlobalReads||[])evidence.set(name,new Set(['known-global-identifier-read']));
+  for(const name of consumer.globalPropertyReads||[]){
+    if(byGlobal.has(name)||evidence.has(name)){
+      const tags=evidence.get(name)||new Set();tags.add('window-property-reference');evidence.set(name,tags);
     }
   }
+  for(const [name,kinds] of evidence){
+    staticReadReferenceCount++;
+    const providers=byGlobal.get(name)||[],sameScript=providers.filter(x=>x.order===consumer.order);
+    if(sameScript.length){sameScriptReferences.push({global:name,scriptOrder:consumer.order,scriptId:consumer.id,evidenceKinds:[...kinds]});continue;}
+    const prior=providers.filter(x=>x.order<consumer.order);
+    if(!prior.length){
+      unresolvedReferences.push({
+        global:name,consumerOrder:consumer.order,consumerId:consumer.id,
+        laterProviderOrders:providers.filter(x=>x.order>consumer.order).map(x=>x.order),
+        reason:providers.length?'no-provider-before-consumer':'no-static-provider-detected',
+        evidenceKinds:[...kinds]
+      });
+      continue;
+    }
+    const latest=prior[prior.length-1];
+    dependencyEdges.push({
+      global:name,
+      fromOrder:latest.order,fromId:latest.id,fromSha256:latest.sha256,providerKind:latest.kind,
+      toOrder:consumer.order,toId:consumer.id,toSha256:consumer.sha256,
+      priorProviderCount:prior.length,
+      priorProviderOrders:prior.map(x=>x.order),
+      executionOrder:'provider-before-consumer',
+      confidence:prior.length===1?'lexical-single-prior-provider':'lexical-multiple-prior-writers-last-in-order',
+      evidenceKinds:[...kinds]
+    });
+  }
 }
-dependencyCandidates.sort((a,b)=>a.fromOrder-b.fromOrder||a.toOrder-b.toOrder||a.global.localeCompare(b.global));
+dependencyEdges.sort((a,b)=>a.fromOrder-b.fromOrder||a.toOrder-b.toOrder||a.global.localeCompare(b.global));
+unresolvedReferences.sort((a,b)=>a.consumerOrder-b.consumerOrder||a.global.localeCompare(b.global));
+sameScriptReferences.sort((a,b)=>a.scriptOrder-b.scriptOrder||a.global.localeCompare(b.global));
+const dependencyCandidates={
+  count:dependencyEdges.length,
+  confidence:'lexical-static-order-candidate-not-semantic',
+  summary:{
+    staticReadReferenceCount,
+    resolvedEdgeCount:dependencyEdges.length,
+    unresolvedReferenceCount:unresolvedReferences.length,
+    sameScriptReferenceCount:sameScriptReferences.length,
+    ambiguousMultiWriterEdges:dependencyEdges.filter(x=>x.priorProviderCount>1).length,
+    providerGlobals:byGlobal.size
+  },
+  edges:dependencyEdges,
+  unresolved:unresolvedReferences,
+  sameScriptReferences
+};
 const loaderCounts={};
 for(const item of dynamicLoaders)loaderCounts[item.kind]=(loaderCounts[item.kind]||0)+1;
 const report={
@@ -128,18 +169,19 @@ const report={
   version:1,
   generatedAt:new Date().toISOString(),
   source:'restored canonical index.html after all workflow-managed module integration steps',
-  purpose:'Inventory inline styles, template elements and dynamic resource-loader call sites. Dependency candidates use known global reads/exports and execution order only; they are heuristic and are not a human-reviewed semantic boot-order DAG.',
+  purpose:'Inventory inline styles, template elements, dynamic resource-loader call sites and lexical global-reference ordering candidates. Global references are not a human-reviewed semantic boot-order or runtime data-flow graph.',
   htmlBytes:Buffer.byteLength(html),
   styles:{blockCount:styleBlocks.length,inlineStyleAttributeCount:inlineStyleAttributes.length,totalStyleBytes:styleBlocks.reduce((n,x)=>n+x.bytes,0)+inlineStyleAttributes.reduce((n,x)=>n+x.bytes,0),blocks:styleBlocks,inlineAttributes:inlineStyleAttributes},
   templates:{count:templates.length,blocks:templates},
   dynamicLoaders:{count:dynamicLoaders.length,countsByKind:loaderCounts,sites:dynamicLoaders},
-  dependencyCandidates:{count:dependencyCandidates.length,confidence:'heuristic-not-semantic',edges:dependencyCandidates},
+  dependencyCandidates:dependencyCandidates,
   limitations:[
     'Regular-expression inventories can miss HTML/CSS/JavaScript constructed from concatenated strings or runtime data.',
     'Inline style attribute records retain hashes and sizes, not full style contents.',
     'CSS selector extraction is approximate and does not evaluate nesting, @layer, @supports or runtime style mutation.',
     'Template elements do not include HTML templates stored only inside JavaScript strings.',
-    'Global read/export pairs are candidate dependencies only; they do not prove invocation order, data flow or safe extraction boundaries.',
+    'Lexical global reads and preceding static assignments/bindings are candidate dependencies only; conditional writes, aliases, invocation order and runtime data flow are not proven.',
+    'Template interpolation bodies, destructured globals, eval and dynamically assembled names may be missed by the lexical scanner.',
     'No script, style, template or loader has been moved by generating this report.'
   ]
 };
@@ -151,6 +193,8 @@ console.log(JSON.stringify({
   inlineStyleAttributes:inlineStyleAttributes.length,
   templateBlocks:templates.length,
   dynamicLoaderSites:dynamicLoaders.length,
-  dependencyCandidates:dependencyCandidates.length,
+  dependencyCandidates:report.dependencyCandidates.count,
+  unresolvedGlobalReferences:report.dependencyCandidates.unresolved.length,
+  sameScriptReferences:report.dependencyCandidates.sameScriptReferences.length,
   output:'tests/p143/style-template-loader-inventory.json'
 },null,2));

@@ -199,3 +199,10 @@ Pull trước (`git pull --rebase origin main`; CI bot hay push commit build). A
 
 - Adjustment metadata is now embedded in the existing Pixel PNG snapshot string and restored through the existing native Pixel API. Preview remains non-destructive; exports remain flattened copies.
 - Hosted Node/Chromium and P143 parity are the merge gate. Cross-device sync and advanced Photoshop-like tools remain open.
+
+
+## Additional verified work — P137.2 / P119.2 / P135.2 — 2026-11-21
+
+- Merged P137.2 (#76, `fa6c6c4`), P119.2 (#78, `3b53b8d`) and P135.2 (#81, `33f6848`). Candidate and post-merge mainline workflows passed: P137.2 51/51, P119.2 52/52, P135.2 53/53.
+- P135.2 preserves the Pixel snapshot API while storing the editable adjustment stack in a CRC-checked PNG tEXt chunk. Chromium validated snapshot, restore, reload and unchanged source raster. P143 parity reached 32/32.
+- P143.4 lexical global evidence scanner is being carried to a fresh branch based on the P135.2-verified mainline; it does not change app runtime or complete the semantic dependency graph/Phase 3 refactor.

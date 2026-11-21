@@ -287,3 +287,16 @@ PR #71 was closed as superseded by clean-main PR #73; the latter carries the cor
 
 - P135.2 carries the existing adjustment stack through Pixel snapshotState() / restoreState() using a bounded PNG tEXt metadata chunk. The snapshot string remains a PNG Data URL and existing raster pixels are not changed by preview.
 - Acceptance gate: Node metadata/CRC/32-layer checks, Chromium snapshot→reload→restore, P143 standalone/embedded parity. Not a claim of cloud sync or independent-device Project Vault validation.
+
+
+## Verified mainline updates — 2026-11-21 — P137.2 / P119.2 / P135.2
+
+- **P137.2** merged through PR #76 at `fa6c6c4372fff076a950fa2a17e693cbd058c55f`. Candidate workflow #534 and post-merge mainline #535 both passed 51/51. Hosted Chromium verified selected-character styling, three table presets and HTML rehydration; P143 parity was 31/31 at that point. Remaining: cross-paragraph character selection, nested style editing, advanced table semantics and print pagination.
+- **P119.2** merged through PR #78 at `3b53b8d5128aa5b773bef725183b5151b029b612`. Candidate workflow #536 and post-merge mainline #538 both passed 52/52; Pages #271 passed build/report/deploy. Node reports `P119 OK` and `P145.2 OK`; Chromium confirms that the shared P119 preset/custom curve changes the actual P145.2 shader/Canvas2D output. Linear remains the default. Video Engine clip/keyframe easing and Website Engine/CSS timeline integration remain open.
+- **P135.2** merged through PR #81 at `33f68481d52ca9445d0d3dae05d1cfb903b81487`. Candidate workflow #547 and post-merge mainline #549 both passed 53/53; Pages #273 and #274 passed deployment. P135.2 keeps the existing Pixel snapshot API as a PNG Data URL and stores a bounded, CRC-checked `CANVIO.P135` tEXt chunk with adjustment metadata. Chromium verified snapshot restore, reload/restore, unchanged raster, undo/redo and zero page errors. P143 parity is now 32/32 after registering P135.2.
+- These are automated local/hosted-browser checks, not physical-device acceptance. P135.2 does not prove cloud/two-device sync; third-party PNG re-encoding may strip the ancillary metadata. P70 remains releaseCertified=false with fourteen manual gates open.
+
+## P143.4 — lexical global-reference evidence candidate — 2026-11-21
+
+- Candidate PR #83 is being rebuilt on the latest mainline after P135.2. The dependency-free scanner records static global writes, reads, simple top-level declarations, source order and SHA evidence; it adds no runtime code and moves no script/style/template or boot order.
+- Its output is a lexical candidate map, not a semantic dependency/data-flow DAG. Template interpolation, destructured/aliased globals, computed names, eval, conditional execution and call-time ordering remain unproven. P143 Phase 3 staged extraction is still open until human-reviewed boundaries plus rollback, app regression, offline/PWA and CSP acceptance pass.
