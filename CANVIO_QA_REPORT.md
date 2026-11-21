@@ -411,3 +411,9 @@ The candidate workflow runs standalone/embedded source parity and API tests for 
 - Branch work/p143-parity-current-main-final-20261121 is based on main 6481d83 and runs the 20-module standalone/embedded source parity gate before the full HTML audit.
 - Prior candidate #363 passed 39/39 including the parity gate and same-origin browser acceptance. Current-main CI pending.
 - Full P143 source split remains open.
+
+
+## P134.2 WebM duration measurement correction — candidate
+
+- Hosted run #371 showed the previous test divided video frame count by inaccurate `r_frame_rate=60/1` because WebM format duration and `avg_frame_rate` were missing. It recorded 2.05 s for output whose expected length is ~4.1 s; all other P134 checks (moving subject, 720×1280, audio, full decode, local-only, preview) passed.
+- The test now measures video packet PTS span plus median packet duration and emits packet diagnostics. The 3.5–4.5 s assertion remains unchanged. Latest-main rerun #373 pending.
