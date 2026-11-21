@@ -959,3 +959,13 @@ Hosted verification after the ffmpeg repair is complete:
 - Style definitions: whitelisted CSS properties only, localStorage `canvio137:styles` (UI convenience, not in exported files).
 - Tests: `tests/p127/run-p137s-tests.cjs` (Node, sanitising/escaping/fallback) and `tests/p145/run-p137-browser.py` (real Chrome, 11 checks: apply, switch clears old props, redefine → other page restyled, TOC entries+pages, rebuild without duplicate, undo, empty TOC message, zero page errors). Smoke 21/21.
 - Limits: no multi-frame text flow, no nested character styles, tables stay with the existing Layout Foundry insert (no table styles); TOC page numbers are document page order, not print pagination; style set is fixed to the five defaults plus edits (no UI to create new names yet); TOC entries are static until rebuilt.
+
+ 
+## P135.1 — Pixel Atelier adjustment stack (candidate · 2026-11-21)
+
+- Integrated on candidate branch only: P135.1 standalone adjustment module and canonical lot are wired into the hosted build workflow.
+- Pixel Atelier gains nine ordered non-destructive preview adjustments, layer enable/disable, rename, reorder, delete, reset, and separate Undo/Redo for the adjustment stack. Existing raster canvas and source remain unmodified by the preview.
+- Export PNG/WebP uses a derived canvas with the stack applied; Asset Library saves a new flattened raster through the existing CV.assets.addBlob owner.
+- Acceptance boundary: the editable layer stack is tab-memory only; it is not part of the current Pixel snapshotState() contract (PNG data URL), so page reload/project restore does not preserve editable stack metadata. This is an initial P135 increment only.
+- CI adds Node parity/source assertions and hosted same-origin Chromium interaction/export checks. Status remains CANDIDATE / PENDING HOSTED RUN, not accepted.
+- Next: project-owned persistence contract for adjustment metadata, per-layer masks/local adjustments, memory/blur edge tests. P139 remains OPEN.
