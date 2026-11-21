@@ -1001,6 +1001,76 @@ jobs:
           MATRIX
           fi
 
+      - name: Record P119.2 shared easing in Video Engine transitions
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! grep -q '## P119.2 — Shared easing for Video Engine transitions' CANVIO_AI_GUIDE.md; then
+            cat >> CANVIO_AI_GUIDE.md <<'GUIDE'
+
+          ## P119.2 — Shared easing for Video Engine transitions
+
+          - Existing easing owner remains canvio-p119-easing.js / canonical canvio-lot119e / window.CVEasingP119. No second cubic-bezier solver, preset registry or animation store is created.
+          - P139.1 Motion Lab Text Animator already consumes the same P119 PRESETS and bez() function. This increment extends the shared contract to P145.2 shader transitions and the P79 video-only transition export path.
+          - P145.2 source remains canvio-p145-shader.js / canonical canvio-lot1452 / window.CVShaderP145 (version 145.2.2). Easing selector supports linear (default, backward-compatible), all named P119 presets, and "Tuỳ chỉnh từ Motion", which reads the existing #motionEase cubic-bezier value using CVEasingP119.parse().
+          - P145.2 stores raw progress separately from derived easedProgress. The derived value is passed into both GLSL u_progress and the Canvas2D fallback, so preview, PNG frame and optional P79 MP4 sequence use the same curve. The P119 spring() linear() output remains an independent CSS export and is not silently converted to a bezier.
+          - If P119 API or a valid custom curve is unavailable, the transition safely retains linear progress. Existing projects and calls that omit easingCurve remain visually unchanged.
+          - Tests: tests/p145/run-p1452-tests.cjs loads the real P119 source in the Node VM and checks preset/custom curve resolution; tests/p145/run-p1452-browser.py verifies selector, custom Motion curve, and that an eased mid-frame differs from linear in WebGL/Canvas2D. The existing P119 graph tests continue to run.
+          - Scope boundary: P119 is now shared with Motion Lab and P145.2 transitions; it is not yet integrated into Video Engine clip/keyframe easing or Website Engine/CSS animation timelines. Those remain open rather than claimed complete.
+          GUIDE
+          fi
+          if ! grep -q 'P119.2 shared easing transition QA' CANVIO_QA_REPORT.md; then
+            cat >> CANVIO_QA_REPORT.md <<'QA'
+
+          ## P119.2 shared easing transition QA
+
+          Hosted Node tests load both P119 and P145.2 and verify actual preset/custom curve resolution. Hosted Chromium checks the P145.2 easing selector and compares the output frame at equal raw progress with linear and custom P119 curves, verifying that the derived easing value affects both renderer paths. Video Engine clip/keyframe easing and Website Engine motion remain unverified and are not part of this increment.
+          QA
+          fi
+          if ! grep -q '## P119.2 — Share easing with Video Engine transitions' CANVIO_ROADMAP.md; then
+            cat >> CANVIO_ROADMAP.md <<'ROADMAP'
+
+          ## P119.2 — Share easing with Video Engine transitions
+
+          - Extends the existing P119 CVEasingP119 presets and cubic-bezier solver to P145.2 shader transitions and video-only MP4 transition export. Default stays linear to preserve current output.
+          - Named presets and "custom from Motion" map to P119.PRESETS / P119.parse. The same derived easedProgress is used in WebGL and Canvas2D fallback; P79 export sequence passes the same options per frame.
+          - P139.1 and P145.2 now consume the shared P119 easing module. Video Engine clip/keyframe easing and Website Engine/CSS timeline remain open.
+          ROADMAP
+          fi
+          if ! grep -q 'P119.2 shared easing in P145.2 candidate' CANVIO_ALL_P_COMPLETION_TRACKER.md; then
+            cat >> CANVIO_ALL_P_COMPLETION_TRACKER.md <<'TRACKER'
+
+          ## P119.2 shared easing in P145.2 candidate — 2026-11-21
+
+          - P145.2 now reads the original P119 named presets and custom cubic-bezier from Motion; linear remains the default. Applies the same easedProgress to shader, Canvas2D preview and P79 video-only transition export.
+          - Keep P119 partial for Video Engine clip/keyframe and Website Engine timeline integration; merge only after Node/Chromium verification on current main.
+          TRACKER
+          fi
+          if ! grep -q 'P119.2 shared easing integration' CANVIO_NEXT_AI_PROMPT.md; then
+            cat >> CANVIO_NEXT_AI_PROMPT.md <<'PROMPT'
+
+          ## P119.2 shared easing integration — 2026-11-21
+
+          - Candidate shares CVEasingP119 with P145.2 transitions and P79 video-only segment export. Default linear is backward compatible; named presets/custom curve from #motionEase use the original P119 API.
+          - Verify P145.2 Node+Chromium and P143 source parity; P119 remains partial for Video Engine clip/keyframe and Website Engine timelines.
+          PROMPT
+          fi
+          if ! grep -q 'P119.2 Motion easing shared with P145.2' CANVIO_SESSION_SUMMARY_2026-11-21.md; then
+            cat >> CANVIO_SESSION_SUMMARY_2026-11-21.md <<'SESSION'
+
+          ## P119.2 Motion easing shared with P145.2 — candidate 2026-11-21
+
+          - P145.2 now consumes P119 easing presets and custom Motion cubic-bezier via the existing CVEasingP119 owner. The easing value affects shader and Canvas2D render progress, preview, PNG and P79 MP4 transition frames; default remains linear.
+          - Node/Chromium acceptance is added; Video Engine clip/keyframe easing and Website Engine animation timeline are still open.
+          SESSION
+          fi
+          if ! grep -q 'P119.2 P145.2 shared easing' CANVIO_FINAL_ACCEPTANCE_MATRIX.md; then
+            cat >> CANVIO_FINAL_ACCEPTANCE_MATRIX.md <<'MATRIX'
+
+          | P119.2 shared easing in P145.2 | Node loads actual P119 and P145.2 sources; Chromium verifies preset/custom Motion curve changes equal-progress transition output | Video Engine clip/keyframe easing, Website Engine/CSS timeline, real GPU and target-device export performance remain open. |
+          MATRIX
+          fi
+
       - name: Package full source handoff and runtime evidence
         shell: bash
         run: |
