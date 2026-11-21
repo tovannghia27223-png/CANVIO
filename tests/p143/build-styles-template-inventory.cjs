@@ -98,7 +98,9 @@ for(let i=0;i<scriptBlocks.length;i++){
 const byGlobal=new Map();
 function addProvider(name,module,kind){
   if(!byGlobal.has(name))byGlobal.set(name,[]);
-  byGlobal.get(name).push({order:module.order,id:module.id,sha256:module.sha256,kind});
+  const list=byGlobal.get(name),same=list.find(x=>x.order===module.order);
+  if(same){if(!same.kind.split('|').includes(kind))same.kind+='|'+kind;return;}
+  list.push({order:module.order,id:module.id,sha256:module.sha256,kind});
 }
 for(const module of scriptInventory.modules||[]){
   for(const name of module.exportedGlobals||[])addProvider(name,module,'window-or-globalThis-assignment');
