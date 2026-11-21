@@ -128,6 +128,12 @@ Pull trước (`git pull --rebase origin main`; CI bot hay push commit build). A
 - Changes are not merged and no CI PASS is claimed yet. The next step is hosted PR verification, fix any failing assertions, then merge only if the full candidate suite passes.
 - Real-world manual testing is deferred as requested. P70's fourteen gates remain OPEN. P130 Supabase sync and P122.3 MCP remain blocked on the necessary real infrastructure/security contract.
 
+## P143.4 lexical dependency inventory — candidate 2026-11-21
+
+- Added a lexical scanner for direct global reads/writes and simple top-level declarations; the existing source/script/style/template inventory now generates ordered provider-before-consumer candidates with SHA and unresolved-reference evidence.
+- The report remains lexical evidence only. No CANVIO runtime order, state store, CSS, template or module boundary has changed; semantic review and Phase 3 reversible extraction remain open.
+
+
 
 
 ## Verified update — 2026-11-21 — P124.3
