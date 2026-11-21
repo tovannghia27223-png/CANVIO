@@ -168,3 +168,9 @@ No honest all-P completion claim is possible yet. In addition to P70's 14 open r
 
 - Carries the 20-module source registry/parity gate onto current main after the hosted package/manifest bot commit. Prior run #363 passed 39/39, including source parity and same-origin browser acceptance; new current-main hosted run is pending.
 - Full P143 remains OPEN until all inline JS/CSS is inventoried, dependencies/boot order mapped and staged extraction passes app/rollback/offline/CSP acceptance.
+
+
+## P134.2 duration test reliability fix — 2026-11-21
+
+- Hosted rerun #371 exposed a bad WebM test assumption: `r_frame_rate=60/1` was used when container duration and avg frame rate were missing, under-measuring a 4.1 s synthetic output as 2.05 s. Video decode/audio preservation remained PASS; only durationWithinTolerance failed.
+- Updated P134 browser acceptance to use actual ffprobe packet PTS and median frame duration, with metadata and 30 fps configured fallback. Run #373 on latest-main PR #54 is pending; keep P143/overall CI unmerged until result.
