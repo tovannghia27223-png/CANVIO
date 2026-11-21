@@ -376,3 +376,9 @@ The candidate workflow runs standalone/embedded source parity and API tests for 
 - P122.3 MCP, P124 Auto Layout/Component, P133 OPFS/proxy and P143 full code split have no source/test owner in the current main tree; P144 overlaps P109's existing palette and needs scope parity review. P130 remains blocked on real backend/RLS/two-device infrastructure.
 - P142 Pages deployment main run #192 (`44819441586`) passed build, report and deploy jobs; real-origin/browser/physical-device matrix remains manual.
 - P70 remains fail-closed with 14/14 real-world gates open.
+
+## Consolidated candidate — P124 / P133.2 / P144.3 (2026-11-21)
+
+- P124 responsive Auto Layout; P133.2 4K-to-720p local proxy; P144.3 contextual Studio help are staged together on work/canvio-p124-p133-p144-final-20261121.
+- Hosted workflow integrates all three modules and runs Node/Chromium tests; P133 proxy also uses ffmpeg/ffprobe decode validation.
+- Disposition: pending hosted CI. Advanced P124 editor controls, remaining P133 OffscreenCanvas/OPFS migration, and human accessibility/real-media acceptance remain open.
