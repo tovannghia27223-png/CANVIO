@@ -156,8 +156,11 @@ async function renderProxy(blob,clip,onProgress){
    }
    function draw(){
     if(finished)return;
+    var atEnd=video.ended||video.currentTime>=range.end-.025;
+    if(atEnd&&workerPending){raf=requestAnimationFrame(draw);return;}
     if(video.readyState>=2){
-     if(scaler){
+     if(atEnd)fallbackFrame();
+     else if(scaler){
       if(!workerPending){
        workerPending=true;
        var captureFinished=false;
@@ -192,10 +195,7 @@ async function renderProxy(blob,clip,onProgress){
      }else fallbackFrame();
      if(onProgress)onProgress(Math.max(0,Math.min(1,(video.currentTime-range.start)/range.duration)));
     }
-    if(video.ended||video.currentTime>=range.end-.025){
-     if(workerPending){raf=requestAnimationFrame(draw);return;}
-     finish();return;
-    }
+    if(atEnd){finish();return;}
     raf=requestAnimationFrame(draw);
    }
    video.addEventListener('ended',onEnded,{once:true});
