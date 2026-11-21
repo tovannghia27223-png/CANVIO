@@ -30,6 +30,7 @@ async def main():
         await panel.locator("select[aria-label='Biến thể component']").select_option("soft")
         await panel.locator("button[data-p124-kind='grid']").click()
         await page.wait_for_function("window.__p124Inserted.length === 1")
+        await page.wait_for_function("window.__p124SaveCount === 1")
         first = await page.evaluate("window.__p124Inserted[0]")
         assert 'data-canvio-auto-layout="grid"' in first
         assert 'data-canvio-variant="soft"' in first
@@ -38,6 +39,7 @@ async def main():
         await page.evaluate("""() => { window.CV.engines.web.save = () => { window.__p124SaveCount++; return false; }; }""")
         await panel.locator("button[data-p124-kind='card']").click()
         await page.wait_for_function("window.__p124Inserted.length === 2")
+        await page.wait_for_function("document.querySelector('[data-canvio-p124-panel] [role=status]').textContent.toLowerCase().includes('từ chối lưu')")
         status = await panel.locator("[role='status']").inner_text()
         assert "từ chối lưu" in status.lower(), status
         assert await page.evaluate("document.documentElement.scrollWidth <= window.innerWidth"), "mobile viewport overflow"
