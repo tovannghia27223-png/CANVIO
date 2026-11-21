@@ -893,3 +893,10 @@ Hosted verification after the ffmpeg repair is complete:
 - P144.3: contextual help covers all 38 CVWS routes; F1 and tour browser tests pass.
 - P143 Phase 1/2: parity gate covers 20 standalone modules; canonical inventory committed at tests/p143/inline-source-inventory.json (150 inline script tags, zero external src, zero duplicate IDs). Full semantic dependency DAG and reversible project-wide extraction remain open.
 - P70 is still NOT certified: fourteen manual real-world gates remain. P130 cloud sync needs real Supabase/RLS/two-device test; P122.3 MCP requires an approved security/transport contract.
+
+
+## P143 parity map extension — 27 standalone modules (2026-11-21 · candidate)
+
+- Central source map now covers 27 sources: the prior 20 plus P127 Loudness/Templates, P133 Resilience, P134 Scopes, P138 Denoise, P140 Charts and P145 SFX.
+- These seven already have standalone/embedded comparison in individual module suites; the P143 gate centralizes the same check. No runtime change or script reordering.
+- Hosted parity/Chromium workflow pending. Full dependency DAG, CSS/template/dynamic-loader inventory and reversible project-wide extraction remain open.
