@@ -6,7 +6,7 @@ const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
 const match=html.match(/<script id="canvio-lot119v">([\s\S]*?)<\/script>/);
 if(!match)throw new Error('P119.3 embedded lot missing');
 assert.equal(match[1].replace(/\r\n/g,'\n').trim(),source.replace(/\r\n/g,'\n').trim(),'P119.3 standalone/embedded parity');
-const preset={Mượt:[.2,.8,.3,1],Giảm tốc:[0,0,.58,1],Tăng tốc:[.42,0,1,1],'Đều hai đầu':[.42,0,.58,1],'Nảy nhẹ':[.34,1.56,.64,1],Tuyến tính:[0,0,1,1]};
+const preset={'Mượt':[.2,.8,.3,1],'Giảm tốc':[0,0,.58,1],'Tăng tốc':[.42,0,1,1],'Đều hai đầu':[.42,0,.58,1],'Nảy nhẹ':[.34,1.56,.64,1],'Tuyến tính':[0,0,1,1]};
 const nodes={motionEase:{value:'cubic-bezier(.1,.2,.3,.4)'},vtKFEasing:{value:'linear'},vtKFCurveX1:{value:'0'},vtKFCurveY1:{value:'0'},vtKFCurveX2:{value:'1'},vtKFCurveY2:{value:'1'},'cv119v-status':{textContent:'',dataset:{}}};
 for(const n of Object.values(nodes)){n.dispatchEvent=()=>{};n.addEventListener=()=>{};}
 const document={readyState:'loading',addEventListener(){},getElementById:id=>nodes[id]||null};
