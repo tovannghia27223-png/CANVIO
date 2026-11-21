@@ -114,8 +114,7 @@ function tests(){
   missingParentFailsClosed:parentMatrixForObject({parentId:'missing'},map).scale===1
  };
 }
-let ml=null,originalDraw=null,ctx=null,originalSave=null,originalRestore=null,originalTranslate=null,originalFillText=null;
-let active=false,depth=0,visible=[],objectCursor=0,currentObject=null,currentTime=0,panel=null,mounted=false;
+let ml=null,panel=null,mounted=false,frameMap=new Map(),frameTime=0;
 function state(){try{return JSON.parse(ml.snapshotState());}catch(e){return {objs:[],duration:5};}}
 function getMap(){return mapObjects(state());}
 function selectedLayer(){const a=ml.getLayers();return a.find(x=>x.selected)||null;}
@@ -124,48 +123,33 @@ function safeRestore(s,selectId){
  if(ok&&selectId)ml.selectLayer(selectId);
  renderPanel();return ok;
 }
-function updateCanvasHooks(){
- if(!ctx||ctx.__p139Wrapped)return;
- originalSave=ctx.save.bind(ctx);originalRestore=ctx.restore.bind(ctx);
- originalTranslate=ctx.translate.bind(ctx);originalFillText=ctx.fillText.bind(ctx);
- ctx.save=function(){const r=originalSave();depth++;if(active&&depth===1){currentObject=visible[objectCursor++]||null;}return r;};
- ctx.restore=function(){try{return originalRestore();}finally{depth=Math.max(0,depth-1);if(depth===0)currentObject=null;}};
- ctx.translate=function(x,y){
-  if(active&&depth===1&&currentObject&&currentObject.parentId){
-   const map=getMap(),m=parentMatrixForObject(currentObject,map);
-   if(m.scale!==1||m.rotation!==0||m.x!==0||m.y!==0){
-    originalTranslate(m.x,m.y);ctx.rotate(m.rotation);ctx.scale(m.scale,m.scale);
-   }
-  }
-  return originalTranslate(x,y);
- };
- ctx.fillText=function(text,x,y,maxWidth){
-  const a=currentObject&&currentObject.textAnimator?normalizeAnimator(currentObject.textAnimator):null;
-  if(!active||depth!==1||!a||!a.enabled||currentObject.type!=='text'||typeof text!=='string'||text.length>2000)
-   return originalFillText.apply(ctx,arguments);
-  const chars=(root.Intl&&root.Intl.Segmenter)?Array.from(new root.Intl.Segmenter('vi',{granularity:'grapheme'}).segment(text),x=>x.segment):Array.from(text);
-  if(chars.length<2)return originalFillText.apply(ctx,arguments);
-  const widths=chars.map(c=>ctx.measureText(c).width),total=widths.reduce((s,w)=>s+w,0);
-  const align=ctx.textAlign||'start';
-  let cursor=align==='center'?x-total/2:(align==='right'||align==='end'?x-total:x),baseAlpha=ctx.globalAlpha;
-  chars.forEach((ch,i)=>{
-   const w=widths[i],p=textProgress(a,currentTime,currentObject.delay||0,i);
-   let dx=0,dy=0,sc=1,alpha=1,rot=0;
-   if(a.mode==='rise')dy=(1-p)*a.strength;
-   else if(a.mode==='fade')alpha=p;
-   else if(a.mode==='scale')sc=.25+.75*p;
-   else if(a.mode==='wave')dy=Math.sin((currentTime-(currentObject.delay||0))*7+i*.65)*a.strength*(1-p);
-   else if(a.mode==='tracking')dx=i*a.strength/Math.max(1,chars.length-1);
-   ctx.save();ctx.translate(cursor+w/2+dx,y+dy);ctx.rotate(rot);ctx.scale(sc,sc);ctx.globalAlpha=baseAlpha*alpha;
-   originalFillText.call(ctx,ch,0,0);ctx.restore();cursor+=w;
-  });
-  return undefined;
- };
- ctx.__p139Wrapped=true;
+function beginFrame(objs,time){frameMap=mapObjects(Array.isArray(objs)?objs:[]);frameTime=Number(time)||0;}
+function applyParentTransform(obj,time,ctx){
+ if(!obj||!obj.parentId||!ctx)return false;
+ const m=parentMatrixForObject(obj,frameMap);
+ if(m.scale===1&&m.rotation===0&&m.x===0&&m.y===0)return false;
+ ctx.translate(m.x,m.y);ctx.rotate(m.rotation);ctx.scale(m.scale,m.scale);return true;
 }
-function draw(time){
- const snap=state();visible=snap.objs.filter(o=>o&&!o.hidden);objectCursor=0;depth=0;currentObject=null;currentTime=Number(time)||0;active=true;
- try{return originalDraw.apply(ml,arguments);}finally{active=false;depth=0;currentObject=null;}
+function drawText(ctx,obj,time){
+ const a=normalizeAnimator(obj&&obj.textAnimator),value=String(obj&&obj.text||'');
+ if(!a.enabled||!ctx||value.length>2000)return ctx.fillText(value,0,0);
+ const chars=(root.Intl&&root.Intl.Segmenter)?Array.from(new root.Intl.Segmenter('vi',{granularity:'grapheme'}).segment(value),x=>x.segment):Array.from(value);
+ if(chars.length<2)return ctx.fillText(value,0,0);
+ const widths=chars.map(ch=>ctx.measureText(ch).width),total=widths.reduce((sum,w)=>sum+w,0);
+ const align=ctx.textAlign||'start';let cursor=align==='center'?-total/2:(align==='right'||align==='end'?-total:0);
+ const baseAlpha=ctx.globalAlpha,timeNow=Number(time)||frameTime;
+ chars.forEach((ch,i)=>{
+  const width=widths[i],p=textProgress(a,timeNow,obj&&obj.delay||0,i);
+  let dx=0,dy=0,sc=1,alpha=1;
+  if(a.mode==='rise')dy=(1-p)*a.strength;
+  else if(a.mode==='fade')alpha=p;
+  else if(a.mode==='scale')sc=.25+.75*p;
+  else if(a.mode==='wave')dy=Math.sin((timeNow-(obj&&obj.delay||0))*7+i*.65)*a.strength*(1-p);
+  else if(a.mode==='tracking')dx=i*a.strength/Math.max(1,chars.length-1);
+  ctx.save();ctx.translate(cursor+width/2+dx,dy);ctx.scale(sc,sc);ctx.globalAlpha=baseAlpha*alpha;
+  ctx.fillText(ch,0,0);ctx.restore();cursor+=width;
+ });
+ return undefined;
 }
 function readSelectedObject(){
  const sel=selectedLayer();if(!sel)return null;
@@ -282,10 +266,9 @@ function bind(){
 function mount(){
  if(mounted)return true;if(!doc||!root.CVNativeEngines||!root.CVNativeEngines.motionLab)return false;
  const page=doc.getElementById('page-motionLab'),canvasEl=doc.getElementById('mlCanvas');if(!page||!canvasEl)return false;
- ml=root.CVNativeEngines.motionLab;ctx=canvasEl.getContext('2d');if(!ctx)return false;
+ ml=root.CVNativeEngines.motionLab;if(!canvasEl.getContext('2d'))return false;
  if(ml.__p139Wrapped)return false;
- originalDraw=ml.draw;
- if(typeof originalDraw!=='function'||typeof ml.snapshotState!=='function'||typeof ml.restoreState!=='function')return false;
+ if(typeof ml.draw!=='function'||typeof ml.snapshotState!=='function'||typeof ml.restoreState!=='function')return false;
  panel=doc.createElement('section');panel.id='cv139-panel';panel.className='cv139-panel';panel.setAttribute('aria-labelledby','cv139-title');
  const curves=root.CVEasingP119&&root.CVEasingP119.PRESETS||{'Mượt':CURVE_FALLBACK};
  panel.innerHTML='<div class="cv139-head"><div><span class="cv139-kicker">MOTION LAB · P139</span><h3 id="cv139-title">Parent / Null & Text Animator</h3><p>Gắn đối tượng vào Null Controller và tạo hoạt ảnh theo từng ký tự bằng easing P119.</p></div><span class="cv139-status">Dùng chung snapshot Motion Lab</span></div>'+
@@ -297,13 +280,12 @@ function mount(){
  if(!doc.getElementById('canvio-lot139-css'))doc.head.appendChild(style);
  const note=page.querySelector('.ne-note');if(note)page.insertBefore(panel,note);else page.appendChild(panel);
  const nativeAction=ml.action,nativeSelect=ml.selectLayer,nativeRestore=ml.restoreState;
- ml.draw=draw;
  ml.action=function(){const r=nativeAction.apply(ml,arguments);renderPanel();return r;};
  ml.selectLayer=function(id){const r=nativeSelect.call(ml,id);renderPanel();return r;};
  ml.restoreState=function(raw){const r=nativeRestore.call(ml,raw);renderPanel();return r;};
- ml.__p139Wrapped=true;updateCanvasHooks();bind();renderPanel();mounted=true;return true;
+ ml.__p139Wrapped=true;bind();renderPanel();mounted=true;return true;
 }
-const api={version:'139.1.0',normalizeAnimator,normalizeNull,normalizeCurve,parentMatrixForObject,transformPoint,inversePoint,wouldCycle,tests,mount,
+const api={version:'139.1.0',normalizeAnimator,normalizeNull,normalizeCurve,parentMatrixForObject,transformPoint,inversePoint,wouldCycle,beginFrame,applyParentTransform,drawText,tests,mount,
  addNull,createNullAsParent,setParent,unparent,setNullTransform,configureTextAnimator,removeNull,
  getState:()=>state()};
 root.CVMotionLabP139=api;
