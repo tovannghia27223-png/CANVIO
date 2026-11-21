@@ -30,3 +30,11 @@
 12. Physical target-device GPU/VRAM, performance and long-render testing.
 13. Cross-origin backup/restore and independent-device recovery.
 14. Rollback, release observability, alerting and production incident drill.
+
+## Final acceptance matrix — mainline after PR #55 (2026-11-21)
+
+| P143 central parity | 27/27 standalone source/embedded lot pairs passed; candidate #386 and main #387 41/41 | Merged PR #55. Full semantic dependency/boot-order DAG, CSS/template/dynamic loader inventory and staged project-wide extraction remain open. |
+| P143 canonical script inventory | 150 script tags; 150 inline; 0 external src; 0 module/async/defer; 147 unique IDs; 0 duplicates | Committed JSON report and included in verified artifact. |
+| P134.2 Auto Reframe | 4.076 s from 123 packet PTS values; VP9 720×1280 + Opus; full decode | Real-footage occlusion and physical device evaluation remain manual. |
+| P133.2 proxy | 1280×720 VP9 + Opus; source and proxy both on timeline; original unchanged; full decode | Real long-media and cross-browser/mobile acceptance remain. |
+| P70 release gate | Fail-closed | Fourteen real-world acceptance gates remain open; production certification not granted. |

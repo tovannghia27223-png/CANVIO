@@ -900,3 +900,12 @@ Hosted verification after the ffmpeg repair is complete:
 - Central source map now covers 27 sources: the prior 20 plus P127 Loudness/Templates, P133 Resilience, P134 Scopes, P138 Denoise, P140 Charts and P145 SFX.
 - These seven already have standalone/embedded comparison in individual module suites; the P143 gate centralizes the same check. No runtime change or script reordering.
 - Hosted parity/Chromium workflow pending. Full dependency DAG, CSS/template/dynamic-loader inventory and reversible project-wide extraction remain open.
+
+## P143 final parity expansion — 2026-11-21
+
+- PR #55 merged (`d8b37533b5699bb495b88dea50da2a8f9e48e8d9`), expanding the central source parity gate from 20 to **27** standalone/embedded modules.
+- Hosted candidate #386 and mainline #387 both passed **41/41**. Pages #224 and #225 completed successfully.
+- The seven additions are P127 Loudness/Templates, P133 Resilience, P134 Scopes, P138 Denoise, P140 Charts and P145 SFX. No runtime script/order changes.
+- P143 script-tag inventory: 150 tags, all inline, no external `src`, no module/async/defer, 147 unique IDs and zero duplicate IDs.
+- This does not close full P143. Semantic dependencies/boot order, all CSS/templates/dynamic loader inventory, reversible project-wide extraction, offline/PWA/CSP and rollback remain open.
+- P70 remains NOT certified (14 manual gates). P130 blocked on real Supabase/RLS and two-device tests. P122.3 waits for approved MCP security/transport contract.

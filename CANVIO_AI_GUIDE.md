@@ -3835,3 +3835,14 @@ P144 tour: thêm bước bằng cách thêm vào mảng `STEPS` ({sel,title,text
 - Extended tests/p143/source-module-map.json from 20 to 27 standalone/embedded pairs. Added P127 Loudness/Templates, P133 Resilience, P134 Scopes, P138 Denoise, P140 Charts and P145 SFX.
 - Each added source already has its own individual parity test; central P143 gate now enforces unique lot, syntax, CRLF-normalized equality and classic-script safety for 27 modules.
 - No runtime code or script order changed. Hosted validation pending. Full semantic dependency/boot-order DAG, CSS/template/dynamic-loader inventory and staged extraction remain open.
+
+## Final parity expansion verification — 2026-11-21
+
+- PR #55 merged at `d8b37533b5699bb495b88dea50da2a8f9e48e8d9`; P143 central parity registry now covers **27** standalone/embedded pairs.
+- Hosted candidate workflow #386: SUCCESS, 41/41 steps. P143 parity result: 27 passed, 0 failed. Mainline runtime workflow #387: SUCCESS, 41/41. GitHub Pages deployment #224: SUCCESS; subsequent Pages/package build #225: SUCCESS.
+- Seven additional sources now included in central parity: P127 Loudness/Templates, P133 Resilience, P134 Scopes, P138 Denoise, P140 Charts and P145 SFX. No runtime code/script order change was made in PR #55.
+- Full canonical inline inventory remains 150 script tags, all inline; 0 external src, 0 module/async/defer, 147 unique script IDs and 0 duplicate IDs. HTML size 5,459,631 bytes.
+- Latest main at this verification: `9624e38540458c523e2ab8a354e3d7592b27eeb8`.
+- Latest verified source artifact: `CANVIO-23.3.111-GITHUB-RUNTIME-VERIFIED-387`, 21,753,092 bytes, SHA-256 `31a2ba6e7494fd8e6fdf65210ef2714e43bf49dae399d910b8f4fe5e84b1f958`. 
+- P143 is still not a full source split: semantic dependency/boot-order DAG, complete CSS/inline-style/template/dynamic-loader inventory, reversible extraction and offline/CSP/rollback acceptance remain.
+- Release disposition remains fail-closed: P70 has fourteen real-world gates open; P130 requires deployed Supabase/schema/RLS and two-device validation; P122.3 requires an approved MCP feature/transport/auth/consent/permission/threat contract. P124 advanced breakpoint/component interactions and P133 remaining OffscreenCanvas/large-media OPFS work remain partial.

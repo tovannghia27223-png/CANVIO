@@ -105,3 +105,15 @@ Pull trước (`git pull --rebase origin main`; CI bot hay push commit build). A
 - Created work/p143-parity-27-modules-20261121 from current main and extended source-module-map.json from 20 to 27 module pairs.
 - Added seven previously individually tested sources: P127 Loudness/Templates, P133 Resilience, P134 Scopes, P138 Denoise, P140 Charts, P145 SFX. No runtime code or script order changed.
 - Guide, Roadmap, tracker, handoff, QA, acceptance matrix and this summary updated. Hosted validation pending.
+
+## Final session closure — 2026-11-21
+
+- PR #51 merged P124 Auto Layout, P133.2 proxy and P144.3 Studio help.
+- PR #54 merged P143 central parity for 20 modules plus full canonical script inventory.
+- PR #55 merged parity coverage expansion to **27 modules**: P127 Loudness/Templates, P133 Resilience, P134 Scopes, P138 Denoise, P140 Charts and P145 SFX.
+- Candidate #386 SUCCESS 41/41; source parity 27/27, zero failures. Mainline #387 SUCCESS 41/41. Pages #224 and #225 SUCCESS.
+- Canonical index: 5,459,631 bytes, 150 inline script tags, no external src, no module/async/defer, 147 unique script IDs, zero duplicate IDs.
+- P134 duration acceptance uses actual packet timestamps: 4.076 s, 123 video packets, VP9 720×1280 plus Opus, full decode and no page errors. The 3.5–4.5 s threshold was not relaxed.
+- P133.2 4K proxy acceptance: source and proxy both remain in timeline, 1280×720 VP9 plus Opus, full decode, original unchanged.
+- Artifact #387: 21,753,092 bytes, SHA-256 `31a2ba6e7494fd8e6fdf65210ef2714e43bf49dae399d910b8f4fe5e84b1f958`.
+- Still externally/manual: P70 14 gates, P130 Supabase/RLS/two-device sync, P122.3 MCP security/transport contract, P124 advanced editor controls, P133 OffscreenCanvas/large media OPFS and full P143 semantic dependency/style/template extraction.

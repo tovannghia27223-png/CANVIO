@@ -200,3 +200,16 @@ No honest all-P completion claim is possible yet. In addition to P70's 14 open r
 - Manifest tests/p143/source-module-map.json expanded from 20 to 27 standalone/inline-lot pairs. Seven new pairs: P127 Loudness/Templates, P133 Resilience, P134 Scopes, P138 Denoise, P140 Charts, P145 SFX.
 - Each added pair already has its own module parity test. Central P143 gate applies source/embedded syntax and parity checks to the larger set. No runtime code changed; hosted run pending.
 - Full project-wide source refactor remains open.
+
+## Final mainline status after PR #55 — 2026-11-21
+
+| Item | Verified state | Remaining |
+|---|---|---|
+| P124 Auto Layout | **MERGED** PR #51. Chromium 9/9; hosted/mainline runtime workflows pass. | Advanced selected-component conversion, breakpoint editor, nested variants, drag/resize and accessibility. |
+| P133.2 proxy | **MERGED** PR #51. 4K fixture generated 1280×720 WebM with Opus, full decode, original preserved and proxy clip on timeline. | Real long-footage/browser/device checks; remaining OffscreenCanvas and selected large-media OPFS migration. |
+| P134.2 Auto Reframe | **MERGED** PR #46. 123 packets; measured 4.076 s via PTS in latest 27-module candidate; VP9 720×1280 + Opus; full decode. | Real footage, occlusion, rapid camera motion and physical-device quality review. |
+| P144.3 contextual help | **MERGED** PR #51. 38/38 CVWS routes; F1/tour/keyboard smoke passes. | Human wording and screen-reader review. |
+| P143 parity/inventory | **MERGED** PR #54 + parity expansion PR #55. Central parity **27/27 PASS**; candidate #386 and main #387 PASS 41/41. Inventory: 150 inline script tags, 0 external src, 0 duplicate IDs. | Full semantic dependency/boot-order DAG, CSS/template/dynamic loader inventory, staged extraction/rollback/offline/CSP. |
+| P130 cloud sync | **BLOCKED EXTERNAL** | Real Supabase project, schema/RLS, credentials and two-device recovery acceptance. |
+| P122.3 MCP | **NOT IMPLEMENTED** | Requires approved feature, transport, auth, consent, permission and threat-model contract. |
+| P70 release | **NOT CERTIFIED** | Fourteen real-world gates remain open. |

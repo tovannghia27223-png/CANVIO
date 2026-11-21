@@ -55,3 +55,16 @@ Reduce CANVIO's single-file authoring burden without breaking the canonical app 
 - The source registry now lists 27 standalone feature modules and canonical inline lot IDs.
 - Added P127 Loudness, P127 Templates, P133 Resilience, P134 Scopes, P138 Denoise, P140 Charts and P145 SFX; each already has its own individual parity test.
 - No runtime code or script order changed. Central gate remains data-driven from source-module-map.json; hosted acceptance required before merge.
+
+## Phase 1 — final parity coverage (27 modules, 2026-11-21)
+
+- PR #55 merged. The central registry contains 27 standalone feature sources paired with their canonical inline lots.
+- Hosted candidate run #386 and post-merge mainline run #387 both passed 41/41. P143 parity report: 27 passed, 0 failed.
+- Added P127 Loudness, P127 Templates, P133 Resilience, P134 Scopes, P138 Denoise, P140 Charts and P145 SFX to the prior 20-module registry.
+- No runtime code or browser script order changed in the expansion.
+
+## Remaining P143 phases
+
+- Phase 2 script-tag inventory is complete: 150 tags in exact source order, all inline; zero external src, module, async or defer; 147 unique IDs and no duplicate IDs.
+- Still required: inventory CSS and inline styles, HTML template payloads and dynamic script construction; human-reviewed semantic dependency/boot-order graph; then incremental reversible extraction with application regression, offline/PWA, CSP and rollback tests.
+- The global-reference list in the script inventory is heuristic only and must not be treated as a semantic dependency graph.

@@ -440,3 +440,15 @@ The candidate workflow runs standalone/embedded source parity and API tests for 
 - Central parity map expanded from 20 to 27 standalone/embedded module pairs, adding P127 Loudness/Templates, P133 Resilience, P134 Scopes, P138 Denoise, P140 Charts and P145 SFX.
 - Each added module already has an individual source/embedded parity suite; central P143 gate now includes them. No runtime behavior change.
 - Hosted run pending. Full script/style dependency DAG and project-wide extraction remain open.
+
+## Final QA — 2026-11-21 after PR #55
+
+- Candidate workflow #386: **SUCCESS 41/41**. Mainline workflow #387: **SUCCESS 41/41**. Pages #224 and #225 completed successfully.
+- P143 source/embedded central parity: **27/27 passed, 0 failed**. Includes the seven new source pairs listed in the tracker.
+- P143 canonical inventory: HTML 5,459,631 bytes; 150 script tags, all inline; 0 external src, 0 module/async/defer; 147 unique IDs; 0 duplicate IDs. Inventory committed at `tests/p143/inline-source-inventory.json`.
+- P134 Auto Reframe: 123 video packets; measured duration 4.076 s from packet PTS, within unchanged 3.5–4.5 s assertion; VP9 720×1280 + Opus, full decode, moving-subject tracking, local-only, no page errors.
+- P133.2: 4K synthetic input imported; timeline holds original and proxy; 1280×720 VP9 + Opus; 3.008 s proxy duration; full decode; original unchanged and no page errors.
+- P124 Auto Layout: Chromium 9/9, mobile viewport without overflow, canonical save and save-failure reporting.
+- P144.3: 38/38 CVWS route help; palette, keyboard, F1 focus trap/Escape and first-run tour pass.
+- P133 resilience and denoise Worker acceptance pass (OPFS round-trip/recovery; Worker matches main-thread output with maxDiff=0 and page responsive).
+- **P70 remains NOT CERTIFIED**: fourteen real-world gates are still open. Hosted fixtures do not prove physical target hardware, production provider, all media, screen-reader/accessibility, security headers, cross-origin restore or release operations.

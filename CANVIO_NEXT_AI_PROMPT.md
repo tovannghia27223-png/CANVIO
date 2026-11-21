@@ -103,3 +103,14 @@ Quy tắc nhúng: mỗi lot là `<script id="canvio-lotNNN">` + bản độc l�
 - Branch work/p143-parity-27-modules-20261121 extends tests/p143/source-module-map.json from 20 to 27 pairs, adding P127 Loudness/Templates, P133 Resilience, P134 Scopes, P138 Denoise, P140 Charts and P145 SFX.
 - No runtime code or script order changed. Each added pair already has an individual parity suite. Hosted CI required before merge.
 - Full P143 still needs a semantic dependency/boot-order DAG, CSS/template/dynamic-loader inventory and staged extraction/rollback/offline/CSP acceptance.
+
+## Final verified handoff — 2026-11-21
+
+- Latest main at handoff: `9624e38540458c523e2ab8a354e3d7592b27eeb8`.
+- PR #55 merged at `d8b37533b5699bb495b88dea50da2a8f9e48e8d9`; expands central P143 parity from 20 to **27** module pairs.
+- Candidate workflow #386 and mainline workflow #387: **SUCCESS 41/41** each. GitHub Pages #224 and #225: SUCCESS.
+- P143 additions: P127 Loudness/Templates, P133 Resilience, P134 Scopes, P138 Denoise, P140 Charts and P145 SFX. Source parity result 27 passed / 0 failed.
+- Canonical index inventory: 150 script tags (all inline), 0 external src, 0 module/async/defer, 147 unique IDs, 0 duplicates; HTML 5,459,631 bytes.
+- Latest verified artifact #387: 21,753,092 bytes, SHA-256 `31a2ba6e7494fd8e6fdf65210ef2714e43bf49dae399d910b8f4fe5e84b1f958`.
+- P124 advanced component/breakpoint editing and P133 OffscreenCanvas/large-media OPFS remain partial. Full P143 semantic dependency/style/template extraction is not complete.
+- P70 remains fail-closed (14 manual gates); P130 needs real Supabase/RLS/two-device validation; P122.3 needs approved MCP threat/security/transport contract. Do not claim CANVIO 1.0 Stable or production certification.
