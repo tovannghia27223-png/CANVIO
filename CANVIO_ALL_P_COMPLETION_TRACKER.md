@@ -238,3 +238,16 @@ These are branch candidates, not merged or PASS. Previous mainline status remain
 - PR #64 P135.1 is NOT merged: its hosted run #467 failed at the unrelated P133.2 proxy gate with UI status `Tạo proxy vượt thời gian cho phép.`; no page errors were reported. Its head is now non-mergeable against the updated main and must be rebased/cleaned before another acceptance run. Do not mark P135 complete.
 - PR #65 is a duplicate/stale P139 candidate (mergeable=false; no hosted run). PR #66 is the clean P139.1 candidate stacked on the P135 branch (no hosted run yet); keep P139 partial and do not merge before the P135 base is accepted.
 - P135.1 remains a partial non-destructive adjustment stack; reload persistence, masks/local corrections, smart objects, clone/patch and liquify remain open. P139.1 remains partial; precomp, physical motion blur, word/range selector, expanded keyframe editor and real-project/export acceptance remain open.
+
+
+## Verified mainline update — P133/P135 — 2026-11-21
+
+| Item | Mainline evidence | Current status / remaining |
+|---|---|---|
+| P133.2/P133.3 proxy reliability | PR #68 merged; candidate #44911472539 44/44, combined #44911475373 45/45, post-merge mainline #44912553516 45/45. | Implemented in main for bounded Worker/bitmap failure handling and Canvas2D fallback. Real long-footage/browser/target-device tests remain open; OPFS large-media migration remains separate. |
+| P135.1 Pixel adjustment stack | PR #68 merged; same candidate and mainline runs passed Node + Chromium. | Implemented nine non-destructive stack adjustments and derived export. Adjustment metadata is memory-only over flattened PNG snapshots; reload persistence, masks/local edits, smart objects, clone/patch and liquify remain open. |
+| P139.1 Motion Lab | PR #70 | Candidate only; waiting for hosted live-renderer assertion. |
+| P120/P126 ComfyUI | PR #71 | Candidate only; mock-server acceptance and actual local ComfyUI/model/GPU acceptance must remain distinct. |
+
+PR #67 was closed as superseded after PR #68 brought its verified P133 fix into main. P70 remains fail-closed with fourteen manual real-world gates.
+
