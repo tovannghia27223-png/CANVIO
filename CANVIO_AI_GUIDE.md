@@ -3951,3 +3951,12 @@ P144 tour: thêm bước bằng cách thêm vào mảng `STEPS` ({sel,title,text
 - P120/P126 task selectors route through the imported workflow. Real-ESRGAN, RIFE, AI video and other model/custom-node behaviors only exist if the user installs compatible free local ComfyUI models/nodes and imports a compatible API workflow. CANVIO does not bundle or certify those models.
 - Tests: `tests/p127/run-p120-comfyui-tests.cjs` and hosted Chromium `tests/p145/run-p120-browser.py`. Browser test uses a local mock ComfyUI HTTP server to verify route wiring, media upload, input replacement, queue/history/output retrieval and Asset Library handoff. It does not test real GPU inference or third-party custom nodes.
 - CORS: ComfyUI must allow the exact CANVIO origin; do not expose wildcard CORS on a network-facing server. Hosted CANVIO may also be subject to browser local-network permission and mixed-content rules.
+
+## P137.2 — Reusable character and table styles
+
+- Existing owner remains canvio-p137-styles.js / canvio-lot137s / window.CVStylesP137 (version 137.2.0) in the existing Layout Foundry toolbar and #lfDoc contenteditable document.
+- P137.1 paragraph styles and TOC remain intact. P137.2 adds reusable character formatting for selected text within one paragraph (bold, italic, highlight, code and small-caps) stored as span data-cv137-char metadata with whitelisted inline style properties.
+- Adds three table presets (Lưới, Báo cáo, Tối giản) applied to the selected existing table with data-cv137-table metadata and inline table/cell/header style. Table content and row order are unchanged.
+- restyleHtml now reapplies paragraph, character and table metadata when the existing Layout Foundry document snapshot is rehydrated. The current style-definition store remains localStorage convenience; actual applied style attributes travel inside existing page HTML snapshots/export. No new document, page, timeline or sync store was added.
+- Character selection must remain inside a single block to avoid invalid cross-paragraph inline wrappers. Multi-block character styling, nested character-style editing, table formulas, merged-cell layout, sorting/filtering and print pagination are out of scope.
+- Tests: tests/p127/run-p137s-tests.cjs validates source/API/unsafe-style filtering; tests/p145/run-p137-browser.py validates paragraph styles/TOC plus actual character-span application, table presets and HTML restyling in Chromium. P143 parity registry includes the P137 standalone source paired with canvio-lot137s.

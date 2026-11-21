@@ -499,3 +499,7 @@ Automated checks validate source/embedded parity and the existing Motion Lab can
 ## P120/P126 ComfyUI connector hosted checks
 
 Candidate CI runs Node contract/security tests and Chromium against a local mock ComfyUI server. The checks cover loopback URL restrictions, API workflow JSON validation, bounded node/input overrides, /system_stats connection, optional file upload, /prompt submission, /history polling, /view retrieval, output caps and Asset Library addBlob handoff. This verifies connector plumbing only; no actual ComfyUI installation, GPU inference, model accuracy, RIFE or Real-ESRGAN output quality is certified.
+
+## P137.2 character/table style QA
+
+Hosted Node and Chromium checks cover five named character styles, three table presets, selection inside one paragraph, persisted data-cv137-char/data-cv137-table metadata, inline styles and restyleHtml reapplication. Table rows/cells are not replaced and use the existing Layout Foundry page HTML owner. Cross-paragraph character selection and advanced table editing remain out of scope.

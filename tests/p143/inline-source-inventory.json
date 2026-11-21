@@ -1,10 +1,10 @@
 {
   "format": "CANVIO_P143_INLINE_SOURCE_INVENTORY",
   "version": 1,
-  "generatedAt": "2026-11-21T14:41:10.939Z",
+  "generatedAt": "2026-11-21T14:53:49.928Z",
   "source": "restored canonical index.html after hosted workflow integration steps",
   "purpose": "Complete script-tag inventory in browser execution order; known global reference detection is heuristic, not a semantic dependency DAG.",
-  "htmlBytes": 5608561,
+  "htmlBytes": 5616945,
   "scriptTagCount": 159,
   "inlineScriptCount": 159,
   "externalScriptCount": 0,
@@ -2510,8 +2510,8 @@
       "async": false,
       "defer": false,
       "noModule": false,
-      "bytes": 12427,
-      "sha256": "1254b26e53721304f9f11de6c44d365520cd5510d5c811b4241ee29cfb936562",
+      "bytes": 20811,
+      "sha256": "0aca6fda70d893ded18121e1ec90e87d07930a6cae36d66e468b1dec0a4fafc2",
       "exportedGlobals": [
         "CVStylesP137"
       ],

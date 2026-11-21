@@ -194,3 +194,7 @@ Chỉ kiểm bằng tín hiệu/tệp tổng hợp và Chromium headless; chưa 
 
 - Candidate branch adds a local-only ComfyUI API bridge via P128: import API-format workflow JSON, optional media upload, map prompt/media node inputs, queue/poll, retrieve output through /view and save via existing CV.assets.addBlob.
 - Verify hosted Node/Chromium CI before merge. Keep P120/P126 partial until real user-installed free ComfyUI models/custom nodes and representative GPU media are exercised. No cloud APIs, API keys, background jobs or auto-installers.
+
+## P137.2 rich formatting — 2026-11-21
+
+- Adds selected-character styling and table presets to the existing P137 Layout Foundry owner. Check P137 Node + Chromium and P143 source parity before merge. Keep selection restricted to one paragraph and do not create a second document store.

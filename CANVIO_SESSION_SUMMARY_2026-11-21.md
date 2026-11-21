@@ -169,3 +169,13 @@ Pull trước (`git pull --rebase origin main`; CI bot hay push commit build). A
 
 - Added the loopback-only local ComfyUI bridge, Node contract tests and Chromium mock-server acceptance. It registers image/video/upscale/interpolate handlers with P128 and imports result blobs through the existing Asset Library owner.
 - Model/custom-node execution and output quality remain unverified until the user's actual free local ComfyUI environment is available. This is not cloud sync or an AI model bundle.
+
+## P120/P126 ComfyUI bridge — candidate 2026-11-21
+
+- Added the loopback-only local ComfyUI bridge, Node contract tests and Chromium mock-server acceptance. It registers image/video/upscale/interpolate handlers with P128 and imports result blobs through the existing Asset Library owner.
+- Model/custom-node execution and output quality remain unverified until the user's actual free local ComfyUI environment is available. This is not cloud sync or an AI model bundle.
+
+## P137.2 rich text and table styles — candidate 2026-11-21
+
+- Added five character-style presets applied to a selected text range within one paragraph, three reusable table presets, and HTML rehydration for data-cv137-char/data-cv137-table metadata. Reuses Layout Foundry page HTML.
+- Automated P137 Node/Chromium tests and P143 source parity are the merge gate; cross-paragraph styling, advanced table semantics and real print pagination remain open.

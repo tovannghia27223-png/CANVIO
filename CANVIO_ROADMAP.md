@@ -1003,3 +1003,9 @@ Hosted verification after the ffmpeg repair is complete:
 - Supports image, upscale, video and interpolation routes, but the API workflow/model/custom-node graph remains user-provided. Real-ESRGAN, RIFE and AI video are not bundled; compatible free local nodes/models must be installed by the user.
 - Strict loopback-only URL allowlist, explicit user action, no cloud provider/API keys, bounded polling and request/file sizes, safe workflow cloning and individual output retrieval.
 - Hosted mock-server CI validates integration only. Actual ComfyUI/CORS, model licensing, GPU memory, speed and output quality remain real-environment acceptance.
+
+## P137.2 — Character and table formatting
+
+- Extended the existing Layout Foundry style module with five character styles (bold, italic, highlight, code, small-caps) applied to selection within one paragraph, and three reusable table presets (grid, report, minimal).
+- Inline style metadata is stored inside existing page HTML; style definitions remain localStorage convenience. Rehydration reapplies paragraph, character and table definitions without adding another editor/store.
+- Multi-block selection, nested character styles, table formulas/merged cells/sort/filter and print pagination remain outside this increment.

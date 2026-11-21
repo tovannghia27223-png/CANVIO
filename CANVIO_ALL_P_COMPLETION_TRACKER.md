@@ -272,3 +272,8 @@ PR #71 was closed as superseded by clean-main PR #73; the latter carries the cor
 - Candidate implementation: local ComfyUI API workflow bridge in `canvio-p120-p126-comfyui.js`, registered with existing P128 orchestrator. Supports image/video/upscale/interpolate routes with user-provided API-format graph and explicit input mapping.
 - Automated acceptance uses a mock local ComfyUI HTTP server; it does not claim an installed ComfyUI server, Real-ESRGAN/RIFE custom nodes, model weights, GPU inference or visual accuracy. Keep P120/P126 **partial** until real user-installed free models and representative media are tested.
 - No paid API, cloud provider, model download, third-party dependency or secret is added. Only loopback URLs are accepted.
+
+## P137.2 character and table styles candidate — 2026-11-21
+
+- Extends P137.1 in the existing Layout Foundry module with selected-character style spans and three table presets. Applied metadata stays in existing page HTML; no second store.
+- Candidate only until Node/Chromium and P143 source parity checks pass. Multi-block text styling and advanced table behavior remain open.
