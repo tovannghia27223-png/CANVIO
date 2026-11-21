@@ -397,3 +397,11 @@ The candidate workflow runs standalone/embedded source parity and API tests for 
 - Added page-specific guidance for all 13, using Guide-documented behavior and explicit boundaries (e.g. collab is local notes/activity, Prompt Forge is prompt handoff, Shield does not certify server headers).
 - P133.2 passed all 11 Chromium checks in the same run, including actual timeline import, clip duration, audio, full decode and original preservation. P124 passed 9/9.
 - Rerun required to verify all 38 CVWS routes have contextual help; no merge claim until that coverage check passes.
+
+## 2026-11-21 mainline regression after PR #51
+
+- Main commit e4e3647b8b49dcc931065c3f7893f68b48d9a071; hosted workflow #362 completed PASS 39/39. Candidate run #360 also PASS 39/39.
+- P124 Auto Layout Chromium acceptance: 9/9 (preset panel, 5 controls, 4 variants, responsive grid insert, selected variant, canonical save, save failure reporting, mobile viewport and no page errors).
+- P133.2 proxy acceptance: synthetic 4K source imported, proxy added as a second timeline clip, original preserved, 1280×720 WebM, Opus audio, complete ffmpeg decode, zero page errors.
+- P144.3 F1 contextual help: 38 registered CVWS routes, 0 missing; focus trap/Escape and shortcut tests pass.
+- P70 is still NOT certified. Fourteen manual gates listed in §7 remain open.
