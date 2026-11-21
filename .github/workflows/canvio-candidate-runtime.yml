@@ -345,6 +345,23 @@ jobs:
           fs.writeFileSync(file,html,'utf8');
           NODE
 
+      - name: Integrate P139.1 Motion Lab parent hierarchy and live text animator
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs=require('node:fs');
+          const file='index.html',source=fs.readFileSync('canvio-p139-motionlab.js','utf8').trim(),id='canvio-lot139',open='<script id="'+id+'">',close='</script>';
+          if(!source.includes('root.CVMotionLabP139'))throw new Error('P139.1 source contract missing');
+          let html=fs.readFileSync(file,'utf8'),tag=open+'\\n'+source+'\\n'+close;
+          const pos=html.indexOf(open);
+          if(pos>=0){const end=html.indexOf(close,pos);if(end<0)throw new Error('P139.1 embedded lot is not closed');html=html.slice(0,pos)+tag+html.slice(end+close.length);}
+          else{const body=html.lastIndexOf('</body>');if(body<0)throw new Error('P139.1 index body close missing');html=html.slice(0,body)+tag+'\\n'+html.slice(body);}
+          if((html.match(/id="canvio-lot139"/g)||[]).length!==1)throw new Error('P139.1 duplicate/missing lot');
+          fs.writeFileSync(file,html,'utf8');
+          console.log('P139.1 Motion Lab hierarchy and renderer adapter embedded in canonical index.html');
+          NODE
+
       - name: Integrate P131.3 safe HTML import into canonical security hub
         shell: bash
         run: |
@@ -694,6 +711,7 @@ jobs:
           node tests/p127/run-p141f-tests.cjs
           node tests/p127/run-p128o-tests.cjs
           node tests/p127/run-p137s-tests.cjs
+          node tests/p127/run-p139-tests.cjs
           node tests/p127/run-p135a-tests.cjs
           node tests/hosted/p107-portable-roundtrip.cjs
 
@@ -765,6 +783,7 @@ jobs:
           /tmp/canvio-playwright/bin/python tests/p145/run-p141-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p128-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p137-browser.py
+          /tmp/canvio-playwright/bin/python tests/p145/run-p139-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p135-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p133w-browser.py
 
