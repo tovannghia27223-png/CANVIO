@@ -487,3 +487,11 @@ Status: pending hosted PR verification. Do not treat this section as a PASS repo
 ## P139.1 live renderer adapter QA
 
 Automated checks validate source/embedded parity and the existing Motion Lab canvas render path. The browser acceptance creates a real text layer, adds a Null parent, applies an animator, compares rendered PNG output with the animator enabled/disabled, and confirms object metadata survives the existing Motion Lab snapshot/restore. This validates adapter execution in headless Chromium, not physical GPU frame-rate performance, production footage quality, complex font shaping, precomp or motion blur.
+
+
+## Verified P120/P126 QA — local ComfyUI connector — 2026-11-21
+
+- Hosted workflow run #44914277311 passed 48/48 after clean-main PR #73 merge. Browser mock server confirms successful workflow completion, optional media upload, explicit prompt/media node replacement, ComfyUI queue/history polling, output retrieval, Asset Library handoff and download link; zero page errors.
+- API boundary checks enforce local loopback origin only, API workflow graph validation, node/input allowlists through user-selected fields, bounded payload/file sizes and bounded polling.
+- Not tested: actual ComfyUI process, model/custom-node availability, free model licensing, GPU/VRAM pressure, real inference speed, image/video quality, CORS configuration on the user's PC or browser local-network prompt. These remain real-environment acceptance.
+
