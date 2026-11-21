@@ -864,3 +864,9 @@ Hosted verification after the ffmpeg repair is complete:
 - P144.3 contextual help uses the existing CVUxP144 owner and covers all 38 registered CVWS routes; hosted Chromium route-coverage test PASS.
 - P143 remains in Phase 1 candidate branch: a 20-module standalone/embedded parity audit has passed pre-browser hosted gates in run #363; wait for the full workflow result before merge. This is not full index modularization.
 - P70 still has fourteen open manual gates; not production-certified.
+
+## P143 Phase 1 — final current-main candidate (2026-11-21)
+
+- Branch work/p143-parity-current-main-final-20261121 re-applies the 20-module source parity manifest/audit after main commit 6481d83.
+- Previous candidate run #363 passed the P143 gate and all 39 steps; current branch reruns same-origin browser matrix and build against the latest main.
+- Phase 1 is an integrity control for 20 sources, not a full index split. Full script/style inventory, dependency DAG and staged reversible extraction remain open.
