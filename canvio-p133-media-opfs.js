@@ -82,7 +82,15 @@ function quotaAllows(bytes){
  }).catch(function(){return false;});
 }
 function idbPut(id,blob,state){
- return writeRecord({id:id,blob:blob},state).then(function(){return{ok:true,storage:'indexeddb',bytes:blob.size};});
+ return readRecord(id,state).then(function(previous){
+  return writeRecord({id:id,blob:blob},state).then(function(){
+   var result={ok:true,storage:'indexeddb',bytes:blob.size,sidecarCleanup:'not-needed'};
+   if(previous&&previous.storage==='opfs'&&previous.opfsName){
+    return removeOpfs(previous.opfsName).then(function(){result.sidecarCleanup='removed';return result;},function(){result.sidecarCleanup='failed';return result;});
+   }
+   return result;
+  });
+ });
 }
 function put(id,blob,state){
  id=safeId(id);
