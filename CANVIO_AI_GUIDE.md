@@ -3778,3 +3778,11 @@ P144 tour: thêm bước bằng cách thêm vào mảng `STEPS` ({sel,title,text
 - First hosted Chromium run successfully generated a 1280×720 WebM, preserved Opus audio, fully decoded the file and confirmed the original clip remained unchanged.
 - It caught an actual integration race: the UI did not await the asynchronous Video Engine importFiles() promise, so the proxy download existed but the new timeline clip was not yet present when reported. Updated the module to await importFiles(), verify clip-count increase and retain the download link if timeline ingestion fails.
 - CI must be rerun on the corrected commit; no proxy acceptance/merge claim until timeline import passes.
+
+
+### P144.3 route-coverage correction — CI #354 (2026-11-21)
+
+- Hosted Chromium confirmed the workspace registry contains 38 routes, not only the 25 initially covered. It identified 13 missing help topics: templates, brand, designSystem, responsive, collab, hub, platform, one, promptForge, insight, hallmark, guide and shield.
+- Added page-specific guidance for all 13, using Guide-documented behavior and explicit boundaries (e.g. collab is local notes/activity, Prompt Forge is prompt handoff, Shield does not certify server headers).
+- P133.2 passed all 11 Chromium checks in the same run, including actual timeline import, clip duration, audio, full decode and original preservation. P124 passed 9/9.
+- Rerun required to verify all 38 CVWS routes have contextual help; no merge claim until that coverage check passes.
