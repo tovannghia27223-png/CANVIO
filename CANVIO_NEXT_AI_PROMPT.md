@@ -164,3 +164,7 @@ CI font setup is now in branch work/canvio-font-ci-fix-20261121 / PR #60. In hos
 P135.1 has now been implemented on work/canvio-p135-adjustments-20261121 (child of the PR #60 branch): canvio-p135-adjustments.js, embedded canvio-lot135a, Node contract/parity test and hosted Chromium test are wired. This is a first increment; the editable adjustment stack is tab-memory only because Pixel Atelier's current snapshot contract is a flattened PNG. Wait for the new branch's hosted report before acceptance or merge.
 
 PR #58 was green on its own hosted run. PR #59 was red at the P133 proxy-browser wait, not at its P124 Node/Chromium assertions; keep it open until rerun and green. Do not merge PR #56. Next tasks: review P135 hosted result and fix any regression; repair the P133 proxy test/root cause on its own scope; implement P139; then finish P137/P118/P119 gaps. Preserve blocked/manual gates and do not label P70 Stable.
+
+## Candidate status — P139.1 (2026-11-21)
+
+P139.1 candidate branch work/canvio-p139-rebased-20261121 adds parent/null hierarchy and per-grapheme text animation on Motion Lab's existing object model. Node model assertions passed in an earlier hosted attempt. Both panel insertion operations were fixed after a full-app smoke observed insertBefore exceptions. New stacked CI is queued; keep P139 PARTIAL until browser interaction, snapshot/restore and render checks pass. Precomp and motion blur remain OPEN.
