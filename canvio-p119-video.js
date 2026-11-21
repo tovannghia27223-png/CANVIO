@@ -88,7 +88,8 @@ function nativeCurveState(){
 }
 function setStatus(message,warning){
  const out=$('cv119v-status');if(!out)return;
- out.textContent=message||'Chọn preset rồi bấm Áp dụng để lưu vào clip.';
+ const next=message||'Chọn preset rồi bấm Áp dụng để lưu vào clip.';
+ if(out.textContent!==next)out.textContent=next;
  out.dataset.state=warning?'warning':'info';
 }
 function dispatch(node,type){
