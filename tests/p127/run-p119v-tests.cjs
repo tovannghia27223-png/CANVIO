@@ -29,7 +29,7 @@ assert.equal(api.findPreset([.25,.75,.25,1]),null);
 assert.equal(api.setNativeCurve(preset.Mượt),true);
 assert.equal(nodes.vtKFEasing.value,'custom');
 assert.deepEqual(['vtKFCurveX1','vtKFCurveY1','vtKFCurveX2','vtKFCurveY2'].map(k=>Number(nodes[k].value)),preset.Mượt);
-assert.equal(api.setNativeCurve(preset.Tuyến tính),true);
+assert.equal(api.setNativeCurve(preset['Tuyến tính']),true);
 assert.equal(nodes.vtKFEasing.value,'linear');
 nodes.motionEase.value='linear(0,0.5,1)';
 assert.equal(api.curveFromMotion(),null,'spring linear() cannot be silently misread as cubic-bezier');
