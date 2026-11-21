@@ -80,3 +80,9 @@ Quy tắc nhúng: mỗi lot là `<script id="canvio-lotNNN">` + bản độc l�
 - Run #371 exposed a WebM metadata issue, not an exporter failure: `r_frame_rate` falsely indicated 60 fps when avg rate/format duration were missing, measuring ~4.1 seconds as 2.05 seconds.
 - `tests/p145/run-p134r-browser.py` now reads packet presentation timestamps/durations and reports PTS diagnostics; fallback is the explicit canvas.captureStream(30) only when timestamps are unavailable.
 - New latest-main run #373 pending on PR #54. Do not merge until success.
+
+## P143 Phase 2 — canonical inline inventory
+
+- Added tests/p143/build-inline-source-inventory.cjs. It runs after module integration and before full HTML audit, writes tests/p143/inline-source-inventory.json, and the JSON is included in package/evidence artifact.
+- Report enumerates script tags in source order and records ids/types/src/async/defer/bytes/SHA256 plus heuristic global dependencies. It is not a semantic dependency DAG; CSS, HTML templates and dynamic imports/loaders still need separate inventory.
+- Current hosted workflow must pass before treating this report as verified.
