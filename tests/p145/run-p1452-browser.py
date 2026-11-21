@@ -19,6 +19,8 @@ with sync_playwright() as p:
     page.evaluate("CV.go('videoEngine')"); page.wait_for_timeout(1200)
     checks['panel mounted'] = page.evaluate("!!document.getElementById('cv1452-card')")
     checks['shared easing selector mounted'] = page.evaluate("(()=>{const s=document.getElementById('cv1452-easing');return !!s&&s.options.length>=7&&s.querySelector('option[value=custom]')})()")
+    page.evaluate("(()=>{const s=document.getElementById('motionEase');if(!s)return false;let o=[...s.options].find(x=>x.value==='cubic-bezier(0.2,0.8,0.3,1)');if(!o){o=document.createElement('option');o.value='cubic-bezier(0.2,0.8,0.3,1)';o.textContent='Test custom curve';s.appendChild(o);}s.value=o.value;s.dispatchEvent(new Event('change',{bubbles:true}));return true;})()")
+    page.select_option('#cv1452-easing', 'custom')
     result = page.evaluate("""()=>{
       const api=CVShaderP145, from=document.createElement('canvas'), to=document.createElement('canvas'), out=document.createElement('canvas');
       from.width=to.width=64;from.height=to.height=64;
@@ -32,7 +34,7 @@ with sync_playwright() as p:
       const eased=pixel(.5,'fade',{easingCurve:[.2,.8,.3,1]});
       const easedOptions=api.normalizeOptions({progress:.5,easingCurve:[.2,.8,.3,1]});
       renderer.dispose();
-      return {backend:renderer.backend,endpoints:cases,allEndpoints:Object.values(cases).every(Boolean),midpoint:mid[0]>40&&mid[2]>40&&Math.abs(mid[0]-mid[2])<40,easingChangesRender:Math.abs(eased[0]-linear[0])>40&&Math.abs(eased[2]-linear[2])>40,easingCurveApplied:easedOptions.easingApplied&&easedOptions.easedProgress>.5,presetCurve:api.resolveCurve('preset:Nảy nhẹ')&&api.resolveCurve('preset:Nảy nhẹ').length===4,customMotionCurve:!!api.resolveCurve('custom')||true,apiTests:Object.values(api.tests()).every(Boolean),status:api.webCodecsStatus()};
+      return {backend:renderer.backend,endpoints:cases,allEndpoints:Object.values(cases).every(Boolean),midpoint:mid[0]>40&&mid[2]>40&&Math.abs(mid[0]-mid[2])<40,easingChangesRender:Math.abs(eased[0]-linear[0])>40&&Math.abs(eased[2]-linear[2])>40,easingCurveApplied:easedOptions.easingApplied&&easedOptions.easedProgress>.5,presetCurve:api.resolveCurve('preset:Nảy nhẹ')&&api.resolveCurve('preset:Nảy nhẹ').length===4,customMotionCurve:Array.isArray(api.resolveCurve('custom'))&&api.resolveCurve('custom').length===4&&Math.abs(api.resolveCurve('custom')[0]-.2)<1e-6,apiTests:Object.values(api.tests()).every(Boolean),status:api.webCodecsStatus()};
     }""")
     checks['all transition endpoints show correct source/target'] = result['allEndpoints']
     checks['crossfade midpoint mixes both frames'] = result['midpoint']
