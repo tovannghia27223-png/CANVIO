@@ -201,6 +201,31 @@ jobs:
           console.log('P127.7 integrated into canonical index.html');
           NODE
 
+      - name: Integrate P124 responsive Auto Layout and Component variants
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs=require('node:fs');
+          const file='index.html', source=fs.readFileSync('canvio-p124-autolayout.js','utf8').trim();
+          if(!source.includes('window.CVAutoLayoutP124'))throw new Error('P124 source contract missing');
+          let html=fs.readFileSync(file,'utf8');
+          const id='canvio-lot124', open='<script id="'+id+'">';
+          const re=/(<script\\b(?=[^>]*\\bid=["']canvio-lot124["'])[^>]*>)[\\s\\S]*?(<\\/script\\s*>)/i;
+          const tag=open+'\\n'+source+'\\n</script>';
+          if(re.test(html))html=html.replace(re,tag);
+          else{
+            const at=html.lastIndexOf('</body>');
+            if(at<0)throw new Error('P124: canonical index has no closing body');
+            html=html.slice(0,at)+tag+'\\n'+html.slice(at);
+          }
+          if((html.match(/id="canvio-lot124"/g)||[]).length!==1)throw new Error('P124 duplicate/missing script lot');
+          const m=html.match(new RegExp('<script id="'+id+'">([\\\\s\\\\S]*?)<\\\\/script>'));
+          if(!m||m[1].trim()!==source)throw new Error('P124 embedded source parity mismatch');
+          fs.writeFileSync(file,html,'utf8');
+          console.log('P124 responsive Auto Layout and component variants integrated into canonical Website Engine');
+          NODE
+
       - name: Integrate P131.3 safe HTML import into canonical security hub
         shell: bash
         run: |
@@ -492,6 +517,7 @@ jobs:
           node tests/p115/run-p115-tests.cjs
           node tests/p115/run-p122-p123-tests.cjs
           node tests/p115/run-p1222-tests.cjs
+          node tests/p124/run-p124-tests.cjs
           node tests/p115/run-p127-tests.cjs
           node tests/p127/run-p127k-tests.cjs
           node tests/p127/run-p1272-tests.cjs
