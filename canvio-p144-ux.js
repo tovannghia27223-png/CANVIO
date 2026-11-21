@@ -26,14 +26,37 @@ var CMDS = [
 var NAV = { v: 'videoEngine', w: 'webEngine', p: 'poster', a: 'assets', i: 'imageStudio', h: 'home', s: 'settings', d: 'designEngine' };
 var NAV_LABEL = { v: 'Video Engine', w: 'Website Engine', p: 'Poster', a: 'Tài nguyên', i: 'Image Studio', h: 'Trang chủ', s: 'Cài đặt', d: 'Design Engine' };
 var TIPS = {
-  home: ['Ctrl+K: tìm trang, mẫu, hành động.', 'Chọn thẻ nhanh để bắt đầu poster, website, video hoặc CV 3D.'],
+  home: ['Ctrl+K: tìm trang, mẫu và hành động.', 'Chọn Hub hoặc Studio phù hợp; mở hướng dẫn nhanh để xem luồng bắt đầu.'],
+  creativeHub: ['Hub là điểm vào các workspace; dùng Studio Switcher để đổi nhóm công việc.', 'Gần đây và Đã gắn sao dùng trạng thái hiện có; dữ liệu dự án vẫn do Project Center/Project Vault quản lý.'],
   poster: ['T chữ · R khối · C hình tròn · L đường kẻ.', 'Ctrl+D nhân đôi · [ ] đổi lớp · Ctrl +/−/0 phóng to, thu nhỏ, vừa khung.', 'Ctrl+S lưu, Ctrl+Z hoàn tác.'],
-  videoEngine: ['Thêm clip bằng nút nhập media, kéo thanh tua để xem khung.', 'Thẻ Chất lượng: phân tích nhịp, đo LUFS, khử ồn, mẫu Short/Reel, SFX, xuất GIF, đo màu.', 'Mọi thao tác thêm clip đều có hoàn tác (Ctrl+Z).'],
-  webEngine: ['Kéo thả block để dựng trang; Xuất HTML để lấy tệp.', 'Thẻ "Web cuộn từ video" tạo trang cuộn tới đâu video chạy tới đó.'],
-  imageStudio: ['Thẻ "Ảnh → Vector" đổi logo, icon, hình ít màu thành SVG.', 'Giảm số màu hoặc chọn Chi tiết thấp để tệp nhẹ hơn.'],
-  assets: ['Tải ảnh, logo vào kho; gắn giấy phép để có báo cáo và credit.', 'Biểu đồ từ CSV và data merge nằm ngay bên dưới.'],
-  settings: ['Thẻ Bộ nhớ và phục hồi cho biết dung lượng và các bản tự lưu.', 'Nếu app đóng đột ngột, lần mở sau sẽ có thanh khôi phục.'],
-  designEngine: ['Chọn đối tượng để chỉnh thuộc tính; Ctrl+Z hoàn tác.']
+  designEngine: ['Chọn đối tượng để chỉnh thuộc tính; Ctrl+Z hoàn tác.', 'Kiểm tra lớp đang khóa/ẩn trước khi sửa; lưu và mở lại dự án để xác nhận.'],
+  layoutFoundry: ['Chọn master/layout phù hợp rồi áp dụng cho trang hiện tại.', 'Kiểm tra lề, phân cấp chữ và bản in; preflight trong app không thay thế kiểm tra PDF/X, CMYK hoặc bản in vật lý.'],
+  vectorForge: ['Dùng Ảnh → Vector/Trace cho logo và hình ít màu; kiểm tra preview trước khi lưu SVG.', 'Giảm số màu/độ chi tiết để giữ SVG nhẹ; mở file xuất bằng trình duyệt khác để rà lại.'],
+  autodesign: ['Viết brief rõ mục tiêu, đối tượng, kích thước và phong cách trước khi tạo bản nháp.', 'Provider AI chỉ chạy khi bạn chủ động dùng dịch vụ; kiểm tra quyền sử dụng và nguồn asset trước khi xuất.'],
+  cvstudio: ['Điền thông tin cá nhân, kinh nghiệm và kỹ năng; kiểm tra lỗi chính tả và thứ tự thời gian.', 'Xem trước A4 và in thử; luồng xuất CV hiện có là owner chuẩn, không coi preflight là chứng nhận PDF/X.'],
+  web: ['Dựng trang từ các block hiện có, sắp xếp thứ tự và kiểm tra nội dung trên màn hình hẹp.', 'Lưu trong Website Engine hiện tại; mở bản HTML xuất ở tab/trình duyệt khác để kiểm tra.'],
+  webEngine: ['Kéo thả block để dựng trang; Xuất HTML để lấy tệp.', 'Thẻ Web cuộn từ video tạo trang cuộn tới đâu video chạy tới đó.', 'Auto Layout chèn preset vào GrapesJS hiện tại; chỉnh sửa trực tiếp trong editor rồi lưu.'],
+  portfolioStudio: ['Sắp xếp dự án theo vai trò, kết quả và hình ảnh minh họa; ưu tiên case study có số liệu kiểm chứng.', 'Kiểm tra quyền sử dụng ảnh/logo và mở lại dự án sau khi lưu để xác nhận gallery.'],
+  hrvisual: ['Chọn đúng ngữ cảnh tuyển dụng/đào tạo/nội bộ và giữ thông tin nhân sự chính xác.', 'Kiểm tra logo, màu thương hiệu, quyền dùng ảnh và khả năng đọc trên điện thoại.'],
+  pixelStudio: ['Làm việc theo lưới pixel; giữ kích thước canvas và palette nhất quán.', 'Phóng to khi chỉnh pixel, thu nhỏ để kiểm tra hình tổng thể trước khi xuất.'],
+  colorStudio: ['Điều chỉnh màu/độ sáng từng bước và so sánh trước–sau.', 'Không kéo highlight/shadow quá mức; kiểm tra ảnh trên màn hình khác trước khi bàn giao.'],
+  clarityLab: ['Dùng tăng nét/khử nhiễu vừa phải; giữ bản gốc để đối chiếu.', 'Phóng to 100% để rà halo, bệt chi tiết và artefact trước khi xuất.'],
+  imageStudio: ['Thẻ Ảnh → Vector đổi logo, icon, hình ít màu thành SVG.', 'Giảm số màu hoặc chọn Chi tiết thấp để tệp nhẹ hơn; kiểm tra SVG an toàn trước khi dùng.'],
+  artcraft: ['Chọn asset/kiểu minh họa theo mục tiêu thiết kế; kiểm tra độ tương phản và tính nhất quán.', 'Gắn nguồn/giấy phép cho tài nguyên trước khi công bố hoặc chuyển giao.'],
+  capcutEngine: ['Đây là bảng điều phối CapCut, không phải timeline độc lập.', 'Mở Video Engine để chỉnh clip trên timeline chuẩn; media, undo và export vẫn thuộc engine hiện hữu.'],
+  videoEngine: ['Thêm clip bằng nút nhập media, kéo thanh tua để xem khung.', 'Thẻ Chất lượng: phân tích nhịp, đo LUFS, khử ồn, Auto Reframe, proxy, SFX, GIF và đo màu.', 'Mọi thao tác thêm clip tạo clip mới và giữ bản gốc; dùng Ctrl+Z khi cần hoàn tác.'],
+  motionLab: ['Chọn preset chuyển động rồi xem thử trên đối tượng đang chọn.', 'Tôn trọng reduced-motion và kiểm tra tốc độ/độ dài trước khi xuất.'],
+  videoStudio: ['Lập kịch bản, shot list và thứ tự cảnh trước khi dựng.', 'Chuyển media sang Video Engine để chỉnh timeline; không tạo timeline thứ hai trong Studio này.'],
+  shotcraft: ['Mô tả góc máy, cỡ cảnh, chuyển động và mục tiêu của từng shot.', 'Giữ shot list khớp footage thực tế; không coi storyboard là tracking hay render video tự động.'],
+  motion: ['Chọn motion preset phù hợp nội dung và thời lượng.', 'Kiểm tra keyframe trên timeline Video Engine; preset không thay thế thao tác chỉnh clip gốc.'],
+  motionCut: ['MotionCut là luồng phụ/handoff; Video Engine vẫn là timeline chuẩn.', 'Nhập media qua engine hiện có và xác nhận mapping clip trước khi tiếp tục chỉnh sửa.'],
+  assets: ['Tải ảnh/logo vào kho; gắn giấy phép để có báo cáo và credit.', 'Biểu đồ CSV và data merge nằm trong Asset Library; kiểm tra nguồn và quyền dùng trước khi công bố.'],
+  projects: ['Project Center quản lý brief, tiến độ và trạng thái công việc.', 'Project Vault là nơi lưu/mở snapshot editor; hai khu vực có vai trò khác nhau.'],
+  projectVault: ['Tạo snapshot có tên trước thay đổi lớn; dùng restore point khi cần quay lại.', 'Backup/restore phải được kiểm tra trên bản sao; không xóa dữ liệu cũ khi chưa xác minh bản phục hồi.'],
+  export: ['Chọn đúng định dạng và kiểm tra codec/kích thước thực tế sau khi xuất.', 'Dùng File QC và công cụ độc lập để mở thử artifact; Blob được tạo không đồng nghĩa file đã đạt chuẩn.'],
+  object: ['Kiểm tra mô hình 3D, camera và khả năng tải asset trước khi chia sẻ.', 'Offline OBJ viewer chỉ bao phủ profile hình học được hỗ trợ; không mặc định hỗ trợ GLTF/FBX đầy đủ.'],
+  entry: ['Bắt đầu từ Hub hoặc chọn Studio theo loại sản phẩm cần làm.', 'Nếu chưa biết công cụ, dùng Ctrl+K tìm tính năng hoặc F1 để xem mẹo của trang.'],
+  settings: ['Thẻ Bộ nhớ & phục hồi cho biết dung lượng và các bản tự lưu.', 'Nếu app đóng đột ngột, lần mở sau có thể xuất hiện thanh khôi phục; hãy xem nội dung trước khi xác nhận.']
 };
 function lsGet(k, d) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }
 function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
@@ -126,8 +149,10 @@ function tests() {
     tourStepsWellFormed: STEPS.length === 4 && STEPS.every(function (x) { return x.title && x.text; }),
     readOnlyAutoRunOnly: CMDS.filter(function (c) { return c.run; }).every(function (c) { return /^(#cv127q-run|#cv134-run|#cv133-now)$/.test(c.run); }),
     navKeysUnique: Object.keys(NAV).length === 8 && Object.keys(NAV).every(function (k) { return NAV_LABEL[k] && k.length === 1; }),
-    tipsCoverMainPages: ['home', 'poster', 'videoEngine', 'webEngine', 'imageStudio', 'assets', 'settings'].every(function (k) { return TIPS[k] && TIPS[k].length; })
+    tipsCoverAllKnownStudioRoutes: ['poster','layoutFoundry','vectorForge','designEngine','autodesign','cvstudio','web','webEngine','portfolioStudio','hrvisual','pixelStudio','colorStudio','clarityLab','imageStudio','artcraft','videoEngine','motionLab','videoStudio','shotcraft','motion','motionCut','creativeHub'].every(function (k) { return TIPS[k] && TIPS[k].length >= 2; }),
+    tipsCoverProjectAndUtilityPages: ['home','projects','projectVault','export','object','entry','capcutEngine','assets','settings'].every(function (k) { return TIPS[k] && TIPS[k].length >= 2; }),
+    tipsAvoidGenericFallbackForStudioRoutes: ['poster','layoutFoundry','vectorForge','designEngine','autodesign','cvstudio','web','webEngine','portfolioStudio','hrvisual','pixelStudio','colorStudio','clarityLab','imageStudio','artcraft','videoEngine','motionLab','videoStudio','shotcraft','motion','motionCut','creativeHub'].every(function (k) { return TIPS[k].some(function (t) { return t.length > 25; }); })
   };
 }
-window.CVUxP144 = { version: '144.2.0', startTour: startTour, closeTour: closeTour, tourDone: tourDone, commands: CMDS, nav: NAV, tips: TIPS, openHelp: openHelp, closeHelp: closeHelp, wrapPalette: wrapPalette, tests: tests };
+window.CVUxP144 = { version: '144.3.0', startTour: startTour, closeTour: closeTour, tourDone: tourDone, commands: CMDS, nav: NAV, tips: TIPS, openHelp: openHelp, closeHelp: closeHelp, wrapPalette: wrapPalette, tests: tests };
 })();
