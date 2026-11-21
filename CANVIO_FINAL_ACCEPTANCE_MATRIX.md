@@ -30,15 +30,3 @@
 12. Physical target-device GPU/VRAM, performance and long-render testing.
 13. Cross-origin backup/restore and independent-device recovery.
 14. Rollback, release observability, alerting and production incident drill.
-
-| P145.10 mainline local Asset Library SHA-256 (run #310) | PR #38 merged; hosted Node 10/10 and Chromium 14/14; native `CV.assets.list()`, 64-char SHA-256, duplicate detection from local bytes, read-only/no-mutation checks | Local base64 data URLs only; 40 rows / 25 MiB per asset / 64 MiB aggregate; unscannable rows remain unverified; no remote/cloud vault or cross-device sync |
-| P136.4 local SVG pattern fill (run #312) | PR #39 merged; hosted workflow success; six SVG pattern presets in Image Trace multicolour fill mode | No brush authoring, gradient mesh, topology editing or physical GPU/performance certification |
-| P131.3 safe local HTML body-fragment import (run #315) | PR #41 merged; Chromium 31/31 and app smoke 21 checks / 48 pages, zero page errors | .html/.htm only, ≤5 MiB, sanitized fragment; stylesheets/scripts/forms/iframes/remote media are excluded |
-| P70 14 real-world release gates | **OPEN — 0/14 evidenced as passed in current manifest** | Must be separately reviewed on deployed origin, real media, supported physical devices and production infrastructure; CI success does not close these gates |
-
-| P122.1 / P123 | Hosted source/Node suite 13/13 | Website Taste heuristic + 12 static layout blocks only; no WCAG/screenshot/keyboard certification or live map/inbox/Kanban/chat services |
-| P122.2 | Hosted Node suite 14/14, including preview/apply/undo, stale-plan rejection and failed-save rollback | Website CSS-only; no content/icon editing, Poster/Slide, or Project Vault history integration |
-| P122.3 / P124 / P133 / P143 | No dedicated source owner or tests on main; explicitly open in historical Roadmap/handoff | MCP contract/security; Auto Layout/Component; OPFS/proxy storage migration; complete code split remain unimplemented |
-| P144 | Existing P109 palette/command search covers a basic subset | Parity audit required; no duplicate palette should be introduced |
-| P142 | GitHub Pages build/report/deploy run #192 succeeded | Real-origin browser, Windows/GTX 1650, Firefox/WebKit, touch and physical GPU checks remain open |
-| PR #44 docs verification | Hosted run #320 success; artifact SHA `74cb03f31a7c55d94f69376b74f46a22bef1538b473aeca1165c42296f2e69ba` | Documentation/status reconciliation, not proof all P complete |
