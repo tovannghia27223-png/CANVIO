@@ -206,3 +206,8 @@ Pull trước (`git pull --rebase origin main`; CI bot hay push commit build). A
 - Merged P137.2 (#76, `fa6c6c4`), P119.2 (#78, `3b53b8d`) and P135.2 (#81, `33f6848`). Candidate and post-merge mainline workflows passed: P137.2 51/51, P119.2 52/52, P135.2 53/53.
 - P135.2 preserves the Pixel snapshot API while storing the editable adjustment stack in a CRC-checked PNG tEXt chunk. Chromium validated snapshot, restore, reload and unchanged source raster. P143 parity reached 32/32.
 - P143.4 lexical global evidence scanner is being carried to a fresh branch based on the P135.2-verified mainline; it does not change app runtime or complete the semantic dependency graph/Phase 3 refactor.
+
+## P120/P126 ComfyUI bridge — candidate 2026-11-21
+
+- Added the loopback-only local ComfyUI bridge, Node contract tests and Chromium mock-server acceptance. It registers image/video/upscale/interpolate handlers with P128 and imports result blobs through the existing Asset Library owner.
+- Model/custom-node execution and output quality remain unverified until the user's actual free local ComfyUI environment is available. This is not cloud sync or an AI model bundle.
