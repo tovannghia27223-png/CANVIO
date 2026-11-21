@@ -3801,3 +3801,10 @@ P144 tour: thêm bước bằng cách thêm vào mảng `STEPS` ({sel,title,text
 - Scope: 20 workflow-managed standalone feature modules and their canonical inline lots. Checks unique lot, JS syntax in both copies, CRLF-normalized content parity, and classic inline safety.
 - Previous workflow #363 passed this gate and all 39 steps. This candidate re-applies it after the latest mainline bot commit 6481d83 and reruns CI before merge.
 - Full P143 remains open: all-inline script/style inventory, dependency/boot order DAG, staged reversible extraction, offline/PWA/CSP and rollback acceptance are not complete.
+
+
+## P134.2 QA robustness update (2026-11-21 · candidate)
+
+- `tests/p145/run-p134r-browser.py` now measures WebM duration from ffprobe video packet presentation timestamps and median packet/frame duration when container/stream duration is absent. The exporter uses canvas.captureStream(30); nominal `r_frame_rate` can be an inaccurate 60/1 and is no longer trusted as the primary duration measurement.
+- Fallback to 30 fps is only used if both container duration and packet timestamps are unavailable. CI reports packet count, first/last PTS and median frame interval for diagnosis.
+- Current-main CI rerun is pending; do not claim this correction accepted until the new hosted run completes.
