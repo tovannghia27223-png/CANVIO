@@ -433,3 +433,10 @@ The candidate workflow runs standalone/embedded source parity and API tests for 
 - P144.3 contextual help: all 38/38 CVWS routes have tips; palette, keyboard, F1 focus trap/Escape and first-run tour pass.
 - P133 resilience: OPFS 3 MB round-trip, path traversal rejection, crash banner, restore and settings pass. P133 denoise Worker parity maxDiff=0 and UI remains responsive.
 - P70 release disposition remains NOT CERTIFIED. Fourteen real-world gates in the original QA section are OPEN; hosted fixtures do not replace target hardware/media, provider, accessibility, hosting-header, cross-origin restore or operations evidence.
+
+
+## P143 parity extension — 27 module candidate (2026-11-21)
+
+- Central parity map expanded from 20 to 27 standalone/embedded module pairs, adding P127 Loudness/Templates, P133 Resilience, P134 Scopes, P138 Denoise, P140 Charts and P145 SFX.
+- Each added module already has an individual source/embedded parity suite; central P143 gate now includes them. No runtime behavior change.
+- Hosted run pending. Full script/style dependency DAG and project-wide extraction remain open.
