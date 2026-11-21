@@ -228,6 +228,14 @@ No honest all-P completion claim is possible yet. In addition to P70's 14 open r
 
 These are branch candidates, not merged or PASS. Previous mainline status remains the accepted baseline until CI and merge are verified.
 
+## P143.4 lexical global-reference ordering map candidate — 2026-11-21
+
+- Extends the existing complete script/style/template inventory with a dependency-free lexical scanner for direct global writes/reads and simple top-level declarations.
+- Candidate edges are order-bounded: the report records the latest earlier static provider plus prior writers, evidence types, script ids and SHA-256 hashes. Same-script and unresolved references are retained rather than invented as dependencies.
+- Existing P143 workflow builds and validates the report inside style-template-loader-inventory.json; no application runtime, boot order or persistence path changes.
+- Acceptance gate: scanner fixture tests; candidate inventory consistency/ordering/hash checks; hosted candidate and post-merge mainline runs. This remains a lexical candidate map, not a semantic dependency DAG or source-split completion.
+
+
 
 
 ## Verified update — 2026-11-21 — P124.3
