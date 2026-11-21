@@ -128,3 +128,12 @@ Pull trước (`git pull --rebase origin main`; CI bot hay push commit build). A
 - Changes are not merged and no CI PASS is claimed yet. The next step is hosted PR verification, fix any failing assertions, then merge only if the full candidate suite passes.
 - Real-world manual testing is deferred as requested. P70's fourteen gates remain OPEN. P130 Supabase sync and P122.3 MCP remain blocked on the necessary real infrastructure/security contract.
 
+ 
+## P135.1 implementation started — candidate branch, not merged (2026-11-21)
+
+- Created work/canvio-p135-adjustments-20261121 from the CI-font-fix candidate branch.
+- Added canvio-p135-adjustments.js: nine non-destructive adjustment filters; layer list with add/select/rename/enable/reorder/delete/reset; stack undo/redo; preview on the existing Pixel canvas; derived-canvas PNG/WebP export and a new Asset Library raster save.
+- Wired the module into candidate assembly as canvio-lot135a and added Node parity/source tests plus hosted Chromium UI/export tests.
+- Source limitation recorded: existing Pixel snapshotState() is a flattened PNG data URL, so P135.1 does not pretend editable stack metadata is project-persistent. Reload/new source clears the in-memory stack; export to Asset Library creates a flattened copy while preserving the original.
+- PR for P135.1 and hosted results are still pending. The exact CI-font-fix branch run executed P119 OK, P118w OK, P141f OK, P128o OK and P137s OK. That run still failed later at the existing P133 proxy-browser gate, so it is not a whole-workflow PASS.
+- P139, P120/P126 GPU adapters and all external P70/P130/P122.3/P142 gates remain OPEN/blocked as documented.
