@@ -1,7 +1,7 @@
-/* CANVIO P135.1 — non-destructive adjustment stack for Pixel Atelier.
- * The stack is an in-memory preview layer over the canonical Pixel canvas.
- * Export applies it to a derived canvas; the original raster canvas remains unchanged.
- * Project round-trip persistence of the editable stack is not claimed.
+/* CANVIO P135.2 — non-destructive adjustment stack with Project Vault round-trip.
+ * The editable stack is serialized beside the canonical Pixel raster snapshot.
+ * Project Vault remains the single persistence owner; no second project store is created.
+ * Export applies the stack to a derived canvas; the original raster canvas remains unchanged.
  */
 (function(root){
 'use strict';
@@ -18,7 +18,7 @@ const SPECS={
  opacity:{label:'Độ mờ',min:0,max:100,step:1,initial:100,unit:'%'}
 };
 let seq=0,layers=[],selectedId=null,undo=[],redo=[],panel=null,canvas=null,status=null,px=null;
-let originalDraw=null,originalAct=null,originalLoad=null,inputEditing=false,mounted=false;
+let originalDraw=null,originalAct=null,originalLoad=null,originalSnapshotState=null,originalRestoreState=null,inputEditing=false,mounted=false;
 const clone=x=>JSON.parse(JSON.stringify(x));
 const clamp=(v,min,max,fallback)=>{const n=Number(v);return Number.isFinite(n)?Math.max(min,Math.min(max,n)):fallback;};
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -162,9 +162,69 @@ function bind(){
  const statusNode=doc.getElementById('pxStatus');
  if(statusNode&&root.MutationObserver){const observer=new root.MutationObserver(()=>root.requestAnimationFrame(renderPreview));observer.observe(statusNode,{childList:true,characterData:true,subtree:true});}
 }
+const PROJECT_MARKER='__canvioPixelAdjustmentProject';
+function createProjectSnapshot(raster,state){
+ if(typeof raster!=='string'||!/^data:image\\//i.test(raster))return null;
+ state=state&&typeof state==='object'?state:{};
+ const projectLayers=normalizeLayers(state.layers);
+ const activeId=state.selectedId&&projectLayers.some(x=>x.id===state.selectedId)?state.selectedId:(projectLayers[0]?.id||null);
+ return {__canvioPixelAdjustmentProject:1,version:1,raster:raster,adjustments:{version:1,layers:projectLayers,selectedId:activeId}};
+}
+function isProjectSnapshot(value){
+ return !!(value&&typeof value==='object'&&value.__canvioPixelAdjustmentProject===1&&value.version===1&&
+  typeof value.raster==='string'&&/^data:image\\//i.test(value.raster)&&value.adjustments&&
+  value.adjustments.version===1&&Array.isArray(value.adjustments.layers));
+}
+function restoreRasterForProject(raster){
+ return new Promise(resolve=>{
+  const probe=new root.Image();probe.onerror=()=>resolve(false);
+  probe.onload=()=>{
+   const width=probe.naturalWidth||probe.width,height=probe.naturalHeight||probe.height,target=px&&px.canvas||canvas;
+   if(!target||!width||!height){resolve(false);return}
+   let expected=null;
+   try{const sample=doc.createElement('canvas');sample.width=width;sample.height=height;const x=sample.getContext('2d',{willReadFrequently:true});x.drawImage(probe,0,0);expected=Array.from(x.getImageData(0,0,1,1).data)}catch(e){resolve(false);return}
+   const ready=()=>{if(target.width!==width||target.height!==height)return false;try{const actual=Array.from(target.getContext('2d',{willReadFrequently:true}).getImageData(0,0,1,1).data);return actual.every((v,i)=>v===expected[i])}catch(e){return false}};
+   let finished=false,observer=null,timer=null;
+   const finish=ok=>{if(finished)return;finished=true;if(observer)observer.disconnect();if(timer)root.clearTimeout(timer);resolve(!!ok)};
+   if(root.MutationObserver){observer=new root.MutationObserver(()=>{if(ready())finish(true)});observer.observe(target,{attributes:true,attributeFilter:['width','height']});const statusNode=doc.getElementById('pxStatus');if(statusNode)observer.observe(statusNode,{childList:true,characterData:true,subtree:true})}
+   try{const result=originalRestoreState&&originalRestoreState.call(px,raster);if(result===false){finish(false);return}}catch(e){finish(false);return}
+   const started=Date.now();
+   const poll=()=>{if(finished)return;if(ready()){finish(true);return}if(Date.now()-started>=12000){finish(false);return}timer=root.setTimeout(poll,40)};
+   poll();
+  };
+  probe.src=raster;
+ });
+}
+async function restoreProjectSnapshot(pack){
+ if(!isProjectSnapshot(pack))return false;
+ const restored=await restoreRasterForProject(pack.raster);if(!restored)return false;
+ const state=pack.adjustments||{};layers=normalizeLayers(state.layers);
+ selectedId=state.selectedId&&layers.some(x=>x.id===state.selectedId)?state.selectedId:(layers[0]?.id||null);
+ undo=[];redo=[];inputEditing=false;render();
+ setStatus('Đã khôi phục '+layers.length+' lớp điều chỉnh cùng dự án Pixel Atelier.');return true;
+}
+function installProjectVaultBridge(){
+ if(!px||!originalSnapshotState||!originalRestoreState)return false;
+ px.snapshotProjectState=function(){const raster=originalSnapshotState.call(px);return createProjectSnapshot(raster,{layers:layers,selectedId:selectedId})};
+ px.restoreProjectState=restoreProjectSnapshot;
+ const nativeRestore=px.restoreState;
+ if(typeof nativeRestore==='function'&&!nativeRestore.__p135ProjectAware){
+  const wrappedRestore=function(value){if(isProjectSnapshot(value))return restoreProjectSnapshot(value);resetStack('Đã khôi phục ảnh raster cũ; stack điều chỉnh được đặt lại.');const result=nativeRestore.apply(this,arguments);root.requestAnimationFrame(renderPreview);return result};
+  wrappedRestore.__p135ProjectAware=true;px.restoreState=wrappedRestore;
+ }
+ const unified=root.CVUnifiedLayers;
+ if(unified&&!unified.__p135ProjectBridge&&typeof unified.snapshotState==='function'&&typeof unified.restoreState==='function'){
+  const snapshot=unified.snapshotState,restore=unified.restoreState;
+  const snapshotBridge=function(editor){if(editor==='pixelStudio'&&typeof px.snapshotProjectState==='function')return px.snapshotProjectState();return snapshot.apply(this,arguments)};
+  snapshotBridge.__p135ProjectBridge=true;
+  const restoreBridge=async function(editor,state){if(editor==='pixelStudio'&&isProjectSnapshot(state))return px.restoreProjectState(state);return restore.apply(this,arguments)};
+  restoreBridge.__p135ProjectBridge=true;unified.snapshotState=snapshotBridge;unified.restoreState=restoreBridge;unified.__p135ProjectBridge=true;
+ }
+ return true;
+}
 function installPixelHooks(){
  px=root.CVNativeEngines&&root.CVNativeEngines.pixel;if(!px||px.__p135Wrapped)return false;
- originalDraw=px.draw;originalAct=px.act;originalLoad=px.load;
+ originalDraw=px.draw;originalAct=px.act;originalLoad=px.load;originalSnapshotState=px.snapshotState;originalRestoreState=px.restoreState;
  if(typeof originalDraw==='function')px.draw=function(){const result=originalDraw.apply(this,arguments);renderPreview();return result;};
  if(typeof originalLoad==='function')px.load=function(){resetStack('Ảnh mới đã mở · stack điều chỉnh được làm mới.');return originalLoad.apply(this,arguments);};
  if(typeof originalAct==='function')px.act=function(action){
@@ -175,7 +235,7 @@ function installPixelHooks(){
   if(action==='clear')resetStack('Đã làm mới ảnh và stack điều chỉnh.');else root.requestAnimationFrame(renderPreview);
   return result;
  };
- px.__p135Wrapped=true;return true;
+ installProjectVaultBridge();px.__p135Wrapped=true;return true;
 }
 function mount(){
  if(mounted)return true;if(!doc||!root.CVNativeEngines||!root.CVNativeEngines.pixel)return false;
@@ -188,7 +248,7 @@ function mount(){
  '<div class="cv135-body"><div class="cv135-list-wrap"><div class="cv135-section-label">STACK · TRÊN CÙNG ĐƯỢC ÁP DỤNG SAU</div><div id="cv135-layer-list" class="cv135-layer-list"></div></div>',
  '<div class="cv135-inspector"><div class="cv135-section-label">THUỘC TÍNH LỚP</div><label for="cv135-name">Tên lớp</label><input id="cv135-name" maxlength="64" placeholder="Chọn một lớp để chỉnh sửa"><label for="cv135-value">Cường độ <output id="cv135-value-out">100%</output></label><input id="cv135-value" type="range" min="0" max="200" value="100" disabled><div class="cv135-toolbar cv135-inspector-actions"><button type="button" data-cv135="up" aria-label="Đưa lớp lên">↑ Lên</button><button type="button" data-cv135="down" aria-label="Đưa lớp xuống">↓ Xuống</button><button type="button" data-cv135="remove" class="cv135-danger">Xóa lớp</button><button type="button" data-cv135="reset">Xóa stack</button></div></div></div>',
  '<div class="cv135-export"><div><b>Xuất kết quả đã áp dụng</b><small>Xuất PNG/WebP hoặc lưu một bản raster mới vào Asset Library; không ghi đè ảnh gốc.</small></div><div class="cv135-toolbar"><button type="button" id="cv135-export-png" data-cv135="export-png" class="cv135-primary">Xuất PNG</button><button type="button" id="cv135-export-webp" data-cv135="export-webp">Xuất WebP</button><button type="button" data-cv135="asset">Lưu bản mới vào Asset Library</button></div></div>',
- '<p class="cv135-note"><b>Giới hạn hiện tại:</b> stack được giữ trong bộ nhớ tab, chưa đi cùng project snapshot/restore của Pixel Atelier (engine hiện chỉ snapshot PNG). Tải lại trang hoặc mở ảnh khác sẽ xóa stack. Xuất/Lưu tạo ảnh raster mới, ảnh nguồn vẫn được giữ nguyên.</p>'
+ '<p class="cv135-note"><b>Lưu dự án:</b> stack điều chỉnh được lưu cùng raster snapshot qua Project Vault hiện có (IndexedDB trên thiết bị này) và khôi phục khi mở lại workspace. Dùng Xuất bản sao lưu trong Project Vault để chuyển dự án sang thiết bị khác; chưa có đồng bộ đám mây. Xuất/Lưu ảnh tạo raster mới, ảnh nguồn vẫn được giữ nguyên.</p>'
  ].join('');
  const style=doc.createElement('style');style.id='canvio-lot135-css';
  style.textContent='#cv135-panel{margin:18px 0;padding:18px;border:1px solid var(--border,#dce3ee);border-radius:16px;background:var(--card,#fff);color:var(--text,#182230);box-shadow:0 8px 24px rgba(20,34,55,.055)}'+
@@ -212,8 +272,8 @@ function tests(){
  enforcesMaximumLayerCount:normalizeLayers(Array.from({length:40},(_,i)=>({id:'l'+i,type:'brightness'}))).length===LIMIT,
  usesStableUniqueIds:normalizeLayers([{id:'same',type:'brightness'},{id:'same',type:'contrast'}]).length===1};
 }
-const api={version:'135.1.0',specs:clone(SPECS),normalizeLayer:normalizeLayer,normalizeLayers:normalizeLayers,filterFor:filterFor,tests:tests,mount:mount,
- getState:()=>({layers:clone(layers),selectedId:selectedId,sessionOnly:true}),reset:()=>resetStack('Đã xóa stack điều chỉnh.')};
+const api={version:'135.2.0',specs:clone(SPECS),normalizeLayer:normalizeLayer,normalizeLayers:normalizeLayers,filterFor:filterFor,createProjectSnapshot:createProjectSnapshot,isProjectSnapshot:isProjectSnapshot,restoreProjectSnapshot:restoreProjectSnapshot,tests:tests,mount:mount,
+ getState:()=>({layers:clone(layers),selectedId:selectedId,sessionOnly:false,projectPersistenceAvailable:!!(px&&px.snapshotProjectState&&root.CVUnifiedLayers&&root.CVUnifiedLayers.__p135ProjectBridge)}),reset:()=>resetStack('Đã xóa stack điều chỉnh.')};
 window.CVPixelAdjustmentsP135=api;
 if(doc){if(doc.readyState==='loading')doc.addEventListener('DOMContentLoaded',mount,{once:true});else mount();}
 })(window);
