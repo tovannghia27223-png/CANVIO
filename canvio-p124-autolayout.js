@@ -4,7 +4,7 @@
 'use strict';
 if (window.CVAutoLayoutP124) return;
 
-var VERSION = '124.1.0';
+var VERSION = '124.2.0';
 var VARIANTS = {
   surface: { background: '#ffffff', border: '1px solid #e2e8f0', boxShadow: 'none' },
   outline: { background: 'transparent', border: '1px solid #94a3b8', boxShadow: 'none' },
@@ -89,6 +89,75 @@ function inspect() {
     variants: Object.keys(VARIANTS)
   };
 }
+function selectedTarget() {
+  var ed = window.CVWeb, component = null;
+  try { component = ed && typeof ed.getSelected === 'function' ? ed.getSelected() : null; } catch (e) {}
+  if (!component || typeof component.addClass !== 'function') return null;
+  try { if (typeof component.is === 'function' && component.is('wrapper')) return null; } catch (e) {}
+  return component;
+}
+function normalizeResponsive(options) {
+  options = options || {};
+  var tablet = Math.round(clamp(options.tabletBreakpoint, 600, 1200, 992));
+  var mobile = Math.round(clamp(options.mobileBreakpoint, 320, 760, 480));
+  if (mobile >= tablet) mobile = Math.max(320, tablet - 1);
+  return {
+    desktopColumns: Math.round(clamp(options.desktopColumns, 1, 6, 3)),
+    tabletColumns: Math.round(clamp(options.tabletColumns, 1, 4, 2)),
+    mobileColumns: Math.round(clamp(options.mobileColumns, 1, 2, 1)),
+    desktopGap: Math.round(clamp(options.desktopGap, 0, 64, 24)),
+    tabletGap: Math.round(clamp(options.tabletGap, 0, 48, 16)),
+    mobileGap: Math.round(clamp(options.mobileGap, 0, 32, 12)),
+    tabletBreakpoint: tablet,
+    mobileBreakpoint: mobile
+  };
+}
+function responsiveCss(selector, options) {
+  if (!/^\.cv-p124-[a-z0-9_-]{1,64}$/.test(String(selector || ''))) throw new Error('Selector P124 không hợp lệ.');
+  var o = normalizeResponsive(options);
+  var rule = function (columns, gap) {
+    return 'display:grid;grid-template-columns:repeat(' + columns + ',minmax(0,1fr));gap:' + gap + 'px;min-width:0;box-sizing:border-box;';
+  };
+  return selector + '{' + rule(o.desktopColumns, o.desktopGap) + '}@media (max-width:' + o.tabletBreakpoint + 'px){' +
+    selector + '{' + rule(o.tabletColumns, o.tabletGap) + '}}@media (max-width:' + o.mobileBreakpoint + 'px){' +
+    selector + '{' + rule(o.mobileColumns, o.mobileGap) + '}}';
+}
+function targetClass(component) {
+  var raw = '';
+  try { raw = component.getId ? component.getId() : (component.get && component.get('id')) || component.cid || ''; } catch (e) {}
+  raw = String(raw || 'selected').toLowerCase().replace(/[^a-z0-9_-]/g, '-').replace(/^-+|-+$/g, '').slice(0, 48) || 'selected';
+  return 'cv-p124-' + raw;
+}
+async function applyResponsiveToSelected(options) {
+  var ed = window.CVWeb, component = selectedTarget();
+  if (!ed || !component) return { ok: false, saved: false, error: 'Hãy chọn một phần tử trong Website Engine trước.' };
+  var canAddStyle = typeof ed.addStyle === 'function' || (ed.Css && typeof ed.Css.setRule === 'function');
+  if (!canAddStyle) return { ok: false, saved: false, error: 'GrapesJS chưa sẵn sàng để lưu CSS responsive.' };
+  var cls = targetClass(component), selector = '.' + cls, o = normalizeResponsive(options);
+  var css = responsiveCss(selector, o);
+  try {
+    if (ed.Css && typeof ed.Css.setRule === 'function') {
+      var base = { display: 'grid', 'grid-template-columns': 'repeat(' + o.desktopColumns + ', minmax(0, 1fr))', gap: o.desktopGap + 'px', 'min-width': '0', 'box-sizing': 'border-box' };
+      var tablet = { 'grid-template-columns': 'repeat(' + o.tabletColumns + ', minmax(0, 1fr))', gap: o.tabletGap + 'px' };
+      var mobile = { 'grid-template-columns': 'repeat(' + o.mobileColumns + ', minmax(0, 1fr))', gap: o.mobileGap + 'px' };
+      ed.Css.setRule(selector, base);
+      ed.Css.setRule(selector, tablet, { atRuleType: 'media', atRuleParams: '(max-width: ' + o.tabletBreakpoint + 'px)' });
+      ed.Css.setRule(selector, mobile, { atRuleType: 'media', atRuleParams: '(max-width: ' + o.mobileBreakpoint + 'px)' });
+    } else {
+      ed.addStyle(css);
+    }
+    component.addClass(cls);
+  } catch (error) {
+    return { ok: false, saved: false, error: 'Không áp dụng được CSS responsive: ' + cleanText(error && error.message, 'lỗi GrapesJS', 100) };
+  }
+  try {
+    var saved = await Promise.resolve(window.CV && CV.engines && CV.engines.web && CV.engines.web.save());
+    if (saved === false) return { ok: false, saved: false, className: cls, error: 'Đã áp dụng trong phiên nhưng không lưu được. Hãy kiểm tra và lưu lại trong Website Engine.' };
+    return { ok: true, saved: true, className: cls, breakpoints: { tablet: o.tabletBreakpoint, mobile: o.mobileBreakpoint } };
+  } catch (error) {
+    return { ok: false, saved: false, className: cls, error: 'Đã áp dụng trong phiên nhưng lưu thất bại.' };
+  }
+}
 async function insert(kind, options) {
   var markup;
   try { markup = render(kind, options); }
@@ -140,6 +209,31 @@ function mount() {
     select.appendChild(option);
   });
   var status = make('p', { role: 'status', 'aria-live': 'polite', style: 'margin:10px 0 0;font-size:12px;color:var(--muted,#64748b);' }, 'Chọn bố cục để chèn vào trang.');
+  var responsiveRow = make('div', { style: 'display:flex;flex-wrap:wrap;gap:8px;align-items:end;margin-top:12px;padding-top:12px;border-top:1px solid #cbd5e1;' });
+  function columnSelect(label, value, max) {
+    var wrap = make('label', { style: 'display:flex;flex-direction:column;gap:4px;font-size:11px;color:var(--muted,#64748b);' }, label);
+    var field = make('select', { 'aria-label': label, style: 'min-height:34px;padding:5px 8px;border:1px solid #cbd5e1;border-radius:8px;background:transparent;color:inherit;' });
+    for (var n = 1; n <= max; n++) { var opt = make('option', { value: String(n) }, String(n) + ' cột'); if (n === value) opt.selected = true; field.appendChild(opt); }
+    wrap.appendChild(field); responsiveRow.appendChild(wrap); return field;
+  }
+  var desktopColumns = columnSelect('Desktop', 3, 6);
+  var tabletColumns = columnSelect('Tablet', 2, 4);
+  var mobileColumns = columnSelect('Mobile', 1, 2);
+  var applyButton = make('button', { type: 'button', 'data-p124-apply-selected': '1',
+    style: 'min-height:34px;padding:7px 12px;border:1px solid #64748b;border-radius:8px;background:var(--primary,#2563eb);color:#fff;cursor:pointer;font:inherit;' }, 'Áp dụng cho phần tử đang chọn');
+  applyButton.addEventListener('click', async function () {
+    applyButton.disabled = true; status.textContent = 'Đang áp dụng breakpoint cho phần tử…';
+    var result = await applyResponsiveToSelected({ desktopColumns: desktopColumns.value, tabletColumns: tabletColumns.value, mobileColumns: mobileColumns.value });
+    status.textContent = result.ok ? 'Đã áp dụng và lưu responsive cho phần tử ' + result.className + '.' : result.error;
+    applyButton.disabled = false;
+  });
+  responsiveRow.appendChild(applyButton);
+  try {
+    if (window.CVWeb && typeof window.CVWeb.on === 'function') window.CVWeb.on('component:selected', function (component) {
+      var name = 'phần tử'; try { name = component && (component.getName && component.getName() || component.get && component.get('tagName')) || name; } catch (e) {}
+      status.textContent = 'Đã chọn ' + cleanText(name, 'phần tử', 60) + '. Có thể áp dụng số cột responsive bên dưới.';
+    });
+  } catch (e) {}
   inspect().layouts.forEach(function (layout) {
     var button = make('button', {
       type: 'button',
@@ -155,7 +249,7 @@ function mount() {
     });
     row.appendChild(button);
   });
-  panel.appendChild(heading); panel.appendChild(help); row.appendChild(select); panel.appendChild(row); panel.appendChild(status);
+  panel.appendChild(heading); panel.appendChild(help); row.appendChild(select); panel.appendChild(row); panel.appendChild(responsiveRow); panel.appendChild(status);
   host.appendChild(panel);
   return true;
 }
@@ -176,7 +270,7 @@ if (typeof document !== 'undefined') {
   if (document.readyState === 'loading' && document.addEventListener) document.addEventListener('DOMContentLoaded', start, { once: true });
   else start();
 }
-var api = { version: VERSION, inspect: inspect, normalize: normalize, render: render, insert: insert, mount: mount };
+var api = { version: VERSION, inspect: inspect, normalize: normalize, normalizeResponsive: normalizeResponsive, responsiveCss: responsiveCss, applyResponsiveToSelected: applyResponsiveToSelected, insert: insert, mount: mount };
 api.tests = function () {
   var n = normalize('grid', { columns: 99, gap: 1, minWidth: 900, variant: 'unknown' });
   var g = render('grid', { columns: 4, minWidth: 260, gap: 24 });
@@ -195,7 +289,11 @@ api.tests = function () {
     cardVariantIsTagged: /data-canvio-variant="elevated"/.test(c),
     escapesUserText: !/<script>alert/.test(c) && /&lt;script&gt;/.test(c),
     boundsTextLength: normalize('card', { title: 'x'.repeat(200) }).title.length === 120,
-    exposesFourVariants: inspect().variants.length === 4
+    exposesFourVariants: inspect().variants.length === 4,
+    responsiveColumnsAreClamped: normalizeResponsive({ desktopColumns: 99, tabletColumns: 0, mobileColumns: 5 }).desktopColumns === 6 && normalizeResponsive({ desktopColumns: 99, tabletColumns: 0, mobileColumns: 5 }).tabletColumns === 1 && normalizeResponsive({ desktopColumns: 99, tabletColumns: 0, mobileColumns: 5 }).mobileColumns === 2,
+    responsiveBreakpointsAreOrdered: normalizeResponsive({ tabletBreakpoint: 700, mobileBreakpoint: 750 }).mobileBreakpoint < 700,
+    responsiveCssHasThreeRanges: (responsiveCss('.cv-p124-test', { desktopColumns: 4, tabletColumns: 2, mobileColumns: 1 }).match(/@media/g) || []).length === 2,
+    rejectsUnsafeResponsiveSelector: (function () { try { responsiveCss('body', {}); return false; } catch (e) { return true; } })()
   };
 };
 window.CVAutoLayoutP124 = api;

@@ -213,3 +213,15 @@ No honest all-P completion claim is possible yet. In addition to P70's 14 open r
 | P130 cloud sync | **BLOCKED EXTERNAL** | Real Supabase project, schema/RLS, credentials and two-device recovery acceptance. |
 | P122.3 MCP | **NOT IMPLEMENTED** | Requires approved feature, transport, auth, consent, permission and threat-model contract. |
 | P70 release | **NOT CERTIFIED** | Fourteen real-world gates remain open. |
+
+## P124/P133/P143 continuation status — 2026-11-21
+
+| Area | Candidate implementation | Acceptance boundary |
+|---|---|---|
+| P124.2 | Selected component responsive CSS for desktop/tablet/mobile via existing GrapesJS editor and save owner | Candidate unit + Chromium suites pending; drag/resize, nested variants, general conversion and accessibility review remain open |
+| P133.3 | OffscreenCanvas Worker frame scaler; main-thread Canvas fallback; capture canvas/MediaRecorder unchanged | Candidate Node + Chromium proxy suite pending; cross-browser/mobile and real long-media tests remain open |
+| P133.4 | Same-owner OPFS sidecar for media >=32 MiB; explicit migration; quota preflight; staged write + IDB pointer update + rollback/fallback | Candidate unit + Chromium OPFS/rollback suite pending; real quota exhaustion, browser restart and large real projects remain open |
+| P143 Phase 2 | Styles, inline style attributes, literal template elements, inert script payloads, HTML-producing JS signals, dynamic script/Worker loaders | Candidate inventory test pending; heuristics are not semantic dependency proof; dependency DAG and staged extraction remain open |
+
+The user has explicitly deferred real-world/physical acceptance to a later session. Automated CI does not close P70's fourteen manual gates. No Stable/production certification is implied.
+

@@ -114,3 +114,13 @@ Quy tắc nhúng: mỗi lot là `<script id="canvio-lotNNN">` + bản độc l�
 - Latest verified artifact #387: 21,753,092 bytes, SHA-256 `31a2ba6e7494fd8e6fdf65210ef2714e43bf49dae399d910b8f4fe5e84b1f958`.
 - P124 advanced component/breakpoint editing and P133 OffscreenCanvas/large-media OPFS remain partial. Full P143 semantic dependency/style/template extraction is not complete.
 - P70 remains fail-closed (14 manual gates); P130 needs real Supabase/RLS/two-device validation; P122.3 needs approved MCP threat/security/transport contract. Do not claim CANVIO 1.0 Stable or production certification.
+
+## Next AI handoff — branch work/canvio-p124-p133-p143-completion-20261121
+
+1. Start from this candidate branch and read the latest `CANVIO_AI_GUIDE.md`; do not base changes on old P143 branches.
+2. Candidate changes: P124.2 selected-component responsive styling; P133.3 Offscreen Worker proxy frame renderer; P133.4 OPFS sidecar using the existing `CANVIO_81_MEDIA/media` store; P143 supplemental CSS/template/dynamic loader inventory and 28-pair parity registry.
+3. First action after PR creation: inspect candidate workflow jobs/logs. Confirm P133 OPFS rollback test and P133 proxy Worker output path, P124 CSS Manager/save test, P143 scanner fixture and canonical output. Do not merge on assumption.
+4. After candidate CI success, update docs with exact measured inventory counts and run IDs; merge only when all required CI jobs pass, then inspect post-merge mainline Pages/runtime.
+5. Keep OPFS local-only and do not claim cross-device sync. P130 still requires real Supabase deployment/schema/RLS credentials and two-device restore. P122.3 remains blocked pending approved security/transport/consent contract.
+6. Physical/real-world testing is intentionally deferred. Keep P70 NOT CERTIFIED and all fourteen manual gates open; do not weaken their acceptance criteria.
+

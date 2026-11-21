@@ -909,3 +909,14 @@ Hosted verification after the ffmpeg repair is complete:
 - P143 script-tag inventory: 150 tags, all inline, no external `src`, no module/async/defer, 147 unique IDs and zero duplicate IDs.
 - This does not close full P143. Semantic dependencies/boot order, all CSS/templates/dynamic loader inventory, reversible project-wide extraction, offline/PWA/CSP and rollback remain open.
 - P70 remains NOT certified (14 manual gates). P130 blocked on real Supabase/RLS and two-device tests. P122.3 waits for approved MCP security/transport contract.
+
+## 23.3.111 continuation — P124.2, P133.3/P133.4 and P143 asset inventory
+
+Code-completable work added in the current candidate branch:
+- P124.2 extends the existing Website Engine with selected-component responsive columns across desktop/tablet/mobile. It uses GrapesJS selection, CSS Manager rules and the existing Website Engine save path.
+- P133.3 adds OffscreenCanvas Worker frame scaling for the 4K→720p proxy while preserving the main capture canvas. A guarded Canvas 2D fallback remains available.
+- P133.4 adds large-media OPFS sidecar storage and explicit legacy migration. The only media metadata database remains `CANVIO_81_MEDIA/media`; OPFS stores Blob bytes, while the IDB record stores the pointer. Staged writes, size verification, quota preflight and fallback preserve the previous IDB record on failed metadata commit.
+- P143 adds CSS/style/template/dynamic loader inventory alongside the existing 150-script inventory and extends parity coverage to 28 source/embedded pairs.
+- Candidate automated validation is pending; do not mark these additions passed until PR workflow and post-merge mainline runs succeed.
+- Real-device/real-user tests remain deferred as requested. P70 continues NOT CERTIFIED with fourteen manual gates open. P130 still requires the owner's real Supabase deployment/schema/RLS and two-device test. P122.3 remains unimplemented until an approved MCP feature/transport/auth/consent/permission/threat contract exists.
+

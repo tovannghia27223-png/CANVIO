@@ -31,9 +31,11 @@ with tempfile.TemporaryDirectory(prefix='canvio-p133p-') as td:
         page.click('#cv133p-run')
         page.wait_for_function("document.querySelector('#cv133p-status').textContent.includes('Đã thêm')",timeout=90000)
         checks['proxyGeneratedAndImported']=True
-        details=page.evaluate("""()=>{const clips=CV.engines.video._state().clips;const original=clips.find(c=>c.name==='4k-source.webm');const proxy=clips.find(c=>/proxy-720p\\.webm$/i.test(c.name||''));return{status:document.querySelector('#cv133p-status').textContent,count:clips.length,original:!!original,proxy:!!proxy,proxyDuration:proxy&&proxy.duration}}""")
+        details=page.evaluate("""()=>{const clips=CV.engines.video._state().clips;const original=clips.find(c=>c.name==='4k-source.webm');const proxy=clips.find(c=>/proxy-720p\\.webm$/i.test(c.name||''));const status=document.querySelector('#cv133p-status').textContent;return{status,count:clips.length,original:!!original,proxy:!!proxy,proxyDuration:proxy&&proxy.duration,offscreenSupported:typeof Worker==='function'&&typeof OffscreenCanvas==='function'&&typeof createImageBitmap==='function',renderMode:status.includes('Offscreen Worker')?'offscreen-worker':status.includes('Canvas dự phòng')?'main-thread':'unknown'}}""")
         checks['timelineHasOriginalAndProxy']=details['count']>=selected['clipCount']+1 and details['original'] and details['proxy']
         checks['proxyDurationMatchesMedia']=details['proxyDuration'] is not None and abs(float(details['proxyDuration'])-3.0)<=0.5
+        checks['rendererModeReported']=details['renderMode'] in ('offscreen-worker','main-thread')
+        checks['offscreenWorkerUsedWhenSupported']=not details['offscreenSupported'] or details['renderMode']=='offscreen-worker'
         with page.expect_download(timeout=30000) as event:page.click('#cv133p-download')
         event.value.save_as(str(out))
         checks['downloadCreated']=out.exists() and out.stat().st_size>10000

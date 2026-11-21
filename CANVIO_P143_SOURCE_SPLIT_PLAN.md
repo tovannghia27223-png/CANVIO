@@ -68,3 +68,13 @@ Reduce CANVIO's single-file authoring burden without breaking the canonical app 
 - Phase 2 script-tag inventory is complete: 150 tags in exact source order, all inline; zero external src, module, async or defer; 147 unique IDs and no duplicate IDs.
 - Still required: inventory CSS and inline styles, HTML template payloads and dynamic script construction; human-reviewed semantic dependency/boot-order graph; then incremental reversible extraction with application regression, offline/PWA, CSP and rollback tests.
 - The global-reference list in the script inventory is heuristic only and must not be treated as a semantic dependency graph.
+
+## Phase 2 addendum — CSS, template payload and dynamic loader inventory (2026-11-21)
+
+- Added `tests/p143/build-asset-dependency-inventory.cjs` and `tests/p143/run-p143-asset-inventory-tests.cjs`.
+- New output `tests/p143/asset-dependency-inventory.json` records stylesheet links, real `<style>` blocks, inline style attributes, literal `<template>` elements, inert JSON/template script payloads, HTML-producing JavaScript signals (`innerHTML`, `outerHTML`, `insertAdjacentHTML`, template-element construction), and dynamic script/import/Worker/service-worker loader signals.
+- All entries record source order/line and stable SHA-256/byte metadata where the payload itself is measurable. Generated HTML and dynamic-loader matches are heuristic indicators; they do not prove a complete runtime template catalogue or semantic dependency DAG.
+- Workflow builds and tests this report after candidate index reconstruction and uploads it beside the full inline script inventory.
+- Literal template-element count may legitimately be zero; inert JSON payloads and HTML-producing JS signals are reported separately so absence of `<template>` tags is not misrepresented.
+- The P143 parity map now adds the P133.4 source/lot pair, bringing it to 28 pairs. Full source split remains incomplete until a human-reviewed boot/dependency graph and reversible CSS/module extraction, offline/PWA/CSP and rollback acceptance exist.
+

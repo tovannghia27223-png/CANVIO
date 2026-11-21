@@ -18,7 +18,13 @@ async def main():
         await page.evaluate("""() => {
           window.__p124Inserted = [];
           window.__p124SaveCount = 0;
-          window.CVWeb = { addComponents(markup) { window.__p124Inserted.push(markup); return true; } };
+          window.__p124Rules = [];
+          window.__p124Component = { getId() { return 'selected-hero'; }, addClass(name) { this.className = name; } };
+          window.CVWeb = {
+            addComponents(markup) { window.__p124Inserted.push(markup); return true; },
+            getSelected() { return window.__p124Component; },
+            Css: { setRule(selector, style, options) { window.__p124Rules.push({selector, style, options: options || null}); } }
+          };
           window.CV = { engines: { web: { save() { window.__p124SaveCount++; return true; } } } };
         }""")
         await page.add_script_tag(path=str(MODULE))
@@ -36,6 +42,10 @@ async def main():
         assert 'data-canvio-variant="soft"' in first
         assert "repeat(auto-fit,minmax" in first
         assert await page.evaluate("window.__p124SaveCount") == 1
+        await panel.locator("button[data-p124-apply-selected]").click()
+        await page.wait_for_function("window.__p124Rules.length === 3 && window.__p124SaveCount === 2")
+        assert await page.evaluate("window.__p124Component.className === 'cv-p124-selected-hero'")
+        assert await page.evaluate("window.__p124Rules[1].options.atRuleParams.includes('992px') && window.__p124Rules[2].options.atRuleParams.includes('480px')")
         await page.evaluate("""() => { window.CV.engines.web.save = () => { window.__p124SaveCount++; return false; }; }""")
         await panel.locator("button[data-p124-kind='card']").click()
         await page.wait_for_function("window.__p124Inserted.length === 2")
@@ -46,8 +56,8 @@ async def main():
         assert not errors, errors
         print(json.dumps({
             "suite": "P124 Chromium UI interaction",
-            "passed": 9,
-            "total": 9,
+            "passed": 12,
+            "total": 12,
             "checks": {
                 "panelMountsInCanonicalHost": True,
                 "fiveLayoutControls": True,
@@ -55,6 +65,8 @@ async def main():
                 "gridInsertUsesResponsiveCSS": True,
                 "variantSelectionApplied": True,
                 "canonicalSaveCalled": True,
+                "selectedElementGetsResponsiveClass": True,
+                "tabletAndMobileCSSRulesCreated": True,
                 "saveFailureReported": True,
                 "mobileViewportNoOverflow": True,
                 "zeroPageErrors": True

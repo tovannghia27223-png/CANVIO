@@ -452,3 +452,15 @@ The candidate workflow runs standalone/embedded source parity and API tests for 
 - P144.3: 38/38 CVWS route help; palette, keyboard, F1 focus trap/Escape and first-run tour pass.
 - P133 resilience and denoise Worker acceptance pass (OPFS round-trip/recovery; Worker matches main-thread output with maxDiff=0 and page responsive).
 - **P70 remains NOT CERTIFIED**: fourteen real-world gates are still open. Hosted fixtures do not prove physical target hardware, production provider, all media, screen-reader/accessibility, security headers, cross-origin restore or release operations.
+
+## Candidate QA — P124.2 / P133.3–P133.4 / P143 Phase 2 (2026-11-21)
+
+This section records candidate changes only. Hosted validation has not yet been observed for this branch.
+
+- P124.2 adds desktop/tablet/mobile responsive CSS to a selected GrapesJS component through the existing Website Engine; unit and Chromium coverage were expanded.
+- P133.3 introduces Worker/OffscreenCanvas frame scaling for proxy generation and keeps a main-thread Canvas 2D fallback.
+- P133.4 stores large media bytes in OPFS while retaining the existing `CANVIO_81_MEDIA/media` IndexedDB metadata owner. Candidate browser coverage exercises OPFS round-trip, legacy migration, proxy-sidecar reads, settings control and a simulated IDB metadata failure/rollback.
+- P143 candidate adds style/template/loader inventory and a fixture + canonical-index test; dynamic HTML and loader matches are explicitly heuristic.
+- Status: **PENDING HOSTED CI**. Do not report a pass until the PR candidate job reports success and the resulting logs/artifacts have been inspected.
+- Real-world verification remains deferred: all fourteen P70 gates stay open; no device, production backend, real footage quality, accessibility certification or cross-device sync is inferred from CI.
+

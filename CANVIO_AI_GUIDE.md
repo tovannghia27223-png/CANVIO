@@ -3846,3 +3846,30 @@ P144 tour: thêm bước bằng cách thêm vào mảng `STEPS` ({sel,title,text
 - Latest verified source artifact: `CANVIO-23.3.111-GITHUB-RUNTIME-VERIFIED-387`, 21,753,092 bytes, SHA-256 `31a2ba6e7494fd8e6fdf65210ef2714e43bf49dae399d910b8f4fe5e84b1f958`. 
 - P143 is still not a full source split: semantic dependency/boot-order DAG, complete CSS/inline-style/template/dynamic-loader inventory, reversible extraction and offline/CSP/rollback acceptance remain.
 - Release disposition remains fail-closed: P70 has fourteen real-world gates open; P130 requires deployed Supabase/schema/RLS and two-device validation; P122.3 requires an approved MCP feature/transport/auth/consent/permission/threat contract. P124 advanced breakpoint/component interactions and P133 remaining OffscreenCanvas/large-media OPFS work remain partial.
+
+## CANVIO continuation — P124.2 / P133.3–P133.4 / P143 Phase 2 (2026-11-21)
+
+### P124.2 — selected-component responsive controls
+- Standalone source: `canvio-p124-autolayout.js`; canonical inline lot: `canvio-lot124`; API: `window.CVAutoLayoutP124`, version 124.2.0.
+- Existing Website Engine/GrapesJS remains the only editor and project owner. The new action reads `CVWeb.getSelected()`, adds a stable `cv-p124-*` class, writes desktop/tablet/mobile CSS through the existing GrapesJS CSS Manager (`Css.setRule`, with `addStyle` fallback), then calls `CV.engines.web.save()`.
+- Controls expose column counts for desktop/tablet/mobile. Default max-width breakpoints are 992px and 480px; all inputs are clamped and ordered. No second editor, project model or persistence store is created.
+- This adds responsive styling to the selected component; it does not claim arbitrary component conversion, freeform breakpoint authoring, nested variants or drag/resize handles. Keyboard/screen-reader review remains separate.
+
+### P133.3 — Offscreen Worker proxy rendering
+- Standalone source: `canvio-p133-proxy.js`; canonical inline lot: `canvio-lot133p`; API version 133.3.0.
+- When Worker + OffscreenCanvas + createImageBitmap are available, decoded video frames are transferred as ImageBitmap to a Worker/OffscreenCanvas for scaling. The existing main-thread canvas remains the captureStream/MediaRecorder output surface because that is the canonical export path.
+- Unsupported APIs, Worker creation/runtime errors, or transfer failures fall back to the prior main-thread Canvas 2D draw loop. MediaRecorder codecs/audio handling and import through the existing Video Engine remain unchanged. The original timeline clip remains untouched.
+
+### P133.4 — large-media OPFS sidecar
+- Standalone source: `canvio-p133-media-opfs.js`; canonical inline lot: `canvio-lot133m`; API: `window.CVMediaOPFSP133`, version 133.4.0.
+- The canonical metadata owner remains IndexedDB database `CANVIO_81_MEDIA`, object store `media`. OPFS directory `canvio-video-media` stores bytes for media at/above 32 MiB; IDB retains the media ID and metadata pointer. Existing small-media records remain Blob-backed in IDB.
+- New writes use a unique staged OPFS file, verify the written byte length, then update the existing IDB record. If metadata commit fails, the staged OPFS file is removed and the original IDB Blob record remains. If OPFS/quota is unavailable, write falls back to the existing IDB Blob path.
+- Reads/deletes are routed through the same sidecar for Video Engine and P133 proxy. An explicit Settings action migrates legacy large IDB Blob records one-by-one after quota preflight. No automatic migration runs on page load.
+- OPFS is origin-local browser storage, not cloud synchronization or a replacement for Project Vault. Real quota-pressure, browser restart, long-media and cross-device behaviour are still acceptance work.
+
+### P143 — supplemental asset/dependency inventory
+- New generator: `tests/p143/build-asset-dependency-inventory.cjs`; output: `tests/p143/asset-dependency-inventory.json`.
+- The deterministic report records actual stylesheet links, style blocks, inline style attributes, template elements, inert JSON/template script payloads, HTML-producing JavaScript signals, and dynamically constructed script/Worker/service-worker loaders. It records order/line, byte count and SHA-256 where applicable.
+- Dynamic loader and JavaScript HTML-template matches are heuristic signals, not a semantic dependency DAG. A zero count of literal `<template>` elements does not mean no runtime-generated HTML. The 28-pair source parity registry still covers paired modules only; do not claim full project modularization.
+- The candidate workflow runs the new inventory builder/test, P124 unit/browser tests, P133 proxy/media tests and P143 parity before a merge decision. Results remain pending until the hosted run is complete.
+

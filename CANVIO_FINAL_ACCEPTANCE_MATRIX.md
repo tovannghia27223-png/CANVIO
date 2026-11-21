@@ -38,3 +38,15 @@
 | P134.2 Auto Reframe | 4.076 s from 123 packet PTS values; VP9 720×1280 + Opus; full decode | Real-footage occlusion and physical device evaluation remain manual. |
 | P133.2 proxy | 1280×720 VP9 + Opus; source and proxy both on timeline; original unchanged; full decode | Real long-media and cross-browser/mobile acceptance remain. |
 | P70 release gate | Fail-closed | Fourteen real-world acceptance gates remain open; production certification not granted. |
+
+## Candidate acceptance — pending hosted CI (2026-11-21)
+
+| Item | New automated coverage in candidate | Status |
+|---|---|---|
+| P124.2 selected component | Responsive class, desktop/tablet/mobile CSS rules, existing save path, save-failure messaging | Pending PR CI |
+| P133.3 proxy renderer | Worker/OffscreenCanvas path when supported; explicit main-thread fallback; proxy output/timeline regression | Pending PR CI |
+| P133.4 media OPFS | Same-owner IDB metadata pointer, large Blob round-trip, legacy migration, proxy read, settings control, staged-write rollback | Pending PR CI |
+| P143 asset inventory | CSS/style/template payload/HTML-generation/dynamic-loader inventory + fixture/canonical source assertions | Pending PR CI |
+
+The user has deferred physical/real-world checks. The fourteen P70 manual gates are not executed by this change and remain open.
+

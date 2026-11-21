@@ -117,3 +117,22 @@ Pull trước (`git pull --rebase origin main`; CI bot hay push commit build). A
 - P133.2 4K proxy acceptance: source and proxy both remain in timeline, 1280×720 VP9 plus Opus, full decode, original unchanged.
 - Artifact #387: 21,753,092 bytes, SHA-256 `31a2ba6e7494fd8e6fdf65210ef2714e43bf49dae399d910b8f4fe5e84b1f958`.
 - Still externally/manual: P70 14 gates, P130 Supabase/RLS/two-device sync, P122.3 MCP security/transport contract, P124 advanced editor controls, P133 OffscreenCanvas/large media OPFS and full P143 semantic dependency/style/template extraction.
+
+## 2026-11-21 — candidate continuation after verified mainline
+
+User instruction: defer physical/real-world testing; continue all code-completable items first.
+
+### Implemented in candidate branch (hosted CI pending)
+- P124.2: responsive styling for the selected GrapesJS component using desktop/tablet/mobile column controls, existing CSS Manager, and Website Engine save owner. Unit suite count updated to 36; Chromium checks extended to 12.
+- P133.3: worker-backed OffscreenCanvas frame scaling for 4K proxy generation; main-thread 2D canvas fallback; main canvas remains the MediaRecorder capture surface.
+- P133.4: large-media OPFS sidecar (32 MiB threshold) in the existing `CANVIO_81_MEDIA/media` owner. Staged file is size-verified before the IDB pointer is updated. IDB metadata failure deletes the staged file and leaves the prior Blob record untouched; quota/OPFS unsupported paths fall back to IDB. Explicit settings action migrates legacy large media.
+- P133.2 proxy reader now resolves OPFS-backed media through the P133.4 sidecar.
+- P143: adds a deterministic inventory for style blocks/attributes, template elements, inert JSON/template script payloads, HTML-generating code signals and dynamic script/Worker/service-worker loaders. Registry grows from 27 to 28 source/embedded pairs.
+- Candidate workflow adds P133.4 Node/Chromium tests and P143 scanner fixture/canonical tests, and packages the asset dependency inventory.
+
+### Acceptance boundary
+- Changes are on a work branch, not yet merged. Do not claim pass until GitHub candidate workflows complete and logs are reviewed.
+- Real-world testing was explicitly deferred. P70's fourteen manual gates remain open and release certification remains false.
+- P130 Cloud Sync remains blocked pending the owner's actual Supabase deployment/schema/RLS and two-device restore. P122.3 MCP remains unimplemented without an approved feature/transport/auth/consent/permission/threat contract.
+- P143 semantic dependency DAG, project-wide extraction and CSP/PWA/rollback testing remain open after inventory collection.
+
