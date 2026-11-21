@@ -201,6 +201,32 @@ jobs:
           console.log('P127.7 integrated into canonical index.html');
           NODE
 
+      - name: Integrate P133.2 local 4K to 720p proxy
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs=require('node:fs');
+          const file='index.html',source=fs.readFileSync('canvio-p133-proxy.js','utf8').trim();
+          if(!source.includes('window.CVProxyP133'))throw new Error('P133.2 source contract missing');
+          const id='canvio-lot133p',open='<script id="'+id+'">';
+          const first=fs.readFileSync(file,'utf8');
+          let html=first,at=html.indexOf(open);
+          if(at>=0){
+            if(html.indexOf(open,at+1)>=0)throw new Error('P133.2 duplicate lot');
+            const start=at+open.length,end=html.indexOf('</script>',start);
+            if(end<0)throw new Error('P133.2 embedded script close missing');
+            html=html.slice(0,start)+'\n'+source+'\n'+html.slice(end);
+          }else{
+            at=html.lastIndexOf('</body>');
+            if(at<0)throw new Error('index.html has no closing body tag');
+            html=html.slice(0,at)+open+'\n'+source+'\n</script>\n'+html.slice(at);
+          }
+          if((html.match(/id="canvio-lot133p"/g)||[]).length!==1)throw new Error('P133.2 embedded lot duplicate/missing');
+          fs.writeFileSync(file,html,'utf8');
+          console.log('P133.2 local 4K-to-720p proxy integrated');
+          NODE
+
       - name: Integrate P131.3 safe HTML import into canonical security hub
         shell: bash
         run: |
@@ -519,6 +545,7 @@ jobs:
           node tests/p127/run-p138d-tests.cjs
           node tests/p127/run-p140c-tests.cjs
           node tests/p127/run-p133r-tests.cjs
+          node tests/p127/run-p133p-tests.cjs
           node tests/p127/run-p144u-tests.cjs
           node tests/hosted/p107-portable-roundtrip.cjs
 
@@ -579,6 +606,7 @@ jobs:
           /tmp/canvio-playwright/bin/python tests/p145/run-p138-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p140-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p133-browser.py
+          /tmp/canvio-playwright/bin/python tests/p145/run-p133-proxy-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p144-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p144t-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p133w-browser.py
