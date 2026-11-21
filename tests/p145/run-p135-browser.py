@@ -66,13 +66,16 @@ with sync_playwright() as p:
       const rows=await CANVIOPersistentProjects.list();
       const rec=rows.find(x=>x.editor==='pixelStudio'&&x.state&&x.state.__canvioPixelAdjustmentProject===1);
       localStorage.setItem('__p135ExpectedPixel',JSON.stringify(Array.from(CVNativeEngines.pixel.canvas.getContext('2d').getImageData(0,0,1,1).data)));
+      localStorage.setItem('__p135ExpectedRaster',CVNativeEngines.pixel.snapshotState());
       return {snapshotMarker:snap&&snap.__canvioPixelAdjustmentProject===1,
         snapshotLayer:snap&&snap.adjustments&&snap.adjustments.layers.some(x=>x.type==='brightness'&&x.value===150),
-        saved:ok,recordFound:!!rec,recordLayer:!!(rec&&rec.state.adjustments.layers.some(x=>x.type==='brightness'&&x.value===150))};
+        selectedLayer:snap&&snap.adjustments&&snap.adjustments.selectedId===snap.adjustments.layers.find(x=>x.value===150)?.id,
+        saved:ok,recordFound:!!rec,recordLayer:!!(rec&&rec.state.adjustments.layers.some(x=>x.type==='brightness'&&x.value===150)),
+        recordSelected:!!(rec&&rec.state.adjustments.selectedId===rec.state.adjustments.layers.find(x=>x.value===150)?.id)};
     }""")
-    checks['projectSnapshotIncludesAdjustmentStack']=project_record['snapshotMarker'] and project_record['snapshotLayer']
+    checks['projectSnapshotIncludesAdjustmentStack']=project_record['snapshotMarker'] and project_record['snapshotLayer'] and project_record['selectedLayer']
     checks['projectBridgeActiveForProjectVault']=page.evaluate("!!CVUnifiedLayers.__p135ProjectBridge && CVPixelAdjustmentsP135.getState().projectPersistenceAvailable")
-    checks['projectVaultSavedAdjustmentMetadata']=project_record['saved'] and project_record['recordFound'] and project_record['recordLayer']
+    checks['projectVaultSavedAdjustmentMetadata']=project_record['saved'] and project_record['recordFound'] and project_record['recordLayer'] and project_record['recordSelected']
     page.reload(wait_until='commit',timeout=60000)
     page.wait_for_function("!!(window.CVPixelAdjustmentsP135 && window.CVUnifiedLayers && window.CANVIOPersistentProjects)",timeout=90000)
     page.wait_for_function("""(()=>{const state=window.CVPixelAdjustmentsP135?.getState();const canvas=document.querySelector("#pxCanvas");return !!(state&&state.layers.some(x=>x.type==="brightness"&&x.value===150)&&canvas&&canvas.style.filter.includes("brightness(150%)"))})()""",timeout=30000,polling=250)
@@ -80,7 +83,8 @@ with sync_playwright() as p:
       const state=CVPixelAdjustmentsP135.getState(),canvas=CVNativeEngines.pixel.canvas;
       const expected=JSON.parse(localStorage.getItem('__p135ExpectedPixel')||'null');
       const actual=Array.from(canvas.getContext('2d').getImageData(0,0,1,1).data);
-      return !!(state.layers.some(x=>x.type==='brightness'&&x.value===150)&&canvas.style.filter.includes('brightness(150%)')&&JSON.stringify(actual)===JSON.stringify(expected));
+      const expectedRaster=localStorage.getItem('__p135ExpectedRaster');
+      return !!(state.layers.some(x=>x.type==='brightness'&&x.value===150)&&state.selectedId===state.layers.find(x=>x.value===150)?.id&&canvas.style.filter.includes('brightness(150%)')&&JSON.stringify(actual)===JSON.stringify(expected)&&CVNativeEngines.pixel.snapshotState()===expectedRaster);
     })()""")
     b.close()
 httpd.shutdown()
