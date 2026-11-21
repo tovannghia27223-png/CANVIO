@@ -1,0 +1,86 @@
+{
+  "version": 1,
+  "description": "P143 phase-1 source registry for standalone feature modules integrated into canonical inline script lots. This list is intentionally scoped to workflow-managed modules; it is not a claim that the entire 4.9 MB index has been modularized.",
+  "modules": [
+    {
+      "source": "canvio-p125-scrollframes.js",
+      "scriptId": "canvio-lot125f"
+    },
+    {
+      "source": "canvio-p125-storyboard.js",
+      "scriptId": "canvio-lot1252"
+    },
+    {
+      "source": "canvio-p136-trace.js",
+      "scriptId": "canvio-lot136t"
+    },
+    {
+      "source": "canvio-p145-templates.js",
+      "scriptId": "canvio-lot1455"
+    },
+    {
+      "source": "canvio-p145-icons.js",
+      "scriptId": "canvio-lot1456"
+    },
+    {
+      "source": "canvio-p145-typography.js",
+      "scriptId": "canvio-lot1457"
+    },
+    {
+      "source": "canvio-p145-visual-assets.js",
+      "scriptId": "canvio-lot1458"
+    },
+    {
+      "source": "canvio-p145-search-gate.js",
+      "scriptId": "canvio-lot145910"
+    },
+    {
+      "source": "canvio-p127-duck.js",
+      "scriptId": "canvio-lot127k"
+    },
+    {
+      "source": "canvio-p134-reframe.js",
+      "scriptId": "canvio-lot134r"
+    },
+    {
+      "source": "canvio-p124-autolayout.js",
+      "scriptId": "canvio-lot124"
+    },
+    {
+      "source": "canvio-p133-proxy.js",
+      "scriptId": "canvio-lot133p"
+    },
+    {
+      "source": "canvio-p144-ux.js",
+      "scriptId": "canvio-lot144u"
+    },
+    {
+      "source": "canvio-p131-security.js",
+      "scriptId": "canvio-lot131"
+    },
+    {
+      "source": "canvio-p145-shader.js",
+      "scriptId": "canvio-lot1452"
+    },
+    {
+      "source": "canvio-p145-music-preview.js",
+      "scriptId": "canvio-lot1454b"
+    },
+    {
+      "source": "canvio-p145-music.js",
+      "scriptId": "canvio-lot1454"
+    },
+    {
+      "source": "canvio-p132-gif.js",
+      "scriptId": "canvio-lot132g"
+    },
+    {
+      "source": "canvio-p127-director.js",
+      "scriptId": "canvio-lot1272"
+    },
+    {
+      "source": "canvio-p145-core.js",
+      "scriptId": "canvio-lot145c"
+    }
+  ]
+}

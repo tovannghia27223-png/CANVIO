@@ -163,3 +163,20 @@ No honest all-P completion claim is possible yet. In addition to P70's 14 open r
 | P130 | **Blocked externally**: no verified Supabase project/schema/RLS/credentials/two-device environment. | Requires a user-owned deployed backend and independent-device restore test. |
 | P122.3 | **Not implemented**: roadmap has no feature/security/transport/permission contract. | Define and approve exact MCP contract/threat model before implementation. |
 | P70 | **Not certified**: fourteen real-world acceptance gates remain open. | Actual browser/device/media/provider/hosting/accessibility/recovery/release-operation evidence and review. |
+
+## P143 Phase 1 — candidate based on main 6481d83 (2026-11-21)
+
+- Carries the 20-module source registry/parity gate onto current main after the hosted package/manifest bot commit. Prior run #363 passed 39/39, including source parity and same-origin browser acceptance; new current-main hosted run is pending.
+- Full P143 remains OPEN until all inline JS/CSS is inventoried, dependencies/boot order mapped and staged extraction passes app/rollback/offline/CSP acceptance.
+
+
+## P134.2 duration test reliability fix — 2026-11-21
+
+- Hosted rerun #371 exposed a bad WebM test assumption: `r_frame_rate=60/1` was used when container duration and avg frame rate were missing, under-measuring a 4.1 s synthetic output as 2.05 s. Video decode/audio preservation remained PASS; only durationWithinTolerance failed.
+- Updated P134 browser acceptance to use actual ffprobe packet PTS and median frame duration, with metadata and 30 fps configured fallback. Run #373 on latest-main PR #54 is pending; keep P143/overall CI unmerged until result.
+
+## P143 Phase 2 — script inventory candidate (2026-11-21)
+
+- Added hosted inventory generator tests/p143/build-inline-source-inventory.cjs and JSON output tests/p143/inline-source-inventory.json covering all canonical script tags in execution order, with ID/type/src/async/defer/bytes/SHA256 and heuristic global references.
+- Report is included in packaged source and upload artifact. Current hosted run will verify generation.
+- Remaining P143: inline CSS/HTML templates/dynamic loaders inventory, semantic dependency DAG, initialization/DOM order review, staged reversible extraction, CSP/offline/rollback.

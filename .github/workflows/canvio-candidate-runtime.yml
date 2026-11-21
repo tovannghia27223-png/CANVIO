@@ -495,6 +495,19 @@ jobs:
           node scripts/extract-integrated-modules.mjs
           for file in canvio-p74-p81-three-viewer.js canvio-p85-studio.js canvio-p102-background-removal.js canvio-p105-p107-depth-parallax.js canvio-p68-p70.js canvio-p72-glb-viewer.js canvio-p73-offline-site.js canvio-p82-p84-vector-pdf.js canvio-p87-cv-docx.js canvio-p90-p96.js canvio-p97-p101.js canvio-p104.js canvio-p127-duck.js canvio-p145-shader.js assets/canvio-rmbg-worker.js assets/canvio-depth-worker.js assets/canvio-whisper-worker.js; do node --check "$file"; done
 
+      - name: P143 standalone source and canonical lot parity audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          node tests/p143/run-p143-source-parity.cjs
+
+      - name: P143 complete canonical inline script inventory
+        shell: bash
+        run: |
+          set -euo pipefail
+          node tests/p143/build-inline-source-inventory.cjs
+          test -s tests/p143/inline-source-inventory.json
+
       - name: Audit complete HTML and all inline JavaScript
         shell: bash
         run: |
@@ -820,6 +833,7 @@ jobs:
             dist/CANVIO_23.3.111_GITHUB_RUNTIME_VERIFIED_SOURCE_2026-11-18.zip.sha256
             CANVIO_MANIFEST.json
             tests/hosted/*.json
+            tests/p143/inline-source-inventory.json
             assets/three/THREE-VENDOR-MANIFEST.json
             assets/p85/P85-VENDOR-MANIFEST.json
             assets/three/THREE-VENDOR-NOTICE.md

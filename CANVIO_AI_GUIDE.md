@@ -3794,3 +3794,24 @@ P144 tour: thêm bước bằng cách thêm vào mảng `STEPS` ({sel,title,text
 - P133.2 source owner: canvio-p133-proxy.js / canvio-lot133p / CVProxyP133. 4K-to-WebM proxy adds a new clip through existing Video Engine importFiles and leaves the original untouched; 1280×720 synthetic 4K fixture, Opus audio and full decode passed hosted Chromium acceptance. Remaining P133: OffscreenCanvas use cases and selected large-media migration to OPFS with quota/migration/rollback tests.
 - P144.3 updates existing CVUxP144 to 144.3.0; contextual help covers all 38 routes registered through CVWS in hosted Chromium. Existing F1, palette, shortcuts, tour and recent-command owner are preserved; wording/accessibility review remains manual.
 - Do not mark CANVIO 1.0 Stable: P70 remains fail-closed with fourteen real-world gates open.
+
+## P143 Phase 1 — parity gate on latest main (2026-11-21)
+
+- Registry: tests/p143/source-module-map.json; audit: tests/p143/run-p143-source-parity.cjs; staged extraction plan: CANVIO_P143_SOURCE_SPLIT_PLAN.md.
+- Scope: 20 workflow-managed standalone feature modules and their canonical inline lots. Checks unique lot, JS syntax in both copies, CRLF-normalized content parity, and classic inline safety.
+- Previous workflow #363 passed this gate and all 39 steps. This candidate re-applies it after the latest mainline bot commit 6481d83 and reruns CI before merge.
+- Full P143 remains open: all-inline script/style inventory, dependency/boot order DAG, staged reversible extraction, offline/PWA/CSP and rollback acceptance are not complete.
+
+
+## P134.2 QA robustness update (2026-11-21 · candidate)
+
+- `tests/p145/run-p134r-browser.py` now measures WebM duration from ffprobe video packet presentation timestamps and median packet/frame duration when container/stream duration is absent. The exporter uses canvas.captureStream(30); nominal `r_frame_rate` can be an inaccurate 60/1 and is no longer trusted as the primary duration measurement.
+- Fallback to 30 fps is only used if both container duration and packet timestamps are unavailable. CI reports packet count, first/last PTS and median frame interval for diagnosis.
+- Current-main CI rerun is pending; do not claim this correction accepted until the new hosted run completes.
+
+## P143 Phase 2 — canonical inline script inventory (2026-11-21 · candidate)
+
+- Added tests/p143/build-inline-source-inventory.cjs. After all hosted integration steps, it enumerates every <script> block in restored canonical index.html in execution order, recording ID, type, src, async/defer/nomodule flags, byte size, SHA-256, detected window exports and heuristic references to known global owners.
+- Output: tests/p143/inline-source-inventory.json. The report is included in the candidate source ZIP and uploaded acceptance artifact.
+- This is a complete script-tag inventory, but known-global detection is heuristic and not a semantic dependency/boot-order DAG. Inline CSS/stylesheets, template strings and dynamic script construction require a separate inventory. No scripts are moved or reordered in this phase.
+- Hosted CI must generate the report before this phase is marked PASS.

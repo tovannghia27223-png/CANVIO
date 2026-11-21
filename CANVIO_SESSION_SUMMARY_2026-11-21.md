@@ -68,3 +68,22 @@ Pull trước (`git pull --rebase origin main`; CI bot hay push commit build). A
 - P124 Auto Layout: five presets/four variants; Chromium 9/9. P133.2 proxy: 4K synthetic clip generates 1280×720 WebM with Opus audio, full decode, new timeline clip and untouched original. P144.3 contextual help: all 38 CVWS routes covered; tour and keyboard smoke pass.
 - Began P143 Phase 1: 20-module standalone/inline-lot source registry and parity test. Hosted run #363 passed source integration, syntax, P143 parity audit, full HTML audit, P47–P70 regressions, integration source contracts and P107 ZIP round-trip; same-origin browser phase was still running.
 - Updated Guide, Roadmap, tracker, QA, acceptance matrix, handoff prompt and this summary.
+
+## P143 current-main final rebase
+
+- Main advanced to 6481d83 after hosted build artifact commit; previous P143 branches became stale.
+- Created work/p143-parity-current-main-final-20261121 from latest main, copied the 20-module registry/audit and split plan, and re-added the hosted workflow gate.
+- Documentation updated; hosted CI pending. Prior candidate #363 had full success 39/39, including parity audit and browser matrix.
+
+
+## P134.2 CI regression correction — 2026-11-21
+
+- P143 rebased run #371 failed only at P134.2 `durationWithinTolerance`: WebM had 123 frames but no format/stream duration and incorrect 60 fps nominal metadata, so the old test derived 2.05 s instead of ~4.1 s.
+- Updated browser test to measure packet presentation timestamp range plus median packet duration, with 30 fps fallback only when PTS missing. Added packet diagnostics. No tolerance was relaxed and exporter code was unchanged.
+- Latest-main rerun #373 is pending; PR #54 must remain open until full CI succeeds.
+
+## P143 Phase 2 — complete inline script inventory added
+
+- Added inventory generator tests/p143/build-inline-source-inventory.cjs to list every script tag from the restored canonical index.html in execution order, with IDs, type/src, async/defer, byte size, SHA-256 and heuristic known-global reads/exports.
+- It writes tests/p143/inline-source-inventory.json, included in the ZIP and uploaded evidence artifact. Hosted validation for this new step is pending.
+- Does not yet map CSS/templates or establish the full semantic dependency/boot-order DAG; no script reorder/extraction performed.

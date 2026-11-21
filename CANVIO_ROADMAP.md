@@ -864,3 +864,22 @@ Hosted verification after the ffmpeg repair is complete:
 - P144.3 contextual help uses the existing CVUxP144 owner and covers all 38 registered CVWS routes; hosted Chromium route-coverage test PASS.
 - P143 remains in Phase 1 candidate branch: a 20-module standalone/embedded parity audit has passed pre-browser hosted gates in run #363; wait for the full workflow result before merge. This is not full index modularization.
 - P70 still has fourteen open manual gates; not production-certified.
+
+## P143 Phase 1 — final current-main candidate (2026-11-21)
+
+- Branch work/p143-parity-current-main-final-20261121 re-applies the 20-module source parity manifest/audit after main commit 6481d83.
+- Previous candidate run #363 passed the P143 gate and all 39 steps; current branch reruns same-origin browser matrix and build against the latest main.
+- Phase 1 is an integrity control for 20 sources, not a full index split. Full script/style inventory, dependency DAG and staged reversible extraction remain open.
+
+
+## P134.2 browser duration assertion correction (2026-11-21)
+
+- Root cause found in hosted rerun: WebM did not carry format/stream duration and ffprobe reported `r_frame_rate=60/1` while `avg_frame_rate=0/0`, producing an invalid calculated duration (2.05 s for a ~4.1 s output).
+- Updated `tests/p145/run-p134r-browser.py` to prefer video packet PTS range + median packet duration, use actual format/stream duration when available, and reserve the exporter-configured 30 fps fallback for the case where packet timestamps are missing. Added PTS diagnostics.
+- This changes test measurement, not the exporter or 3.5–4.5 s acceptance range. Current-main hosted rerun #373 pending.
+
+## P143 Phase 2 — full inline script inventory (2026-11-21 · candidate)
+
+- Added tests/p143/build-inline-source-inventory.cjs to enumerate all script tags from the rebuilt canonical index.html in exact browser order. Records each script's ID/type/src/async/defer flags, bytes, SHA-256, detected globals and heuristic known-global reads.
+- Generates tests/p143/inline-source-inventory.json, packaged into the candidate ZIP and hosted evidence artifact.
+- This is a full script-tag inventory, not semantic dependency graph. It does not inventory all CSS/template/dynamic script paths or change any loading order. Full P143 extraction remains open until dependencies/boot order are reviewed and extraction staged.
