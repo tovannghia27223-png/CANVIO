@@ -36,4 +36,4 @@ assert.equal(api.curveFromMotion(),null,'spring linear() cannot be silently misr
 const mixed=api.motionCurveState({motion:{keyframes:[{t:0,bezier:[.2,.8,.3,1]},{t:50,bezier:[.42,0,1,1]},{t:100}]}});
 assert.equal(mixed.mixed,true,'different keyframe-segment curves are preserved as mixed');
 assert(!/localStorage|indexedDB|CANVIO_PROJECT_VAULT|new[ \t]+(?:class[ \t]+)?Timeline/i.test(source),'module adds no storage or timeline owner');
-console.log(JSON.stringify({suite:'P119.3 shared easing with canonical Video Engine',passed:16,total:16,failed:[]},null,2));
+console.log(JSON.stringify({suite:'P119.3 shared easing with canonical Video Engine',passed:20,total:20,failed:[]},null,2));
