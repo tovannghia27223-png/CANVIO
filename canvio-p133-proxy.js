@@ -138,8 +138,11 @@ function mount(){
    outputUrl=URL.createObjectURL(proxy.blob);download.href=outputUrl;result.style.display='block';
    var before=Array.isArray(state.clips)?state.clips.length:0;
    var imported=await v.importFiles({target:{files:[file],value:''}});
-   var afterState=v._state&&v._state(),after=afterState&&Array.isArray(afterState.clips)?afterState.clips.length:before;
-   if(imported===false||after<=before)throw new Error('Đã tạo được proxy và có thể tải xuống, nhưng Video Engine chưa xác nhận clip mới trên timeline. Hãy tải tệp rồi nhập thủ công.');
+   var afterState=v._state&&v._state(),added=afterState&&Array.isArray(afterState.clips)?afterState.clips.slice(before):[],after=afterState&&Array.isArray(afterState.clips)?afterState.clips.length:before;
+   if(imported===false||!added.length)throw new Error('Đã tạo được proxy và có thể tải xuống, nhưng Video Engine chưa xác nhận clip mới trên timeline. Hãy tải tệp rồi nhập thủ công.');
+   var proxyClip=added.find(function(x){return afterState.fileRefs&&(afterState.fileRefs[x.mediaId||x.id]===file);})||added[0];
+   proxyClip.name=file.name;proxyClip.duration=Math.max(.2,proxy.duration);proxyClip.trimIn=0;proxyClip.trimOut=null;
+   if(v.commit)v.commit();
    progress.value=100;
    say('Đã thêm '+file.name+' vào timeline ('+proxy.width+'×'+proxy.height+' · '+(proxy.bytes/1048576).toFixed(1)+' MB · '+(proxy.audioPreserved?'có audio':'không có audio')+'). Clip gốc không bị sửa; hãy kiểm tra rồi thay thủ công nếu muốn.');
   }catch(e){say(e&&e.message?e.message:String(e));progress.value=0;}
