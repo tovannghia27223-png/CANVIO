@@ -969,3 +969,12 @@ Hosted verification after the ffmpeg repair is complete:
 - Acceptance boundary: the editable layer stack is tab-memory only; it is not part of the current Pixel snapshotState() contract (PNG data URL), so page reload/project restore does not preserve editable stack metadata. This is an initial P135 increment only.
 - CI adds Node parity/source assertions and hosted same-origin Chromium interaction/export checks. Status remains CANDIDATE / PENDING HOSTED RUN, not accepted.
 - Next: project-owned persistence contract for adjustment metadata, per-layer masks/local adjustments, memory/blur edge tests. P139 remains OPEN.
+
+## P139.1 — Motion Lab parent/null & text animator (candidate · 2026-11-21)
+
+- Added canvio-p139-motionlab.js, embedded as canvio-lot139, with window.CVMotionLabP139.
+- Extends the existing Motion Lab object records: Null Controller hierarchy, parent/unparent, cycle validation, grouped x/y/scale/rotation, and per-grapheme text animation (rise/fade/scale/wave/tracking) using easing presets from P119.
+- Metadata is part of existing snapshotState() / restoreState(); no second store or timeline.
+- Workflow applies guarded render-loop hooks to the existing Motion Lab draw function; native export/play remains its owner.
+- Node contracts pass (8 model assertions plus animator-value assertion); hosted Chromium UI/snapshot/render acceptance pending.
+- Still open: precomp, motion blur, word/range animation, comprehensive keyframe editor and real project/media acceptance. P139 is PARTIAL.
