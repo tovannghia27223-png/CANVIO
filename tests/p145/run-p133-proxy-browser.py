@@ -31,7 +31,9 @@ with tempfile.TemporaryDirectory(prefix='canvio-p133p-') as td:
         page.click('#cv133p-run')
         page.wait_for_function("document.querySelector('#cv133p-status').textContent.includes('Đã thêm')",timeout=90000)
         checks['proxyGeneratedAndImported']=True
-        details=page.evaluate("""()=>{const clips=CV.engines.video._state().clips;const original=clips.find(c=>c.name==='4k-source.webm');const proxy=clips.find(c=>/proxy-720p\\.webm$/i.test(c.name||''));return{status:document.querySelector('#cv133p-status').textContent,count:clips.length,original:!!original,proxy:!!proxy,proxyDuration:proxy&&proxy.duration}}""")
+        checks['offscreenCanvasWorkerUsed']=details['renderPath']=='offscreen-worker'
+        checks['workerFallbackIsAvailable']=page.evaluate("CVProxyP133.tests().offscreenWorkerHasSafeFallback && CVProxyP133.tests().offscreenScalerIsSelfContained")
+        details=page.evaluate("""()=>{const clips=CV.engines.video._state().clips;const original=clips.find(c=>c.name==='4k-source.webm');const proxy=clips.find(c=>/proxy-720p\\.webm$/i.test(c.name||''));return{status:document.querySelector('#cv133p-status').textContent,count:clips.length,original:!!original,proxy:!!proxy,proxyDuration:proxy&&proxy.duration,renderPath:CVProxyP133.getLastRenderPath()}}""")
         checks['timelineHasOriginalAndProxy']=details['count']>=selected['clipCount']+1 and details['original'] and details['proxy']
         checks['proxyDurationMatchesMedia']=details['proxyDuration'] is not None and abs(float(details['proxyDuration'])-3.0)<=0.5
         with page.expect_download(timeout=30000) as event:page.click('#cv133p-download')
