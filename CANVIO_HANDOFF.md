@@ -270,3 +270,11 @@ The candidate is built and verified by the hosted runtime workflow. Runtime vend
 - Newly reconciled explicit open items from the existing handoff/roadmap: P122.3 MCP (not implemented/no transport-security contract), P124 Auto Layout/Component (P123 static starters are not equivalent), P133 OPFS/proxy (no owner/test; must coordinate with current storage), P143 full code split (not performed), and P144 (basic palette already in P109; parity audit before extending).
 - P142 Pages deployment is confirmed by run #192 (`44819441586`), but real-origin, Windows/GTX 1650/RAM 7 GB, Firefox/WebKit/touch and physical GPU acceptance have not been performed.
 - PR #44 docs update hosted run #320 passed; artifact SHA-256 `74cb03f31a7c55d94f69376b74f46a22bef1538b473aeca1165c42296f2e69ba`. Do not interpret docs/CI success as all-P or Stable certification.
+
+## P124.1 — Auto Layout implementation handoff (2026-11-21)
+
+- Source: `canvio-p124-autolayout.js`; inline script ID: `canvio-lot124`; global API: `window.CVAutoLayoutP124`.
+- UI mounts in existing `#page-webEngine`; public mutation path is `CVWeb.addComponents(markup)`, persistence is `CV.engines.web.save()`. Do not access GrapesJS private editor state or create a second project/store.
+- Presets: stack, row, grid, split, card. Card variants: surface, outline, elevated, soft. Text is escaped; numeric dimensions/gaps are clamped; grid uses auto-fit/minmax and row uses flex-wrap.
+- Save failure after insertion is reported honestly and directs user to undo; no remote assets or runtime dependencies.
+- Remaining: arbitrary selected component conversion, breakpoint editing UI, nested component variant synchronization, drag/resize constraint handles and actual browser visual/accessibility acceptance. Keep P124 partial.
