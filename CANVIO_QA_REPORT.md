@@ -405,3 +405,9 @@ The candidate workflow runs standalone/embedded source parity and API tests for 
 - P133.2 proxy acceptance: synthetic 4K source imported, proxy added as a second timeline clip, original preserved, 1280×720 WebM, Opus audio, complete ffmpeg decode, zero page errors.
 - P144.3 F1 contextual help: 38 registered CVWS routes, 0 missing; focus trap/Escape and shortcut tests pass.
 - P70 is still NOT certified. Fourteen manual gates listed in §7 remain open.
+
+## P143 Phase 1 — source parity gate (rebased candidate, 2026-11-21)
+
+- Prior hosted run #363 passed 39/39 steps and includes successful 20-module standalone/embedded parity, full inline HTML/JS audit, P47–P70 regressions, P107 ZIP round-trip and same-origin browser acceptance.
+- Current candidate work/p143-source-parity-rebased-20261121 is rebased after mainline documentation commit d33fcdaa618cf35c2646d2768fa5e0ec60184413 and reruns hosted validation.
+- Full project-wide source split remains open; Phase 1 covers only the 20 explicitly listed modules.
