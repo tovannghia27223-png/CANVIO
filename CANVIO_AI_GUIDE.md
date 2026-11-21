@@ -3828,3 +3828,10 @@ P144 tour: thêm bước bằng cách thêm vào mảng `STEPS` ({sel,title,text
 - P143 is not a full source split: semantic dependency/boot-order DAG, CSS/template/dynamic-loader inventory and reversible staged extraction remain open.
 - Artifact #384: 21,748,431 bytes; SHA-256 d07e7aa93e09357fae6c027578d6ece7d8d011f0e2019852ee72ece4d89dc17a. URL: https://github.com/tovannghia27223-png/CANVIO/actions/runs/44889536662/artifacts/14701064610.
 - Release boundary unchanged: P70 releaseCertified=false with fourteen manual gates open. P130 needs real Supabase/schema/RLS/two-device test; P122.3 MCP waits for an approved transport/auth/consent/permission/threat contract.
+
+
+## P143 parity coverage extension — 27 modules (2026-11-21 · candidate)
+
+- Extended tests/p143/source-module-map.json from 20 to 27 standalone/embedded pairs. Added P127 Loudness/Templates, P133 Resilience, P134 Scopes, P138 Denoise, P140 Charts and P145 SFX.
+- Each added source already has its own individual parity test; central P143 gate now enforces unique lot, syntax, CRLF-normalized equality and classic-script safety for 27 modules.
+- No runtime code or script order changed. Hosted validation pending. Full semantic dependency/boot-order DAG, CSS/template/dynamic-loader inventory and staged extraction remain open.
