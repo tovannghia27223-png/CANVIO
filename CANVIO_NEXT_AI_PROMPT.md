@@ -36,3 +36,10 @@ Quy tắc nhúng: mỗi lot là `<script id="canvio-lotNNN">` + bản độc l�
 - Dò tương phản cạnh + sai khác frame; 9:16/1:1; WebM; giới hạn 60 giây/100 MiB. Không phải face/object AI; không upload/đụng timeline.
 - Đọc kết quả PR/hosted CI trước khi merge. Không sửa PR #45. Nếu CI pass, kiểm source parity/index build/manifest trước khi xác nhận main.
 - P133 trên main đã có OPFS/recovery + denoise Worker; chỉ còn proxy 720p, OffscreenCanvas use-case cụ thể và migration tài sản lớn có quota/rollback. P143 vẫn là tách mã theo từng lot và parity test.
+
+
+## Tiếp tục P124 — rebased candidate 2026-11-21
+
+- Source canvio-p124-autolayout.js, lot canvio-lot124; tests/p124/run-p124-tests.cjs và tests/p124/run-p124-browser.py.
+- Branch work/p124-autolayout-rebased-20261121 dựa trên main hiện tại, không dựa trên PR #45 cũ. Chờ hosted CI trước khi merge.
+- Scope hiện có 5 preset responsive + 4 card variants, dùng CVWeb.addComponents/CV.engines.web.save. Còn convert component chọn, visual breakpoint editor, nested variant sync, drag/resize constraints và accessibility/real GrapesJS review.
