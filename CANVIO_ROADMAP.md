@@ -819,3 +819,15 @@ Hosted verification after the ffmpeg repair is complete:
 - `CVUxP144.startTour/closeTour/tourDone`: tour 4 bước ở trang chủ (chào mừng, Ctrl+K, thẻ bắt đầu, F1/Alt+Shift/tự lưu), làm nổi bật mục tiêu bằng viền, phím Enter/Esc/Tab, lưu `canvio144:tour`; tự bật 3,5 giây sau khi vào trang chủ lần đầu (không bật khi có thanh khôi phục sự cố, khi palette mở, hoặc khi `navigator.webdriver` = true để không chặn test tự động). Lệnh palette "Xem lại hướng dẫn nhanh" bật lại. Test: `tests/p145/run-p144t-browser.py` (12 mục, ẩn webdriver để chạy đường tự bật).
 - Chưa làm: trợ giúp riêng cho từng Studio còn lại.
 
+
+
+## P134.2 — Auto Reframe bản nhẹ (2026-11-21 · candidate)
+
+- Quét: P134 Scopes đã có (canvio-p134-scopes.js, canvio-lot134s); Auto Reframe trước đó chưa có owner riêng. P65 đã cung cấp ví dụ local grayscale/SAD tracking nhưng P134.2 không tạo timeline hay ghi đè tracking API.
+- Đã làm: source canvio-p134-reframe.js, lot dự kiến canvio-lot134r, API CVAutoReframeP134. Dò vùng nổi bật từ độ tương phản cạnh + sai khác giữa frame, tìm crop theo tỷ lệ dọc 9:16 / vuông 1:1, làm mượt đường focus.
+- Đã gộp: dùng trang Video Engine và thẻ chất lượng P127 hiện hữu; một nguồn video do người dùng chọn; không tạo timeline, store, Asset Library hay Project Vault riêng.
+- Bỏ: nhận diện mặt/vật thể bằng model tải thêm; upload; cloud sync; MP4 muxer. Lý do: chưa cần thiết cho bản nhẹ, trái nguyên tắc offline-first/không request nền hoặc không có hạ tầng đã xác minh.
+- Export: WebM Canvas + MediaRecorder; 720×1280 cho 9:16, 1080×1080 cho 1:1. Âm thanh chỉ có khi captureStream() lấy được audio track; không đảm bảo codec giống nhau trên mọi trình duyệt.
+- Giới hạn: ≤100 MiB, ≤60 giây, tối đa 48 frame phân tích ở kích cỡ tối đa 192×108. Heuristic có thể bám vào vùng nhiều texture/contrast thay vì chủ thể; cảnh ít chi tiết sẽ kém ổn định. Không nhận diện mặt/AI object detection; chưa có manual focus override.
+- Test bổ sung: Node tests/p127/run-p134r-tests.cjs (11 assertion); Chromium UI/export và ffprobe tests/p145/run-p134r-browser.py. Kết quả hosted CI phải được kiểm trước khi đánh dấu merged/PASS. Nếu localhost bị chặn trong sandbox, ghi rõ môi trường, không tính là test ứng dụng thất bại.
+- Trạng thái: candidate trên branch riêng, chưa merge. Việc tiếp theo: hosted run xác nhận Node, same-origin app boot, UI analysis, WebM decode/duration/audio; sau đó rà lại bằng video thật dài hơn và điện thoại thật.
