@@ -42,9 +42,9 @@ with sync_playwright() as p:
     after=page.evaluate("CVNativeEngines.pixel.snapshotState()")
     checks['sourceCanvasUnchanged']=before==after
     page.click('#cv135-panel [data-cv135="undo"]')
-    checks['stackUndoWorks']=page.locator('#cv135-layer-list .cv135-layer').count()==0
+    checks['stackUndoWorks']=page.locator('#cv135-layer-list .cv135-layer').count()==1 and page.locator('#cv135-value').input_value()=='100'
     page.click('#cv135-panel [data-cv135="redo"]')
-    checks['stackRedoWorks']=page.locator('#cv135-layer-list .cv135-layer').count()==1
+    checks['stackRedoWorks']=page.locator('#cv135-layer-list .cv135-layer').count()==1 and page.locator('#cv135-value').input_value()=='150'
     with page.expect_download(timeout=30000) as info:
         page.click('#cv135-export-png')
     path=Path(info.value.path());data=path.read_bytes()
