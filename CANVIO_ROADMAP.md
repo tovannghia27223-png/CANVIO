@@ -804,3 +804,9 @@ Hosted verification after the ffmpeg repair is complete:
 - Test: `node tests/p127/run-p133r-tests.cjs`; Chrome thật `tests/p145/run-p133-browser.py` (OPFS ghi/đọc 3 MB, chặn `../`, mô phỏng crash → tải lại → banner → khôi phục clip).
 - Chưa làm (phần còn lại của P133): proxy 720p cho video 4K, Web Worker/OffscreenCanvas cho xử lý nặng, chuyển tài sản lớn của Asset Vault/Video sang OPFS; chưa thử dựng 10 phút 1080p; chỉ Chromium được kiểm.
 
+### P144 (phần Command Palette + phím tắt + trợ giúp)
+- `canvio-p144-ux.js` (lot `canvio-lot144u`): bọc `CV.palette.build` — thêm 15 lệnh cho công cụ mới (phân tích chất lượng, LUFS, khử ồn, SFX, mẫu, GIF, đo màu, web cuộn, trace, biểu đồ, giấy phép, font/data merge, bộ nhớ/phục hồi, trợ giúp), đưa 5 lệnh dùng gần đây lên đầu (localStorage `canvio144:recent`). Lệnh đưa người dùng tới thẻ công cụ (cuộn + focus + viền nháy); chỉ 3 lệnh chỉ-đọc tự chạy (phân tích chất lượng, đo màu, lưu bản phục hồi), không lệnh nào tự sửa timeline.
+- Phím: F1 = trợ giúp theo trang (mẹo + phím tắt, khoá focus, Esc đóng); Alt+Shift+V/W/P/A/I/H/S/D chuyển trang (không đụng phím T/R/C/G của Poster và không bị chặn khi đang gõ vì dùng tổ hợp Alt+Shift).
+- Test: `node tests/p127/run-p144u-tests.cjs`; Chrome thật `tests/p145/run-p144-browser.py` (14 mục).
+- Chưa làm: hướng dẫn lần đầu (tour), trợ giúp riêng cho từng Studio còn lại, tìm mờ (fuzzy) và tìm xuyên tài nguyên/mẫu (P145.10 thuộc AI kia).
+

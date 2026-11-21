@@ -3732,3 +3732,6 @@ P125.3: `CVScrollFramesP125.PRESETS`, `decimate(frames,maxBytes)`; `buildHtml` n
 ## P133 Resilience
 `window.CVResilienceP133` {store.put/get/getText/list/remove/kind, usage, snapshotNow, recoveries, restore(engine), engineNames, crashedSessions, start, mountSettings, tests}. Lot `canvio-lot133r` khớp `canvio-p133-resilience.js`. Khoá localStorage `canvio133:s:<id>` = cờ phiên; tệp `recovery-<engine>.json` trong OPFS `canvio133/`. Engine nào muốn được tự lưu chỉ cần có `snapshotState()` (trả chuỗi/JSON) và `restoreState(raw)`.
 
+## P144 UX
+`window.CVUxP144` {commands, nav, tips, openHelp, closeHelp, wrapPalette, tests}. Lot `canvio-lot144u` khớp `canvio-p144-ux.js`. Thêm lệnh palette mới: thêm đối tượng `{label,hint,icon,page,sel,run?}` vào `CMDS` (label duy nhất; `run` chỉ dùng cho lệnh chỉ-đọc). Thêm mẹo trang: thêm khoá vào `TIPS`.
+
