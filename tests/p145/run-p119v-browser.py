@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """P119.3 hosted Chromium acceptance: P119 presets/custom Motion curve are saved through the existing Video Engine keyframe Apply/snapshot path."""
-import json, os, sys, threading, http.server, socketserver, functools, shutil, struct, zlib
+import json, os, sys, threading, http.server, socketserver, functools, shutil, struct, zlib, base64
 from playwright.sync_api import sync_playwright
 ROOT=os.path.abspath(os.path.join(os.path.dirname(__file__),'..','..'))
 CHROME=os.environ.get('CHROME_BIN') or shutil.which('google-chrome') or shutil.which('chromium')
@@ -27,8 +27,15 @@ with sync_playwright() as p:
     page.goto(url,wait_until='commit',timeout=60000)
     page.wait_for_function("!!(window.CV&&CV.go&&window.CVEasingP119&&window.CVVideoEasingP119)",timeout=90000,polling=500)
     page.evaluate("CV.go('videoEngine')")
-    page.wait_for_selector('#vtFiles',timeout=60000)
-    page.set_input_files('#vtFiles',{'name':'p119-motion-fixture.png','mimeType':'image/png','buffer':png_fixture()})
+    page.wait_for_function("!!(CV.engines&&CV.engines.video&&typeof CV.engines.video.importFiles==='function')",timeout=60000)
+    image64=base64.b64encode(png_fixture()).decode('ascii')
+    page.evaluate("""(encoded)=>{
+      const raw=atob(encoded),bytes=new Uint8Array(raw.length);
+      for(let i=0;i<raw.length;i++)bytes[i]=raw.charCodeAt(i);
+      const file=new File([bytes],'p119-motion-fixture.png',{type:'image/png'});
+      CV.engines.video.importFiles({target:{files:[file],value:''}});
+      return true;
+    }""",image64)
     page.wait_for_function("!!CV.engines.video._state().clips.some(c=>c.type==='image')",timeout=45000)
     clip_id=page.evaluate("CV.engines.video._state().clips.find(c=>c.type==='image').id")
     page.evaluate("(id)=>CV.engines.video.select(id)",clip_id)
