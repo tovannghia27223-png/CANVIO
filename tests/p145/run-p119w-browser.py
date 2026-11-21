@@ -65,8 +65,16 @@ with sync_playwright() as p:
       return CVWebsiteMotionBuilder.inject(html);
     }""")
     checks['exportKeepsSharedEasingVariableAndReducedMotionFallback']='--canvio-motion-easing' in injected and 'prefers-reduced-motion:reduce' in injected
-    # Start the import assertion with an unapplied component, so a previous preset commit cannot affect the result.
+    # The Motion panel can be remounted when switching Studio tools. Set the active
+    # Motion curve after Website Builder is mounted, then import it without applying.
     page.click('#canvio-motion-clear')
+    page.evaluate("""()=>{
+      const sel=document.getElementById('motionEase'),value='cubic-bezier(0.1,0.2,0.3,0.4)';
+      if(!sel)throw new Error('Existing Motion easing control is unavailable');
+      let option=Array.from(sel.options).find(x=>x.value===value);
+      if(!option){option=document.createElement('option');option.value=value;option.textContent='P119.4 browser fixture';sel.appendChild(option);}
+      sel.value=value;sel.dispatchEvent(new Event('change',{bubbles:true}));
+    }""")
     page.click('#cv119w-from-motion')
     checks['customMotionCurveImportedWithoutPrematureApply']=page.locator('#canvio-motion-easing').input_value()=='cubic-bezier(0.1,0.2,0.3,0.4)' and page.evaluate("!__p1194Component.getAttributes()['data-canvio-motion-easing']")
     page.click('#canvio-motion-apply')
