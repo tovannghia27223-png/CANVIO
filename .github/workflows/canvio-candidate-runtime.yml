@@ -732,6 +732,7 @@ jobs:
         run: |
           set -euo pipefail
           export CANVIO_GLB_FIXTURES=/tmp/glbfx/out
+/tmp/canvio-playwright/bin/python tests/p145/run-p135-browser.py
           /tmp/canvio-playwright/bin/python tests/hosted/run-hosted-runtime-acceptance.py
           /tmp/canvio-playwright/bin/python tests/p131/run-p131-browser.py
           /tmp/canvio-playwright/bin/python tests/p131/run-p131-app-smoke.py
@@ -765,8 +766,7 @@ jobs:
           /tmp/canvio-playwright/bin/python tests/p145/run-p118-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p141-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p128-browser.py
-          /tmp/canvio-playwright/bin/python tests/p145/run-p135-browser.py
-          /tmp/canvio-playwright/bin/python tests/p145/run-p137-browser.py
+                    /tmp/canvio-playwright/bin/python tests/p145/run-p137-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p133w-browser.py
 
       - name: Refresh Guide, Roadmap, QA, Acceptance Matrix and Manifest
