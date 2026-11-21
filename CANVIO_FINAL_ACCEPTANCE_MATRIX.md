@@ -42,3 +42,5 @@
 - Added page-specific guidance for all 13, using Guide-documented behavior and explicit boundaries (e.g. collab is local notes/activity, Prompt Forge is prompt handoff, Shield does not certify server headers).
 - P133.2 passed all 11 Chromium checks in the same run, including actual timeline import, clip duration, audio, full decode and original preservation. P124 passed 9/9.
 - Rerun required to verify all 38 CVWS routes have contextual help; no merge claim until that coverage check passes.
+
+| P143 Phase 1 source parity | 20 standalone modules vs canonical inline lots; unique IDs, syntax, normalized source equality and classic-script constraints | Candidate parity gate; hosted CI pending. Full index script/style inventory, dependency DAG, staged extraction, offline/CSP and rollback remain open. |
