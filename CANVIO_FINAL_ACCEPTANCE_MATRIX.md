@@ -30,3 +30,6 @@
 12. Physical target-device GPU/VRAM, performance and long-render testing.
 13. Cross-origin backup/restore and independent-device recovery.
 14. Rollback, release observability, alerting and production incident drill.
+
+
+| P124 Auto Layout | Node source/API + canonical embedded parity + 390 px Chromium insert/save smoke | Candidate branch; hosted CI pending. Arbitrary component conversion, breakpoint editor, nested variants, drag/resize and accessibility remain open. |
