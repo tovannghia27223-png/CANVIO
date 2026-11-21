@@ -29947,14 +29947,50 @@ var CMDS = [
 var NAV = { v: 'videoEngine', w: 'webEngine', p: 'poster', a: 'assets', i: 'imageStudio', h: 'home', s: 'settings', d: 'designEngine' };
 var NAV_LABEL = { v: 'Video Engine', w: 'Website Engine', p: 'Poster', a: 'Tài nguyên', i: 'Image Studio', h: 'Trang chủ', s: 'Cài đặt', d: 'Design Engine' };
 var TIPS = {
-  home: ['Ctrl+K: tìm trang, mẫu, hành động.', 'Chọn thẻ nhanh để bắt đầu poster, website, video hoặc CV 3D.'],
+  home: ['Ctrl+K: tìm trang, mẫu và hành động.', 'Chọn Hub hoặc Studio phù hợp; mở hướng dẫn nhanh để xem luồng bắt đầu.'],
+  creativeHub: ['Hub là điểm vào các workspace; dùng Studio Switcher để đổi nhóm công việc.', 'Gần đây và Đã gắn sao dùng trạng thái hiện có; dữ liệu dự án vẫn do Project Center/Project Vault quản lý.'],
   poster: ['T chữ · R khối · C hình tròn · L đường kẻ.', 'Ctrl+D nhân đôi · [ ] đổi lớp · Ctrl +/−/0 phóng to, thu nhỏ, vừa khung.', 'Ctrl+S lưu, Ctrl+Z hoàn tác.'],
-  videoEngine: ['Thêm clip bằng nút nhập media, kéo thanh tua để xem khung.', 'Thẻ Chất lượng: phân tích nhịp, đo LUFS, khử ồn, mẫu Short/Reel, SFX, xuất GIF, đo màu.', 'Mọi thao tác thêm clip đều có hoàn tác (Ctrl+Z).'],
-  webEngine: ['Kéo thả block để dựng trang; Xuất HTML để lấy tệp.', 'Thẻ "Web cuộn từ video" tạo trang cuộn tới đâu video chạy tới đó.'],
-  imageStudio: ['Thẻ "Ảnh → Vector" đổi logo, icon, hình ít màu thành SVG.', 'Giảm số màu hoặc chọn Chi tiết thấp để tệp nhẹ hơn.'],
-  assets: ['Tải ảnh, logo vào kho; gắn giấy phép để có báo cáo và credit.', 'Biểu đồ từ CSV và data merge nằm ngay bên dưới.'],
-  settings: ['Thẻ Bộ nhớ và phục hồi cho biết dung lượng và các bản tự lưu.', 'Nếu app đóng đột ngột, lần mở sau sẽ có thanh khôi phục.'],
-  designEngine: ['Chọn đối tượng để chỉnh thuộc tính; Ctrl+Z hoàn tác.']
+  designEngine: ['Chọn đối tượng để chỉnh thuộc tính; Ctrl+Z hoàn tác.', 'Kiểm tra lớp đang khóa/ẩn trước khi sửa; lưu và mở lại dự án để xác nhận.'],
+  layoutFoundry: ['Chọn master/layout phù hợp rồi áp dụng cho trang hiện tại.', 'Kiểm tra lề, phân cấp chữ và bản in; preflight trong app không thay thế kiểm tra PDF/X, CMYK hoặc bản in vật lý.'],
+  vectorForge: ['Dùng Ảnh → Vector/Trace cho logo và hình ít màu; kiểm tra preview trước khi lưu SVG.', 'Giảm số màu/độ chi tiết để giữ SVG nhẹ; mở file xuất bằng trình duyệt khác để rà lại.'],
+  autodesign: ['Viết brief rõ mục tiêu, đối tượng, kích thước và phong cách trước khi tạo bản nháp.', 'Provider AI chỉ chạy khi bạn chủ động dùng dịch vụ; kiểm tra quyền sử dụng và nguồn asset trước khi xuất.'],
+  cvstudio: ['Điền thông tin cá nhân, kinh nghiệm và kỹ năng; kiểm tra lỗi chính tả và thứ tự thời gian.', 'Xem trước A4 và in thử; luồng xuất CV hiện có là owner chuẩn, không coi preflight là chứng nhận PDF/X.'],
+  web: ['Dựng trang từ các block hiện có, sắp xếp thứ tự và kiểm tra nội dung trên màn hình hẹp.', 'Lưu trong Website Engine hiện tại; mở bản HTML xuất ở tab/trình duyệt khác để kiểm tra.'],
+  webEngine: ['Kéo thả block để dựng trang; Xuất HTML để lấy tệp.', 'Thẻ Web cuộn từ video tạo trang cuộn tới đâu video chạy tới đó.', 'Auto Layout chèn preset vào GrapesJS hiện tại; chỉnh sửa trực tiếp trong editor rồi lưu.'],
+  portfolioStudio: ['Sắp xếp dự án theo vai trò, kết quả và hình ảnh minh họa; ưu tiên case study có số liệu kiểm chứng.', 'Kiểm tra quyền sử dụng ảnh/logo và mở lại dự án sau khi lưu để xác nhận gallery.'],
+  hrvisual: ['Chọn đúng ngữ cảnh tuyển dụng/đào tạo/nội bộ và giữ thông tin nhân sự chính xác.', 'Kiểm tra logo, màu thương hiệu, quyền dùng ảnh và khả năng đọc trên điện thoại.'],
+  pixelStudio: ['Làm việc theo lưới pixel; giữ kích thước canvas và palette nhất quán.', 'Phóng to khi chỉnh pixel, thu nhỏ để kiểm tra hình tổng thể trước khi xuất.'],
+  colorStudio: ['Điều chỉnh màu/độ sáng từng bước và so sánh trước–sau.', 'Không kéo highlight/shadow quá mức; kiểm tra ảnh trên màn hình khác trước khi bàn giao.'],
+  clarityLab: ['Dùng tăng nét/khử nhiễu vừa phải; giữ bản gốc để đối chiếu.', 'Phóng to 100% để rà halo, bệt chi tiết và artefact trước khi xuất.'],
+  imageStudio: ['Thẻ Ảnh → Vector đổi logo, icon, hình ít màu thành SVG.', 'Giảm số màu hoặc chọn Chi tiết thấp để tệp nhẹ hơn; kiểm tra SVG an toàn trước khi dùng.'],
+  artcraft: ['Chọn asset/kiểu minh họa theo mục tiêu thiết kế; kiểm tra độ tương phản và tính nhất quán.', 'Gắn nguồn/giấy phép cho tài nguyên trước khi công bố hoặc chuyển giao.'],
+  capcutEngine: ['Đây là bảng điều phối CapCut, không phải timeline độc lập.', 'Mở Video Engine để chỉnh clip trên timeline chuẩn; media, undo và export vẫn thuộc engine hiện hữu.'],
+  videoEngine: ['Thêm clip bằng nút nhập media, kéo thanh tua để xem khung.', 'Thẻ Chất lượng: phân tích nhịp, đo LUFS, khử ồn, Auto Reframe, proxy, SFX, GIF và đo màu.', 'Mọi thao tác thêm clip tạo clip mới và giữ bản gốc; dùng Ctrl+Z khi cần hoàn tác.'],
+  motionLab: ['Chọn preset chuyển động rồi xem thử trên đối tượng đang chọn.', 'Tôn trọng reduced-motion và kiểm tra tốc độ/độ dài trước khi xuất.'],
+  videoStudio: ['Lập kịch bản, shot list và thứ tự cảnh trước khi dựng.', 'Chuyển media sang Video Engine để chỉnh timeline; không tạo timeline thứ hai trong Studio này.'],
+  shotcraft: ['Mô tả góc máy, cỡ cảnh, chuyển động và mục tiêu của từng shot.', 'Giữ shot list khớp footage thực tế; không coi storyboard là tracking hay render video tự động.'],
+  motion: ['Chọn motion preset phù hợp nội dung và thời lượng.', 'Kiểm tra keyframe trên timeline Video Engine; preset không thay thế thao tác chỉnh clip gốc.'],
+  motionCut: ['MotionCut là luồng phụ/handoff; Video Engine vẫn là timeline chuẩn.', 'Nhập media qua engine hiện có và xác nhận mapping clip trước khi tiếp tục chỉnh sửa.'],
+  assets: ['Tải ảnh/logo vào kho; gắn giấy phép để có báo cáo và credit.', 'Biểu đồ CSV và data merge nằm trong Asset Library; kiểm tra nguồn và quyền dùng trước khi công bố.'],
+  projects: ['Project Center quản lý brief, tiến độ và trạng thái công việc.', 'Project Vault là nơi lưu/mở snapshot editor; hai khu vực có vai trò khác nhau.'],
+  projectVault: ['Tạo snapshot có tên trước thay đổi lớn; dùng restore point khi cần quay lại.', 'Backup/restore phải được kiểm tra trên bản sao; không xóa dữ liệu cũ khi chưa xác minh bản phục hồi.'],
+  export: ['Chọn đúng định dạng và kiểm tra codec/kích thước thực tế sau khi xuất.', 'Dùng File QC và công cụ độc lập để mở thử artifact; Blob được tạo không đồng nghĩa file đã đạt chuẩn.'],
+  object: ['Kiểm tra mô hình 3D, camera và khả năng tải asset trước khi chia sẻ.', 'Offline OBJ viewer chỉ bao phủ profile hình học được hỗ trợ; không mặc định hỗ trợ GLTF/FBX đầy đủ.'],
+  entry: ['Bắt đầu từ Hub hoặc chọn Studio theo loại sản phẩm cần làm.', 'Nếu chưa biết công cụ, dùng Ctrl+K tìm tính năng hoặc F1 để xem mẹo của trang.'],
+  settings: ['Thẻ Bộ nhớ & phục hồi cho biết dung lượng và các bản tự lưu.', 'Nếu app đóng đột ngột, lần mở sau có thể xuất hiện thanh khôi phục; hãy xem nội dung trước khi xác nhận.'],
+  templates: ['Lọc mẫu theo ngành, phong cách và tỷ lệ; mở preview trước khi áp dụng.', 'Thư viện thành phần chèn vào Poster Studio; kiểm tra font, ảnh và quyền sử dụng của từng asset.'],
+  brand: ['Thiết lập palette, vai trò màu, font tiêu đề/nội dung và quy tắc thương hiệu.', 'Dùng preview và kiểm tra tuân thủ trước khi áp dụng; lưu bộ thương hiệu sau khi rà logo và tài sản.'],
+  designSystem: ['Quản lý token màu, font, khoảng cách và style dùng chung; kiểm tra giá trị trước khi áp dụng.', 'Thay token có thể ảnh hưởng nhiều thiết kế; thử trên bản sao hoặc một artboard trước khi áp dụng rộng.'],
+  responsive: ['Tạo biến thể theo tỷ lệ/kênh từ thiết kế hiện có; kiểm tra nội dung bị cắt ở từng khung.', 'Tên và tỷ lệ đầu ra phải khớp kênh đích; mở từng biến thể ở kích thước thật trước khi xuất.'],
+  collab: ['Ghi chú và activity log được lưu cục bộ; có thể xuất ghi chú để chia sẻ.', 'Đây chưa phải cộng tác real-time nhiều người dùng hay đồng bộ hai chiều; không giả định thay đổi của người khác tự xuất hiện.'],
+  hub: ['Kho tài nguyên tổng hợp giúp tìm và tái sử dụng media/asset đã nhập.', 'Kiểm tra nguồn, giấy phép và thông tin mô tả trước khi dùng asset trong sản phẩm hoặc phát hành.'],
+  platform: ['Workbench là điểm điều phối workspace, module registry, Data Workspace, Report Studio và Provider Registry.', 'Kiểm tra trạng thái module và cấu hình provider; thao tác provider chỉ chạy khi người dùng chủ động và cấu hình hợp lệ.'],
+  one: ['Tạo trọn bộ bắt đầu từ brief: mục tiêu, đối tượng, nội dung, kênh và định dạng đầu ra.', 'Rà từng artifact và nguồn asset trước khi xuất; prompt/handoff không đồng nghĩa mọi nội dung đã được AI tạo hoặc kiểm chứng.'],
+  promptForge: ['Chọn target, task, tỷ lệ và đầu ra rồi viết brief cụ thể để tạo prompt có cấu trúc.', 'Prompt Forge chỉ chuẩn bị/copy/export prompt và handoff; việc sinh ảnh/video phụ thuộc provider ngoài được người dùng chủ động chọn.'],
+  insight: ['Đọc điểm thiết kế, 12 tiêu chí và attention map như gợi ý heuristic để rà bố cục.', 'Điểm số không phải chứng nhận WCAG, hiệu quả chuyển đổi hay đánh giá người dùng thật; cần kiểm tra thủ công.'],
+  hallmark: ['Dùng Design Intelligence để rà nguyên tắc, creative direction và các điểm cần cải thiện.', 'Đề xuất là heuristic; xác nhận lại theo brief, dữ liệu thương hiệu và yêu cầu của người duyệt.'],
+  guide: ['Dùng mục lục/tìm kiếm để mở đúng phần hướng dẫn và kiểm tra phiên bản tài liệu.', 'Nếu cần trợ giúp thao tác ngay trong Studio, nhấn F1 để mở mẹo theo trang hiện tại.'],
+  shield: ['Security Hub rà soát import/export, sanitizer, URL/CSS nguy hiểm và ranh giới dữ liệu nhạy cảm.', 'Kết quả audit trong trình duyệt không thay thế CSP/SRI, kiểm thử server headers hay security review trên hệ thống production.']
 };
 function lsGet(k, d) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }
 function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
@@ -30047,10 +30083,12 @@ function tests() {
     tourStepsWellFormed: STEPS.length === 4 && STEPS.every(function (x) { return x.title && x.text; }),
     readOnlyAutoRunOnly: CMDS.filter(function (c) { return c.run; }).every(function (c) { return /^(#cv127q-run|#cv134-run|#cv133-now)$/.test(c.run); }),
     navKeysUnique: Object.keys(NAV).length === 8 && Object.keys(NAV).every(function (k) { return NAV_LABEL[k] && k.length === 1; }),
-    tipsCoverMainPages: ['home', 'poster', 'videoEngine', 'webEngine', 'imageStudio', 'assets', 'settings'].every(function (k) { return TIPS[k] && TIPS[k].length; })
+    tipsCoverAllKnownStudioRoutes: ['poster','layoutFoundry','vectorForge','designEngine','templates','brand','designSystem','responsive','autodesign','cvstudio','web','webEngine','portfolioStudio','hrvisual','pixelStudio','colorStudio','clarityLab','imageStudio','artcraft','videoEngine','motionLab','videoStudio','shotcraft','motion','motionCut','creativeHub','collab','hub','platform','one','promptForge','insight','hallmark','guide','shield'].every(function (k) { return TIPS[k] && TIPS[k].length >= 2; }),
+    tipsCoverProjectAndUtilityPages: ['home','projects','projectVault','export','object','entry','capcutEngine','assets','settings'].every(function (k) { return TIPS[k] && TIPS[k].length >= 2; }),
+    tipsAvoidGenericFallbackForStudioRoutes: ['poster','layoutFoundry','vectorForge','designEngine','autodesign','cvstudio','web','webEngine','portfolioStudio','hrvisual','pixelStudio','colorStudio','clarityLab','imageStudio','artcraft','videoEngine','motionLab','videoStudio','shotcraft','motion','motionCut','creativeHub'].every(function (k) { return TIPS[k].some(function (t) { return t.length > 25; }); })
   };
 }
-window.CVUxP144 = { version: '144.2.0', startTour: startTour, closeTour: closeTour, tourDone: tourDone, commands: CMDS, nav: NAV, tips: TIPS, openHelp: openHelp, closeHelp: closeHelp, wrapPalette: wrapPalette, tests: tests };
+window.CVUxP144 = { version: '144.3.0', startTour: startTour, closeTour: closeTour, tourDone: tourDone, commands: CMDS, nav: NAV, tips: TIPS, openHelp: openHelp, closeHelp: closeHelp, wrapPalette: wrapPalette, tests: tests };
 })();
 </script>
 <style id="canvio-lot131-css">
@@ -31827,6 +31865,369 @@ function ready(){try{mount();var page=document.querySelector('#page-videoEngine'
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',ready,{once:true});else ready();
 window.CVAutoReframeP134={version:'134.2.0',ratios:RATIOS,cropSize:cropSize,analyzeFrames:analyzeFrames,focusAt:focusAt,cropAt:cropAt,sampleVideo:sampleVideo,exportWebM:exportWebM,mount:mount,
  tests:function(){return{saliencyAnalysis:typeof analyzeFrames==='function',aspectCrop:typeof cropSize==='function',smoothFocusPath:typeof focusAt==='function',localWebMExport:typeof exportWebM==='function',noFaceModel:true,noNetwork:true,noTimelineMutation:true};}};
+})();
+</script>
+<script id="canvio-lot124">
+/* P124 · Responsive Auto Layout + reusable component variants for the existing Website Engine.
+   Uses only CVWeb.addComponents() and CV.engines.web.save(); no second editor, project store or dependency. */
+(function () {
+'use strict';
+if (window.CVAutoLayoutP124) return;
+
+var VERSION = '124.1.0';
+var VARIANTS = {
+  surface: { background: '#ffffff', border: '1px solid #e2e8f0', boxShadow: 'none' },
+  outline: { background: 'transparent', border: '1px solid #94a3b8', boxShadow: 'none' },
+  elevated: { background: '#ffffff', border: '1px solid #e2e8f0', boxShadow: '0 12px 32px rgba(15,23,42,.10)' },
+  soft: { background: '#f1f5f9', border: '1px solid transparent', boxShadow: 'none' }
+};
+var KINDS = ['stack', 'row', 'grid', 'split', 'card'];
+
+function clamp(value, min, max, fallback) {
+  var n = Number(value);
+  if (!isFinite(n)) n = fallback;
+  return Math.max(min, Math.min(max, n));
+}
+function cleanText(value, fallback, max) {
+  var s = String(value == null ? fallback : value).replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/g, '');
+  return s.slice(0, max || 160);
+}
+function esc(value) {
+  return String(value == null ? '' : value).replace(/[&<>"']/g, function (c) {
+    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+  });
+}
+function normalize(kind, options) {
+  options = options || {};
+  if (KINDS.indexOf(kind) < 0) throw new Error('Kiểu Auto Layout không hợp lệ.');
+  var variant = Object.prototype.hasOwnProperty.call(VARIANTS, options.variant) ? options.variant : 'surface';
+  return {
+    kind: kind,
+    variant: variant,
+    gap: Math.round(clamp(options.gap, 8, 64, 20)),
+    minWidth: Math.round(clamp(options.minWidth, 180, 480, kind === 'split' ? 352 : 240)),
+    columns: Math.round(clamp(options.columns, 2, 6, 3)),
+    title: cleanText(options.title, 'Tiêu đề thành phần', 120),
+    description: cleanText(options.description, 'Mô tả ngắn — nhấp để chỉnh sửa nội dung.', 240)
+  };
+}
+function cardMarkup(o, index) {
+  var v = VARIANTS[o.variant];
+  var style = 'min-width:0;padding:24px;border-radius:16px;background:' + v.background +
+    ';border:' + v.border + ';box-shadow:' + v.boxShadow + ';';
+  return '<article data-canvio-component="card" data-canvio-variant="' + o.variant + '" style="' + style + '">' +
+    '<h3 data-canvio-component="heading" style="margin:0 0 10px;font-size:1.125rem;line-height:1.35;font-weight:700;">' +
+    esc(o.title + (index > 0 ? ' ' + (index + 1) : '')) + '</h3>' +
+    '<p data-canvio-component="body" style="margin:0;color:#475569;line-height:1.65;">' + esc(o.description) + '</p>' +
+    '</article>';
+}
+function render(kind, options) {
+  var o = normalize(kind, options), style, inner, i, children = [];
+  if (kind === 'card') return cardMarkup(o, 0);
+  if (kind === 'stack') {
+    style = 'display:flex;flex-direction:column;gap:' + o.gap + 'px;width:100%;max-width:72rem;margin-inline:auto;padding:clamp(16px,3vw,32px);box-sizing:border-box;';
+    inner = '<header><h2 style="margin:0 0 8px;font-size:clamp(1.35rem,2.5vw,2rem);line-height:1.2;">' + esc(o.title) +
+      '</h2><p style="margin:0;color:#475569;line-height:1.65;">' + esc(o.description) + '</p></header>' +
+      cardMarkup(o, 0);
+  } else if (kind === 'row') {
+    style = 'display:flex;flex-flow:row wrap;align-items:stretch;gap:' + o.gap + 'px;width:100%;max-width:72rem;margin-inline:auto;padding:clamp(16px,3vw,32px);box-sizing:border-box;';
+    for (i = 0; i < 3; i++) children.push('<div style="flex:1 1 ' + o.minWidth + 'px;min-width:0;">' + cardMarkup(o, i) + '</div>');
+    inner = children.join('');
+  } else if (kind === 'grid') {
+    style = 'display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,' + o.minWidth + 'px),1fr));align-items:stretch;gap:' + o.gap + 'px;width:100%;max-width:72rem;margin-inline:auto;padding:clamp(16px,3vw,32px);box-sizing:border-box;';
+    for (i = 0; i < o.columns; i++) children.push(cardMarkup(o, i));
+    inner = children.join('');
+  } else {
+    style = 'display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,' + Math.max(320, o.minWidth) + 'px),1fr));align-items:center;gap:' + (o.gap + 8) + 'px;width:100%;max-width:72rem;margin-inline:auto;padding:clamp(16px,3vw,32px);box-sizing:border-box;';
+    inner = '<div style="min-width:0;"><p style="margin:0 0 8px;color:#64748b;font-size:.8rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;">CANVIO · AUTO LAYOUT</p>' +
+      '<h2 style="margin:0 0 12px;font-size:clamp(1.6rem,3vw,2.6rem);line-height:1.15;">' + esc(o.title) + '</h2>' +
+      '<p style="margin:0;color:#475569;line-height:1.7;">' + esc(o.description) + '</p></div>' + cardMarkup(o, 0);
+  }
+  return '<section data-canvio-auto-layout="' + kind + '" data-canvio-layout-version="' + VERSION +
+    '" style="' + style + '">' + inner + '</section>';
+}
+function inspect() {
+  return {
+    version: VERSION,
+    layouts: [
+      { id: 'stack', label: 'Stack · xếp dọc', description: 'Nội dung theo trục dọc, khoảng cách nhất quán.' },
+      { id: 'row', label: 'Row · hàng linh hoạt', description: 'Flex wrap, tự xuống hàng khi thiếu không gian.' },
+      { id: 'grid', label: 'Grid · lưới tự co giãn', description: 'CSS Grid auto-fit/minmax, tự đổi số cột.' },
+      { id: 'split', label: 'Split · hai vùng', description: 'Hai vùng nội dung tự xếp lại trên màn hình hẹp.' },
+      { id: 'card', label: 'Card · biến thể', description: 'Thành phần tái sử dụng với bốn biến thể bề mặt.' }
+    ],
+    variants: Object.keys(VARIANTS)
+  };
+}
+async function insert(kind, options) {
+  var markup;
+  try { markup = render(kind, options); }
+  catch (error) { return { ok: false, inserted: false, saved: false, error: error.message }; }
+  if (!window.CVWeb || typeof window.CVWeb.addComponents !== 'function' ||
+      !window.CV || !window.CV.engines || !window.CV.engines.web ||
+      typeof window.CV.engines.web.save !== 'function') {
+    return { ok: false, inserted: false, saved: false, error: 'Website Engine chưa sẵn sàng. Hãy mở Website Engine rồi thử lại.' };
+  }
+  try {
+    var added = await Promise.resolve(window.CVWeb.addComponents(markup));
+    if (added === false) return { ok: false, inserted: false, saved: false, error: 'Website Engine từ chối chèn thành phần.' };
+  } catch (error) {
+    return { ok: false, inserted: false, saved: false, error: 'Không thể chèn thành phần: ' + cleanText(error && error.message, 'lỗi editor', 120) };
+  }
+  try {
+    var saved = await Promise.resolve(window.CV.engines.web.save());
+    if (saved === false) return { ok: false, inserted: true, saved: false, error: 'Đã chèn vào phiên hiện tại nhưng Website Engine từ chối lưu. Hãy kiểm tra và dùng Hoàn tác nếu cần.' };
+    return { ok: true, inserted: true, saved: true, error: '' };
+  } catch (error) {
+    return { ok: false, inserted: true, saved: false, error: 'Đã chèn vào phiên hiện tại nhưng lưu thất bại. Hãy kiểm tra editor và dùng Hoàn tác nếu cần.' };
+  }
+}
+function make(tag, attrs, text) {
+  var el = document.createElement(tag), k;
+  Object.keys(attrs || {}).forEach(function (key) {
+    if (key === 'style') el.style.cssText = attrs[key];
+    else el.setAttribute(key, attrs[key]);
+  });
+  if (text != null) el.textContent = text;
+  return el;
+}
+function mount() {
+  if (!document || typeof document.getElementById !== 'function') return false;
+  var host = document.getElementById('page-webEngine');
+  if (!host || host.querySelector('[data-canvio-p124-panel]')) return false;
+  var panel = make('section', {
+    'data-canvio-p124-panel': '1',
+    'aria-label': 'Auto Layout và Component',
+    style: 'margin:16px 0;padding:16px;border:1px solid #cbd5e1;border-radius:14px;background:var(--surface,#fff);color:var(--text,#0f172a);'
+  });
+  var heading = make('h3', { style: 'margin:0 0 6px;font-size:16px;font-weight:700;' }, 'Auto Layout & Component');
+  var help = make('p', { style: 'margin:0 0 12px;color:var(--muted,#64748b);font-size:13px;line-height:1.5;' },
+    'Chèn bố cục responsive hoặc card biến thể vào Website Engine hiện tại. Nội dung sau khi chèn có thể chỉnh sửa trực tiếp trong GrapesJS.');
+  var row = make('div', { style: 'display:flex;flex-wrap:wrap;gap:8px;align-items:center;' });
+  var select = make('select', { 'aria-label': 'Biến thể component', style: 'min-height:36px;padding:6px 10px;border:1px solid #cbd5e1;border-radius:8px;background:transparent;color:inherit;' });
+  inspect().variants.forEach(function (v) {
+    var option = make('option', { value: v }, v.charAt(0).toUpperCase() + v.slice(1));
+    select.appendChild(option);
+  });
+  var status = make('p', { role: 'status', 'aria-live': 'polite', style: 'margin:10px 0 0;font-size:12px;color:var(--muted,#64748b);' }, 'Chọn bố cục để chèn vào trang.');
+  inspect().layouts.forEach(function (layout) {
+    var button = make('button', {
+      type: 'button',
+      'data-p124-kind': layout.id,
+      style: 'min-height:36px;padding:7px 12px;border:1px solid #cbd5e1;border-radius:8px;background:transparent;color:inherit;cursor:pointer;font:inherit;'
+    }, layout.label);
+    button.addEventListener('click', async function () {
+      button.disabled = true;
+      status.textContent = 'Đang chèn ' + layout.label + '…';
+      var result = await insert(layout.id, { variant: select.value });
+      status.textContent = result.ok ? 'Đã chèn và lưu thành công.' : result.error;
+      button.disabled = false;
+    });
+    row.appendChild(button);
+  });
+  panel.appendChild(heading); panel.appendChild(help); row.appendChild(select); panel.appendChild(row); panel.appendChild(status);
+  host.appendChild(panel);
+  return true;
+}
+function hasPanel() {
+  var host = document && typeof document.getElementById === 'function' ? document.getElementById('page-webEngine') : null;
+  return !!(host && host.querySelector && host.querySelector('[data-canvio-p124-panel]'));
+}
+function start() {
+  if (mount() || hasPanel()) return;
+  if (typeof MutationObserver === 'function' && document && document.documentElement) {
+    var observer = new MutationObserver(function () {
+      if (mount() || hasPanel()) observer.disconnect();
+    });
+    observer.observe(document.documentElement, { childList: true, subtree: true });
+  }
+}
+if (typeof document !== 'undefined') {
+  if (document.readyState === 'loading' && document.addEventListener) document.addEventListener('DOMContentLoaded', start, { once: true });
+  else start();
+}
+var api = { version: VERSION, inspect: inspect, normalize: normalize, render: render, insert: insert, mount: mount };
+api.tests = function () {
+  var n = normalize('grid', { columns: 99, gap: 1, minWidth: 900, variant: 'unknown' });
+  var g = render('grid', { columns: 4, minWidth: 260, gap: 24 });
+  var s = render('split', { minWidth: 360 });
+  var r = render('row', { minWidth: 220 });
+  var c = render('card', { variant: 'elevated', title: '<script>alert(1)<' + '/script>' });
+  return {
+    rejectsUnknownLayout: (function () { try { normalize('unknown'); return false; } catch (e) { return true; } })(),
+    clampsColumns: n.columns === 6,
+    clampsGap: n.gap === 8,
+    clampsMinWidth: n.minWidth === 480,
+    rejectsUnknownVariant: n.variant === 'surface',
+    gridUsesAutoFit: /repeat\(auto-fit,minmax/.test(g),
+    splitUsesResponsiveGrid: /repeat\(auto-fit,minmax/.test(s),
+    rowUsesFlexWrap: /flex-flow:row wrap/.test(r),
+    cardVariantIsTagged: /data-canvio-variant="elevated"/.test(c),
+    escapesUserText: !/<script>alert/.test(c) && /&lt;script&gt;/.test(c),
+    boundsTextLength: normalize('card', { title: 'x'.repeat(200) }).title.length === 120,
+    exposesFourVariants: inspect().variants.length === 4
+  };
+};
+window.CVAutoLayoutP124 = api;
+})();
+</script>
+<script id="canvio-lot133p">
+/* P133.2 · Local 720p proxy generator for selected 4K timeline clips.
+ * Uses the existing Video Engine media owner and importFiles path. Original clip/timeline are never replaced.
+ * Browser MediaRecorder exports WebM; audio is retained only when captureStream exposes it.
+ */
+(function(){
+'use strict';
+if(window.CVProxyP133)return;
+var MAX_BYTES=500*1048576,MAX_SECONDS=180,FPS=30;
+function is4k(w,h){w=Number(w)||0;h=Number(h)||0;return(w>=2560&&h>=1440)||(h>=2560&&w>=1440);}
+function outputSize(w,h){
+ w=Number(w);h=Number(h);
+ if(!(w>0&&h>0))throw new Error('Kích thước video không hợp lệ.');
+ var scale=Math.min(1,1280/Math.max(w,h));
+ return{width:Math.max(2,Math.round(w*scale/2)*2),height:Math.max(2,Math.round(h*scale/2)*2)};
+}
+function trimRange(video,clip){
+ var start=Math.max(0,Number(clip&&clip.trimIn)||0),duration=Number(clip&&clip.duration);
+ if(!Number.isFinite(duration)||duration<=0)duration=video.duration-start;
+ start=Math.min(start,Math.max(0,video.duration-.05));
+ var end=Math.min(video.duration,start+duration);
+ if(end-start<=.05)throw new Error('Khoảng trim của clip không hợp lệ.');
+ if(end-start>MAX_SECONDS)throw new Error('Proxy bản nhẹ giới hạn clip tối đa 180 giây.');
+ return{start:start,end:end,duration:end-start};
+}
+function getBlob(state,clip){
+ var id=clip.mediaId||clip.id,ref=state&&state.fileRefs&&state.fileRefs[id];
+ if(ref&&typeof ref.arrayBuffer==='function')return Promise.resolve(ref);
+ if(ref&&ref.blob)return Promise.resolve(ref.blob);
+ return new Promise(function(resolve){
+  if(!state||!state.db){resolve(null);return;}
+  var req;try{req=state.db.transaction('media').objectStore('media').get(id);}catch(e){resolve(null);return;}
+  req.onsuccess=function(){resolve(req.result&&(req.result.blob||null));};req.onerror=function(){resolve(null);};
+ });
+}
+function waitEvent(el,good,bad,timeout){
+ return new Promise(function(resolve,reject){
+  var timer=setTimeout(function(){clean();reject(new Error('Hết thời gian chờ giải mã video.'));},timeout||15000);
+  function clean(){clearTimeout(timer);el.removeEventListener(good,ok);el.removeEventListener(bad,fail);}
+  function ok(){clean();resolve();}
+  function fail(){clean();reject(new Error('Không giải mã được video nguồn.'));}
+  el.addEventListener(good,ok,{once:true});el.addEventListener(bad,fail,{once:true});
+ });
+}
+async function seek(video,time){
+ if(Math.abs(video.currentTime-time)<.025&&video.readyState>=2)return;
+ var p=waitEvent(video,'seeked','error');video.currentTime=time;return p;
+}
+function mimeType(){
+ if(typeof MediaRecorder==='undefined')throw new Error('Trình duyệt không hỗ trợ xuất WebM.');
+ var types=['video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm'];
+ for(var i=0;i<types.length;i++)if(!MediaRecorder.isTypeSupported||MediaRecorder.isTypeSupported(types[i]))return types[i];
+ throw new Error('Không tìm thấy codec WebM phù hợp.');
+}
+async function renderProxy(blob,clip,onProgress){
+ if(!(blob instanceof Blob))throw new Error('Không đọc được media gốc của clip.');
+ if(blob.size>MAX_BYTES)throw new Error('Media gốc vượt giới hạn 500 MB của proxy bản nhẹ.');
+ var video=document.createElement('video'),url=URL.createObjectURL(blob),canvas=null,stream=null,sourceStream=null,recorder=null,raf=0,timer=0;
+ video.muted=false;video.playsInline=true;video.preload='auto';video.src=url;
+ try{
+  await waitEvent(video,'loadedmetadata','error',30000);
+  if(!video.videoWidth||!video.videoHeight)throw new Error('Nguồn không phải video hợp lệ.');
+  if(!is4k(video.videoWidth,video.videoHeight))throw new Error('Chỉ tạo proxy cho video 4K (tối thiểu 2560×1440).');
+  var range=trimRange(video,clip),size=outputSize(video.videoWidth,video.videoHeight);
+  canvas=document.createElement('canvas');canvas.width=size.width;canvas.height=size.height;
+  var ctx=canvas.getContext('2d');if(!ctx)throw new Error('Không tạo được canvas proxy.');
+  if(!canvas.captureStream)throw new Error('Trình duyệt không hỗ trợ Canvas captureStream.');
+  stream=canvas.captureStream(FPS);
+  var audioCount=0;
+  if(typeof video.captureStream==='function'){
+   try{sourceStream=video.captureStream();sourceStream.getAudioTracks().forEach(function(track){stream.addTrack(track);audioCount++;});}catch(e){sourceStream=null;audioCount=0;}
+  }
+  var mime=mimeType(),chunks=[];
+  recorder=new MediaRecorder(stream,{mimeType:mime,videoBitsPerSecond:3500000,audioBitsPerSecond:128000});
+  var stopped=new Promise(function(resolve,reject){
+   recorder.ondataavailable=function(e){if(e.data&&e.data.size)chunks.push(e.data);};
+   recorder.onerror=function(){reject(new Error('MediaRecorder lỗi trong khi tạo proxy.'));};
+   recorder.onstop=resolve;
+  });
+  await seek(video,range.start);
+  recorder.start(500);
+  await video.play();
+  await new Promise(function(resolve,reject){
+   var finished=false;
+   function finish(err){
+    if(finished)return;finished=true;cancelAnimationFrame(raf);clearTimeout(timer);
+    video.removeEventListener('ended',onEnded);
+    try{if(recorder.state!=='inactive')recorder.stop();}catch(e){}
+    err?reject(err):resolve();
+   }
+   function onEnded(){finish();}
+   function draw(){
+    try{
+     if(video.readyState>=2){
+      ctx.drawImage(video,0,0,video.videoWidth,video.videoHeight,0,0,size.width,size.height);
+      if(onProgress)onProgress(Math.max(0,Math.min(1,(video.currentTime-range.start)/range.duration)));
+     }
+     if(video.ended||video.currentTime>=range.end-.025){finish();return;}
+     raf=requestAnimationFrame(draw);
+    }catch(e){finish(e);}
+   }
+   video.addEventListener('ended',onEnded,{once:true});
+   timer=setTimeout(function(){finish(new Error('Tạo proxy vượt thời gian cho phép.'));},range.duration*2500+20000);
+   raf=requestAnimationFrame(draw);
+  });
+  await stopped;
+  var out=new Blob(chunks,{type:recorder.mimeType||mime});
+  if(!out.size)throw new Error('Tệp proxy rỗng.');
+  return{blob:out,mime:out.type,width:size.width,height:size.height,duration:range.duration,audioPreserved:audioCount>0,bytes:out.size,sourceWidth:video.videoWidth,sourceHeight:video.videoHeight};
+ }finally{
+  try{video.pause();}catch(e){}
+  try{if(stream)stream.getTracks().forEach(function(t){t.stop();});}catch(e){}
+  try{if(sourceStream)sourceStream.getTracks().forEach(function(t){t.stop();});}catch(e){}
+  if(raf)cancelAnimationFrame(raf);if(timer)clearTimeout(timer);URL.revokeObjectURL(url);
+ }
+}
+function mount(){
+ var page=document.querySelector('#page-videoEngine'),card=page&&page.querySelector('#cv127-quality');
+ if(!card||card.querySelector('#cv133p-panel'))return false;
+ var panel=document.createElement('section');panel.id='cv133p-panel';panel.style.cssText='margin-top:10px;padding:12px;border:1px solid var(--line,rgba(148,163,184,.24));border-radius:12px';
+ panel.innerHTML='<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><b class="tiny">Proxy 720p · P133</b><span class="tiny">Video 4K · xử lý cục bộ</span></div><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px"><button type="button" class="btn btn-soft sm" id="cv133p-run">Tạo proxy cho clip đang chọn</button><span class="tiny" id="cv133p-status" role="status" aria-live="polite">Chọn clip video 4K trên timeline. Proxy được thêm thành clip mới; clip gốc giữ nguyên.</span></div><progress id="cv133p-progress" max="100" value="0" style="width:100%;height:6px;margin-top:7px"></progress><div id="cv133p-result" style="display:none;margin-top:8px"><a id="cv133p-download" class="btn btn-soft sm" download="canvio-proxy-720p.webm">Tải proxy WebM</a></div><p class="tiny" style="margin:8px 0 0;opacity:.75">Giới hạn bản nhẹ: 500 MB / 180 giây; đầu ra WebM tối đa 1280×720 (giữ tỷ lệ). Âm thanh được giữ nếu trình duyệt hỗ trợ capture audio. Không tự thay clip gốc hoặc đổi timeline.</p>';
+ var anchor=card.querySelector('#cv127q-list');if(anchor)card.insertBefore(panel,anchor);else card.appendChild(panel);
+ var btn=panel.querySelector('#cv133p-run'),status=panel.querySelector('#cv133p-status'),progress=panel.querySelector('#cv133p-progress'),result=panel.querySelector('#cv133p-result'),download=panel.querySelector('#cv133p-download');
+ var busy=false,outputUrl='';
+ function say(s){status.textContent=s;}
+ function clear(){if(outputUrl)URL.revokeObjectURL(outputUrl);outputUrl='';download.removeAttribute('href');result.style.display='none';progress.value=0;}
+ btn.addEventListener('click',async function(){
+  if(busy)return;var v=window.CV&&CV.engines&&CV.engines.video,state=v&&v._state&&v._state();
+  var clip=state&&(state.clips||[]).filter(function(c){return c.id===state.selected;})[0];
+  if(!v||!state||!v.importFiles){say('Mở Video Engine trước.');return;}
+  if(!clip||clip.type!=='video'){say('Hãy chọn một clip video trên timeline.');return;}
+  busy=true;btn.disabled=true;clear();
+  try{
+   var blob=await getBlob(state,clip);if(!blob)throw new Error('Không đọc được tệp nguồn từ media store.');
+   say('Đang kiểm tra video nguồn…');
+   var proxy=await renderProxy(blob,clip,function(p){progress.value=p*90;say('Đang tạo proxy '+Math.round(p*100)+'%…');});
+   var base=String(clip.name||'video').replace(/\.[^.]+$/,'').slice(0,60)||'video';
+   var file=new File([proxy.blob],base+'-proxy-720p.webm',{type:proxy.mime||'video/webm'});
+   outputUrl=URL.createObjectURL(proxy.blob);download.href=outputUrl;result.style.display='block';
+   var before=Array.isArray(state.clips)?state.clips.length:0;
+   var imported=await v.importFiles({target:{files:[file],value:''}});
+   var afterState=v._state&&v._state(),added=afterState&&Array.isArray(afterState.clips)?afterState.clips.slice(before):[],after=afterState&&Array.isArray(afterState.clips)?afterState.clips.length:before;
+   if(imported===false||!added.length)throw new Error('Đã tạo được proxy và có thể tải xuống, nhưng Video Engine chưa xác nhận clip mới trên timeline. Hãy tải tệp rồi nhập thủ công.');
+   var proxyClip=added.find(function(x){return afterState.fileRefs&&(afterState.fileRefs[x.mediaId||x.id]===file);})||added[0];
+   proxyClip.name=file.name;proxyClip.duration=Math.max(.2,proxy.duration);proxyClip.trimIn=0;proxyClip.trimOut=null;
+   if(v.commit)v.commit();
+   progress.value=100;
+   say('Đã thêm '+file.name+' vào timeline ('+proxy.width+'×'+proxy.height+' · '+(proxy.bytes/1048576).toFixed(1)+' MB · '+(proxy.audioPreserved?'có audio':'không có audio')+'). Clip gốc không bị sửa; hãy kiểm tra rồi thay thủ công nếu muốn.');
+  }catch(e){say(e&&e.message?e.message:String(e));progress.value=0;}
+  finally{busy=false;btn.disabled=false;}
+ });
+ window.addEventListener('beforeunload',function(){if(outputUrl)URL.revokeObjectURL(outputUrl);});
+ return true;
+}
+function ready(){try{mount();var p=document.querySelector('#page-videoEngine');if(p&&!p.__cv133pObs&&window.MutationObserver){p.__cv133pObs=new MutationObserver(function(){if(!p.querySelector('#cv133p-panel'))mount();});p.__cv133pObs.observe(p,{childList:true,subtree:true});}}catch(e){}}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',ready,{once:true});else ready();
+window.CVProxyP133={version:'133.2.0',is4k:is4k,outputSize:outputSize,trimRange:trimRange,getBlob:getBlob,renderProxy:renderProxy,mount:mount,tests:function(){return{detectsLandscape4k:is4k(3840,2160),detectsPortrait4k:is4k(2160,3840),rejects1080p:!is4k(1920,1080),landscape720:outputSize(3840,2160).width===1280&&outputSize(3840,2160).height===720,portrait720:outputSize(2160,3840).width===720&&outputSize(2160,3840).height===1280,neverUpscales:outputSize(640,480).width===640,trimClampsToSource:trimRange({duration:10},{trimIn:8,duration:9}).end===10,trimLimitEnforced:(function(){try{trimRange({duration:300},{trimIn:0,duration:181});return false;}catch(e){return true;}})(),localOnly:true,originalPreserved:true};}};
 })();
 </script>
 </body>
