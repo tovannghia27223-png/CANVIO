@@ -30,3 +30,6 @@
 12. Physical target-device GPU/VRAM, performance and long-render testing.
 13. Cross-origin backup/restore and independent-device recovery.
 14. Rollback, release observability, alerting and production incident drill.
+
+
+| P133.2 4K → 720p proxy | Node output geometry/trim/source guards + hosted Chromium 4K fixture, WebM ffprobe and full decode | Candidate branch only; CI pending. WebM codec/audio capture varies; real 4K media, long clips and physical mobile performance remain manual. |
