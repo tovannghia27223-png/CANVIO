@@ -211,3 +211,9 @@ Pull trước (`git pull --rebase origin main`; CI bot hay push commit build). A
 
 - Added the loopback-only local ComfyUI bridge, Node contract tests and Chromium mock-server acceptance. It registers image/video/upscale/interpolate handlers with P128 and imports result blobs through the existing Asset Library owner.
 - Model/custom-node execution and output quality remain unverified until the user's actual free local ComfyUI environment is available. This is not cloud sync or an AI model bundle.
+
+
+## P143.4 verified mainline and P119.3 follow-up — 2026-11-21
+
+- P143.4 merged PR #83 (29acd119); post-merge #551 passed 53/53 and Pages #275 passed. Parity 32/32, lexical scanner 14/14 and inventory validator 17/17. This is lexical evidence, not a semantic dependency graph.
+- Started P119.3: native Video Engine keyframe inspector now receives a shared P119 preset adapter; writes into existing vtKFEasing/Bezier fields and relies on existing Apply/Undo/snapshot path. Candidate Node/Chromium suites added; awaiting full hosted result.
