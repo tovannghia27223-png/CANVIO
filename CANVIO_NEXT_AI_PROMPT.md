@@ -203,3 +203,8 @@ Chỉ kiểm bằng tín hiệu/tệp tổng hợp và Chromium headless; chưa 
 
 - Candidate shares CVEasingP119 with P145.2 transitions and P79 video-only segment export. Default linear is backward compatible; named presets/custom curve from #motionEase use the original P119 API.
 - Verify P145.2 Node+Chromium and P143 source parity; P119 remains partial for Video Engine clip/keyframe and Website Engine timelines.
+
+## P135.2 project snapshot persistence — 2026-11-21
+
+- New P135.2 candidate stores the editable adjustment stack inside the existing Pixel PNG snapshot via a CRC-checked tEXt chunk; it wraps native snapshotState/restoreState, adds no second database and keeps the image raster unchanged.
+- Verify P135 Node/Chromium tests and P143 parity before merge. Do not claim cloud/two-device sync; third-party PNG re-encoding can discard ancillary metadata.

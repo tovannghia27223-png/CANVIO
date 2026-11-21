@@ -507,3 +507,7 @@ Hosted Node and Chromium checks cover five named character styles, three table p
 ## P119.2 shared easing transition QA
 
 Hosted Node tests load both P119 and P145.2 and verify actual preset/custom curve resolution. Hosted Chromium checks the P145.2 easing selector and compares the output frame at equal raw progress with linear and custom P119 curves, verifying that the derived easing value affects both renderer paths. Video Engine clip/keyframe easing and Website Engine motion remain unverified and are not part of this increment.
+
+## P135.2 editable project snapshot QA
+
+Node tests round-trip the private PNG tEXt metadata and enforce CRC/version/safe layer limits. Hosted Chromium applies a non-destructive adjustment, confirms the underlying PNG snapshot bytes are unchanged, restores the stack using the existing Pixel restoreState() API, then reloads and restores the saved snapshot again. The test verifies ordered layer values and preview filter state with no page errors. It does not certify independent cloud sync or third-party PNG re-encoding.

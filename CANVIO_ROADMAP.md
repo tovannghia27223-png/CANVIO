@@ -1015,3 +1015,8 @@ Hosted verification after the ffmpeg repair is complete:
 - Extends the existing P119 CVEasingP119 presets and cubic-bezier solver to P145.2 shader transitions and video-only MP4 transition export. Default stays linear to preserve current output.
 - Named presets and "custom from Motion" map to P119.PRESETS / P119.parse. The same derived easedProgress is used in WebGL and Canvas2D fallback; P79 export sequence passes the same options per frame.
 - P139.1 and P145.2 now consume the shared P119 easing module. Video Engine clip/keyframe easing and Website Engine/CSS timeline remain open.
+
+## P135.2 — Pixel adjustment snapshot persistence (2026-11-21 · hosted candidate)
+
+- The existing Pixel snapshot API continues to return a PNG Data URL. P135.2 stores its bounded adjustment stack in a CRC-checked PNG tEXt metadata chunk, and restoreState() rehydrates it without a second database or changing raster pixels.
+- Node and Chromium tests cover metadata round-trip, source-raster identity, preview, export, reload and native restore. Keep cloud/two-device sync, non-PNG re-encoding, masks, smart objects and advanced pixel tools as separate acceptance scopes.

@@ -282,3 +282,8 @@ PR #71 was closed as superseded by clean-main PR #73; the latter carries the cor
 
 - P145.2 now reads the original P119 named presets and custom cubic-bezier from Motion; linear remains the default. Applies the same easedProgress to shader, Canvas2D preview and P79 video-only transition export.
 - Keep P119 partial for Video Engine clip/keyframe and Website Engine timeline integration; merge only after Node/Chromium verification on current main.
+
+## P135.2 Pixel snapshot metadata candidate — 2026-11-21
+
+- P135.2 carries the existing adjustment stack through Pixel snapshotState() / restoreState() using a bounded PNG tEXt metadata chunk. The snapshot string remains a PNG Data URL and existing raster pixels are not changed by preview.
+- Acceptance gate: Node metadata/CRC/32-layer checks, Chromium snapshot→reload→restore, P143 standalone/embedded parity. Not a claim of cloud sync or independent-device Project Vault validation.

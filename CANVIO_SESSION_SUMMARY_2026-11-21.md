@@ -189,3 +189,13 @@ Pull trước (`git pull --rebase origin main`; CI bot hay push commit build). A
 
 - P145.2 now consumes P119 easing presets and custom Motion cubic-bezier via the existing CVEasingP119 owner. The easing value affects shader and Canvas2D render progress, preview, PNG and P79 MP4 transition frames; default remains linear.
 - Node/Chromium acceptance is added; Video Engine clip/keyframe easing and Website Engine animation timeline are still open.
+
+## P120/P126 ComfyUI bridge — candidate 2026-11-21
+
+- Added the loopback-only local ComfyUI bridge, Node contract tests and Chromium mock-server acceptance. It registers image/video/upscale/interpolate handlers with P128 and imports result blobs through the existing Asset Library owner.
+- Model/custom-node execution and output quality remain unverified until the user's actual free local ComfyUI environment is available. This is not cloud sync or an AI model bundle.
+
+## P135.2 Pixel snapshot restore — candidate 2026-11-21
+
+- Adjustment metadata is now embedded in the existing Pixel PNG snapshot string and restored through the existing native Pixel API. Preview remains non-destructive; exports remain flattened copies.
+- Hosted Node/Chromium and P143 parity are the merge gate. Cross-device sync and advanced Photoshop-like tools remain open.
