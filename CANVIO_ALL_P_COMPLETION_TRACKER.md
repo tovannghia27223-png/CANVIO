@@ -129,3 +129,10 @@ No honest all-P completion claim is possible yet. In addition to P70's 14 open r
 - P134 base scopes remain the existing histogram/waveform/vectorscope implementation; this increment adds a separate aspect-ratio workflow inside the existing Video Engine quality card.
 - Scope boundary: 9:16 / 1:1 saliency crop from edge contrast + frame difference; WebM export; no face-recognition model, no upload, no timeline or store mutation.
 - Acceptance status: pending hosted PR verification. Do not mark merged/automated PASS until the workflow result is inspected. Real footage, mobile/browser matrix and audio listening remain manual.
+
+
+## P124 — rebased Auto Layout candidate (2026-11-21)
+
+- Candidate branch work/p124-autolayout-rebased-20261121 carries the existing P124 implementation from the stale PR onto current main, with canonical hosted workflow integration.
+- Five responsive layout presets and four card variants; uses the existing Website Engine adapter/save path.
+- Node and Chromium tests wired; pending hosted run. P124 remains partial: arbitrary component conversion, visual breakpoint editor, nested variant sync, drag/resize constraints and full accessibility/real-editor acceptance remain open.
