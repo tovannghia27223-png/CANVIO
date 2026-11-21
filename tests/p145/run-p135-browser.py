@@ -59,7 +59,28 @@ with sync_playwright() as p:
     page.wait_for_function("window.__p135AssetCalls.some(x=>x.isFile && x.type==='image/png' && x.size>24)",timeout=30000)
     checks['assetSaveUsesExistingOwner']=page.evaluate("window.__p135AssetCalls.some(x=>x.isFile && x.type==='image/png' && x.size>24)")
     checks['sourceCanvasStillUnchangedAfterExport']=before==page.evaluate("CVNativeEngines.pixel.snapshotState()")
-    page.evaluate("CV.assets.addBlob=CV.assets.addBlob")
+    page.evaluate("CV.assets.addBlob=window.__p135OriginalAddBlob")
+    project_record=page.evaluate("""async ()=>{
+      const snap=CVUnifiedLayers.snapshotState('pixelStudio');
+      const ok=await CANVIOPersistentProjects.save('pixelStudio','P135.2 persistent round-trip test');
+      const rows=await CANVIOPersistentProjects.list();
+      const rec=rows.find(x=>x.editor==='pixelStudio'&&x.state&&x.state.__canvioPixelAdjustmentProject===1);
+      localStorage.setItem('__p135ExpectedPixel',JSON.stringify(Array.from(CVNativeEngines.pixel.canvas.getContext('2d').getImageData(0,0,1,1).data)));
+      return {snapshotMarker:snap&&snap.__canvioPixelAdjustmentProject===1,
+        snapshotLayer:snap&&snap.adjustments&&snap.adjustments.layers.some(x=>x.type==='brightness'&&x.value===150),
+        saved:ok,recordFound:!!rec,recordLayer:!!(rec&&rec.state.adjustments.layers.some(x=>x.type==='brightness'&&x.value===150))};
+    }""")
+    checks['projectSnapshotIncludesAdjustmentStack']=project_record['snapshotMarker'] and project_record['snapshotLayer']
+    checks['projectVaultSavedAdjustmentMetadata']=project_record['saved'] and project_record['recordFound'] and project_record['recordLayer']
+    page.reload(wait_until='commit',timeout=60000)
+    page.wait_for_function("!!(window.CVPixelAdjustmentsP135 && window.CVUnifiedLayers && window.CANVIOPersistentProjects)",timeout=90000)
+    page.wait_for_function("""(()=>{const state=window.CVPixelAdjustmentsP135?.getState();const canvas=document.querySelector("#pxCanvas");return !!(state&&state.layers.some(x=>x.type==="brightness"&&x.value===150)&&canvas&&canvas.style.filter.includes("brightness(150%)"))})()""",timeout=30000,polling=250)
+    checks["projectVaultReloadRestoresAdjustmentStack"]=page.evaluate("""(()=>{
+      const state=CVPixelAdjustmentsP135.getState(),canvas=CVNativeEngines.pixel.canvas;
+      const expected=JSON.parse(localStorage.getItem('__p135ExpectedPixel')||'null');
+      const actual=Array.from(canvas.getContext('2d').getImageData(0,0,1,1).data);
+      return !!(state.layers.some(x=>x.type==='brightness'&&x.value===150)&&canvas.style.filter.includes('brightness(150%)')&&JSON.stringify(actual)===JSON.stringify(expected));
+    })()""")
     b.close()
 httpd.shutdown()
 result={'checks':checks,'pageErrors':errors,'failed':[k for k,v in checks.items() if not v]}
