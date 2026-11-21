@@ -74,8 +74,9 @@ with tempfile.TemporaryDirectory() as td:
         page.wait_for_function("document.querySelector('#cv120-status').textContent.includes('ComfyUI hoàn tất')",timeout=30000)
         c['workflowCompleted']=True
         c['inputMediaUploaded']=state['uploads']==1
-        c['promptNodeOverridden']=bool(state['workflow'] and state['workflow']['1']['inputs']['text']=='Business editorial image, clean desk, natural light')
-        c['mediaNodeOverridden']=bool(state['workflow'] and state['workflow']['2']['inputs']['image']=='canvio-input.png')
+        sent_graph=(state['workflow'] or {}).get('prompt',{})
+        c['promptNodeOverridden']=bool(sent_graph.get('1',{}).get('inputs',{}).get('text')=='Business editorial image, clean desk, natural light')
+        c['mediaNodeOverridden']=bool(sent_graph.get('2',{}).get('inputs',{}).get('image')=='canvio-input.png')
         c['historyPolled']=state['history']>=1 and state['views']==1
         c['savedToAssetLibrary']=page.evaluate("window.__cv120Saved.length===1&&window.__cv120Saved[0].name==='canvio-result.png'&&window.__cv120Saved[0].size>0")
         c['outputDownloadLink']=page.locator('#cv120-results a').count()==1
