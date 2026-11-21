@@ -107,6 +107,46 @@ function inspect() {
     breakpointControls: ['mobileBreakpoint', 'tabletBreakpoint', 'mobileColumns', 'tabletColumns', 'desktopColumns']
   };
 }
+function selectedTarget(){
+ var ed=window.CVWeb,component=null;
+ try{component=ed&&typeof ed.getSelected==='function'?ed.getSelected():null;}catch(e){}
+ if(!component||typeof component.addClass!=='function')return null;
+ try{if(typeof component.is==='function'&&component.is('wrapper'))return null;}catch(e){}
+ return component;
+}
+function selectedTargetClass(component){
+ var raw='';
+ try{raw=component.getId?component.getId():(component.get&&component.get('id'))||component.cid||'';}catch(e){}
+ raw=String(raw||'selected').toLowerCase().replace(/[^a-z0-9_-]/g,'-').replace(/^-+|-+$/g,'').slice(0,48)||'selected';
+ return 'cv-p124-selected-'+raw;
+}
+function selectedResponsiveCss(selector,options){
+ if(!/^\.cv-p124-selected-[a-z0-9_-]{1,64}$/.test(String(selector||'')))throw new Error('Selector P124 không hợp lệ.');
+ var o=normalize('grid',options),rule=function(columns,gap){return 'display:grid;grid-template-columns:repeat('+columns+',minmax(0,1fr));gap:'+gap+'px;min-width:0;box-sizing:border-box;';};
+ return selector+'{'+rule(o.desktopColumns,o.gap)+'}@media(max-width:'+o.tabletBreakpoint+'px){'+selector+'{'+rule(o.tabletColumns,o.gap)+'}}@media(max-width:'+o.mobileBreakpoint+'px){'+selector+'{'+rule(o.mobileColumns,o.gap)+'}}';
+}
+async function applyResponsiveToSelected(options){
+ var ed=window.CVWeb,component=selectedTarget();
+ if(!ed||!component)return{ok:false,saved:false,error:'Hãy chọn một phần tử trong Website Engine trước.'};
+ var o=normalize('grid',options),cls=selectedTargetClass(component),selector='.'+cls,css=selectedResponsiveCss(selector,o);
+ if(!(ed.Css&&typeof ed.Css.setRule==='function')&&typeof ed.addStyle!=='function')
+  return{ok:false,saved:false,error:'GrapesJS chưa sẵn sàng để lưu CSS responsive.'};
+ try{
+  if(ed.Css&&typeof ed.Css.setRule==='function'){
+   ed.Css.setRule(selector,{display:'grid','grid-template-columns':'repeat('+o.desktopColumns+',minmax(0,1fr))',gap:o.gap+'px','min-width':'0','box-sizing':'border-box'});
+   ed.Css.setRule(selector,{'grid-template-columns':'repeat('+o.tabletColumns+',minmax(0,1fr))',gap:o.gap+'px'},{atRuleType:'media',atRuleParams:'(max-width: '+o.tabletBreakpoint+'px)'});
+   ed.Css.setRule(selector,{'grid-template-columns':'repeat('+o.mobileColumns+',minmax(0,1fr))',gap:o.gap+'px'},{atRuleType:'media',atRuleParams:'(max-width: '+o.mobileBreakpoint+'px)'});
+  }else ed.addStyle(css);
+  component.addClass(cls);
+ }catch(error){return{ok:false,saved:false,error:'Không áp dụng được CSS responsive: '+cleanText(error&&error.message,'lỗi GrapesJS',100)};}
+ try{
+  if(!window.CV||!CV.engines||!CV.engines.web||typeof CV.engines.web.save!=='function')
+   return{ok:false,saved:false,className:cls,error:'Đã áp dụng trong phiên nhưng Website Engine chưa có hàm lưu.'};
+  var saved=await Promise.resolve(CV.engines.web.save());
+  if(saved===false)return{ok:false,saved:false,className:cls,error:'Đã áp dụng trong phiên nhưng lưu thất bại. Hãy kiểm tra và lưu lại trong Website Engine.'};
+  return{ok:true,saved:true,className:cls,error:''};
+ }catch(error){return{ok:false,saved:false,className:cls,error:'Đã áp dụng trong phiên nhưng lưu thất bại.'};}
+}
 async function insert(kind, options) {
   var markup;
   try { markup = render(kind, options); }
@@ -196,6 +236,26 @@ function mount() {
     });
     row.appendChild(button);
   });
+  var selectedButton = make('button', {
+    type: 'button',
+    'data-p124-apply-selected': '1',
+    style: 'min-height:36px;padding:7px 12px;border:1px solid #64748b;border-radius:8px;background:var(--primary,#2563eb);color:#fff;cursor:pointer;font:inherit;'
+  }, 'Áp dụng breakpoint cho phần tử đang chọn');
+  selectedButton.addEventListener('click', async function () {
+    selectedButton.disabled = true;
+    status.textContent = 'Đang áp dụng responsive cho phần tử được chọn…';
+    var result = await applyResponsiveToSelected({
+      gap: gap.input.value,
+      mobileBreakpoint: mobileBreakpoint.input.value,
+      tabletBreakpoint: tabletBreakpoint.input.value,
+      mobileColumns: mobileColumns.input.value,
+      tabletColumns: tabletColumns.input.value,
+      desktopColumns: desktopColumns.input.value
+    });
+    status.textContent = result.ok ? 'Đã áp dụng và lưu responsive cho ' + result.className + '.' : result.error;
+    selectedButton.disabled = false;
+  });
+  row.appendChild(selectedButton);
   panel.appendChild(heading); panel.appendChild(help); row.appendChild(select); panel.appendChild(row); panel.appendChild(settings); panel.appendChild(status);
   host.appendChild(panel);
   return true;
@@ -217,7 +277,7 @@ if (typeof document !== 'undefined') {
   if (document.readyState === 'loading' && document.addEventListener) document.addEventListener('DOMContentLoaded', start, { once: true });
   else start();
 }
-var api = { version: VERSION, inspect: inspect, normalize: normalize, render: render, insert: insert, mount: mount };
+var api = { version: VERSION, inspect: inspect, normalize: normalize, render: render, selectedResponsiveCss: selectedResponsiveCss, applyResponsiveToSelected: applyResponsiveToSelected, insert: insert, mount: mount };
 api.tests = function () {
   var n = normalize('grid', { columns: 99, gap: 1, minWidth: 900, variant: 'unknown' });
   var g = render('grid', { columns: 4, minWidth: 260, gap: 24 });
@@ -240,7 +300,11 @@ api.tests = function () {
     clampsMobileColumns: normalize('grid', { mobileColumns: 9 }).mobileColumns === 2,
     breakpointsOrdered: normalize('grid', { mobileBreakpoint: 760, tabletBreakpoint: 768 }).tabletBreakpoint > normalize('grid', { mobileBreakpoint: 760, tabletBreakpoint: 768 }).mobileBreakpoint,
     responsiveRulesAreScoped: /data-canvio-p124-breakpoints/.test(g) && /cv-p124-layout-/.test(g),
-    exposesBreakpointControls: inspect().breakpointControls.length === 5
+    exposesBreakpointControls: inspect().breakpointControls.length === 5,
+    selectedResponsiveCssHasThreeRanges: (selectedResponsiveCss('.cv-p124-selected-unit', { desktopColumns: 4, tabletColumns: 2, mobileColumns: 1 }).match(/@media/g) || []).length === 2,
+    selectedResponsiveCssRejectsUnsafeSelector: (function () { try { selectedResponsiveCss('body', {}); return false; } catch (e) { return true; } })(),
+    selectedResponsiveColumnsAreBounded: normalize('grid', { desktopColumns: 99, tabletColumns: 0, mobileColumns: 9 }).desktopColumns === 6 && normalize('grid', { desktopColumns: 99, tabletColumns: 0, mobileColumns: 9 }).tabletColumns === 1 && normalize('grid', { desktopColumns: 99, tabletColumns: 0, mobileColumns: 9 }).mobileColumns === 2,
+    selectedResponsiveBreakpointsAreOrdered: normalize('grid', { mobileBreakpoint: 760, tabletBreakpoint: 768 }).tabletBreakpoint > normalize('grid', { mobileBreakpoint: 760, tabletBreakpoint: 768 }).mobileBreakpoint
   };
 };
 window.CVAutoLayoutP124 = api;
