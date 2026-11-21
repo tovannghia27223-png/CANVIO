@@ -417,3 +417,8 @@ The candidate workflow runs standalone/embedded source parity and API tests for 
 
 - Hosted run #371 showed the previous test divided video frame count by inaccurate `r_frame_rate=60/1` because WebM format duration and `avg_frame_rate` were missing. It recorded 2.05 s for output whose expected length is ~4.1 s; all other P134 checks (moving subject, 720×1280, audio, full decode, local-only, preview) passed.
 - The test now measures video packet PTS span plus median packet duration and emits packet diagnostics. The 3.5–4.5 s assertion remains unchanged. Latest-main rerun #373 pending.
+## P143 Phase 2 — inline script inventory gate (candidate)
+
+- Hosted workflow runs tests/p143/build-inline-source-inventory.cjs after integrations and before full HTML/JS audit.
+- Generates tests/p143/inline-source-inventory.json for all canonical script tags in execution order; the report is included in the source ZIP and evidence artifact.
+- Records script identity/attributes, bytes, SHA-256 and heuristic global references. This is not a semantic dependency graph or CSS/template inventory. Current hosted result pending.
