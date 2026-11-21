@@ -777,3 +777,21 @@ Hosted verification after the ffmpeg repair is complete:
 - Supersedes previous P131.3 pending/candidate notes. Import is limited to sanitized .html/.htm body fragment, ≤5 MiB, no scripts/forms/iframes/stylesheets/remote images/media or third-party runtime; uses existing Website Engine add/save path and creates no new store/backend.
 - P70 stays blocked: 14/14 real-world acceptance gates remain open.
 
+## 2026-11-21 — Mainline status reconciliation (supersedes older pending labels)
+
+- **P145.10:** merged on main by PR #38, commit `c0ee9749dbfda84abcf43466a034dfa5539222c9`; hosted run #310 (`44812233871`) passed. Node 10/10 and Chromium 14/14; native `CV.assets.list()`, session-only SHA-256 from local bytes, duplicate detection and read-only Asset Library behavior passed. Artifact `CANVIO-23.3.111-GITHUB-RUNTIME-VERIFIED-310` (21,579,190 bytes; SHA-256 `302274465126dec415716d796981168ed96fc0d2091514581725557e67a22843`). Limits: 40 assets, 25 MiB each, 64 MiB total; unsupported/over-budget entries are unverified; no cloud inventory.
+- **P136.4:** merged through PR #39 at `1eb4129f4252b31c41f819d23f1cd9dd02948d68`; hosted run #312 (`44813838108`) passed 33 workflow steps. Six local SVG pattern fills are available in multicolour Image Trace; existing none/Bezier/Stroke paths remain. No brush authoring, gradient mesh or topology editor is included.
+- **P131.3:** merged through PR #41 at `1ac185d7aea7b14ad13a0517f51e72292cc42162`; hosted run #315 (`44816184861`) passed. Chromium import suite 31/31, zero page errors; app smoke 21 checks across 48 pages. Import is a sanitized local .html/.htm body fragment ≤5 MiB through the existing Website Engine add/save owner; external media, stylesheets, scripts, forms and iframes are intentionally excluded.
+- Older entries above/below that label these three increments “candidate”, “pending” or “awaiting rerun” are historical snapshots and are superseded by this reconciliation. Their original history is retained.
+- **P70 release gate is not closed:** `releaseCertified:false`, fourteen real-world acceptance gates remain pending. CI fixtures do not replace real-origin persistence, real-media, accessibility, HTTP-header, physical-device/GPU, clean-machine offline, cross-origin recovery or incident-drill evidence.
+- Detailed state for all documented P families is consolidated in `CANVIO_ALL_P_COMPLETION_TRACKER.md`; it distinguishes merged/automated PASS, partial scope, not yet evidenced and external blockers.
+
+## 2026-11-21 — Backlog audit correction (P122.3 / P124 / P133 / P142 / P143 / P144)
+
+- P122.3 is explicitly listed as **MCP chưa làm** in the earlier P122 section. No separate source, test or transport/permission/threat-model contract was found. It remains unimplemented until a concrete safe acceptance contract is approved.
+- P124 Auto Layout/Component remains partial/open; the 12 P123 static GrapesJS blocks do not implement auto-layout constraints, reusable variants or responsive component behavior.
+- P133 OPFS/proxy is listed as backlog in `CANVIO_NEXT_AI_PROMPT.md`; no P133 source, worker or tests exist on main. It must be designed around current IndexedDB/Project Vault/media owners and quota/rollback behavior, not as an unrelated second store.
+- P143 full source split/refactor remains open; standalone lots do not mean the entire large index has been modularized. Use staged extraction and embedded/source parity tests.
+- P144 Command Palette is partially covered by P109's existing palette/command-search owner and tests. Do not create a second palette; first reconcile original P144 acceptance against P109.
+- P142 GitHub Pages deployment on main succeeded in workflow #192 (`44819441586`), all three build/report/deploy jobs passed. This closes the Pages deployment step only; real-origin browser checks and Windows/GTX 1650/RAM 7 GB, Firefox/WebKit/touch/physical-GPU acceptance remain open.
+- PR #44 documentation reconciliation passed hosted verify run #320 (`44859258258`); artifact SHA-256 `74cb03f31a7c55d94f69376b74f46a22bef1538b473aeca1165c42296f2e69ba`. This run does not change the P70 disposition.

@@ -256,3 +256,17 @@ The candidate is built and verified by the hosted runtime workflow. Runtime vend
 - Main build commit `4fdaae3219cde7ebc6c4c9358bf40b3d57812f16` committed the built canonical `index.html` and Manifest. Verified the main index blob contains the new P131.3 API, version `131.3.0` and **Nhập HTML an toàn · Website Studio** palette entry.
 - Manifest index SHA-256 `e419b50f1bd459201ad19d94f6a2cd5ea08c03b539be3c0a3b7899b8b925a7ac`, 5,358,886 bytes; 237 files. Artifact #315 (21,590,752 bytes), SHA-256 `12305d7990ed16b93d6d653cd3fd1d662a3cd90144b9800773e560a5a55fa06c`.
 - Import remains intentionally limited to sanitized .html/.htm body fragments ≤5 MiB; remote media, stylesheets, scripts, forms and iframes are excluded. Existing Website Engine store/owner reused.
+
+## Current mainline reconciliation — 2026-11-21
+
+- P145.10 is merged (PR #38, `c0ee9749dbfda84abcf43466a034dfa5539222c9`) and its current-main hosted verification passed in run #310 (`44812233871`). Node 10/10; Chromium 14/14; artifact `CANVIO-23.3.111-GITHUB-RUNTIME-VERIFIED-310`, 21,579,190 bytes, SHA-256 `302274465126dec415716d796981168ed96fc0d2091514581725557e67a22843`.
+- P145.10 reads the native local `CV.assets.list()` provider, computes SHA-256 for eligible local base64 data URLs only on explicit user action, keeps hashes in memory, and never mutates vault records. Bounds: 40 entries, 25 MiB each, 64 MiB aggregate. No cloud or cross-device sync.
+- P136.4 PR #39/run #312 and P131.3 PR #41/run #315 are merged and accepted on main; see their Roadmap/QA entries for exact limits.
+- The former PR #43 attempt was closed as a stale duplicate: P145.10 was already merged through PR #38 and the PR #43 documentation snapshot lagged behind newer mainline P131.3/P136.4 records. No code was lost.
+- For the full remaining backlog and manual release gates, use `CANVIO_ALL_P_COMPLETION_TRACKER.md`. Do not merge stale branches or report “all P complete” while partial scopes and P70 real-world gates remain.
+
+## Additional backlog boundary — 2026-11-21
+
+- Newly reconciled explicit open items from the existing handoff/roadmap: P122.3 MCP (not implemented/no transport-security contract), P124 Auto Layout/Component (P123 static starters are not equivalent), P133 OPFS/proxy (no owner/test; must coordinate with current storage), P143 full code split (not performed), and P144 (basic palette already in P109; parity audit before extending).
+- P142 Pages deployment is confirmed by run #192 (`44819441586`), but real-origin, Windows/GTX 1650/RAM 7 GB, Firefox/WebKit/touch and physical GPU acceptance have not been performed.
+- PR #44 docs update hosted run #320 passed; artifact SHA-256 `74cb03f31a7c55d94f69376b74f46a22bef1538b473aeca1165c42296f2e69ba`. Do not interpret docs/CI success as all-P or Stable certification.

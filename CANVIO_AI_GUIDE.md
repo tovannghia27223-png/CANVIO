@@ -3708,3 +3708,21 @@ P125.3: `CVScrollFramesP125.PRESETS`, `decimate(frames,maxBytes)`; `buildHtml` n
 - This supersedes prior entries saying “candidate”, “CI pending”, or “main index embed pending” for P131.3.
 - P70 still remains `releaseCertified:false` / `BLOCKED_PENDING_REAL_WORLD_ACCEPTANCE`: 14/14 real-world gates pending, 0 passed. SwiftShader software rendering was used; no physical GPU, full ONNX/Whisper model-inference, production accessibility, two-device/cloud sync or real-media sign-off is implied.
 
+## 2026-11-21 — Mainline reconciliation and P145.10 hosted acceptance (run #310)
+
+- P145.10 is **merged on main** via PR #38, commit `c0ee9749dbfda84abcf43466a034dfa5539222c9`; do not treat the earlier “rebased candidate / hosted rerun pending” note as current.
+- Hosted runtime workflow #310 (`44812233871`) completed with conclusion `success`; verify job passed. Its active source extraction/syntax, HTML/inline-JS audit, P47–P70 regressions, integrated source contracts, P107 ZIP round-trip, pinned Three.js r187/P85 vendors, compressed GLB decoder fixtures, same-origin browser runtime and app smoke stages passed. The PR-event-only commit-to-working-branch step was skipped by workflow design.
+- P145.9/.10 Node suite: **10/10**. Hosted Chromium: **14/14**, `failed: []`, `pageErrors: []`. Explicit checks included native `CV.assets.list()` provider, real local-byte SHA-256 (64 lowercase hex), duplicate detection, read-only behavior and no Asset Library record mutation.
+- Artifact: `CANVIO-23.3.111-GITHUB-RUNTIME-VERIFIED-310`, 21,579,190 bytes, SHA-256 `302274465126dec415716d796981168ed96fc0d2091514581725557e67a22843`.
+- Scope remains local-only: manual user action, decoded local base64 data URLs, hashes kept in page memory, maximum 40 assets / 25 MiB per asset / 64 MiB aggregate. Skipped or unsupported assets remain unverified; this is not remote/cloud inventory or cross-device synchronization.
+- Mainline merge records also supersede older candidate notes for P136.4 (PR #39, run #312) and P131.3 (PR #41, run #315). See the current Roadmap/QA/Handoff addenda and `CANVIO_ALL_P_COMPLETION_TRACKER.md` for the consolidated P-by-P boundary.
+- P70 remains `releaseCertified:false` / `BLOCKED_PENDING_REAL_WORLD_ACCEPTANCE`; all fourteen gates remain open. Do not call CANVIO 1.0 Stable or production-certified based on CI alone.
+
+## 2026-11-21 — Additional open scope found in handoff audit
+
+- `CANVIO_NEXT_AI_PROMPT.md` confirms the remaining P122.3 MCP item, P124 Auto Layout/Component, P133 OPFS/proxy, P143 code extraction and P144 Command Palette work were not all closed. P109 already owns the basic command palette; extend that owner after checking P144 parity rather than creating a second palette.
+- P122.1/P123 source suite passed 13/13 and P122.2 passed 14/14 in run #310. P122.2 remains Website Engine CSS-only; it does not edit content/icons, Poster/Slide or Project Vault version history.
+- P122.3 is explicitly described in the Roadmap as “MCP chưa làm”. No source/test or MCP threat/transport/permission contract is present. Do not invent network endpoints or broaden local data exposure.
+- P124/P133/P143 have no standalone source/test owner in the current main tree. P133 must reuse/coordinate with existing Project Vault/IndexedDB/media stores; do not introduce a second source of truth. P143 must be staged and parity-tested, not an all-at-once rewrite.
+- P142 Pages pipeline is confirmed successful on main run #192 (`44819441586`), including build, report and deploy jobs. This does not close real-origin Playwright, Windows/GTX 1650, Firefox/WebKit, touch or physical GPU acceptance.
+- PR #44 documentation reconciliation hosted verify run #320 (`44859258258`) succeeded. Artifact `CANVIO-23.3.111-GITHUB-RUNTIME-VERIFIED-320` SHA-256 `74cb03f31a7c55d94f69376b74f46a22bef1538b473aeca1165c42296f2e69ba`; PR-event branch commit step skipped by workflow design.
