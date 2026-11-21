@@ -382,3 +382,10 @@ The candidate workflow runs standalone/embedded source parity and API tests for 
 - P124 responsive Auto Layout; P133.2 4K-to-720p local proxy; P144.3 contextual Studio help are staged together on work/canvio-p124-p133-p144-final-20261121.
 - Hosted workflow integrates all three modules and runs Node/Chromium tests; P133 proxy also uses ffmpeg/ffprobe decode validation.
 - Disposition: pending hosted CI. Advanced P124 editor controls, remaining P133 OffscreenCanvas/OPFS migration, and human accessibility/real-media acceptance remain open.
+
+
+### P133.2 QA correction — CI #347 (2026-11-21)
+
+- First hosted Chromium run successfully generated a 1280×720 WebM, preserved Opus audio, fully decoded the file and confirmed the original clip remained unchanged.
+- It caught an actual integration race: the UI did not await the asynchronous Video Engine importFiles() promise, so the proxy download existed but the new timeline clip was not yet present when reported. Updated the module to await importFiles(), verify clip-count increase and retain the download link if timeline ingestion fails.
+- CI must be rerun on the corrected commit; no proxy acceptance/merge claim until timeline import passes.
