@@ -31,3 +31,11 @@ CI trên GitHub: các commit P138, P133, P144 đều chạy thành công (xanh) 
 
 ## Việc cho người/AI tiếp theo
 Pull trước (`git pull --rebase origin main`; CI bot hay push commit build). AI kia đang giữ PR #45 (P124 Auto Layout), P143 (tách mã) và P145.6–10; không dẫm chân. Xem `CANVIO_NEXT_AI_PROMPT.md` để biết quy tắc nhúng (CRLF, không viết `</script>` thật trong mã) và lệnh chạy test.
+
+
+## Tiếp tục P133.2 — 4K to 720p proxy candidate
+
+- Tạo branch work/p133-proxy720p-20261121.
+- Thêm canvio-p133-proxy.js: tạo proxy WebM từ clip 4K đang chọn, giữ tỷ lệ với cạnh dài tối đa 1280 px, giới hạn 500 MiB/180 giây, thêm thành clip mới qua Video Engine importFiles; không sửa clip gốc.
+- Thêm Node regression tests/p127/run-p133p-tests.cjs và Chromium + ffmpeg/ffprobe acceptance tests/p145/run-p133-proxy-browser.py; tích hợp vào hosted workflow.
+- Guide, Roadmap, All-P Tracker, Next AI Prompt, QA report và Acceptance Matrix được cập nhật; kết quả CI còn pending, chưa merge.
