@@ -1,17 +1,17 @@
 {
   "format": "CANVIO_P143_INLINE_SOURCE_INVENTORY",
   "version": 1,
-  "generatedAt": "2026-11-21T14:23:03.746Z",
+  "generatedAt": "2026-11-21T14:41:10.939Z",
   "source": "restored canonical index.html after hosted workflow integration steps",
   "purpose": "Complete script-tag inventory in browser execution order; known global reference detection is heuristic, not a semantic dependency DAG.",
-  "htmlBytes": 5589468,
-  "scriptTagCount": 158,
-  "inlineScriptCount": 158,
+  "htmlBytes": 5608561,
+  "scriptTagCount": 159,
+  "inlineScriptCount": 159,
   "externalScriptCount": 0,
   "moduleScriptCount": 0,
   "asyncScriptCount": 0,
   "deferScriptCount": 0,
-  "uniqueScriptIds": 155,
+  "uniqueScriptIds": 156,
   "duplicateScriptIds": [],
   "modules": [
     {
@@ -2838,6 +2838,23 @@
       "sha256": "4eca82cf04970f47b42ff53793ad941b13d66efc33cebf3b30f7d8ef38e40529",
       "exportedGlobals": [],
       "knownGlobalReads": []
+    },
+    {
+      "order": 158,
+      "id": "canvio-lot120126",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 19052,
+      "sha256": "8b3d78a3ba43126ec6a7c8e8895ae9e27b22ece8e305b27a3245e07125444114",
+      "exportedGlobals": [
+        "CVComfyP120P126"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
     }
   ]
 }

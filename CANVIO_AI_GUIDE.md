@@ -3940,3 +3940,14 @@ P144 tour: thêm bước bằng cách thêm vào mảng `STEPS` ({sel,title,text
 - Important limitation: mock server verifies connector protocol only. It does not test a real ComfyUI installation, free custom-node/model compatibility, model licensing, GPU/VRAM, inference latency, or output visual/audio quality. Real-ESRGAN, RIFE and AI video workflows require the user to install compatible free local models/nodes and import their API-format graph. Keep P120/P126 partial for real model acceptance.
 - Release remains releaseCertified:false; the fourteen P70 real-world gates remain open.
 
+
+## P120/P126 — Local ComfyUI workflow bridge
+
+- Owner: `canvio-p120-p126-comfyui.js`; embedded lot: `canvio-lot120126`; API: `window.CVComfyP120P126`; version 120.126.1.
+- UI: Platform Hub → API Hub, adjacent to existing P128 task orchestrator. Registers `image`, `video`, `upscale` and `interpolate` handlers as the `comfyui-local` tier; no second provider registry, timeline, asset database or AI state owner.
+- User imports ComfyUI **API-format** workflow JSON, optionally selects local image/video media, and explicitly maps prompt node/input and media node/input. The connector validates/clones the graph before replacing only mapped inputs.
+- Loopback-only endpoint policy: HTTP/HTTPS localhost, 127.0.0.1 or ::1. No credentials/API keys are sent. Explicit Connect calls `/system_stats`; execution uses `/upload/image` (when media is supplied), `/prompt`, `/history/{prompt_id}` and `/view`. Polling is bounded to 10 minutes; workflow 10 MiB, media 100 MiB, each output 150 MiB.
+- Successful output blobs are handed to existing `CV.assets.addBlob(blob, filename)`; downloadable links remain session-local. No cloud request, model download, custom-node installation or background execution.
+- P120/P126 task selectors route through the imported workflow. Real-ESRGAN, RIFE, AI video and other model/custom-node behaviors only exist if the user installs compatible free local ComfyUI models/nodes and imports a compatible API workflow. CANVIO does not bundle or certify those models.
+- Tests: `tests/p127/run-p120-comfyui-tests.cjs` and hosted Chromium `tests/p145/run-p120-browser.py`. Browser test uses a local mock ComfyUI HTTP server to verify route wiring, media upload, input replacement, queue/history/output retrieval and Asset Library handoff. It does not test real GPU inference or third-party custom nodes.
+- CORS: ComfyUI must allow the exact CANVIO origin; do not expose wildcard CORS on a network-facing server. Hosted CANVIO may also be subject to browser local-network permission and mixed-content rules.

@@ -996,3 +996,10 @@ Hosted verification after the ffmpeg repair is complete:
 - Endpoint is strict loopback-only; no cloud API keys, auto model download, custom-node installer or second provider/store. Browser local-network permission and exact ComfyUI CORS origin may still be required.
 - Mock CI validates connector plumbing, not actual ComfyUI, GPU inference, model compatibility/licensing, RIFE/Real-ESRGAN or video output quality. Keep P120/P126 partially complete until the real local model environment is tested.
 
+
+## P120/P126 — Local ComfyUI workflow adapter
+
+- Adds a free/local ComfyUI API bridge to the existing P128 orchestrator. The user imports an API-format workflow JSON, optionally uploads media, maps prompt/media node inputs, queues the workflow and saves output through the existing Asset Library.
+- Supports image, upscale, video and interpolation routes, but the API workflow/model/custom-node graph remains user-provided. Real-ESRGAN, RIFE and AI video are not bundled; compatible free local nodes/models must be installed by the user.
+- Strict loopback-only URL allowlist, explicit user action, no cloud provider/API keys, bounded polling and request/file sizes, safe workflow cloning and individual output retrieval.
+- Hosted mock-server CI validates integration only. Actual ComfyUI/CORS, model licensing, GPU memory, speed and output quality remain real-environment acceptance.

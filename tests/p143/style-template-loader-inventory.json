@@ -1,14 +1,14 @@
 {
   "format": "CANVIO_P143_STYLE_TEMPLATE_LOADER_INVENTORY",
   "version": 1,
-  "generatedAt": "2026-11-21T14:23:03.940Z",
+  "generatedAt": "2026-11-21T14:41:11.099Z",
   "source": "restored canonical index.html after all workflow-managed module integration steps",
   "purpose": "Inventory inline styles, template elements and dynamic resource-loader call sites. Dependency candidates use known global reads/exports and execution order only; they are heuristic and are not a human-reviewed semantic boot-order DAG.",
-  "htmlBytes": 5589468,
+  "htmlBytes": 5608561,
   "styles": {
     "blockCount": 119,
-    "inlineStyleAttributeCount": 1475,
-    "totalStyleBytes": 433611,
+    "inlineStyleAttributeCount": 1488,
+    "totalStyleBytes": 433962,
     "blocks": [
       {
         "order": 0,
@@ -13035,6 +13035,84 @@
         "element": "div",
         "bytes": 54,
         "sha256": "7598b6eb4fe52585ece8f375d767e42f8824375dff60362932ef1e3222cdd38b"
+      },
+      {
+        "order": 1475,
+        "element": "div",
+        "bytes": 41,
+        "sha256": "c7fa36b5ce6ce3b9526ba27de467bea4292b482200e4c3e17636bbf439b757f8"
+      },
+      {
+        "order": 1476,
+        "element": "input",
+        "bytes": 31,
+        "sha256": "068bd6698899f7350ef713e1de67bef0760c6f12a8588d3f374646868ce2ed29"
+      },
+      {
+        "order": 1477,
+        "element": "div",
+        "bytes": 37,
+        "sha256": "963a61bc0a651f4f4e320ee57f153ae1c047b1b1cd36b253737696a1786f6244"
+      },
+      {
+        "order": 1478,
+        "element": "div",
+        "bytes": 37,
+        "sha256": "963a61bc0a651f4f4e320ee57f153ae1c047b1b1cd36b253737696a1786f6244"
+      },
+      {
+        "order": 1479,
+        "element": "div",
+        "bytes": 37,
+        "sha256": "963a61bc0a651f4f4e320ee57f153ae1c047b1b1cd36b253737696a1786f6244"
+      },
+      {
+        "order": 1480,
+        "element": "input",
+        "bytes": 15,
+        "sha256": "a475ef0c1654ab8db11181a7ceba60862810002ca1919a6e94797ce2f58c8fb0"
+      },
+      {
+        "order": 1481,
+        "element": "input",
+        "bytes": 15,
+        "sha256": "d272ef216064725bdfdcfc22de7fd85d586d31075e5a30492f9dfb3270c3827c"
+      },
+      {
+        "order": 1482,
+        "element": "input",
+        "bytes": 15,
+        "sha256": "a475ef0c1654ab8db11181a7ceba60862810002ca1919a6e94797ce2f58c8fb0"
+      },
+      {
+        "order": 1483,
+        "element": "input",
+        "bytes": 15,
+        "sha256": "d272ef216064725bdfdcfc22de7fd85d586d31075e5a30492f9dfb3270c3827c"
+      },
+      {
+        "order": 1484,
+        "element": "textarea",
+        "bytes": 25,
+        "sha256": "307fbbf6e9c6c052ae8aafa4d3827d0b236cc0fddc2d662d4eeff6193de932da"
+      },
+      {
+        "order": 1485,
+        "element": "div",
+        "bytes": 22,
+        "sha256": "3765360aca1b9f13c02baae6396dabe38ea5a031ae2f610099cade6d6dea97a2"
+      },
+      {
+        "order": 1486,
+        "element": "div",
+        "bytes": 35,
+        "sha256": "0347f881a47a93d8080a6e2f466dcaba208c59f1fe1cfe5c513ba3c19401d706"
+      },
+      {
+        "order": 1487,
+        "element": "p",
+        "bytes": 26,
+        "sha256": "816d919ea4fdf2ebae2bc63ad6401cbf94e4dfb28748e21b6cdb33cf7dd195ea"
       }
     ]
   },
@@ -13043,11 +13121,11 @@
     "blocks": []
   },
   "dynamicLoaders": {
-    "count": 77,
+    "count": 78,
     "countsByKind": {
       "dynamic-script-element": 4,
       "dedicated-worker": 5,
-      "dynamic-fetch": 51,
+      "dynamic-fetch": 52,
       "document-write": 2,
       "script-src-assignment": 4,
       "dynamic-import": 11
@@ -13591,11 +13669,18 @@
         "scriptId": "canvio-lot133p",
         "offset": 4814,
         "excerpt": "nError(message||'Offscreen worker failed');}catch(e){} } try{worker=new Worker(workerUrl);}catch(e){URL.revokeObjectURL(workerUrl);return null;} worker.onmessage=function(event){ var d=event.data||{}; if"
+      },
+      {
+        "kind": "dynamic-fetch",
+        "scriptOrder": 158,
+        "scriptId": "canvio-lot120126",
+        "offset": 4097,
+        "excerpt": "ut(function(){ctl.abort();},timeout||30000);} try{ var res=await fetch(base+path,init); if(!res.ok){var msg='HTTP '+res.status;try{var body=await res.clone().json();msg=body.error||body.message||msg;}ca"
       }
     ]
   },
   "dependencyCandidates": {
-    "count": 318,
+    "count": 320,
     "confidence": "heuristic-not-semantic",
     "edges": [
       {
@@ -14720,6 +14805,15 @@
         "fromId": null,
         "toOrder": 156,
         "toId": "canvio-lot133m",
+        "executionOrder": "producer-before-consumer",
+        "confidence": "heuristic"
+      },
+      {
+        "global": "CV",
+        "fromOrder": 1,
+        "fromId": null,
+        "toOrder": 158,
+        "toId": "canvio-lot120126",
         "executionOrder": "producer-before-consumer",
         "confidence": "heuristic"
       },
@@ -16403,6 +16497,15 @@
         "fromId": null,
         "toOrder": 156,
         "toId": "canvio-lot133m",
+        "executionOrder": "producer-before-consumer",
+        "confidence": "heuristic"
+      },
+      {
+        "global": "CV",
+        "fromOrder": 78,
+        "fromId": null,
+        "toOrder": 158,
+        "toId": "canvio-lot120126",
         "executionOrder": "producer-before-consumer",
         "confidence": "heuristic"
       },

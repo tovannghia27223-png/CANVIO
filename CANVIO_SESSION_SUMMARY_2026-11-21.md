@@ -164,3 +164,8 @@ Pull trước (`git pull --rebase origin main`; CI bot hay push commit build). A
 - PR #71 closed as superseded by clean-main PR #73. No paid/cloud API, key, model download or custom-node installer.
 - Real ComfyUI/model/GPU inference and output quality remain untested and must not be represented as certified.
 
+
+## P120/P126 ComfyUI bridge — candidate 2026-11-21
+
+- Added the loopback-only local ComfyUI bridge, Node contract tests and Chromium mock-server acceptance. It registers image/video/upscale/interpolate handlers with P128 and imports result blobs through the existing Asset Library owner.
+- Model/custom-node execution and output quality remain unverified until the user's actual free local ComfyUI environment is available. This is not cloud sync or an AI model bundle.

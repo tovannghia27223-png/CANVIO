@@ -495,3 +495,7 @@ Automated checks validate source/embedded parity and the existing Motion Lab can
 - API boundary checks enforce local loopback origin only, API workflow graph validation, node/input allowlists through user-selected fields, bounded payload/file sizes and bounded polling.
 - Not tested: actual ComfyUI process, model/custom-node availability, free model licensing, GPU/VRAM pressure, real inference speed, image/video quality, CORS configuration on the user's PC or browser local-network prompt. These remain real-environment acceptance.
 
+
+## P120/P126 ComfyUI connector hosted checks
+
+Candidate CI runs Node contract/security tests and Chromium against a local mock ComfyUI server. The checks cover loopback URL restrictions, API workflow JSON validation, bounded node/input overrides, /system_stats connection, optional file upload, /prompt submission, /history polling, /view retrieval, output caps and Asset Library addBlob handoff. This verifies connector plumbing only; no actual ComfyUI installation, GPU inference, model accuracy, RIFE or Real-ESRGAN output quality is certified.

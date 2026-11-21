@@ -189,3 +189,8 @@ Chỉ kiểm bằng tín hiệu/tệp tổng hợp và Chromium headless; chưa 
 - Keep P120/P126 partial until real free local ComfyUI models/nodes are tested on target hardware, with CORS, licensing and output quality checked.
 - Continue P137.2 and P119.2 clean-main PRs, verify CI, merge and append exact results to this Guide/Roadmap/Tracker/QA/Session Summary/Acceptance Matrix. P70 still has 14 open real-world gates.
 
+
+## P120/P126 ComfyUI workflow bridge — 2026-11-21
+
+- Candidate branch adds a local-only ComfyUI API bridge via P128: import API-format workflow JSON, optional media upload, map prompt/media node inputs, queue/poll, retrieve output through /view and save via existing CV.assets.addBlob.
+- Verify hosted Node/Chromium CI before merge. Keep P120/P126 partial until real user-installed free ComfyUI models/custom nodes and representative GPU media are exercised. No cloud APIs, API keys, background jobs or auto-installers.

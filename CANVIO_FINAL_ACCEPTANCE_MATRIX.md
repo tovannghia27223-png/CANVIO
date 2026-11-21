@@ -33,6 +33,4 @@
 
 | P139.1 Motion Lab hierarchy/text animator | Node contract + centralized P143 source parity + hosted Chromium rendered-PNG comparison and snapshot round-trip | Real project/export review, precomp, word/range selection, advanced keyframes, motion blur and physical GPU/device performance remain manual. |
 
-
-| P120/P126 local ComfyUI workflow bridge | Hosted Node + Chromium run #44914277311 48/48 with mock local ComfyUI; workflow upload, queue/history, prompt/media override, output retrieval and Asset Library handoff verified | Real ComfyUI, locally installed free models/custom nodes, CORS/local-network browser permission, model licensing, GPU/VRAM, inference performance and visual/audio quality remain manual. |
-
+| P120/P126 local ComfyUI bridge | Node contract tests + hosted Chromium with local mock HTTP server (API workflow, upload, queue/history/view, Asset Library handoff) | Connector plumbing only; real ComfyUI, free custom-node/model licensing, GPU inference, RIFE/Real-ESRGAN/video quality and browser CORS remain manual. |
