@@ -53,10 +53,12 @@ with sync_playwright() as p:
     page.evaluate("CVNativeEngines.pixel.restoreState(window.__p135Snapshot)")
     page.wait_for_function("window.CVPixelAdjustmentsP135.getState().layers.length===1 && window.CVNativeEngines.pixel.canvas.style.filter.includes('brightness(150%)')",timeout=30000)
     checks['projectSnapshotRestoreRehydratesStack']=page.evaluate("CVPixelAdjustmentsP135.getState().layers[0].value===150")
+    page.locator('#cv135-value').evaluate("(e)=>{e.value='125';e.dispatchEvent(new Event('input',{bubbles:true}));e.dispatchEvent(new Event('change',{bubbles:true}))}")
+    page.wait_for_function("window.CVNativeEngines.pixel.canvas.style.filter.includes('brightness(125%)')",timeout=10000)
     page.click('#cv135-panel [data-cv135="undo"]')
-    checks['stackUndoWorks']=page.locator('#cv135-layer-list .cv135-layer').count()==1 and page.locator('#cv135-value').input_value()=='100'
+    checks['stackUndoWorks']=page.locator('#cv135-layer-list .cv135-layer').count()==1 and page.locator('#cv135-value').input_value()=='150' and 'brightness(150%)' in page.locator('#pxCanvas').evaluate("(e)=>e.style.filter")
     page.click('#cv135-panel [data-cv135="redo"]')
-    checks['stackRedoWorks']=page.locator('#cv135-layer-list .cv135-layer').count()==1 and page.locator('#cv135-value').input_value()=='150'
+    checks['stackRedoWorks']=page.locator('#cv135-layer-list .cv135-layer').count()==1 and page.locator('#cv135-value').input_value()=='125' and 'brightness(125%)' in page.locator('#pxCanvas').evaluate("(e)=>e.style.filter")
     with page.expect_download(timeout=30000) as info_download:
         page.click('#cv135-export-png')
     data=Path(info_download.value.path()).read_bytes()
