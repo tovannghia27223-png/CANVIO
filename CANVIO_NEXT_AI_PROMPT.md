@@ -44,3 +44,10 @@ Quy tắc nhúng: mỗi lot là `<script id="canvio-lotNNN">` + bản độc l�
 - P144.3: canvio-p144-ux.js 144.3.0; TIPS for all registered CVWS routes, existing F1/palette/tour owner; route coverage tests added.
 - Consolidated branch work/canvio-p124-p133-p144-final-20261121. Wait for hosted CI before merge. P134.2 Auto Reframe is already merged to main through PR #46 (run #340 PASS).
 - P143 remains staged code extraction; P122.3 MCP has no approved threat/transport/permission contract; P130 needs a real Supabase project/RLS/two-device test; P70 retains 14 manual release gates.
+
+
+### P133.2 QA correction — CI #347 (2026-11-21)
+
+- First hosted Chromium run successfully generated a 1280×720 WebM, preserved Opus audio, fully decoded the file and confirmed the original clip remained unchanged.
+- It caught an actual integration race: the UI did not await the asynchronous Video Engine importFiles() promise, so the proxy download existed but the new timeline clip was not yet present when reported. Updated the module to await importFiles(), verify clip-count increase and retain the download link if timeline ingestion fails.
+- CI must be rerun on the corrected commit; no proxy acceptance/merge claim until timeline import passes.
