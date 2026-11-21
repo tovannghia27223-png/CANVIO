@@ -37,7 +37,7 @@ function status(message,warning){
  el.dataset.state=warning?'warning':'info';
 }
 function addOption(group,item){
- let option=Array.from(group.options||[]).find(node=>node.value===item.value);
+ let option=Array.from(group.querySelectorAll('option')).find(node=>node.value===item.value);
  if(!option){
   option=doc.createElement('option');
   option.value=item.value;
