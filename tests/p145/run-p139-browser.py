@@ -32,7 +32,7 @@ with sync_playwright() as p:
   page.evaluate("""([id])=>CVMotionLabP139.setNullTransform(id,{x:450,y:260,scale:1.4,rotation:20})""",[parent['id']])
   page.evaluate("""([id])=>CVMotionLabP139.configureTextAnimator(id,{enabled:true,mode:'rise',stagger:.06,duration:.8,strength:70,curve:[.2,.8,.3,1]})""",[text_id])
   enabled_png=page.evaluate("CVNativeEngines.motionLab.draw(.22);document.getElementById('mlCanvas').toDataURL('image/png')")
-  page.evaluate("CVMotionLabP139.configureTextAnimator(arguments[0],{enabled:false})",[text_id])
+  page.evaluate("id=>CVMotionLabP139.configureTextAnimator(id,{enabled:false})",text_id)
   page.evaluate("CVNativeEngines.motionLab.draw(.22)")
   disabled_png=page.evaluate("document.getElementById('mlCanvas').toDataURL('image/png')")
   checks['textAnimatorChangesRender']=enabled_png!=disabled_png
