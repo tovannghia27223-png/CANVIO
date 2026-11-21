@@ -14,6 +14,7 @@ on:
       - work/p145-asset-library-rebased-20261121
       - work/p132-apng
       - main
+      - work/canvio-p135-adjustments-20261121
   pull_request:
     branches:
       - main
