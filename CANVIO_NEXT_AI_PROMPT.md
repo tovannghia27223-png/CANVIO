@@ -36,3 +36,13 @@ Quy tắc nhúng: mỗi lot là `<script id="canvio-lotNNN">` + bản độc l�
 - Dò tương phản cạnh + sai khác frame; 9:16/1:1; WebM; giới hạn 60 giây/100 MiB. Không phải face/object AI; không upload/đụng timeline.
 - Đọc kết quả PR/hosted CI trước khi merge. Không sửa PR #45. Nếu CI pass, kiểm source parity/index build/manifest trước khi xác nhận main.
 - P133 trên main đã có OPFS/recovery + denoise Worker; chỉ còn proxy 720p, OffscreenCanvas use-case cụ thể và migration tài sản lớn có quota/rollback. P143 vẫn là tách mã theo từng lot và parity test.
+
+
+## Tiếp tục 2026-11-21 — P133.2 proxy candidate
+
+- Source canvio-p133-proxy.js, lot canvio-lot133p; Node test tests/p127/run-p133p-tests.cjs; hosted Chromium 4K proxy test tests/p145/run-p133-proxy-browser.py.
+- Tạo proxy WebM cho clip 4K đang chọn; cạnh dài tối đa 1280 px, 30 fps, ≤500 MiB / ≤180 giây. Dùng media owner và importFiles hiện có; thêm clip mới, không sửa clip gốc.
+- Kiểm CI PR trước khi merge. Sau P133.2 còn OffscreenCanvas tác vụ có lợi thực tế và migration media lớn sang OPFS cần quota/migration/rollback.
+- P134.2 Auto Reframe đã merge main qua PR #46, hosted run #340 PASS; vẫn cần media thật và mobile/browser matrix thủ công.
+- PR #45 P124 run #332 PASS nhưng branch diverged/dirty so với main; không merge khi chưa giải quyết conflict và chạy lại CI.
+- P143 cần tách mã theo lot nhỏ/parity tests; P144 còn thiếu trợ giúp theo từng Studio. P122.3 MCP chưa có security/transport/permission contract; P130 cần Supabase/RLS/two-device test; P70 còn 14 cổng manual.
