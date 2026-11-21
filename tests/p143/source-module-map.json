@@ -113,7 +113,11 @@
     {
       "source": "canvio-p133-media-opfs.js",
       "scriptId": "canvio-lot133m"
+    },
+    {
+      "source": "canvio-p139-motionlab.js",
+      "scriptId": "canvio-lot139"
     }
   ],
-  "totalModules": 28
+  "totalModules": 29
 }
