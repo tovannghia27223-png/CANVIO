@@ -4,7 +4,7 @@ const html=fs.readFileSync(path.join(__dirname,'../../index.html'),'utf8');
 const m=html.match(/<script id="canvio-lot139">([\s\S]*?)<\/script>/);let fail=0;
 function ck(n,v){if(v!==true){console.log('FAIL',n);fail++;}}
 ck('P139 lot embedded',!!m);if(m)ck('standalone/inline parity',m[1].replace(/\r\n/g,'\n').trim()===src.replace(/\r\n/g,'\n').trim());
-const window={CVEasingP119:{norm:x=>x,bez:(c,t)=>t},Intl};
+const window={Intl};
 const sandbox={window,Math,Number,String,Object,Array,Map,Set,JSON,Date,Error};
 vm.createContext(sandbox);vm.runInContext(src,sandbox);
 const api=window.CVMotionLabP139;ck('API version',api&&api.version==='139.1.0');
