@@ -117,3 +117,10 @@ This batch is not a completion claim for P115–P145 and does not certify CANVIO
 - The audit explicitly restored open backlog items that had been omitted from the earlier short list: P122.3 MCP, P124 Auto Layout/Component, P133 OPFS/proxy, P143 complete code split, and P144 parity with the existing P109 command palette. P130 remains blocked by real Supabase/RLS/two-device requirements.
 - P142 Pages deployment passed run #192; Windows/GTX 1650, Firefox/WebKit/touch and real-origin browser tests remain outstanding.
 - This is a documentation and verification update. It does not state that every P is complete; P70 remains blocked with fourteen real-world acceptance gates open.
+
+## 2026-11-21 — P124 responsive layout increment
+
+- Added the P124 first functional increment in branch `work/p124-autolayout-component-20261121`: five responsive layout presets (Stack, Row, Grid, Split, Card) and four card variants.
+- Uses the existing Website Engine page, `CVWeb.addComponents()` and `CV.engines.web.save()`; no second editor/store, server, API or external dependency.
+- CI embeds the standalone source into canonical `index.html` as `canvio-lot124` and runs source parity/API tests. Await hosted PR verification before counting this increment as accepted.
+- P124 remains partial: no arbitrary selected-component conversion, breakpoint editor, nested variant synchronization or drag/resize constraints; real browser visual/accessibility acceptance is outstanding.
