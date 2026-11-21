@@ -345,6 +345,29 @@ jobs:
           fs.writeFileSync(file,html,'utf8');
           NODE
 
+      - name: Integrate P120/P126 local ComfyUI workflow bridge
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs=require('node:fs');
+          const file='index.html',source=fs.readFileSync('canvio-p120-p126-comfyui.js','utf8').trim();
+          const id='canvio-lot120126',open='<script id="'+id+'">';
+          if(!source.includes('window.CVComfyP120P126'))throw new Error('P120/P126 source contract missing');
+          let html=fs.readFileSync(file,'utf8');
+          const re=new RegExp('<script id="'+id+'">[\\s\\S]*?<\\/script>','g');
+          const count=(html.match(re)||[]).length;
+          const crlf=String.fromCharCode(13,10),lf=String.fromCharCode(10);
+          const nl=html.includes(crlf)?crlf:lf;
+          const tag=open+nl+source.split(lf).join(nl)+nl+'</script>';
+          if(count>1)throw new Error('P120/P126 duplicate embedded lot');
+          if(count===1)html=html.replace(re,tag);
+          else{const at=html.lastIndexOf('</body>');if(at<0)throw new Error('P120/P126 cannot find </body>');html=html.slice(0,at)+tag+nl+html.slice(at);}
+          if((html.match(/id="canvio-lot120126"/g)||[]).length!==1)throw new Error('P120/P126 lot count is not exactly one');
+          fs.writeFileSync(file,html,'utf8');
+          console.log('P120/P126 ComfyUI bridge embedded after P128; no second AI provider or Asset Library was added.');
+          NODE
+
       - name: Integrate P131.3 safe HTML import into canonical security hub
         shell: bash
         run: |
@@ -694,6 +717,7 @@ jobs:
           node tests/p127/run-p141f-tests.cjs
           node tests/p127/run-p128o-tests.cjs
           node tests/p127/run-p137s-tests.cjs
+          node tests/p127/run-p120-comfyui-tests.cjs
           node tests/p127/run-p135a-tests.cjs
           node tests/hosted/p107-portable-roundtrip.cjs
 
@@ -765,6 +789,7 @@ jobs:
           /tmp/canvio-playwright/bin/python tests/p145/run-p141-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p128-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p137-browser.py
+          /tmp/canvio-playwright/bin/python tests/p145/run-p120-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p135-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p133w-browser.py
 
@@ -909,6 +934,79 @@ jobs:
           fs.writeFileSync('CANVIO_MANIFEST.json',JSON.stringify(manifest,null,2)+'\n');
           console.log('Manifest refreshed:',files.length,'files; index SHA-256:',index.sha256);
           NODE
+
+      - name: Record P120/P126 ComfyUI workflow bridge
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! grep -q '## P120/P126 — Local ComfyUI workflow bridge' CANVIO_AI_GUIDE.md; then
+            cat >> CANVIO_AI_GUIDE.md <<'GUIDE'
+
+          ## P120/P126 — Local ComfyUI workflow bridge
+
+          - Owner: `canvio-p120-p126-comfyui.js`; embedded lot: `canvio-lot120126`; API: `window.CVComfyP120P126`; version 120.126.1.
+          - UI: Platform Hub → API Hub, adjacent to existing P128 task orchestrator. Registers `image`, `video`, `upscale` and `interpolate` handlers as the `comfyui-local` tier; no second provider registry, timeline, asset database or AI state owner.
+          - User imports ComfyUI **API-format** workflow JSON, optionally selects local image/video media, and explicitly maps prompt node/input and media node/input. The connector validates/clones the graph before replacing only mapped inputs.
+          - Loopback-only endpoint policy: HTTP/HTTPS localhost, 127.0.0.1 or ::1. No credentials/API keys are sent. Explicit Connect calls `/system_stats`; execution uses `/upload/image` (when media is supplied), `/prompt`, `/history/{prompt_id}` and `/view`. Polling is bounded to 10 minutes; workflow 10 MiB, media 100 MiB, each output 150 MiB.
+          - Successful output blobs are handed to existing `CV.assets.addBlob(blob, filename)`; downloadable links remain session-local. No cloud request, model download, custom-node installation or background execution.
+          - P120/P126 task selectors route through the imported workflow. Real-ESRGAN, RIFE, AI video and other model/custom-node behaviors only exist if the user installs compatible free local ComfyUI models/nodes and imports a compatible API workflow. CANVIO does not bundle or certify those models.
+          - Tests: `tests/p127/run-p120-comfyui-tests.cjs` and hosted Chromium `tests/p145/run-p120-browser.py`. Browser test uses a local mock ComfyUI HTTP server to verify route wiring, media upload, input replacement, queue/history/output retrieval and Asset Library handoff. It does not test real GPU inference or third-party custom nodes.
+          - CORS: ComfyUI must allow the exact CANVIO origin; do not expose wildcard CORS on a network-facing server. Hosted CANVIO may also be subject to browser local-network permission and mixed-content rules.
+          GUIDE
+          fi
+          if ! grep -q 'P120/P126 ComfyUI connector hosted checks' CANVIO_QA_REPORT.md; then
+            cat >> CANVIO_QA_REPORT.md <<'QA'
+
+          ## P120/P126 ComfyUI connector hosted checks
+
+          Candidate CI runs Node contract/security tests and Chromium against a local mock ComfyUI server. The checks cover loopback URL restrictions, API workflow JSON validation, bounded node/input overrides, /system_stats connection, optional file upload, /prompt submission, /history polling, /view retrieval, output caps and Asset Library addBlob handoff. This verifies connector plumbing only; no actual ComfyUI installation, GPU inference, model accuracy, RIFE or Real-ESRGAN output quality is certified.
+          QA
+          fi
+          if ! grep -q '## P120/P126 — Local ComfyUI workflow adapter' CANVIO_ROADMAP.md; then
+            cat >> CANVIO_ROADMAP.md <<'ROADMAP'
+
+          ## P120/P126 — Local ComfyUI workflow adapter
+
+          - Adds a free/local ComfyUI API bridge to the existing P128 orchestrator. The user imports an API-format workflow JSON, optionally uploads media, maps prompt/media node inputs, queues the workflow and saves output through the existing Asset Library.
+          - Supports image, upscale, video and interpolation routes, but the API workflow/model/custom-node graph remains user-provided. Real-ESRGAN, RIFE and AI video are not bundled; compatible free local nodes/models must be installed by the user.
+          - Strict loopback-only URL allowlist, explicit user action, no cloud provider/API keys, bounded polling and request/file sizes, safe workflow cloning and individual output retrieval.
+          - Hosted mock-server CI validates integration only. Actual ComfyUI/CORS, model licensing, GPU memory, speed and output quality remain real-environment acceptance.
+          ROADMAP
+          fi
+          if ! grep -q 'P120/P126 connector scope correction' CANVIO_ALL_P_COMPLETION_TRACKER.md; then
+            cat >> CANVIO_ALL_P_COMPLETION_TRACKER.md <<'TRACKER'
+
+          ## P120/P126 connector scope correction — 2026-11-21
+
+          - Candidate implementation: local ComfyUI API workflow bridge in `canvio-p120-p126-comfyui.js`, registered with existing P128 orchestrator. Supports image/video/upscale/interpolate routes with user-provided API-format graph and explicit input mapping.
+          - Automated acceptance uses a mock local ComfyUI HTTP server; it does not claim an installed ComfyUI server, Real-ESRGAN/RIFE custom nodes, model weights, GPU inference or visual accuracy. Keep P120/P126 **partial** until real user-installed free models and representative media are tested.
+          - No paid API, cloud provider, model download, third-party dependency or secret is added. Only loopback URLs are accepted.
+          TRACKER
+          fi
+          if ! grep -q 'P120/P126 ComfyUI workflow bridge' CANVIO_NEXT_AI_PROMPT.md; then
+            cat >> CANVIO_NEXT_AI_PROMPT.md <<'PROMPT'
+
+          ## P120/P126 ComfyUI workflow bridge — 2026-11-21
+
+          - Candidate branch adds a local-only ComfyUI API bridge via P128: import API-format workflow JSON, optional media upload, map prompt/media node inputs, queue/poll, retrieve output through /view and save via existing CV.assets.addBlob.
+          - Verify hosted Node/Chromium CI before merge. Keep P120/P126 partial until real user-installed free ComfyUI models/custom nodes and representative GPU media are exercised. No cloud APIs, API keys, background jobs or auto-installers.
+          PROMPT
+          fi
+          if ! grep -q 'P120/P126 ComfyUI workflow bridge' CANVIO_SESSION_SUMMARY_2026-11-21.md; then
+            cat >> CANVIO_SESSION_SUMMARY_2026-11-21.md <<'SESSION'
+
+          ## P120/P126 ComfyUI bridge — candidate 2026-11-21
+
+          - Added the loopback-only local ComfyUI bridge, Node contract tests and Chromium mock-server acceptance. It registers image/video/upscale/interpolate handlers with P128 and imports result blobs through the existing Asset Library owner.
+          - Model/custom-node execution and output quality remain unverified until the user's actual free local ComfyUI environment is available. This is not cloud sync or an AI model bundle.
+          SESSION
+          fi
+          if ! grep -q 'P120/P126 local ComfyUI workflow bridge' CANVIO_FINAL_ACCEPTANCE_MATRIX.md; then
+            cat >> CANVIO_FINAL_ACCEPTANCE_MATRIX.md <<'MATRIX'
+
+          | P120/P126 local ComfyUI bridge | Node contract tests + hosted Chromium with local mock HTTP server (API workflow, upload, queue/history/view, Asset Library handoff) | Connector plumbing only; real ComfyUI, free custom-node/model licensing, GPU inference, RIFE/Real-ESRGAN/video quality and browser CORS remain manual. |
+          MATRIX
+          fi
 
       - name: Package full source handoff and runtime evidence
         shell: bash
