@@ -3895,3 +3895,13 @@ P144 tour: thêm bước bằng cách thêm vào mảng `STEPS` ({sel,title,text
 
 ## P137 paragraph styles + TOC (2026-11-21)
 - `window.CVStylesP137`: `load/clean/applyToSelection/restyleAll/buildToc/undo/entriesFrom/tocHtml/stripToc`. Layout Foundry editor root is `#lfDoc` (contenteditable, one page's HTML); pages live in `CVNativeEngines.layout.snapshotState()` = `{pages:[{id,html}],active}`; `restoreState(obj)` re-renders. Blocks carry `data-cv137-style`; TOC block carries `data-cv137-toc` (contenteditable=false). Standalone must equal embedded `canvio-lot137s`.
+
+ 
+## P135.1 — Pixel Atelier non-destructive adjustment stack (candidate · 2026-11-21)
+
+- Standalone source: canvio-p135-adjustments.js; embedded canonical lot: canvio-lot135a; public API: window.CVPixelAdjustmentsP135.
+- Adds nine adjustment layer types: brightness, contrast, saturation, hue, blur, grayscale, sepia, invert and opacity. The stack supports add, select, rename, enable/disable, reorder, delete, reset and its own undo/redo history, with a 32-layer bound and clamped values.
+- Preview is a CSS filter chain on the existing Pixel Atelier canvas; it does not mutate the canvas bitmap. PNG/WebP export renders the same ordered stack on a derived canvas. The Asset Library action saves a new flattened File through the existing CV.assets.addBlob owner; original source data is not overwritten.
+- No new store, IndexedDB database, timeline, provider, CDN, model or network request is added. The editable stack is currently in-memory for the tab only; it is not included in Pixel Atelier snapshotState()/project restore because that owner currently exposes a flattened PNG data URL. Loading another source image or reloading the page clears the stack. Saved exports are flattened raster assets, not reversible adjustment projects.
+- Tests wired: tests/p127/run-p135a-tests.cjs (standalone/embedded parity and source contracts) and tests/p145/run-p135-browser.py (real-origin Chromium preview/source preservation/export/Asset Library-owner stub). Hosted run pending for this candidate; do not record PASS until its exact run artifact is reviewed.
+- Remaining P135 work: project snapshot/restore for editable adjustment metadata without creating a second data owner; per-layer masks/local adjustments; inspect edge clipping for blur and large-canvas memory budget. P135 is PARTIAL, not complete.
