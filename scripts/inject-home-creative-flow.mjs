@@ -12,7 +12,7 @@ if(matches.length===1){
 }else{
  const at=html.lastIndexOf('</body>');
  if(at<0)throw new Error('Could not find final </body> in index.html');
- html=html.slice(0,at)+'<script id="'+id+'">\\n'+source+'\\n</script>\\n'+html.slice(at);
+ html=html.slice(0,at)+'<script id="'+id+'">\n'+source+'\n</script>\n'+html.slice(at);
  fs.writeFileSync(htmlPath,html,'utf8');
  console.log('Injected P146 guided workflow into canonical Home page.');
 }
