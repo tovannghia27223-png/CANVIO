@@ -165,3 +165,13 @@ Chỉ kiểm bằng tín hiệu/tệp tổng hợp và Chromium headless; chưa 
 - PR #64 P135.1 is NOT merged: its hosted run #467 failed at the unrelated P133.2 proxy gate with UI status `Tạo proxy vượt thời gian cho phép.`; no page errors were reported. Its head is now non-mergeable against the updated main and must be rebased/cleaned before another acceptance run. Do not mark P135 complete.
 - PR #65 is a duplicate/stale P139 candidate (mergeable=false; no hosted run). PR #66 is the clean P139.1 candidate stacked on the P135 branch (no hosted run yet); keep P139 partial and do not merge before the P135 base is accepted.
 - P135.1 remains a partial non-destructive adjustment stack; reload persistence, masks/local corrections, smart objects, clone/patch and liquify remain open. P139.1 remains partial; precomp, physical motion blur, word/range selector, expanded keyframe editor and real-project/export acceptance remain open.
+
+
+## Latest verified continuation — 2026-11-21 (P133/P135)
+
+- Main now includes P133 bitmap/Worker watchdog and Canvas2D fallback plus P135.1's nine non-destructive Pixel adjustment stack; PR #68 merged.
+- CI evidence: P133 #44911472539 44/44, P135 #44911475373 45/45, post-merge main #44912553516 45/45.
+- For P135 keep the flattened-PNG persistence limitation explicit: adjustment metadata is tab-memory only and resets on reload/new source. Do not claim masks, smart objects, clone/patch or liquify.
+- Next candidate PR #70: wire P139.1 text animator into the actual Motion Lab draw path. PR #71: local-only ComfyUI API workflow bridge through P128 for P120/P126. Validate both on current main and keep actual ComfyUI/GPU/model and P70 real-world acceptance open until tested.
+- Continue to preserve AI Guide/Roadmap/tracker/session/QA/acceptance history on every merge; no full P70 release certification unless all fourteen gates have evidence.
+
