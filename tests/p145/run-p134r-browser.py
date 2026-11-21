@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """P134.2: same-origin Chromium UI analysis/export smoke; inspect output with ffprobe and decode fully."""
-import functools,http.server,json,os,re,shutil,socketserver,subprocess,sys,tempfile,threading
+import functools,http.server,json,math,os,re,shutil,socketserver,subprocess,sys,tempfile,threading
 from pathlib import Path
 from playwright.sync_api import sync_playwright
 ROOT=Path(__file__).resolve().parents[2]
@@ -56,30 +56,51 @@ with tempfile.TemporaryDirectory(prefix='canvio-p134r-') as td:
         decode=subprocess.run([FFMPEG,'-v','error','-i',str(out),'-f','null','-'],capture_output=True,text=True)
         checks['fullDecode']=decode.returncode==0
         fmt=probe_data.get('format',{})
-        def stream_duration(stream):
+        # WebM duration/frame-rate metadata is inconsistent across Chromium/ffprobe:
+        # r_frame_rate may report 60/1 while captured canvas video is ~30 fps.
+        # Use packet presentation timestamps before any nominal-FPS fallback.
+        packet_probe=subprocess.run([FFPROBE,'-v','error','-select_streams','v:0','-show_packets','-show_entries','packet=pts_time,duration_time','-of','json',str(out)],check=True,capture_output=True,text=True)
+        video_packets=json.loads(packet_probe.stdout).get('packets',[])
+        packet_pts=[]
+        packet_durations=[]
+        for packet in video_packets:
             try:
-                if float(stream.get('duration',0))>0:return float(stream['duration'])
+                pts=float(packet.get('pts_time'))
+                if math.isfinite(pts):packet_pts.append(pts)
             except (TypeError,ValueError):pass
             try:
-                rates=[stream.get('avg_frame_rate','0/1'),stream.get('r_frame_rate','0/1')]
-                fps=0
-                for value in rates:
-                    rate=value.split('/')
-                    candidate=float(rate[0])/max(float(rate[1]),1e-9)
-                    if candidate>0:
-                        fps=candidate
-                        break
-                # Canvas.captureStream(FPS) in this exporter requests a 30 fps track;
-                # some Chromium/ffprobe builds report 0/0 for both WebM frame-rate fields.
-                if fps<=0 and stream.get('codec_type')=='video':
-                    fps=30
-                return int(stream.get('nb_read_frames',0))/fps if fps>0 else 0
-            except (TypeError,ValueError,ZeroDivisionError):return 0
-        measured=max([float(fmt.get('duration',0) or 0)]+[stream_duration(s) for s in streams])
+                duration=float(packet.get('duration_time'))
+                if math.isfinite(duration) and duration>0:packet_durations.append(duration)
+            except (TypeError,ValueError):pass
+        packet_pts.sort()
+        pts_deltas=[packet_pts[k]-packet_pts[k-1] for k in range(1,len(packet_pts)) if packet_pts[k]>packet_pts[k-1]]
+        ordered_deltas=sorted(pts_deltas)
+        median_frame_interval=ordered_deltas[len(ordered_deltas)//2] if ordered_deltas else 0
+        ordered_durations=sorted(packet_durations)
+        final_packet_duration=ordered_durations[len(ordered_durations)//2] if ordered_durations else median_frame_interval
+        metadata_durations=[]
+        try:
+            value=float(fmt.get('duration',0) or 0)
+            if math.isfinite(value) and value>0:metadata_durations.append(value)
+        except (TypeError,ValueError):pass
+        for stream in streams:
+            try:
+                value=float(stream.get('duration',0) or 0)
+                if math.isfinite(value) and value>0:metadata_durations.append(value)
+            except (TypeError,ValueError):pass
+        measured=max(metadata_durations) if metadata_durations else 0
+        if measured<=0 and len(packet_pts)>=2:
+            measured=(packet_pts[-1]-packet_pts[0])+final_packet_duration
+        if measured<=0:
+            # Last resort only: exporter uses canvas.captureStream(30).
+            video_meta=next((s for s in streams if s.get('codec_type')=='video'),{})
+            try:count=int(video_meta.get('nb_read_frames',0) or 0)
+            except (TypeError,ValueError):count=0
+            measured=count/30 if count else 0
         checks['durationWithinTolerance']=3.5<=measured<=4.5
         checks['outputPreviewShown']=page.locator('#cv134r-result').evaluate("e => e.style.display !== 'none'")
         checks['localOnlyNoNetwork']=page.evaluate("() => window.CVAutoReframeP134.tests().noNetwork && window.CVAutoReframeP134.tests().noTimelineMutation")
         browser.close()
     server.shutdown()
-    result={'checks':checks,'downloadBytes':out.stat().st_size if out.exists() else 0,'videoStream':video,'audioStream':audio,'measuredDurationSeconds':measured,'formatMetadata':fmt,'pageErrors':errors,'planSummary':details.get('plan',''),'failed':[k for k,v in checks.items() if not v]+(['pageErrors'] if errors else [])}
+    result={'checks':checks,'downloadBytes':out.stat().st_size if out.exists() else 0,'videoStream':video,'audioStream':audio,'measuredDurationSeconds':measured,'videoPacketCount':len(video_packets),'firstVideoPts':packet_pts[0] if packet_pts else None,'lastVideoPts':packet_pts[-1] if packet_pts else None,'medianFrameIntervalSeconds':median_frame_interval,'formatMetadata':fmt,'pageErrors':errors,'planSummary':details.get('plan',''),'failed':[k for k,v in checks.items() if not v]+(['pageErrors'] if errors else [])}
     print(json.dumps(result,ensure_ascii=False,indent=2));sys.exit(1 if result['failed'] else 0)
