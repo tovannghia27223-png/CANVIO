@@ -795,3 +795,10 @@ Hosted verification after the ffmpeg repair is complete:
 - P144 Command Palette is partially covered by P109's existing palette/command-search owner and tests. Do not create a second palette; first reconcile original P144 acceptance against P109.
 - P142 GitHub Pages deployment on main succeeded in workflow #192 (`44819441586`), all three build/report/deploy jobs passed. This closes the Pages deployment step only; real-origin browser checks and Windows/GTX 1650/RAM 7 GB, Firefox/WebKit/touch/physical-GPU acceptance remain open.
 - PR #44 documentation reconciliation passed hosted verify run #320 (`44859258258`); artifact SHA-256 `74cb03f31a7c55d94f69376b74f46a22bef1538b473aeca1165c42296f2e69ba`. This run does not change the P70 disposition.
+
+## P124.1 — Responsive Auto Layout and Component variants (2026-11-21)
+
+- **Implemented increment / P124 remains partial.** Adds Stack, Row/Flex-wrap, Grid auto-fit/minmax, Split auto-fit and Card presets, plus surface/outline/elevated/soft card variants.
+- UI mounts inside existing `#page-webEngine`; inserts editable markup with `CVWeb.addComponents()` and saves through `CV.engines.web.save()`. No parallel GrapesJS instance, project store, dependency or network service.
+- Bounded controls and escaped user text; responsive behavior comes from native CSS Flexbox/Grid rather than fixed viewport breakpoints.
+- Remaining P124 scope: apply layout constraints to an arbitrary selected existing component, breakpoint-specific visual controls, nested/reusable component instance synchronization, drag/resize constraints and real-browser screenshot/keyboard/screen-reader acceptance. Do not mark P124 complete from the preset library alone.
