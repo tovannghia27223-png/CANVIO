@@ -256,3 +256,13 @@ PR #67 was closed as superseded after PR #68 brought its verified P133 fix into 
 
 - Candidate module `canvio-p139-motionlab.js` wraps the existing Motion Lab draw pass so per-grapheme Text Animator reaches the existing #mlCanvas renderer. Null-parent and animator data stay in existing Motion Lab snapshot objects.
 - Keep P139.1 partial until the updated hosted browser render-difference assertion passes. Precomp, physical motion blur, word/range selectors, expanded keyframe editor and real-project export/target-device review remain open.
+
+
+## Verified mainline update — P120/P126 — 2026-11-21
+
+| Item | Evidence | Current status / remaining |
+|---|---|---|
+| P120/P126 local ComfyUI connector | PR #73 merged (1e2e0b1a); hosted run #44914277311 48/48. Mock browser reports workflow completion, media upload, prompt/media mapping, history polling, output download, Asset Library handoff and zero page errors. | Connector implementation is in main. Real ComfyUI/CORS, locally installed free models/custom nodes, model licensing, GPU/VRAM, inference latency and output quality remain open acceptance. Do not mark P120/P126 fully complete from mock tests alone. |
+
+PR #71 was closed as superseded by clean-main PR #73; the latter carries the corrected nested-prompt graph assertion and null-safe Asset Library test mock.
+
