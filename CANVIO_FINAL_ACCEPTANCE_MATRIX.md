@@ -61,3 +61,13 @@ P70's fourteen real-world gates are deliberately deferred at the user's instruct
 | Editable project persistence | No stack metadata in existing Pixel snapshot/restore contract | OPEN |
 | Layer masks/local adjustments | Not implemented | OPEN |
 | P70 release certification | Fourteen manual gates | OPEN |
+
+## P139.1 — Motion Lab (candidate; 2026-11-21)
+
+| Area | Evidence | Status |
+|---|---|---|
+| Null hierarchy | Parent/null records, transform composition and cycle rejection | Candidate branch; Node contract passed |
+| Character Text Animator | 5 modes, P119 easing, bounded controls | Candidate branch; Node contract passed |
+| Project metadata | Uses existing Motion Lab snapshotState/restoreState | Candidate round-trip check pending hosted browser |
+| Precomp / motion blur | Not implemented | OPEN |
+| Real edit/export round-trip | Hosted Chromium pending | OPEN |
