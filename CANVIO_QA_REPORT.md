@@ -359,3 +359,11 @@ The candidate workflow runs standalone/embedded source parity and API tests for 
 - Artifact `CANVIO-23.3.111-GITHUB-RUNTIME-VERIFIED-315`: 21,590,752 bytes; SHA-256 `12305d7990ed16b93d6d653cd3fd1d662a3cd90144b9800773e560a5a55fa06c`.
 - Previous “P131.3 pending/candidate/main-index promotion pending” entries are superseded by this PASS. P70 remains fail-closed with 14 manual gates pending and release certification false.
 
+## P145.10 — hosted mainline verification (run #310, 2026-11-21)
+
+- PR #38 merged as `c0ee9749dbfda84abcf43466a034dfa5539222c9`. Hosted workflow #310 (`44812233871`) completed successfully.
+- Node P145.9/.10: **10/10**. Chromium P145.9/.10: **14/14**, `failed: []`, `pageErrors: []`. Browser assertions confirmed the default native provider is `CV.assets.list()`, the panel lists real local-provider fixture rows, shared Quality Gate status/search/type filters work, computed SHA-256 is 64 lowercase hex characters, duplicate detection uses local bytes, transient hashes do not mutate vault records and the module remains read-only.
+- Full verify job also passed candidate source restoration, integration of P125/P136/P145/P127/P131/P132 modules, source extraction and syntax checks, full HTML/inline-JS audit, P47–P70 regression suites, source-contract tests, P107 strict ZIP round-trip, Three.js r187/P85 manifest SHA checks, compressed Draco/Meshopt/KTX2 GLB runtime fixtures, same-origin P85/ONNX worker/browser acceptance and app smoke. The PR-only commit-to-feature-branch step was skipped by design.
+- Artifact `CANVIO-23.3.111-GITHUB-RUNTIME-VERIFIED-310`: 21,579,190 bytes; SHA-256 `302274465126dec415716d796981168ed96fc0d2091514581725557e67a22843`.
+- Bounds: explicit user-triggered local scan; only eligible local base64 data URLs; hashes session-only; 40 rows / 25 MiB per asset / 64 MiB aggregate. Unsupported, unavailable-Web-Crypto and over-budget entries remain unverified. No remote/cloud inventory or cross-device sync is verified.
+- P70 remains fail-closed with fourteen real-world gates pending. SwiftShader/software rendering, synthetic media and fixture contexts are not physical GPU, production media, accessibility or release certification.
