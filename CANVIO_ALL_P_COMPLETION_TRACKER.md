@@ -151,3 +151,15 @@ No honest all-P completion claim is possible yet. In addition to P70's 14 open r
 - Added page-specific guidance for all 13, using Guide-documented behavior and explicit boundaries (e.g. collab is local notes/activity, Prompt Forge is prompt handoff, Shield does not certify server headers).
 - P133.2 passed all 11 Chromium checks in the same run, including actual timeline import, clip duration, audio, full decode and original preservation. P124 passed 9/9.
 - Rerun required to verify all 38 CVWS routes have contextual help; no merge claim until that coverage check passes.
+
+## Mainline status reconciliation after PR #51 — 2026-11-21
+
+| Item | Current verified status | Remaining |
+|---|---|---|
+| P124 | **Merged** via PR #51 / main commit e4e3647. Hosted #360 and main #362 PASS 39/39; Chromium interaction 9/9. | Advanced component conversion, breakpoint editor, nested variants, drag/resize and accessibility remain partial. |
+| P133.2 | **Merged** via PR #51. 4K → WebM proxy passed hosted Chromium: original + new proxy clip, 1280×720, Opus audio, full decode, zero page errors. | OffscreenCanvas use cases and large-media OPFS migration with quota/rollback are open. |
+| P144.3 | **Merged** via PR #51. Existing CVUxP144 covers 38/38 CVWS routes in Chromium; first-run tour tests also pass. | Human wording, keyboard/screen-reader review and additional fuzzy/global search remain partial. |
+| P143 Phase 1 | Candidate PR #52. 20-module source parity, inline HTML audit, P47–P70 regressions and P107 round-trip all passed pre-browser gates in hosted run #363; run still in progress at time of this note. | Full script/style inventory, dependency/boot-order graph, staged extraction, offline/CSP/rollback acceptance remain open. |
+| P130 | **Blocked externally**: no verified Supabase project/schema/RLS/credentials/two-device environment. | Requires a user-owned deployed backend and independent-device restore test. |
+| P122.3 | **Not implemented**: roadmap has no feature/security/transport/permission contract. | Define and approve exact MCP contract/threat model before implementation. |
+| P70 | **Not certified**: fourteen real-world acceptance gates remain open. | Actual browser/device/media/provider/hosting/accessibility/recovery/release-operation evidence and review. |
