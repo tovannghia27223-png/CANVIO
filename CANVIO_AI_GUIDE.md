@@ -3879,3 +3879,7 @@ P144 tour: thêm bước bằng cách thêm vào mảng `STEPS` ({sel,title,text
 ## P119 easing editor (2026-11-21)
 - `window.CVEasingP119`: `bez/css/parse/norm/spring/lottie/mount/tests`. Mounted into `#motionEase`'s card on `#page-motion`; writes an `option[data-cv119]` and fires `change` so `CV.motion.play()` reuses the existing path.
 - Standalone `canvio-p119-easing.js` must equal embedded `<script id="canvio-lot119e">` (CRLF in index.html).
+
+
+## P118 wordmark (2026-11-21)
+- `window.CVWordmarkP118`: `parse(ArrayBuffer)`, `layout(font,text,{size,tracking,kerning})`, `glyph`, `kernPair`, `toSvg`, `mount`. Card `#cv118-card` on `#page-brand`. Standalone must equal embedded `canvio-lot118w`.

@@ -927,3 +927,11 @@ Hosted verification after the ffmpeg repair is complete:
 - Integrates through the existing `#motionEase` select by adding a "Tuỳ chỉnh (đồ thị)" option; no existing option or Motion function was removed.
 - Tests: `tests/p127/run-p119e-tests.cjs` (Node, standalone + embedded parity) and `tests/p145/run-p119-browser.py` (real Chrome: mount, handle drag, preset, valid Lottie JSON, zero page errors). App smoke 21/21.
 - Limits: Lottie output is not validated with lottie-web/dotLottie player; single layer only, no expressions/masks; graph editor is not yet shared with Video Engine keyframes or Website Motion Builder; `linear()` needs a recent browser.
+
+
+## P118 Wordmark outline + real kerning (2026-11-21 · candidate)
+
+- New `canvio-p118-wordmark.js` (CVWordmarkP118, embedded lot `canvio-lot118w`) on the Brand page: choose a local .ttf, type text, tracking and kerning toggle, preview, download SVG outlines, or save into the Asset Library via `CV.assets.addBlob`.
+- Pure-JS TrueType reader: cmap 4/12, glyf (simple + composite), hmtx, `kern` format 0 and GPOS PairPos formats 1/2. Quadratic contours become SVG path.
+- Tests: `tests/p127/run-p118w-tests.cjs` (Node; needs Liberation Sans or `CANVIO_TEST_TTF`) and `tests/p145/run-p118-browser.py` (real Chrome: outline raster vs Chrome's own text — ink width 476 vs 476 px, area within 0.5%; kerning narrows; bad font rejected; zero page errors). Smoke 21/21.
+- Limits: .ttf only (no CFF .otf, .woff/.woff2, variable fonts); no GSUB ligatures, single line, no complex-script shaping; no Paper.js boolean ops/path editing; kerning from GPOS covers PairPos only (no mark/contextual).
