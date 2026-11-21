@@ -73,3 +73,10 @@ Quy tắc nhúng: mỗi lot là `<script id="canvio-lotNNN">` + bản độc l�
 - Use work/p143-parity-current-main-final-20261121 (based on main 6481d83), not old branches #52/#53.
 - Phase 1 source parity manifest/tests and plan are present. Prior run #363 passed all 39 steps; rerun current-main CI before merge.
 - Full source split remains open; don't claim every inline script/style has been modularized.
+
+
+## P134 test fix for P143 hosted validation
+
+- Run #371 exposed a WebM metadata issue, not an exporter failure: `r_frame_rate` falsely indicated 60 fps when avg rate/format duration were missing, measuring ~4.1 seconds as 2.05 seconds.
+- `tests/p145/run-p134r-browser.py` now reads packet presentation timestamps/durations and reports PTS diagnostics; fallback is the explicit canvas.captureStream(30) only when timestamps are unavailable.
+- New latest-main run #373 pending on PR #54. Do not merge until success.
