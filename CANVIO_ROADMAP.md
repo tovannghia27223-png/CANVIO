@@ -831,3 +831,27 @@ Hosted verification after the ffmpeg repair is complete:
 - Giới hạn: ≤100 MiB, ≤60 giây, tối đa 48 frame phân tích ở kích cỡ tối đa 192×108. Heuristic có thể bám vào vùng nhiều texture/contrast thay vì chủ thể; cảnh ít chi tiết sẽ kém ổn định. Không nhận diện mặt/AI object detection; chưa có manual focus override.
 - Test bổ sung: Node tests/p127/run-p134r-tests.cjs (11 assertion); Chromium UI/export và ffprobe tests/p145/run-p134r-browser.py. Kết quả hosted CI phải được kiểm trước khi đánh dấu merged/PASS. Nếu localhost bị chặn trong sandbox, ghi rõ môi trường, không tính là test ứng dụng thất bại.
 - Trạng thái: candidate trên branch riêng, chưa merge. Việc tiếp theo: hosted run xác nhận Node, same-origin app boot, UI analysis, WebM decode/duration/audio; sau đó rà lại bằng video thật dài hơn và điện thoại thật.
+
+## P124 — Responsive Auto Layout & Component variants (2026-11-21 · candidate)
+
+- canvio-p124-autolayout.js / canvio-lot124 trong Website Engine hiện có; 5 preset Stack/Row/Grid/Split/Card và 4 card variants. Dùng CVWeb.addComponents() và CV.engines.web.save().
+- Node tests/p124/run-p124-tests.cjs và Chromium tests/p124/run-p124-browser.py. Còn thiếu arbitrary component conversion, visual breakpoint editor, nested variant sync, drag/resize constraint handles, accessibility và real GrapesJS screenshot review.
+
+## P133.2 — Proxy 720p cục bộ cho clip 4K (2026-11-21 · candidate)
+
+- canvio-p133-proxy.js / canvio-lot133p đọc media từ owner hiện hữu và thêm proxy thành clip mới qua Video Engine importFiles; giữ clip gốc.
+- WebM 30 fps, cạnh dài tối đa 1280 px, nguồn 4K ≤500 MiB / ≤180 giây; audio phụ thuộc captureStream. Không tự relink/replace clip.
+- Node tests/p127/run-p133p-tests.cjs và Chromium 4K fixture + ffprobe/full decode tests/p145/run-p133-proxy-browser.py. P133 còn OffscreenCanvas cho tác vụ phù hợp và migration media lớn sang OPFS có quota/rollback.
+
+## P144.3 — Trợ giúp theo từng Studio (2026-11-21 · candidate)
+
+- CVUxP144 144.3.0 mở rộng TIPS theo các route CVWS đã đăng ký trong ba workspace Design, Website/Profile, Media và các trang utility. F1, palette, tour và navigation owner giữ nguyên.
+- Node route coverage + Chromium đối chiếu tất cả CVWS routes; pending CI. Manual keyboard/screen-reader/wording review vẫn mở.
+
+
+### P144.3 route-coverage correction — CI #354 (2026-11-21)
+
+- Hosted Chromium confirmed the workspace registry contains 38 routes, not only the 25 initially covered. It identified 13 missing help topics: templates, brand, designSystem, responsive, collab, hub, platform, one, promptForge, insight, hallmark, guide and shield.
+- Added page-specific guidance for all 13, using Guide-documented behavior and explicit boundaries (e.g. collab is local notes/activity, Prompt Forge is prompt handoff, Shield does not certify server headers).
+- P133.2 passed all 11 Chromium checks in the same run, including actual timeline import, clip duration, audio, full decode and original preservation. P124 passed 9/9.
+- Rerun required to verify all 38 CVWS routes have contextual help; no merge claim until that coverage check passes.

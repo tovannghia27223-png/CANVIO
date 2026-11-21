@@ -41,6 +41,14 @@ with sync_playwright() as p:
     c['altShiftStillWorksFromInput'] = page.evaluate("!!document.querySelector('#page-videoEngine.active')")
     page.evaluate("CV.go('assets')"); page.wait_for_timeout(800); page.focus('#cv145-src'); page.keyboard.type('f1?'); 
     c['typingNotHijacked'] = page.evaluate("document.getElementById('cv145-src').value==='f1?'") and page.evaluate("!document.getElementById('cv144-help')")
+    coverage = page.evaluate("""() => {
+      const spaces = Array.isArray(CVWS.spaces) ? CVWS.spaces : Object.values(CVWS.spaces || {});
+      const ids = spaces.flatMap(space => (space.p || []).map(route => Array.isArray(route) ? route[0] : (route.id || route.page)).filter(Boolean));
+      const missing = ids.filter(id => !Array.isArray(CVUxP144.tips[id]) || CVUxP144.tips[id].length < 2);
+      return {total: ids.length, missing};
+    }""")
+    c['studioHelpCoversAllRegisteredRoutes'] = coverage['total'] >= 10 and len(coverage['missing']) == 0
+    c['studioHelpCoverageDetail'] = coverage
     b.close()
 res = {'checks': c, 'pageErrors': errs, 'failed': [k for k, v in c.items() if not v]}
 print(json.dumps(res, ensure_ascii=False, indent=1)); sys.exit(1 if res['failed'] or errs else 0)

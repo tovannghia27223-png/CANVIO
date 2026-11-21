@@ -120,7 +120,7 @@ The following backlog entries were omitted or understated in the first inventory
 
 ## Updated completion decision
 
-No honest all-P completion claim is possible yet. In addition to P70's 14 open real-world gates, P122.3 MCP, P124 Auto Layout/Component, P130 cloud sync, P133 OPFS/proxy and P143 full code split are not implemented in the reviewed main tree; P144 is only partially covered by P109; P142 is deployed but not target-device certified. Work on these needs defined contracts and/or real infrastructure rather than placeholder modules.
+No honest all-P completion claim is possible yet. In addition to P70's 14 open real-world gates, P122.3 MCP, P124 Auto Layout/Component is partial in the current candidate; P130 cloud sync is blocked on real Supabase infrastructure; P133 OPFS/recovery and denoise Worker exist with proxy/OffscreenCanvas/media migration still open; P143 full code split remains open; P144 palette/shortcuts/F1/tour exist with contextual help expanded in the current candidate; P142 is deployed but not target-device certified. Work on these needs defined contracts and/or real infrastructure rather than placeholder modules.
 
 
 ## P134.2 incremental update — Auto Reframe (2026-11-21)
@@ -129,3 +129,25 @@ No honest all-P completion claim is possible yet. In addition to P70's 14 open r
 - P134 base scopes remain the existing histogram/waveform/vectorscope implementation; this increment adds a separate aspect-ratio workflow inside the existing Video Engine quality card.
 - Scope boundary: 9:16 / 1:1 saliency crop from edge contrast + frame difference; WebM export; no face-recognition model, no upload, no timeline or store mutation.
 - Acceptance status: pending hosted PR verification. Do not mark merged/automated PASS until the workflow result is inspected. Real footage, mobile/browser matrix and audio listening remain manual.
+
+## Consolidated P124 / P133.2 / P144.3 candidate update — 2026-11-21
+
+- P124: rebased Auto Layout source and tests carried onto current main. Five responsive presets/four variants, existing Website Engine adapter/save path. Still partial: arbitrary component conversion, visual breakpoint editor, nested variants, drag/resize and accessibility/real-editor acceptance.
+- P133: OPFS/recovery and denoise Worker already exist on main. P133.2 adds 4K-to-720p WebM proxy as a new clip using existing media store/import path; original remains unchanged. Node + hosted Chromium/ffmpeg/ffprobe acceptance wired; pending.
+- P144: palette/shortcuts/F1/tour already exist. P144.3 expands contextual help across registered CVWS routes and utility pages, preserving the existing CVUxP144 owner. Node + hosted Chromium route-coverage tests wired; pending.
+- Do not mark any of these increments merged/PASS until the consolidated hosted workflow completes. P133 OffscreenCanvas/large-media migration and P124 advanced editor controls remain open.
+
+
+### P133.2 QA correction — CI #347 (2026-11-21)
+
+- First hosted Chromium run successfully generated a 1280×720 WebM, preserved Opus audio, fully decoded the file and confirmed the original clip remained unchanged.
+- It caught an actual integration race: the UI did not await the asynchronous Video Engine importFiles() promise, so the proxy download existed but the new timeline clip was not yet present when reported. Updated the module to await importFiles(), verify clip-count increase and retain the download link if timeline ingestion fails.
+- CI must be rerun on the corrected commit; no proxy acceptance/merge claim until timeline import passes.
+
+
+### P144.3 route-coverage correction — CI #354 (2026-11-21)
+
+- Hosted Chromium confirmed the workspace registry contains 38 routes, not only the 25 initially covered. It identified 13 missing help topics: templates, brand, designSystem, responsive, collab, hub, platform, one, promptForge, insight, hallmark, guide and shield.
+- Added page-specific guidance for all 13, using Guide-documented behavior and explicit boundaries (e.g. collab is local notes/activity, Prompt Forge is prompt handoff, Shield does not certify server headers).
+- P133.2 passed all 11 Chromium checks in the same run, including actual timeline import, clip duration, audio, full decode and original preservation. P124 passed 9/9.
+- Rerun required to verify all 38 CVWS routes have contextual help; no merge claim until that coverage check passes.

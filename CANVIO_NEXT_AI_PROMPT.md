@@ -36,3 +36,26 @@ Quy tắc nhúng: mỗi lot là `<script id="canvio-lotNNN">` + bản độc l�
 - Dò tương phản cạnh + sai khác frame; 9:16/1:1; WebM; giới hạn 60 giây/100 MiB. Không phải face/object AI; không upload/đụng timeline.
 - Đọc kết quả PR/hosted CI trước khi merge. Không sửa PR #45. Nếu CI pass, kiểm source parity/index build/manifest trước khi xác nhận main.
 - P133 trên main đã có OPFS/recovery + denoise Worker; chỉ còn proxy 720p, OffscreenCanvas use-case cụ thể và migration tài sản lớn có quota/rollback. P143 vẫn là tách mã theo từng lot và parity test.
+
+## Consolidated continuation 2026-11-21 — P124 / P133.2 / P144.3
+
+- P124: canvio-p124-autolayout.js + tests/p124; five layout presets/four variants, existing Website Engine adapter. Advanced breakpoint/component conversion remains partial.
+- P133.2: canvio-p133-proxy.js + tests/p127/run-p133p-tests.cjs and tests/p145/run-p133-proxy-browser.py; 4K local WebM proxy, longest edge 1280 px, ≤500 MiB/180 s, new clip only. OffscreenCanvas/OPFS migration still open.
+- P144.3: canvio-p144-ux.js 144.3.0; TIPS for all registered CVWS routes, existing F1/palette/tour owner; route coverage tests added.
+- Consolidated branch work/canvio-p124-p133-p144-final-20261121. Wait for hosted CI before merge. P134.2 Auto Reframe is already merged to main through PR #46 (run #340 PASS).
+- P143 remains staged code extraction; P122.3 MCP has no approved threat/transport/permission contract; P130 needs a real Supabase project/RLS/two-device test; P70 retains 14 manual release gates.
+
+
+### P133.2 QA correction — CI #347 (2026-11-21)
+
+- First hosted Chromium run successfully generated a 1280×720 WebM, preserved Opus audio, fully decoded the file and confirmed the original clip remained unchanged.
+- It caught an actual integration race: the UI did not await the asynchronous Video Engine importFiles() promise, so the proxy download existed but the new timeline clip was not yet present when reported. Updated the module to await importFiles(), verify clip-count increase and retain the download link if timeline ingestion fails.
+- CI must be rerun on the corrected commit; no proxy acceptance/merge claim until timeline import passes.
+
+
+### P144.3 route-coverage correction — CI #354 (2026-11-21)
+
+- Hosted Chromium confirmed the workspace registry contains 38 routes, not only the 25 initially covered. It identified 13 missing help topics: templates, brand, designSystem, responsive, collab, hub, platform, one, promptForge, insight, hallmark, guide and shield.
+- Added page-specific guidance for all 13, using Guide-documented behavior and explicit boundaries (e.g. collab is local notes/activity, Prompt Forge is prompt handoff, Shield does not certify server headers).
+- P133.2 passed all 11 Chromium checks in the same run, including actual timeline import, clip duration, audio, full decode and original preservation. P124 passed 9/9.
+- Rerun required to verify all 38 CVWS routes have contextual help; no merge claim until that coverage check passes.

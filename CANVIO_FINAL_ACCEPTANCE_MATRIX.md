@@ -30,3 +30,15 @@
 12. Physical target-device GPU/VRAM, performance and long-render testing.
 13. Cross-origin backup/restore and independent-device recovery.
 14. Rollback, release observability, alerting and production incident drill.
+
+| P124 Auto Layout | Node source/API + embedded parity + Chromium insert/save | Consolidated candidate; pending hosted CI. Arbitrary selected-component conversion, visual breakpoint editor, nested variants, drag/resize and accessibility remain open. |
+| P133.2 4K → 720p proxy | Node geometry/trim guards + Chromium 4K fixture, WebM ffprobe/full decode | Consolidated candidate; pending hosted CI. WebM codec/audio capture varies; long real footage/mobile performance manual. |
+| P144.3 contextual Studio help | Node TIPS route coverage + Chromium comparison against registered CVWS routes | Consolidated candidate; pending hosted CI. Human wording, keyboard and screen-reader review remains manual. |
+
+
+### P144.3 route-coverage correction — CI #354 (2026-11-21)
+
+- Hosted Chromium confirmed the workspace registry contains 38 routes, not only the 25 initially covered. It identified 13 missing help topics: templates, brand, designSystem, responsive, collab, hub, platform, one, promptForge, insight, hallmark, guide and shield.
+- Added page-specific guidance for all 13, using Guide-documented behavior and explicit boundaries (e.g. collab is local notes/activity, Prompt Forge is prompt handoff, Shield does not certify server headers).
+- P133.2 passed all 11 Chromium checks in the same run, including actual timeline import, clip duration, audio, full decode and original preservation. P124 passed 9/9.
+- Rerun required to verify all 38 CVWS routes have contextual help; no merge claim until that coverage check passes.
