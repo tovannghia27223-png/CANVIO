@@ -363,6 +363,27 @@ jobs:
           console.log('P139.1 Motion Lab hierarchy and renderer adapter embedded in canonical index.html');
           NODE
 
+      - name: Integrate P137.2 character and table style extensions
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs=require('node:fs');
+          const file='index.html',source=fs.readFileSync('canvio-p137-styles.js','utf8').trim();
+          const id='canvio-lot137s',open='<script id="'+id+'">',close='</script>';
+          if(!source.includes("version: '137.2.0'")||!source.includes('window.CVStylesP137'))throw new Error('P137.2 source contract/version missing');
+          let html=fs.readFileSync(file,'utf8'),at=html.indexOf(open);
+          if(at<0)throw new Error('Existing canonical P137 lot is missing');
+          if(html.indexOf(open,at+1)>=0)throw new Error('P137 duplicate lot');
+          const start=at+open.length,end=html.indexOf(close,start);
+          if(end<0)throw new Error('P137 embedded lot close is missing');
+          const nl=String.fromCharCode(10),tag=open+nl+source+nl+close;
+          html=html.slice(0,at)+tag+html.slice(end+close.length);
+          if((html.match(/id="canvio-lot137s"/g)||[]).length!==1)throw new Error('P137 lot count is not exactly one');
+          fs.writeFileSync(file,html,'utf8');
+          console.log('P137.2 paragraph/character/table styles embedded in the existing Layout Foundry owner.');
+          NODE
+
       - name: Integrate P131.3 safe HTML import into canonical security hub
         shell: bash
         run: |
@@ -998,6 +1019,74 @@ jobs:
             cat >> CANVIO_FINAL_ACCEPTANCE_MATRIX.md <<'MATRIX'
 
           | P139.1 Motion Lab hierarchy/text animator | Node contract + centralized P143 source parity + hosted Chromium rendered-PNG comparison and snapshot round-trip | Real project/export review, precomp, word/range selection, advanced keyframes, motion blur and physical GPU/device performance remain manual. |
+          MATRIX
+          fi
+
+      - name: Record P137.2 character and table styles
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! grep -q '## P137.2 — Reusable character and table styles' CANVIO_AI_GUIDE.md; then
+            cat >> CANVIO_AI_GUIDE.md <<'GUIDE'
+
+          ## P137.2 — Reusable character and table styles
+
+          - Existing owner remains canvio-p137-styles.js / canvio-lot137s / window.CVStylesP137 (version 137.2.0) in the existing Layout Foundry toolbar and #lfDoc contenteditable document.
+          - P137.1 paragraph styles and TOC remain intact. P137.2 adds reusable character formatting for selected text within one paragraph (bold, italic, highlight, code and small-caps) stored as span data-cv137-char metadata with whitelisted inline style properties.
+          - Adds three table presets (Lưới, Báo cáo, Tối giản) applied to the selected existing table with data-cv137-table metadata and inline table/cell/header style. Table content and row order are unchanged.
+          - restyleHtml now reapplies paragraph, character and table metadata when the existing Layout Foundry document snapshot is rehydrated. The current style-definition store remains localStorage convenience; actual applied style attributes travel inside existing page HTML snapshots/export. No new document, page, timeline or sync store was added.
+          - Character selection must remain inside a single block to avoid invalid cross-paragraph inline wrappers. Multi-block character styling, nested character-style editing, table formulas, merged-cell layout, sorting/filtering and print pagination are out of scope.
+          - Tests: tests/p127/run-p137s-tests.cjs validates source/API/unsafe-style filtering; tests/p145/run-p137-browser.py validates paragraph styles/TOC plus actual character-span application, table presets and HTML restyling in Chromium. P143 parity registry includes the P137 standalone source paired with canvio-lot137s.
+          GUIDE
+          fi
+          if ! grep -q 'P137.2 character/table style QA' CANVIO_QA_REPORT.md; then
+            cat >> CANVIO_QA_REPORT.md <<'QA'
+
+          ## P137.2 character/table style QA
+
+          Hosted Node and Chromium checks cover five named character styles, three table presets, selection inside one paragraph, persisted data-cv137-char/data-cv137-table metadata, inline styles and restyleHtml reapplication. Table rows/cells are not replaced and use the existing Layout Foundry page HTML owner. Cross-paragraph character selection and advanced table editing remain out of scope.
+          QA
+          fi
+          if ! grep -q '## P137.2 — Character and table formatting' CANVIO_ROADMAP.md; then
+            cat >> CANVIO_ROADMAP.md <<'ROADMAP'
+
+          ## P137.2 — Character and table formatting
+
+          - Extended the existing Layout Foundry style module with five character styles (bold, italic, highlight, code, small-caps) applied to selection within one paragraph, and three reusable table presets (grid, report, minimal).
+          - Inline style metadata is stored inside existing page HTML; style definitions remain localStorage convenience. Rehydration reapplies paragraph, character and table definitions without adding another editor/store.
+          - Multi-block selection, nested character styles, table formulas/merged cells/sort/filter and print pagination remain outside this increment.
+          ROADMAP
+          fi
+          if ! grep -q 'P137.2 character and table styles candidate' CANVIO_ALL_P_COMPLETION_TRACKER.md; then
+            cat >> CANVIO_ALL_P_COMPLETION_TRACKER.md <<'TRACKER'
+
+          ## P137.2 character and table styles candidate — 2026-11-21
+
+          - Extends P137.1 in the existing Layout Foundry module with selected-character style spans and three table presets. Applied metadata stays in existing page HTML; no second store.
+          - Candidate only until Node/Chromium and P143 source parity checks pass. Multi-block text styling and advanced table behavior remain open.
+          TRACKER
+          fi
+          if ! grep -q 'P137.2 rich formatting' CANVIO_NEXT_AI_PROMPT.md; then
+            cat >> CANVIO_NEXT_AI_PROMPT.md <<'PROMPT'
+
+          ## P137.2 rich formatting — 2026-11-21
+
+          - Adds selected-character styling and table presets to the existing P137 Layout Foundry owner. Check P137 Node + Chromium and P143 source parity before merge. Keep selection restricted to one paragraph and do not create a second document store.
+          PROMPT
+          fi
+          if ! grep -q 'P137.2 rich text and table styles' CANVIO_SESSION_SUMMARY_2026-11-21.md; then
+            cat >> CANVIO_SESSION_SUMMARY_2026-11-21.md <<'SESSION'
+
+          ## P137.2 rich text and table styles — candidate 2026-11-21
+
+          - Added five character-style presets applied to a selected text range within one paragraph, three reusable table presets, and HTML rehydration for data-cv137-char/data-cv137-table metadata. Reuses Layout Foundry page HTML.
+          - Automated P137 Node/Chromium tests and P143 source parity are the merge gate; cross-paragraph styling, advanced table semantics and real print pagination remain open.
+          SESSION
+          fi
+          if ! grep -q 'P137.2 character and table styles' CANVIO_FINAL_ACCEPTANCE_MATRIX.md; then
+            cat >> CANVIO_FINAL_ACCEPTANCE_MATRIX.md <<'MATRIX'
+
+          | P137.2 character/table styles | P137 Node + Chromium checks for one-paragraph text selection, five character presets, three table presets, HTML metadata and rehydration; P143 standalone/embedded parity | Cross-paragraph selection, nested character styles, formulas/merged tables/sort/filter and print pagination remain manual/out of scope. |
           MATRIX
           fi
 
