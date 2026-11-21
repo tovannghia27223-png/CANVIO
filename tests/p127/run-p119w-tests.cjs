@@ -26,9 +26,9 @@ assert('Website Motion Builder remains the required owner',checks.existingWebsit
 assert('custom Motion cubic-bezier is accepted',api.canonicalCurve('cubic-bezier(0.1,0.2,0.3,0.4)')==='cubic-bezier(0.1,0.2,0.3,0.4)');
 assert('non-Bezier timing functions are rejected',api.canonicalCurve('linear(0,0.5,1)')===null);
 assert('malformed CSS easing is rejected',api.canonicalCurve('cubic-bezier(9,0,9,1)')===null);
-const inline=(html.match(/<script\\b[^>]*id=["']canvio-lot119w["'][^>]*>([\\s\\S]*?)<\\/script>/i)||[])[1]||'';
+const inline=(html.match(/<script\b[^>]*id=["']canvio-lot119w["'][^>]*>([\s\S]*?)<\/script>/i)||[])[1]||'';
 assert('canonical inline source is present',!!inline);
-assert('standalone and canonical inline sources match',inline.trim().replace(/\\r\\n/g,'\\n')===source.trim().replace(/\\r\\n/g,'\\n'));
+assert('standalone and canonical inline sources match',inline.trim().replace(/\r\n/g,'\n')===source.trim().replace(/\r\n/g,'\n'));
 const pair=map.modules.filter(x=>x.source==='canvio-p119-website.js'&&x.scriptId==='canvio-lot119w');
 assert('P143 registry includes exactly one P119.4 source pair',pair.length===1&&map.totalModules===34);
 assert('Website easing change preserves reduced-motion export owner',html.includes('canvio-motion-runtime')||html.includes('CVWebsiteMotionBuilder'));
