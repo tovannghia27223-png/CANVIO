@@ -18,7 +18,7 @@ const SPECS={
  opacity:{label:'Độ mờ',min:0,max:100,step:1,initial:100,unit:'%'}
 };
 let seq=0,layers=[],selectedId=null,undo=[],redo=[],panel=null,canvas=null,status=null,px=null;
-let originalDraw=null,originalAct=null,originalLoad=null,inputEditing=false,mounted=false;
+let originalDraw=null,originalAct=null,originalLoad=null,originalSnapshot=null,originalRestore=null,inputEditing=false,mounted=false;
 const clone=x=>JSON.parse(JSON.stringify(x));
 const clamp=(v,min,max,fallback)=>{const n=Number(v);return Number.isFinite(n)?Math.max(min,Math.min(max,n)):fallback;};
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -53,7 +53,7 @@ function filterFor(input){
  return parts.length?parts.join(' '):'none';
 }
 function hasAdjustments(){return layers.some(x=>x.enabled&&Math.abs(x.value-SPECS[x.type].initial)>.0001);}
-function snapshot(){return {layers:clone(layers),selectedId:selectedId};}
+function snapshot(){return {version:1,layers:clone(layers),selectedId:selectedId};}
 function checkpoint(){undo.push(snapshot());if(undo.length>40)undo.shift();redo=[];}
 function setStatus(message){if(status)status.textContent=message;}
 function selected(){return layers.find(x=>x.id===selectedId)||null;}
@@ -87,6 +87,84 @@ function render(){
  renderPreview();
 }
 function resetStack(message){layers=[];selectedId=null;undo=[];redo=[];inputEditing=false;render();if(message)setStatus(message);}
+
+const SNAPSHOT_META_KEY='CANVIO.P135';
+let pngCrcTable=null;
+function crc32Binary(value){
+ if(!pngCrcTable){pngCrcTable=new Uint32Array(256);for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=(c&1)?(0xedb88320^(c>>>1)):(c>>>1);pngCrcTable[n]=c>>>0;}}
+ let crc=0xffffffff;for(let i=0;i<value.length;i++)crc=pngCrcTable[(crc^value.charCodeAt(i))&255]^(crc>>>8);
+ return (crc^0xffffffff)>>>0;
+}
+function pngReadU32(bin,at){return (bin.charCodeAt(at)*16777216+bin.charCodeAt(at+1)*65536+bin.charCodeAt(at+2)*256+bin.charCodeAt(at+3))>>>0;}
+function pngWriteU32(value){return String.fromCharCode((value>>>24)&255,(value>>>16)&255,(value>>>8)&255,value&255);}
+function utf8ToBinary(value){
+ if(root.TextEncoder){const bytes=new root.TextEncoder().encode(value);let out='';for(let i=0;i<bytes.length;i++)out+=String.fromCharCode(bytes[i]);return out;}
+ return unescape(encodeURIComponent(value));
+}
+function binaryToUtf8(value){
+ if(root.TextDecoder){const bytes=new Uint8Array(value.length);for(let i=0;i<value.length;i++)bytes[i]=value.charCodeAt(i);return new root.TextDecoder('utf-8',{fatal:true}).decode(bytes);}
+ return decodeURIComponent(escape(value));
+}
+function pngBinary(dataUrl){
+ const match=String(dataUrl||'').match(/^data:image\/png;base64,([A-Za-z0-9+/=]+)$/i);
+ if(!match||!root.atob)return null;
+ try{return root.atob(match[1]);}catch(e){return null;}
+}
+function pngSignatureValid(bin){return !!bin&&bin.length>=20&&[137,80,78,71,13,10,26,10].every((v,i)=>bin.charCodeAt(i)===v);}
+function snapshotStateClean(raw){
+ if(!raw||(raw.version!==undefined&&raw.version!==1)||!Array.isArray(raw.layers))return null;
+ const clean=normalizeLayers(raw.layers),selected=raw.selectedId==null?null:String(raw.selectedId);
+ return {version:1,layers:clean,selectedId:selected&&clean.some(x=>x.id===selected)?selected:null};
+}
+function makeSnapshotTextChunk(state){
+ const json=JSON.stringify(state),payload=root.btoa(utf8ToBinary(json)),data=SNAPSHOT_META_KEY+'\0'+payload;
+ if(data.length>65536)throw new Error('P135 snapshot metadata exceeds its safe limit');
+ const type='tEXt',crc=crc32Binary(type+data);
+ return pngWriteU32(data.length)+type+data+pngWriteU32(crc);
+}
+function unpackSnapshot(dataUrl){
+ const original=String(dataUrl||''),bin=pngBinary(original);
+ if(!pngSignatureValid(bin))return {dataUrl:original,state:null,embedded:false};
+ const pieces=[bin.slice(0,8)];let pos=8,found=false,meta=null,valid=true;
+ while(pos+12<=bin.length){
+  const length=pngReadU32(bin,pos),end=pos+12+length;
+  if(end>bin.length){valid=false;break;}
+  const type=bin.slice(pos+4,pos+8),data=bin.slice(pos+8,pos+8+length),crc=pngReadU32(bin,pos+8+length),chunk=bin.slice(pos,end);
+  let remove=false;
+  if(type==='tEXt'){
+   const split=data.indexOf('\0');
+   if(split>=0&&data.slice(0,split)===SNAPSHOT_META_KEY&&crc32Binary(type+data)===crc){
+    try{const decoded=binaryToUtf8(root.atob(data.slice(split+1))),parsed=snapshotStateClean(JSON.parse(decoded));if(parsed){meta=parsed;found=true;remove=true;}}catch(e){}
+   }
+  }
+  if(!remove)pieces.push(chunk);
+  pos=end;
+  if(type==='IEND')break;
+ }
+ if(!valid||!found)return {dataUrl:original,state:null,embedded:false};
+ try{return {dataUrl:'data:image/png;base64,'+root.btoa(pieces.join('')),state:meta,embedded:true};}
+ catch(e){return {dataUrl:original,state:null,embedded:false};}
+}
+function packSnapshot(dataUrl,state){
+ const original=String(dataUrl||'');
+ try{
+  const clean=snapshotStateClean(state);
+  if(!clean||!clean.layers.length)return original;
+  const unpacked=unpackSnapshot(original),base=pngBinary(unpacked.dataUrl);
+  if(!pngSignatureValid(base)||!root.btoa)return original;
+  let pos=8,iend=-1;
+  while(pos+12<=base.length){const length=pngReadU32(base,pos),end=pos+12+length;if(end>base.length) return original;const type=base.slice(pos+4,pos+8);if(type==='IEND'){iend=pos;break;}pos=end;}
+  if(iend<0)return original;
+  const chunk=makeSnapshotTextChunk(clean),packed=base.slice(0,iend)+chunk+base.slice(iend);
+  return 'data:image/png;base64,'+root.btoa(packed);
+ }catch(e){return original;}
+}
+function restoreStackFromSnapshot(state){
+ if(!state){resetStack();return;}
+ const clean=snapshotStateClean(state);if(!clean){resetStack();return;}
+ layers=clean.layers;selectedId=clean.selectedId;undo=[];redo=[];inputEditing=false;render();
+}
+
 function addLayer(type){
  if(layers.length>=LIMIT){setStatus('Đã đạt giới hạn 32 lớp điều chỉnh.');return false;}
  type=Object.prototype.hasOwnProperty.call(SPECS,type)?type:'brightness';checkpoint();
@@ -164,9 +242,19 @@ function bind(){
 }
 function installPixelHooks(){
  px=root.CVNativeEngines&&root.CVNativeEngines.pixel;if(!px||px.__p135Wrapped)return false;
- originalDraw=px.draw;originalAct=px.act;originalLoad=px.load;
+ originalDraw=px.draw;originalAct=px.act;originalLoad=px.load;originalSnapshot=px.snapshotState;originalRestore=px.restoreState;
  if(typeof originalDraw==='function')px.draw=function(){const result=originalDraw.apply(this,arguments);renderPreview();return result;};
- if(typeof originalLoad==='function')px.load=function(){resetStack('Ảnh mới đã mở · stack điều chỉnh được làm mới.');return originalLoad.apply(this,arguments);};
+ if(typeof originalLoad==='function')px.load=function(){resetStack('Ảnh mới đã mở · stack cũ được đóng để tránh áp nhầm ảnh.');return originalLoad.apply(this,arguments);};
+ if(typeof originalSnapshot==='function')px.snapshotState=function(){
+  const raw=originalSnapshot.apply(this,arguments);
+  return packSnapshot(raw,snapshot());
+ };
+ if(typeof originalRestore==='function')px.restoreState=function(raw){
+  const decoded=unpackSnapshot(raw),args=Array.from(arguments);args[0]=decoded.dataUrl;
+  const result=originalRestore.apply(this,args);
+  if(result!==false)restoreStackFromSnapshot(decoded.state);else resetStack();
+  return result;
+ };
  if(typeof originalAct==='function')px.act=function(action){
   if((action==='export'||action==='webp'||action==='asset')&&hasAdjustments()){
    if(action==='asset')return saveAppliedAsset();return exportApplied(action==='webp'?'image/webp':'image/png');
@@ -188,7 +276,7 @@ function mount(){
  '<div class="cv135-body"><div class="cv135-list-wrap"><div class="cv135-section-label">STACK · TRÊN CÙNG ĐƯỢC ÁP DỤNG SAU</div><div id="cv135-layer-list" class="cv135-layer-list"></div></div>',
  '<div class="cv135-inspector"><div class="cv135-section-label">THUỘC TÍNH LỚP</div><label for="cv135-name">Tên lớp</label><input id="cv135-name" maxlength="64" placeholder="Chọn một lớp để chỉnh sửa"><label for="cv135-value">Cường độ <output id="cv135-value-out">100%</output></label><input id="cv135-value" type="range" min="0" max="200" value="100" disabled><div class="cv135-toolbar cv135-inspector-actions"><button type="button" data-cv135="up" aria-label="Đưa lớp lên">↑ Lên</button><button type="button" data-cv135="down" aria-label="Đưa lớp xuống">↓ Xuống</button><button type="button" data-cv135="remove" class="cv135-danger">Xóa lớp</button><button type="button" data-cv135="reset">Xóa stack</button></div></div></div>',
  '<div class="cv135-export"><div><b>Xuất kết quả đã áp dụng</b><small>Xuất PNG/WebP hoặc lưu một bản raster mới vào Asset Library; không ghi đè ảnh gốc.</small></div><div class="cv135-toolbar"><button type="button" id="cv135-export-png" data-cv135="export-png" class="cv135-primary">Xuất PNG</button><button type="button" id="cv135-export-webp" data-cv135="export-webp">Xuất WebP</button><button type="button" data-cv135="asset">Lưu bản mới vào Asset Library</button></div></div>',
- '<p class="cv135-note"><b>Giới hạn hiện tại:</b> stack được giữ trong bộ nhớ tab, chưa đi cùng project snapshot/restore của Pixel Atelier (engine hiện chỉ snapshot PNG). Tải lại trang hoặc mở ảnh khác sẽ xóa stack. Xuất/Lưu tạo ảnh raster mới, ảnh nguồn vẫn được giữ nguyên.</p>'
+ '<p class="cv135-note"><b>Giới hạn hiện tại:</b> stack được nhúng trong PNG project snapshot dưới dạng tEXt metadata. Các luồng hiện hữu gọi snapshotState()/restoreState() sẽ giữ lại stack khi lưu/khôi phục; mở ảnh mới trực tiếp vẫn reset stack để tránh áp nhầm ảnh. Xuất/Lưu tạo raster mới, không ghi đè ảnh gốc.</p>'
  ].join('');
  const style=doc.createElement('style');style.id='canvio-lot135-css';
  style.textContent='#cv135-panel{margin:18px 0;padding:18px;border:1px solid var(--border,#dce3ee);border-radius:16px;background:var(--card,#fff);color:var(--text,#182230);box-shadow:0 8px 24px rgba(20,34,55,.055)}'+
@@ -212,8 +300,8 @@ function tests(){
  enforcesMaximumLayerCount:normalizeLayers(Array.from({length:40},(_,i)=>({id:'l'+i,type:'brightness'}))).length===LIMIT,
  usesStableUniqueIds:normalizeLayers([{id:'same',type:'brightness'},{id:'same',type:'contrast'}]).length===1};
 }
-const api={version:'135.1.0',specs:clone(SPECS),normalizeLayer:normalizeLayer,normalizeLayers:normalizeLayers,filterFor:filterFor,tests:tests,mount:mount,
- getState:()=>({layers:clone(layers),selectedId:selectedId,sessionOnly:true}),reset:()=>resetStack('Đã xóa stack điều chỉnh.')};
+const api={version:'135.2.0',specs:clone(SPECS),normalizeLayer:normalizeLayer,normalizeLayers:normalizeLayers,filterFor:filterFor,tests:tests,mount:mount,
+ getState:()=>({version:1,layers:clone(layers),selectedId:selectedId,persistedInPixelSnapshot:true}),packSnapshot:packSnapshot,unpackSnapshot:unpackSnapshot,reset:()=>resetStack('Đã xóa stack điều chỉnh.')};
 window.CVPixelAdjustmentsP135=api;
 if(doc){if(doc.readyState==='loading')doc.addEventListener('DOMContentLoaded',mount,{once:true});else mount();}
 })(window);

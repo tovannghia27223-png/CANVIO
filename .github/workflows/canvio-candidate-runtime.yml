@@ -272,21 +272,21 @@ jobs:
           if((html.match(/id="canvio-lot133p"/g)||[]).length!==1)throw new Error('P133.2 duplicate/missing lot');fs.writeFileSync(file,html,'utf8');
           NODE
 
-      - name: Integrate P135.1 non-destructive Pixel adjustment stack
+      - name: Integrate P135.2 project snapshot persistence
         shell: bash
         run: |
           set -euo pipefail
           node <<'NODE'
           const fs=require('node:fs');
           const file='index.html',source=fs.readFileSync('canvio-p135-adjustments.js','utf8').trim(),open='<script id="canvio-lot135a">',close='</script>';
-          if(!source.includes('window.CVPixelAdjustmentsP135'))throw new Error('P135.1 source contract missing');
+          if(!source.includes('window.CVPixelAdjustmentsP135')||!source.includes("version:'135.2.0'")||!source.includes("CANVIO.P135"))throw new Error('P135.2 project snapshot contract missing');
           let html=fs.readFileSync(file,'utf8'),tag=open+'\n'+source+'\n'+close;
           const pos=html.indexOf(open);
           if(pos>=0){const end=html.indexOf(close,pos);if(end<0)throw new Error('P135.1 embedded lot is not closed');html=html.slice(0,pos)+tag+html.slice(end+close.length);}
           else{const body=html.lastIndexOf('</body>');if(body<0)throw new Error('index.html body close missing');html=html.slice(0,body)+tag+'\n'+html.slice(body);}
-          if((html.match(/id="canvio-lot135a"/g)||[]).length!==1)throw new Error('P135.1 duplicate/missing lot');
+          if((html.match(/id="canvio-lot135a"/g)||[]).length!==1)throw new Error('P135.2 duplicate/missing lot');
           fs.writeFileSync(file,html,'utf8');
-          console.log('P135.1 Pixel adjustment stack embedded in canonical index.html');
+          console.log('P135.2 Pixel adjustment snapshot module embedded in canonical index.html');
           NODE
 
       - name: Integrate P133.4 same-owner large-media OPFS sidecar
@@ -1255,6 +1255,74 @@ jobs:
             cat >> CANVIO_FINAL_ACCEPTANCE_MATRIX.md <<'MATRIX'
 
           | P119.2 shared easing in P145.2 | Node loads actual P119 and P145.2 sources; Chromium verifies preset/custom Motion curve changes equal-progress transition output | Video Engine clip/keyframe easing, Website Engine/CSS timeline, real GPU and target-device export performance remain open. |
+          MATRIX
+          fi
+
+      - name: Record P135.2 editable adjustment stack in project snapshots
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! grep -q '## P135.2 — Editable adjustment stack in Pixel project snapshots' CANVIO_AI_GUIDE.md; then
+            cat >> CANVIO_AI_GUIDE.md <<'GUIDE'
+
+          ## P135.2 — Editable adjustment stack in Pixel project snapshots
+
+          - Owner remains canvio-p135-adjustments.js / canonical canvio-lot135a / window.CVPixelAdjustmentsP135, version 135.2.0. It wraps the existing CVNativeEngines.pixel.snapshotState() and restoreState() methods; no second project store, IndexedDB database, localStorage namespace, editor or timeline is created.
+          - The existing Pixel snapshot remains a PNG Data URL string. P135.2 adds a private, CRC-checked PNG tEXt chunk (CANVIO.P135) containing versioned, sanitized adjustment metadata (maximum 32 layers). Restore removes only that metadata chunk before passing the original PNG back to the native Pixel restore owner, then rehydrates the editable layer stack and CSS preview.
+          - Pixel raster bytes remain unchanged by the adjustment preview. Project/recovery flows that persist the existing snapshot string now carry the selected layer and ordered adjustments with the same PNG payload. Opening a new image through pixel.load() intentionally clears the prior stack to prevent applying it to the wrong source.
+          - Export PNG/WebP and Asset Library save still produce a new flattened raster output; they do not replace the original image. P135 metadata is intended for the existing project snapshot/restore path, not a separate public image-export format.
+          - Tests: tests/p127/run-p135a-tests.cjs checks safe layer normalization, PNG tEXt metadata encode/decode, CRC validation, unchanged raster payload and the 32-layer bound. Hosted Chromium tests/p145/run-p135-browser.py adds a real image, creates an adjustment, snapshots, reloads the page and restores from that snapshot through the native Pixel API.
+          - Limits: metadata remains available only when the caller persists the exact PNG snapshot string; third-party image re-encoding may strip ancillary metadata. This does not certify two-device/cloud sync, masks/local corrections, smart objects, clone/patch, liquify, multi-image documents or physical-device image performance.
+          GUIDE
+          fi
+          if ! grep -q 'P135.2 editable project snapshot QA' CANVIO_QA_REPORT.md; then
+            cat >> CANVIO_QA_REPORT.md <<'QA'
+
+          ## P135.2 editable project snapshot QA
+
+          Node tests round-trip the private PNG tEXt metadata and enforce CRC/version/safe layer limits. Hosted Chromium applies a non-destructive adjustment, confirms the underlying PNG snapshot bytes are unchanged, restores the stack using the existing Pixel restoreState() API, then reloads and restores the saved snapshot again. The test verifies ordered layer values and preview filter state with no page errors. It does not certify independent cloud sync or third-party PNG re-encoding.
+          QA
+          fi
+          if ! grep -q '## P135.2 — Pixel adjustment snapshot persistence' CANVIO_ROADMAP.md; then
+            cat >> CANVIO_ROADMAP.md <<'ROADMAP'
+
+          ## P135.2 — Pixel adjustment snapshot persistence (2026-11-21 · hosted candidate)
+
+          - The existing Pixel snapshot API continues to return a PNG Data URL. P135.2 stores its bounded adjustment stack in a CRC-checked PNG tEXt metadata chunk, and restoreState() rehydrates it without a second database or changing raster pixels.
+          - Node and Chromium tests cover metadata round-trip, source-raster identity, preview, export, reload and native restore. Keep cloud/two-device sync, non-PNG re-encoding, masks, smart objects and advanced pixel tools as separate acceptance scopes.
+          ROADMAP
+          fi
+          if ! grep -q 'P135.2 Pixel snapshot metadata candidate' CANVIO_ALL_P_COMPLETION_TRACKER.md; then
+            cat >> CANVIO_ALL_P_COMPLETION_TRACKER.md <<'TRACKER'
+
+          ## P135.2 Pixel snapshot metadata candidate — 2026-11-21
+
+          - P135.2 carries the existing adjustment stack through Pixel snapshotState() / restoreState() using a bounded PNG tEXt metadata chunk. The snapshot string remains a PNG Data URL and existing raster pixels are not changed by preview.
+          - Acceptance gate: Node metadata/CRC/32-layer checks, Chromium snapshot→reload→restore, P143 standalone/embedded parity. Not a claim of cloud sync or independent-device Project Vault validation.
+          TRACKER
+          fi
+          if ! grep -q 'P135.2 project snapshot persistence' CANVIO_NEXT_AI_PROMPT.md; then
+            cat >> CANVIO_NEXT_AI_PROMPT.md <<'PROMPT'
+
+          ## P135.2 project snapshot persistence — 2026-11-21
+
+          - New P135.2 candidate stores the editable adjustment stack inside the existing Pixel PNG snapshot via a CRC-checked tEXt chunk; it wraps native snapshotState/restoreState, adds no second database and keeps the image raster unchanged.
+          - Verify P135 Node/Chromium tests and P143 parity before merge. Do not claim cloud/two-device sync; third-party PNG re-encoding can discard ancillary metadata.
+          PROMPT
+          fi
+          if ! grep -q 'P135.2 Pixel snapshot restore' CANVIO_SESSION_SUMMARY_2026-11-21.md; then
+            cat >> CANVIO_SESSION_SUMMARY_2026-11-21.md <<'SESSION'
+
+          ## P135.2 Pixel snapshot restore — candidate 2026-11-21
+
+          - Adjustment metadata is now embedded in the existing Pixel PNG snapshot string and restored through the existing native Pixel API. Preview remains non-destructive; exports remain flattened copies.
+          - Hosted Node/Chromium and P143 parity are the merge gate. Cross-device sync and advanced Photoshop-like tools remain open.
+          SESSION
+          fi
+          if ! grep -q 'P135.2 editable Pixel adjustment stack' CANVIO_FINAL_ACCEPTANCE_MATRIX.md; then
+            cat >> CANVIO_FINAL_ACCEPTANCE_MATRIX.md <<'MATRIX'
+
+          | P135.2 editable Pixel adjustment stack | Node PNG metadata/CRC/32-layer round-trip; hosted Chromium snapshot → reload → native restore and unchanged raster check; P143 standalone/embedded parity | Independent two-device/cloud sync, third-party PNG re-encoding, masks/local corrections, smart objects, clone/patch and liquify remain unverified/out of scope. |
           MATRIX
           fi
 
