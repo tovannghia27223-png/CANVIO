@@ -164,7 +164,7 @@ function bind(){
 }
 const PROJECT_MARKER='__canvioPixelAdjustmentProject';
 function createProjectSnapshot(raster,state){
- if(typeof raster!=='string'||!/^data:image\\//i.test(raster))return null;
+ if(typeof raster!=='string'||!/^data:image\//i.test(raster))return null;
  state=state&&typeof state==='object'?state:{};
  const projectLayers=normalizeLayers(state.layers);
  const activeId=state.selectedId&&projectLayers.some(x=>x.id===state.selectedId)?state.selectedId:(projectLayers[0]?.id||null);
@@ -172,7 +172,7 @@ function createProjectSnapshot(raster,state){
 }
 function isProjectSnapshot(value){
  return !!(value&&typeof value==='object'&&value.__canvioPixelAdjustmentProject===1&&value.version===1&&
-  typeof value.raster==='string'&&/^data:image\\//i.test(value.raster)&&value.adjustments&&
+  typeof value.raster==='string'&&/^data:image\//i.test(value.raster)&&value.adjustments&&
   value.adjustments.version===1&&Array.isArray(value.adjustments.layers));
 }
 function restoreRasterForProject(raster){
@@ -203,6 +203,7 @@ async function restoreProjectSnapshot(pack){
  undo=[];redo=[];inputEditing=false;render();
  setStatus('Đã khôi phục '+layers.length+' lớp điều chỉnh cùng dự án Pixel Atelier.');return true;
 }
+let projectBridgeAttempts=0;
 function installProjectVaultBridge(){
  if(!px||!originalSnapshotState||!originalRestoreState)return false;
  px.snapshotProjectState=function(){const raster=originalSnapshotState.call(px);return createProjectSnapshot(raster,{layers:layers,selectedId:selectedId})};
@@ -213,14 +214,21 @@ function installProjectVaultBridge(){
   wrappedRestore.__p135ProjectAware=true;px.restoreState=wrappedRestore;
  }
  const unified=root.CVUnifiedLayers;
- if(unified&&!unified.__p135ProjectBridge&&typeof unified.snapshotState==='function'&&typeof unified.restoreState==='function'){
+ if(!unified)return false;
+ if(!unified.__p135ProjectBridge&&typeof unified.snapshotState==='function'&&typeof unified.restoreState==='function'){
   const snapshot=unified.snapshotState,restore=unified.restoreState;
   const snapshotBridge=function(editor){if(editor==='pixelStudio'&&typeof px.snapshotProjectState==='function')return px.snapshotProjectState();return snapshot.apply(this,arguments)};
   snapshotBridge.__p135ProjectBridge=true;
   const restoreBridge=async function(editor,state){if(editor==='pixelStudio'&&isProjectSnapshot(state))return px.restoreProjectState(state);return restore.apply(this,arguments)};
   restoreBridge.__p135ProjectBridge=true;unified.snapshotState=snapshotBridge;unified.restoreState=restoreBridge;unified.__p135ProjectBridge=true;
  }
- return true;
+ return !!unified.__p135ProjectBridge;
+}
+function scheduleProjectVaultBridge(){
+ if(installProjectVaultBridge())return true;
+ projectBridgeAttempts++;
+ if(projectBridgeAttempts<40)root.setTimeout(scheduleProjectVaultBridge,50);
+ return false;
 }
 function installPixelHooks(){
  px=root.CVNativeEngines&&root.CVNativeEngines.pixel;if(!px||px.__p135Wrapped)return false;
@@ -235,7 +243,7 @@ function installPixelHooks(){
   if(action==='clear')resetStack('Đã làm mới ảnh và stack điều chỉnh.');else root.requestAnimationFrame(renderPreview);
   return result;
  };
- installProjectVaultBridge();px.__p135Wrapped=true;return true;
+ scheduleProjectVaultBridge();px.__p135Wrapped=true;return true;
 }
 function mount(){
  if(mounted)return true;if(!doc||!root.CVNativeEngines||!root.CVNativeEngines.pixel)return false;
@@ -266,11 +274,17 @@ function mount(){
 function tests(){
  const normalized=normalizeLayers([{id:'a',type:'brightness',value:999},{id:'b',type:'hue',value:-999},{id:'bad',type:'not-real',value:1}]);
  const filters=filterFor([{id:'x',type:'brightness',value:125},{id:'y',type:'blur',value:2,enabled:false},{id:'z',type:'hue',value:30}]);
+ const raster='data:image/png;base64,AAAA';
+ const project=createProjectSnapshot(raster,{layers:[{id:'persisted',type:'brightness',value:150}],selectedId:'persisted'});
  return {clampsUpperBound:normalized[0].value===200,clampsLowerBound:normalized[1].value===-180,
- unknownTypeFallsBackSafely:normalized[2].type==='brightness',preservesLayerOrder:normalized[0].order===0&&normalized[1].order===1,
- ignoresDisabledLayers:filters==='brightness(125%) hue-rotate(30deg)',supportsNineAdjustmentTypes:Object.keys(SPECS).length===9,
- enforcesMaximumLayerCount:normalizeLayers(Array.from({length:40},(_,i)=>({id:'l'+i,type:'brightness'}))).length===LIMIT,
- usesStableUniqueIds:normalizeLayers([{id:'same',type:'brightness'},{id:'same',type:'contrast'}]).length===1};
+  unknownTypeFallsBackSafely:normalized[2].type==='brightness',preservesLayerOrder:normalized[0].order===0&&normalized[1].order===1,
+  ignoresDisabledLayers:filters==='brightness(125%) hue-rotate(30deg)',supportsNineAdjustmentTypes:Object.keys(SPECS).length===9,
+  enforcesMaximumLayerCount:normalizeLayers(Array.from({length:40},(_,i)=>({id:'l'+i,type:'brightness'}))).length===LIMIT,
+  usesStableUniqueIds:normalizeLayers([{id:'same',type:'brightness'},{id:'same',type:'contrast'}]).length===1,
+  createsVersionedProjectPayload:!!project&&project.__canvioPixelAdjustmentProject===1&&project.version===1,
+  preservesProjectLayerValue:!!project&&project.adjustments.layers[0].value===150,
+  preservesProjectSelection:!!project&&project.adjustments.selectedId==='persisted',
+  leavesLegacyRasterOutsideProjectSchema:!isProjectSnapshot(raster)};
 }
 const api={version:'135.2.0',specs:clone(SPECS),normalizeLayer:normalizeLayer,normalizeLayers:normalizeLayers,filterFor:filterFor,createProjectSnapshot:createProjectSnapshot,isProjectSnapshot:isProjectSnapshot,restoreProjectSnapshot:restoreProjectSnapshot,tests:tests,mount:mount,
  getState:()=>({layers:clone(layers),selectedId:selectedId,sessionOnly:false,projectPersistenceAvailable:!!(px&&px.snapshotProjectState&&root.CVUnifiedLayers&&root.CVUnifiedLayers.__p135ProjectBridge)}),reset:()=>resetStack('Đã xóa stack điều chỉnh.')};
