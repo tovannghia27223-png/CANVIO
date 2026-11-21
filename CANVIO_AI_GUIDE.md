@@ -3749,3 +3749,12 @@ P144 tour: thêm bước bằng cách thêm vào mảng `STEPS` ({sel,title,text
 - No face/object ML model, model download, network upload, timeline mutation, project-store mutation or new persistence owner. User manually imports the resulting WebM if needed.
 - Known limits: saliency heuristic can follow background texture/high contrast instead of the intended subject; no manual tracking-point correction, no MP4/H.264 export, max 60 seconds/100 MiB, browser codec/captureStream support varies. This is a lightweight reframing helper, not AI subject recognition.
 - Tests added: Node source regression tests/p127/run-p134r-tests.cjs (11 assertions) and same-origin Chromium + ffmpeg/ffprobe workflow tests/p145/run-p134r-browser.py. Hosted PR result is the acceptance gate; no full-app runtime PASS is claimed before the hosted run completes.
+
+
+## P124 — Responsive Auto Layout & Component variants (rebased candidate, 2026-11-21)
+
+- Source canvio-p124-autolayout.js; embedded lot canvio-lot124; API window.CVAutoLayoutP124 (inspect, normalize, render, insert, mount, tests).
+- Mounts only inside existing #page-webEngine and inserts through CVWeb.addComponents(); persists with CV.engines.web.save(). No second GrapesJS instance, project store or external dependency.
+- Presets: Stack, Row/Flex-wrap, Grid auto-fit/minmax, Split and Card. Four card variants: surface, outline, elevated and soft. Text/number inputs are clamped and user text escaped.
+- Tests: tests/p124/run-p124-tests.cjs and tests/p124/run-p124-browser.py (390 px Chromium interaction). Hosted workflow verifies source/embedded parity and full application regressions.
+- Explicit partial boundary: does not convert arbitrary selected existing components, provide a visual breakpoint editor, synchronize nested component variants, or implement drag/resize constraint handles. Keyboard/screen-reader and real GrapesJS-origin responsive screenshot acceptance remain open.
