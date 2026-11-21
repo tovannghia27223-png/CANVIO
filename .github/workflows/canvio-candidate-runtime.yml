@@ -732,7 +732,7 @@ jobs:
         run: |
           set -euo pipefail
           export CANVIO_GLB_FIXTURES=/tmp/glbfx/out
-/tmp/canvio-playwright/bin/python tests/p145/run-p135-browser.py
+          /tmp/canvio-playwright/bin/python tests/p145/run-p135-browser.py
           /tmp/canvio-playwright/bin/python tests/hosted/run-hosted-runtime-acceptance.py
           /tmp/canvio-playwright/bin/python tests/p131/run-p131-browser.py
           /tmp/canvio-playwright/bin/python tests/p131/run-p131-app-smoke.py
