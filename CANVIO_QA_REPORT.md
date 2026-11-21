@@ -471,3 +471,10 @@ Status: pending hosted PR verification. Do not treat this section as a PASS repo
 - Candidate checks: model bounds/unknown type handling/duplicate ID filtering/order/disabled layers/layer cap; same-origin browser panel, preview CSS, source PNG unchanged, layer undo/redo, exported PNG signature/dimensions/pixel change and existing Asset Library owner invocation.
 - Do not report P135.1 as PASS until the hosted run executes both the Node and Chromium suites. Current PR #60 run did execute the font setup and the P119/P118/P141/P128/P137 Node suites successfully, but the overall workflow then stopped at the pre-existing P133 proxy-browser timeout. This does not verify P135.
 - Explicit limits: no editable stack persistence across reload, no masks/local corrections, no production target-device performance or visual acceptance. P70 remains not certified.
+
+## P139.1 candidate QA note — 2026-11-21
+
+- Source module, canonical lot injection and P139 model/browser suites are in candidate branch work/canvio-p139-motionlab-20261121.
+- Node output from hosted run #44905353707 reported P139 Motion Lab PASS for model/source contract checks after correction. That run later failed in the pre-existing P70/P85 runtime smoke on a DOM insertBefore exception; both P135 and P139 panel insertion have since been changed to insert through the note's actual parent node.
+- Latest candidate run is pending/active at documentation time; no P139 browser pass is claimed until the exact run-p139-browser.py output is reviewed.
+- Explicit scope limits: parent/null and per-grapheme text animator only. Precomp, motion blur, advanced selection and real project acceptance remain open.
