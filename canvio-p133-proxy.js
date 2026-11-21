@@ -67,11 +67,11 @@ function createOffscreenScaler(width,height,onFrame,onError){
   "};"
  ].join(String.fromCharCode(10));
  var blob=new Blob([code],{type:'text/javascript'}),workerUrl=URL.createObjectURL(blob),worker=null;
- var readyResolve,readySettled=false,state={ready:false,pending:false,closed:false};
+ var readyResolve,readySettled=false,frameTimer=0,state={ready:false,pending:false,closed:false};
  var ready=new Promise(function(resolve){readyResolve=resolve;});
  function fail(message){
   if(state.closed)return;
-  state.pending=false;
+  state.pending=false;clearTimeout(frameTimer);frameTimer=0;
   if(!readySettled){readySettled=true;readyResolve(false);}
   try{if(onError)onError(message||'Offscreen worker failed');}catch(e){}
  }
@@ -79,7 +79,7 @@ function createOffscreenScaler(width,height,onFrame,onError){
  worker.onmessage=function(event){
   var d=event.data||{};
   if(d.type==='ready'){state.ready=true;if(!readySettled){readySettled=true;readyResolve(true);}return;}
-  if(d.type==='frame'){state.pending=false;try{if(onFrame)onFrame(d.bitmap);}catch(e){fail(e&&e.message);}return;}
+  if(d.type==='frame'){clearTimeout(frameTimer);frameTimer=0;state.pending=false;try{if(onFrame)onFrame(d.bitmap);}catch(e){fail(e&&e.message);}return;}
   if(d.type==='error')fail(d.message||'Offscreen scaler error');
  };
  worker.onerror=function(event){try{event.preventDefault();}catch(e){}fail(event&&event.message||'Offscreen worker error');};
@@ -91,13 +91,13 @@ function createOffscreenScaler(width,height,onFrame,onError){
   send:function(frame){
    if(state.closed||!state.ready||state.pending||!worker)return false;
    state.pending=true;
-   try{worker.postMessage({type:'frame',frame:frame,width:width,height:height},[frame]);return true;}
+   try{worker.postMessage({type:'frame',frame:frame,width:width,height:height},[frame]);frameTimer=setTimeout(function(){fail('Offscreen worker frame timed out');},3000);return true;}
    catch(e){state.pending=false;fail(e&&e.message);return false;}
   },
   close:function(){
    if(state.closed)return;
    state.closed=true;state.pending=false;
-   try{worker.terminate();}catch(e){}
+   clearTimeout(frameTimer);frameTimer=0;try{worker.terminate();}catch(e){}
    try{URL.revokeObjectURL(workerUrl);}catch(e){}
   }
  };
@@ -106,7 +106,7 @@ async function renderProxy(blob,clip,onProgress){
  if(!(blob instanceof Blob))throw new Error('Không đọc được media gốc của clip.');
  if(blob.size>MAX_BYTES)throw new Error('Media gốc vượt giới hạn 500 MB của proxy bản nhẹ.');
  var video=document.createElement('video'),url=URL.createObjectURL(blob),canvas=null,stream=null,sourceStream=null,recorder=null,raf=0,timer=0,scaler=null,workerPending=false,finished=false,renderPath='main-canvas';
- video.muted=false;video.playsInline=true;video.preload='auto';video.src=url;
+ video.muted=false;video.playsInline=true;video.preload='auto';video.style.cssText='position:fixed;left:-10000px;top:0;width:2px;height:2px;opacity:0;pointer-events:none;';video.setAttribute('aria-hidden','true');video.src=url;try{document.body.appendChild(video);}catch(e){}
  try{
   await waitEvent(video,'loadedmetadata','error',30000);
   if(!video.videoWidth||!video.videoHeight)throw new Error('Nguồn không phải video hợp lệ.');
@@ -156,37 +156,50 @@ async function renderProxy(blob,clip,onProgress){
    }
    function draw(){
     if(finished)return;
+    var atEnd=video.ended||video.currentTime>=range.end-.025;
+    if(atEnd&&workerPending){raf=requestAnimationFrame(draw);return;}
     if(video.readyState>=2){
-     if(scaler){
+     if(atEnd)fallbackFrame();
+     else if(scaler){
       if(!workerPending){
        workerPending=true;
+       var captureFinished=false;
+       var captureTimer=setTimeout(function(){
+        if(captureFinished||finished)return;
+        captureFinished=true;workerPending=false;
+        if(scaler){scaler.close();scaler=null;}
+        if(renderPath==='offscreen-worker')renderPath='main-canvas-fallback';
+        fallbackFrame();
+        if(video.ended||video.currentTime>=range.end-.025)finish();
+       },8000);
        createImageBitmap(video).then(function(frame){
-        if(finished){if(frame&&frame.close)frame.close();workerPending=false;return;}
+        if(captureFinished||finished){if(frame&&frame.close)frame.close();return;}
+        captureFinished=true;clearTimeout(captureTimer);
         if(!scaler||!scaler.send(frame)){
          if(frame&&frame.close)frame.close();
          workerPending=false;
          if(scaler){scaler.close();scaler=null;}
          if(renderPath==='offscreen-worker')renderPath='main-canvas-fallback';
          fallbackFrame();
+         if(video.ended||video.currentTime>=range.end-.025)finish();
         }
        }).catch(function(){
-        workerPending=false;
+        if(captureFinished||finished)return;
+        captureFinished=true;clearTimeout(captureTimer);workerPending=false;
         if(scaler){scaler.close();scaler=null;}
         if(renderPath==='offscreen-worker')renderPath='main-canvas-fallback';
         fallbackFrame();
+        if(video.ended||video.currentTime>=range.end-.025)finish();
        });
       }
      }else fallbackFrame();
      if(onProgress)onProgress(Math.max(0,Math.min(1,(video.currentTime-range.start)/range.duration)));
     }
-    if(video.ended||video.currentTime>=range.end-.025){
-     if(workerPending){raf=requestAnimationFrame(draw);return;}
-     finish();return;
-    }
+    if(atEnd){finish();return;}
     raf=requestAnimationFrame(draw);
    }
    video.addEventListener('ended',onEnded,{once:true});
-   timer=setTimeout(function(){finish(new Error('Tạo proxy vượt thời gian cho phép.'));},range.duration*2500+20000);
+   timer=setTimeout(function(){finish(new Error('Tạo proxy vượt thời gian cho phép (t='+video.currentTime.toFixed(2)+'s, readyState='+video.readyState+', paused='+video.paused+', ended='+video.ended+', workerPending='+workerPending+').'));},Math.min(300000,range.duration*8000+90000));
    raf=requestAnimationFrame(draw);
   });
   await stopped;
@@ -195,7 +208,7 @@ async function renderProxy(blob,clip,onProgress){
   lastRenderPath=renderPath;
   return{blob:out,mime:out.type,width:size.width,height:size.height,duration:range.duration,audioPreserved:audioCount>0,bytes:out.size,sourceWidth:video.videoWidth,sourceHeight:video.videoHeight,renderPath:renderPath};
  }finally{
-  try{video.pause();}catch(e){}
+  try{video.pause();}catch(e){}try{if(video.parentNode)video.parentNode.removeChild(video);}catch(e){}
   if(scaler)scaler.close();
   try{if(stream)stream.getTracks().forEach(function(t){t.stop();});}catch(e){}
   try{if(sourceStream)sourceStream.getTracks().forEach(function(t){t.stop();});}catch(e){}
