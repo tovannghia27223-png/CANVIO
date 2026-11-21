@@ -523,3 +523,15 @@ Node tests round-trip the private PNG tEXt metadata and enforce CRC/version/safe
 ## P143.4 candidate QA — lexical global-reference evidence — 2026-11-21
 
 - Candidate adds static lexical evidence only; scanner fixture and generated dependency map will be accepted only after current-main hosted CI. It is not an AST or semantic runtime dependency graph and does not change application execution order.
+
+
+## Verified hosted mainline — P137.2 / P119.2 / P135.2 — 2026-11-21
+
+- P137.2: PR #76 candidate #534 and post-merge #535 passed 51/51. Chromium verified character/table controls, application and rehydration.
+- P119.2: PR #78 candidate #536 and post-merge #538 passed 52/52; P119/P145.2 Node suites passed and Chromium confirmed eased progress changes the actual transition frame. Pages #271 passed.
+- P135.2: PR #81 candidate #547 and post-merge #549 passed 53/53; Node PNG metadata/CRC checks and hosted Chromium snapshot→reload→restore suite passed with zero page errors. Pages #273/#274 passed. P143 parity after P135 registration: 32/32.
+- Limits: software Chromium does not certify physical GPU/image performance; P135.2 ancillary PNG metadata can be stripped by third-party re-encoding and does not prove two-device/cloud sync. P70 remains blocked with 14 manual gates.
+
+## P143.4 candidate QA — lexical global-reference evidence — 2026-11-21
+
+- Candidate adds static lexical evidence only; scanner fixtures and generated ordering map will be accepted only after current-main hosted CI. It is not an AST or semantic runtime dependency graph and does not change application execution order.
