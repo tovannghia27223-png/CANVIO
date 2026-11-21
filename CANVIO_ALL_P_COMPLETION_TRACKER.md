@@ -129,3 +129,9 @@ No honest all-P completion claim is possible yet. In addition to P70's 14 open r
 - P134 base scopes remain the existing histogram/waveform/vectorscope implementation; this increment adds a separate aspect-ratio workflow inside the existing Video Engine quality card.
 - Scope boundary: 9:16 / 1:1 saliency crop from edge contrast + frame difference; WebM export; no face-recognition model, no upload, no timeline or store mutation.
 - Acceptance status: pending hosted PR verification. Do not mark merged/automated PASS until the workflow result is inspected. Real footage, mobile/browser matrix and audio listening remain manual.
+
+
+## P144.3 contextual help increment — 2026-11-21
+
+- Candidate branch work/p144-studio-help-20261121 updates the existing CVUxP144 owner to 144.3.0; contextual tips now cover the registered CVWS routes across Design, Website/Profile and Media, plus utility pages.
+- Node API assertions and hosted Chromium route-coverage check added; CI pending. Does not create a second router, palette or help owner.
