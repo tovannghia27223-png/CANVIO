@@ -340,8 +340,9 @@ jobs:
           let html=fs.readFileSync(file,'utf8');
           const re=new RegExp('<script id="'+id+'">[\\s\\S]*?<\\/script>','g');
           const count=(html.match(re)||[]).length;
-          const nl=html.includes('\\r\\n')?'\\r\\n':'\\n';
-          const tag=open+nl+source.replace(/\\r?\\n/g,nl)+nl+'</script>';
+          const crlf=String.fromCharCode(13,10),lf=String.fromCharCode(10);
+          const nl=html.includes(crlf)?crlf:lf;
+          const tag=open+nl+source.split(lf).join(nl)+nl+'</script>';
           if(count>1)throw new Error('P120/P126 duplicate embedded lot');
           if(count===1)html=html.replace(re,tag);
           else{const at=html.lastIndexOf('</body>');if(at<0)throw new Error('P120/P126 cannot find </body>');html=html.slice(0,at)+tag+nl+html.slice(at);}
