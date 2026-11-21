@@ -3808,3 +3808,10 @@ P144 tour: thêm bước bằng cách thêm vào mảng `STEPS` ({sel,title,text
 - `tests/p145/run-p134r-browser.py` now measures WebM duration from ffprobe video packet presentation timestamps and median packet/frame duration when container/stream duration is absent. The exporter uses canvas.captureStream(30); nominal `r_frame_rate` can be an inaccurate 60/1 and is no longer trusted as the primary duration measurement.
 - Fallback to 30 fps is only used if both container duration and packet timestamps are unavailable. CI reports packet count, first/last PTS and median frame interval for diagnosis.
 - Current-main CI rerun is pending; do not claim this correction accepted until the new hosted run completes.
+
+## P143 Phase 2 — canonical inline script inventory (2026-11-21 · candidate)
+
+- Added tests/p143/build-inline-source-inventory.cjs. After all hosted integration steps, it enumerates every <script> block in restored canonical index.html in execution order, recording ID, type, src, async/defer/nomodule flags, byte size, SHA-256, detected window exports and heuristic references to known global owners.
+- Output: tests/p143/inline-source-inventory.json. The report is included in the candidate source ZIP and uploaded acceptance artifact.
+- This is a complete script-tag inventory, but known-global detection is heuristic and not a semantic dependency/boot-order DAG. Inline CSS/stylesheets, template strings and dynamic script construction require a separate inventory. No scripts are moved or reordered in this phase.
+- Hosted CI must generate the report before this phase is marked PASS.
