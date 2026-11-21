@@ -28,3 +28,13 @@ Pull trước khi làm: CI bot hay push commit "build: commit verified ..." lên
 Việc còn mở theo thứ tự gợi ý: P125.2 editor cuộn; P132 xuất GIF/APNG/WebP động; P136 Image Trace; P137 kiểu đoạn/bảng/luồng chữ; P138 khử ồn + TTS; P145.3 SFX Web Audio; P145.2 shader chuyển cảnh; P134 waveform/vectorscope; P124 Auto Layout/Component; P133 OPFS/proxy; P143 tách mã; P144 Command Palette; P145.4b trình phát nhúng tự phát; P130 (chặn: cần Supabase thật); P142 kiểm Firefox/WebKit/cảm ứng.
 Quy tắc nhúng: mỗi lot là `<script id="canvio-lotNNN">` + bản độc lập `canvio-pNNN-*.js`; không viết chuỗi `</script>` thật trong mã (dùng `<\/script>`); index.html dùng CRLF, sửa bằng đọc/ghi nhị phân.
 
+
+
+## Tiếp tục 2026-11-21 — P133.2 proxy candidate
+
+- Source canvio-p133-proxy.js, lot canvio-lot133p; Node test tests/p127/run-p133p-tests.cjs; hosted Chromium 4K proxy test tests/p145/run-p133-proxy-browser.py.
+- Tạo proxy WebM cho clip 4K đang chọn; cạnh dài tối đa 1280 px, 30 fps, ≤500 MiB / ≤180 giây. Dùng media owner và importFiles hiện có; thêm clip mới, không sửa clip gốc.
+- Kiểm CI PR trước khi merge. Sau P133.2 còn OffscreenCanvas cho tác vụ có lợi thực tế và migration media lớn sang OPFS cần quota/migration/rollback.
+- P134.2 Auto Reframe nằm ở PR #46, đang nghiệm thu. PR #45 P124 run #332 PASS nhưng branch diverged/dirty so với main; không merge nếu chưa giải quyết conflict và chạy lại CI.
+- P143 cần tách mã theo lot nhỏ và parity tests; không rewrite index nguyên khối. P144 còn thiếu trợ giúp theo từng Studio.
+- P122.3 MCP chưa có security/transport/permission contract; P130 cần Supabase project/RLS/two-device test; P70 còn 14 cổng manual. Không tạo placeholder và không đánh dấu hoàn thành khi thiếu điều kiện thực.
