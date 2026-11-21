@@ -810,3 +810,8 @@ Hosted verification after the ffmpeg repair is complete:
 - Test: `node tests/p127/run-p144u-tests.cjs`; Chrome thật `tests/p145/run-p144-browser.py` (14 mục).
 - Chưa làm: hướng dẫn lần đầu (tour), trợ giúp riêng cho từng Studio còn lại, tìm mờ (fuzzy) và tìm xuyên tài nguyên/mẫu (P145.10 thuộc AI kia).
 
+### P133 (phần Web Worker) — Khử ồn chạy nền
+- `CVDenoiseP138.denoiseAsync` chạy thuật toán trong Web Worker (nguồn worker dựng từ chính hàm `denoise`/`fft`, không phụ thuộc DOM), tự rơi về luồng chính nếu Worker lỗi/không có, giới hạn 120 giây. `processClip` và nút Khử ồn dùng đường này.
+- Đo trên Chrome thật (30 giây audio): kết quả giống hệt luồng chính (lệch 0), trang vẫn nhận sự kiện trong lúc xử lý. Test: `tests/p145/run-p133w-browser.py`.
+- Còn lại của P133: proxy 720p cho video 4K, OffscreenCanvas cho tách nền/upscale, chuyển tài sản lớn sang OPFS.
+

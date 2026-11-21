@@ -3735,3 +3735,5 @@ P125.3: `CVScrollFramesP125.PRESETS`, `decimate(frames,maxBytes)`; `buildHtml` n
 ## P144 UX
 `window.CVUxP144` {commands, nav, tips, openHelp, closeHelp, wrapPalette, tests}. Lot `canvio-lot144u` khớp `canvio-p144-ux.js`. Thêm lệnh palette mới: thêm đối tượng `{label,hint,icon,page,sel,run?}` vào `CMDS` (label duy nhất; `run` chỉ dùng cho lệnh chỉ-đọc). Thêm mẹo trang: thêm khoá vào `TIPS`.
 
+P133 Worker: `CVDenoiseP138.denoiseAsync(Float32Array,{strength})` -> `{samples, worker:boolean}`. Muốn đẩy xử lý nặng khác ra Worker, dùng cùng cách: dựng nguồn từ `fn.toString()` + hằng số, không tham chiếu `window`/DOM.
+

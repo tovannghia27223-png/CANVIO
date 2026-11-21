@@ -36,6 +36,24 @@ function denoise(x, opt) {
   }
   var y = new Float32Array(n); for (i = 0; i < n; i++) y[i] = out[i + HOP]; return y;
 }
+function workerSource() {
+  return 'var N=' + N + ',HOP=' + HOP + ';' + fft.toString() + ';var WIN=new Float64Array(N);for(var i=0;i<N;i++)WIN[i]=Math.sqrt(0.5-0.5*Math.cos(2*Math.PI*i/N));' + denoise.toString() + ';onmessage=function(e){try{var y=denoise(e.data.samples,{strength:e.data.strength});postMessage({ok:true,samples:y},[y.buffer])}catch(err){postMessage({ok:false,error:String(err&&err.message||err)})}};';
+}
+function denoiseAsync(x, opt) {
+  return new Promise(function (ok, no) {
+    var fallback = function () { setTimeout(function () { try { ok({ samples: denoise(x, opt), worker: false }); } catch (e) { no(e); } }, 0); };
+    if (typeof Worker !== 'function' || typeof Blob !== 'function' || !window.URL || !URL.createObjectURL) { fallback(); return; }
+    var w, url, done = false, timer;
+    function fin(fn, v) { if (done) return; done = true; clearTimeout(timer); try { w.terminate(); } catch (e) {} try { URL.revokeObjectURL(url); } catch (e) {} fn(v); }
+    try {
+      url = URL.createObjectURL(new Blob([workerSource()], { type: 'text/javascript' })); w = new Worker(url);
+      w.onmessage = function (e) { if (e.data && e.data.ok) fin(ok, { samples: e.data.samples, worker: true }); else fin(no, new Error(e.data && e.data.error || 'Worker lỗi')); };
+      w.onerror = function () { if (!done) { done = true; clearTimeout(timer); try { w.terminate(); } catch (e) {} try { URL.revokeObjectURL(url); } catch (e) {} fallback(); } };
+      timer = setTimeout(function () { fin(no, new Error('Khử ồn quá thời gian (120 giây).')); }, 120000);
+      var copy = Float32Array.from(x); w.postMessage({ samples: copy, strength: opt && opt.strength }, [copy.buffer]);
+    } catch (e) { fallback(); }
+  });
+}
 function rms(a, s, e) { var t = 0, c = 0; for (var i = s; i < e && i < a.length; i++) { t += a[i] * a[i]; c++; } return Math.sqrt(t / Math.max(1, c)); }
 function wav(data, sr) {
   var n = data.length, b = new ArrayBuffer(44 + n * 2), v = new DataView(b), i, s;
@@ -55,7 +73,7 @@ function processClip(state, clip, strength) {
     var fs = buf.sampleRate, from = Math.min(buf.length, Math.max(0, Math.round((Number(clip.trimIn) || 0) * fs))), len = Math.min(buf.length - from, Math.round(Math.max(0.1, Number(clip.duration) || 0.1) * fs));
     if (len > fs * MAX_SECONDS) throw new Error('Clip dài quá 5 phút.');
     var mono = new Float32Array(len), ch, i; for (ch = 0; ch < buf.numberOfChannels; ch++) { var d = buf.getChannelData(ch); for (i = 0; i < len; i++) mono[i] += d[from + i] / buf.numberOfChannels; }
-    var y = denoise(mono, { strength: strength }); return { samples: y, sampleRate: fs, wav: wav(y, fs) };
+    return denoiseAsync(mono, { strength: strength }).then(function (r) { return { samples: r.samples, sampleRate: fs, wav: wav(r.samples, fs), worker: r.worker }; });
   });
 }
 function mount() {
@@ -91,8 +109,9 @@ function tests() {
     strengthMonotonic: rms(denoise(x, { strength: 1 }), sr * 2 + tOff[0], sr * 2 + tOff[1]) < rms(denoise(x, { strength: 0 }), sr * 2 + tOff[0], sr * 2 + tOff[1]),
     shortInputPassesThrough: denoise(new Float32Array(100), {}).length === 100 && denoise(null, {}).length === 0,
     edgesNotAttenuated: (function () { var c = new Float32Array(sr * 3), i, k = Math.round(sr * 0.2); for (i = 0; i < k; i++) { c[i] = 0.4 * Math.sin(2 * Math.PI * 440 * i / sr); c[c.length - 1 - i] = 0.4 * Math.sin(2 * Math.PI * 440 * i / sr); } var o = denoise(c, { strength: 0.5 }); return Math.abs(rms(o, 0, k) / rms(c, 0, k) - 1) < 0.15 && Math.abs(rms(o, c.length - k, c.length) / rms(c, c.length - k, c.length) - 1) < 0.15; })(), silenceStaysSilent: rms(denoise(clean, {}), 0, clean.length) < 1e-6,
+    workerSourceSelfContained: (function () { var src = workerSource(); return src.indexOf('function denoise') >= 0 && src.indexOf('function fft') >= 0 && src.indexOf('onmessage') > 0 && src.indexOf('window') < 0; })(),
     wavHeader: String.fromCharCode(w[0], w[1], w[2], w[3]) === 'RIFF' && w.length === 50
   };
 }
-window.CVDenoiseP138 = { version: '138.1.0', denoise: denoise, processClip: processClip, wav: wav, mount: mount, tests: tests };
+window.CVDenoiseP138 = { version: '138.2.0', denoise: denoise, denoiseAsync: denoiseAsync, workerSource: workerSource, processClip: processClip, wav: wav, mount: mount, tests: tests };
 })();
