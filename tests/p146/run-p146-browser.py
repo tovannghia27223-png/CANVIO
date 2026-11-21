@@ -9,11 +9,11 @@ class Quiet(http.server.SimpleHTTPRequestHandler):
 server=socketserver.ThreadingTCPServer(('127.0.0.1',0),functools.partial(Quiet,directory=ROOT));server.daemon_threads=True
 threading.Thread(target=server.serve_forever,daemon=True).start()
 url='http://127.0.0.1:%d/index.html'%server.server_address[1]
-checks,errors={},[]
+checks,errors,provider_requests={},{},[]
 with sync_playwright() as p:
  browser=p.chromium.launch(executable_path=CHROME,headless=True,args=['--no-sandbox','--disable-dev-shm-usage','--disable-gpu'])
  context=browser.new_context(viewport={'width':1360,'height':900},reduced_motion='reduce')
- page=context.new_page();page.on('pageerror',lambda e:errors.append(str(e)[:240]))
+ page=context.new_page();page.on('pageerror',lambda e:errors.append(str(e)[:240]));page.on('request',lambda req:provider_requests.append(req.url) if 'pollinations' in req.url.lower() else None)
  page.goto(url,wait_until='domcontentloaded',timeout=90000)
  page.wait_for_function("!!(window.CV&&CV.go&&window.CVHomeCreativeFlowP146&&document.querySelector('#cvhs-workflows'))",timeout=90000)
  checks['fiveWorkflows']=page.locator('#cvhs-workflows [data-cvhs-flow]').count()==5
@@ -23,8 +23,13 @@ with sync_playwright() as p:
  checks['hrBriefPrefilled']='tuyển dụng' in brief.lower() and '[VỊ TRÍ]' in brief
  checks['homeKindReused']=page.locator('#homeKind button.on').get_attribute('data-kind')=='poster'
  page.click('#cvhs-workflows [data-cvhs-action=\"open\"]')
- page.wait_for_function("document.querySelector('#page-hrvisual.active')&&document.querySelector('#hrPrompt')&&document.querySelector('#hrPrompt').value.includes('[VỊ TRÍ]')",timeout=20000)
+ page.wait_for_function("document.querySelector('#page-hrvisual.active')&&document.querySelector('#hrTabs [data-t=ai]')",timeout=20000)
+ page.wait_for_function("document.querySelector('#hrPrompt')&&document.querySelector('#hrPrompt').value.includes('[VỊ TRÍ]')",timeout=10000)
  checks['hrStudioHandoff']=page.locator('#hrPrompt').input_value()==brief
+ checks['hrPromptTabOpened']= 'btn-primary' in (page.locator('#hrTabs button[data-t=ai]').get_attribute('class') or '')
+ checks['noPollinationsCall']=len(provider_requests)==0
+ checks['noImageGenerationTriggered']=page.locator('#hrGo').count()==1 and page.locator('#hrGo').is_visible()
+ checks['hrStatusExplainsOptionalTab']='chưa gọi Pollinations' in page.locator('#cvhs-status').inner_text().lower()
  core_brief=page.evaluate('CVCreativeCore.context().brief')
  checks['sharedCoreOwner']=bool(core_brief) and core_brief==brief
  page.evaluate("CV.go('home')");page.wait_for_function("document.querySelector('#page-home.active')",timeout=10000)
@@ -36,5 +41,5 @@ with sync_playwright() as p:
  checks['noPageErrors']=len(errors)==0
  browser.close()
 server.shutdown();server.server_close()
-result={'checks':checks,'pageErrors':errors,'failed':[k for k,v in checks.items() if not v]}
+result={'checks':checks,'pageErrors':errors,'providerRequests':provider_requests,'failed':[k for k,v in checks.items() if not v]}
 print(json.dumps(result,ensure_ascii=False,indent=2));sys.exit(1 if result['failed'] else 0)

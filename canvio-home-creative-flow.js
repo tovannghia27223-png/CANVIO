@@ -84,12 +84,16 @@ function syncExistingCore(x){
  return 'Brief được chuyển vào Studio; Shared Core hiện không khả dụng.';
 }
 function fillDestination(x,attempt){
+ if(x.page==='hrvisual'&&!$('#hrPrompt')){
+  var hrAiTab=$('#hrTabs [data-t="ai"]');
+  if(hrAiTab&&typeof hrAiTab.onclick==='function')hrAiTab.click();
+ }
  var el=$('#'+x.field);
  if(el){
   el.value=x.brief;el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}));
   if(x.page==='creativeHub'&&x.task){var task=$('#chTask');if(task){task.value=x.task;task.dispatchEvent(new Event('change',{bubbles:true}))}}
   if(x.page==='studio'){var kind=$('#studioKind');if(kind){kind.value=x.kind;kind.dispatchEvent(new Event('change',{bubbles:true}))}}
-  var st=$('#cvhs-status');if(st)st.textContent='Đã chuyển brief vào '+x.studio+'. Chưa tự chạy AI; bạn chủ động bấm tạo trong Studio.';return true;
+  var st=$('#cvhs-status');if(st)st.textContent=x.page==='hrvisual'?'Đã chuyển brief vào HR Visual Studio. Chỉ mở tab nhập brief; chưa gọi Pollinations hay tạo ảnh.':'Đã chuyển brief vào '+x.studio+'. Chưa tự chạy AI; bạn chủ động bấm tạo trong Studio.';return true;
  }
  if(attempt<12){window.setTimeout(function(){fillDestination(x,attempt+1)},140);return false}
  var st2=$('#cvhs-status');if(st2)st2.textContent='Đã mở '+x.studio+'. Ô brief chưa sẵn sàng; nội dung vẫn còn trong Home và Shared Core nếu đã lưu.';return false;

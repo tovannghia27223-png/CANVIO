@@ -566,5 +566,5 @@ Mainline workflow #551 passed 53/53; Pages #275 passed build/deploy. P143 parity
 ## P146.1 Home Guided Creative Workflows — candidate test scope
 
 - Node source-contract checks exactly one canonical inline P146 lot, byte-normalized standalone/embedded parity, syntax, five flow definitions, existing destination fields, Shared Core API reuse and absence of a new network/storage owner.
-- Chromium acceptance covers five workflow entries, brief prefill through the existing Home prompt, HR Visual and Video Studio handoff, Shared Core ownership and no-overwrite behavior for a non-empty project brief.
+- Chromium acceptance covers five workflow entries, brief prefill through the existing Home prompt, HR Visual and Video Studio handoff, Shared Core ownership and no-overwrite behavior for a non-empty project brief. HR Visual’s optional AI tab is activated only to reveal `#hrPrompt`; the test asserts no Pollinations request and does not click the image-generation action.
 - Successful automated checks validate deterministic local routing only; they do not certify content quality, accessibility, physical-device UX or cloud sync.
