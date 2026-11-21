@@ -135,8 +135,12 @@ function mount(){
    var proxy=await renderProxy(blob,clip,function(p){progress.value=p*90;say('Đang tạo proxy '+Math.round(p*100)+'%…');});
    var base=String(clip.name||'video').replace(/\.[^.]+$/,'').slice(0,60)||'video';
    var file=new File([proxy.blob],base+'-proxy-720p.webm',{type:proxy.mime||'video/webm'});
-   v.importFiles({target:{files:[file],value:''}});
-   outputUrl=URL.createObjectURL(proxy.blob);download.href=outputUrl;result.style.display='block';progress.value=100;
+   outputUrl=URL.createObjectURL(proxy.blob);download.href=outputUrl;result.style.display='block';
+   var before=Array.isArray(state.clips)?state.clips.length:0;
+   var imported=await v.importFiles({target:{files:[file],value:''}});
+   var afterState=v._state&&v._state(),after=afterState&&Array.isArray(afterState.clips)?afterState.clips.length:before;
+   if(imported===false||after<=before)throw new Error('Đã tạo được proxy và có thể tải xuống, nhưng Video Engine chưa xác nhận clip mới trên timeline. Hãy tải tệp rồi nhập thủ công.');
+   progress.value=100;
    say('Đã thêm '+file.name+' vào timeline ('+proxy.width+'×'+proxy.height+' · '+(proxy.bytes/1048576).toFixed(1)+' MB · '+(proxy.audioPreserved?'có audio':'không có audio')+'). Clip gốc không bị sửa; hãy kiểm tra rồi thay thủ công nếu muốn.');
   }catch(e){say(e&&e.message?e.message:String(e));progress.value=0;}
   finally{busy=false;btn.disabled=false;}
