@@ -501,6 +501,13 @@ jobs:
           set -euo pipefail
           node tests/p143/run-p143-source-parity.cjs
 
+      - name: P143 complete canonical inline script inventory
+        shell: bash
+        run: |
+          set -euo pipefail
+          node tests/p143/build-inline-source-inventory.cjs
+          test -s tests/p143/inline-source-inventory.json
+
       - name: Audit complete HTML and all inline JavaScript
         shell: bash
         run: |
@@ -826,6 +833,7 @@ jobs:
             dist/CANVIO_23.3.111_GITHUB_RUNTIME_VERIFIED_SOURCE_2026-11-18.zip.sha256
             CANVIO_MANIFEST.json
             tests/hosted/*.json
+            tests/p143/inline-source-inventory.json
             assets/three/THREE-VENDOR-MANIFEST.json
             assets/p85/P85-VENDOR-MANIFEST.json
             assets/three/THREE-VENDOR-NOTICE.md
