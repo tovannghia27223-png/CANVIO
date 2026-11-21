@@ -122,6 +122,13 @@ Quy tắc nhúng: mỗi lot là `<script id="canvio-lotNNN">` + bản độc l�
 - Candidate changes: P124.2 configurable breakpoint/column panel; P133.3 OffscreenCanvas Worker proxy scaling with main-thread fallback; P143.3 CSS/style/template/dynamic-loader inventory and heuristic dependency candidate report.
 - Before merging, inspect candidate GitHub Actions. P124 expected Node API check count 16 and Chromium UI 12; P133 browser test requires renderPath === 'offscreen-worker'; P143 style inventory generator + validator run before HTML audit. These are planned checks, not yet PASS.
 - Do not claim that P143 is fully modularized: semantic dependency/boot-order review and reversible source extraction remain. Do not claim large-media OPFS migration: the canonical Video Engine media store is unchanged.
+
+## P143.4 lexical dependency evidence — 2026-11-21
+
+- New tests/p143/js-global-scanner.cjs supplements inline inventory with comment/string/regex-aware lexical global reference evidence and static provider-before-consumer candidates.
+- Review tests/p143/style-template-loader-inventory.json: each edge has producer/consumer order, ids, SHA-256, prior provider history and evidence kinds; unresolved/same-script references are separate.
+- Do not call this an AST or semantic dependency graph. Alias/destructuring, template interpolation, conditional writes, call-time order and runtime data flow remain open. Do not reorder/extract scripts until those dependencies are reviewed and rollback/offline/CSP tests exist.
+
 - Continue updating this Guide, Roadmap, Tracker, QA report, acceptance matrix and session summary in the same branch/turn after each verified increment.
 - Defer P70 real-world gates until the user schedules them. P130 still needs the user's Supabase project/schema/RLS/credentials and cross-device restore proof. P122.3 MCP still needs an approved transport/authentication/consent/permissions/threat model before implementation.
 
