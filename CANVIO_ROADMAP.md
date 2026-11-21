@@ -1074,3 +1074,11 @@ Hosted verification after the ffmpeg repair is complete:
 - Mỗi quy trình dùng brief mẫu có placeholder, đưa về `#homePrompt` / `#homeKind`, rồi điều hướng tới đúng trang và trường nhập hiện có. Shared Core được tái sử dụng; brief dự án hiện tại không bị ghi đè khi đã có nội dung khác.
 - Đây là orchestration UI; không bổ sung editor, template database, provider AI, network request hoặc persistence namespace. Việc tạo sản phẩm vẫn do người dùng thực hiện trong Studio.
 - Automated acceptance: P146 Node source/inline contract và hosted Chromium route/brief tests. Real user content, keyboard/screen reader, physical mobile and real-project acceptance remain manual.
+
+
+## P114.1 Restore hidden entry points: "AI & cài đặt", "Dự án & xuất", Spatial Workspace (2026-11-22 · candidate)
+
+- Reported by the owner: after the shell navigation (`data-nav=shell`, P114) the old sidebar (`#side`, `#ws-tabs`) is hidden, so only four spaces remained in the Studio menu and the "◈ Spatial" launcher (`#cv229-open`, Ctrl/⌘+Shift+I) was `display:none`. "Dự án & xuất" (Alt+4) and "AI & cài đặt" (Alt+5) were reachable only by hotkey, Ctrl+K or the Home cards.
+- New `canvio-p114-nav-restore.js` (CVNavRestoreP114, embedded lot `canvio-lot114n` + `canvio-lot114n-css`): appends both spaces to the P109 Studio menu (same `data-route` handler → `CVWS.open`), marks them `aria-current`, updates footer to "Alt+0–5", adds palette entries, and shows the Spatial button in the top bar under shell mode. P109/P110 lots are untouched.
+- Tests: `tests/p145/run-p114n-browser.py` (real Chrome, desktop 1440 and mobile 390: 20 checks incl. Spatial inspector opens, six routes, AI/Projects open, old routes still work, menu inside viewport, zero page errors); `tests/p109` and `tests/p110` still pass; smoke 21/21; screenshot checked.
+- Limits: the classic sidebar itself stays hidden in shell mode (by design of P114); this only restores the entry points. Not checked on real touch devices.

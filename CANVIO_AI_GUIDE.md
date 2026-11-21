@@ -4042,3 +4042,7 @@ P144 tour: thêm bước bằng cách thêm vào mảng `STEPS` ({sel,title,text
 - Người dùng chủ động mở Studio và bấm tạo; không có AI tự động, network request, API key, localStorage namespace, asset store, timeline hoặc history store mới.
 - Tests: `tests/p146/run-p146-tests.cjs` kiểm tra source/inline parity và hợp đồng module; `tests/p146/run-p146-browser.py` kiểm tra 5 luồng, Home kind, HR/Video handoff, Shared Core không bị ghi đè và page errors.
 - Giới hạn: brief là template có placeholder; người dùng phải thay bằng dữ liệu đã xác minh. Không phải AI recommendation model, cloud sync, real-time collaboration hay nghiệm thu accessibility/thiết bị thật.
+
+
+## P114.1 nav restore (2026-11-22)
+- `window.CVNavRestoreP114`: extends `#cv-studio-menu` with `proj`/`ai` routes and shows `#cv229-open` under `html[data-nav=shell]`. CVWS space ids: design, site, media, proj, ai (home via `CV.go('home')`). Standalone must equal embedded `canvio-lot114n`.
