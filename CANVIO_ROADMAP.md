@@ -884,6 +884,15 @@ Hosted verification after the ffmpeg repair is complete:
 - Generates tests/p143/inline-source-inventory.json, packaged into the candidate ZIP and hosted evidence artifact.
 - This is a full script-tag inventory, not semantic dependency graph. It does not inventory all CSS/template/dynamic script paths or change any loading order. Full P143 extraction remains open until dependencies/boot order are reviewed and extraction staged.
 
+## P143 Phase 2.2 — lexical global-reference ordering map (2026-11-21 · candidate)
+
+- Added a dependency-free lexical scanner for classic inline scripts. It skips comments, strings, regex literals and template-literal bodies, and records direct window/globalThis writes/reads plus simple top-level declarations.
+- Existing P143 inventory records now include global declarations, global-property reads, known-global reads and bounded line evidence. The style/template inventory builds ordered candidate edges from the latest earlier static provider to each consumer; provider history, same-script references and unresolved reads are retained.
+- Edge evidence carries script order/id/SHA for both sides and distinguishes single-prior-provider from multiple-prior-writer cases. The report remains lexical and heuristic, not a JavaScript AST or semantic runtime dependency DAG.
+- Existing hosted P143 inventory workflow runs scanner fixtures and validates ordering, hashes and reference accounting. No application code, script execution order, storage or sync owner changes.
+- Remaining: manual review of aliases/destructuring, template interpolation, conditional execution, call-time order and dynamic code; then select one dependency-bounded extraction at a time with parity, rollback, offline/PWA/CSP and full app regression.
+
+
 ## Final reconciliation — P124 / P133.2 / P134.2 / P143 / P144 (2026-11-21)
 
 - PR #51 merged P124/P133.2/P144.3. Candidate #360 and main #362 passed; post-P143 main run #385 passed 41/41. Pages #222 passed build/deploy/report.
