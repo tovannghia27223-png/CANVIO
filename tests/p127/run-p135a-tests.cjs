@@ -21,6 +21,11 @@ const packed=api.packSnapshot(fixture,state),decoded=api.unpackSnapshot(packed);
 ck('snapshot embeds editable stack as PNG metadata',packed!==fixture&&decoded.embedded===true);
 ck('snapshot round-trip preserves layer values',decoded.state&&decoded.state.layers.length===1&&decoded.state.layers[0].id==='persist-1'&&decoded.state.layers[0].value===145);
 ck('snapshot round-trip preserves selected layer',decoded.state&&decoded.state.selectedId==='persist-1');
+const corruptBytes=Buffer.from(packed.slice('data:image/png;base64,'.length),'base64');
+let chunkAt=8,crcDamaged=false;
+while(chunkAt+12<=corruptBytes.length){const size=corruptBytes.readUInt32BE(chunkAt),type=corruptBytes.toString('ascii',chunkAt+4,chunkAt+8),end=chunkAt+12+size;if(end>corruptBytes.length)break;if(type==='tEXt'&&corruptBytes.toString('ascii',chunkAt+8,chunkAt+8+size).startsWith('CANVIO.P135\\0')){corruptBytes[end-1]^=1;crcDamaged=true;break;}chunkAt=end;}
+const corruptUrl='data:image/png;base64,'+corruptBytes.toString('base64'),corruptDecoded=api.unpackSnapshot(corruptUrl);
+ck('corrupt metadata CRC is ignored safely',crcDamaged&&corruptDecoded.embedded===false&&corruptDecoded.dataUrl===corruptUrl);
 ck('PNG raster payload is byte-identical after metadata stripping',decoded.dataUrl===fixture);
 ck('empty stack keeps legacy PNG payload unchanged',api.packSnapshot(fixture,{version:1,layers:[],selectedId:null})===fixture);
 const oversize={version:1,layers:Array.from({length:50},(_,i)=>({id:'l'+i,type:'brightness',value:120})),selectedId:'l0'};
