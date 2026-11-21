@@ -556,6 +556,12 @@ jobs:
           /tmp/canvio-playwright/bin/python -m pip install --disable-pip-version-check playwright==1.65.2
           /tmp/canvio-playwright/bin/python -m playwright install --with-deps chromium
 
+      - name: Run P124 Chromium UI interaction smoke
+        shell: bash
+        run: |
+          set -euo pipefail
+          /tmp/canvio-playwright/bin/python tests/p124/run-p124-browser.py
+
       - name: Install KTX-Software toktx (for the KTX2 fixture)
         shell: bash
         env:
@@ -657,6 +663,7 @@ jobs:
           | P145.7 Typography presets | Six system-font presets, bounded controls, CSS export and physical Playwright hit-test | No bundled commercial fonts; OS typography review remains manual |
           | P145.8 Vector illustrations | Eight original SVG illustrations, four palettes, filter/preview/vector export; Node + Chromium | Starter pack only; not stock photography or a large illustration catalogue |
           | P145.9/.10 Asset Search & Quality Gate | Read-only local search/filter and shared license/source/size/hash gate | Full live Asset Vault enumeration and hashing every uploaded binary require canonical provider |
+          | P124 Auto Layout / Component | Node parity/API tests + Chromium panel/insert/save-failure/mobile smoke | First preset increment only; selected-component constraints, breakpoint editor and nested variants remain open |
           | P70 Stable release | Fourteen fail-closed manual gates | releaseCertified:false until every gate has reviewed production evidence |
 
           ## Required manual gates
@@ -693,6 +700,7 @@ jobs:
           - Added P145.2 local WebGL shader transitions/effects, Canvas2D fallback, PNG export and an optional P79-muxed video-only transition MP4 path with hosted Chromium coverage.
           - Added P125.4 optional split-asset storyboard ZIP alongside the original self-contained HTML export; hosted Chromium verifies ZIP integrity and final relative-frame decoding offline. Audio and mobile/real-media acceptance remain open.
           - Added P145.6–P145.10 Asset Library tools: 25 original SVG icons, six local typography presets, eight original SVG illustrations, and read-only asset search/quality gate, with Node and hosted Chromium acceptance.
+          - Added P124 responsive Auto Layout presets (Stack, Row, Grid, Split, Card), four card variants, canonical Website Engine insertion/save, and Node + Chromium interaction coverage; selected-component constraints and breakpoint editor remain open.
           - Stable release remains fail-closed at P70; no physical GPU or two-device certification is implied.
           PATCH
           if ! grep -q '## P145.2 — Shader transitions and effects' CANVIO_AI_GUIDE.md; then
