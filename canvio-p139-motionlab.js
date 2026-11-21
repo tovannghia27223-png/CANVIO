@@ -263,12 +263,45 @@ function bind(){
   if(['cv139-x','cv139-y','cv139-scale','cv139-rotation'].includes(e.target.id))applyNullInputs();
  });
 }
+function wrapRenderer(canvasEl){
+ if(ml.__p139DrawWrapped)return true;
+ const ctx=canvasEl&&canvasEl.getContext('2d'),nativeDraw=ml.draw;
+ if(!ctx||typeof nativeDraw!=='function')return false;
+ ml.draw=function(time){
+  const snapshot=state(),objs=Array.isArray(snapshot.objs)?snapshot.objs:[],originalFill=ctx.fillText;
+  const hadOwn=Object.prototype.hasOwnProperty.call(ctx,'fillText');
+  const used=Object.create(null);let drawing=false;
+  beginFrame(objs,time);
+  try{
+   ctx.fillText=function(value,x,y,maxWidth){
+    if(drawing)return originalFill.apply(ctx,arguments);
+    const text=String(value),matches=objs.filter(o=>o&&o.type==='text'&&String(o.text||'')===text&&(normalizeAnimator(o.textAnimator).enabled||!!o.parentId));
+    if(!matches.length)return originalFill.apply(ctx,arguments);
+    const index=used[text]||0,obj=matches[Math.min(index,matches.length-1)];used[text]=index+1;
+    drawing=true;ctx.save();
+    try{
+     if(obj.parentId)applyParentTransform(obj,time,ctx);
+     ctx.translate(Number(x)||0,Number(y)||0);
+     const max=Number(maxWidth),width=ctx.measureText(text).width;
+     if(Number.isFinite(max)&&max>0&&width>max)ctx.scale(max/width,1);
+     drawText(ctx,obj,time);
+    }finally{ctx.restore();drawing=false;}
+   };
+   return nativeDraw.apply(this,arguments);
+  }finally{
+   if(hadOwn)ctx.fillText=originalFill;else delete ctx.fillText;
+  }
+ };
+ ml.__p139DrawWrapped=true;
+ return true;
+}
 function mount(){
  if(mounted)return true;if(!doc||!root.CVNativeEngines||!root.CVNativeEngines.motionLab)return false;
  const page=doc.getElementById('page-motionLab'),canvasEl=doc.getElementById('mlCanvas');if(!page||!canvasEl)return false;
  ml=root.CVNativeEngines.motionLab;if(!canvasEl.getContext('2d'))return false;
  if(ml.__p139Wrapped)return false;
  if(typeof ml.draw!=='function'||typeof ml.snapshotState!=='function'||typeof ml.restoreState!=='function')return false;
+ wrapRenderer(canvasEl);
  panel=doc.createElement('section');panel.id='cv139-panel';panel.className='cv139-panel';panel.setAttribute('aria-labelledby','cv139-title');
  const curves=root.CVEasingP119&&root.CVEasingP119.PRESETS||{'Mượt':CURVE_FALLBACK};
  panel.innerHTML='<div class="cv139-head"><div><span class="cv139-kicker">MOTION LAB · P139</span><h3 id="cv139-title">Parent / Null & Text Animator</h3><p>Gắn đối tượng vào Null Controller và tạo hoạt ảnh theo từng ký tự bằng easing P119.</p></div><span class="cv139-status">Dùng chung snapshot Motion Lab</span></div>'+
@@ -285,7 +318,7 @@ function mount(){
  ml.restoreState=function(raw){const r=nativeRestore.call(ml,raw);renderPanel();return r;};
  ml.__p139Wrapped=true;bind();renderPanel();mounted=true;return true;
 }
-const api={version:'139.1.0',normalizeAnimator,normalizeNull,normalizeCurve,parentMatrixForObject,transformPoint,inversePoint,wouldCycle,beginFrame,applyParentTransform,drawText,tests,mount,
+const api={version:'139.1.1',normalizeAnimator,normalizeNull,normalizeCurve,parentMatrixForObject,transformPoint,inversePoint,wouldCycle,beginFrame,applyParentTransform,drawText,wrapRenderer,tests,mount,
  addNull,createNullAsParent,setParent,unparent,setNullTransform,configureTextAnimator,removeNull,
  getState:()=>state()};
 root.CVMotionLabP139=api;
