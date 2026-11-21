@@ -1,0 +1,2719 @@
+{
+  "format": "CANVIO_P143_INLINE_SOURCE_INVENTORY",
+  "version": 1,
+  "generatedAt": "2026-11-21T09:34:16.988Z",
+  "source": "restored canonical index.html after hosted workflow integration steps",
+  "purpose": "Complete script-tag inventory in browser execution order; known global reference detection is heuristic, not a semantic dependency DAG.",
+  "htmlBytes": 5459631,
+  "scriptTagCount": 150,
+  "inlineScriptCount": 150,
+  "externalScriptCount": 0,
+  "moduleScriptCount": 0,
+  "asyncScriptCount": 0,
+  "deferScriptCount": 0,
+  "uniqueScriptIds": 147,
+  "duplicateScriptIds": [],
+  "modules": [
+    {
+      "order": 0,
+      "id": "canvio101-lib-loader",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 1352,
+      "sha256": "b9037371ad2ce9d98031780eaa95f461cee7016f1997153348b15bb4380a5eb7",
+      "exportedGlobals": [
+        "CVLibs",
+        "__cvNeedLib"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 1,
+      "id": null,
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 396747,
+      "sha256": "0cc97745993385f1c78abf0f2fcf04215315e1a18fceeae6d356585212695183",
+      "exportedGlobals": [
+        "CV",
+        "CV190PosterSamples",
+        "__canvio10Keys",
+        "confirm",
+        "onload"
+      ],
+      "knownGlobalReads": [
+        "LS"
+      ]
+    },
+    {
+      "order": 2,
+      "id": "canvio-gemini-module",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 9280,
+      "sha256": "f57f2d37b8f1760b6a28e9d4c7a1d87ac2c369f22ae1b96a9ef1a022181dd028",
+      "exportedGlobals": [
+        "GeminiAPI"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 3,
+      "id": "canvio10-portfolio-module",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 5883,
+      "sha256": "025e50d048fc96585f8482992968ca638f6f5f7b109d52f86d61e4927b90ab3c",
+      "exportedGlobals": [
+        "CANVIO_PORTFOLIO"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 4,
+      "id": "canvio-artcraft-module",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 9450,
+      "sha256": "143bcc0c484245873c1a6a6053e290a0c0b21b55b7ef1c2e6be91d5ade948972",
+      "exportedGlobals": [
+        "ArtCraft"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 5,
+      "id": "canvio-shotcraft-module",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 13933,
+      "sha256": "92917c8f65d762ac9b9fa110a0ed7b88ab91cb0870036a21bbb58aa3348efc59",
+      "exportedGlobals": [
+        "ShotCraft"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 6,
+      "id": "canvio10-release-meta",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 460,
+      "sha256": "3f6ce42439cda7b5084a1af7ce267dde6764dd97370524ce5d6acf3ec23a35c3",
+      "exportedGlobals": [
+        "CANVIO_RELEASE"
+      ],
+      "knownGlobalReads": []
+    },
+    {
+      "order": 7,
+      "id": "canvio-hrvisual-module",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 28993,
+      "sha256": "a9e175cff3fc6176fec69889134b718408b5b73b6547c587111655683046f68d",
+      "exportedGlobals": [
+        "CVLocal",
+        "HRVisual"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 8,
+      "id": "canvio102-skin-module",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 17062,
+      "sha256": "681991e5474f05ea4fffc6c3f598861c8d256f048d49638864b824a33d8377cf",
+      "exportedGlobals": [],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 9,
+      "id": "canvio101-hardening-module",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 56784,
+      "sha256": "d0151d398f570afb17abee157578d654fc1205a5c17125fd909055e950c2bfab",
+      "exportedGlobals": [
+        "CV11",
+        "CVAudioMix",
+        "CVHealth",
+        "CVZip"
+      ],
+      "knownGlobalReads": [
+        "CV",
+        "LS"
+      ]
+    },
+    {
+      "order": 10,
+      "id": "canvio-one-module",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 39255,
+      "sha256": "43c78839343f8762cdb09dabf798e1f5a978b81f33c52e88f36b8150cbd9ef13",
+      "exportedGlobals": [
+        "CVOne"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 11,
+      "id": "canvio-hub-module",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 141437,
+      "sha256": "bc49389813aea325938bd708f376127b0331bde178722b49cea47e313b23c3cd",
+      "exportedGlobals": [
+        "CVAuto",
+        "CVHub",
+        "CVKit",
+        "CVQA",
+        "CVStudioCore",
+        "__ps"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 12,
+      "id": "canvio-lot56",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 32789,
+      "sha256": "bf87d06f6427d9793259782451720f64d740809c2ad224f0be1b0b04536fbf26",
+      "exportedGlobals": [
+        "CV190TemplateState",
+        "CVLot56"
+      ],
+      "knownGlobalReads": [
+        "CV",
+        "CVKit"
+      ]
+    },
+    {
+      "order": 13,
+      "id": "canvio-lot7",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 1744,
+      "sha256": "2b94023ad43a7d564b66c0842a72e51e1349bed114fb57a28f561c8f49cfc4b1",
+      "exportedGlobals": [],
+      "knownGlobalReads": [
+        "CVKit"
+      ]
+    },
+    {
+      "order": 14,
+      "id": "canvio-lot8",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 9990,
+      "sha256": "b1f750d25cd1260318dfb6518ab0165d060b354d83f6cccf9c932f78804306b1",
+      "exportedGlobals": [],
+      "knownGlobalReads": [
+        "CV",
+        "CVKit"
+      ]
+    },
+    {
+      "order": 15,
+      "id": "canvio-lot9",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 14089,
+      "sha256": "b20f95c4dda8b3009cc5edacd0f5998e8c64c28e6f9d494259d42dedcf5cb882",
+      "exportedGlobals": [
+        "CVPublish"
+      ],
+      "knownGlobalReads": [
+        "CV",
+        "CVKit"
+      ]
+    },
+    {
+      "order": 16,
+      "id": "canvio-lot10",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 16417,
+      "sha256": "bd0e7db2af81d527025df4ce1f0193edd868dc64e73eb0d0e7825d0f7f656c56",
+      "exportedGlobals": [
+        "CVLot10"
+      ],
+      "knownGlobalReads": [
+        "CV",
+        "CVKit"
+      ]
+    },
+    {
+      "order": 17,
+      "id": "canvio-lot11",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 7588,
+      "sha256": "44bca071afdcaa7e0dd1a2c0e79d709aecf4bd31d33c0fcd03beb5db7eaa9617",
+      "exportedGlobals": [
+        "CVLot11"
+      ],
+      "knownGlobalReads": [
+        "CV",
+        "CVKit"
+      ]
+    },
+    {
+      "order": 18,
+      "id": "canvio-lot12",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 9211,
+      "sha256": "71b907399e36a32760c61765f340a4f874f2e95358d97def4d20ead576f3494f",
+      "exportedGlobals": [
+        "CVLot12"
+      ],
+      "knownGlobalReads": [
+        "CV",
+        "CVKit"
+      ]
+    },
+    {
+      "order": 19,
+      "id": "canvio-lot13",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 7323,
+      "sha256": "e85800fb1f8139e0c27e6062174367ccefdebd766611d55ca17167fd26dfba55",
+      "exportedGlobals": [
+        "CVLot13"
+      ],
+      "knownGlobalReads": [
+        "CV",
+        "CVKit"
+      ]
+    },
+    {
+      "order": 20,
+      "id": "canvio-lot14",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 15318,
+      "sha256": "7de5dcbe573c81b7660414df3613c94d17dde1e8be2409dd5615b25b424dab19",
+      "exportedGlobals": [
+        "CVLot14"
+      ],
+      "knownGlobalReads": [
+        "CV",
+        "CVKit"
+      ]
+    },
+    {
+      "order": 21,
+      "id": "canvio-lot15",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 39784,
+      "sha256": "4fb69628edf573e4b970c136848a70459e1e89f41ceb5232223789ea6951ab29",
+      "exportedGlobals": [
+        "CVLot15",
+        "dataLayer",
+        "gtag"
+      ],
+      "knownGlobalReads": [
+        "CV",
+        "CVKit"
+      ]
+    },
+    {
+      "order": 22,
+      "id": "canvio-lot20",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 8526,
+      "sha256": "732e1a21e87d4c6a4bcc889f6e669bcaa1daaa0476580509534864145edac334",
+      "exportedGlobals": [
+        "CVPages"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 23,
+      "id": "canvio-lot21",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 16255,
+      "sha256": "6216eb9ce10a587d758ea38d1d59f57b187b4c0b3e17ce086dd2758ce8f88814",
+      "exportedGlobals": [
+        "CVShell"
+      ],
+      "knownGlobalReads": [
+        "CV",
+        "CVKit"
+      ]
+    },
+    {
+      "order": 24,
+      "id": "canvio-lot22",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 9597,
+      "sha256": "cb8771834700f8633b1f7f03a744d20d3cd41a11bd6018e08f10bdd6737c17b3",
+      "exportedGlobals": [
+        "CANVIO_MAP",
+        "CVLot22"
+      ],
+      "knownGlobalReads": [
+        "CV",
+        "CVKit"
+      ]
+    },
+    {
+      "order": 25,
+      "id": "canvio-lot23",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 21579,
+      "sha256": "9e7bf002dd3c13bda045b78cb5a83dab26a20d7230363621b1d3c3101cc5e739",
+      "exportedGlobals": [
+        "CVFonts",
+        "CVLot23",
+        "__cvFontInline"
+      ],
+      "knownGlobalReads": [
+        "CV",
+        "CVKit"
+      ]
+    },
+    {
+      "order": 26,
+      "id": "canvio-lot24",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 16525,
+      "sha256": "d4522d42122fb061c3d9928a94c5e2e0b7e7487b24029c887d91a8b374f83fe2",
+      "exportedGlobals": [
+        "CVLot24",
+        "__paK"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 27,
+      "id": "canvio-lot25",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 7153,
+      "sha256": "f3e2c50f2be3f07a42e024c60b995f810735a19cfe3b535abf0bcc40ccf27a59",
+      "exportedGlobals": [
+        "CVLot25"
+      ],
+      "knownGlobalReads": [
+        "CV",
+        "CVKit"
+      ]
+    },
+    {
+      "order": 28,
+      "id": "canvio-lot26",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 16529,
+      "sha256": "f2680bc2bbfad16435d047ea3a8e54965d1960f810b10b60c55f76ac30214cb0",
+      "exportedGlobals": [
+        "CVLot26",
+        "__cvImg"
+      ],
+      "knownGlobalReads": [
+        "CV",
+        "CVKit"
+      ]
+    },
+    {
+      "order": 29,
+      "id": "canvio-lot27",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 16855,
+      "sha256": "7953e718670f7611cf6f25c053b15fcb05a1b2bdd9cfd597c1df3b2bc7e36a45",
+      "exportedGlobals": [
+        "CVLot27"
+      ],
+      "knownGlobalReads": [
+        "CV",
+        "CVKit"
+      ]
+    },
+    {
+      "order": 30,
+      "id": "canvio-lot28",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 11700,
+      "sha256": "4e40ba0e733b7315219768b7baefc0d326e32784e959d3db1ed7d0e586e4b7a4",
+      "exportedGlobals": [
+        "CVWS"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 31,
+      "id": "canvio-lot29",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 16844,
+      "sha256": "18595d69322270d814bfb1a8c96fdf5dbde59aa317a36445d1b5eead4ac60654",
+      "exportedGlobals": [
+        "CVStore"
+      ],
+      "knownGlobalReads": [
+        "CV",
+        "CVWS"
+      ]
+    },
+    {
+      "order": 32,
+      "id": "canvio-lot30",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 11981,
+      "sha256": "a977045b79e8917dcb1cd2d913f9828c62dd3f3913ad3c8de2120bd8c2a8a4df",
+      "exportedGlobals": [
+        "CVExport"
+      ],
+      "knownGlobalReads": [
+        "CV",
+        "CVWS"
+      ]
+    },
+    {
+      "order": 33,
+      "id": "canvio-lot31",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 7732,
+      "sha256": "f687b76daaf69b0c6586c0e11662145428c878adf67ff56ae0df81c820b15c5b",
+      "exportedGlobals": [
+        "CVCmd"
+      ],
+      "knownGlobalReads": [
+        "CV",
+        "CVWS"
+      ]
+    },
+    {
+      "order": 34,
+      "id": "canvio-lot32",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 10901,
+      "sha256": "4fdac922b1942e0aa27d5cd34876668b97569bae68a023aa11aed4bdfc01d091",
+      "exportedGlobals": [
+        "CVJobs"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 35,
+      "id": "canvio-lot33",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 32680,
+      "sha256": "109f38df16e9d9dd86cc3ea2ea5057618ed8620b23f387f2afb26d4191f47246",
+      "exportedGlobals": [
+        "CVParts"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 36,
+      "id": "canvio-lot34",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 9511,
+      "sha256": "0861eb2a36ad1d708b3f9a3320446aed9982367de1eeac814f79296e2917891d",
+      "exportedGlobals": [
+        "CANVIO_MAP",
+        "CVOnboard"
+      ],
+      "knownGlobalReads": [
+        "CV",
+        "CVKit",
+        "CVWS"
+      ]
+    },
+    {
+      "order": 37,
+      "id": "canvio-lot35",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 42779,
+      "sha256": "d2ccb81fb5a357f67f9000e54f10b8a3736a0c971b97711a2607b25a0e9b78d1",
+      "exportedGlobals": [
+        "CVShield"
+      ],
+      "knownGlobalReads": [
+        "CV",
+        "CVWS"
+      ]
+    },
+    {
+      "order": 38,
+      "id": "canvio-lot38",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 24435,
+      "sha256": "bc1f8d42d925d87cb85ad06dad4a1b1da44734cd052b6a32f4d18022927171b5",
+      "exportedGlobals": [
+        "CVLot38"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 39,
+      "id": "canvio-lot39",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 13734,
+      "sha256": "2e4045ccd224beca2775523e97a4886dcda20be48f272609935060ac45ccb99e",
+      "exportedGlobals": [
+        "CVLot39"
+      ],
+      "knownGlobalReads": [
+        "CV",
+        "CVKit"
+      ]
+    },
+    {
+      "order": 40,
+      "id": "canvio-lot40",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 1942,
+      "sha256": "34da9d69c8ed8886baeb04342485920aa7fa2ceb3516b442f23a0d2e4ca316dc",
+      "exportedGlobals": [
+        "CVLot40"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 41,
+      "id": "canvio-lot41",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 3031,
+      "sha256": "a66c44a06f33a25fdc65ca234cea6083cd5548ff75c5da512ddc3e67d8f308d5",
+      "exportedGlobals": [
+        "CVLot41"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 42,
+      "id": "canvio-lot42",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 4932,
+      "sha256": "f8398da129e8c63359ec97e926e94bb45741926f4eda262a626448fd6350bea3",
+      "exportedGlobals": [
+        "CVLot42"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 43,
+      "id": "canvio-lot43",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 4172,
+      "sha256": "01a604b8223dfac2fc82b0adb7b9634cb355f16587066b1a9110141a17739bda",
+      "exportedGlobals": [
+        "CVLot43"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 44,
+      "id": "canvio-lot44",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 2772,
+      "sha256": "012a0b23e38e7410b2811f1f31603faa52d250bbdd3df96a7447cdd11cfc9459",
+      "exportedGlobals": [
+        "CVLot44"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 45,
+      "id": "canvio-lot45",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 12602,
+      "sha256": "2d133d6fda502a5fd8889bc868ddc24d1c0bc598cb4c7d57281d80d01aa7e8f5",
+      "exportedGlobals": [
+        "CVLot45"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 46,
+      "id": "canvio-lot46",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 6953,
+      "sha256": "5ddeecb6677c24bca06a7db876dc03a669f329f7a2da954ae846a4e201d416d3",
+      "exportedGlobals": [
+        "CVHealth",
+        "CVLot46"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 47,
+      "id": "canvio-lot47",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 4744,
+      "sha256": "500fbb57d1317b75044f8d45e3b3f9fad1795384921a254bfe038faa43beb1a0",
+      "exportedGlobals": [
+        "CVLot47"
+      ],
+      "knownGlobalReads": [
+        "CV",
+        "CVKit"
+      ]
+    },
+    {
+      "order": 48,
+      "id": "canvio-lot48",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 4978,
+      "sha256": "6c6dfc720e71e261af7ed813e1062ec3a01914189df41e32a70d08c043166644",
+      "exportedGlobals": [
+        "CVLot48"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 49,
+      "id": "canvio-lot49",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 3306,
+      "sha256": "33764774b7f53fcd1f43174e750d1563aac097b0e04754bc40fe3217ccf95033",
+      "exportedGlobals": [
+        "CVLot49"
+      ],
+      "knownGlobalReads": [
+        "CV",
+        "CVKit"
+      ]
+    },
+    {
+      "order": 50,
+      "id": "canvio-lot50",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 2328,
+      "sha256": "1eae37d771bfeaaab67da0c1b11db4cfded138587c66c2aa734691634e3d134b",
+      "exportedGlobals": [
+        "CVLot50"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 51,
+      "id": "canvio-lot51",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 1571,
+      "sha256": "f0e4e3eeb9a11264195f130acff1a3fd586ad324a1691a427187185e4b78e440",
+      "exportedGlobals": [
+        "CVLot51",
+        "Export",
+        "LS",
+        "Responsive",
+        "Templates"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 52,
+      "id": "canvio-lot53",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 22333,
+      "sha256": "094ad1ba1a3594a941acc90d5e84bd70fa68b71e869ab1be0b01c73c03337746",
+      "exportedGlobals": [
+        "CVLot53",
+        "CVWeb"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 53,
+      "id": "canvio-styledna",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 37603,
+      "sha256": "699fecff6485b8b606d16e079aef58072aadb46b2487758eb75cde45551ad7d0",
+      "exportedGlobals": [
+        "CVStyleDNA"
+      ],
+      "knownGlobalReads": [
+        "CV",
+        "CVWeb"
+      ]
+    },
+    {
+      "order": 54,
+      "id": "canvio-guide",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 24950,
+      "sha256": "4ffa502b80ddba92f052758e637a96917a70e2bab4e7dd5b089ae736e6957c11",
+      "exportedGlobals": [
+        "CVGuide"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 55,
+      "id": "canvio-creative-hub-module",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 29270,
+      "sha256": "b7cbc309a5c7e76c81731b08c7e309cc7d93f89068d5b5c1afecf9d6ce501605",
+      "exportedGlobals": [
+        "CVCreativeHub"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 56,
+      "id": "canvio17-shared-core",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 30302,
+      "sha256": "f6272d44e0872cb96d1bcfc584079fd0e00144d4a0d1cea03e29c258b95bd742",
+      "exportedGlobals": [
+        "CVCreativeCore"
+      ],
+      "knownGlobalReads": [
+        "CV",
+        "LS"
+      ]
+    },
+    {
+      "order": 57,
+      "id": "canvio18-native-engines",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 100752,
+      "sha256": "619d36fbbf2a87564cdb6042b391f0cdf8d610468ee3b5ef40c0c4b4633ffd77",
+      "exportedGlobals": [
+        "CVNativeEngines",
+        "CVNativeSuite",
+        "onload"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 58,
+      "id": "canvio18-global-design-toolkit",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 88002,
+      "sha256": "4bcfd8749cc19f4bcbdc1867f162993c78c0dd3bdce266b5b6b64c3c82a84947",
+      "exportedGlobals": [
+        "CVGlobalDesignToolkit",
+        "__cvgLayoutRange"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 59,
+      "id": "canvio185-creative-system-library",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 28247,
+      "sha256": "c97322b8a55e802d50e082b3934e72e2e9524528d10e829388bece8378220dac",
+      "exportedGlobals": [
+        "CVDesignSystem"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 60,
+      "id": "canvio186-unified-layers-history",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 24056,
+      "sha256": "1446a41b0f7aad39be0854ddcdd96d69cadc989139fb9949f0fd47beb82239eb",
+      "exportedGlobals": [
+        "CVUnifiedLayers"
+      ],
+      "knownGlobalReads": [
+        "CV",
+        "CVWeb"
+      ]
+    },
+    {
+      "order": 61,
+      "id": "canvio187-persistent-projects",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 32349,
+      "sha256": "23c7fa0cd85def7f2f39c6864ff65962fe73da2e7e22539b6c7a5603201a3a02",
+      "exportedGlobals": [
+        "CANVIOPersistentProjects"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 62,
+      "id": "canvio189-universal-context-editing",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 70327,
+      "sha256": "ee7da870f222afe0416495418cbc6d2de92d7760489a9736d9b3c4785b232763",
+      "exportedGlobals": [
+        "CANVIOContextWorkspace"
+      ],
+      "knownGlobalReads": [
+        "CANVIOPersistentProjects",
+        "CV",
+        "CVWeb"
+      ]
+    },
+    {
+      "order": 63,
+      "id": "canvio190-template-motion-site-ai",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 43889,
+      "sha256": "3622744c48b0de125d76ef0a6f3ec78c8b26e05cbda20b73fb73e7f94959e6c3",
+      "exportedGlobals": [
+        "CV190Library",
+        "CV190TemplateState"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 64,
+      "id": "canvio191-reference-showcase",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 641418,
+      "sha256": "7fa3ea586f0ebc08e6aa0d3cc54ab310e7344082164335cdd9459c8d31b9a376",
+      "exportedGlobals": [
+        "CVShowcaseTemplates"
+      ],
+      "knownGlobalReads": [
+        "CVKit"
+      ]
+    },
+    {
+      "order": 65,
+      "id": "canvio193-video-references",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 171329,
+      "sha256": "cde0510990c9c4f6870d13172e8b1192d7608be4dbe68ba375c86c8810cfc1f8",
+      "exportedGlobals": [
+        "CVRefSites"
+      ],
+      "knownGlobalReads": [
+        "CV",
+        "CVKit"
+      ]
+    },
+    {
+      "order": 66,
+      "id": "canvio217-faithful-3d",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 118855,
+      "sha256": "3148dc8a24a7c7414625ea53ebfb1e36b709e6c2faa1e9363af0b6635582246c",
+      "exportedGlobals": [
+        "CVFaithful",
+        "__cvCount",
+        "__z3"
+      ],
+      "knownGlobalReads": [
+        "CV",
+        "CVKit"
+      ]
+    },
+    {
+      "order": 67,
+      "id": "canvio200-unified-control-plane",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 43783,
+      "sha256": "912f422b6c1c4e632322d64a605b648374167c5f83fb9627f46b735b9cd9f753",
+      "exportedGlobals": [
+        "CANVIOControlPlane",
+        "CANVIOUsageGuard",
+        "__canvio20FetchGuard",
+        "fetch"
+      ],
+      "knownGlobalReads": [
+        "CANVIOPersistentProjects",
+        "CV",
+        "CVDesignSystem"
+      ]
+    },
+    {
+      "order": 68,
+      "id": "canvio201-ops-intelligence",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 37379,
+      "sha256": "08bc98f3260bb9d95fcb38b745d38cdd8b17eec141f3de67209a64255803a248",
+      "exportedGlobals": [
+        "CANVIOOpsIntelligence"
+      ],
+      "knownGlobalReads": [
+        "CANVIOPersistentProjects",
+        "CV"
+      ]
+    },
+    {
+      "order": 69,
+      "id": "canvio21-capcut-integration",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 4893,
+      "sha256": "70ccb87551545905ade56bd336ce43c0edb21b8cb13623035cfa72af7154c8dc",
+      "exportedGlobals": [],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 70,
+      "id": "canvio217-platform-foundation",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 39033,
+      "sha256": "b8dabdc5b234c6f93035fe70f156652a690d1b7e368416993e84b15240b5b89c",
+      "exportedGlobals": [
+        "CANVIODataLayer",
+        "CANVIOIntegrationHub",
+        "CANVIOPlatform21",
+        "CANVIOSystemQA",
+        "CANVIOWorkflowIntelligence"
+      ],
+      "knownGlobalReads": [
+        "CANVIOPersistentProjects",
+        "CV"
+      ]
+    },
+    {
+      "order": 71,
+      "id": "canvio218-tool-parity",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 19732,
+      "sha256": "d88d7030db0e10fcf52fdd4722fa07973cf4b395e41e33667fe3c8b6cd272511",
+      "exportedGlobals": [
+        "CVToolParity"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 72,
+      "id": "canvio222-video-scopes",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 11207,
+      "sha256": "c6b11a5d0c7eeba483f2a7b79f13d08579ef3cfbf04fdca4c652bff3bc801c15",
+      "exportedGlobals": [
+        "CVVideoScopes"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 73,
+      "id": "canvio218-design-tools",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 42134,
+      "sha256": "7ad0d7414266cd00d82b57d7b94dcca1af2d4a010fce702349e8271236f88f8f",
+      "exportedGlobals": [
+        "CVDesignTools"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 74,
+      "id": "canvio219-photo-tools",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 37191,
+      "sha256": "c97e1c41d04f613308a7bb9894fa907cd55fbcc492e8b97959890cd1d65543eb",
+      "exportedGlobals": [
+        "CVPhotoTools"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 75,
+      "id": "canvio219-shape-anim",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 291535,
+      "sha256": "02e87b23cb82314340ec18548fce93872eed653148c1925ea06c4dd1e8d40d83",
+      "exportedGlobals": [
+        "CANVIO22",
+        "CANVIOCreativeSuite",
+        "CV227",
+        "CV229",
+        "CVAudioAutomation",
+        "CVKeyframeStudio",
+        "CVLocalImageLab",
+        "CVLocalMasking",
+        "CVLumaHSL",
+        "CVPhotoWorkflow",
+        "CVProNativeTools",
+        "CVShapeAnim",
+        "CVSubtitleQC",
+        "CVVideoPreflight"
+      ],
+      "knownGlobalReads": [
+        "CANVIOPersistentProjects",
+        "CV"
+      ]
+    },
+    {
+      "order": 76,
+      "id": "cv239-professional-render-queue",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 11742,
+      "sha256": "74ad5a007b355ea1d89bf52b88089b684f586357febf28b7d0337af6dfde434a",
+      "exportedGlobals": [
+        "CANVIO_BUILD",
+        "CVRenderQueue"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 77,
+      "id": "cv2310-extended-studios",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 30555,
+      "sha256": "e8df1f942a970765f3dbe71e719047daee8116db73675a5e892990ae3877c0aa",
+      "exportedGlobals": [
+        "CANVIO_BUILD",
+        "CVStudioSuite2310"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 78,
+      "id": null,
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 514089,
+      "sha256": "04654c2cec9e1230c499533710944375179b6d5843c5b97e981e051646504c49",
+      "exportedGlobals": [
+        "CANVIOPluginRegistryStudio",
+        "CANVIO_BUILD",
+        "CANVIO_P31_P36",
+        "CANVIO_P37_P42",
+        "CV",
+        "CVAccessibilityQC",
+        "CVAudioQC",
+        "CVBrandIntegrityQC",
+        "CVCanvaDesignWorkbench",
+        "CVCapCutProductionSuite",
+        "CVCoreReliability",
+        "CVCreativeRoundTripQA",
+        "CVExportIntegrity",
+        "CVHostingCompatibilityProfiles",
+        "CVLayoutPrintQC",
+        "CVLiveSiteQualityAudit",
+        "CVLiveWebsiteVerification",
+        "CVMotionWebsiteStudio",
+        "CVPerformanceDiagnostics",
+        "CVProductionReleaseCandidate",
+        "CVProductionReleaseGate",
+        "CVProfessionalQC",
+        "CVProjectRecoveryDrill",
+        "CVQRStudio",
+        "CVResponsiveAccessibilityQA",
+        "CVResponsiveSafeArea",
+        "CVSafeMediaRelink",
+        "CVStudioSuite2311",
+        "CVTimelineQC",
+        "CVTypographyQC",
+        "CVUnifiedCreativeWorkspace",
+        "CVWebsiteAcceptance",
+        "CVWebsiteDeploymentQC",
+        "CVWebsiteLinkAssetQC",
+        "CVWebsitePerformanceQC",
+        "CVWebsitePublishQC",
+        "CVWebsiteResponsiveQC",
+        "CVWebsiteSocialPreview",
+        "CVWebsiteStructuredDataQC",
+        "__canvioBuildTitleObserver",
+        "__canvioP5CreativeWorkflowInstalled",
+        "__canvioP7ReviewStudioInstalled",
+        "__cvP27TitleSync",
+        "__cvP28TitleSync",
+        "__cvP29TitleSync",
+        "__cvP30Installed",
+        "__p22Injected",
+        "__p23Run",
+        "confirm"
+      ],
+      "knownGlobalReads": [
+        "CANVIOPersistentProjects",
+        "CVDesignSystem",
+        "LS",
+        "P31",
+        "P8"
+      ]
+    },
+    {
+      "order": 79,
+      "id": "canvio-phase-completion-suite",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 31545,
+      "sha256": "09b17d58e321fb4f81d640a10ff4108d97871601b006deecb029a024df464804",
+      "exportedGlobals": [
+        "CANVIOPhaseSuite",
+        "CANVIOProjectBundle",
+        "CVAIProviderAdapter",
+        "CVWebsiteMotionBuilder"
+      ],
+      "knownGlobalReads": [
+        "CV",
+        "CVWeb"
+      ]
+    },
+    {
+      "order": 80,
+      "id": "canvio-p55-runtime-release-gate",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 20122,
+      "sha256": "182554bc5e27ed0d0a59cbf93eb61a21c1b0790d80678af795df29ce3adf41d2",
+      "exportedGlobals": [
+        "CANVIOPerformanceBudget",
+        "CANVIOProjectIntegrity",
+        "CANVIOReleaseGate",
+        "CANVIORuntimeDiagnostics"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 81,
+      "id": "canvio-p56-portable-archive-preflight",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 10509,
+      "sha256": "4eda23c51931a6795e0dd92d87eb968511e332d354137253635dc76e9b0cb00e",
+      "exportedGlobals": [
+        "CANVIOArchivePreflight",
+        "CANVIO_BUILD"
+      ],
+      "knownGlobalReads": []
+    },
+    {
+      "order": 82,
+      "id": "canvio-p57-native-persistence-audit",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 9001,
+      "sha256": "9d84fff92969d0533dd091710738232e5fa73d9f457483d9703324956c35140f",
+      "exportedGlobals": [
+        "CANVIOPersistenceAudit"
+      ],
+      "knownGlobalReads": []
+    },
+    {
+      "order": 83,
+      "id": "canvio-p58-media-export-acceptance",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 4690,
+      "sha256": "bcb4ef0652ae0963b0016bc78f0cbff454c5736f26adb9e0ebc8d3162f3fb7da",
+      "exportedGlobals": [
+        "CANVIOExportAcceptance"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 84,
+      "id": "canvio-p59-whisper-runtime-acceptance",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 3164,
+      "sha256": "c07ec4cf71a78b12c798361c9a47db7aa9e154aa68518b60ef235d8fdc3f3571",
+      "exportedGlobals": [
+        "CANVIOWhisperAcceptance"
+      ],
+      "knownGlobalReads": []
+    },
+    {
+      "order": 85,
+      "id": "canvio-p60-accessibility-screening",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 5502,
+      "sha256": "f78876b4a6f57d55eeea8a7a5b81bc21a9044e8b35da51b2f32f67ddc1fb726e",
+      "exportedGlobals": [
+        "CANVIOAccessibilityAudit"
+      ],
+      "knownGlobalReads": []
+    },
+    {
+      "order": 86,
+      "id": "canvio-p61-hosting-security-audit",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 3311,
+      "sha256": "24cb369dd4e1c0bd77c1e3fe37dedf9984657c53112c4580f558e245c7e9f2c5",
+      "exportedGlobals": [
+        "CANVIOHostingSecurityAudit"
+      ],
+      "knownGlobalReads": []
+    },
+    {
+      "order": 87,
+      "id": "canvio-p62-phase1-release-gate",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 4539,
+      "sha256": "5a955278b5fa33e8dc74400cac56f65b0f25dd577ea87336f2c49b3406b7dec9",
+      "exportedGlobals": [
+        "CANVIOPhase1ReleaseGate",
+        "CANVIO_BUILD"
+      ],
+      "knownGlobalReads": []
+    },
+    {
+      "order": 88,
+      "id": "canvio-p62-phase1-dashboard",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 6690,
+      "sha256": "7271d2e9f75c51255f6eb9bc3e6861f29b4110d01d42bfbb066b8b20a94ae760",
+      "exportedGlobals": [],
+      "knownGlobalReads": []
+    },
+    {
+      "order": 89,
+      "id": "canvio-p63-p67-main",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 76068,
+      "sha256": "1c02a7761a074054d3eeb2df0fc5598164d9d982c6b2afbdbe29a86085990dea",
+      "exportedGlobals": [
+        "CANVIOAICreativeWorkflow",
+        "CANVIOAdvancedTimeline",
+        "CANVIOMotionTracking",
+        "CANVIOPhase2",
+        "CANVIOPrintProduction",
+        "CANVIOUnifiedTimeline",
+        "CANVIO_BUILD"
+      ],
+      "knownGlobalReads": [
+        "CANVIOSecurity",
+        "CV",
+        "LS"
+      ]
+    },
+    {
+      "order": 90,
+      "id": "canvio-p68-p70-main",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 35043,
+      "sha256": "4d31fad6d26f033f2de68f0017ca022495e73e3cd55154304441c0a0ef5a3786",
+      "exportedGlobals": [
+        "CANVIOOffline3D",
+        "CANVIOPhase3",
+        "CANVIOStableRelease",
+        "CANVIOSystemOptimizer",
+        "CANVIO_BUILD"
+      ],
+      "knownGlobalReads": []
+    },
+    {
+      "order": 91,
+      "id": "canvio-p90-p96-main",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 41294,
+      "sha256": "039e4287e372a1ead6ed4c3a1b0431ee7984149b98344098c141a7548074a8f9",
+      "exportedGlobals": [
+        "CANVIOUXSuite",
+        "CANVIO_BUILD"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 92,
+      "id": null,
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 44848,
+      "sha256": "51418fef0f5ada20e69301ff902b7f9711a938b1e640f851ffd1fcd6bf0b66a1",
+      "exportedGlobals": [
+        "CANVIOVideoUXSuite",
+        "CANVIO_BUILD"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 93,
+      "id": "canvio-p104-module",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 21630,
+      "sha256": "667bf4a399d883cc2ca91ff8f1cd3172fa8667ec62a9f9c8b3742aac91b4e995",
+      "exportedGlobals": [
+        "CANVIOKenBurnsSuite",
+        "CANVIO_BUILD"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 94,
+      "id": "canvio-p87-cv-docx",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 18295,
+      "sha256": "42f5e0c4b77459482fd3c72a2fb3bccdf478d578c2789e36d7170a920f01c176",
+      "exportedGlobals": [
+        "CANVIO_BUILD",
+        "CVATSExport"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 95,
+      "id": "canvio-p82-p84-vector-pdf",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 36986,
+      "sha256": "7a54d4f94abb09551c7460450bce8cdc68c354de5f9fe00ccf54ef526fc1327a",
+      "exportedGlobals": [
+        "CANVIOVectorPDF",
+        "CANVIO_BUILD"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 96,
+      "id": "canvio-p76-p77-p83-brand",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 49954,
+      "sha256": "a4993b42ea35d6252b72c24d86ec44d45b7ff0752bc8f803fc65a2d378d0c1a9",
+      "exportedGlobals": [
+        "CANVIOBrandDNA",
+        "CANVIO_BUILD"
+      ],
+      "knownGlobalReads": [
+        "CV",
+        "CVWeb",
+        "LS"
+      ]
+    },
+    {
+      "order": 97,
+      "id": "canvio-p75-logo-studio",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 27759,
+      "sha256": "62e02842bcb66ded0ee1391fcd1b7f0569cbf99d59c29a64f6fa240f44092e6a",
+      "exportedGlobals": [
+        "CANVIOLogoStudio",
+        "CANVIO_BUILD"
+      ],
+      "knownGlobalReads": [
+        "CV",
+        "LS"
+      ]
+    },
+    {
+      "order": 98,
+      "id": "canvio-p79-webcodecs",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 26423,
+      "sha256": "5900a01fabf613f358b3790b75ab3e6413e727c35f6c879bcfd5f660441b1ca0",
+      "exportedGlobals": [
+        "CANVIOWebCodecsExport",
+        "CANVIO_BUILD"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 99,
+      "id": "canvio-p80-whisper-webgpu",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 4113,
+      "sha256": "d701e34a10dd89427d1aaec3219ea1a4545173ecf03c042fc6ed5ecebb1c7197",
+      "exportedGlobals": [
+        "CANVIOWhisperP80",
+        "CANVIO_BUILD"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 100,
+      "id": "canvio-p89-template-multisize",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 22526,
+      "sha256": "a64a45baea889b486d5c5bab242cc483c74885a88e14d31040c62205f5992d79",
+      "exportedGlobals": [
+        "CANVIOP89Suite",
+        "CANVIO_BUILD"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 101,
+      "id": "canvio-p86-cv-vector-pdf",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 13831,
+      "sha256": "b5e078ab41105bd06825b730adc698b650ca93f230d2784bc3c5a41005c747f1",
+      "exportedGlobals": [
+        "CANVIOCVPDF",
+        "CANVIO_BUILD"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 102,
+      "id": "canvio-p78-motion-checklist",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 21306,
+      "sha256": "59bbdf418b201672456f23bf389d6dac763aed025ab57abdbf4e1de2d3361b6e",
+      "exportedGlobals": [
+        "CANVIOMotionChecklistP78",
+        "CANVIO_BUILD"
+      ],
+      "knownGlobalReads": [
+        "CV",
+        "CVWeb"
+      ]
+    },
+    {
+      "order": 103,
+      "id": "canvio-p72-glb-viewer",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 23987,
+      "sha256": "6d55dad9959d1e2b3f04c57b3af4d04abc6eed50a51d7a59e6fa63916a4099c8",
+      "exportedGlobals": [
+        "CANVIOGLBViewerP72",
+        "CANVIO_BUILD"
+      ],
+      "knownGlobalReads": []
+    },
+    {
+      "order": 104,
+      "id": "canvio-p73-offline-site",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 17580,
+      "sha256": "845dc74d51aa58204379b717c99fd8b81a2a6aba37dfc91c5fad69edce9559f4",
+      "exportedGlobals": [
+        "CANVIOOfflineSiteP73",
+        "CANVIO_BUILD",
+        "demo"
+      ],
+      "knownGlobalReads": [
+        "CANVIOSecurity",
+        "CV"
+      ]
+    },
+    {
+      "order": 105,
+      "id": "canvio-p103-sfx-library",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 12958,
+      "sha256": "79ede60f9b33d27dde3745c446fbbee35fce2443e7303987d307343114c7cfd4",
+      "exportedGlobals": [
+        "CANVIOP103Sfx",
+        "CANVIO_BUILD"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 106,
+      "id": "canvio-p102-background-removal",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 9672,
+      "sha256": "19b41cb64d7dfb32c3cb4fd5779bc139e712154d6126558aadff452fd954fc7c",
+      "exportedGlobals": [
+        "CANVIOBackgroundRemovalP102"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 107,
+      "id": "canvio-p105-p107-depth-parallax",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 44178,
+      "sha256": "ab8c1e6d8e75c0786814cb59ee25235735977addeb9b71dc3fa6149b083e5ad4",
+      "exportedGlobals": [
+        "CANVIODepthParallaxP105",
+        "CANVIO_BUILD"
+      ],
+      "knownGlobalReads": [
+        "CV",
+        "LS"
+      ]
+    },
+    {
+      "order": 108,
+      "id": "canvio-p102-p105-worker-assets-r1",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 2906,
+      "sha256": "db0a2a7886d707ba8ddd48cdf7082b6c1d53b378b9e275b15b025d1214b58b5d",
+      "exportedGlobals": [
+        "CANVIO_BUILD"
+      ],
+      "knownGlobalReads": []
+    },
+    {
+      "order": 109,
+      "id": "canvio-p74-p81-three-viewer",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 22493,
+      "sha256": "4056146ffb73d567943c9f2f5266e1dcc55ffa967df3f832f875f3a9cae06d40",
+      "exportedGlobals": [
+        "CANVIOThreeGLBViewerP74"
+      ],
+      "knownGlobalReads": []
+    },
+    {
+      "order": 110,
+      "id": "canvio-p85-module",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 33673,
+      "sha256": "4a6a72f314468cfc17d722b2ad5c11d862866fefefff36e510686f8c2c0c1b43",
+      "exportedGlobals": [
+        "CANVIOP85Suite"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 111,
+      "id": "canvio-lot109",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 5327,
+      "sha256": "7839e82636461e0c84be92b9e65839739ffe0ed864900b85b6fbcbb62c35b428",
+      "exportedGlobals": [
+        "CANVIOStudioSwitcherP109"
+      ],
+      "knownGlobalReads": [
+        "CV",
+        "CVWS"
+      ]
+    },
+    {
+      "order": 112,
+      "id": "canvio-lot110",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 6592,
+      "sha256": "a8a118ff948cae53441e97dad42a57cba71b8afc674bf4f78f11e63ef3da306a",
+      "exportedGlobals": [
+        "CANVIOHubP110"
+      ],
+      "knownGlobalReads": [
+        "CANVIOStudioSwitcherP109",
+        "CV",
+        "CVDesignSystem",
+        "CVWS"
+      ]
+    },
+    {
+      "order": 113,
+      "id": "canvio-lot111",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 3804,
+      "sha256": "12fb539c656b84862762dfc8df2c0d4c602f15b4e241b95f1b4de6c815bf070c",
+      "exportedGlobals": [
+        "CANVIOStudioShellP111"
+      ],
+      "knownGlobalReads": [
+        "CV",
+        "CVWS"
+      ]
+    },
+    {
+      "order": 114,
+      "id": "canvio-lot112",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 969,
+      "sha256": "d1969df63aa5ed9e0d2c8a5a32b6b6573893e6fbf1aaaecddd3d197b7b2c1183",
+      "exportedGlobals": [
+        "CANVIOStudioSiteP112"
+      ],
+      "knownGlobalReads": [
+        "CANVIOStudioShellP111",
+        "CV",
+        "CVWS"
+      ]
+    },
+    {
+      "order": 115,
+      "id": "canvio-lot113",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 922,
+      "sha256": "091de1c951963b5593ac7b9b33313d4a14fe8ed662eed62e670a2109b17a36ff",
+      "exportedGlobals": [
+        "CANVIOStudioMediaP113"
+      ],
+      "knownGlobalReads": [
+        "CANVIOStudioShellP111",
+        "CV",
+        "CVWS"
+      ]
+    },
+    {
+      "order": 116,
+      "id": "canvio-lot114",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 1966,
+      "sha256": "3b83d57ff3a61ff64560f2613747cd1acb94b89e3a34bc506f40d44076ccab5d",
+      "exportedGlobals": [
+        "CVNavShellP114"
+      ],
+      "knownGlobalReads": [
+        "CV",
+        "CVWS"
+      ]
+    },
+    {
+      "order": 117,
+      "id": "canvio-lot122",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 5960,
+      "sha256": "f4d683f9cd844896ea407b8c1981668ba62a6a8f61250631c577d9ea2cb2154b",
+      "exportedGlobals": [
+        "CVTasteP122"
+      ],
+      "knownGlobalReads": [
+        "CV",
+        "CVWeb"
+      ]
+    },
+    {
+      "order": 118,
+      "id": "canvio-lot123",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 10618,
+      "sha256": "74bfa97394a9e86009c0acb18a9902ab8190d18f976190fe4f5242f6beddbd66",
+      "exportedGlobals": [
+        "CVLayoutsP123"
+      ],
+      "knownGlobalReads": [
+        "CV",
+        "CVWeb"
+      ]
+    },
+    {
+      "order": 119,
+      "id": "canvio-lot127",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 7544,
+      "sha256": "5f16308c6e16bfc728291cd6f7c5872956a4ce0650fdaec5e22b6e0687effefd",
+      "exportedGlobals": [
+        "CVEditPlanP127"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 120,
+      "id": "canvio-lot127q",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 13634,
+      "sha256": "891d0d43aac22d5a1b6810fb37d8b411cf8c5b3abf3fc22fd8b08288e29981cd",
+      "exportedGlobals": [
+        "CVEditQualityP127"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 121,
+      "id": "canvio-lot127l",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 9294,
+      "sha256": "b2cbad50df0d5c885ab3b764f9f0f6370d8ae5ba0139990ae5f5165692ea9f46",
+      "exportedGlobals": [
+        "CVLoudnessP127"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 122,
+      "id": "canvio-lot127t",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 6935,
+      "sha256": "c1c07c49662f30e2e7fa0f9fbc3bcbda2715ac17bc7b09f90d51620305ec43e7",
+      "exportedGlobals": [
+        "CVTemplatesP127"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 123,
+      "id": "canvio-lot125f",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 19276,
+      "sha256": "befb8a24025fe381229c94ee71ba5e9df709e01ca5a57e856951e1a2e5669b1d",
+      "exportedGlobals": [
+        "CVScrollFramesP125",
+        "__scrollFrames"
+      ],
+      "knownGlobalReads": []
+    },
+    {
+      "order": 124,
+      "id": "canvio-lot145c",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 22498,
+      "sha256": "7ad1fc270d72bbcb090d1c5ffe9ea024c12ddb7546e346536fa349c1a28138dd",
+      "exportedGlobals": [
+        "CVContentCoreP145"
+      ],
+      "knownGlobalReads": [
+        "CANVIOSecurity",
+        "CV"
+      ]
+    },
+    {
+      "order": 125,
+      "id": "canvio-lot132g",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 26210,
+      "sha256": "93499f957f90eb203ed7cdee7178fafb26c0cb2273e579ba82b38c9b26b482f1",
+      "exportedGlobals": [
+        "CVGifP132"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 126,
+      "id": "canvio-lot145s",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 10557,
+      "sha256": "f0340b388c6e20c48bc3e0ddb71ad5d61ec79bb637a2a447f7aac38b883524fc",
+      "exportedGlobals": [
+        "CVSfxP145"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 127,
+      "id": "canvio-lot136t",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 26625,
+      "sha256": "812d3d71c07a30017391247f9513845bf0aae93997dbf22dfe77b3917c43d660",
+      "exportedGlobals": [
+        "CVTraceP136"
+      ],
+      "knownGlobalReads": []
+    },
+    {
+      "order": 128,
+      "id": "canvio-lot134s",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 9017,
+      "sha256": "f8460147eeb00761c830c920159bcd00aca419933463f39b9a16c9f5224f797a",
+      "exportedGlobals": [
+        "CVScopesP134"
+      ],
+      "knownGlobalReads": []
+    },
+    {
+      "order": 129,
+      "id": "canvio-lot138d",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 13424,
+      "sha256": "3749cbb960a3c3c61deb855b550d269f656cbf1b99b1623ad3c7663e30164555",
+      "exportedGlobals": [
+        "CVDenoiseP138"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 130,
+      "id": "canvio-lot140c",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 14397,
+      "sha256": "2bb285e80f3ee7a04867dfb3c1c4d2c6f75f3704def4b23c0277551265e4a952",
+      "exportedGlobals": [
+        "CVChartsP140"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 131,
+      "id": "canvio-lot133r",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 16101,
+      "sha256": "e9a96433d1328d693c7119fa1fd582c9fb0e6cec41ad7fa41d4328d5f23d6604",
+      "exportedGlobals": [
+        "CVResilienceP133"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 132,
+      "id": "canvio-lot144u",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 27067,
+      "sha256": "b5dc3deb0ec3ecf7362ca8902fa6a0ae5a523002cda37c7ed7c84d4c8fcd30a6",
+      "exportedGlobals": [
+        "CVUxP144",
+        "__cv144Keys"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 133,
+      "id": "canvio-lot131",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 28158,
+      "sha256": "eebfcf23f70e5babdc25b92ee06311d64500645e2335c31cf603b2f41c125278",
+      "exportedGlobals": [
+        "CANVIOSecurity",
+        "confirm"
+      ],
+      "knownGlobalReads": [
+        "CV",
+        "CVWeb"
+      ]
+    },
+    {
+      "order": 134,
+      "id": "canvio-lot115",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 1802,
+      "sha256": "7daadc2990a825ffe6ca7e919ae87331933beadbc193b871c82e86d2d66efeeb",
+      "exportedGlobals": [
+        "CANVIOOfflineP115"
+      ],
+      "knownGlobalReads": []
+    },
+    {
+      "order": 135,
+      "id": "canvio-lot1222",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 8252,
+      "sha256": "a8aa6e0b0946fa84d6b94c84d6acc49a988cf285e9bde6a9de8cd4c667122f1b",
+      "exportedGlobals": [
+        "CVUnslopP1222"
+      ],
+      "knownGlobalReads": [
+        "CV",
+        "CVWeb"
+      ]
+    },
+    {
+      "order": 136,
+      "id": "canvio-lot127k",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 9697,
+      "sha256": "34dfa32b69bb44495c3c6a642e8e39ca7fb60c96340cba421780028c24fa1de6",
+      "exportedGlobals": [
+        "CVDuckSubP127"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 137,
+      "id": "canvio-lot1452",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 19408,
+      "sha256": "553ca019dc0ef2a00a1e9f8dd338cdd30fc47b2de4422cd02538f39840c4d2ed",
+      "exportedGlobals": [
+        "CVShaderP145"
+      ],
+      "knownGlobalReads": []
+    },
+    {
+      "order": 138,
+      "id": "canvio-lot1454b",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 7650,
+      "sha256": "2a4c90c3545b9e03fba79f285a582b050247c5e98d134d90c275bb6b3e20f9bc",
+      "exportedGlobals": [
+        "CVMusicPreviewP1454B"
+      ],
+      "knownGlobalReads": []
+    },
+    {
+      "order": 139,
+      "id": "canvio-lot1454",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 10275,
+      "sha256": "e11ce23f7de7cc216744be229146e967498c4c3e98858e3f212e28b57813c15e",
+      "exportedGlobals": [
+        "CVMusicComposerP1454"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 140,
+      "id": "canvio-lot1252",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 14666,
+      "sha256": "1f887109cf1b6576799a84113b43d93b743e10a226fd01a0d968a301aa7432b0",
+      "exportedGlobals": [
+        "CVScrollStoryboardP1252"
+      ],
+      "knownGlobalReads": []
+    },
+    {
+      "order": 141,
+      "id": "canvio-lot1455",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 17949,
+      "sha256": "c968cb42b583ecf2fb708e63723956a087d9a9591ed48e5a89a4b617f4465891",
+      "exportedGlobals": [
+        "CVTemplateFactoryP1455"
+      ],
+      "knownGlobalReads": []
+    },
+    {
+      "order": 142,
+      "id": "canvio-lot1272",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 13645,
+      "sha256": "f467cb0baa4e1bc7835a405a02616f9f8e38786cec9931e8b8466202cfba8eb4",
+      "exportedGlobals": [
+        "CVCaptionDirectorP1272"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 143,
+      "id": "canvio-lot1456",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 12032,
+      "sha256": "e683216bd76c06af6a123a447848d7b17a817828fa594edc020f3cb7e39924c7",
+      "exportedGlobals": [
+        "CVOriginalIconPackP1456"
+      ],
+      "knownGlobalReads": []
+    },
+    {
+      "order": 144,
+      "id": "canvio-lot1457",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 10783,
+      "sha256": "b7a1ec693f581da714ae62c647511e6c365adc2d35d920fc3df918af13abfd40",
+      "exportedGlobals": [
+        "CVTypographyPresetsP1457"
+      ],
+      "knownGlobalReads": []
+    },
+    {
+      "order": 145,
+      "id": "canvio-lot1458",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 16357,
+      "sha256": "202a165824c1928ffdcaac5e2da645807fd488da37f6abd8062bcfd3e374d376",
+      "exportedGlobals": [
+        "CVOriginalVectorAssetsP1458"
+      ],
+      "knownGlobalReads": []
+    },
+    {
+      "order": 146,
+      "id": "canvio-lot145910",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 14535,
+      "sha256": "0b29a007c67d8a2c13c3407de8e608e8a61d7df3a7f5da4939645facbddb3bf8",
+      "exportedGlobals": [
+        "CVAssetSearchGateP145910"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    },
+    {
+      "order": 147,
+      "id": "canvio-lot134r",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 16815,
+      "sha256": "adf4653cc00a5643ac3c6592a748bb736f569e2661ac974ac9c34ae7e77bef67",
+      "exportedGlobals": [
+        "CVAutoReframeP134"
+      ],
+      "knownGlobalReads": []
+    },
+    {
+      "order": 148,
+      "id": "canvio-lot124",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 11914,
+      "sha256": "dd2d65745f1071a8424c5c0a9a2e455c9887d41923c90cdda3f6a2983eb6da5b",
+      "exportedGlobals": [
+        "CVAutoLayoutP124"
+      ],
+      "knownGlobalReads": [
+        "CV",
+        "CVWeb"
+      ]
+    },
+    {
+      "order": 149,
+      "id": "canvio-lot133p",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 12131,
+      "sha256": "980cc5d292d47651bce1ba1c5581ef486c98e9b81f63c9a4c23d9ae460c33051",
+      "exportedGlobals": [
+        "CVProxyP133"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ]
+    }
+  ]
+}
