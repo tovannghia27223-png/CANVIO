@@ -98,3 +98,10 @@ Pull trước (`git pull --rebase origin main`; CI bot hay push commit build). A
 - P143 source parity: 20 standalone/embedded pairs. Inventory tests/p143/inline-source-inventory.json: canonical HTML 5,459,631 bytes, 150 inline scripts, 0 external, 147 script IDs, 0 duplicates, no async/defer/module scripts.
 - Artifact #384: 21,748,431 bytes, SHA-256 d07e7aa93e09357fae6c027578d6ece7d8d011f0e2019852ee72ece4d89dc17a.
 - Remaining external/manual limits: fourteen P70 acceptance gates, P130 Supabase/RLS/two-device sync, P122.3 MCP security/transport contract, P133 OffscreenCanvas/OPFS migration, advanced P124 controls and full P143 dependency/style/template extraction.
+
+
+## P143 parity extension — 27 standalone modules (candidate)
+
+- Created work/p143-parity-27-modules-20261121 from current main and extended source-module-map.json from 20 to 27 module pairs.
+- Added seven previously individually tested sources: P127 Loudness/Templates, P133 Resilience, P134 Scopes, P138 Denoise, P140 Charts, P145 SFX. No runtime code or script order changed.
+- Guide, Roadmap, tracker, handoff, QA, acceptance matrix and this summary updated. Hosted validation pending.
