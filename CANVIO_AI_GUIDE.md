@@ -3887,3 +3887,7 @@ P144 tour: thêm bước bằng cách thêm vào mảng `STEPS` ({sel,title,text
 
 ## P141 font manager (2026-11-21)
 - `window.CVFontsP141`: `VN` (146 chars), `analyze(ArrayBuffer,name)`, `suggest(list)`, `report(list)`, `mount`. Depends on `CVWordmarkP118.parse` (P118 lot must load first). Card `#cv141-card` on `#page-brand`. Standalone must equal embedded `canvio-lot141f`.
+
+
+## P128 orchestrator (2026-11-21)
+- `window.CVOrchestratorP128`: `run({kind,prompt,tiers,timeoutMs,cache})` → `{ok,tier,text,ms,cached,tried}` or `{ok:false,status:'unconfigured'|'failed',message}`; `register(kind,tier,fn)`, `order/setOrder`, `stats`, `clearCache`. Text tiers call `CVAIProviderAdapter.call(prompt,{provider:'local'|'gemini'})`. Card is inside the hidden-by-default API Hub tab of `#page-platform` (tests must click `button[data-tab=api]` first). Standalone must equal embedded `canvio-lot128o`.

@@ -942,3 +942,12 @@ Hosted verification after the ffmpeg repair is complete:
 - New `canvio-p141-fonts.js` (CVFontsP141, embedded lot `canvio-lot141f`) on the Brand page, reusing the P118 TrueType reader. Choose up to 12 local .ttf files: family/style names, weight, serif/sans (OS/2 PANOSE), variable-font flag (fvar), kerning flag, and coverage of 146 precomposed Vietnamese characters with the missing list. Live preview line uses the loaded font; heading+body pair suggestions come only from fully covered serif+sans fonts; JSON report download.
 - Tests: `tests/p127/run-p141f-tests.cjs` (Node; Liberation Sans = complete, Caladea Bold = partial, override with `CANVIO_TEST_TTF` / `CANVIO_TEST_TTF_PARTIAL`) and `tests/p145/run-p141-browser.py` (real Chrome: two fonts, complete vs partial rows, preview font applied, report JSON, bad file skipped, zero page errors). Smoke 21/21.
 - Limits: .ttf only; "complete" means precomposed glyphs exist, not that mark placement is good; no license check; no bundled offline font pack (fonts must come from the user); pairing is heuristic.
+
+
+## P128.1/.2/.4 AI task orchestrator (2026-11-21 · candidate)
+
+- P128.1 (provider config) is merged into existing owners, not rebuilt: API Hub (`#cv11Provider`, `CVAIProviderAdapter`) and Local AI Studio (Ollama/LM Studio, loopback only) already provide URL/model/test-connection.
+- New `canvio-p128-orchestrator.js` (CVOrchestratorP128, embedded lot `canvio-lot128o`), card `#cv128-card` in the Platform Hub → **API Hub** tab: text/caption/brief tasks go local → Gemini (order selectable: local-first / gemini-first / local-only / gemini-only), at most one call per tier per action, 45 s timeout, automatic fall-through on error/empty answer, per-tier latency/success stats, bounded in-memory cache (50 entries). Image/video kinds run only if a handler is registered (`register(kind,tier,fn)`, e.g. ComfyUI later); otherwise it honestly reports "chưa cấu hình".
+- Tests: `tests/p127/run-p128o-tests.cjs` (Node, 17 checks incl. fallback, timeout, cache eviction, bad input) and `tests/p145/run-p128-browser.py` (real Chrome against a local mock OpenAI-compatible server: answer, stats, cache without 2nd call, 503 fall-through reported, image unconfigured, order persists, no key stored). Smoke 21/21.
+- Limits: only latency/error rate is measured, not answer quality; no ComfyUI/image handler exists yet (P120/P126); Gemini tier needs the user's own key and network; not tested against real Ollama/LM Studio.
+- P128.3 (JSONL export) was already delivered earlier in P145 core.
