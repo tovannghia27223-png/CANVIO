@@ -3749,3 +3749,14 @@ P144 tour: thêm bước bằng cách thêm vào mảng `STEPS` ({sel,title,text
 - No face/object ML model, model download, network upload, timeline mutation, project-store mutation or new persistence owner. User manually imports the resulting WebM if needed.
 - Known limits: saliency heuristic can follow background texture/high contrast instead of the intended subject; no manual tracking-point correction, no MP4/H.264 export, max 60 seconds/100 MiB, browser codec/captureStream support varies. This is a lightweight reframing helper, not AI subject recognition.
 - Tests added: Node source regression tests/p127/run-p134r-tests.cjs (11 assertions) and same-origin Chromium + ffmpeg/ffprobe workflow tests/p145/run-p134r-browser.py. Hosted PR result is the acceptance gate; no full-app runtime PASS is claimed before the hosted run completes.
+
+
+## P133.2 — Local 4K to 720p proxy (2026-11-21 · candidate)
+
+- Source canvio-p133-proxy.js; embedded lot canvio-lot133p; API window.CVProxyP133 (is4k, outputSize, trimRange, getBlob, renderProxy, mount, tests).
+- UI mounts inside the existing Video Engine P127 quality card. It reads the selected video through existing CV.engines.video._state() media references/IndexedDB and uses the existing CV.engines.video.importFiles() path to add the proxy as a new clip.
+- Source guard: 4K landscape/portrait only, ≤500 MiB, ≤180 seconds of selected clip trim range. Output preserves aspect ratio with longest dimension capped at 1280 px (1280×720 landscape or 720×1280 portrait).
+- Local Canvas captureStream + MediaRecorder WebM, 30 fps target, 3.5 Mbps video target. Audio only if HTMLVideoElement.captureStream() exposes an audio track.
+- Original clip and timeline are not replaced/mutated. Proxy is a new clip for manual review/replacement. No upload, duplicate timeline, new media database or automatic deletion.
+- Tests: tests/p127/run-p133p-tests.cjs and hosted same-origin Chromium + ffmpeg/ffprobe tests/p145/run-p133-proxy-browser.py. CI pending; no PASS/merge claim before hosted result.
+- Limits: WebM only; codec/audio support varies; 4K decoding can use substantial memory/GPU; no automatic relinking or transparent source/proxy toggle. Long real footage, Firefox/WebKit and physical mobile review remain manual.
