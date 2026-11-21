@@ -666,9 +666,9 @@ jobs:
           const file='index.html',source=fs.readFileSync('canvio-p119-website.js','utf8').trim();
           const id='canvio-lot119w',open='<script id="'+id+'">',close='</script>';
           if(!source.includes("version:'119.4.0'")||!source.includes('CVWebsiteEasingP119'))throw new Error('P119.4 source contract/version missing');
-          let html=fs.readFileSync(file,'utf8'),tag=open+'\\n'+source+'\\n'+close,pos=html.indexOf(open);
+          let html=fs.readFileSync(file,'utf8'),tag=open+'\n'+source+'\n'+close,pos=html.indexOf(open);
           if(pos>=0){const end=html.indexOf(close,pos);if(end<0)throw new Error('P119.4 embedded lot is not closed');html=html.slice(0,pos)+tag+html.slice(end+close.length);}
-          else{const at=html.lastIndexOf('</body>');if(at<0)throw new Error('P119.4 body close missing');html=html.slice(0,at)+tag+'\\n'+html.slice(at);}
+          else{const at=html.lastIndexOf('</body>');if(at<0)throw new Error('P119.4 body close missing');html=html.slice(0,at)+tag+'\n'+html.slice(at);}
           const old="easingOptions=['linear','ease','ease-in','ease-out','ease-in-out','cubic-bezier(.2,.7,.2,1)'];if(easingOptions.indexOf(easing)<0)easing='cubic-bezier(.2,.7,.2,1)';";
           const shared="easingOptions=['linear','ease','ease-in','ease-out','ease-in-out','cubic-bezier(.2,.7,.2,1)'];var p119Api=window.CVEasingP119,p119Curve=p119Api&&typeof p119Api.parse==='function'?p119Api.parse(easing):null,p119CurveAllowed=!!(p119Curve&&typeof p119Api.css==='function'&&p119Api.css(p119Curve)===easing);if(easingOptions.indexOf(easing)<0&&!p119CurveAllowed)easing='cubic-bezier(.2,.7,.2,1)';";
           if(!html.includes('p119CurveAllowed')){
@@ -686,7 +686,7 @@ jobs:
           map.description=String(map.description||'').replace(/33 standalone/g,'34 standalone');
           map.totalModules=map.modules.length;
           if(map.totalModules!==34||map.modules.filter(x=>x.source===item.source).length!==1)throw new Error('P119.4 P143 registry must contain exactly 34 unique pairs');
-          fs.writeFileSync(mapPath,JSON.stringify(map,null,2)+'\\n');
+          fs.writeFileSync(mapPath,JSON.stringify(map,null,2)+'\n');
           console.log('P119.4 uses the single P119 preset/curve registry in Website Motion Builder; P143 pairs:',map.totalModules);
           NODE
 
