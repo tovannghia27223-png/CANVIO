@@ -158,7 +158,7 @@ Pull trước (`git pull --rebase origin main`; CI bot hay push commit build). A
 
 ## Verified delivery — P120/P126 local ComfyUI — 2026-11-21
 
-- PR #73 merged to main as 1e2e0b1a; hosted CI run #44914277311 passed 48/48.
+- PR #73 merged to main as edd18a7abbed57e2; hosted CI run #44914277311 passed 48/48.
 - Adds loopback-only ComfyUI API workflow bridge through existing P128 for image/video/upscale/interpolate; optional media upload, prompt/media mapping, queue/history, /view output and existing Asset Library addBlob handoff.
 - Browser assertions all passed: workflowCompleted, inputMediaUploaded, promptNodeOverridden, mediaNodeOverridden, historyPolled, savedToAssetLibrary and outputDownloadLink; zero page errors.
 - PR #71 closed as superseded by clean-main PR #73. No paid/cloud API, key, model download or custom-node installer.
