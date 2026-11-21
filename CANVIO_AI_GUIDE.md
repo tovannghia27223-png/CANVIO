@@ -3874,3 +3874,8 @@ P144 tour: thêm bước bằng cách thêm vào mảng `STEPS` ({sel,title,text
 - Records inline style blocks, inline style-attribute counts/hashes, template elements, dynamic resource-loader call sites and candidate global producer/consumer pairs derived from the existing heuristic script inventory.
 - Boundaries: these are inventories and heuristic dependency candidates, not a human-reviewed semantic dependency/boot-order DAG. No script/style/template was moved; full P143 staged extraction, offline/PWA/CSP and rollback acceptance remain open.
 
+
+
+## P119 easing editor (2026-11-21)
+- `window.CVEasingP119`: `bez/css/parse/norm/spring/lottie/mount/tests`. Mounted into `#motionEase`'s card on `#page-motion`; writes an `option[data-cv119]` and fires `change` so `CV.motion.play()` reuses the existing path.
+- Standalone `canvio-p119-easing.js` must equal embedded `<script id="canvio-lot119e">` (CRLF in index.html).

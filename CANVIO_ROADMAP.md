@@ -919,3 +919,11 @@ Hosted verification after the ffmpeg repair is complete:
 - Acceptance: Node and Chromium assertions are expanded. Status remains candidate / hosted verification pending until PR and mainline CI are inspected. Do not update completion rows to PASS before the workflow evidence exists.
 - Still blocked or deferred: P130 Cloud Sync needs a deployed user-owned Supabase project/schema/RLS and credentials; P122.3 MCP needs an approved transport/auth/consent/permission/threat contract. P70's 14 production/manual gates are deliberately deferred by the user for later real-world testing.
 
+
+
+## P119 shared easing editor + simple Lottie export (2026-11-21 · candidate)
+
+- New `canvio-p119-easing.js` (CVEasingP119, embedded lot `canvio-lot119e`): draggable cubic-bezier graph in the Motion page card, six presets, spring approximation via CSS `linear()`, and Lottie JSON export (one rounded-rectangle layer, fade/slide/scale keyframes using the edited curve).
+- Integrates through the existing `#motionEase` select by adding a "Tuỳ chỉnh (đồ thị)" option; no existing option or Motion function was removed.
+- Tests: `tests/p127/run-p119e-tests.cjs` (Node, standalone + embedded parity) and `tests/p145/run-p119-browser.py` (real Chrome: mount, handle drag, preset, valid Lottie JSON, zero page errors). App smoke 21/21.
+- Limits: Lottie output is not validated with lottie-web/dotLottie player; single layer only, no expressions/masks; graph editor is not yet shared with Video Engine keyframes or Website Motion Builder; `linear()` needs a recent browser.
