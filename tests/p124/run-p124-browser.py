@@ -59,7 +59,7 @@ async def main():
         await panel.locator("button[data-p124-apply-selected]").click()
         await page.wait_for_function("window.__p124Rules.length === 3 && window.__p124SaveCount === 2")
         assert await page.evaluate("window.__p124Component.className === 'cv-p124-selected-hero-selected'")
-        assert await page.evaluate("window.__p124Rules[1].options.atRuleParams.includes('960px') && window.__p124Rules[2].options.atRuleParams.includes('640px')")
+        assert await page.evaluate("window.__p124Rules[1].options.atRuleParams.includes('1024px') && window.__p124Rules[2].options.atRuleParams.includes('680px')")
         await page.evaluate("""() => { window.CV.engines.web.save = () => { window.__p124SaveCount++; return false; }; }""")
         await panel.locator("button[data-p124-kind='card']").click()
         await page.wait_for_function("window.__p124Inserted.length === 2")
