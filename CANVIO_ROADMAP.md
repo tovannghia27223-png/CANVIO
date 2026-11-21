@@ -831,3 +831,12 @@ Hosted verification after the ffmpeg repair is complete:
 - Giới hạn: ≤100 MiB, ≤60 giây, tối đa 48 frame phân tích ở kích cỡ tối đa 192×108. Heuristic có thể bám vào vùng nhiều texture/contrast thay vì chủ thể; cảnh ít chi tiết sẽ kém ổn định. Không nhận diện mặt/AI object detection; chưa có manual focus override.
 - Test bổ sung: Node tests/p127/run-p134r-tests.cjs (11 assertion); Chromium UI/export và ffprobe tests/p145/run-p134r-browser.py. Kết quả hosted CI phải được kiểm trước khi đánh dấu merged/PASS. Nếu localhost bị chặn trong sandbox, ghi rõ môi trường, không tính là test ứng dụng thất bại.
 - Trạng thái: candidate trên branch riêng, chưa merge. Việc tiếp theo: hosted run xác nhận Node, same-origin app boot, UI analysis, WebM decode/duration/audio; sau đó rà lại bằng video thật dài hơn và điện thoại thật.
+
+
+## P144.3 — Trợ giúp theo từng Studio (2026-11-21 · candidate)
+
+- Nâng canvio-p144-ux.js lên 144.3.0; cập nhật TIPS theo các route đã đăng ký trong CVWS cho ba workspace Thiết kế, Website & hồ sơ, Ảnh & video; bổ sung Hub, CapCut, Projects, Project Vault, Export, Object, Settings.
+- Giữ nguyên một owner CVUxP144 cho F1/help dialog, palette, phím tắt và tour; không tạo router hoặc help system thứ hai.
+- Nội dung phân biệt rõ CapCut Engine là hub/handoff, Video Engine là timeline chuẩn; Project Center và Project Vault khác vai trò; các giới hạn codec/3D/preflight không được quảng cáo quá mức.
+- Test mới: P144 API suite kiểm đủ route; Chromium test đối chiếu mọi route CVWS với TIPS (tối thiểu 2 mẹo/route). Hosted CI pending.
+- Trạng thái: candidate branch work/p144-studio-help-20261121; chưa merge.
