@@ -61,3 +61,10 @@ Pull trước (`git pull --rebase origin main`; CI bot hay push commit build). A
 - Added page-specific guidance for all 13, using Guide-documented behavior and explicit boundaries (e.g. collab is local notes/activity, Prompt Forge is prompt handoff, Shield does not certify server headers).
 - P133.2 passed all 11 Chromium checks in the same run, including actual timeline import, clip duration, audio, full decode and original preservation. P124 passed 9/9.
 - Rerun required to verify all 38 CVWS routes have contextual help; no merge claim until that coverage check passes.
+
+## Mainline verification after PR #51
+
+- PR #51 merged at e4e3647b8b49dcc931065c3f7893f68b48d9a071. Hosted candidate run #360 and mainline run #362 both PASS 39/39.
+- P124 Auto Layout: five presets/four variants; Chromium 9/9. P133.2 proxy: 4K synthetic clip generates 1280×720 WebM with Opus audio, full decode, new timeline clip and untouched original. P144.3 contextual help: all 38 CVWS routes covered; tour and keyboard smoke pass.
+- Began P143 Phase 1: 20-module standalone/inline-lot source registry and parity test. Hosted run #363 passed source integration, syntax, P143 parity audit, full HTML audit, P47–P70 regressions, integration source contracts and P107 ZIP round-trip; same-origin browser phase was still running.
+- Updated Guide, Roadmap, tracker, QA, acceptance matrix, handoff prompt and this summary.
