@@ -182,8 +182,8 @@ function restoreRasterForProject(raster){
    const width=probe.naturalWidth||probe.width,height=probe.naturalHeight||probe.height,target=px&&px.canvas||canvas;
    if(!target||!width||!height){resolve(false);return}
    let expected=null;
-   try{const sample=doc.createElement('canvas');sample.width=width;sample.height=height;const x=sample.getContext('2d',{willReadFrequently:true});x.drawImage(probe,0,0);expected=Array.from(x.getImageData(0,0,1,1).data)}catch(e){resolve(false);return}
-   const ready=()=>{if(target.width!==width||target.height!==height)return false;try{const actual=Array.from(target.getContext('2d',{willReadFrequently:true}).getImageData(0,0,1,1).data);return actual.every((v,i)=>v===expected[i])}catch(e){return false}};
+   try{const sample=doc.createElement('canvas');sample.width=width;sample.height=height;const x=sample.getContext('2d',{willReadFrequently:true});x.drawImage(probe,0,0);expected=x.getImageData(0,0,width,height).data.slice()}catch(e){resolve(false);return}
+   const ready=()=>{if(target.width!==width||target.height!==height)return false;try{const actual=target.getContext('2d',{willReadFrequently:true}).getImageData(0,0,width,height).data;if(actual.length!==expected.length)return false;for(let i=0;i<expected.length;i++)if(actual[i]!==expected[i])return false;return true}catch(e){return false}};
    let finished=false,observer=null,timer=null;
    const finish=ok=>{if(finished)return;finished=true;if(observer)observer.disconnect();if(timer)root.clearTimeout(timer);resolve(!!ok)};
    if(root.MutationObserver){observer=new root.MutationObserver(()=>{if(ready())finish(true)});observer.observe(target,{attributes:true,attributeFilter:['width','height']});const statusNode=doc.getElementById('pxStatus');if(statusNode)observer.observe(statusNode,{childList:true,characterData:true,subtree:true})}
