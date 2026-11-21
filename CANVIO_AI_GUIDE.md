@@ -4022,3 +4022,13 @@ P144 tour: thêm bước bằng cách thêm vào mảng `STEPS` ({sel,title,text
 - PR #83 merged as 29acd1192da8e42bad845248b1110d30a6cbfc44. Post-merge workflow #551 passed 53/53 and Pages #275 built/deployed successfully.
 - P143 parity 32/32; lexical scanner 14/14; inventory verifier 17/17. Inventory: 119 style blocks, 1,490 inline style attributes, 78 dynamic-loader sites, 456 lexical dependency candidates, 33 unresolved references, 209 same-script references.
 - This is lexical evidence only, not a semantic AST/data-flow graph. P143 Phase 3 extraction, manual dependency review, rollback, offline/PWA and CSP acceptance remain open.
+
+## P119.4 — P119 shared easing in Website Motion Builder
+
+- Extends the existing P47 Website Motion Builder with the six named values read directly from the existing CVEasingP119.PRESETS registry. It does not maintain a duplicate list of curve coordinates or add another animation engine.
+- The existing #motionEase cubic-bezier can be imported into #canvio-motion-easing through an explicit “Lấy curve từ Motion” action. Import stages the value; the user still has to select the component and click the existing Apply action.
+- Only canonical cubic-bezier CSS produced by CVEasingP119.css() is accepted by the P47 apply validator. Spring linear() output remains unsupported as a cubic-Bezier and is rejected without changing the selected Website value.
+- Existing GrapesJS component attributes/styles, CV.engines.web.save(), Website Publish QC export wrapper and reduced-motion runtime remain the owners. No second component store, animation timeline, easing registry or export runtime is created.
+- Tests: tests/p127/run-p119w-tests.cjs checks registry contract, canonical preset values and rejection rules; tests/p145/run-p119w-browser.py checks the real Chromium panel, six values, Motion import, Apply/Clear contract, export runtime and zero page errors using a deterministic component contract fixture.
+- Website Engine does not yet have a graph editor of its own; it reuses the Motion graph as the single authoring surface. Real GrapesJS component selection, publish-host CSP/headers, keyboard review and target-device reduced-motion review remain manual acceptance.
+

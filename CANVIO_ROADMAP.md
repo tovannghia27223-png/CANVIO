@@ -1060,3 +1060,9 @@ Hosted verification after the ffmpeg repair is complete:
 
 - PR #83 / commit 29acd119; post-merge workflow #551 53/53 and Pages #275 PASS. P143 parity 32/32, scanner 14/14, inventory verifier 17/17.
 - 456 lexical provider/consumer candidates, 33 unresolved reads, 209 same-script references. Not a semantic dependency graph; Phase 3 extraction/rollback/offline/CSP remains open.
+
+## P119.4 — P119 shared easing for Website Motion Builder
+
+- Reuse CVEasingP119.PRESETS and the existing #motionEase cubic-Bezier graph in Website Motion Builder. A selected component receives the curve through the original P47 Apply/Save path and exports it through the original Website Publish QC runtime.
+- There is one source of truth for named curves; CSS linear() spring remains a separate representation and is not coerced into Bezier. Reduced-motion fallback remains enabled.
+- The graph remains in Motion; Website Engine intentionally shares the curve rather than opening a second graph or timeline. Manual author-project, deployed-host CSP and accessibility checks remain open.

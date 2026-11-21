@@ -1,10 +1,10 @@
 {
   "format": "CANVIO_P143_STYLE_TEMPLATE_LOADER_INVENTORY",
   "version": 1,
-  "generatedAt": "2026-11-21T17:25:10.610Z",
+  "generatedAt": "2026-11-21T18:13:48.446Z",
   "source": "restored canonical index.html after all workflow-managed module integration steps",
   "purpose": "Inventory inline styles, template elements, dynamic resource-loader call sites and lexical global-reference ordering candidates. Global references are not a human-reviewed semantic boot-order or runtime data-flow graph.",
-  "htmlBytes": 5635518,
+  "htmlBytes": 5641178,
   "styles": {
     "blockCount": 119,
     "inlineStyleAttributeCount": 1493,
@@ -13487,7 +13487,7 @@
         "kind": "dynamic-fetch",
         "scriptOrder": 79,
         "scriptId": "canvio-phase-completion-suite",
-        "offset": 9006,
+        "offset": 9234,
         "excerpt": "setTimeout(function(){ctl.abort()},30000):null;try{var response=await fetch(url,{method:'POST',headers:headers,body:JSON.stringify(body),signal:ctl?ctl.signal:undefined,mode:'cors',credentials:'omit'});var raw="
       },
       {
@@ -13713,9 +13713,9 @@
     "count": 456,
     "confidence": "lexical-static-order-candidate-not-semantic",
     "summary": {
-      "staticReadReferenceCount": 699,
+      "staticReadReferenceCount": 700,
       "resolvedEdgeCount": 456,
-      "unresolvedReferenceCount": 34,
+      "unresolvedReferenceCount": 35,
       "sameScriptReferenceCount": 209,
       "ambiguousMultiWriterEdges": 56,
       "providerGlobals": 287
@@ -15514,7 +15514,7 @@
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 79,
         "toId": "canvio-phase-completion-suite",
-        "toSha256": "09b17d58e321fb4f81d640a10ff4108d97871601b006deecb029a024df464804",
+        "toSha256": "704bafcd552be67a67e3dbf85440c7b43e7dbb92057344baa352e6f0a290be17",
         "priorProviderCount": 1,
         "priorProviderOrders": [
           2
@@ -16465,7 +16465,7 @@
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 79,
         "toId": "canvio-phase-completion-suite",
-        "toSha256": "09b17d58e321fb4f81d640a10ff4108d97871601b006deecb029a024df464804",
+        "toSha256": "704bafcd552be67a67e3dbf85440c7b43e7dbb92057344baa352e6f0a290be17",
         "priorProviderCount": 1,
         "priorProviderOrders": [
           9
@@ -16484,7 +16484,7 @@
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 79,
         "toId": "canvio-phase-completion-suite",
-        "toSha256": "09b17d58e321fb4f81d640a10ff4108d97871601b006deecb029a024df464804",
+        "toSha256": "704bafcd552be67a67e3dbf85440c7b43e7dbb92057344baa352e6f0a290be17",
         "priorProviderCount": 1,
         "priorProviderOrders": [
           9
@@ -19192,7 +19192,7 @@
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 79,
         "toId": "canvio-phase-completion-suite",
-        "toSha256": "09b17d58e321fb4f81d640a10ff4108d97871601b006deecb029a024df464804",
+        "toSha256": "704bafcd552be67a67e3dbf85440c7b43e7dbb92057344baa352e6f0a290be17",
         "priorProviderCount": 1,
         "priorProviderOrders": [
           52
@@ -20043,7 +20043,7 @@
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 79,
         "toId": "canvio-phase-completion-suite",
-        "toSha256": "09b17d58e321fb4f81d640a10ff4108d97871601b006deecb029a024df464804",
+        "toSha256": "704bafcd552be67a67e3dbf85440c7b43e7dbb92057344baa352e6f0a290be17",
         "priorProviderCount": 1,
         "priorProviderOrders": [
           60
@@ -20736,7 +20736,7 @@
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 79,
         "toId": "canvio-phase-completion-suite",
-        "toSha256": "09b17d58e321fb4f81d640a10ff4108d97871601b006deecb029a024df464804",
+        "toSha256": "704bafcd552be67a67e3dbf85440c7b43e7dbb92057344baa352e6f0a290be17",
         "priorProviderCount": 2,
         "priorProviderOrders": [
           1,
@@ -20757,7 +20757,7 @@
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 79,
         "toId": "canvio-phase-completion-suite",
-        "toSha256": "09b17d58e321fb4f81d640a10ff4108d97871601b006deecb029a024df464804",
+        "toSha256": "704bafcd552be67a67e3dbf85440c7b43e7dbb92057344baa352e6f0a290be17",
         "priorProviderCount": 1,
         "priorProviderOrders": [
           78
@@ -21815,7 +21815,7 @@
         "global": "CANVIOPhaseSuite",
         "fromOrder": 79,
         "fromId": "canvio-phase-completion-suite",
-        "fromSha256": "09b17d58e321fb4f81d640a10ff4108d97871601b006deecb029a024df464804",
+        "fromSha256": "704bafcd552be67a67e3dbf85440c7b43e7dbb92057344baa352e6f0a290be17",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 80,
         "toId": "canvio-p55-runtime-release-gate",
@@ -21834,7 +21834,7 @@
         "global": "CANVIOPhaseSuite",
         "fromOrder": 79,
         "fromId": "canvio-phase-completion-suite",
-        "fromSha256": "09b17d58e321fb4f81d640a10ff4108d97871601b006deecb029a024df464804",
+        "fromSha256": "704bafcd552be67a67e3dbf85440c7b43e7dbb92057344baa352e6f0a290be17",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 81,
         "toId": "canvio-p56-portable-archive-preflight",
@@ -21853,7 +21853,7 @@
         "global": "CANVIOPhaseSuite",
         "fromOrder": 79,
         "fromId": "canvio-phase-completion-suite",
-        "fromSha256": "09b17d58e321fb4f81d640a10ff4108d97871601b006deecb029a024df464804",
+        "fromSha256": "704bafcd552be67a67e3dbf85440c7b43e7dbb92057344baa352e6f0a290be17",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 82,
         "toId": "canvio-p57-native-persistence-audit",
@@ -21872,7 +21872,7 @@
         "global": "CANVIOPhaseSuite",
         "fromOrder": 79,
         "fromId": "canvio-phase-completion-suite",
-        "fromSha256": "09b17d58e321fb4f81d640a10ff4108d97871601b006deecb029a024df464804",
+        "fromSha256": "704bafcd552be67a67e3dbf85440c7b43e7dbb92057344baa352e6f0a290be17",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 83,
         "toId": "canvio-p58-media-export-acceptance",
@@ -21891,7 +21891,7 @@
         "global": "CANVIOPhaseSuite",
         "fromOrder": 79,
         "fromId": "canvio-phase-completion-suite",
-        "fromSha256": "09b17d58e321fb4f81d640a10ff4108d97871601b006deecb029a024df464804",
+        "fromSha256": "704bafcd552be67a67e3dbf85440c7b43e7dbb92057344baa352e6f0a290be17",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 84,
         "toId": "canvio-p59-whisper-runtime-acceptance",
@@ -21910,7 +21910,7 @@
         "global": "CANVIOPhaseSuite",
         "fromOrder": 79,
         "fromId": "canvio-phase-completion-suite",
-        "fromSha256": "09b17d58e321fb4f81d640a10ff4108d97871601b006deecb029a024df464804",
+        "fromSha256": "704bafcd552be67a67e3dbf85440c7b43e7dbb92057344baa352e6f0a290be17",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 85,
         "toId": "canvio-p60-accessibility-screening",
@@ -21929,7 +21929,7 @@
         "global": "CANVIOPhaseSuite",
         "fromOrder": 79,
         "fromId": "canvio-phase-completion-suite",
-        "fromSha256": "09b17d58e321fb4f81d640a10ff4108d97871601b006deecb029a024df464804",
+        "fromSha256": "704bafcd552be67a67e3dbf85440c7b43e7dbb92057344baa352e6f0a290be17",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 86,
         "toId": "canvio-p61-hosting-security-audit",
@@ -21948,7 +21948,7 @@
         "global": "CANVIOPhaseSuite",
         "fromOrder": 79,
         "fromId": "canvio-phase-completion-suite",
-        "fromSha256": "09b17d58e321fb4f81d640a10ff4108d97871601b006deecb029a024df464804",
+        "fromSha256": "704bafcd552be67a67e3dbf85440c7b43e7dbb92057344baa352e6f0a290be17",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 87,
         "toId": "canvio-p62-phase1-release-gate",
@@ -21967,7 +21967,7 @@
         "global": "CANVIOPhaseSuite",
         "fromOrder": 79,
         "fromId": "canvio-phase-completion-suite",
-        "fromSha256": "09b17d58e321fb4f81d640a10ff4108d97871601b006deecb029a024df464804",
+        "fromSha256": "704bafcd552be67a67e3dbf85440c7b43e7dbb92057344baa352e6f0a290be17",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 89,
         "toId": "canvio-p63-p67-main",
@@ -21986,7 +21986,7 @@
         "global": "CANVIOPhaseSuite",
         "fromOrder": 79,
         "fromId": "canvio-phase-completion-suite",
-        "fromSha256": "09b17d58e321fb4f81d640a10ff4108d97871601b006deecb029a024df464804",
+        "fromSha256": "704bafcd552be67a67e3dbf85440c7b43e7dbb92057344baa352e6f0a290be17",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 90,
         "toId": "canvio-p68-p70-main",
@@ -22005,7 +22005,7 @@
         "global": "CANVIOProjectBundle",
         "fromOrder": 79,
         "fromId": "canvio-phase-completion-suite",
-        "fromSha256": "09b17d58e321fb4f81d640a10ff4108d97871601b006deecb029a024df464804",
+        "fromSha256": "704bafcd552be67a67e3dbf85440c7b43e7dbb92057344baa352e6f0a290be17",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 107,
         "toId": "canvio-p105-p107-depth-parallax",
@@ -22024,7 +22024,7 @@
         "global": "CVAIProviderAdapter",
         "fromOrder": 79,
         "fromId": "canvio-phase-completion-suite",
-        "fromSha256": "09b17d58e321fb4f81d640a10ff4108d97871601b006deecb029a024df464804",
+        "fromSha256": "704bafcd552be67a67e3dbf85440c7b43e7dbb92057344baa352e6f0a290be17",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 136,
         "toId": "canvio-lot128o",
@@ -22958,6 +22958,18 @@
         "consumerId": "canvio-phase-completion-suite",
         "laterProviderOrders": [
           80
+        ],
+        "reason": "no-provider-before-consumer",
+        "evidenceKinds": [
+          "window-property-reference"
+        ]
+      },
+      {
+        "global": "CVEasingP119",
+        "consumerOrder": 79,
+        "consumerId": "canvio-phase-completion-suite",
+        "laterProviderOrders": [
+          133
         ],
         "reason": "no-provider-before-consumer",
         "evidenceKinds": [

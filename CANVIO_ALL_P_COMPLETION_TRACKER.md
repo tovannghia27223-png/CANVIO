@@ -326,3 +326,10 @@ PR #71 was closed as superseded by clean-main PR #73; the latter carries the cor
 ## P143.4 verified mainline — 2026-11-21
 
 - PR #83 mainline workflow #551 passed 53/53; Pages #275 deployed. P143 parity 32/32, scanner 14/14, verifier 17/17. Lexical 456 candidates are not a semantic DAG.
+
+## P119.4 shared easing with Website Engine
+
+- Adds six P119 preset options and explicit Motion cubic-Bezier import to the existing P47 Website Motion Builder. Apply/Clear still target the selected GrapesJS component and canonical Website Engine save/export owner.
+- Candidate acceptance: P119.4 Node contract, hosted Chromium adapter/export test, P143 34-pair source parity and full hosted runtime workflow.
+- No second easing registry, graph, animation timeline, store, local persistence or paid dependency is added. The UI reuses the Motion graph and original reduced-motion export.
+- Real authored project, external publish host CSP/headers, keyboard/screen-reader and physical-device checks remain manual.

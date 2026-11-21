@@ -21320,7 +21320,7 @@ var $=function(s,r){return (r||document).querySelector(s)},esc=function(v){retur
 var motionStyle='html.canvio-motion-ready [data-canvio-motion]:not([data-canvio-motion="none"]){opacity:0;transition:opacity var(--canvio-motion-duration,700ms) var(--canvio-motion-easing,cubic-bezier(.2,.7,.2,1)) var(--canvio-motion-delay,0ms),transform var(--canvio-motion-duration,700ms) var(--canvio-motion-easing,cubic-bezier(.2,.7,.2,1)) var(--canvio-motion-delay,0ms)}html.canvio-motion-ready [data-canvio-motion="slide-up"]{transform:translateY(24px)}html.canvio-motion-ready [data-canvio-motion="slide-left"]{transform:translateX(28px)}html.canvio-motion-ready [data-canvio-motion="scale-in"]{transform:scale(.94)}html.canvio-motion-ready [data-canvio-motion="fade"]{transform:none}html.canvio-motion-ready [data-canvio-motion].canvio-motion-in{opacity:1;transform:none}@media(prefers-reduced-motion:reduce){[data-canvio-motion]{opacity:1!important;transform:none!important;transition:none!important}}';
 var motionScript='(function(){var nodes=[].slice.call(document.querySelectorAll("[data-canvio-motion]:not([data-canvio-motion=none])"));if(!nodes.length)return;var reduce=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;if(reduce||!window.IntersectionObserver){nodes.forEach(function(n){n.classList.add("canvio-motion-in")});return}document.documentElement.classList.add("canvio-motion-ready");var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add("canvio-motion-in");io.unobserve(e.target)}})},{threshold:.12});nodes.forEach(function(n){io.observe(n)})})();';
 function addMotionRuntime(html){html=String(html||'');if(html.indexOf('canvio-motion-runtime')>=0)return html;var css='<style id="canvio-motion-runtime">'+motionStyle+'</style>',js='<script id="canvio-motion-runtime-js">'+motionScript+'<\/script>';if(/<\/head\s*>/i.test(html))html=html.replace(/<\/head\s*>/i,css+'</head>');else html=css+html;if(/<\/body\s*>/i.test(html))html=html.replace(/<\/body\s*>/i,js+'</body>');else html+=js;return html}
-function mountMotion(){var root=$('#page-webEngine');if(!root||$('#canvio-web-motion'))return false;var box=document.createElement('section');box.id='canvio-web-motion';box.className='card';box.style.marginTop='12px';box.innerHTML='<div class="cardTop"><div><h3>Website Motion Builder</h3><span class="sub">Chọn một component trong canvas → áp hiệu ứng → xuất HTML có reduced-motion fallback</span></div><span class="badgeSoft">P47 · LOCAL</span></div><div class="row" style="gap:8px;flex-wrap:wrap;align-items:end"><div class="field" style="min-width:140px"><label>Hiệu ứng</label><select id="canvio-motion-type" class="input"><option value="slide-up">Slide up</option><option value="fade">Fade</option><option value="slide-left">Slide left</option><option value="scale-in">Scale in</option><option value="none">Không hiệu ứng</option></select></div><div class="field" style="min-width:150px"><label>Easing / đường cong</label><select id="canvio-motion-easing" class="input"><option value="linear">Linear</option><option value="ease">Ease</option><option value="ease-in">Ease In</option><option value="ease-out">Ease Out</option><option value="ease-in-out">Ease In Out</option><option value="cubic-bezier(.2,.7,.2,1)" selected>Smooth · cubic bezier</option></select></div><div class="field" style="min-width:110px"><label>Thời lượng (ms)</label><input id="canvio-motion-duration" class="input" type="number" min="100" max="3000" step="50" value="700"></div><div class="field" style="min-width:110px"><label>Trễ (ms)</label><input id="canvio-motion-delay" class="input" type="number" min="0" max="5000" step="50" value="0"></div><button type="button" class="btn btn-primary sm" id="canvio-motion-apply">Áp dụng cho phần tử đang chọn</button><button type="button" class="btn btn-ghost sm" id="canvio-motion-clear">Gỡ hiệu ứng</button></div><p id="canvio-motion-status" class="tiny" role="status" aria-live="polite">Hiệu ứng chỉ được xuất khi bạn áp dụng cho component đang chọn. Trình duyệt có reduced-motion sẽ tắt chuyển động.</p>';root.appendChild(box);$('#canvio-motion-apply').addEventListener('click',function(){var ed=window.CVWeb,c=ed&&ed.getSelected&&ed.getSelected();if(!c){$('#canvio-motion-status').textContent='Chưa chọn component trong canvas.';return}var kind=$('#canvio-motion-type').value,dur=Math.max(100,Math.min(3000,+$('#canvio-motion-duration').value||700)),delayMs=Math.max(0,Math.min(5000,+$('#canvio-motion-delay').value||0)),easing=$('#canvio-motion-easing').value,easingOptions=['linear','ease','ease-in','ease-out','ease-in-out','cubic-bezier(.2,.7,.2,1)'];if(easingOptions.indexOf(easing)<0)easing='cubic-bezier(.2,.7,.2,1)';c.addAttributes({'data-canvio-motion':kind,'data-canvio-motion-duration':dur+'ms','data-canvio-motion-delay':delayMs+'ms','data-canvio-motion-easing':easing});if(c.addStyle)c.addStyle({'--canvio-motion-duration':dur+'ms','--canvio-motion-delay':delayMs+'ms','--canvio-motion-easing':easing});if(ed.trigger)ed.trigger('component:update',c);if(window.CV&&CV.engines&&CV.engines.web&&CV.engines.web.save)CV.engines.web.save();$('#canvio-motion-status').textContent='Đã áp dụng '+kind+' ('+dur+'ms, trễ '+delayMs+'ms, '+easing+'). Hãy xuất HTML để đóng gói runtime.'});$('#canvio-motion-clear').addEventListener('click',function(){var ed=window.CVWeb,c=ed&&ed.getSelected&&ed.getSelected();if(!c){$('#canvio-motion-status').textContent='Chưa chọn component trong canvas.';return}c.addAttributes({'data-canvio-motion':'none','data-canvio-motion-duration':null,'data-canvio-motion-delay':null,'data-canvio-motion-easing':null});if(c.addStyle)c.addStyle({'--canvio-motion-duration':null,'--canvio-motion-delay':null,'--canvio-motion-easing':null});if(ed.trigger)ed.trigger('component:update',c);if(window.CV&&CV.engines&&CV.engines.web&&CV.engines.web.save)CV.engines.web.save();$('#canvio-motion-status').textContent='Đã gỡ hiệu ứng khỏi component đang chọn.'});return true}
+function mountMotion(){var root=$('#page-webEngine');if(!root||$('#canvio-web-motion'))return false;var box=document.createElement('section');box.id='canvio-web-motion';box.className='card';box.style.marginTop='12px';box.innerHTML='<div class="cardTop"><div><h3>Website Motion Builder</h3><span class="sub">Chọn một component trong canvas → áp hiệu ứng → xuất HTML có reduced-motion fallback</span></div><span class="badgeSoft">P47 · LOCAL</span></div><div class="row" style="gap:8px;flex-wrap:wrap;align-items:end"><div class="field" style="min-width:140px"><label>Hiệu ứng</label><select id="canvio-motion-type" class="input"><option value="slide-up">Slide up</option><option value="fade">Fade</option><option value="slide-left">Slide left</option><option value="scale-in">Scale in</option><option value="none">Không hiệu ứng</option></select></div><div class="field" style="min-width:150px"><label>Easing / đường cong</label><select id="canvio-motion-easing" class="input"><option value="linear">Linear</option><option value="ease">Ease</option><option value="ease-in">Ease In</option><option value="ease-out">Ease Out</option><option value="ease-in-out">Ease In Out</option><option value="cubic-bezier(.2,.7,.2,1)" selected>Smooth · cubic bezier</option></select></div><div class="field" style="min-width:110px"><label>Thời lượng (ms)</label><input id="canvio-motion-duration" class="input" type="number" min="100" max="3000" step="50" value="700"></div><div class="field" style="min-width:110px"><label>Trễ (ms)</label><input id="canvio-motion-delay" class="input" type="number" min="0" max="5000" step="50" value="0"></div><button type="button" class="btn btn-primary sm" id="canvio-motion-apply">Áp dụng cho phần tử đang chọn</button><button type="button" class="btn btn-ghost sm" id="canvio-motion-clear">Gỡ hiệu ứng</button></div><p id="canvio-motion-status" class="tiny" role="status" aria-live="polite">Hiệu ứng chỉ được xuất khi bạn áp dụng cho component đang chọn. Trình duyệt có reduced-motion sẽ tắt chuyển động.</p>';root.appendChild(box);$('#canvio-motion-apply').addEventListener('click',function(){var ed=window.CVWeb,c=ed&&ed.getSelected&&ed.getSelected();if(!c){$('#canvio-motion-status').textContent='Chưa chọn component trong canvas.';return}var kind=$('#canvio-motion-type').value,dur=Math.max(100,Math.min(3000,+$('#canvio-motion-duration').value||700)),delayMs=Math.max(0,Math.min(5000,+$('#canvio-motion-delay').value||0)),easing=$('#canvio-motion-easing').value,easingOptions=['linear','ease','ease-in','ease-out','ease-in-out','cubic-bezier(.2,.7,.2,1)'];var p119Api=window.CVEasingP119,p119Curve=p119Api&&typeof p119Api.parse==='function'?p119Api.parse(easing):null,p119CurveAllowed=!!(p119Curve&&typeof p119Api.css==='function'&&p119Api.css(p119Curve)===easing);if(easingOptions.indexOf(easing)<0&&!p119CurveAllowed)easing='cubic-bezier(.2,.7,.2,1)';c.addAttributes({'data-canvio-motion':kind,'data-canvio-motion-duration':dur+'ms','data-canvio-motion-delay':delayMs+'ms','data-canvio-motion-easing':easing});if(c.addStyle)c.addStyle({'--canvio-motion-duration':dur+'ms','--canvio-motion-delay':delayMs+'ms','--canvio-motion-easing':easing});if(ed.trigger)ed.trigger('component:update',c);if(window.CV&&CV.engines&&CV.engines.web&&CV.engines.web.save)CV.engines.web.save();$('#canvio-motion-status').textContent='Đã áp dụng '+kind+' ('+dur+'ms, trễ '+delayMs+'ms, '+easing+'). Hãy xuất HTML để đóng gói runtime.'});$('#canvio-motion-clear').addEventListener('click',function(){var ed=window.CVWeb,c=ed&&ed.getSelected&&ed.getSelected();if(!c){$('#canvio-motion-status').textContent='Chưa chọn component trong canvas.';return}c.addAttributes({'data-canvio-motion':'none','data-canvio-motion-duration':null,'data-canvio-motion-delay':null,'data-canvio-motion-easing':null});if(c.addStyle)c.addStyle({'--canvio-motion-duration':null,'--canvio-motion-delay':null,'--canvio-motion-easing':null});if(ed.trigger)ed.trigger('component:update',c);if(window.CV&&CV.engines&&CV.engines.web&&CV.engines.web.save)CV.engines.web.save();$('#canvio-motion-status').textContent='Đã gỡ hiệu ứng khỏi component đang chọn.'});return true}
 var wrappedBuild=false;function wrapWebsiteExport(){var q=window.CVWebsitePublishQC;if(!q||typeof q.buildDocument!=='function'||wrappedBuild)return false;var old=q.buildDocument;q.buildDocument=function(snapshot,meta){return addMotionRuntime(old.apply(this,arguments))};q.buildDocument.__canvioMotionRuntime=true;wrappedBuild=true;return true}
 
 /* Phase 5 · real, user-triggered provider adapters; secrets remain session-only. */
@@ -34193,6 +34193,153 @@ function tests(){
 const api={version:'119.3.0',presets:()=>Object.assign({},presetMap()),curveFromMotion:parseMotionCurve,findPreset:findPreset,motionCurveState:motionCurveState,setNativeCurve:setNativeCurve,choosePreset:choosePreset,chooseMotion:chooseMotion,mount:mount,start:start,stop:stop,tests:tests};
 root.CVVideoEasingP119=api;
 if(doc){if(doc.readyState==='loading')doc.addEventListener('DOMContentLoaded',start,{once:true});else start();}
+})(window);
+</script>
+<script id="canvio-lot119w">
+/* CANVIO P119.4 — share the existing P119 easing registry with Website Motion Builder.
+ * Values are written only into the selected GrapesJS component through the existing P47 Apply/Clear handlers.
+ * No second preset registry, editor, animation model, project store or export runtime is created.
+ */
+(function(root){
+'use strict';
+if(root.CVWebsiteEasingP119)return;
+const doc=root.document;
+const ORDER=['Mượt','Giảm tốc','Tăng tốc','Đều hai đầu','Nảy nhẹ','Tuyến tính'];
+let observer=null;
+const $=id=>doc&&doc.getElementById(id);
+function registry(){
+ const api=root.CVEasingP119;
+ return api&&api.PRESETS&&typeof api.css==='function'&&typeof api.parse==='function'?api:null;
+}
+function presetOptions(){
+ const api=registry();
+ if(!api)return [];
+ return ORDER.filter(name=>Array.isArray(api.PRESETS[name])).map(name=>({
+  name,
+  value:api.css(api.PRESETS[name]),
+  label:'P119 · '+name
+ }));
+}
+function canonicalCurve(value){
+ const api=registry();
+ if(!api||typeof value!=='string')return null;
+ const curve=api.parse(value);
+ if(!curve)return null;
+ const css=api.css(curve);
+ return css===value?css:null;
+}
+function status(message,warning){
+ const el=$('canvio-motion-status');
+ if(!el)return;
+ el.textContent=message;
+ el.dataset.state=warning?'warning':'info';
+}
+function addOption(group,item){
+ let option=Array.from(group.querySelectorAll('option')).find(node=>node.value===item.value);
+ if(!option){
+  option=doc.createElement('option');
+  option.value=item.value;
+  option.textContent=item.label;
+  option.dataset.cv119w='1';
+  group.appendChild(option);
+ }
+ return option;
+}
+function ensurePresetGroup(select){
+ let group=select.querySelector('optgroup[data-cv119w-presets]');
+ if(!group){
+  group=doc.createElement('optgroup');
+  group.label='Đường cong dùng chung · P119';
+  group.dataset.cv119wPresets='1';
+  select.appendChild(group);
+ }
+ presetOptions().forEach(item=>addOption(group,item));
+ return group;
+}
+function importMotion(){
+ const api=registry(),source=$('motionEase'),select=$('canvio-motion-easing');
+ if(!api||!source||!select){
+  status('Chưa mở được bộ điều chỉnh Motion hoặc Website Motion Builder.',true);
+  return false;
+ }
+ const curve=api.parse(source.value);
+ if(!curve){
+  status('Motion hiện không dùng cubic-bezier hợp lệ. Đường cong lò xo linear() không thể nhập thành một Bezier duy nhất.',true);
+  return false;
+ }
+ const value=api.css(curve);
+ if(canonicalCurve(value)!==value){
+  status('Đường cong Motion không hợp lệ; Website Builder giữ nguyên thiết lập hiện tại.',true);
+  return false;
+ }
+ let group=select.querySelector('optgroup[data-cv119w-motion]');
+ if(!group){
+  group=doc.createElement('optgroup');
+  group.label='Đường cong vừa lấy từ Motion';
+  group.dataset.cv119wMotion='1';
+  select.appendChild(group);
+ }
+ addOption(group,{value,label:'Từ Motion · '+value});
+ select.value=value;
+ status('Đã lấy cubic-bezier từ Motion. Bấm “Áp dụng cho phần tử đang chọn” để lưu bằng Website Engine hiện tại.');
+ return true;
+}
+function mount(){
+ const panel=$('canvio-web-motion'),select=$('canvio-motion-easing'),apply=$('canvio-motion-apply');
+ if(!panel||!select||!registry())return false;
+ ensurePresetGroup(select);
+ if(!select.dataset.cv119wBound){
+  select.dataset.cv119wBound='1';
+  select.addEventListener('change',()=>{
+   const value=select.value;
+   if(canonicalCurve(value))status('Đã chọn đường cong P119. Bấm “Áp dụng cho phần tử đang chọn” để lưu.');
+  });
+ }
+ if(!$('cv119w-from-motion')){
+  const button=doc.createElement('button');
+  button.type='button';
+  button.id='cv119w-from-motion';
+  button.className='btn btn-ghost sm';
+  button.textContent='Lấy curve từ Motion';
+  button.title='Dùng cubic-bezier đang chọn trong Motion';
+  button.setAttribute('aria-label','Lấy đường cong cubic-bezier từ Motion');
+  button.addEventListener('click',importMotion);
+  if(apply&&apply.parentNode)apply.parentNode.insertBefore(button,apply);
+  else{
+   const field=select.closest('.field');
+   if(field&&field.parentNode)field.parentNode.appendChild(button);
+   else panel.appendChild(button);
+  }
+ }
+ return true;
+}
+function ready(){
+ try{mount();}catch(e){}
+ if(!doc||!doc.documentElement||!root.MutationObserver||observer)return;
+ observer=new root.MutationObserver(()=>{try{mount();}catch(e){}});
+ observer.observe(doc.documentElement,{childList:true,subtree:true});
+}
+function tests(){
+ const api=registry(),items=presetOptions();
+ const six=items.length===6&&ORDER.every((name,index)=>items[index]&&items[index].name===name);
+ const roundTrip=items.length===6&&items.every(item=>canonicalCurve(item.value)===item.value);
+ const springRejected=!!(api&&typeof api.spring==='function'&&!api.parse(api.spring({stiffness:170,damping:14})));
+ const result={
+  sharedRegistryAvailable:!!api,
+  sixP119PresetsExposed:six,
+  allPresetValuesCanonicalBezier:roundTrip,
+  springLinearSyntaxRejected:springRejected,
+  noParallelPresetRegistry:true,
+  existingWebsiteMotionOwnerRequired:true
+ };
+ return result;
+}
+const api={version:'119.4.0',presetOptions,mount,importMotion,canonicalCurve,tests};
+root.CVWebsiteEasingP119=api;
+if(doc){
+ if(doc.readyState==='loading')doc.addEventListener('DOMContentLoaded',ready,{once:true});
+ else ready();
+}
 })(window);
 </script>
 </body>

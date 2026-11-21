@@ -228,3 +228,9 @@ Chỉ kiểm bằng tín hiệu/tệp tổng hợp và Chromium headless; chưa 
 - P119.3 adds the shared six-preset registry to the existing Video Engine motion inspector; custom cubic-bezier from #motionEase maps into the native vtKFEasing/Bezier inputs. Use native Apply/Undo/snapshot only.
 - The evaluator delegates to CVEasingP119.bez only when its three-decimal normalisation is lossless and its Y range is representable; older curves use the original solver. Spring linear() is not treated as a cubic-Bezier.
 - Verify Node P119.3 and real Chromium image-clip acceptance; keep Website Engine/CSS timeline open.
+
+## P119.4 Website Motion shared easing — candidate
+
+- Share CVEasingP119.PRESETS and Motion cubic-Bezier with the existing P47 Website Motion Builder. Apply only via existing selected GrapesJS component and Website Engine save/export handlers; do not create a second timeline/store.
+- Accept only canonical cubic-bezier from CVEasingP119.css(); do not treat spring linear() as Bezier.
+- Re-run Node, Chromium and P143 34-pair parity. Manual authored-project, published-host CSP/headers, keyboard/screen-reader and physical-device acceptance remain open.
