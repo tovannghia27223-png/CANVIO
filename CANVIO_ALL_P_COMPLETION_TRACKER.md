@@ -174,3 +174,9 @@ No honest all-P completion claim is possible yet. In addition to P70's 14 open r
 
 - Hosted rerun #371 exposed a bad WebM test assumption: `r_frame_rate=60/1` was used when container duration and avg frame rate were missing, under-measuring a 4.1 s synthetic output as 2.05 s. Video decode/audio preservation remained PASS; only durationWithinTolerance failed.
 - Updated P134 browser acceptance to use actual ffprobe packet PTS and median frame duration, with metadata and 30 fps configured fallback. Run #373 on latest-main PR #54 is pending; keep P143/overall CI unmerged until result.
+
+## P143 Phase 2 — script inventory candidate (2026-11-21)
+
+- Added hosted inventory generator tests/p143/build-inline-source-inventory.cjs and JSON output tests/p143/inline-source-inventory.json covering all canonical script tags in execution order, with ID/type/src/async/defer/bytes/SHA256 and heuristic global references.
+- Report is included in packaged source and upload artifact. Current hosted run will verify generation.
+- Remaining P143: inline CSS/HTML templates/dynamic loaders inventory, semantic dependency DAG, initialization/DOM order review, staged reversible extraction, CSP/offline/rollback.
