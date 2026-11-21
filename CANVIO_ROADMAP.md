@@ -969,3 +969,14 @@ Hosted verification after the ffmpeg repair is complete:
 - PR #64 P135.1 is NOT merged: its hosted run #467 failed at the unrelated P133.2 proxy gate with UI status `Tạo proxy vượt thời gian cho phép.`; no page errors were reported. Its head is now non-mergeable against the updated main and must be rebased/cleaned before another acceptance run. Do not mark P135 complete.
 - PR #65 is a duplicate/stale P139 candidate (mergeable=false; no hosted run). PR #66 is the clean P139.1 candidate stacked on the P135 branch (no hosted run yet); keep P139 partial and do not merge before the P135 base is accepted.
 - P135.1 remains a partial non-destructive adjustment stack; reload persistence, masks/local corrections, smart objects, clone/patch and liquify remain open. P139.1 remains partial; precomp, physical motion blur, word/range selector, expanded keyframe editor and real-project/export acceptance remain open.
+
+
+## Verified mainline update — 2026-11-21 — P133/P135
+
+- PR #68 merged P133 proxy reliability and P135.1 Pixel adjustments. Mainline workflow run 44912553516: 45/45 steps passed (with candidate branch runs #44911472539 44/44 and #44911475373 45/45).
+- P133 fix now handles both a stalled createImageBitmap(video) capture and a stalled Worker frame. Separate watchdogs cause safe fallback to the existing Canvas2D renderer; end-of-range logic avoids requesting a new worker frame after the video ended. Original clip and Video Engine data owner remain unchanged.
+- P135.1 supplies nine non-destructive adjustment types, ordered stack, enable/disable/rename/reorder/delete/reset, bounded undo/redo and derived canvas export through the existing Asset Library.
+- P135 still lacks reload persistence for stack metadata because the current Pixel document snapshot is flattened PNG; masks/local corrections, smart objects, clone/patch and liquify remain open.
+- P133 real long footage, unusual codecs, physical devices; P135 reload persistence/real edit documents remain follow-up.
+- PR #70 P139.1 and PR #71 P120/P126 are separate candidates, not mainline-complete until their own CI and merge.
+
