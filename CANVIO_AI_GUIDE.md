@@ -3726,3 +3726,11 @@ P125.3: `CVScrollFramesP125.PRESETS`, `decimate(frames,maxBytes)`; `buildHtml` n
 - P124/P133/P143 have no standalone source/test owner in the current main tree. P133 must reuse/coordinate with existing Project Vault/IndexedDB/media stores; do not introduce a second source of truth. P143 must be staged and parity-tested, not an all-at-once rewrite.
 - P142 Pages pipeline is confirmed successful on main run #192 (`44819441586`), including build, report and deploy jobs. This does not close real-origin Playwright, Windows/GTX 1650, Firefox/WebKit, touch or physical GPU acceptance.
 - PR #44 documentation reconciliation hosted verify run #320 (`44859258258`) succeeded. Artifact `CANVIO-23.3.111-GITHUB-RUNTIME-VERIFIED-320` SHA-256 `74cb03f31a7c55d94f69376b74f46a22bef1538b473aeca1165c42296f2e69ba`; PR-event branch commit step skipped by workflow design.
+
+## P124.1 — Responsive Auto Layout and reusable Component variants (2026-11-21)
+
+- Standalone owner: `canvio-p124-autolayout.js`; canonical inline lot: `canvio-lot124`; API: `window.CVAutoLayoutP124`.
+- Adds five user-triggered responsive presets (Stack, Row/Flex-wrap, Grid/auto-fit + minmax, Split/auto-fit and Card) and four reusable card surface variants (surface, outline, elevated, soft). Layout dimensions/gaps/text are bounded and user text is HTML-escaped.
+- UI mounts inside the existing `#page-webEngine` only; it inserts into the canonical GrapesJS owner through `CVWeb.addComponents()` and persists through `CV.engines.web.save()`. No second editor, project store, database, remote dependency or network request.
+- Failure boundary: if the editor is unavailable, insertion is refused; if save fails after insertion, the UI reports that the current session may contain the inserted component and directs the user to undo. It never reports a failed save as success.
+- Current scope is **partial**: presets are inserted as editable GrapesJS markup; selecting an arbitrary existing component and converting it to constraints, a visual breakpoint editor, nested component variants/instance synchronization and drag/resize constraint controls are not implemented. Hosted CI validates source parity/API behavior; real GrapesJS CDN, screenshot/responsive/keyboard and screen-reader acceptance remain separate.
