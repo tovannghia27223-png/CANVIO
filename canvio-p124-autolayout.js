@@ -176,7 +176,7 @@ api.tests = function () {
   var g = render('grid', { columns: 4, minWidth: 260, gap: 24 });
   var s = render('split', { minWidth: 360 });
   var r = render('row', { minWidth: 220 });
-  var c = render('card', { variant: 'elevated', title: '<script>alert(1)</script>' });
+  var c = render('card', { variant: 'elevated', title: '<script>alert(1)<' + '/script>' });
   return {
     rejectsUnknownLayout: (function () { try { normalize('unknown'); return false; } catch (e) { return true; } })(),
     clampsColumns: n.columns === 6,
