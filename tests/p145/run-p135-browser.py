@@ -44,9 +44,12 @@ with sync_playwright() as p:
     snap=page.evaluate("CVNativeEngines.pixel.snapshotState()")
     page.evaluate("(s)=>{window.__p135Snapshot=s;window.__p135SnapshotInfo=CVPixelAdjustmentsP135.unpackSnapshot(s)}",snap)
     info=page.evaluate("window.__p135SnapshotInfo")
-    checks['projectSnapshotEmbedsEditableStack']=bool(info and info.get('embedded') and len(info.get('state',{}).get('layers',[]))==1 and info['state']['layers'][0]['value']==150)
+    snapshot_state=info.get('state') if isinstance(info,dict) else None
+    snapshot_layers=snapshot_state.get('layers',[]) if isinstance(snapshot_state,dict) else []
+    checks['projectSnapshotEmbedsEditableStack']=bool(info and info.get('embedded') is True and len(snapshot_layers)==1 and snapshot_layers[0].get('value')==150)
+    checks['snapshotMetadataVersionIsOne']=bool(isinstance(snapshot_state,dict) and snapshot_state.get('version')==1)
     checks['snapshotKeepsOriginalRasterPNG']=bool(info and info.get('dataUrl')==baseline_clean)
-    checks['snapshotSelectedLayerRoundTrip']=bool(info and info.get('state',{}).get('selectedId')==info['state']['layers'][0]['id'])
+    checks['snapshotSelectedLayerRoundTrip']=bool(snapshot_layers and snapshot_state.get('selectedId')==snapshot_layers[0].get('id'))
     page.evaluate("CVNativeEngines.pixel.restoreState(window.__p135Snapshot)")
     page.wait_for_function("window.CVPixelAdjustmentsP135.getState().layers.length===1 && window.CVNativeEngines.pixel.canvas.style.filter.includes('brightness(150%)')",timeout=30000)
     checks['projectSnapshotRestoreRehydratesStack']=page.evaluate("CVPixelAdjustmentsP135.getState().layers[0].value===150")
