@@ -79,9 +79,9 @@ with sync_playwright() as p:
       el.value=v;el.dispatchEvent(new Event('change',{bubbles:true}));
     }""")
     page.evaluate("CV.go('videoEngine')")
+    page.evaluate("(id)=>CV.engines.video.select(id)",clip_id)
     page.wait_for_selector('#vtProps details',timeout=30000)
     page.locator('#vtProps details').first.locator('summary').click()
-    page.evaluate("(id)=>CV.engines.video.select(id)",clip_id)
     page.select_option('#cv119v-select','motion')
     checks['customMotionCurveLoaded']=page.evaluate("""()=>{
       const v=document.getElementById('vtKFEasing').value;
@@ -100,6 +100,8 @@ with sync_playwright() as p:
       el.value=v;el.dispatchEvent(new Event('change',{bubbles:true}));
     }""")
     page.evaluate("(id)=>CV.engines.video.select(id)",clip_id)
+    page.wait_for_selector('#vtProps details',timeout=30000)
+    page.locator('#vtProps details').first.locator('summary').click()
     before=page.locator('#vtKFCurveX1').input_value()
     page.select_option('#cv119v-select','motion')
     checks['springCurveRejectedWithoutMutation']=page.locator('#vtKFCurveX1').input_value()==before and 'linear()' in page.locator('#cv119v-status').inner_text()
