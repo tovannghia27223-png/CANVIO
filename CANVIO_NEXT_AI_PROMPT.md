@@ -180,3 +180,12 @@ Chỉ kiểm bằng tín hiệu/tệp tổng hợp và Chromium headless; chưa 
 
 - P139.1 now wraps existing Motion Lab draw and routes matching text-layer Canvas2D fillText calls through the per-character animator; verify P139 Node + Chromium CI before merge.
 - P139 is partial until real project/export/target device review. Do not add a second canvas/timeline/store; preserve existing Motion Lab snapshot/restore as owner.
+
+
+## Latest verified continuation — 2026-11-21 — P120/P126
+
+- Main includes P120/P126 local ComfyUI connector via existing P128; PR #73 merge 1e2e0b1a, hosted CI #44914277311 48/48.
+- It connects to loopback ComfyUI, imports API graph, supports explicit prompt/media input mapping and optional media upload, polls job history, downloads output and saves to current Asset Library. No cloud/key/auto-installer.
+- Keep P120/P126 partial until real free local ComfyUI models/nodes are tested on target hardware, with CORS, licensing and output quality checked.
+- Continue P137.2 and P119.2 clean-main PRs, verify CI, merge and append exact results to this Guide/Roadmap/Tracker/QA/Session Summary/Acceptance Matrix. P70 still has 14 open real-world gates.
+
