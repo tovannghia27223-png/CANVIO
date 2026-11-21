@@ -68,3 +68,9 @@ Pull trước (`git pull --rebase origin main`; CI bot hay push commit build). A
 - P124 Auto Layout: five presets/four variants; Chromium 9/9. P133.2 proxy: 4K synthetic clip generates 1280×720 WebM with Opus audio, full decode, new timeline clip and untouched original. P144.3 contextual help: all 38 CVWS routes covered; tour and keyboard smoke pass.
 - Began P143 Phase 1: 20-module standalone/inline-lot source registry and parity test. Hosted run #363 passed source integration, syntax, P143 parity audit, full HTML audit, P47–P70 regressions, integration source contracts and P107 ZIP round-trip; same-origin browser phase was still running.
 - Updated Guide, Roadmap, tracker, QA, acceptance matrix, handoff prompt and this summary.
+
+## P143 Phase 1 — rebased onto current main
+
+- Prior branch completed hosted run #363 PASS 39/39; P143 parity audit, full HTML/JS audit, P47–P70 regression, source contracts, P107 ZIP and same-origin browser acceptance all passed.
+- Main changed after PR #51 reconciliation, so created work/p143-source-parity-rebased-20261121 and carried the 20-module parity gate/plan over to current main; new hosted run pending.
+- Full P143 remains open pending full inline inventory, dependency/boot-order DAG and staged extraction.
