@@ -40,3 +40,10 @@ Pull trước (`git pull --rebase origin main`; CI bot hay push commit build). A
 - Bản nhẹ phân tích chuyển động + cạnh/độ tương phản, chọn crop 9:16 hoặc 1:1; xuất WebM tại 720×1280 / 1080×1080. File cục bộ ≤100 MiB, ≤60 giây; không dùng face model, không gửi mạng, không thay timeline/store.
 - Đã thêm bước tích hợp lot canvio-lot134r và lệnh Node/browser test vào hosted workflow. Kết quả CI/PR chưa được xác nhận trong báo cáo này.
 - Chưa nghiệm thu: full-app same-origin CI, footage đời thực dài, âm thanh bằng tai người, Firefox/WebKit và mobile thật. Auto Reframe có thể bám texture/contrast không phải chủ thể.
+
+
+## P144.3 — Contextual help across Studio routes
+
+- Tạo branch work/p144-studio-help-20261121; nâng CVUxP144 lên 144.3.0, mở rộng TIPS theo các route thực tế của CVWS cho Design, Website/Profile, Media và utility pages.
+- Thêm API coverage assertions và Chromium route coverage test; cập nhật workflow để nhúng source mới vào canvio-lot144u.
+- Guide, Roadmap, Tracker, Next AI Prompt, QA report và Acceptance Matrix được cập nhật. CI pending; chưa merge.
