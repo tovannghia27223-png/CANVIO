@@ -855,3 +855,10 @@ Hosted verification after the ffmpeg repair is complete:
 - Added page-specific guidance for all 13, using Guide-documented behavior and explicit boundaries (e.g. collab is local notes/activity, Prompt Forge is prompt handoff, Shield does not certify server headers).
 - P133.2 passed all 11 Chromium checks in the same run, including actual timeline import, clip duration, audio, full decode and original preservation. P124 passed 9/9.
 - Rerun required to verify all 38 CVWS routes have contextual help; no merge claim until that coverage check passes.
+
+## P143 Phase 1 — source registry and parity gate (2026-11-21 · candidate)
+
+- Thêm tests/p143/source-module-map.json và tests/p143/run-p143-source-parity.cjs cho 20 module độc lập do hosted workflow quản lý.
+- Sau bước nhúng module, test kiểm mỗi inline lot đúng một lần, cú pháp standalone/embedded, nội dung hai bản trùng nhau sau chuẩn hóa CRLF, không import ES module và không chứa literal </script> có thể cắt HTML.
+- Thêm CANVIO_P143_SOURCE_SPLIT_PLAN.md mô tả 4 giai đoạn: inventory/dependency DAG, extraction đảo ngược từng module, CSS/assets boundary.
+- Đây mới là P143 Phase 1; chưa tuyên bố tách toàn bộ index.html. Còn inventory mọi inline script/style, phân tích boot order, di chuyển từng owner và kiểm offline/CSP/rollback.
