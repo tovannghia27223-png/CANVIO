@@ -71,6 +71,7 @@ with sync_playwright() as p:
         saved:ok,recordFound:!!rec,recordLayer:!!(rec&&rec.state.adjustments.layers.some(x=>x.type==='brightness'&&x.value===150))};
     }""")
     checks['projectSnapshotIncludesAdjustmentStack']=project_record['snapshotMarker'] and project_record['snapshotLayer']
+    checks['projectBridgeAvailableBeforeSave']=page.evaluate("!!CVUnifiedLayers.__p135ProjectBridge && CVPixelAdjustmentsP135.getState().projectPersistenceAvailable")
     checks['projectVaultSavedAdjustmentMetadata']=project_record['saved'] and project_record['recordFound'] and project_record['recordLayer']
     page.reload(wait_until='commit',timeout=60000)
     page.wait_for_function("!!(window.CVPixelAdjustmentsP135 && window.CVUnifiedLayers && window.CANVIOPersistentProjects)",timeout=90000)
