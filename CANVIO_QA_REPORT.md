@@ -463,3 +463,11 @@ Status: pending hosted PR verification. Do not treat this section as a PASS repo
 - P143.3: new style/template/dynamic-loader report generator and validator are wired into the candidate workflow and artifact. CSS/global dependency candidates are heuristic, not semantic.
 - No hosted test result has been observed for this branch at the time of this note. First candidate workflow must be inspected before merge. P70 remains uncertified; its fourteen real-world gates are deferred, not passed.
 
+ 
+## P135.1 candidate QA note — 2026-11-21
+
+- Added canvio-p135-adjustments.js and the embedded canvio-lot135a through the candidate workflow. The source and browser suites are wired but the new branch's hosted result has not yet been observed.
+- Existing Pixel raster snapshot is intentionally unchanged during preview; export applies CSS-equivalent filters to a separate output canvas. Asset Library save is delegated to the existing CV.assets.addBlob API.
+- Candidate checks: model bounds/unknown type handling/duplicate ID filtering/order/disabled layers/layer cap; same-origin browser panel, preview CSS, source PNG unchanged, layer undo/redo, exported PNG signature/dimensions/pixel change and existing Asset Library owner invocation.
+- Do not report P135.1 as PASS until the hosted run executes both the Node and Chromium suites. Current PR #60 run did execute the font setup and the P119/P118/P141/P128/P137 Node suites successfully, but the overall workflow then stopped at the pre-existing P133 proxy-browser timeout. This does not verify P135.
+- Explicit limits: no editable stack persistence across reload, no masks/local corrections, no production target-device performance or visual acceptance. P70 remains not certified.
