@@ -25,7 +25,7 @@ Sau mỗi lô: cập nhật `CANVIO_ROADMAP.md` (Đã có / Một phần / Chưa
 ## Cập nhật 2026-11-20 (sau P145 core)
 Đã có thêm: P127.3 (LUFS), P127.5 (mẫu), P125.1/P125.3/P125.4-phần giảm dung lượng (web cuộn từ video), P145 core (giấy phép, cue sheet, kiểm font, data merge, JSONL).
 Pull trước khi làm: CI bot hay push commit "build: commit verified ..." lên main; dùng `git pull --rebase origin main`.
-Việc còn mở theo thứ tự gợi ý: P125.2 editor cuộn; P132 xuất GIF/APNG/WebP động; P136 Image Trace; P137 kiểu đoạn/bảng/luồng chữ; P138 khử ồn + TTS; P145.3 SFX Web Audio; P145.2 shader chuyển cảnh; P134 waveform/vectorscope; P124 Auto Layout/Component; P133 OPFS/proxy; P143 tách mã; P144 Command Palette; P145.4b trình phát nhúng tự phát; P130 (chặn: cần Supabase thật); P142 kiểm Firefox/WebKit/cảm ứng.
+Việc còn mở theo thứ tự gợi ý: P125.2 editor cuộn; P132 xuất GIF/APNG/WebP động; P136 Image Trace; P137 kiểu đoạn/bảng/luồng chữ; P138 khử ồn + TTS; P145.3 SFX Web Audio; P145.2 shader chuyển cảnh; P134 waveform/vectorscope; P124 follow-up (selected-component constraints/breakpoint UI/variants); P133 OPFS/proxy; P143 tách mã; P144 Command Palette; P145.4b trình phát nhúng tự phát; P130 (chặn: cần Supabase thật); P142 kiểm Firefox/WebKit/cảm ứng.
 Quy tắc nhúng: mỗi lot là `<script id="canvio-lotNNN">` + bản độc lập `canvio-pNNN-*.js`; không viết chuỗi `</script>` thật trong mã (dùng `<\/script>`); index.html dùng CRLF, sửa bằng đọc/ghi nhị phân.
 
 ## Cập nhật 2026-11-21 — P124.1
