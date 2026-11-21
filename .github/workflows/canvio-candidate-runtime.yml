@@ -15,6 +15,7 @@ on:
       - work/p132-apng
       - main
       - work/canvio-p135-adjustments-20261121
+      - work/canvio-p139-rebased-20261121
   pull_request:
     branches:
       - main
@@ -606,6 +607,35 @@ jobs:
           console.log('P135.1 Pixel adjustment stack embedded in canonical index.html');
           NODE
 
+      - name: Integrate P139.1 Motion Lab parent/null and text animator
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs=require('node:fs');
+          const file='index.html',source=fs.readFileSync('canvio-p139-motionlab.js','utf8').trim(),open='<script id="canvio-lot139">',close='</script>';
+          if(!source.includes('CVMotionLabP139'))throw new Error('P139.1 source contract missing');
+          let html=fs.readFileSync(file,'utf8'),tag=open+'\n'+source+'\n'+close;
+          const pos=html.indexOf(open);
+          if(pos>=0){const end=html.indexOf(close,pos);if(end<0)throw new Error('P139.1 embedded lot is not closed');html=html.slice(0,pos)+tag+html.slice(end+close.length);}
+          else{const body=html.lastIndexOf('</body>');if(body<0)throw new Error('index.html body close missing');html=html.slice(0,body)+tag+'\n'+html.slice(body);}
+          const frameHook="ctx.textAlign='center';objs.filter(o=>!o.hidden).forEach(o=>{";
+          const transformHook="ctx.translate(x,y);ctx.rotate(rot);ctx.scale(scale,scale);ctx.fillStyle=o.color;";
+          const textHook="ctx.fillText(o.text,0,0)";
+          for (const [needle,replacement,label] of [
+            [frameHook,"ctx.textAlign='center';if(window.CVMotionLabP139)window.CVMotionLabP139.beginFrame(objs,time);objs.filter(o=>!o.hidden).forEach(o=>{","beginFrame"],
+            [transformHook,"if(window.CVMotionLabP139)window.CVMotionLabP139.applyParentTransform(o,time,ctx);ctx.translate(x,y);ctx.rotate(rot);ctx.scale(scale,scale);ctx.fillStyle=o.color;","parent transform"],
+            [textHook,"if(window.CVMotionLabP139)window.CVMotionLabP139.drawText(ctx,o,time);else ctx.fillText(o.text,0,0)","text animator"]
+          ]) {
+            const count=html.split(needle).length-1;
+            if (count!==1) throw new Error("P139 "+label+" source anchor count="+count);
+            html=html.replace(needle,replacement);
+          }
+          if((html.match(/id="canvio-lot139"/g)||[]).length!==1)throw new Error('P139.1 duplicate/missing lot');
+          fs.writeFileSync(file,html,'utf8');
+          console.log('P139.1 Motion Lab parent/null and text animator embedded with render hooks');
+          NODE
+
       - name: Run integrated source contracts and real P107 ZIP round-trip tests
         shell: bash
         run: |
@@ -657,6 +687,7 @@ jobs:
           node tests/p127/run-p128o-tests.cjs
           node tests/p127/run-p137s-tests.cjs
           node tests/p127/run-p135a-tests.cjs
+          node tests/p127/run-p139-tests.cjs
           node tests/hosted/p107-portable-roundtrip.cjs
 
       - name: Install Chromium and Playwright for hosted runtime acceptance
@@ -718,6 +749,7 @@ jobs:
           /tmp/canvio-playwright/bin/python tests/p145/run-p140-browser.py
           /tmp/canvio-playwright/bin/python tests/p124/run-p124-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p135-browser.py
+          /tmp/canvio-playwright/bin/python tests/p145/run-p139-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p133-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p133-proxy-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p144-browser.py
