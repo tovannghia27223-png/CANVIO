@@ -376,3 +376,9 @@ The candidate workflow runs standalone/embedded source parity and API tests for 
 - P122.3 MCP, P124 Auto Layout/Component, P133 OPFS/proxy and P143 full code split have no source/test owner in the current main tree; P144 overlaps P109's existing palette and needs scope parity review. P130 remains blocked on real backend/RLS/two-device infrastructure.
 - P142 Pages deployment main run #192 (`44819441586`) passed build, report and deploy jobs; real-origin/browser/physical-device matrix remains manual.
 - P70 remains fail-closed with 14/14 real-world gates open.
+
+
+## P144.3 — Contextual Studio help candidate (2026-11-21)
+
+- Existing CVUxP144 owner version 144.3.0; contextual tips expanded across all registered CVWS routes and utility pages.
+- Node route assertions and hosted Chromium route coverage test are wired into the runtime workflow. Pending hosted result; no PASS/merge claim yet.
