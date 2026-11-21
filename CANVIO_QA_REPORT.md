@@ -461,6 +461,13 @@ Status: pending hosted PR verification. Do not treat this section as a PASS repo
 - P124.2: source now exposes five layouts, four surface variants and configurable title/description/gap/minimum-width/mobile/tablet breakpoints and column counts. Node suite updated to 16 module checks plus direct CSS and save-path assertions; Chromium suite updated to 12 UI checks.
 - P133.3: proxy scaler attempts a same-origin Blob Worker with OffscreenCanvas and ImageBitmap transfer; it falls back to main-thread canvas when unavailable or failed. Browser acceptance now explicitly expects renderPath === 'offscreen-worker' in hosted Chromium and checks fallback API, 720p dimensions, audio, full decode, source preservation and timeline insertion.
 - P143.3: new style/template/dynamic-loader report generator and validator are wired into the candidate workflow and artifact. CSS/global dependency candidates are heuristic, not semantic.
+
+## P143.4 lexical global-reference ordering map — candidate QA scope
+
+- The lexical scanner ignores comments, quoted strings, regex literals and whole template literals before classifying global references. Static provider candidates are limited to window/globalThis assignments and simple top-level bindings.
+- The generated report resolves only reads with an earlier static provider. It records SHA/order evidence and classifies multiple prior writers, same-script references and unresolved reads; the validator checks counts, ordering and source hashes.
+- This is not an AST, dynamic call graph, module loader trace or proof of runtime initialization. Alias/destructuring, template interpolation, conditional code paths and invocation order remain manual. No code is extracted or reordered.
+
 - No hosted test result has been observed for this branch at the time of this note. First candidate workflow must be inspected before merge. P70 remains uncertified; its fourteen real-world gates are deferred, not passed.
 
 
