@@ -657,11 +657,44 @@ jobs:
           console.log('P119.3 integrated shared presets and P119 easing solver into the existing Video Engine; P143 pairs:',map.totalModules);
           NODE
 
+      - name: Integrate P119.4 shared easing with Website Motion Builder
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs=require('node:fs');
+          const file='index.html',source=fs.readFileSync('canvio-p119-website.js','utf8').trim();
+          const id='canvio-lot119w',open='<script id="'+id+'">',close='</script>';
+          if(!source.includes("version:'119.4.0'")||!source.includes('CVWebsiteEasingP119'))throw new Error('P119.4 source contract/version missing');
+          let html=fs.readFileSync(file,'utf8'),tag=open+'\n'+source+'\n'+close,pos=html.indexOf(open);
+          if(pos>=0){const end=html.indexOf(close,pos);if(end<0)throw new Error('P119.4 embedded lot is not closed');html=html.slice(0,pos)+tag+html.slice(end+close.length);}
+          else{const at=html.lastIndexOf('</body>');if(at<0)throw new Error('P119.4 body close missing');html=html.slice(0,at)+tag+'\n'+html.slice(at);}
+          const old="easingOptions=['linear','ease','ease-in','ease-out','ease-in-out','cubic-bezier(.2,.7,.2,1)'];if(easingOptions.indexOf(easing)<0)easing='cubic-bezier(.2,.7,.2,1)';";
+          const shared="easingOptions=['linear','ease','ease-in','ease-out','ease-in-out','cubic-bezier(.2,.7,.2,1)'];var p119Api=window.CVEasingP119,p119Curve=p119Api&&typeof p119Api.parse==='function'?p119Api.parse(easing):null,p119CurveAllowed=!!(p119Curve&&typeof p119Api.css==='function'&&p119Api.css(p119Curve)===easing);if(easingOptions.indexOf(easing)<0&&!p119CurveAllowed)easing='cubic-bezier(.2,.7,.2,1)';";
+          if(!html.includes('p119CurveAllowed')){
+            const count=html.split(old).length-1;
+            if(count!==1)throw new Error('P119.4 expected one canonical Website Motion easing validator; found '+count);
+            html=html.replace(old,shared);
+          }
+          if((html.match(/id="canvio-lot119w"/g)||[]).length!==1)throw new Error('P119.4 duplicate/missing inline lot');
+          if(!html.includes('p119CurveAllowed')||!html.includes('window.CVEasingP119'))throw new Error('P119.4 canonical Website Motion validator missing');
+          fs.writeFileSync(file,html,'utf8');
+          const mapPath='tests/p143/source-module-map.json',map=JSON.parse(fs.readFileSync(mapPath,'utf8'));
+          const item={source:'canvio-p119-website.js',scriptId:id};
+          const at=map.modules.findIndex(x=>x.source===item.source||x.scriptId===id);
+          if(at>=0)map.modules[at]=item;else map.modules.push(item);
+          map.description=String(map.description||'').replace(/33 standalone/g,'34 standalone');
+          map.totalModules=map.modules.length;
+          if(map.totalModules!==34||map.modules.filter(x=>x.source===item.source).length!==1)throw new Error('P119.4 P143 registry must contain exactly 34 unique pairs');
+          fs.writeFileSync(mapPath,JSON.stringify(map,null,2)+'\n');
+          console.log('P119.4 uses the single P119 preset/curve registry in Website Motion Builder; P143 pairs:',map.totalModules);
+          NODE
+
       - name: Extract and syntax-check integrated modules and workers
         run: |
           set -euo pipefail
           node scripts/extract-integrated-modules.mjs
-          for file in canvio-p74-p81-three-viewer.js canvio-p85-studio.js canvio-p102-background-removal.js canvio-p105-p107-depth-parallax.js canvio-p68-p70.js canvio-p72-glb-viewer.js canvio-p73-offline-site.js canvio-p82-p84-vector-pdf.js canvio-p87-cv-docx.js canvio-p90-p96.js canvio-p97-p101.js canvio-p104.js canvio-p127-duck.js canvio-p145-shader.js canvio-p119-video.js assets/canvio-rmbg-worker.js assets/canvio-depth-worker.js assets/canvio-whisper-worker.js; do node --check "$file"; done
+          for file in canvio-p74-p81-three-viewer.js canvio-p85-studio.js canvio-p102-background-removal.js canvio-p105-p107-depth-parallax.js canvio-p68-p70.js canvio-p72-glb-viewer.js canvio-p73-offline-site.js canvio-p82-p84-vector-pdf.js canvio-p87-cv-docx.js canvio-p90-p96.js canvio-p97-p101.js canvio-p104.js canvio-p127-duck.js canvio-p145-shader.js canvio-p119-video.js canvio-p119-website.js assets/canvio-rmbg-worker.js assets/canvio-depth-worker.js assets/canvio-whisper-worker.js; do node --check "$file"; done
 
       - name: P143 standalone source and canonical lot parity audit
         shell: bash
@@ -787,6 +820,7 @@ jobs:
           node tests/p127/run-p144u-tests.cjs
           node tests/p127/run-p119e-tests.cjs
           node tests/p127/run-p119v-tests.cjs
+          node tests/p127/run-p119w-tests.cjs
           node tests/p127/run-p118w-tests.cjs
           node tests/p127/run-p141f-tests.cjs
           node tests/p127/run-p128o-tests.cjs
@@ -861,6 +895,7 @@ jobs:
           /tmp/canvio-playwright/bin/python tests/p145/run-p144t-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p119-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p119v-browser.py
+          /tmp/canvio-playwright/bin/python tests/p145/run-p119w-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p118-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p141-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p128-browser.py
@@ -1383,6 +1418,82 @@ jobs:
 
           - Shared P119 presets/custom curve are presented inside existing Video Engine keyframe inspector; selected values are written into the native cubic-Bezier controls and saved only by native Apply. Existing timeline undo/snapshot path remains owner.
           - Node + Chromium acceptance and P143 parity are required before merge; CSS Website Engine timeline and hardware/GPU performance are not claimed.
+          SESSION
+          fi
+
+      - name: Record P119.4 shared easing with Website Motion Builder
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! grep -q '## P119.4 — P119 shared easing in Website Motion Builder' CANVIO_AI_GUIDE.md; then
+            cat >> CANVIO_AI_GUIDE.md <<'GUIDE'
+
+          ## P119.4 — P119 shared easing in Website Motion Builder
+
+          - Extends the existing P47 Website Motion Builder with the six named values read directly from the existing CVEasingP119.PRESETS registry. It does not maintain a duplicate list of curve coordinates or add another animation engine.
+          - The existing #motionEase cubic-bezier can be imported into #canvio-motion-easing through an explicit “Lấy curve từ Motion” action. Import stages the value; the user still has to select the component and click the existing Apply action.
+          - Only canonical cubic-bezier CSS produced by CVEasingP119.css() is accepted by the P47 apply validator. Spring linear() output remains unsupported as a cubic-Bezier and is rejected without changing the selected Website value.
+          - Existing GrapesJS component attributes/styles, CV.engines.web.save(), Website Publish QC export wrapper and reduced-motion runtime remain the owners. No second component store, animation timeline, easing registry or export runtime is created.
+          - Tests: tests/p127/run-p119w-tests.cjs checks registry contract, canonical preset values and rejection rules; tests/p145/run-p119w-browser.py checks the real Chromium panel, six values, Motion import, Apply/Clear contract, export runtime and zero page errors using a deterministic component contract fixture.
+          - Website Engine does not yet have a graph editor of its own; it reuses the Motion graph as the single authoring surface. Real GrapesJS component selection, publish-host CSP/headers, keyboard review and target-device reduced-motion review remain manual acceptance.
+
+          GUIDE
+          fi
+          if ! grep -q 'P119.4 Website Motion shared easing QA' CANVIO_QA_REPORT.md; then
+            cat >> CANVIO_QA_REPORT.md <<'QA'
+
+          ## P119.4 Website Motion shared easing QA
+
+          - Node contract suite verifies all six preset options are derived from CVEasingP119.PRESETS, each value is canonical CSS cubic-bezier, arbitrary CSS and spring linear() are rejected, and the module has no independent persistence owner.
+          - Hosted Chromium verifies the existing Website Motion Builder panel receives six P119 options, a custom cubic-Bezier can be staged from Motion, the existing Apply/Clear callbacks write/remove component attributes/styles and use CV.engines.web.save(), and exported HTML retains the easing CSS variable plus prefers-reduced-motion fallback.
+          - The browser component is a deterministic GrapesJS-compatible fixture; this is an adapter-contract test, not manual review of an authored user project, deployed publish origin, or physical mobile accessibility.
+          QA
+          fi
+          if ! grep -q '## P119.4 — P119 shared easing for Website Motion Builder' CANVIO_ROADMAP.md; then
+            cat >> CANVIO_ROADMAP.md <<'ROADMAP'
+
+          ## P119.4 — P119 shared easing for Website Motion Builder
+
+          - Reuse CVEasingP119.PRESETS and the existing #motionEase cubic-Bezier graph in Website Motion Builder. A selected component receives the curve through the original P47 Apply/Save path and exports it through the original Website Publish QC runtime.
+          - There is one source of truth for named curves; CSS linear() spring remains a separate representation and is not coerced into Bezier. Reduced-motion fallback remains enabled.
+          - The graph remains in Motion; Website Engine intentionally shares the curve rather than opening a second graph or timeline. Manual author-project, deployed-host CSP and accessibility checks remain open.
+          ROADMAP
+          fi
+          if ! grep -q '## P119.4 shared easing with Website Engine' CANVIO_ALL_P_COMPLETION_TRACKER.md; then
+            cat >> CANVIO_ALL_P_COMPLETION_TRACKER.md <<'TRACKER'
+
+          ## P119.4 shared easing with Website Engine
+
+          - Adds six P119 preset options and explicit Motion cubic-Bezier import to the existing P47 Website Motion Builder. Apply/Clear still target the selected GrapesJS component and canonical Website Engine save/export owner.
+          - Candidate acceptance: P119.4 Node contract, hosted Chromium adapter/export test, P143 34-pair source parity and full hosted runtime workflow.
+          - No second easing registry, graph, animation timeline, store, local persistence or paid dependency is added. The UI reuses the Motion graph and original reduced-motion export.
+          - Real authored project, external publish host CSP/headers, keyboard/screen-reader and physical-device checks remain manual.
+          TRACKER
+          fi
+          if ! grep -q '| P119.4 Website Motion shared easing |' CANVIO_FINAL_ACCEPTANCE_MATRIX.md; then
+            cat >> CANVIO_FINAL_ACCEPTANCE_MATRIX.md <<'MATRIX'
+
+          | P119.4 Website Motion shared easing | Node derives six curves from CVEasingP119; Chromium checks import/apply/clear, canonical component attributes/styles, Website save hook and reduced-motion export; P143 34-pair parity | Real authored projects, production publish host/CSP, keyboard/screen-reader and physical device review remain manual. |
+          MATRIX
+          fi
+          if ! grep -q '## P119.4 Website Motion shared easing — candidate' CANVIO_NEXT_AI_PROMPT.md; then
+            cat >> CANVIO_NEXT_AI_PROMPT.md <<'PROMPT'
+
+          ## P119.4 Website Motion shared easing — candidate
+
+          - Share CVEasingP119.PRESETS and Motion cubic-Bezier with the existing P47 Website Motion Builder. Apply only via existing selected GrapesJS component and Website Engine save/export handlers; do not create a second timeline/store.
+          - Accept only canonical cubic-bezier from CVEasingP119.css(); do not treat spring linear() as Bezier.
+          - Re-run Node, Chromium and P143 34-pair parity. Manual authored-project, published-host CSP/headers, keyboard/screen-reader and physical-device acceptance remain open.
+          PROMPT
+          fi
+          if ! grep -q '## P119.4 Website Motion shared easing — candidate' CANVIO_SESSION_SUMMARY_2026-11-21.md; then
+            cat >> CANVIO_SESSION_SUMMARY_2026-11-21.md <<'SESSION'
+
+          ## P119.4 Website Motion shared easing — candidate
+
+          - Added shared P119 preset/curve adapter for the existing Website Motion Builder; Motion custom Bezier imports explicitly and user commits with existing Apply.
+          - Reuses existing GrapesJS component attributes/styles, Website save and publish runtime with reduced-motion fallback. No duplicate registry/timeline/store.
+          - Candidate requires successful Node/Chromium/P143 parity and post-merge hosted run; real authored project/publish-host/assistive technology/mobile acceptance remains open.
           SESSION
           fi
 
