@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "description": "P143 phase-1 source registry for 28 standalone feature modules integrated into canonical inline script lots. The canonical inventory covers all script tags; this parity map covers paired standalone files explicitly listed here, not a claim that the whole index is modularized.",
+  "description": "P143 phase-1 source registry for 29 standalone feature modules integrated into canonical inline script lots. The canonical inventory covers all script tags; this parity map covers paired standalone files explicitly listed here, not a claim that the whole index is modularized.",
   "modules": [
     {
       "source": "canvio-p125-scrollframes.js",
@@ -113,7 +113,11 @@
     {
       "source": "canvio-p133-media-opfs.js",
       "scriptId": "canvio-lot133m"
+    },
+    {
+      "source": "canvio-p139-motionlab.js",
+      "scriptId": "canvio-lot139"
     }
   ],
-  "totalModules": 28
+  "totalModules": 29
 }
