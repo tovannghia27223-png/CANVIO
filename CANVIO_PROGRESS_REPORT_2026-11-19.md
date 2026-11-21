@@ -109,3 +109,11 @@ This batch is not a completion claim for P115–P145 and does not certify CANVIO
 - P136.4 is merged in PR #39; run #312 passed. P131.3 is merged in PR #41; run #315 passed (31 browser checks and app smoke 21/21 across 48 routes). These records supersede the earlier candidate/pending wording.
 - PR #43 was closed as a stale duplicate after confirming P145.10 was already on main; no source changes were discarded.
 - Remaining partial or external work is not silently counted as finished: P122 wider content/history scope, P127 real-speech/editorial quality, P130 actual backend/RLS/two-device recovery, P131 broad importer/zip quotas/server headers, and all fourteen P70 production gates remain open. See `CANVIO_ALL_P_COMPLETION_TRACKER.md`.
+
+## 2026-11-21 — PR #44 documentation audit and hosted acceptance
+
+- Consolidated P status tracker added as `CANVIO_ALL_P_COMPLETION_TRACKER.md`; Guide, Roadmap, QA, Handoff, Acceptance Matrix, Patch Notes and this progress report now carry matching boundaries.
+- Hosted workflow #320 (`44859258258`) passed the verify job, including integration of P125/P127/P131/P132/P136/P145 modules, syntax/HTML audit, P47–P70 regression, source contracts, P107 ZIP, pinned vendor SHA checks and same-origin GLB/P85/ONNX/worker browser acceptance. Artifact digest: `74cb03f31a7c55d94f69376b74f46a22bef1538b473aeca1165c42296f2e69ba`.
+- The audit explicitly restored open backlog items that had been omitted from the earlier short list: P122.3 MCP, P124 Auto Layout/Component, P133 OPFS/proxy, P143 complete code split, and P144 parity with the existing P109 command palette. P130 remains blocked by real Supabase/RLS/two-device requirements.
+- P142 Pages deployment passed run #192; Windows/GTX 1650, Firefox/WebKit/touch and real-origin browser tests remain outstanding.
+- This is a documentation and verification update. It does not state that every P is complete; P70 remains blocked with fourteen real-world acceptance gates open.
