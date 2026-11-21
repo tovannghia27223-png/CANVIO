@@ -159,10 +159,16 @@ function mount() {
   host.appendChild(panel);
   return true;
 }
+function hasPanel() {
+  var host = document && typeof document.getElementById === 'function' ? document.getElementById('page-webEngine') : null;
+  return !!(host && host.querySelector && host.querySelector('[data-canvio-p124-panel]'));
+}
 function start() {
-  mount();
+  if (mount() || hasPanel()) return;
   if (typeof MutationObserver === 'function' && document && document.documentElement) {
-    var observer = new MutationObserver(function () { mount(); });
+    var observer = new MutationObserver(function () {
+      if (mount() || hasPanel()) observer.disconnect();
+    });
     observer.observe(document.documentElement, { childList: true, subtree: true });
   }
 }
