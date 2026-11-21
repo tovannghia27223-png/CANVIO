@@ -59,7 +59,7 @@ with tempfile.TemporaryDirectory() as td:
         page.wait_for_function('!!(window.CV&&CV.go&&window.CVOrchestratorP128&&window.CVComfyP120P126)',timeout=90000,polling=500)
         page.evaluate("CV.go('platform')");page.wait_for_timeout(700)
         page.click('button[data-tab="api"]');page.wait_for_selector('#cv120-card',timeout=30000)
-        page.evaluate("window.__cv120Saved=[];CV.assets.addBlob=async function(blob,name){window.__cv120Saved.push({name:name,type:blob.type,size:blob.size});return true;}")
+        page.evaluate("window.__cv120Saved=[];CV.assets.addBlob=async function(blob,name){if(!blob||typeof blob.size!=='number')return false;window.__cv120Saved.push({name:name,type:blob.type,size:blob.size});return true;}")
         c['mounted']=page.evaluate("!!(document.querySelector('#cv120-connect')&&document.querySelector('#cv120-run'))")
         page.fill('#cv120-url','http://127.0.0.1:%d'%mock.server_address[1])
         page.click('#cv120-connect');page.wait_for_function("document.querySelector('#cv120-connection').textContent.includes('Đã kết nối')",timeout=10000)
