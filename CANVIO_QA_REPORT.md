@@ -473,3 +473,13 @@ Status: pending hosted PR verification. Do not treat this section as a PASS repo
 - PR #64 P135.1 is NOT merged: its hosted run #467 failed at the unrelated P133.2 proxy gate with UI status `Tạo proxy vượt thời gian cho phép.`; no page errors were reported. Its head is now non-mergeable against the updated main and must be rebased/cleaned before another acceptance run. Do not mark P135 complete.
 - PR #65 is a duplicate/stale P139 candidate (mergeable=false; no hosted run). PR #66 is the clean P139.1 candidate stacked on the P135 branch (no hosted run yet); keep P139 partial and do not merge before the P135 base is accepted.
 - P135.1 remains a partial non-destructive adjustment stack; reload persistence, masks/local corrections, smart objects, clone/patch and liquify remain open. P139.1 remains partial; precomp, physical motion blur, word/range selector, expanded keyframe editor and real-project/export acceptance remain open.
+
+
+## Verified mainline QA — P133/P135 — 2026-11-21
+
+- P133 branch #67 CI run 44911472539: 44/44 passed; P135 branch #68 CI run 44911475373: 45/45 passed; post-merge main run 44912553516: 45/45 passed.
+- P133 browser fixture acceptance exercised a 4K-to-720p proxy, OffscreenCanvas Worker path, independent bitmap-capture watchdog, fallback availability, video end handling, output WebM streams/full decode and timeline insertion while preserving the original clip.
+- P135 Node/Chromium checks exercised nine adjustment types, ordered stack behavior, enable/disable, rename/reorder/delete/reset, stack undo/redo, derived-canvas export and Asset Library handoff. Original raster remains unchanged.
+- P135 persistent editable stack state is not claimed: source document remains flattened PNG; adjustments reset on reload/new image. Masks/local adjustments, smart objects, clone/patch and liquify are not covered.
+- CI uses a generated short synthetic video and headless Chromium. This is not long real-footage compatibility, real multi-hour export, physical GPU throughput or cross-device acceptance.
+
