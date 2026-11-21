@@ -870,3 +870,10 @@ Hosted verification after the ffmpeg repair is complete:
 - Branch work/p143-parity-current-main-final-20261121 re-applies the 20-module source parity manifest/audit after main commit 6481d83.
 - Previous candidate run #363 passed the P143 gate and all 39 steps; current branch reruns same-origin browser matrix and build against the latest main.
 - Phase 1 is an integrity control for 20 sources, not a full index split. Full script/style inventory, dependency DAG and staged reversible extraction remain open.
+
+
+## P134.2 browser duration assertion correction (2026-11-21)
+
+- Root cause found in hosted rerun: WebM did not carry format/stream duration and ffprobe reported `r_frame_rate=60/1` while `avg_frame_rate=0/0`, producing an invalid calculated duration (2.05 s for a ~4.1 s output).
+- Updated `tests/p145/run-p134r-browser.py` to prefer video packet PTS range + median packet duration, use actual format/stream duration when available, and reserve the exporter-configured 30 fps fallback for the case where packet timestamps are missing. Added PTS diagnostics.
+- This changes test measurement, not the exporter or 3.5–4.5 s acceptance range. Current-main hosted rerun #373 pending.
