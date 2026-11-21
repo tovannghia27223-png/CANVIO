@@ -81,3 +81,9 @@ Pull trước (`git pull --rebase origin main`; CI bot hay push commit build). A
 - P143 rebased run #371 failed only at P134.2 `durationWithinTolerance`: WebM had 123 frames but no format/stream duration and incorrect 60 fps nominal metadata, so the old test derived 2.05 s instead of ~4.1 s.
 - Updated browser test to measure packet presentation timestamp range plus median packet duration, with 30 fps fallback only when PTS missing. Added packet diagnostics. No tolerance was relaxed and exporter code was unchanged.
 - Latest-main rerun #373 is pending; PR #54 must remain open until full CI succeeds.
+
+## P143 Phase 2 — complete inline script inventory added
+
+- Added inventory generator tests/p143/build-inline-source-inventory.cjs to list every script tag from the restored canonical index.html in execution order, with IDs, type/src, async/defer, byte size, SHA-256 and heuristic known-global reads/exports.
+- It writes tests/p143/inline-source-inventory.json, included in the ZIP and uploaded evidence artifact. Hosted validation for this new step is pending.
+- Does not yet map CSS/templates or establish the full semantic dependency/boot-order DAG; no script reorder/extraction performed.
