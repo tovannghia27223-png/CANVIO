@@ -877,3 +877,9 @@ Hosted verification after the ffmpeg repair is complete:
 - Root cause found in hosted rerun: WebM did not carry format/stream duration and ffprobe reported `r_frame_rate=60/1` while `avg_frame_rate=0/0`, producing an invalid calculated duration (2.05 s for a ~4.1 s output).
 - Updated `tests/p145/run-p134r-browser.py` to prefer video packet PTS range + median packet duration, use actual format/stream duration when available, and reserve the exporter-configured 30 fps fallback for the case where packet timestamps are missing. Added PTS diagnostics.
 - This changes test measurement, not the exporter or 3.5–4.5 s acceptance range. Current-main hosted rerun #373 pending.
+
+## P143 Phase 2 — full inline script inventory (2026-11-21 · candidate)
+
+- Added tests/p143/build-inline-source-inventory.cjs to enumerate all script tags from the rebuilt canonical index.html in exact browser order. Records each script's ID/type/src/async/defer flags, bytes, SHA-256, detected globals and heuristic known-global reads.
+- Generates tests/p143/inline-source-inventory.json, packaged into the candidate ZIP and hosted evidence artifact.
+- This is a full script-tag inventory, not semantic dependency graph. It does not inventory all CSS/template/dynamic script paths or change any loading order. Full P143 extraction remains open until dependencies/boot order are reviewed and extraction staged.
