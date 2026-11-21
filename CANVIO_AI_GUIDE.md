@@ -3729,3 +3729,6 @@ P125.3: `CVScrollFramesP125.PRESETS`, `decimate(frames,maxBytes)`; `buildHtml` n
 ## P140 Charts
 `window.CVChartsP140` {parseTable, build(table,{type,title,colors}), fromCsv, mount, tests}. Lot `canvio-lot140c` khớp `canvio-p140-charts.js`.
 
+## P133 Resilience
+`window.CVResilienceP133` {store.put/get/getText/list/remove/kind, usage, snapshotNow, recoveries, restore(engine), engineNames, crashedSessions, start, mountSettings, tests}. Lot `canvio-lot133r` khớp `canvio-p133-resilience.js`. Khoá localStorage `canvio133:s:<id>` = cờ phiên; tệp `recovery-<engine>.json` trong OPFS `canvio133/`. Engine nào muốn được tự lưu chỉ cần có `snapshotState()` (trả chuỗi/JSON) và `restoreState(raw)`.
+

@@ -799,3 +799,8 @@ Hosted verification after the ffmpeg repair is complete:
 - `canvio-p140-charts.js` (lot `canvio-lot140c`): thẻ "Biểu đồ từ dữ liệu" ở trang Tài nguyên. CSV/TSV (hỗ trợ ô có dấu ngoặc kép, số kiểu 1.234,5 và 1,234.5) → SVG cột/đường/tròn/donut, có title/desc, văn bản được thoát; tải SVG hoặc lưu thẳng vào Tài nguyên. Test: `node tests/p127/run-p140c-tests.cjs`, Chrome thật `tests/p145/run-p140-browser.py` (4 kiểu vẽ được, lưu vào kho).
 - Chưa làm: mockup thiết bị/QR (đã có sẵn một phần), chế độ trình chiếu mở rộng, biểu đồ xếp chồng/scatter.
 
+### P133 (phần bền vững) — OPFS + tự lưu + phục hồi sự cố
+- `canvio-p133-resilience.js` (lot `canvio-lot133r`): kho tệp OPFS (rơi về IndexedDB `CANVIO_133` nếu không hỗ trợ), tên tệp được làm sạch (chặn path traversal). Tự lưu bản phục hồi mỗi 30 giây và khi ẩn/đóng tab cho MỌI engine có `snapshotState`/`restoreState` (mỗi engine 1 bản, ≤ 8 MB, bỏ qua khi không đổi). Phiên trước đóng đột ngột (cờ phiên chưa sạch, nhịp tim quá 90 giây) → thanh khôi phục từng engine. Thẻ "Bộ nhớ & phục hồi" ở Cài đặt: dung lượng, lưu ngay, xin lưu trữ bền vững, xoá bản phục hồi.
+- Test: `node tests/p127/run-p133r-tests.cjs`; Chrome thật `tests/p145/run-p133-browser.py` (OPFS ghi/đọc 3 MB, chặn `../`, mô phỏng crash → tải lại → banner → khôi phục clip).
+- Chưa làm (phần còn lại của P133): proxy 720p cho video 4K, Web Worker/OffscreenCanvas cho xử lý nặng, chuyển tài sản lớn của Asset Vault/Video sang OPFS; chưa thử dựng 10 phút 1080p; chỉ Chromium được kiểm.
+
