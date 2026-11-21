@@ -53,7 +53,7 @@ assert.throws(()=>api.render('unknown'),/không hợp lệ/i);
   assert.equal(failed.saved,false);
   const badSelector=(()=>{try{api.selectedLayoutCss('body','grid',{});return false;}catch(e){return true;}})();
   assert.equal(badSelector,true);
-  assert.match(api.selectedLayoutCss('.cv-p124-selected-node','grid',{desktopColumns:4,tabletColumns:2,mobileColumns:1}),/@media\\(max-width:960px\\)/);
+  assert.match(api.selectedLayoutCss('.cv-p124-selected-node','grid',{desktopColumns:4,tabletColumns:2,mobileColumns:1}),/@media\(max-width:960px\)/);
   assert.match(api.selectedVariantCss('.cv-p124-selected-node','elevated'),/data-canvio-variant="elevated"/);
   const rules=[];
   const selected={classes:[],attributes:{},getId(){return 'chosen-node';},is(){return false;},addClass(name){if(!this.classes.includes(name))this.classes.push(name);},addAttributes(values){Object.assign(this.attributes,values);}};
