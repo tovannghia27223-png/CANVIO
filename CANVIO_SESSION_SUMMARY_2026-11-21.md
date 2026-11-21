@@ -136,3 +136,12 @@ Pull trước (`git pull --rebase origin main`; CI bot hay push commit build). A
 - The editable stack is tab-memory only in this first increment because Pixel `snapshotState()` currently returns a flattened PNG data URL. Page reload/new source clears the stack; flattened exports are not reversible adjustment projects. No second store/DB/timeline/provider/CDN was added.
 - Node parity/model suite: `tests/p127/run-p135a-tests.cjs`; hosted same-origin browser suite: `tests/p145/run-p135-browser.py`. Current-main hosted result is pending; do not record PASS before reviewing its exact run.
 - P135 remains PARTIAL. Editable stack project persistence, masks/local adjustments, smart objects, clone/patch and liquify remain OPEN.
+ 
+## P139.1 — Motion Lab hierarchy + character Text Animator (current-main candidate · 2026-11-21)
+
+- Candidate branch: `work/canvio-p139-mainline-20261121`; source `canvio-p139-motionlab.js`; embedded lot `canvio-lot139`; API `window.CVMotionLabP139`.
+- Adds Null Controller records to existing Motion Lab `objs`: parent/unparent, cycle/type/missing-parent validation, nested translation/rotation/scale composition, and world-position preservation when unparenting/removing a Null.
+- Adds per-grapheme Text Animator modes rise/fade/scale/wave/tracking with bounded stagger/duration/strength and easing reused from P119. Motion Lab metadata remains inside existing `snapshotState()`/`restoreState()`; no second timeline/store.
+- Hosted integration inserts guarded hooks into the existing render loop and sets initial x/y of newly created Motion Lab objects to canvas center. It does not replace the existing native draw/play/export owner.
+- Node suite: `tests/p127/run-p139-tests.cjs`; hosted Chromium suite: `tests/p145/run-p139-browser.py`. Current-main hosted run pending; don't mark browser acceptance PASS until exact logs are reviewed.
+- P139.1 is PARTIAL only. Precomp, physical motion blur, word/range selectors, advanced keyframe UX and real user-project/export acceptance remain OPEN.
