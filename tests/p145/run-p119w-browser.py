@@ -65,6 +65,8 @@ with sync_playwright() as p:
       return CVWebsiteMotionBuilder.inject(html);
     }""")
     checks['exportKeepsSharedEasingVariableAndReducedMotionFallback']='--canvio-motion-easing' in injected and 'prefers-reduced-motion:reduce' in injected
+    # Start the import assertion with an unapplied component, so a previous preset commit cannot affect the result.
+    page.click('#canvio-motion-clear')
     page.click('#cv119w-from-motion')
     checks['customMotionCurveImportedWithoutPrematureApply']=page.locator('#canvio-motion-easing').input_value()=='cubic-bezier(0.1,0.2,0.3,0.4)' and page.evaluate("!__p1194Component.getAttributes()['data-canvio-motion-easing']")
     page.click('#canvio-motion-apply')
