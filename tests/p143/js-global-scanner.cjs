@@ -101,10 +101,10 @@ function scanGlobalReferences(source,knownGlobals){
    }
   }
  }
- let braceDepth=0;
+ let braceDepth=0,parenDepth=0,bracketDepth=0;
  for(let i=0;i<tokens.length;i++){
   const token=tokens[i],value=token.value;
-  if(braceDepth===0&&token.type==='identifier'){
+  if(braceDepth===0&&parenDepth===0&&bracketDepth===0&&token.type==='identifier'){
    if((value==='var'||value==='let'||value==='const')&&tokens[i+1]?.type==='identifier')bindings.add(tokens[i+1].value);
    if(value==='class'&&tokens[i+1]?.type==='identifier')bindings.add(tokens[i+1].value);
    if(value==='function'){
@@ -120,6 +120,10 @@ function scanGlobalReferences(source,knownGlobals){
   }
   if(value==='{')braceDepth++;
   else if(value==='}')braceDepth=Math.max(0,braceDepth-1);
+  else if(value==='(')parenDepth++;
+  else if(value===')')parenDepth=Math.max(0,parenDepth-1);
+  else if(value==='[')bracketDepth++;
+  else if(value===']')bracketDepth=Math.max(0,bracketDepth-1);
  }
  return {
   exportedGlobals:[...exports].sort(),
@@ -144,6 +148,7 @@ function runSelfTests(){
   'globalThis.GlobalApi = {};',
   'const RootOwner = {};',
   'function PublicOwner() {}',
+  'for (const LoopLocal of items) { consume(LoopLocal); }',
   'const result = window.ProviderApi.run();',
   'const result2 = ProviderApi.run();',
   'if (CVNativeEngines.pixel) {}',
@@ -156,6 +161,7 @@ function runSelfTests(){
   detectsGlobalThisExport:result.exportedGlobals.includes('GlobalApi'),
   detectsTopLevelLexicalBinding:result.globalDeclarations.includes('RootOwner'),
   detectsTopLevelFunctionBinding:result.globalDeclarations.includes('PublicOwner'),
+  ignoresForLoopBinding:!result.globalDeclarations.includes('LoopLocal'),
   detectsWindowPropertyRead:result.globalPropertyReads.some(x=>x.name==='ProviderApi'),
   detectsKnownBareRead:result.knownGlobalReads.some(x=>x.name==='CVNativeEngines'),
   ignoresCommentText:!result.exportedGlobals.includes('CommentApi')&&!result.exportedGlobals.includes('BlockCommentApi'),
