@@ -193,3 +193,10 @@ No honest all-P completion claim is possible yet. In addition to P70's 14 open r
 | P130 cloud sync | BLOCKED EXTERNAL | Real Supabase project, schema/RLS, credentials and two-device recovery. |
 | P122.3 MCP | NOT IMPLEMENTED BY DESIGN | Requires approved feature, transport, auth, consent, permission and threat-model contract. |
 | P70 release | NOT CERTIFIED | Fourteen real-world device, service, media, accessibility, hosting, recovery and operations gates remain open. |
+
+
+## P143 parity coverage extension — 27 modules candidate (2026-11-21)
+
+- Manifest tests/p143/source-module-map.json expanded from 20 to 27 standalone/inline-lot pairs. Seven new pairs: P127 Loudness/Templates, P133 Resilience, P134 Scopes, P138 Denoise, P140 Charts, P145 SFX.
+- Each added pair already has its own module parity test. Central P143 gate applies source/embedded syntax and parity checks to the larger set. No runtime code changed; hosted run pending.
+- Full project-wide source refactor remains open.
