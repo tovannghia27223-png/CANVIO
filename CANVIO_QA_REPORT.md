@@ -397,3 +397,10 @@ The candidate workflow runs standalone/embedded source parity and API tests for 
 - Added page-specific guidance for all 13, using Guide-documented behavior and explicit boundaries (e.g. collab is local notes/activity, Prompt Forge is prompt handoff, Shield does not certify server headers).
 - P133.2 passed all 11 Chromium checks in the same run, including actual timeline import, clip duration, audio, full decode and original preservation. P124 passed 9/9.
 - Rerun required to verify all 38 CVWS routes have contextual help; no merge claim until that coverage check passes.
+
+## P143 Phase 1 — standalone source parity (2026-11-21 · candidate)
+
+- New registry: tests/p143/source-module-map.json (20 workflow-managed modules).
+- New hosted gate: tests/p143/run-p143-source-parity.cjs. Checks unique lot, source/embedded syntax, normalized content parity and classic inline source safety.
+- Wired after all module integrations and before complete HTML audit. Pending hosted CI.
+- Full P143 is still open: no complete inline script/style inventory or dependency DAG; no claim of project-wide source split, external script loading, offline/CSP certification or rollback of every extracted owner.
