@@ -30,8 +30,3 @@
 12. Physical target-device GPU/VRAM, performance and long-render testing.
 13. Cross-origin backup/restore and independent-device recovery.
 14. Rollback, release observability, alerting and production incident drill.
-
-| P124 Auto Layout (main) | Hosted candidate #360 + main #362 PASS; Chromium interaction 9/9 | Merged by PR #51. Advanced component conversion/breakpoint editor/nested variants/drag-resize/accessibility remain partial. |
-| P133.2 proxy (main) | Hosted synthetic 4K → 1280×720 WebM, Opus audio, second timeline clip, original retained, full decode | Merged by PR #51. WebM/browser variation, real long footage, OffscreenCanvas and OPFS migration remain open. |
-| P144.3 contextual help (main) | F1 route mapping and 38/38 registered CVWS route coverage in Chromium | Merged by PR #51. Human wording/accessibility review remains manual. |
-| P143 Phase 1 | 20-module source parity gate passed in hosted workflow #363 pre-browser steps | PR #52 candidate; full run pending. Does not close full index source split. |

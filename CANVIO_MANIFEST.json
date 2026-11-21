@@ -2,7 +2,7 @@
   "format": "CANVIO_DELIVERY_MANIFEST",
   "schemaVersion": 2,
   "candidate": "23.3.111-github-runtime-ci",
-  "generatedAt": "2026-11-21T09:07:29.294Z",
+  "generatedAt": "2026-11-21T09:14:06.844Z",
   "hashAlgorithm": "SHA-256",
   "indexSha256": "eb872f91479a7d9b4cad5d729a5bb1d6d0d4e4d3b4b8b8707df90a33db684285",
   "indexBytes": 5459631,
@@ -382,13 +382,13 @@
     },
     {
       "path": "CANVIO_AI_GUIDE.md",
-      "bytes": 396735,
-      "sha256": "0c99aebc24ae938020d3b3b7a6075af147b9946c56c74d0fe2e6122995a942e1"
+      "bytes": 398102,
+      "sha256": "26424fd5706802c16fdbc16ff4bc99b475630551b2024c3a6b32f35ee82652da"
     },
     {
       "path": "CANVIO_ALL_P_COMPLETION_TRACKER.md",
-      "bytes": 23569,
-      "sha256": "f146e3ecbbed6ff3a338ac275dc2d30b024709319aee46269787ab9f457bde44"
+      "bytes": 25289,
+      "sha256": "58ffdb1ae766d6a2f7102cdf8f75e564076b63a1262359c6af5ffdd47709ee19"
     },
     {
       "path": "CANVIO_FINAL_ACCEPTANCE_MATRIX.md",
@@ -402,8 +402,8 @@
     },
     {
       "path": "CANVIO_NEXT_AI_PROMPT.md",
-      "bytes": 7328,
-      "sha256": "eafa906abbf6d53b184b5845c773d88e282f95f5786008bd66339fb3184fbdb9"
+      "bytes": 8281,
+      "sha256": "960f7b0b7a3512bf8b838a86d6a135f2c3c8bef515e473654ed932f8ca7c60c1"
     },
     {
       "path": "CANVIO_PATCH_NOTES.md",
@@ -422,18 +422,18 @@
     },
     {
       "path": "CANVIO_QA_REPORT.md",
-      "bytes": 45896,
-      "sha256": "9cd2cf5a93469be6d53dd44c2123da3af06ba87b94771c339b24982747380d43"
+      "bytes": 46657,
+      "sha256": "fbcbd674fa9c04c47e6f5d4a3db54e0d32b8cb4991fb84929e4193b5908d28bd"
     },
     {
       "path": "CANVIO_ROADMAP.md",
-      "bytes": 103179,
-      "sha256": "9a4c29781e1133e8c3bd6aa25bcfee959fc764720a1c7c5525c3bad9c1858107"
+      "bytes": 104293,
+      "sha256": "d8a72e828e5031a038095ea93308ccada5dc44848b2eeca905b4ecc2c50937c9"
     },
     {
       "path": "CANVIO_SESSION_SUMMARY_2026-11-21.md",
-      "bytes": 6688,
-      "sha256": "cd3a88f5f74c7ba6996e5c94f6423e201ce487bf0812f2d7c244806d0937b82c"
+      "bytes": 7514,
+      "sha256": "b5cea2ecd66b95558bd460051e43a83c206c887f358b220b5d5a42e2033d828c"
     },
     {
       "path": "canvio-p102-background-removal.js",
@@ -768,7 +768,7 @@
     {
       "path": "tests/hosted/hosted-runtime-report.json",
       "bytes": 16378,
-      "sha256": "b5eea948e59a6c91440a6c5ebbc29a8f0365a8647d3eb4a76c5b84b712aaa782"
+      "sha256": "052286b43f2ea12a6274cbc378072f68e8416aa644d49e9e878879eae3ed78c0"
     },
     {
       "path": "tests/hosted/integrated-source-contracts.cjs",
