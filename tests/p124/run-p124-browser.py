@@ -56,8 +56,8 @@ async def main():
         assert not errors, errors
         print(json.dumps({
             "suite": "P124 Chromium UI interaction",
-            "passed": 12,
-            "total": 12,
+            "passed": 11,
+            "total": 11,
             "checks": {
                 "panelMountsInCanonicalHost": True,
                 "fiveLayoutControls": True,

@@ -270,7 +270,7 @@ if (typeof document !== 'undefined') {
   if (document.readyState === 'loading' && document.addEventListener) document.addEventListener('DOMContentLoaded', start, { once: true });
   else start();
 }
-var api = { version: VERSION, inspect: inspect, normalize: normalize, normalizeResponsive: normalizeResponsive, responsiveCss: responsiveCss, applyResponsiveToSelected: applyResponsiveToSelected, insert: insert, mount: mount };
+var api = { version: VERSION, inspect: inspect, normalize: normalize, render: render, normalizeResponsive: normalizeResponsive, responsiveCss: responsiveCss, applyResponsiveToSelected: applyResponsiveToSelected, insert: insert, mount: mount };
 api.tests = function () {
   var n = normalize('grid', { columns: 99, gap: 1, minWidth: 900, variant: 'unknown' });
   var g = render('grid', { columns: 4, minWidth: 260, gap: 24 });
