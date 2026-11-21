@@ -214,6 +214,6 @@ function tests(){
 }
 const api={version:'135.1.0',specs:clone(SPECS),normalizeLayer:normalizeLayer,normalizeLayers:normalizeLayers,filterFor:filterFor,tests:tests,mount:mount,
  getState:()=>({layers:clone(layers),selectedId:selectedId,sessionOnly:true}),reset:()=>resetStack('Đã xóa stack điều chỉnh.')};
-root.CVPixelAdjustmentsP135=api;
+window.CVPixelAdjustmentsP135=api;
 if(doc){if(doc.readyState==='loading')doc.addEventListener('DOMContentLoaded',mount,{once:true});else mount();}
 })(window);
