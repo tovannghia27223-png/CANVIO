@@ -18,7 +18,13 @@ async def main():
         await page.evaluate("""() => {
           window.__p124Inserted = [];
           window.__p124SaveCount = 0;
-          window.CVWeb = { addComponents(markup) { window.__p124Inserted.push(markup); return true; } };
+          window.__p124Rules = [];
+          window.__p124Component = { getId() { return 'hero-selected'; }, addClass(name) { this.className = name; }, is() { return false; } };
+          window.CVWeb = {
+            addComponents(markup) { window.__p124Inserted.push(markup); return true; },
+            getSelected() { return window.__p124Component; },
+            Css: { setRule(selector, style, options) { window.__p124Rules.push({ selector, style, options: options || null }); } }
+          };
           window.CV = { engines: { web: { save() { window.__p124SaveCount++; return true; } } } };
         }""")
         await page.add_script_tag(path=str(MODULE))
@@ -50,6 +56,10 @@ async def main():
         assert "@media(max-width:1024px)" in first
         assert "Bố cục kiểm thử" in first
         assert await page.evaluate("window.__p124SaveCount") == 1
+        await panel.locator("button[data-p124-apply-selected]").click()
+        await page.wait_for_function("window.__p124Rules.length === 3 && window.__p124SaveCount === 2")
+        assert await page.evaluate("window.__p124Component.className === 'cv-p124-selected-hero-selected'")
+        assert await page.evaluate("window.__p124Rules[1].options.atRuleParams.includes('960px') && window.__p124Rules[2].options.atRuleParams.includes('640px')")
         await page.evaluate("""() => { window.CV.engines.web.save = () => { window.__p124SaveCount++; return false; }; }""")
         await panel.locator("button[data-p124-kind='card']").click()
         await page.wait_for_function("window.__p124Inserted.length === 2")
@@ -60,8 +70,8 @@ async def main():
         assert not errors, errors
         print(json.dumps({
             "suite": "P124 Chromium UI interaction",
-            "passed": 12,
-            "total": 12,
+            "passed": 15,
+            "total": 15,
             "checks": {
                 "panelMountsInCanonicalHost": True,
                 "fiveLayoutControls": True,
@@ -72,6 +82,9 @@ async def main():
                 "customTitleAndDesktopColumnsApplied": True,
                 "variantSelectionApplied": True,
                 "canonicalSaveCalled": True,
+                "selectedComponentReceivesResponsiveClass": True,
+                "selectedComponentGetsThreeBreakpointRules": True,
+                "selectedComponentSaveCalled": True,
                 "saveFailureReported": True,
                 "mobileViewportNoOverflow": True,
                 "zeroPageErrors": True
