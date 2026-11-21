@@ -84,3 +84,13 @@ Reduce CANVIO's single-file authoring burden without breaking the canonical app 
 - Inventory HTML templates embedded in JavaScript strings, runtime-created stylesheets and other dynamic asset construction that regex inspection cannot prove complete.
 - Choose dependency-bounded extraction units, add source/embedded parity for each, then extract one at a time with rollback, app regression, offline/PWA, CSP and deployment checks.
 
+
+
+## Phase 2.2 — lexical global-reference ordering map (2026-11-21 · candidate)
+
+- Added tests/p143/js-global-scanner.cjs, a dependency-free lexical scanner that ignores line/block comments, quoted strings, regular-expression literals and complete template-literal bodies; it records static window.X / globalThis.X reads and writes plus simple top-level var / let / const / function / class declarations.
+- build-inline-source-inventory.cjs now records global declarations, direct global-property reads and bounded line evidence alongside each script's order, id and SHA-256. Known global names were expanded to include CANVIO's native engine and feature owners.
+- build-styles-template-inventory.cjs now reports a candidate provider-before-consumer map: the latest earlier static provider, prior provider history, evidence type, script hashes, same-script references and unresolved reads. It does not infer API calls, alias flow, conditional execution or runtime data flow.
+- verify-style-template-inventory.cjs runs scanner fixtures and checks edge ordering, hashes, reference accounting and unresolved/same-script classifications. The existing hosted workflow already invokes the inventory builders and validator; no new runtime dependency or application script order is introduced.
+- The report is still lexical static evidence, not a JavaScript AST, reviewed semantic dependency DAG or proof that a provider initialized successfully. Destructured/aliased globals, template interpolation code, eval, computed names, dynamic imports, conditional writes, call-time order and cross-script data flow require manual review.
+- No CANVIO runtime script, CSS block, template, external dependency, service or persistence owner is moved or changed by this phase. Phase 3 extraction remains gated by reviewed dependency boundaries, per-module parity, rollback, app regression, offline/PWA and CSP acceptance.
