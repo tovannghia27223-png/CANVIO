@@ -228,3 +228,15 @@ No honest all-P completion claim is possible yet. In addition to P70's 14 open r
 
 These are branch candidates, not merged or PASS. Previous mainline status remains the accepted baseline until CI and merge are verified.
 
+ 
+## 2026-11-21 — P135.1 candidate tracking
+
+| Item | Status | Evidence / boundary |
+|---|---|---|
+| P135.1 adjustment model + UI | Candidate branch | Nine bounded adjustment types; ordered stack; toggle, reorder, rename, delete, reset, undo/redo |
+| Preview | Candidate branch | CSS filter chain on canonical Pixel canvas; backing PNG snapshot unchanged by preview |
+| Export / Asset Library | Candidate branch | Derived-canvas PNG/WebP; saves new flattened file through existing Asset Library owner |
+| Node / Chromium tests | Wired, pending | run-p135a-tests.cjs + run-p135-browser.py; exact hosted run still required |
+| Editable stack project persistence | OPEN | Existing Pixel snapshot is flattened PNG data URL; no second store was added |
+| P139 Motion Lab | OPEN | Shape parent/null and text animator not yet implemented in this branch |
+| P70 acceptance | OPEN | Fourteen real-world gates remain unaccepted |
