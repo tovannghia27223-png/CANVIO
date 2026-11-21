@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "description": "P143 phase-1 source registry for standalone feature modules integrated into canonical inline script lots. This list is intentionally scoped to workflow-managed modules; it is not a claim that the entire 4.9 MB index has been modularized.",
+  "description": "P143 phase-1 source registry for 27 standalone feature modules integrated into canonical inline script lots. The canonical inventory covers all script tags; this parity map covers paired standalone files explicitly listed here, not a claim that the whole index is modularized.",
   "modules": [
     {
       "source": "canvio-p125-scrollframes.js",
@@ -81,6 +81,35 @@
     {
       "source": "canvio-p145-core.js",
       "scriptId": "canvio-lot145c"
+    },
+    {
+      "source": "canvio-p127-loudness.js",
+      "scriptId": "canvio-lot127l"
+    },
+    {
+      "source": "canvio-p127-templates.js",
+      "scriptId": "canvio-lot127t"
+    },
+    {
+      "source": "canvio-p133-resilience.js",
+      "scriptId": "canvio-lot133r"
+    },
+    {
+      "source": "canvio-p134-scopes.js",
+      "scriptId": "canvio-lot134s"
+    },
+    {
+      "source": "canvio-p138-denoise.js",
+      "scriptId": "canvio-lot138d"
+    },
+    {
+      "source": "canvio-p140-charts.js",
+      "scriptId": "canvio-lot140c"
+    },
+    {
+      "source": "canvio-p145-sfx.js",
+      "scriptId": "canvio-lot145s"
     }
-  ]
+  ],
+  "totalModules": 27
 }
