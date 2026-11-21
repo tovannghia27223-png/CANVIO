@@ -3895,3 +3895,12 @@ P144 tour: thêm bước bằng cách thêm vào mảng `STEPS` ({sel,title,text
 
 ## P137 paragraph styles + TOC (2026-11-21)
 - `window.CVStylesP137`: `load/clean/applyToSelection/restyleAll/buildToc/undo/entriesFrom/tocHtml/stripToc`. Layout Foundry editor root is `#lfDoc` (contenteditable, one page's HTML); pages live in `CVNativeEngines.layout.snapshotState()` = `{pages:[{id,html}],active}`; `restoreState(obj)` re-renders. Blocks carry `data-cv137-style`; TOC block carries `data-cv137-toc` (contenteditable=false). Standalone must equal embedded `canvio-lot137s`.
+ 
+## P135.1 — Pixel Atelier adjustment stack (current-main candidate · 2026-11-21)
+
+- Candidate branch: `work/canvio-p135-mainline-20261121`; source `canvio-p135-adjustments.js`; embedded lot `canvio-lot135a`; API `window.CVPixelAdjustmentsP135`.
+- Nine bounded adjustment types: brightness, contrast, saturation, hue, blur, grayscale, sepia, invert and opacity. Supports ordered stack, enable/disable, rename, reorder, delete, reset and stack-local undo/redo; maximum 32.
+- Non-destructive preview uses CSS filters on the existing Pixel canvas. PNG/WebP exports render to a derived canvas; Asset Library saves a new flattened PNG via the existing `CV.assets.addBlob` owner. Original raster remains unchanged.
+- The editable stack is tab-memory only in this first increment because Pixel `snapshotState()` currently returns a flattened PNG data URL. Page reload/new source clears the stack; flattened exports are not reversible adjustment projects. No second store/DB/timeline/provider/CDN was added.
+- Node parity/model suite: `tests/p127/run-p135a-tests.cjs`; hosted same-origin browser suite: `tests/p145/run-p135-browser.py`. Current-main hosted result is pending; do not record PASS before reviewing its exact run.
+- P135 remains PARTIAL. Editable stack project persistence, masks/local adjustments, smart objects, clone/patch and liquify remain OPEN.
