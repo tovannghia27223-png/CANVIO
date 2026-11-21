@@ -49,6 +49,23 @@ jobs:
           node-version: 24
           package-manager-cache: false
 
+      - name: Install deterministic font fixtures for P118/P141
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y fonts-liberation fonts-crosextra-caladea fontconfig
+          fc-cache -f
+          FULL_FONT="$(fc-match -f '%{file}' 'Liberation Sans:style=Regular')"
+          PARTIAL_FONT="$(fc-match -f '%{file}' 'Caladea:style=Bold')"
+          test -s "$FULL_FONT" || { echo "Liberation Sans fixture font not found" >&2; exit 1; }
+          test -s "$PARTIAL_FONT" || { echo "Caladea fixture font not found" >&2; exit 1; }
+          case "$FULL_FONT" in *Liberation*) ;; *) echo "Unexpected full-coverage fixture: $FULL_FONT" >&2; exit 1 ;; esac
+          case "$PARTIAL_FONT" in *Caladea*) ;; *) echo "Unexpected partial-coverage fixture: $PARTIAL_FONT" >&2; exit 1 ;; esac
+          echo "CANVIO_TEST_TTF=$FULL_FONT" >> "$GITHUB_ENV"
+          echo "CANVIO_TEST_TTF_PARTIAL=$PARTIAL_FONT" >> "$GITHUB_ENV"
+          echo "P118/P141 fixture fonts ready: $FULL_FONT; $PARTIAL_FONT"
+
       - name: Restore complete candidate index from verified chunks
         shell: bash
         run: |
