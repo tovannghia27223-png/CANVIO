@@ -46,3 +46,10 @@ Pull trước (`git pull --rebase origin main`; CI bot hay push commit build). A
 - Created branch work/canvio-p124-p133-p144-final-20261121 from current main after P134.2 merge and bot runtime-manifest commit.
 - Carried P124 Auto Layout, P133.2 local 4K→720p proxy, and P144.3 contextual help into one candidate. Added all three source integrations to hosted workflow; Node/Chromium/ffmpeg/ffprobe tests wired.
 - Updated Guide, Roadmap, All-P Tracker, Next AI Prompt, Session Summary, QA report and Acceptance Matrix. CI pending; not merged.
+
+
+### P133.2 QA correction — CI #347 (2026-11-21)
+
+- First hosted Chromium run successfully generated a 1280×720 WebM, preserved Opus audio, fully decoded the file and confirmed the original clip remained unchanged.
+- It caught an actual integration race: the UI did not await the asynchronous Video Engine importFiles() promise, so the proxy download existed but the new timeline clip was not yet present when reported. Updated the module to await importFiles(), verify clip-count increase and retain the download link if timeline ingestion fails.
+- CI must be rerun on the corrected commit; no proxy acceptance/merge claim until timeline import passes.
