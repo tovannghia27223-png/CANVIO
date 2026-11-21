@@ -30,33 +30,3 @@
 12. Physical target-device GPU/VRAM, performance and long-render testing.
 13. Cross-origin backup/restore and independent-device recovery.
 14. Rollback, release observability, alerting and production incident drill.
-
-## Final acceptance matrix — mainline after PR #55 (2026-11-21)
-
-| P143 central parity | 27/27 standalone source/embedded lot pairs passed; candidate #386 and main #387 41/41 | Merged PR #55. Full semantic dependency/boot-order DAG, CSS/template/dynamic loader inventory and staged project-wide extraction remain open. |
-| P143 canonical script inventory | 150 script tags; 150 inline; 0 external src; 0 module/async/defer; 147 unique IDs; 0 duplicates | Committed JSON report and included in verified artifact. |
-| P134.2 Auto Reframe | 4.076 s from 123 packet PTS values; VP9 720×1280 + Opus; full decode | Real-footage occlusion and physical device evaluation remain manual. |
-| P133.2 proxy | 1280×720 VP9 + Opus; source and proxy both on timeline; original unchanged; full decode | Real long-media and cross-browser/mobile acceptance remain. |
-| P70 release gate | Fail-closed | Fourteen real-world acceptance gates remain open; production certification not granted. |
-
-
-## Follow-on branch candidate — acceptance additions (2026-11-21)
-
-| Area | New automated candidate assertion | Current disposition |
-|---|---|---|
-| P124.2 breakpoints | 16 Node API checks and 12 Chromium UI assertions planned for editable breakpoints, columns, scoped media queries, canonical save and save-failure messaging. | Pending hosted CI. Advanced arbitrary-component conversion, nested variants, drag/resize and human accessibility remain open. |
-| P133.3 OffscreenCanvas | Chromium test requires the actual proxy run path to be offscreen-worker, verifies fallback contract, 1280×720 output, audio, full decode and original clip retention. | Pending hosted CI. No large-media OPFS migration or real long-footage/device acceptance claim. |
-| P143.3 inventory | Node workflow generates and validates styles/template/dynamic-loader report and packages it as evidence. | Pending hosted CI; heuristic candidate graph is not a semantic boot-order DAG and no code extraction has occurred. |
-
-P70's fourteen real-world gates are deliberately deferred at the user's instruction and remain OPEN.
-
-
-
-## Verified update — 2026-11-21 — P124.3
-
-- PR #63 (selected Website Engine component responsive breakpoints) merged to `main` as `ed6679faec689483db62eb718aa55e068866618b` after hosted candidate workflow run #444 succeeded.
-- Hosted Chromium evidence: P124 UI interaction **15/15**; selected component received a scoped class, desktop/tablet/mobile rules were written through GrapesJS CSS Manager, canonical `CV.engines.web.save()` was called, save failure was surfaced, mobile viewport had no overflow, and page errors were zero.
-- The workflow also completed its existing regression/runtime steps successfully, including the P133.2 proxy and P133.4 OPFS checks in run #444. This does not close remaining P124 advanced component editing or P133 migration work.
-- PR #64 P135.1 is NOT merged: its hosted run #467 failed at the unrelated P133.2 proxy gate with UI status `Tạo proxy vượt thời gian cho phép.`; no page errors were reported. Its head is now non-mergeable against the updated main and must be rebased/cleaned before another acceptance run. Do not mark P135 complete.
-- PR #65 is a duplicate/stale P139 candidate (mergeable=false; no hosted run). PR #66 is the clean P139.1 candidate stacked on the P135 branch (no hosted run yet); keep P139 partial and do not merge before the P135 base is accepted.
-- P135.1 remains a partial non-destructive adjustment stack; reload persistence, masks/local corrections, smart objects, clone/patch and liquify remain open. P139.1 remains partial; precomp, physical motion blur, word/range selector, expanded keyframe editor and real-project/export acceptance remain open.
