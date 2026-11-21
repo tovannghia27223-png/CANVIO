@@ -2,11 +2,11 @@
   "format": "CANVIO_DELIVERY_MANIFEST",
   "schemaVersion": 2,
   "candidate": "23.3.111-github-runtime-ci",
-  "generatedAt": "2026-11-21T09:14:06.844Z",
+  "generatedAt": "2026-11-21T09:25:44.108Z",
   "hashAlgorithm": "SHA-256",
   "indexSha256": "eb872f91479a7d9b4cad5d729a5bb1d6d0d4e4d3b4b8b8707df90a33db684285",
   "indexBytes": 5459631,
-  "fileCount": 259,
+  "fileCount": 260,
   "releaseCertified": false,
   "releaseStatus": "BLOCKED_PENDING_REAL_WORLD_ACCEPTANCE",
   "p70ManualGates": {
@@ -767,8 +767,8 @@
     },
     {
       "path": "tests/hosted/hosted-runtime-report.json",
-      "bytes": 16378,
-      "sha256": "052286b43f2ea12a6274cbc378072f68e8416aa644d49e9e878879eae3ed78c0"
+      "bytes": 16376,
+      "sha256": "2f8c8f6a1d855f39beb008e92ace779cc4e3bc9c4a76f1673b5f473e5593df7b"
     },
     {
       "path": "tests/hosted/integrated-source-contracts.cjs",
@@ -1004,6 +1004,11 @@
       "path": "tests/p131/run-p131-tests.cjs",
       "bytes": 2564,
       "sha256": "9c52b9d822409ad8c9c3bfafbefc0b6850b2e323eb58e0952dc404334be1fd1f"
+    },
+    {
+      "path": "tests/p143/build-inline-source-inventory.cjs",
+      "bytes": 3638,
+      "sha256": "322686bdf0545ec111d87a207db481a8e8a3d4754d3a0150f67211e69ef4dd23"
     },
     {
       "path": "tests/p145/run-p133-browser.py",
