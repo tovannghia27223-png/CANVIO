@@ -789,7 +789,7 @@ Hosted verification after the ffmpeg repair is complete:
 ## 2026-11-21 — Backlog audit correction (P122.3 / P124 / P133 / P142 / P143 / P144)
 
 - P122.3 is explicitly listed as **MCP chưa làm** in the earlier P122 section. No separate source, test or transport/permission/threat-model contract was found. It remains unimplemented until a concrete safe acceptance contract is approved.
-- P124 Auto Layout/Component remains partial/open; the 12 P123 static GrapesJS blocks do not implement auto-layout constraints, reusable variants or responsive component behavior.
+- P124 remains partial/open. The first P124.1 candidate now adds responsive Stack/Row/Grid/Split/Card presets and four card variants; P123's 12 static starters alone do not provide these behaviors. Selected-component constraint editing, breakpoint UI and nested instance synchronization remain open.
 - P133 OPFS/proxy is listed as backlog in `CANVIO_NEXT_AI_PROMPT.md`; no P133 source, worker or tests exist on main. It must be designed around current IndexedDB/Project Vault/media owners and quota/rollback behavior, not as an unrelated second store.
 - P143 full source split/refactor remains open; standalone lots do not mean the entire large index has been modularized. Use staged extraction and embedded/source parity tests.
 - P144 Command Palette is partially covered by P109's existing palette/command-search owner and tests. Do not create a second palette; first reconcile original P144 acceptance against P109.
