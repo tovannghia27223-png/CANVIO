@@ -462,4 +462,12 @@ Status: pending hosted PR verification. Do not treat this section as a PASS repo
 - P133.3: proxy scaler attempts a same-origin Blob Worker with OffscreenCanvas and ImageBitmap transfer; it falls back to main-thread canvas when unavailable or failed. Browser acceptance now explicitly expects renderPath === 'offscreen-worker' in hosted Chromium and checks fallback API, 720p dimensions, audio, full decode, source preservation and timeline insertion.
 - P143.3: new style/template/dynamic-loader report generator and validator are wired into the candidate workflow and artifact. CSS/global dependency candidates are heuristic, not semantic.
 - No hosted test result has been observed for this branch at the time of this note. First candidate workflow must be inspected before merge. P70 remains uncertified; its fourteen real-world gates are deferred, not passed.
+ 
+## P135.1 — Pixel Atelier adjustment stack (current-main candidate · 2026-11-21)
 
+- Candidate branch: `work/canvio-p135-mainline-20261121`; source `canvio-p135-adjustments.js`; embedded lot `canvio-lot135a`; API `window.CVPixelAdjustmentsP135`.
+- Nine bounded adjustment types: brightness, contrast, saturation, hue, blur, grayscale, sepia, invert and opacity. Supports ordered stack, enable/disable, rename, reorder, delete, reset and stack-local undo/redo; maximum 32.
+- Non-destructive preview uses CSS filters on the existing Pixel canvas. PNG/WebP exports render to a derived canvas; Asset Library saves a new flattened PNG via the existing `CV.assets.addBlob` owner. Original raster remains unchanged.
+- The editable stack is tab-memory only in this first increment because Pixel `snapshotState()` currently returns a flattened PNG data URL. Page reload/new source clears the stack; flattened exports are not reversible adjustment projects. No second store/DB/timeline/provider/CDN was added.
+- Node parity/model suite: `tests/p127/run-p135a-tests.cjs`; hosted same-origin browser suite: `tests/p145/run-p135-browser.py`. Current-main hosted result is pending; do not record PASS before reviewing its exact run.
+- P135 remains PARTIAL. Editable stack project persistence, masks/local adjustments, smart objects, clone/patch and liquify remain OPEN.
