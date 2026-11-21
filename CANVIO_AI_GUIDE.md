@@ -3794,3 +3794,10 @@ P144 tour: thêm bước bằng cách thêm vào mảng `STEPS` ({sel,title,text
 - P133.2 source owner: canvio-p133-proxy.js / canvio-lot133p / CVProxyP133. 4K-to-WebM proxy adds a new clip through existing Video Engine importFiles and leaves the original untouched; 1280×720 synthetic 4K fixture, Opus audio and full decode passed hosted Chromium acceptance. Remaining P133: OffscreenCanvas use cases and selected large-media migration to OPFS with quota/migration/rollback tests.
 - P144.3 updates existing CVUxP144 to 144.3.0; contextual help covers all 38 routes registered through CVWS in hosted Chromium. Existing F1, palette, shortcuts, tour and recent-command owner are preserved; wording/accessibility review remains manual.
 - Do not mark CANVIO 1.0 Stable: P70 remains fail-closed with fourteen real-world gates open.
+
+## P143 Phase 1 — parity gate on latest main (2026-11-21)
+
+- Registry: tests/p143/source-module-map.json; audit: tests/p143/run-p143-source-parity.cjs; staged extraction plan: CANVIO_P143_SOURCE_SPLIT_PLAN.md.
+- Scope: 20 workflow-managed standalone feature modules and their canonical inline lots. Checks unique lot, JS syntax in both copies, CRLF-normalized content parity, and classic inline safety.
+- Previous workflow #363 passed this gate and all 39 steps. This candidate re-applies it after the latest mainline bot commit 6481d83 and reruns CI before merge.
+- Full P143 remains open: all-inline script/style inventory, dependency/boot order DAG, staged reversible extraction, offline/PWA/CSP and rollback acceptance are not complete.
