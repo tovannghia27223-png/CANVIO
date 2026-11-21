@@ -40,3 +40,7 @@
 | P119.2 shared easing in P145.2 | Node loads actual P119 and P145.2 sources; Chromium verifies preset/custom Motion curve changes equal-progress transition output | Video Engine clip/keyframe easing, Website Engine/CSS timeline, real GPU and target-device export performance remain open. |
 
 | P135.2 editable Pixel adjustment stack | Node PNG metadata/CRC/32-layer round-trip; hosted Chromium snapshot → reload → native restore and unchanged raster check; P143 standalone/embedded parity | Independent two-device/cloud sync, third-party PNG re-encoding, masks/local corrections, smart objects, clone/patch and liquify remain unverified/out of scope. |
+
+
+| P143.4 lexical global evidence | PR #83 post-merge #551 53/53, Pages #275, source parity 32/32, scanner 14/14, inventory 17/17 | Lexical order candidates only; semantic dependency graph and Phase 3 staged extraction/rollback/offline/CSP remain open. |
+| P119.3 Video Engine keyframe easing | Candidate Node + Chromium tests map P119 presets to existing vtKFEasing/Bezier controls, native Apply/snapshot and motionAt output | Await hosted acceptance; Website Engine/CSS timeline, physical GPU and target-device performance remain open. |
