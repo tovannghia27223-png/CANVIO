@@ -149,14 +149,14 @@ function cssText(style){
  }).join('');
 }
 function selectedLayoutCss(selector,kind,options){
- if(!/^\\.cv-p124-selected-[a-z0-9_-]{1,64}$/.test(String(selector||'')))throw new Error('Selector P124 không hợp lệ.');
+ if(!/^\.cv-p124-selected-[a-z0-9_-]{1,64}$/.test(String(selector||'')))throw new Error('Selector P124 không hợp lệ.');
  var rules=selectedLayoutRules(kind,options),o=rules.options,css=selector+'{'+cssText(rules.base)+'}';
  if(rules.tablet)css+='@media(max-width:'+o.tabletBreakpoint+'px){'+selector+'{'+cssText(rules.tablet)+'}}';
  if(rules.mobile)css+='@media(max-width:'+o.mobileBreakpoint+'px){'+selector+'{'+cssText(rules.mobile)+'}}';
  return css;
 }
 function selectedVariantCss(selector,variant){
- if(!/^\\.cv-p124-selected-[a-z0-9_-]{1,64}$/.test(String(selector||'')))throw new Error('Selector P124 không hợp lệ.');
+ if(!/^\.cv-p124-selected-[a-z0-9_-]{1,64}$/.test(String(selector||'')))throw new Error('Selector P124 không hợp lệ.');
  if(!Object.prototype.hasOwnProperty.call(VARIANTS,variant))throw new Error('Biến thể component không hợp lệ.');
  var style=VARIANTS[variant];
  return selector+'[data-canvio-variant="'+variant+'"]{background:'+style.background+';border:'+style.border+';box-shadow:'+style.boxShadow+';}';
