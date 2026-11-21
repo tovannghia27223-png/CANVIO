@@ -136,3 +136,10 @@ No honest all-P completion claim is possible yet. In addition to P70's 14 open r
 - P133: OPFS/recovery and denoise Worker already exist on main. P133.2 adds 4K-to-720p WebM proxy as a new clip using existing media store/import path; original remains unchanged. Node + hosted Chromium/ffmpeg/ffprobe acceptance wired; pending.
 - P144: palette/shortcuts/F1/tour already exist. P144.3 expands contextual help across registered CVWS routes and utility pages, preserving the existing CVUxP144 owner. Node + hosted Chromium route-coverage tests wired; pending.
 - Do not mark any of these increments merged/PASS until the consolidated hosted workflow completes. P133 OffscreenCanvas/large-media migration and P124 advanced editor controls remain open.
+
+
+### P133.2 QA correction — CI #347 (2026-11-21)
+
+- First hosted Chromium run successfully generated a 1280×720 WebM, preserved Opus audio, fully decoded the file and confirmed the original clip remained unchanged.
+- It caught an actual integration race: the UI did not await the asynchronous Video Engine importFiles() promise, so the proxy download existed but the new timeline clip was not yet present when reported. Updated the module to await importFiles(), verify clip-count increase and retain the download link if timeline ingestion fails.
+- CI must be rerun on the corrected commit; no proxy acceptance/merge claim until timeline import passes.
