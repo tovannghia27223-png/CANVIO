@@ -13,4 +13,4 @@ assert.ok(standalone.includes('CVCreativeCore.context()'),'reuses Shared Core co
 assert.ok(standalone.includes('CVCreativeCore.setBrief')&&standalone.includes('CVCreativeCore.create'),'reuses existing Shared Core mutation APIs');
 assert.ok(!/\bfetch\s*\(|XMLHttpRequest|localStorage\.setItem|indexedDB\.open/.test(standalone),'no provider/network/new storage owner');
 assert.ok(standalone.includes('Giữ nguyên brief đang có'),'does not overwrite non-empty Shared Core brief');
-console.log(JSON.stringify({suite:'P146 Home Guided Workflows source contract',passed:11,failed:0,inlineLot:'canvio-lot146'},null,2));
+console.log(JSON.stringify({suite:'P146 Home Guided Workflows source contract',passed:13,failed:0,inlineLot:'canvio-lot146'},null,2));

@@ -647,12 +647,13 @@ jobs:
           if(!html.includes(sharedMarker)||!html.includes('window.CVEasingP119'))throw new Error('P119.3 shared easing evaluator hook missing');
           fs.writeFileSync(file,html,'utf8');
           const mapPath='tests/p143/source-module-map.json',map=JSON.parse(fs.readFileSync(mapPath,'utf8'));
-          map.description=String(map.description||'').replace(/32 standalone/g,'33 standalone');
+          map.description=String(map.description||'');
           const item={source:'canvio-p119-video.js',scriptId:'canvio-lot119v'};
           const at=map.modules.findIndex(x=>x.source===item.source||x.scriptId===item.scriptId);
           if(at>=0)map.modules[at]=item;else map.modules.push(item);
           map.totalModules=map.modules.length;
-          if(map.totalModules!==33||map.modules.filter(x=>x.source===item.source).length!==1)throw new Error('P119.3 P143 module registry must contain exactly 33 unique pairs');
+          map.description=map.description.replace(/\d+ standalone/g,map.totalModules+' standalone');
+if((map.totalModules!==33&&map.totalModules!==34)||map.modules.filter(x=>x.source===item.source).length!==1)throw new Error('P119.3 P143 registry must contain 33 pairs before P119.4 or 34 after P119.4, with exactly one Video module');
           fs.writeFileSync(mapPath,JSON.stringify(map,null,2)+'\n');
           console.log('P119.3 integrated shared presets and P119 easing solver into the existing Video Engine; P143 pairs:',map.totalModules);
           NODE
