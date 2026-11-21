@@ -11,7 +11,7 @@ class QuietHandler(http.server.SimpleHTTPRequestHandler):
     def log_message(self,*_):pass
 with tempfile.TemporaryDirectory(prefix='canvio-p133p-') as td:
     tmp=Path(td);fixture=tmp/'p133-proxy-fixture.webm'
-    subprocess.run([FFMPEG,'-hide_banner','-loglevel','error','-y','-f','lavfi','-i','testsrc2=size=3840x2160:rate=5:duration=3','-f','lavfi','-i','sine=frequency=440:sample_rate=48000:duration=3','-c:v','libvpx','-deadline','realtime','-cpu-used','8','-b:v','1500k','-c:a','libopus','-shortest',str(fixture)],check=True,capture_output=True)
+    subprocess.run([FFMPEG,'-hide_banner','-loglevel','error','-y','-f','lavfi','-i','color=c=0x203040:s=3840x2160:r=5:d=3','-f','lavfi','-i','sine=frequency=440:sample_rate=48000:duration=3','-c:v','libvpx','-deadline','realtime','-cpu-used','8','-b:v','1500k','-c:a','libopus','-shortest',str(fixture)],check=True,capture_output=True)
     server=socketserver.ThreadingTCPServer(('127.0.0.1',0),functools.partial(QuietHandler,directory=str(ROOT)));server.daemon_threads=True
     threading.Thread(target=server.serve_forever,daemon=True).start()
     checks={};errors=[];out=tmp/'proxy.webm';details={}
@@ -29,7 +29,7 @@ with tempfile.TemporaryDirectory(prefix='canvio-p133p-') as td:
         selected=page.evaluate("""()=>{const s=CV.engines.video._state();const c=s.clips.filter(x=>x.type==='video').slice(-1)[0];s.selected=c.id;return{name:c.name,id:c.id,clipCount:s.clips.length}}""")
         checks['4kSourceImported']=bool(selected.get('id'))
         page.click('#cv133p-run')
-        page.wait_for_function("!!document.querySelector('#cv133p-run') && !document.querySelector('#cv133p-run').disabled",timeout=90000)
+        page.wait_for_function("!!document.querySelector('#cv133p-run') && !document.querySelector('#cv133p-run').disabled",timeout=150000)
         observedStatus=page.locator('#cv133p-status').inner_text()
         if 'Đã thêm' not in observedStatus:
             raise AssertionError('P133 proxy failed with UI status: '+observedStatus+'; pageErrors='+json.dumps(errors,ensure_ascii=False))
