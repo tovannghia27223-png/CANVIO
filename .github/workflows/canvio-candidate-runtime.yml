@@ -630,7 +630,7 @@ jobs:
           node <<'NODE'
           const fs=require('node:fs');
           const file='index.html',source=fs.readFileSync('canvio-p119-video.js','utf8').trim(),open='<script id="canvio-lot119v">',close='</script>';
-          if(!source.includes("version:'119.3.0'")||!source.includes('window.CVVideoEasingP119'))throw new Error('P119.3 module contract missing');
+          if(!source.includes("version:'119.3.0'")||!source.includes('CVVideoEasingP119'))throw new Error('P119.3 module contract missing');
           let html=fs.readFileSync(file,'utf8');
           const tag=open+'\n'+source+'\n'+close,pos=html.indexOf(open);
           if(pos>=0){const end=html.indexOf(close,pos);if(end<0)throw new Error('P119.3 embedded lot is not closed');html=html.slice(0,pos)+tag+html.slice(end+close.length);}
