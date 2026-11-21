@@ -172,7 +172,7 @@ const report={
   styles:{blockCount:styleBlocks.length,inlineStyleAttributeCount:inlineStyleAttributes.length,totalStyleBytes:styleBlocks.reduce((n,x)=>n+x.bytes,0)+inlineStyleAttributes.reduce((n,x)=>n+x.bytes,0),blocks:styleBlocks,inlineAttributes:inlineStyleAttributes},
   templates:{count:templates.length,blocks:templates},
   dynamicLoaders:{count:dynamicLoaders.length,countsByKind:loaderCounts,sites:dynamicLoaders},
-  dependencyCandidates:{count:dependencyCandidates.length,confidence:'heuristic-not-semantic',edges:dependencyCandidates},
+  dependencyCandidates:dependencyCandidates,
   limitations:[
     'Regular-expression inventories can miss HTML/CSS/JavaScript constructed from concatenated strings or runtime data.',
     'Inline style attribute records retain hashes and sizes, not full style contents.',
@@ -191,6 +191,8 @@ console.log(JSON.stringify({
   inlineStyleAttributes:inlineStyleAttributes.length,
   templateBlocks:templates.length,
   dynamicLoaderSites:dynamicLoaders.length,
-  dependencyCandidates:dependencyCandidates.length,
+  dependencyCandidates:report.dependencyCandidates.count,
+  unresolvedGlobalReferences:report.dependencyCandidates.unresolved.length,
+  sameScriptReferences:report.dependencyCandidates.sameScriptReferences.length,
   output:'tests/p143/style-template-loader-inventory.json'
 },null,2));
