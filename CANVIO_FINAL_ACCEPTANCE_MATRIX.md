@@ -30,3 +30,8 @@
 12. Physical target-device GPU/VRAM, performance and long-render testing.
 13. Cross-origin backup/restore and independent-device recovery.
 14. Rollback, release observability, alerting and production incident drill.
+
+
+| P133.2/P133.3 proxy reliability | Candidate #44911472539 44/44, combined #44911475373 45/45, post-merge main #44912553516 45/45; short 4K synthetic Chromium proxy with Worker + bitmap watchdog/fallback and full WebM decode | Real long footage, uncommon codecs, multi-hour media, physical target-device performance and edge-case A/V quality remain manual. |
+| P135.1 Pixel adjustment stack | PR #68 + mainline 45/45; Node/Chromium nine-adjustment stack, reorder/undo/redo, derived canvas export and Asset Library handoff | Flattened PNG source; adjustment edit metadata does not survive reload. Masks/local corrections, smart objects, clone/patch and liquify remain outside this increment. |
+
