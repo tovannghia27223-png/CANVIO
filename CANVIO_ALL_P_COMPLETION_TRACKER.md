@@ -95,3 +95,29 @@
 ## Snapshot decision
 
 CANVIO is a broad, integrated **23.3.111 candidate**, not “all P complete” and not production-certified. Mainline feature/code work and several hosted test suites are green, but partial roadmap scopes and external/manual P70 acceptance are still open. Update this tracker append-only after each verified increment.
+
+## Scope correction and final CI snapshot — 2026-11-21
+
+The following backlog entries were omitted or understated in the first inventory. This correction is append-only and supersedes the corresponding rows above:
+
+| P item | Corrected status from current mainline evidence | Remaining work |
+|---|---|---|
+| P122.1 / P123 | Automated unit/source suite **13/13 PASS** in hosted run #310. P122.1 is a local heuristic Website Taste audit; P123 provides 12 static layout blocks inserted through the existing GrapesJS editor. | No screenshot/keyboard/responsive visual acceptance; map/inbox/Kanban/chat are sample blocks, not connected services. This is not WCAG or professional design certification. |
+| P122.2 | Automated suite **14/14 PASS** in run #310: safe CSS-only preview/apply/undo, stale-plan rejection and rollback on save failure. | Still **partial**: Website Engine only; no HTML content/icon editing, Poster/Slide workflow or Project Vault version-history integration. |
+| P122.3 MCP | The Roadmap explicitly says “P122.3 MCP chưa làm”; there is no P122.3/MCP source module, test or implementation path in the current main tree. | **Not implemented.** The exact MCP feature contract, transport, authentication/consent boundary, permissions, threat model and acceptance tests are not specified. Do not invent a remote MCP server or expose local project data without a defined security contract. |
+| P124 Auto Layout / Component | Prior handoff calls P124–P129 partial and lists Auto Layout/Component depth as open. No P124 source module/test appears in the main tree. | **Not implemented as a distinct feature.** P123 static starter blocks do not satisfy Auto Layout/component constraints, responsive rules, reusable component variants or editor round-trip. |
+| P133 OPFS / proxy | Named as open in `CANVIO_NEXT_AI_PROMPT.md`; no P133/OPFS source, worker, owner or tests appear in the main tree. | **Not implemented.** Define relationship to current IndexedDB/Project Vault/media owners, migration/rollback and quota policy before adding a second persistence path. |
+| P142 target-device/browser acceptance | GitHub Pages deployment on main succeeded in run #192 (`44819441586`): build, report-build-status and deploy jobs all passed. | Pages deployment is **PASS**, but real-origin Playwright acceptance, Windows/GTX 1650/RAM 7 GB testing, Firefox/WebKit, touch and physical GPU/AI performance remain unverified. |
+| P143 code split | Next-AI handoff lists P143 as an open “tách mã” task; no P143 module or migration test exists in main. Some feature lots have standalone source copies, but the canonical app is still a large `index.html`. | **Not implemented as a full refactor.** Needs dependency/ID/boot-order map, extraction in small reversible stages, and parity/syntax/build tests; avoid a risky all-at-once rewrite. |
+| P144 Command Palette | P109 already implements a basic shared command palette and tests existing command/search/route ownership. No P144 source/test exists as a separate item. | **Partially covered by P109; not independently closed as P144.** Compare P144’s original expected shortcuts, command registry, fuzzy search, accessibility and context actions against P109 before extending the existing palette; do not add a duplicate. |
+
+### PR #44 hosted verification
+
+- PR #44 documentation reconciliation passed GitHub Actions hosted workflow **#320** (`44859258258`), verify job conclusion `success`; source restoration, integrated module steps, test utilities, vendor provisioning, JavaScript/HTML audit, P47–P70 regressions, integration contracts, P107 ZIP round-trip and same-origin GLB/P85/ONNX/worker browser acceptance all completed successfully.
+- Artifact: `CANVIO-23.3.111-GITHUB-RUNTIME-VERIFIED-320`, 21,602,814 bytes, SHA-256 `74cb03f31a7c55d94f69376b74f46a22bef1538b473aeca1165c42296f2e69ba`.
+- The workflow's final “commit complete verified candidate to working branch” step was skipped on the PR event by design; the verified package is attached as a workflow artifact.
+- Mainline Pages deployment #192 (`44819441586`) completed build, report and deploy jobs successfully. This is deployment pipeline evidence, not the P70 manual release certification.
+
+## Updated completion decision
+
+No honest all-P completion claim is possible yet. In addition to P70's 14 open real-world gates, P122.3 MCP, P124 Auto Layout/Component, P130 cloud sync, P133 OPFS/proxy and P143 full code split are not implemented in the reviewed main tree; P144 is only partially covered by P109; P142 is deployed but not target-device certified. Work on these needs defined contracts and/or real infrastructure rather than placeholder modules.
