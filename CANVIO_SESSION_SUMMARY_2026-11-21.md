@@ -138,3 +138,14 @@ Pull trước (`git pull --rebase origin main`; CI bot hay push commit build). A
 - PR #64 P135.1 is NOT merged: its hosted run #467 failed at the unrelated P133.2 proxy gate with UI status `Tạo proxy vượt thời gian cho phép.`; no page errors were reported. Its head is now non-mergeable against the updated main and must be rebased/cleaned before another acceptance run. Do not mark P135 complete.
 - PR #65 is a duplicate/stale P139 candidate (mergeable=false; no hosted run). PR #66 is the clean P139.1 candidate stacked on the P135 branch (no hosted run yet); keep P139 partial and do not merge before the P135 base is accepted.
 - P135.1 remains a partial non-destructive adjustment stack; reload persistence, masks/local corrections, smart objects, clone/patch and liquify remain open. P139.1 remains partial; precomp, physical motion blur, word/range selector, expanded keyframe editor and real-project/export acceptance remain open.
+
+
+## Verified mainline delivery — P133/P135 — 2026-11-21
+
+- PR #68 merged to main as 256c5f8d7fbed2159f5deff5ca1e065db8d8d14a.
+- P133 proxy reliability tests passed in candidate run #44911472539 (44/44). The branch includes an 8-second bitmap-capture watchdog in addition to the 3-second worker-frame watchdog; on timeout the renderer switches to the existing Canvas2D fallback and safely ends at the last frame.
+- P135.1 candidate run #44911475373 passed 45/45; adds nine ordered non-destructive Pixel adjustments, layer management, bounded undo/redo, derived canvas export and Asset Library handoff.
+- Mainline post-merge run #44912553516 passed 45/45. PR #67 was closed as superseded because PR #68 carried the P133 reliability patch and P135 module together.
+- P135 adjustment stack metadata remains memory-only because the existing Pixel source snapshot is flattened PNG. This is documented, not represented as persistent editable adjustment layers.
+- P139.1 and P120/P126 are follow-on PR candidates #70/#71; no merge or full feature completion claimed yet.
+
