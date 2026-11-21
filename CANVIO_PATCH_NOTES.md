@@ -8,3 +8,8 @@
 - Added P125.4 optional split-asset storyboard ZIP alongside the original self-contained HTML export; hosted Chromium verifies ZIP integrity and final relative-frame decoding offline. Audio and mobile/real-media acceptance remain open.
 - Added P145.6–P145.10 Asset Library tools: 25 original SVG icons, six local typography presets, eight original SVG illustrations, and read-only asset search/quality gate, with Node and hosted Chromium acceptance.
 - Stable release remains fail-closed at P70; no physical GPU or two-device certification is implied.
+
+- P145.10 mainline acceptance: PR #38 merged; hosted run #310 PASS. Node 10/10; Chromium 14/14; actual local-byte SHA-256, duplicate detection and read-only/no-vault-mutation assertions passed. Artifact 21,579,190 bytes; SHA-256 `302274465126dec415716d796981168ed96fc0d2091514581725557e67a22843`. Scan remains user-triggered and bounded (40 assets / 25 MiB per asset / 64 MiB total).
+- P136.4 superseding status: merged PR #39; hosted run #312 PASS. Six static SVG pattern fills, limited to multicolour Image Trace.
+- P131.3 superseding status: merged PR #41; hosted run #315 PASS. Safe local HTML body-fragment import, max 5 MiB, with the existing sanitizer/Website Engine save path.
+- All three updates retain their stated scope limits. P70 remains fail-closed with fourteen manual real-world gates open.
