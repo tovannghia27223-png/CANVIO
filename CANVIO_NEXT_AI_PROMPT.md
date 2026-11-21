@@ -96,3 +96,10 @@ Quy tắc nhúng: mỗi lot là `<script id="canvio-lotNNN">` + bản độc l�
 - P133 OffscreenCanvas/media-to-OPFS migration and P124 advanced breakpoint/component interactions remain partial.
 - P130 cannot be completed without a real Supabase backend/schema/RLS and two-device test. P122.3 MCP must not be invented without an approved threat/transport/auth/consent contract.
 - P70 remains fail-closed with fourteen manual real-world gates; do not claim Stable/production-certified.
+
+
+## P143 follow-up — 27 module parity candidate
+
+- Branch work/p143-parity-27-modules-20261121 extends tests/p143/source-module-map.json from 20 to 27 pairs, adding P127 Loudness/Templates, P133 Resilience, P134 Scopes, P138 Denoise, P140 Charts and P145 SFX.
+- No runtime code or script order changed. Each added pair already has an individual parity suite. Hosted CI required before merge.
+- Full P143 still needs a semantic dependency/boot-order DAG, CSS/template/dynamic-loader inventory and staged extraction/rollback/offline/CSP acceptance.
