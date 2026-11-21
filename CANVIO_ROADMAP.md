@@ -831,3 +831,12 @@ Hosted verification after the ffmpeg repair is complete:
 - Giới hạn: ≤100 MiB, ≤60 giây, tối đa 48 frame phân tích ở kích cỡ tối đa 192×108. Heuristic có thể bám vào vùng nhiều texture/contrast thay vì chủ thể; cảnh ít chi tiết sẽ kém ổn định. Không nhận diện mặt/AI object detection; chưa có manual focus override.
 - Test bổ sung: Node tests/p127/run-p134r-tests.cjs (11 assertion); Chromium UI/export và ffprobe tests/p145/run-p134r-browser.py. Kết quả hosted CI phải được kiểm trước khi đánh dấu merged/PASS. Nếu localhost bị chặn trong sandbox, ghi rõ môi trường, không tính là test ứng dụng thất bại.
 - Trạng thái: candidate trên branch riêng, chưa merge. Việc tiếp theo: hosted run xác nhận Node, same-origin app boot, UI analysis, WebM decode/duration/audio; sau đó rà lại bằng video thật dài hơn và điện thoại thật.
+
+
+## P124 — Responsive Auto Layout & Component variants (rebased candidate, 2026-11-21)
+
+- Thêm canvio-p124-autolayout.js / lot canvio-lot124 vào Website Engine hiện có; không tạo editor hoặc data owner thứ hai.
+- 5 preset Stack, Row/Flex-wrap, Grid auto-fit/minmax, Split, Card; 4 biến thể bề mặt surface/outline/elevated/soft. Chèn qua CVWeb.addComponents() và lưu qua CV.engines.web.save().
+- Node suite tests/p124/run-p124-tests.cjs và Chromium UI tests/p124/run-p124-browser.py; hosted workflow sẽ chạy parity, app audit và regression P47–P70.
+- Trạng thái: candidate branch work/p124-autolayout-rebased-20261121. Chưa merge cho tới khi hosted CI xanh.
+- Còn thiếu để đóng P124 đầy đủ: convert component đang chọn, visual breakpoint editor, nested variant sync, drag/resize constraint handles, keyboard/screen-reader và responsive screenshot trên GrapesJS thật.
