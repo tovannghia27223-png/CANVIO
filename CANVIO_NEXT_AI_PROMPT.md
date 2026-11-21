@@ -155,3 +155,12 @@ P130 Cloud Sync (Supabase thật + RLS + 2 thiết bị); P122.3 MCP (cần hợ
 
 ### Giới hạn trung thực chung
 Chỉ kiểm bằng tín hiệu/tệp tổng hợp và Chromium headless; chưa kiểm footage dài, thiết bị thật, Safari/Firefox, Lottie player thật, Ollama/LM Studio thật. Không ghi "đạt nghiệm thu" cho bất kỳ mục nào trong danh sách trên.
+
+ 
+## Follow-on status — 2026-11-21 (P135.1 candidate)
+
+CI font setup is now in branch work/canvio-font-ci-fix-20261121 / PR #60. In hosted run #44903600244 the P119, P118w, P141f, P128o and P137s Node suites passed with the configured Liberation Sans and Caladea fixtures; the full workflow still failed later in tests/p145/run-p133-proxy-browser.py waiting for the existing P133 proxy status. Do not call the complete candidate workflow green.
+
+P135.1 has now been implemented on work/canvio-p135-adjustments-20261121 (child of the PR #60 branch): canvio-p135-adjustments.js, embedded canvio-lot135a, Node contract/parity test and hosted Chromium test are wired. This is a first increment; the editable adjustment stack is tab-memory only because Pixel Atelier's current snapshot contract is a flattened PNG. Wait for the new branch's hosted report before acceptance or merge.
+
+PR #58 was green on its own hosted run. PR #59 was red at the P133 proxy-browser wait, not at its P124 Node/Chromium assertions; keep it open until rerun and green. Do not merge PR #56. Next tasks: review P135 hosted result and fix any regression; repair the P133 proxy test/root cause on its own scope; implement P139; then finish P137/P118/P119 gaps. Preserve blocked/manual gates and do not label P70 Stable.
