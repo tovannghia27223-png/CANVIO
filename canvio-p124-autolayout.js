@@ -99,12 +99,14 @@ async function insert(kind, options) {
     return { ok: false, inserted: false, saved: false, error: 'Website Engine chưa sẵn sàng. Hãy mở Website Engine rồi thử lại.' };
   }
   try {
-    await Promise.resolve(window.CVWeb.addComponents(markup));
+    var added = await Promise.resolve(window.CVWeb.addComponents(markup));
+    if (added === false) return { ok: false, inserted: false, saved: false, error: 'Website Engine từ chối chèn thành phần.' };
   } catch (error) {
     return { ok: false, inserted: false, saved: false, error: 'Không thể chèn thành phần: ' + cleanText(error && error.message, 'lỗi editor', 120) };
   }
   try {
-    await Promise.resolve(window.CV.engines.web.save());
+    var saved = await Promise.resolve(window.CV.engines.web.save());
+    if (saved === false) return { ok: false, inserted: true, saved: false, error: 'Đã chèn vào phiên hiện tại nhưng Website Engine từ chối lưu. Hãy kiểm tra và dùng Hoàn tác nếu cần.' };
     return { ok: true, inserted: true, saved: true, error: '' };
   } catch (error) {
     return { ok: false, inserted: true, saved: false, error: 'Đã chèn vào phiên hiện tại nhưng lưu thất bại. Hãy kiểm tra editor và dùng Hoàn tác nếu cần.' };
