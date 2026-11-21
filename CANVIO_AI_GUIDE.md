@@ -3905,3 +3905,13 @@ P144 tour: thêm bước bằng cách thêm vào mảng `STEPS` ({sel,title,text
 - No new store, IndexedDB database, timeline, provider, CDN, model or network request is added. The editable stack is currently in-memory for the tab only; it is not included in Pixel Atelier snapshotState()/project restore because that owner currently exposes a flattened PNG data URL. Loading another source image or reloading the page clears the stack. Saved exports are flattened raster assets, not reversible adjustment projects.
 - Tests wired: tests/p127/run-p135a-tests.cjs (standalone/embedded parity and source contracts) and tests/p145/run-p135-browser.py (real-origin Chromium preview/source preservation/export/Asset Library-owner stub). Hosted run pending for this candidate; do not record PASS until its exact run artifact is reviewed.
 - Remaining P135 work: project snapshot/restore for editable adjustment metadata without creating a second data owner; per-layer masks/local adjustments; inspect edge clipping for blur and large-canvas memory budget. P135 is PARTIAL, not complete.
+
+## P139.1 — Motion Lab parent/null + character Text Animator (candidate · 2026-11-21)
+
+- Standalone source: canvio-p139-motionlab.js; embedded lot: canvio-lot139; public API: window.CVMotionLabP139.
+- Extends existing Motion Lab objs and snapshotState()/restoreState(); no second timeline or persistence owner. Null Controller records use type null, hidden=true, position, groupScale, groupRotation and optional parentId.
+- Supports add Null, parent selected layer to a new Null, assign/unassign Null parent, edit null transform and remove Null while preserving child world positions. Parent validation rejects missing parents, cycles and non-null parents.
+- Text Animator is per grapheme (Intl.Segmenter vi when available): rise, fade, scale, wave and tracking; bounded stagger, duration and strength; easing curves reuse CVEasingP119.
+- Hosted build integration injects guarded beginFrame, applyParentTransform and drawText hooks into the existing Motion Lab draw loop; it does not replace the native draw owner.
+- Node suite validates hierarchy transforms, nested scale, cycle rejection, missing-parent behavior and animator bounds. Chromium suite checks UI, parent creation, snapshot metadata and render changes; hosted result pending.
+- P139 remains PARTIAL: precomp, motion blur, word/range selectors, expanded keyframe timeline/inspector and visual acceptance with real projects remain OPEN.
