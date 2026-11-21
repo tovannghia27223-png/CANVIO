@@ -129,3 +129,11 @@ No honest all-P completion claim is possible yet. In addition to P70's 14 open r
 - P134 base scopes remain the existing histogram/waveform/vectorscope implementation; this increment adds a separate aspect-ratio workflow inside the existing Video Engine quality card.
 - Scope boundary: 9:16 / 1:1 saliency crop from edge contrast + frame difference; WebM export; no face-recognition model, no upload, no timeline or store mutation.
 - Acceptance status: pending hosted PR verification. Do not mark merged/automated PASS until the workflow result is inspected. Real footage, mobile/browser matrix and audio listening remain manual.
+
+
+## P133.2 proxy increment — 2026-11-21
+
+- Candidate branch work/p133-proxy720p-rebased-20261121: local 4K clip proxy generator integrated into the existing Video Engine quality card via canvio-lot133p.
+- Uses existing media refs/IndexedDB object store and existing importFiles timeline ingestion; outputs a new WebM clip with longest edge ≤1280 px; original source clip remains unchanged.
+- Node regression and hosted Chromium/ffmpeg/ffprobe acceptance added. CI pending; not marked PASS or merged.
+- Remaining P133 scope: OffscreenCanvas use cases for background removal/upscale and selected large-media OPFS migration with quota/migration/rollback tests. No duplicate project/media store.
