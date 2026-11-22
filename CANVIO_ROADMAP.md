@@ -1122,3 +1122,7 @@ Hosted verification after the ffmpeg repair is complete:
 - Phát hiện: P133.4 chuyển media >32MB sang OPFS (bản ghi IndexedDB chỉ còn con trỏ `storage:'opfs'`), nhưng vài chỗ vẫn đọc thẳng `record.blob` nên không thấy tệp lớn: Audio Studio/waveform (`getBlob`, `blobFor`), khử ồn P138, đo âm lượng P127, tạo proxy preview và chuyển proxy/gốc. Đã vá tất cả để rơi về `CVMediaOPFSP133.get` khi bản ghi là con trỏ OPFS.
 - Kiểm: `tests/p145/run-p133r2-browser.py` (34MB lưu OPFS → Audio Studio đọc đúng 34MB, xóa xong trả null); P138/P133 node + Chrome và smoke 21/21 vẫn qua.
 - P133 còn: chuyển Asset Library/Project Vault (kho khác) sang OPFS — chưa làm, kho video là phần đã chuyển.
+
+## P143 Phase 3 — đồ thị thứ tự nạp (2026-11-23)
+- `tests/p143/build-boot-order-graph.cjs` dựng đồ thị phụ thuộc từ inventory 164 script: 39 script độc lập (leaf), 121 script phụ thuộc theo thứ tự (chỉ đọc global do script đứng trước cung cấp), 4 tham chiếu tiến (CV, LS, CVUnifiedLayers — chỉ an toàn khi đọc muộn). Kết quả ở `tests/p143/boot-order-graph.json`; CI chạy `--check` và đỏ nếu xuất hiện tham chiếu tiến MỚI.
+- Đây vẫn là phân tích heuristic (như inventory), chưa phải trích tách mã. Việc tách thật ra tệp ngoài mâu thuẫn mục tiêu "một tệp HTML", nên giai đoạn tiếp theo chỉ nên trích các script `leaf-standalone` có parity test, và chỉ khi bạn muốn.

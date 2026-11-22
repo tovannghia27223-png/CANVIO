@@ -1,0 +1,2439 @@
+{
+ "format": "CANVIO_P143_BOOT_ORDER_GRAPH",
+ "version": 1,
+ "purpose": "Heuristic boot-order graph from the inline inventory. forwardReferences are reads of a global that only a later script defines.",
+ "scriptCount": 164,
+ "edgeCount": 184,
+ "summary": {
+  "leafStandalone": 39,
+  "orderedDependent": 121,
+  "reviewForwardReference": 4,
+  "forwardReferenceCount": 4
+ },
+ "forwardReferences": [
+  {
+   "reader": "canvio101-lib-loader",
+   "readerOrder": 0,
+   "global": "CV",
+   "providerOrder": 1
+  },
+  {
+   "reader": "#1",
+   "readerOrder": 1,
+   "global": "LS",
+   "providerOrder": 51
+  },
+  {
+   "reader": "canvio101-hardening-module",
+   "readerOrder": 9,
+   "global": "LS",
+   "providerOrder": 51
+  },
+  {
+   "reader": "canvio18-native-engines",
+   "readerOrder": 57,
+   "global": "CVUnifiedLayers",
+   "providerOrder": 60
+  }
+ ],
+ "nodes": [
+  {
+   "order": 0,
+   "id": "canvio101-lib-loader",
+   "bytes": 1352,
+   "provides": [
+    "CVLibs",
+    "__cvNeedLib"
+   ],
+   "dependsOnOrders": [],
+   "forwardReads": [
+    "CV"
+   ],
+   "unresolvedReads": [],
+   "extractionClass": "review-forward-reference"
+  },
+  {
+   "order": 1,
+   "id": null,
+   "bytes": 397366,
+   "provides": [
+    "CV",
+    "CV190PosterSamples",
+    "__canvio10Keys"
+   ],
+   "dependsOnOrders": [],
+   "forwardReads": [
+    "LS"
+   ],
+   "unresolvedReads": [],
+   "extractionClass": "review-forward-reference"
+  },
+  {
+   "order": 2,
+   "id": "canvio-gemini-module",
+   "bytes": 9280,
+   "provides": [
+    "GeminiAPI"
+   ],
+   "dependsOnOrders": [
+    1
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 3,
+   "id": "canvio10-portfolio-module",
+   "bytes": 5883,
+   "provides": [
+    "CANVIO_PORTFOLIO"
+   ],
+   "dependsOnOrders": [
+    1
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 4,
+   "id": "canvio-artcraft-module",
+   "bytes": 9450,
+   "provides": [
+    "ArtCraft"
+   ],
+   "dependsOnOrders": [
+    1
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 5,
+   "id": "canvio-shotcraft-module",
+   "bytes": 13933,
+   "provides": [
+    "ShotCraft"
+   ],
+   "dependsOnOrders": [
+    1
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 6,
+   "id": "canvio10-release-meta",
+   "bytes": 460,
+   "provides": [
+    "CANVIO_RELEASE"
+   ],
+   "dependsOnOrders": [],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "leaf-standalone"
+  },
+  {
+   "order": 7,
+   "id": "canvio-hrvisual-module",
+   "bytes": 28993,
+   "provides": [
+    "CVLocal",
+    "HRVisual"
+   ],
+   "dependsOnOrders": [
+    1
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 8,
+   "id": "canvio102-skin-module",
+   "bytes": 17062,
+   "provides": [],
+   "dependsOnOrders": [
+    1
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 9,
+   "id": "canvio101-hardening-module",
+   "bytes": 56784,
+   "provides": [
+    "CV11",
+    "CVAudioMix",
+    "CVHealth",
+    "CVZip"
+   ],
+   "dependsOnOrders": [
+    1,
+    2
+   ],
+   "forwardReads": [
+    "LS"
+   ],
+   "unresolvedReads": [],
+   "extractionClass": "review-forward-reference"
+  },
+  {
+   "order": 10,
+   "id": "canvio-one-module",
+   "bytes": 39255,
+   "provides": [
+    "CVOne"
+   ],
+   "dependsOnOrders": [
+    1,
+    2
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 11,
+   "id": "canvio-hub-module",
+   "bytes": 141437,
+   "provides": [
+    "CVAuto",
+    "CVHub",
+    "CVKit",
+    "CVQA",
+    "CVStudioCore"
+   ],
+   "dependsOnOrders": [
+    1,
+    2
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 12,
+   "id": "canvio-lot56",
+   "bytes": 32789,
+   "provides": [
+    "CV190TemplateState",
+    "CVLot56"
+   ],
+   "dependsOnOrders": [
+    1,
+    2
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 13,
+   "id": "canvio-lot7",
+   "bytes": 1744,
+   "provides": [],
+   "dependsOnOrders": [],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "leaf-standalone"
+  },
+  {
+   "order": 14,
+   "id": "canvio-lot8",
+   "bytes": 9990,
+   "provides": [],
+   "dependsOnOrders": [
+    1
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 15,
+   "id": "canvio-lot9",
+   "bytes": 14089,
+   "provides": [
+    "CVPublish"
+   ],
+   "dependsOnOrders": [
+    1,
+    2
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 16,
+   "id": "canvio-lot10",
+   "bytes": 16458,
+   "provides": [
+    "CVLot10"
+   ],
+   "dependsOnOrders": [
+    1
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 17,
+   "id": "canvio-lot11",
+   "bytes": 7588,
+   "provides": [
+    "CVLot11"
+   ],
+   "dependsOnOrders": [
+    1
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 18,
+   "id": "canvio-lot12",
+   "bytes": 9211,
+   "provides": [
+    "CVLot12"
+   ],
+   "dependsOnOrders": [
+    1
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 19,
+   "id": "canvio-lot13",
+   "bytes": 7323,
+   "provides": [
+    "CVLot13"
+   ],
+   "dependsOnOrders": [
+    1
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 20,
+   "id": "canvio-lot14",
+   "bytes": 15318,
+   "provides": [
+    "CVLot14"
+   ],
+   "dependsOnOrders": [
+    1
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 21,
+   "id": "canvio-lot15",
+   "bytes": 39784,
+   "provides": [
+    "CVLot15"
+   ],
+   "dependsOnOrders": [
+    1
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 22,
+   "id": "canvio-lot20",
+   "bytes": 8526,
+   "provides": [
+    "CVPages"
+   ],
+   "dependsOnOrders": [
+    1
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 23,
+   "id": "canvio-lot21",
+   "bytes": 16255,
+   "provides": [
+    "CVShell"
+   ],
+   "dependsOnOrders": [
+    1,
+    11
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 24,
+   "id": "canvio-lot22",
+   "bytes": 9597,
+   "provides": [
+    "CANVIO_MAP",
+    "CVLot22"
+   ],
+   "dependsOnOrders": [
+    1,
+    11
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 25,
+   "id": "canvio-lot23",
+   "bytes": 21579,
+   "provides": [
+    "CVFonts",
+    "CVLot23",
+    "__cvFontInline"
+   ],
+   "dependsOnOrders": [
+    1
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 26,
+   "id": "canvio-lot24",
+   "bytes": 16525,
+   "provides": [
+    "CVLot24",
+    "__paK"
+   ],
+   "dependsOnOrders": [
+    1
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 27,
+   "id": "canvio-lot25",
+   "bytes": 7153,
+   "provides": [
+    "CVLot25"
+   ],
+   "dependsOnOrders": [
+    1,
+    11
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 28,
+   "id": "canvio-lot26",
+   "bytes": 16529,
+   "provides": [
+    "CVLot26",
+    "__cvImg"
+   ],
+   "dependsOnOrders": [
+    1,
+    11
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 29,
+   "id": "canvio-lot27",
+   "bytes": 16855,
+   "provides": [
+    "CVLot27"
+   ],
+   "dependsOnOrders": [
+    1,
+    2
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 30,
+   "id": "canvio-lot28",
+   "bytes": 11700,
+   "provides": [
+    "CVWS"
+   ],
+   "dependsOnOrders": [
+    1
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 31,
+   "id": "canvio-lot29",
+   "bytes": 16844,
+   "provides": [
+    "CVStore"
+   ],
+   "dependsOnOrders": [
+    1,
+    30
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 32,
+   "id": "canvio-lot30",
+   "bytes": 11981,
+   "provides": [
+    "CVExport"
+   ],
+   "dependsOnOrders": [
+    1,
+    30
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 33,
+   "id": "canvio-lot31",
+   "bytes": 7732,
+   "provides": [
+    "CVCmd"
+   ],
+   "dependsOnOrders": [
+    1,
+    30
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 34,
+   "id": "canvio-lot32",
+   "bytes": 10901,
+   "provides": [
+    "CVJobs"
+   ],
+   "dependsOnOrders": [
+    1,
+    2
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 35,
+   "id": "canvio-lot33",
+   "bytes": 32680,
+   "provides": [
+    "CVParts"
+   ],
+   "dependsOnOrders": [
+    1
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 36,
+   "id": "canvio-lot34",
+   "bytes": 9511,
+   "provides": [
+    "CANVIO_MAP",
+    "CVOnboard"
+   ],
+   "dependsOnOrders": [
+    1,
+    11,
+    30
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 37,
+   "id": "canvio-lot35",
+   "bytes": 42779,
+   "provides": [
+    "CVShield"
+   ],
+   "dependsOnOrders": [
+    1,
+    30
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 38,
+   "id": "canvio-lot38",
+   "bytes": 24435,
+   "provides": [
+    "CVLot38"
+   ],
+   "dependsOnOrders": [
+    1
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 39,
+   "id": "canvio-lot39",
+   "bytes": 13734,
+   "provides": [
+    "CVLot39"
+   ],
+   "dependsOnOrders": [
+    1,
+    11
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 40,
+   "id": "canvio-lot40",
+   "bytes": 1942,
+   "provides": [
+    "CVLot40"
+   ],
+   "dependsOnOrders": [
+    1
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 41,
+   "id": "canvio-lot41",
+   "bytes": 3031,
+   "provides": [
+    "CVLot41"
+   ],
+   "dependsOnOrders": [
+    1
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 42,
+   "id": "canvio-lot42",
+   "bytes": 4932,
+   "provides": [
+    "CVLot42"
+   ],
+   "dependsOnOrders": [
+    1
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 43,
+   "id": "canvio-lot43",
+   "bytes": 4172,
+   "provides": [
+    "CVLot43"
+   ],
+   "dependsOnOrders": [
+    1
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 44,
+   "id": "canvio-lot44",
+   "bytes": 2772,
+   "provides": [
+    "CVLot44"
+   ],
+   "dependsOnOrders": [
+    1
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 45,
+   "id": "canvio-lot45",
+   "bytes": 12602,
+   "provides": [
+    "CVLot45"
+   ],
+   "dependsOnOrders": [
+    1
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 46,
+   "id": "canvio-lot46",
+   "bytes": 6953,
+   "provides": [
+    "CVHealth",
+    "CVLot46"
+   ],
+   "dependsOnOrders": [
+    1
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 47,
+   "id": "canvio-lot47",
+   "bytes": 4744,
+   "provides": [
+    "CVLot47"
+   ],
+   "dependsOnOrders": [
+    1,
+    11
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 48,
+   "id": "canvio-lot48",
+   "bytes": 4978,
+   "provides": [
+    "CVLot48"
+   ],
+   "dependsOnOrders": [
+    1
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 49,
+   "id": "canvio-lot49",
+   "bytes": 3306,
+   "provides": [
+    "CVLot49"
+   ],
+   "dependsOnOrders": [
+    1,
+    11
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 50,
+   "id": "canvio-lot50",
+   "bytes": 2328,
+   "provides": [
+    "CVLot50"
+   ],
+   "dependsOnOrders": [
+    1
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 51,
+   "id": "canvio-lot51",
+   "bytes": 1571,
+   "provides": [
+    "CVLot51",
+    "Export",
+    "LS",
+    "Responsive",
+    "Templates"
+   ],
+   "dependsOnOrders": [
+    1
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 52,
+   "id": "canvio-lot53",
+   "bytes": 22333,
+   "provides": [
+    "CVLot53",
+    "CVWeb"
+   ],
+   "dependsOnOrders": [
+    1
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 53,
+   "id": "canvio-styledna",
+   "bytes": 37603,
+   "provides": [
+    "CVStyleDNA"
+   ],
+   "dependsOnOrders": [
+    1,
+    2
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 54,
+   "id": "canvio-guide",
+   "bytes": 24950,
+   "provides": [
+    "CVGuide"
+   ],
+   "dependsOnOrders": [
+    1,
+    2
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 55,
+   "id": "canvio-creative-hub-module",
+   "bytes": 29270,
+   "provides": [
+    "CVCreativeHub"
+   ],
+   "dependsOnOrders": [
+    1,
+    2
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 56,
+   "id": "canvio17-shared-core",
+   "bytes": 30302,
+   "provides": [
+    "CVCreativeCore"
+   ],
+   "dependsOnOrders": [
+    1,
+    51
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 57,
+   "id": "canvio18-native-engines",
+   "bytes": 100752,
+   "provides": [
+    "CVNativeEngines",
+    "CVNativeSuite"
+   ],
+   "dependsOnOrders": [
+    1,
+    2
+   ],
+   "forwardReads": [
+    "CVUnifiedLayers"
+   ],
+   "unresolvedReads": [],
+   "extractionClass": "review-forward-reference"
+  },
+  {
+   "order": 58,
+   "id": "canvio18-global-design-toolkit",
+   "bytes": 88002,
+   "provides": [
+    "CVGlobalDesignToolkit",
+    "__cvgLayoutRange"
+   ],
+   "dependsOnOrders": [
+    1,
+    57
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 59,
+   "id": "canvio185-creative-system-library",
+   "bytes": 28247,
+   "provides": [
+    "CVDesignSystem"
+   ],
+   "dependsOnOrders": [
+    1,
+    57
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 60,
+   "id": "canvio186-unified-layers-history",
+   "bytes": 24056,
+   "provides": [
+    "CVUnifiedLayers"
+   ],
+   "dependsOnOrders": [
+    1
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 61,
+   "id": "canvio187-persistent-projects",
+   "bytes": 32349,
+   "provides": [
+    "CANVIOPersistentProjects"
+   ],
+   "dependsOnOrders": [
+    1,
+    60
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 62,
+   "id": "canvio189-universal-context-editing",
+   "bytes": 70327,
+   "provides": [
+    "CANVIOContextWorkspace"
+   ],
+   "dependsOnOrders": [
+    1,
+    52,
+    57,
+    60,
+    61
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 63,
+   "id": "canvio190-template-motion-site-ai",
+   "bytes": 43889,
+   "provides": [
+    "CV190Library",
+    "CV190TemplateState"
+   ],
+   "dependsOnOrders": [
+    1,
+    57
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 64,
+   "id": "canvio191-reference-showcase",
+   "bytes": 641418,
+   "provides": [
+    "CVShowcaseTemplates"
+   ],
+   "dependsOnOrders": [],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "leaf-standalone"
+  },
+  {
+   "order": 65,
+   "id": "canvio193-video-references",
+   "bytes": 171329,
+   "provides": [
+    "CVRefSites"
+   ],
+   "dependsOnOrders": [
+    1
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 66,
+   "id": "canvio217-faithful-3d",
+   "bytes": 118855,
+   "provides": [
+    "CVFaithful"
+   ],
+   "dependsOnOrders": [
+    1
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 67,
+   "id": "canvio200-unified-control-plane",
+   "bytes": 43783,
+   "provides": [
+    "CANVIOControlPlane",
+    "CANVIOUsageGuard",
+    "__canvio20FetchGuard",
+    "fetch"
+   ],
+   "dependsOnOrders": [
+    1,
+    2,
+    61
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 68,
+   "id": "canvio201-ops-intelligence",
+   "bytes": 37379,
+   "provides": [
+    "CANVIOOpsIntelligence"
+   ],
+   "dependsOnOrders": [
+    1
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 69,
+   "id": "canvio21-capcut-integration",
+   "bytes": 4893,
+   "provides": [],
+   "dependsOnOrders": [
+    1
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 70,
+   "id": "canvio217-platform-foundation",
+   "bytes": 39033,
+   "provides": [
+    "CANVIODataLayer",
+    "CANVIOIntegrationHub",
+    "CANVIOPlatform21",
+    "CANVIOSystemQA",
+    "CANVIOWorkflowIntelligence"
+   ],
+   "dependsOnOrders": [
+    1,
+    61
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 71,
+   "id": "canvio218-tool-parity",
+   "bytes": 19732,
+   "provides": [
+    "CVToolParity"
+   ],
+   "dependsOnOrders": [
+    1
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 72,
+   "id": "canvio222-video-scopes",
+   "bytes": 11207,
+   "provides": [
+    "CVVideoScopes"
+   ],
+   "dependsOnOrders": [
+    1
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 73,
+   "id": "canvio218-design-tools",
+   "bytes": 42134,
+   "provides": [
+    "CVDesignTools"
+   ],
+   "dependsOnOrders": [
+    1
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 74,
+   "id": "canvio219-photo-tools",
+   "bytes": 37191,
+   "provides": [
+    "CVPhotoTools"
+   ],
+   "dependsOnOrders": [
+    1
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 75,
+   "id": "canvio219-shape-anim",
+   "bytes": 291535,
+   "provides": [
+    "CANVIO22",
+    "CANVIOCreativeSuite",
+    "CV227",
+    "CV229",
+    "CVAudioAutomation",
+    "CVKeyframeStudio",
+    "CVLocalImageLab",
+    "CVLocalMasking",
+    "CVLumaHSL",
+    "CVPhotoWorkflow",
+    "CVProNativeTools",
+    "CVShapeAnim",
+    "CVSubtitleQC",
+    "CVVideoPreflight"
+   ],
+   "dependsOnOrders": [
+    1,
+    57,
+    60,
+    61
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 76,
+   "id": "cv239-professional-render-queue",
+   "bytes": 11742,
+   "provides": [
+    "CANVIO_BUILD",
+    "CVRenderQueue"
+   ],
+   "dependsOnOrders": [
+    1
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 77,
+   "id": "cv2310-extended-studios",
+   "bytes": 30555,
+   "provides": [
+    "CANVIO_BUILD",
+    "CVStudioSuite2310"
+   ],
+   "dependsOnOrders": [
+    1,
+    57
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 78,
+   "id": null,
+   "bytes": 514089,
+   "provides": [
+    "CANVIOPluginRegistryStudio",
+    "CANVIO_BUILD",
+    "CANVIO_P31_P36",
+    "CANVIO_P37_P42",
+    "CV",
+    "CVAccessibilityQC",
+    "CVAudioQC",
+    "CVBrandIntegrityQC",
+    "CVCanvaDesignWorkbench",
+    "CVCapCutProductionSuite",
+    "CVCoreReliability",
+    "CVCreativeRoundTripQA",
+    "CVExportIntegrity",
+    "CVHostingCompatibilityProfiles",
+    "CVLayoutPrintQC",
+    "CVLiveSiteQualityAudit",
+    "CVLiveWebsiteVerification",
+    "CVMotionWebsiteStudio",
+    "CVPerformanceDiagnostics",
+    "CVProductionReleaseCandidate",
+    "CVProductionReleaseGate",
+    "CVProfessionalQC",
+    "CVProjectRecoveryDrill",
+    "CVQRStudio",
+    "CVResponsiveAccessibilityQA",
+    "CVResponsiveSafeArea",
+    "CVSafeMediaRelink",
+    "CVStudioSuite2311",
+    "CVTimelineQC",
+    "CVTypographyQC",
+    "CVUnifiedCreativeWorkspace",
+    "CVWebsiteAcceptance",
+    "CVWebsiteDeploymentQC",
+    "CVWebsiteLinkAssetQC",
+    "CVWebsitePerformanceQC",
+    "CVWebsitePublishQC",
+    "CVWebsiteResponsiveQC",
+    "CVWebsiteSocialPreview",
+    "CVWebsiteStructuredDataQC",
+    "__canvioBuildTitleObserver",
+    "__canvioP5CreativeWorkflowInstalled",
+    "__canvioP7ReviewStudioInstalled",
+    "__cvP27TitleSync",
+    "__cvP28TitleSync",
+    "__cvP29TitleSync",
+    "__cvP30Installed"
+   ],
+   "dependsOnOrders": [
+    51,
+    57,
+    60,
+    61
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [
+    "P31"
+   ],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 79,
+   "id": "canvio-phase-completion-suite",
+   "bytes": 31773,
+   "provides": [
+    "CANVIOPhaseSuite",
+    "CANVIOProjectBundle",
+    "CVAIProviderAdapter",
+    "CVWebsiteMotionBuilder"
+   ],
+   "dependsOnOrders": [
+    2,
+    60,
+    78
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 80,
+   "id": "canvio-p55-runtime-release-gate",
+   "bytes": 20122,
+   "provides": [
+    "CANVIOPerformanceBudget",
+    "CANVIOProjectIntegrity",
+    "CANVIOReleaseGate",
+    "CANVIORuntimeDiagnostics"
+   ],
+   "dependsOnOrders": [],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "leaf-standalone"
+  },
+  {
+   "order": 81,
+   "id": "canvio-p56-portable-archive-preflight",
+   "bytes": 10509,
+   "provides": [
+    "CANVIOArchivePreflight",
+    "CANVIO_BUILD"
+   ],
+   "dependsOnOrders": [],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "leaf-standalone"
+  },
+  {
+   "order": 82,
+   "id": "canvio-p57-native-persistence-audit",
+   "bytes": 9001,
+   "provides": [
+    "CANVIOPersistenceAudit"
+   ],
+   "dependsOnOrders": [],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "leaf-standalone"
+  },
+  {
+   "order": 83,
+   "id": "canvio-p58-media-export-acceptance",
+   "bytes": 4690,
+   "provides": [
+    "CANVIOExportAcceptance"
+   ],
+   "dependsOnOrders": [
+    78
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 84,
+   "id": "canvio-p59-whisper-runtime-acceptance",
+   "bytes": 3164,
+   "provides": [
+    "CANVIOWhisperAcceptance"
+   ],
+   "dependsOnOrders": [],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "leaf-standalone"
+  },
+  {
+   "order": 85,
+   "id": "canvio-p60-accessibility-screening",
+   "bytes": 5502,
+   "provides": [
+    "CANVIOAccessibilityAudit"
+   ],
+   "dependsOnOrders": [],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "leaf-standalone"
+  },
+  {
+   "order": 86,
+   "id": "canvio-p61-hosting-security-audit",
+   "bytes": 3311,
+   "provides": [
+    "CANVIOHostingSecurityAudit"
+   ],
+   "dependsOnOrders": [],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "leaf-standalone"
+  },
+  {
+   "order": 87,
+   "id": "canvio-p62-phase1-release-gate",
+   "bytes": 4539,
+   "provides": [
+    "CANVIOPhase1ReleaseGate",
+    "CANVIO_BUILD"
+   ],
+   "dependsOnOrders": [],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "leaf-standalone"
+  },
+  {
+   "order": 88,
+   "id": "canvio-p62-phase1-dashboard",
+   "bytes": 6690,
+   "provides": [],
+   "dependsOnOrders": [],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "leaf-standalone"
+  },
+  {
+   "order": 89,
+   "id": "canvio-p63-p67-main",
+   "bytes": 76068,
+   "provides": [
+    "CANVIOAICreativeWorkflow",
+    "CANVIOAdvancedTimeline",
+    "CANVIOMotionTracking",
+    "CANVIOPhase2",
+    "CANVIOPrintProduction",
+    "CANVIOUnifiedTimeline",
+    "CANVIO_BUILD"
+   ],
+   "dependsOnOrders": [
+    51,
+    57,
+    78
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 90,
+   "id": "canvio-p68-p70-main",
+   "bytes": 35043,
+   "provides": [
+    "CANVIOOffline3D",
+    "CANVIOPhase3",
+    "CANVIOStableRelease",
+    "CANVIOSystemOptimizer",
+    "CANVIO_BUILD"
+   ],
+   "dependsOnOrders": [],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "leaf-standalone"
+  },
+  {
+   "order": 91,
+   "id": "canvio-p90-p96-main",
+   "bytes": 41294,
+   "provides": [
+    "CANVIOUXSuite",
+    "CANVIO_BUILD"
+   ],
+   "dependsOnOrders": [],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "leaf-standalone"
+  },
+  {
+   "order": 92,
+   "id": null,
+   "bytes": 44848,
+   "provides": [
+    "CANVIOVideoUXSuite",
+    "CANVIO_BUILD"
+   ],
+   "dependsOnOrders": [
+    78
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 93,
+   "id": "canvio-p104-module",
+   "bytes": 21630,
+   "provides": [
+    "CANVIOKenBurnsSuite",
+    "CANVIO_BUILD"
+   ],
+   "dependsOnOrders": [
+    78
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 94,
+   "id": "canvio-p87-cv-docx",
+   "bytes": 18295,
+   "provides": [
+    "CANVIO_BUILD",
+    "CVATSExport"
+   ],
+   "dependsOnOrders": [],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "leaf-standalone"
+  },
+  {
+   "order": 95,
+   "id": "canvio-p82-p84-vector-pdf",
+   "bytes": 36986,
+   "provides": [
+    "CANVIOVectorPDF",
+    "CANVIO_BUILD"
+   ],
+   "dependsOnOrders": [
+    78
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 96,
+   "id": "canvio-p76-p77-p83-brand",
+   "bytes": 49954,
+   "provides": [
+    "CANVIOBrandDNA",
+    "CANVIO_BUILD"
+   ],
+   "dependsOnOrders": [
+    51,
+    52,
+    60,
+    78
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 97,
+   "id": "canvio-p75-logo-studio",
+   "bytes": 27759,
+   "provides": [
+    "CANVIOLogoStudio",
+    "CANVIO_BUILD"
+   ],
+   "dependsOnOrders": [
+    51,
+    57,
+    60,
+    78
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 98,
+   "id": "canvio-p79-webcodecs",
+   "bytes": 26423,
+   "provides": [
+    "CANVIOWebCodecsExport",
+    "CANVIO_BUILD"
+   ],
+   "dependsOnOrders": [
+    78
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 99,
+   "id": "canvio-p80-whisper-webgpu",
+   "bytes": 4113,
+   "provides": [
+    "CANVIOWhisperP80",
+    "CANVIO_BUILD"
+   ],
+   "dependsOnOrders": [
+    78
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 100,
+   "id": "canvio-p89-template-multisize",
+   "bytes": 22526,
+   "provides": [
+    "CANVIOP89Suite",
+    "CANVIO_BUILD"
+   ],
+   "dependsOnOrders": [
+    78
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 101,
+   "id": "canvio-p86-cv-vector-pdf",
+   "bytes": 13831,
+   "provides": [
+    "CANVIOCVPDF",
+    "CANVIO_BUILD"
+   ],
+   "dependsOnOrders": [
+    78
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 102,
+   "id": "canvio-p78-motion-checklist",
+   "bytes": 21306,
+   "provides": [
+    "CANVIOMotionChecklistP78",
+    "CANVIO_BUILD"
+   ],
+   "dependsOnOrders": [
+    78
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 103,
+   "id": "canvio-p72-glb-viewer",
+   "bytes": 23987,
+   "provides": [
+    "CANVIOGLBViewerP72",
+    "CANVIO_BUILD"
+   ],
+   "dependsOnOrders": [],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "leaf-standalone"
+  },
+  {
+   "order": 104,
+   "id": "canvio-p73-offline-site",
+   "bytes": 17580,
+   "provides": [
+    "CANVIOOfflineSiteP73",
+    "CANVIO_BUILD"
+   ],
+   "dependsOnOrders": [
+    78
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 105,
+   "id": "canvio-p103-sfx-library",
+   "bytes": 12958,
+   "provides": [
+    "CANVIOP103Sfx",
+    "CANVIO_BUILD"
+   ],
+   "dependsOnOrders": [
+    78
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 106,
+   "id": "canvio-p102-background-removal",
+   "bytes": 9672,
+   "provides": [
+    "CANVIOBackgroundRemovalP102"
+   ],
+   "dependsOnOrders": [
+    78
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 107,
+   "id": "canvio-p105-p107-depth-parallax",
+   "bytes": 44178,
+   "provides": [
+    "CANVIODepthParallaxP105",
+    "CANVIO_BUILD"
+   ],
+   "dependsOnOrders": [
+    51,
+    78
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 108,
+   "id": "canvio-p102-p105-worker-assets-r1",
+   "bytes": 2906,
+   "provides": [
+    "CANVIO_BUILD"
+   ],
+   "dependsOnOrders": [],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "leaf-standalone"
+  },
+  {
+   "order": 109,
+   "id": "canvio-p74-p81-three-viewer",
+   "bytes": 22493,
+   "provides": [
+    "CANVIOThreeGLBViewerP74"
+   ],
+   "dependsOnOrders": [],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "leaf-standalone"
+  },
+  {
+   "order": 110,
+   "id": "canvio-p85-module",
+   "bytes": 33673,
+   "provides": [
+    "CANVIOP85Suite"
+   ],
+   "dependsOnOrders": [],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "leaf-standalone"
+  },
+  {
+   "order": 111,
+   "id": "canvio-lot109",
+   "bytes": 5327,
+   "provides": [
+    "CANVIOStudioSwitcherP109"
+   ],
+   "dependsOnOrders": [
+    30,
+    78
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 112,
+   "id": "canvio-lot110",
+   "bytes": 6592,
+   "provides": [
+    "CANVIOHubP110"
+   ],
+   "dependsOnOrders": [
+    30,
+    78
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 113,
+   "id": "canvio-lot111",
+   "bytes": 3804,
+   "provides": [
+    "CANVIOStudioShellP111"
+   ],
+   "dependsOnOrders": [
+    30,
+    78
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 114,
+   "id": "canvio-lot112",
+   "bytes": 969,
+   "provides": [
+    "CANVIOStudioSiteP112"
+   ],
+   "dependsOnOrders": [
+    30,
+    78
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 115,
+   "id": "canvio-lot113",
+   "bytes": 922,
+   "provides": [
+    "CANVIOStudioMediaP113"
+   ],
+   "dependsOnOrders": [
+    30,
+    78
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 116,
+   "id": "canvio-lot114",
+   "bytes": 1966,
+   "provides": [
+    "CVNavShellP114"
+   ],
+   "dependsOnOrders": [
+    30,
+    78
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 117,
+   "id": "canvio-lot122",
+   "bytes": 5960,
+   "provides": [
+    "CVTasteP122"
+   ],
+   "dependsOnOrders": [],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "leaf-standalone"
+  },
+  {
+   "order": 118,
+   "id": "canvio-lot123",
+   "bytes": 10618,
+   "provides": [
+    "CVLayoutsP123"
+   ],
+   "dependsOnOrders": [],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "leaf-standalone"
+  },
+  {
+   "order": 119,
+   "id": "canvio-lot127",
+   "bytes": 7544,
+   "provides": [
+    "CVEditPlanP127"
+   ],
+   "dependsOnOrders": [
+    78
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 120,
+   "id": "canvio-lot127q",
+   "bytes": 13634,
+   "provides": [
+    "CVEditQualityP127"
+   ],
+   "dependsOnOrders": [
+    78
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 121,
+   "id": "canvio-lot127l",
+   "bytes": 9294,
+   "provides": [
+    "CVLoudnessP127"
+   ],
+   "dependsOnOrders": [
+    78
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 122,
+   "id": "canvio-lot127t",
+   "bytes": 6935,
+   "provides": [
+    "CVTemplatesP127"
+   ],
+   "dependsOnOrders": [
+    78
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 123,
+   "id": "canvio-lot125f",
+   "bytes": 19276,
+   "provides": [
+    "CVScrollFramesP125"
+   ],
+   "dependsOnOrders": [],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "leaf-standalone"
+  },
+  {
+   "order": 124,
+   "id": "canvio-lot145c",
+   "bytes": 22498,
+   "provides": [
+    "CVContentCoreP145"
+   ],
+   "dependsOnOrders": [
+    78
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 125,
+   "id": "canvio-lot132g",
+   "bytes": 26210,
+   "provides": [
+    "CVGifP132"
+   ],
+   "dependsOnOrders": [
+    78
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 126,
+   "id": "canvio-lot145s",
+   "bytes": 10557,
+   "provides": [
+    "CVSfxP145"
+   ],
+   "dependsOnOrders": [
+    78
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 127,
+   "id": "canvio-lot136t",
+   "bytes": 26625,
+   "provides": [
+    "CVTraceP136"
+   ],
+   "dependsOnOrders": [],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "leaf-standalone"
+  },
+  {
+   "order": 128,
+   "id": "canvio-lot134s",
+   "bytes": 9017,
+   "provides": [
+    "CVScopesP134"
+   ],
+   "dependsOnOrders": [],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "leaf-standalone"
+  },
+  {
+   "order": 129,
+   "id": "canvio-lot138d",
+   "bytes": 13424,
+   "provides": [
+    "CVDenoiseP138"
+   ],
+   "dependsOnOrders": [
+    78
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 130,
+   "id": "canvio-lot140c",
+   "bytes": 14397,
+   "provides": [
+    "CVChartsP140"
+   ],
+   "dependsOnOrders": [
+    78
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 131,
+   "id": "canvio-lot133r",
+   "bytes": 16101,
+   "provides": [
+    "CVResilienceP133"
+   ],
+   "dependsOnOrders": [
+    78
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 132,
+   "id": "canvio-lot144u",
+   "bytes": 27067,
+   "provides": [
+    "CVUxP144",
+    "__cv144Keys"
+   ],
+   "dependsOnOrders": [
+    78
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 133,
+   "id": "canvio-lot119e",
+   "bytes": 10536,
+   "provides": [
+    "CVEasingP119"
+   ],
+   "dependsOnOrders": [],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "leaf-standalone"
+  },
+  {
+   "order": 134,
+   "id": "canvio-lot118w",
+   "bytes": 24865,
+   "provides": [
+    "CVWordmarkP118"
+   ],
+   "dependsOnOrders": [
+    78
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 135,
+   "id": "canvio-lot141f",
+   "bytes": 7675,
+   "provides": [
+    "CVFontsP141"
+   ],
+   "dependsOnOrders": [],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "leaf-standalone"
+  },
+  {
+   "order": 136,
+   "id": "canvio-lot128o",
+   "bytes": 8660,
+   "provides": [
+    "CVOrchestratorP128"
+   ],
+   "dependsOnOrders": [],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "leaf-standalone"
+  },
+  {
+   "order": 137,
+   "id": "canvio-lot137s",
+   "bytes": 26813,
+   "provides": [
+    "CVStylesP137"
+   ],
+   "dependsOnOrders": [
+    57
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 138,
+   "id": "canvio-lot114n",
+   "bytes": 5535,
+   "provides": [
+    "CVNavRestoreP114"
+   ],
+   "dependsOnOrders": [
+    30,
+    78
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 139,
+   "id": "canvio-lot150h",
+   "bytes": 66809,
+   "provides": [
+    "CVHomeSkyP150"
+   ],
+   "dependsOnOrders": [
+    30
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 140,
+   "id": "canvio-lot131",
+   "bytes": 28158,
+   "provides": [
+    "CANVIOSecurity"
+   ],
+   "dependsOnOrders": [
+    78
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 141,
+   "id": "canvio-lot115",
+   "bytes": 1802,
+   "provides": [
+    "CANVIOOfflineP115"
+   ],
+   "dependsOnOrders": [],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "leaf-standalone"
+  },
+  {
+   "order": 142,
+   "id": "canvio-lot1222",
+   "bytes": 8252,
+   "provides": [
+    "CVUnslopP1222"
+   ],
+   "dependsOnOrders": [
+    78
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 143,
+   "id": "canvio-lot127k",
+   "bytes": 9697,
+   "provides": [
+    "CVDuckSubP127"
+   ],
+   "dependsOnOrders": [
+    78
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 144,
+   "id": "canvio-lot1452",
+   "bytes": 21505,
+   "provides": [
+    "CVShaderP145"
+   ],
+   "dependsOnOrders": [],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "leaf-standalone"
+  },
+  {
+   "order": 145,
+   "id": "canvio-lot1454b",
+   "bytes": 7650,
+   "provides": [
+    "CVMusicPreviewP1454B"
+   ],
+   "dependsOnOrders": [],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "leaf-standalone"
+  },
+  {
+   "order": 146,
+   "id": "canvio-lot1454",
+   "bytes": 10275,
+   "provides": [
+    "CVMusicComposerP1454"
+   ],
+   "dependsOnOrders": [
+    78
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 147,
+   "id": "canvio-lot1252",
+   "bytes": 14666,
+   "provides": [
+    "CVScrollStoryboardP1252"
+   ],
+   "dependsOnOrders": [],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "leaf-standalone"
+  },
+  {
+   "order": 148,
+   "id": "canvio-lot1455",
+   "bytes": 17949,
+   "provides": [
+    "CVTemplateFactoryP1455"
+   ],
+   "dependsOnOrders": [],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "leaf-standalone"
+  },
+  {
+   "order": 149,
+   "id": "canvio-lot1272",
+   "bytes": 13645,
+   "provides": [
+    "CVCaptionDirectorP1272"
+   ],
+   "dependsOnOrders": [
+    78
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 150,
+   "id": "canvio-lot1456",
+   "bytes": 12032,
+   "provides": [
+    "CVOriginalIconPackP1456"
+   ],
+   "dependsOnOrders": [],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "leaf-standalone"
+  },
+  {
+   "order": 151,
+   "id": "canvio-lot1457",
+   "bytes": 10783,
+   "provides": [
+    "CVTypographyPresetsP1457"
+   ],
+   "dependsOnOrders": [],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "leaf-standalone"
+  },
+  {
+   "order": 152,
+   "id": "canvio-lot1458",
+   "bytes": 16357,
+   "provides": [
+    "CVOriginalVectorAssetsP1458"
+   ],
+   "dependsOnOrders": [],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "leaf-standalone"
+  },
+  {
+   "order": 153,
+   "id": "canvio-lot145910",
+   "bytes": 14535,
+   "provides": [
+    "CVAssetSearchGateP145910"
+   ],
+   "dependsOnOrders": [
+    78
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 154,
+   "id": "canvio-lot134r",
+   "bytes": 16815,
+   "provides": [
+    "CVAutoReframeP134"
+   ],
+   "dependsOnOrders": [],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "leaf-standalone"
+  },
+  {
+   "order": 155,
+   "id": "canvio-lot124",
+   "bytes": 31993,
+   "provides": [
+    "CVAutoLayoutP124"
+   ],
+   "dependsOnOrders": [
+    78
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 156,
+   "id": "canvio-lot133p",
+   "bytes": 18920,
+   "provides": [
+    "CVProxyP133"
+   ],
+   "dependsOnOrders": [
+    78
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 157,
+   "id": "canvio-lot135a",
+   "bytes": 26820,
+   "provides": [
+    "CVPixelAdjustmentsP135"
+   ],
+   "dependsOnOrders": [],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "leaf-standalone"
+  },
+  {
+   "order": 158,
+   "id": "canvio-lot133m",
+   "bytes": 11640,
+   "provides": [
+    "CVMediaOPFSP133"
+   ],
+   "dependsOnOrders": [
+    78
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 159,
+   "id": "canvio-lot139",
+   "bytes": 24291,
+   "provides": [],
+   "dependsOnOrders": [],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "leaf-standalone"
+  },
+  {
+   "order": 160,
+   "id": "canvio-lot120126",
+   "bytes": 19052,
+   "provides": [
+    "CVComfyP120P126"
+   ],
+   "dependsOnOrders": [
+    78
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 161,
+   "id": "canvio-lot119v",
+   "bytes": 11196,
+   "provides": [],
+   "dependsOnOrders": [],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "leaf-standalone"
+  },
+  {
+   "order": 162,
+   "id": "canvio-lot119w",
+   "bytes": 5394,
+   "provides": [],
+   "dependsOnOrders": [],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "leaf-standalone"
+  },
+  {
+   "order": 163,
+   "id": "canvio-lot146",
+   "bytes": 15689,
+   "provides": [
+    "CVHomeCreativeFlowP146"
+   ],
+   "dependsOnOrders": [
+    78
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  }
+ ]
+}

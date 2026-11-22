@@ -713,6 +713,7 @@ jobs:
           set -euo pipefail
           node tests/p143/build-inline-source-inventory.cjs
           test -s tests/p143/inline-source-inventory.json
+          node tests/p143/build-boot-order-graph.cjs --check
 
       - name: P143 stylesheet, template and dynamic-loader inventory
         shell: bash
