@@ -8,13 +8,37 @@ function tag(d, o) { return String.fromCharCode(d.getUint8(o), d.getUint8(o + 1)
 function parse(buf) {
   var d = dv(buf), T = {}, n, i, f = { d: d };
   if (d.byteLength < 12) throw new Error('Tệp phông quá nhỏ.');
-  var sig = d.getUint32(0); if (sig === 0x4F54544F) throw new Error('Phông .otf (CFF) chưa hỗ trợ; dùng .ttf.'); if (sig === 0x774F4646 || sig === 0x774F4632) throw new Error('.woff/.woff2 chưa hỗ trợ; dùng .ttf.'); if (sig !== 0x00010000 && sig !== 0x74727565) throw new Error('Không phải TrueType (.ttf).');
+  var sig = d.getUint32(0); if (sig === 0x4F54544F) throw new Error('Phông .otf (CFF) chưa hỗ trợ; dùng .ttf.'); if (sig === 0x774F4646) throw new Error('.woff cần giải nén bất đồng bộ (parseAsync).'); if (sig === 0x774F4632) throw new Error('.woff2 chưa hỗ trợ; dùng .ttf hoặc .woff.'); if (sig !== 0x00010000 && sig !== 0x74727565) throw new Error('Không phải TrueType (.ttf).');
   n = d.getUint16(4); if (n > 64) throw new Error('Số bảng không hợp lệ.');
   for (i = 0; i < n; i++) { var o = 12 + i * 16; T[tag(d, o)] = { off: d.getUint32(o + 8), len: d.getUint32(o + 12) }; if (T[tag(d, o)].off + T[tag(d, o)].len > d.byteLength) throw new Error('Bảng phông hỏng.'); }
   ['head', 'maxp', 'hhea', 'hmtx', 'cmap', 'loca', 'glyf'].forEach(function (k) { if (!T[k]) throw new Error('Thiếu bảng ' + k + ' (có thể là phông CFF/variable).'); });
   f.T = T; f.upm = d.getUint16(T.head.off + 18) || 1000; f.locaLong = d.getInt16(T.head.off + 50) === 1; f.numGlyphs = d.getUint16(T.maxp.off + 4); f.nHM = d.getUint16(T.hhea.off + 34); f.asc = d.getInt16(T.hhea.off + 4); f.desc = d.getInt16(T.hhea.off + 6);
   f.cmap = readCmap(d, T.cmap); if (!f.cmap) throw new Error('Không đọc được bảng cmap (cần format 4 hoặc 12).');
   f.kern = readKern(d, T.kern); f.gpos = T.GPOS ? readGpos(d, T.GPOS.off) : null; return f;
+}
+function woff1ToSfnt(buf) {
+  var d = dv(buf), n = d.getUint16(12), i, tabs = [], total = 12 + n * 16;
+  if (d.byteLength < 44 + n * 20 || n > 64) throw new Error('Tệp WOFF hỏng.');
+  for (i = 0; i < n; i++) { var o = 44 + i * 20, t = { tag: d.getUint32(o), off: d.getUint32(o + 4), cl: d.getUint32(o + 8), ol: d.getUint32(o + 12), ck: d.getUint32(o + 16) }; if (t.off + t.cl > d.byteLength || t.ol > 20 * 1048576) throw new Error('Bảng WOFF hỏng.'); tabs.push(t); }
+  tabs.sort(function (a, b) { return a.tag - b.tag; });
+  var u8 = new Uint8Array(d.buffer, d.byteOffset, d.byteLength);
+  return Promise.all(tabs.map(function (t) {
+    var raw = u8.slice(t.off, t.off + t.cl);
+    if (t.cl === t.ol) return Promise.resolve(raw);
+    if (typeof DecompressionStream !== 'function') return Promise.reject(new Error('Trình duyệt chưa hỗ trợ giải nén WOFF.'));
+    var ds = new DecompressionStream('deflate'), w = ds.writable.getWriter(); w.write(raw); w.close();
+    return new Response(ds.readable).arrayBuffer().then(function (ab) { if (ab.byteLength !== t.ol) throw new Error('Bảng WOFF giải nén sai kích thước.'); return new Uint8Array(ab); });
+  })).then(function (parts) {
+    parts.forEach(function (p) { total += (p.length + 3) & ~3; });
+    var out = new Uint8Array(total), od = new DataView(out.buffer), pos = 12 + n * 16;
+    od.setUint32(0, d.getUint32(4)); od.setUint16(4, n);
+    var sr = 1, es = 0; while (sr * 2 <= n) { sr *= 2; es++; } od.setUint16(6, sr * 16); od.setUint16(8, es); od.setUint16(10, n * 16 - sr * 16);
+    parts.forEach(function (p, k) { var o = 12 + k * 16; od.setUint32(o, tabs[k].tag); od.setUint32(o + 4, tabs[k].ck); od.setUint32(o + 8, pos); od.setUint32(o + 12, p.length); out.set(p, pos); pos += (p.length + 3) & ~3; });
+    return out.buffer;
+  });
+}
+function parseAsync(buf) {
+  try { var d = dv(buf); if (d.byteLength >= 44 && d.getUint32(0) === 0x774F4646) return woff1ToSfnt(buf).then(parse); return Promise.resolve(parse(buf)); } catch (e) { return Promise.reject(e); }
 }
 function readCmap(d, t) {
   var n = d.getUint16(t.off + 2), best = null, i;
@@ -81,7 +105,7 @@ function mount() {
   (grid ? grid.parentNode.insertBefore(card, grid.nextSibling) : page.appendChild(card));
   var $ = function (s) { return card.querySelector(s); }, font = null, last = null;
   function render() { if (!font) return; try { last = toSvg(font, $('#cv118-text').value, { size: 120, tracking: Number($('#cv118-trk').value), kerning: $('#cv118-kern').checked }); $('#cv118-prev').innerHTML = last.svg; $('#cv118-dl').disabled = $('#cv118-asset').disabled = false; $('#cv118-out').textContent = last.width + '×' + last.height + ' · ' + (last.kerned ? 'có bảng kerning' : 'phông không có bảng kerning') + (last.missing ? ' · ' + last.missing + ' ký tự thiếu trong phông' : ''); } catch (e) { $('#cv118-out').textContent = String(e.message || e).slice(0, 140); } }
-  $('#cv118-font').addEventListener('change', function () { var fl = this.files && this.files[0]; if (!fl) return; if (fl.size > 20 * 1048576) { $('#cv118-out').textContent = 'Phông quá lớn (>20MB).'; return; } fl.arrayBuffer().then(function (b) { try { font = parse(b); render(); } catch (e) { font = null; $('#cv118-out').textContent = String(e.message || e).slice(0, 140); } }); });
+  $('#cv118-font').addEventListener('change', function () { var fl = this.files && this.files[0]; if (!fl) return; if (fl.size > 20 * 1048576) { $('#cv118-out').textContent = 'Phông quá lớn (>20MB).'; return; } fl.arrayBuffer().then(parseAsync).then(function (f) { font = f; render(); }).catch(function (e) { font = null; $('#cv118-out').textContent = String(e && e.message || e).slice(0, 140); }); });
   ['#cv118-text', '#cv118-trk', '#cv118-kern'].forEach(function (s) { $(s).addEventListener('input', render); $(s).addEventListener('change', render); });
   $('#cv118-dl').addEventListener('click', function () { if (!last) return; var u = URL.createObjectURL(new Blob([last.svg], { type: 'image/svg+xml' })), a = document.createElement('a'); a.href = u; a.download = 'wordmark.svg'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(function () { URL.revokeObjectURL(u); }, 4000); });
   $('#cv118-asset').addEventListener('click', function () { if (!last || !window.CV || !CV.assets || !CV.assets.addBlob) { $('#cv118-out').textContent = 'Thư viện chưa sẵn sàng.'; return; } Promise.resolve(CV.assets.addBlob(new Blob([last.svg], { type: 'image/svg+xml' }), 'wordmark.svg')).then(function () { $('#cv118-out').textContent = 'Đã lưu wordmark.svg vào Thư viện.'; }).catch(function () { $('#cv118-out').textContent = 'Không lưu được vào Thư viện.'; }); });
@@ -89,5 +113,5 @@ function mount() {
 }
 function ready() { try { mount(); } catch (e) {} }
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', ready, { once: true }); else ready();
-window.CVWordmarkP118 = { version: '118.1.0', parse: parse, layout: layout, glyph: glyph, kernPair: kernPair, toSvg: toSvg, mount: mount };
+window.CVWordmarkP118 = { version: '118.2.0', parse: parse, parseAsync: parseAsync, layout: layout, glyph: glyph, kernPair: kernPair, toSvg: toSvg, mount: mount };
 })();
