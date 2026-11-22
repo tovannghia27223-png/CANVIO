@@ -1085,5 +1085,9 @@ Hosted verification after the ffmpeg repair is complete:
 
 - P114.1 addendum (2026-11-22): the three-dot "Thêm tuỳ chọn" button (`#l42-btn`) now shows an SVG sliders icon (theme-coloured via CSS mask; label/handlers untouched). On ≤560 px the top bar was already wider than the screen (this button sat off-screen at x≈412 of 390); the lot now keeps only the save-state dot, makes Spatial icon-only and tightens padding so the button is on-screen. Chrome test extended (icon is SVG, button still opens its menu; desktop + mobile).
 
-## P150 · Tổng quan "Bàn thiết kế" (đã làm, chờ nghiệm thu)
-- `canvio-p150-home-sky.js` (lot `canvio-lot150h`): nền pasteboard có lưới chấm + thước, hero trái (tiêu đề condensed "Bắt đầu từ một khung trống.", 2 nút Tạo thiết kế mới / Nhờ AI dựng giúp), phải là bàn thiết kế chạy thật: 4 tab Poster/CV 3D (khối 3D xoay)/Website/Video (timeline), kéo khối chữ có đường gióng hồng khi chạm giữa/lề, đổi màu chủ đạo bằng 5 chấm màu, nút mở đúng Studio, 5 không gian là khung giấy kéo ngang được (hover hiện khung chọn hồng). Các phần cũ (cvHero, ws-jobs, Hub, P146…) giữ nguyên, chỉ phủ CSS `html[data-home-skin=sky] #page-home`. Nút "Giao diện cổ điển / Bàn thiết kế" lưu `canvio.homeSkin`. Test: `tests/p145/run-p150-browser.py` (25 check, desktop + mobile).
+## P150 · Tổng quan: 3 kiểu giao diện (đã làm, chờ nghiệm thu)
+- `canvio-p150-home-sky.js` (lot `canvio-lot150h`), bộ chuyển `#cv150-skins` (localStorage `canvio.homeSkin` = sky | fashion | classic).
+- **Bàn thiết kế (sky):** pasteboard + thước; hero có bàn thiết kế chạy thật (4 tab Poster/CV 3D/Website/Video, kéo chữ có đường gióng, 5 chấm màu, nút mở đúng Studio); 5 không gian là khung giấy kéo ngang.
+- **Thời trang (fashion):** bìa tạp chí: chữ "canvio" serif khổng lồ đè lên vòm xanh Klein (mix-blend difference), 5 không gian là bìa dọc đặc màu kéo ngang.
+- **Cổ điển:** giao diện cũ, không đổi.
+- Test: `tests/p145/run-p150-browser.py` (43 check, desktop + mobile). Phần cũ (cvHero, ws-jobs, Hub, P146…) giữ nguyên chức năng.

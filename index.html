@@ -30602,11 +30602,11 @@ window.CVNavRestoreP114 = { version: '114.1.0', routes: EXTRA.map(function (x) {
 'use strict';
 if (window.CVHomeSkyP150) return;
 var KEY = 'canvio.homeSkin';
-function get() { try { return localStorage.getItem(KEY) === 'classic' ? 'classic' : 'sky'; } catch (e) { return 'sky'; } }
+function get() { try { var v = localStorage.getItem(KEY); return v === 'classic' || v === 'fashion' ? v : 'sky'; } catch (e) { return 'sky'; } }
 function set(v) { try { localStorage.setItem(KEY, v); } catch (e) {} apply(v); toggleOutside(); }
 function apply(v) {
   v = v || get(); document.documentElement.setAttribute('data-home-skin', v);
-  var b = document.getElementById('cv150-toggle'); if (b) { b.textContent = v === 'sky' ? 'Giao diện cổ điển' : 'Bàn thiết kế'; b.setAttribute('aria-pressed', v === 'sky' ? 'true' : 'false'); }
+  [].forEach.call(document.querySelectorAll('#cv150-skins button'), function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-skin') === v ? 'true' : 'false'); });
 }
 function css() {
   if (document.getElementById('canvio-lot150h-css')) return;
@@ -30707,9 +30707,52 @@ function css() {
   S + ' #cvHero,' + S + ' #ws-jobs,' + S + ' #l43-recent,' + S + ' #cv-hub110,' + S + ' #cvux-home-launch,' + S + ' #cvhs-workflows,' + S + ' #ws-obc,' + S + ' #cvux-onboarding{background:var(--paper)!important;border:0!important;border-radius:4px!important;box-shadow:0 0 0 1px var(--ln),0 18px 30px -22px rgba(21,21,28,.45)!important;color:var(--ink);margin-bottom:18px;backdrop-filter:none}',
   S + ' #cvHero{background:var(--ink)!important;color:#fff}',
   S + ' #ws-jobs button[class],' + S + ' #cvHero button{border-radius:6px!important}',
-  'html[data-home-skin=classic] #cv150-toggle{position:fixed;right:14px;bottom:14px;z-index:60;display:inline-block;padding:8px 14px;border-radius:999px;border:1px solid #111;background:#fff;color:#111;font:600 12px/1 inherit;cursor:pointer}',
+  /* bộ chuyển kiểu */
+  '#cv150-skins{display:none}',
+  'html[data-home-skin=sky] #cv150-skins,html[data-home-skin=fashion] #cv150-skins{display:flex;position:absolute;top:30px;right:clamp(14px,3vw,44px);z-index:6;gap:2px;padding:3px;background:rgba(251,251,248,.92);border-radius:8px;box-shadow:0 0 0 1px rgba(21,21,28,.16)}',
+  '#cv150-skins button{cursor:pointer;border:0;background:transparent;color:#5b5f73;font-family:inherit;font-size:12px;font-weight:600;padding:6px 11px;border-radius:5px;white-space:nowrap}',
+  '#cv150-skins button[aria-pressed=true]{background:#15151C;color:#fff}',
+  '#cv150-skins button:focus-visible{outline:3px solid #FF2E93;outline-offset:2px}',
+  'html[data-home-skin=classic] #cv150-skins{display:flex;position:fixed;right:14px;bottom:14px;z-index:60;gap:2px;padding:3px;background:#fff;border:1px solid #111;border-radius:999px}',
+  'html[data-home-skin=classic] #cv150-skins button{border-radius:999px}',
+  '#cv150-fa{display:none}',
+  'html[data-home-skin=fashion]{--fb:#F4F5F8;--fi:#0D0D0F;--fk:#2A2BFF;--fp:#F2C9C0;--fg:#0E5A45;--fs:#D5D8DE}',
+  'html[data-home-skin=fashion] #page-home{position:relative;display:flex;flex-direction:column;padding:56px clamp(14px,3vw,44px) 30px;background:var(--fb);color:var(--fi);border-radius:0;overflow:hidden}',
+  'html[data-home-skin=fashion] #page-home #cv150-fa{order:-3;display:block;position:relative;isolation:isolate;min-height:clamp(560px,80vh,760px);margin-bottom:26px;background:var(--fb);overflow:hidden}',
+  'html[data-home-skin=fashion] #page-home .fa-arch{position:absolute;right:6%;bottom:0;width:min(44%,520px);height:96%;background:var(--fk);border-radius:999px 999px 0 0;z-index:0}',
+  'html[data-home-skin=fashion] #page-home .fa-arch::before{content:"";position:absolute;left:50%;top:14%;width:46%;aspect-ratio:1;transform:translateX(-50%);border-radius:50%;background:var(--fp)}',
+  'html[data-home-skin=fashion] #page-home .fa-arch::after{content:"";position:absolute;left:12%;right:12%;bottom:0;height:34%;border-radius:999px 999px 0 0;background:linear-gradient(180deg,var(--fs),#fff 90%);opacity:.9}',
+  'html[data-home-skin=fashion] #page-home .fa-ring{position:absolute;right:calc(6% + 10%);top:6%;width:min(26%,300px);aspect-ratio:1;border:1px solid var(--fi);border-radius:50%;z-index:1}',
+  'html[data-home-skin=fashion] #page-home .fa-copy{position:relative;z-index:3;max-width:42ch;padding-top:6px}',
+  'html[data-home-skin=fashion] #page-home .fa-copy h2{margin:0 0 14px;font-family:"Bodoni 72","Bodoni MT","Didot","Playfair Display",Georgia,serif!important;font-style:italic;font-weight:400;font-size:clamp(28px,3.5vw,54px);line-height:1.08;letter-spacing:-.01em;color:var(--fi)}',
+  'html[data-home-skin=fashion] #page-home .fa-copy p{margin:0 0 22px;font-size:15px;line-height:1.6;color:#44464f;max-width:36ch}',
+  'html[data-home-skin=fashion] #page-home .fa-cta{display:flex;align-items:center;gap:20px;flex-wrap:wrap}',
+  'html[data-home-skin=fashion] #page-home .fa-cta .p{cursor:pointer;width:116px;height:116px;border-radius:50%;border:0;background:var(--fi);color:#fff;font-family:inherit;font-size:14px;font-weight:600;line-height:1.25;padding:0 18px;transition:transform .2s,background .2s}',
+  'html[data-home-skin=fashion] #page-home .fa-cta .p:hover{transform:scale(1.06);background:var(--fk)}',
+  'html[data-home-skin=fashion] #page-home .fa-cta .q{cursor:pointer;background:none;border:0;border-bottom:1.5px solid var(--fi);color:var(--fi);font-family:inherit;font-size:14.5px;font-weight:600;padding:2px 0}',
+  'html[data-home-skin=fashion] #page-home .fa-cta button:focus-visible{outline:3px solid var(--fk);outline-offset:3px}',
+  'html[data-home-skin=fashion] #page-home .fa-word{position:absolute;left:-.015em;bottom:.07em;margin:0;z-index:2;font-family:"Bodoni 72","Bodoni MT","Didot","Playfair Display",Georgia,serif!important;font-weight:400;font-size:clamp(92px,25vw,400px);line-height:.8;letter-spacing:-.05em;color:#fff;mix-blend-mode:difference;pointer-events:none;user-select:none;white-space:nowrap}',
+  'html[data-home-skin=fashion] #page-home #ws-cards{order:-2;margin:0 0 24px}',
+  'html[data-home-skin=fashion] #page-home #ws-cards h3{font-family:"Bodoni 72","Bodoni MT","Didot","Playfair Display",Georgia,serif;font-style:italic;font-weight:400;font-size:24px;letter-spacing:0;text-transform:none;color:var(--fi);margin:0 0 6px}',
+  'html[data-home-skin=fashion] #page-home #ws-cards .ws-grid{display:flex!important;gap:14px;overflow-x:auto;padding:6px 2px 18px;scroll-snap-type:x proximity;cursor:grab;scrollbar-width:none}',
+  'html[data-home-skin=fashion] #page-home #ws-cards .ws-grid::-webkit-scrollbar{display:none}',
+  'html[data-home-skin=fashion] #page-home #ws-cards .ws-grid.drag{cursor:grabbing;scroll-snap-type:none}html[data-home-skin=fashion] #page-home #ws-cards .ws-grid.drag>*{pointer-events:none}',
+  'html[data-home-skin=fashion] #page-home #ws-cards .ws-grid>*{--bg:var(--fk);--fgc:#fff;position:relative;flex:0 0 clamp(220px,19vw,280px);aspect-ratio:3/4;scroll-snap-align:start;display:flex!important;flex-direction:column;align-items:center;justify-content:flex-end;text-align:center;padding:26px 20px 26px!important;background:var(--bg)!important;color:var(--fgc);border:0!important;border-radius:0!important;box-shadow:none!important;overflow:hidden;user-select:none;transform:none;transition:transform .3s}',
+  'html[data-home-skin=fashion] #page-home #ws-cards .ws-grid>[data-ws=site]{--bg:var(--fp);--fgc:var(--fi)}html[data-home-skin=fashion] #page-home #ws-cards .ws-grid>[data-ws=media]{--bg:var(--fi);--fgc:#fff}html[data-home-skin=fashion] #page-home #ws-cards .ws-grid>[data-ws=proj]{--bg:var(--fs);--fgc:var(--fi)}html[data-home-skin=fashion] #page-home #ws-cards .ws-grid>[data-ws=ai]{--bg:var(--fg);--fgc:#fff}',
+  'html[data-home-skin=fashion] #page-home #ws-cards .ws-grid>*::before{content:""!important;display:block!important;position:absolute;left:50%;top:0;width:58%;height:46%;transform:translateX(-50%);border-radius:0 0 999px 999px;background:currentColor;opacity:.12;border:0!important;box-shadow:none!important}',
+  'html[data-home-skin=fashion] #page-home #ws-cards .ws-grid>*::after{display:none!important}',
+  'html[data-home-skin=fashion] #page-home #ws-cards .ws-grid>*:hover{transform:translateY(-6px)}',
+  'html[data-home-skin=fashion] #page-home #ws-cards .ws-grid>* *{color:inherit;background:transparent!important;text-shadow:none}',
+  'html[data-home-skin=fashion] #page-home #ws-cards .ws-grid>* .ws-ic{position:absolute;left:50%;top:9%;transform:translateX(-50%);width:76px;height:76px;border-radius:50%;font-size:34px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.92)!important;box-shadow:none}',
+  'html[data-home-skin=fashion] #page-home #ws-cards .ws-grid>* b{display:block;font-family:"Bodoni 72","Bodoni MT","Didot","Playfair Display",Georgia,serif;font-weight:400;font-size:clamp(26px,2.3vw,34px);line-height:1.05;letter-spacing:-.01em;margin:0 0 8px}',
+  'html[data-home-skin=fashion] #page-home #ws-cards .ws-grid>* .d{display:block;font-size:13px;line-height:1.45;max-width:22ch;margin:0 auto 14px;opacity:.88}',
+  'html[data-home-skin=fashion] #page-home #ws-cards .ws-grid>* .ws-ch{display:flex;flex-wrap:wrap;justify-content:center;gap:5px}',
+  'html[data-home-skin=fashion] #page-home #ws-cards .ws-grid>* button{background:transparent!important;border:1px solid currentColor!important;color:inherit!important;border-radius:999px!important;font-size:11px;padding:3px 9px;opacity:.9}',
+  'html[data-home-skin=fashion] #page-home #cvHero,html[data-home-skin=fashion] #page-home #ws-jobs,html[data-home-skin=fashion] #page-home #l43-recent,html[data-home-skin=fashion] #page-home #cv-hub110,html[data-home-skin=fashion] #page-home #cvux-home-launch,html[data-home-skin=fashion] #page-home #cvhs-workflows,html[data-home-skin=fashion] #page-home #ws-obc,html[data-home-skin=fashion] #page-home #cvux-onboarding{background:#fff!important;border:1px solid var(--fi)!important;border-radius:0!important;box-shadow:none!important;color:var(--fi);margin-bottom:18px;backdrop-filter:none}',
+  'html[data-home-skin=fashion] #page-home #cvHero{background:var(--fi)!important;color:#fff}',
+  '@media(max-width:820px){html[data-home-skin=sky] #cv150-skins,html[data-home-skin=fashion] #cv150-skins{position:relative;top:auto;right:auto;order:-5;align-self:flex-start;margin:0 0 12px}html[data-home-skin=fashion] #page-home .fa-arch{width:80%;height:56%;right:-10%}html[data-home-skin=fashion] #page-home .fa-word{font-size:30vw}html[data-home-skin=fashion] #page-home .fa-ring{display:none}html[data-home-skin=fashion] #page-home #cv150-fa{min-height:560px}}',
   '@media(max-width:820px){' + S + ' #cv150-sky{grid-template-columns:1fr}' + S + ' #cv150-art{width:min(100%,320px);margin:6px auto 24px}' + S + ' #cv150-sky h2{max-width:none}}',
-  '@media(max-width:560px){html[data-home-skin=classic] #cv150-toggle{bottom:76px}' + S + '{padding-top:30px;border-radius:10px}}'
+  '@media(max-width:560px){html[data-home-skin=classic] #cv150-skins{bottom:76px}' + S + '{padding-top:30px;border-radius:10px}}'
   ].join('\n');
   document.head.appendChild(s);
 }
@@ -30734,15 +30777,25 @@ function build() {
       + '<div class="sw" role="group" aria-label="Màu chủ đạo"><button type="button" data-c="#FFD84A" aria-label="Vàng" aria-pressed="true" style="background:#FFD84A"></button><button type="button" data-c="#FF5FA8" aria-label="Hồng" aria-pressed="false" style="background:#FF5FA8"></button><button type="button" data-c="#22C7E8" aria-label="Xanh ngọc" aria-pressed="false" style="background:#22C7E8"></button><button type="button" data-c="#7C4DFF" aria-label="Tím" aria-pressed="false" style="background:#7C4DFF"></button><button type="button" data-c="#2BD48A" aria-label="Xanh lá" aria-pressed="false" style="background:#2BD48A"></button><i>Kéo chữ, đổi màu thử</i></div>'
       + '<button type="button" class="go" id="cv150-go" data-go="design">Mở trong Poster Studio</button></div>';
     d.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('[data-go]'); if (b && window.CVWS && CVWS.open) CVWS.open(b.getAttribute('data-go')); });
-    var t = document.createElement('button'); t.id = 'cv150-toggle'; t.type = 'button'; t.addEventListener('click', function () { set(get() === 'sky' ? 'classic' : 'sky'); });
-    d.appendChild(t); p.insertBefore(d, p.firstChild);
+    p.insertBefore(d, p.firstChild);
+  }
+  if (!document.getElementById('cv150-fa')) {
+    var fa = document.createElement('div'); fa.id = 'cv150-fa';
+    fa.innerHTML = '<div class="fa-arch"></div><div class="fa-ring"></div><div class="fa-copy"><h2>Mọi thứ bạn làm ra, như một bộ sưu tập.</h2><p>Poster, CV 3D, website và video. Làm ngay trên máy bạn, không cần tài khoản, không tốn phí.</p><div class="fa-cta"><button type="button" class="p" data-go="design">Bắt đầu thiết kế</button><button type="button" class="q" data-go="ai">Nhờ AI dựng giúp</button></div></div><div class="fa-word" aria-hidden="true">canvio</div>';
+    fa.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('[data-go]'); if (b && window.CVWS && CVWS.open) CVWS.open(b.getAttribute('data-go')); });
+    p.insertBefore(fa, p.firstChild);
+  }
+  if (!document.getElementById('cv150-skins')) {
+    var k = document.createElement('div'); k.id = 'cv150-skins'; k.setAttribute('role', 'group'); k.setAttribute('aria-label', 'Kiểu giao diện Tổng quan');
+    [['sky', 'Bàn thiết kế'], ['fashion', 'Thời trang'], ['classic', 'Cổ điển']].forEach(function (x) { var b = document.createElement('button'); b.type = 'button'; b.setAttribute('data-skin', x[0]); b.textContent = x[1]; b.addEventListener('click', function () { set(x[0]); }); k.appendChild(b); });
+    p.appendChild(k);
   }
   return true;
 }
 function toggleOutside() {
-  var b = document.getElementById('cv150-toggle'); if (!b) return;
-  if (get() === 'classic' && b.parentNode && b.parentNode.id === 'cv150-sky') document.body.appendChild(b);
-  if (get() === 'sky' && b.parentNode === document.body) { var s = document.getElementById('cv150-sky'); if (s) s.appendChild(b); }
+  var b = document.getElementById('cv150-skins'); if (!b) return;
+  if (get() === 'classic') { if (b.parentNode !== document.body) document.body.appendChild(b); }
+  else { var p = document.getElementById('page-home'); if (p && b.parentNode !== p) p.appendChild(b); }
 }
 function drag() {
   var g = document.querySelector('#ws-cards .ws-grid'); if (!g || g.__cv150) return; g.__cv150 = 1;
@@ -30784,7 +30837,7 @@ function art() {
 }
 function init() { css(); if (!build()) return false; art(); drag(); apply(); toggleOutside(); return true; }
 var tries = 0; (function loop() { if (init() || ++tries > 40) return; setTimeout(loop, 250); })();
-window.CVHomeSkyP150 = { version: '150.7.0', get: get, set: set, init: init };
+window.CVHomeSkyP150 = { version: '150.8.0', get: get, set: set, init: init };
 })();
 
 </script>
