@@ -30602,7 +30602,7 @@ window.CVNavRestoreP114 = { version: '114.1.0', routes: EXTRA.map(function (x) {
 'use strict';
 if (window.CVHomeSkyP150) return;
 var KEY = 'canvio.homeSkin';
-function get() { try { var v = localStorage.getItem(KEY); return v === 'classic' || v === 'fashion' ? v : 'sky'; } catch (e) { return 'sky'; } }
+function get() { try { var v = localStorage.getItem(KEY); return v === 'classic' || v === 'fashion' || v === 'sky' || v === 'tech' ? v : 'tech'; } catch (e) { return 'tech'; } }
 function set(v) { try { localStorage.setItem(KEY, v); } catch (e) {} apply(v); toggleOutside(); }
 function apply(v) {
   v = v || get(); document.documentElement.setAttribute('data-home-skin', v);
@@ -30737,9 +30737,91 @@ function css() {
   'html[data-home-skin=fashion] #page-home :is(.cvh-ic,.cvux-launch-icon,.cvhs-icon){background:#F4F5F8!important;color:#0D0D0F!important;border-radius:50%!important;box-shadow:none!important}',
   'html[data-home-skin=fashion] #page-home :is(.cvhs-kicker,.cvhs-detail-label){color:#44464f!important;text-transform:none!important;letter-spacing:0!important}',
   'html[data-home-skin=fashion] #page-home :is(#cv-hub110,#cvhs-workflows,#ws-jobs,#cvux-home-launch) :is([class*=card],[class*=tile],[class*=btn],a):not(.btn-primary){border-radius:0!important}',
+  /* kiểu Công nghệ (HR) */
+  '#cv150-tech{display:none}',
+  'html[data-home-skin=tech]:has(#page-home.active),html[data-home-skin=tech]:has(#page-home.active) body,html[data-home-skin=tech]:has(#page-home.active) main{background:#07080C!important}',
+  'html[data-home-skin=tech] #page-home{--surface:#11131A;--surface-2:#171A23;--ink:#F3F4F8;--ink-2:#C9CCD8;--ink-3:#8B90A3;--line:rgba(255,255,255,.1);--brand:#FF3D9A;--brand-soft:rgba(255,61,154,.12);--brand-line:rgba(255,61,154,.4);position:relative;isolation:isolate;display:flex;flex-direction:column;padding:34px clamp(14px,3vw,44px) 30px;border-radius:18px;overflow:hidden;color:#F3F4F8;background:radial-gradient(55% 45% at 88% 0%,rgba(123,77,255,.38),transparent 62%),radial-gradient(48% 42% at 0% 100%,rgba(255,61,154,.26),transparent 62%),#07080C}',
+  'html[data-home-skin=tech] #page-home::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background-image:linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.045) 1px,transparent 1px);background-size:64px 64px;-webkit-mask-image:radial-gradient(ellipse at 50% 30%,#000 30%,transparent 78%);mask-image:radial-gradient(ellipse at 50% 30%,#000 30%,transparent 78%)}',
+  'html[data-home-skin=tech] #cv150-skins{display:flex;position:absolute;top:26px;right:clamp(14px,3vw,44px);z-index:6;gap:2px;padding:3px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:10px;backdrop-filter:blur(12px)}',
+  'html[data-home-skin=tech] #cv150-skins button{color:#9AA0B4}html[data-home-skin=tech] #cv150-skins button[aria-pressed=true]{background:#FF3D9A;color:#0B0B10}',
+  'html[data-home-skin=tech] #page-home #cv150-tech{order:-3;display:grid;grid-template-columns:minmax(0,1.02fr) minmax(0,1fr);gap:clamp(20px,3vw,56px);align-items:center;min-height:clamp(520px,68vh,640px);padding:30px 0 10px}',
+  'html[data-home-skin=tech] #page-home .t-st{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border:1px solid rgba(255,255,255,.14);border-radius:999px;background:rgba(255,255,255,.04);font-size:12.5px;color:#C9CCD8}',
+  'html[data-home-skin=tech] #page-home .t-st i{width:7px;height:7px;border-radius:50%;background:#2BD48A;box-shadow:0 0 10px #2BD48A}',
+  'html[data-home-skin=tech] #page-home #cv150-tech h2{margin:22px 0 18px;font-family:inherit!important;font-weight:300;font-size:clamp(34px,4.3vw,70px);line-height:1.02;letter-spacing:-.045em;color:#fff;max-width:14em}',
+  'html[data-home-skin=tech] #page-home #cv150-tech h2 em{display:block;font-style:normal;color:transparent;-webkit-text-stroke:1.4px rgba(255,255,255,.9)}',
+  'html[data-home-skin=tech] #page-home #cv150-tech .t-sub{margin:0 0 26px;max-width:46ch;font-size:clamp(14.5px,1.2vw,17px);line-height:1.6;color:#A5AABD}',
+  'html[data-home-skin=tech] #page-home .t-con{display:flex;gap:8px;align-items:center;max-width:560px;padding:7px 7px 7px 16px;border:1px solid rgba(255,255,255,.16);border-radius:16px;background:rgba(255,255,255,.05);backdrop-filter:blur(14px);transition:border-color .2s,box-shadow .2s}',
+  'html[data-home-skin=tech] #page-home .t-con:focus-within{border-color:#FF3D9A;box-shadow:0 0 0 4px rgba(255,61,154,.16),0 18px 50px -20px rgba(255,61,154,.5)}',
+  'html[data-home-skin=tech] #page-home .t-con input{flex:1;min-width:0;background:transparent!important;border:0!important;outline:0!important;box-shadow:none!important;color:#fff!important;font-family:inherit;font-size:15px;padding:11px 0}',
+  'html[data-home-skin=tech] #page-home .t-con input::placeholder{color:#7C8196}',
+  'html[data-home-skin=tech] #page-home .t-con button{cursor:pointer;border:0;border-radius:11px;background:#FF3D9A;color:#0B0B10;font-family:inherit;font-weight:700;font-size:14px;padding:12px 18px;white-space:nowrap}',
+  'html[data-home-skin=tech] #page-home .t-con button:hover{background:#ff5aa9}',
+  'html[data-home-skin=tech] #page-home .t-con button:focus-visible,html[data-home-skin=tech] #page-home .t-sug button:focus-visible{outline:3px solid #fff;outline-offset:2px}',
+  'html[data-home-skin=tech] #page-home .t-sug{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 0}',
+  'html[data-home-skin=tech] #page-home .t-sug button{cursor:pointer;font-family:inherit;font-size:12.5px;color:#C9CCD8;background:transparent;border:1px solid rgba(255,255,255,.16);border-radius:999px;padding:6px 12px}',
+  'html[data-home-skin=tech] #page-home .t-sug button:hover{border-color:#fff;color:#fff}',
+  'html[data-home-skin=tech] #page-home .t-stat{margin:16px 0 0;min-height:18px;font-family:ui-monospace,"SF Mono","Cascadia Mono",Consolas,monospace;font-size:12px;color:#8B90A3}',
+  'html[data-home-skin=tech] #page-home .t-stat b{color:#2BD48A;font-weight:600}',
+  'html[data-home-skin=tech] #page-home #cv150t-stage{position:relative;perspective:1500px;min-height:520px;touch-action:pan-y}',
+  'html[data-home-skin=tech] #page-home .t-in{position:absolute;inset:0;transform-style:preserve-3d;transform:rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transition:transform .25s ease-out}',
+  'html[data-home-skin=tech] #page-home .tc{position:absolute;opacity:0;clip-path:inset(0 0 100% 0);box-shadow:0 40px 70px -30px rgba(0,0,0,.8),0 0 0 1px rgba(255,255,255,.08);overflow:hidden;border-radius:6px}',
+  'html[data-home-skin=tech] #page-home #cv150t-stage.run .tc{animation:cv150tin .9s cubic-bezier(.2,.8,.2,1) var(--d) forwards}',
+  'html[data-home-skin=tech] #page-home #cv150t-stage.done .tc{opacity:1;clip-path:inset(0);animation:none}',
+  '@keyframes cv150tin{from{opacity:1;clip-path:inset(0 0 100% 0)}to{opacity:1;clip-path:inset(0)}}',
+  'html[data-home-skin=tech] #page-home .tc.po{left:2%;top:2%;width:46%;aspect-ratio:4/5;background:#FBFBF8;color:#0D0D0F;transform:translateZ(30px) rotate(-3deg);--d:.1s}',
+  'html[data-home-skin=tech] #page-home .tc.po .pc{position:absolute;right:-22%;top:-12%;width:80%;aspect-ratio:1;border-radius:50%;background:#FF3D9A}',
+  'html[data-home-skin=tech] #page-home .tc.po b{position:absolute;left:9%;top:34%;font-family:"Bahnschrift","Arial Narrow","Liberation Sans Narrow",sans-serif!important;font-stretch:75%;font-weight:700;font-size:clamp(26px,3.4vw,46px);line-height:.96;letter-spacing:-.01em;color:#0D0D0F}',
+  'html[data-home-skin=tech] #page-home .tc.po span{position:absolute;left:9%;top:72%;font-size:11px;color:#444}',
+  'html[data-home-skin=tech] #page-home .tc.po u{position:absolute;left:9%;bottom:8%;text-decoration:none;font-size:11px;font-weight:700;color:#fff;background:#0D0D0F;padding:7px 13px;border-radius:999px}',
+  'html[data-home-skin=tech] #page-home .tc.bn{right:0;top:24%;width:60%;aspect-ratio:16/10;background:linear-gradient(135deg,#4B3BFF 0%,#B23DFF 52%,#FF3D9A 100%);color:#fff;transform:translateZ(70px) rotate(2deg);--d:.9s}',
+  'html[data-home-skin=tech] #page-home .tc.bn::before{content:"";position:absolute;inset:0;background:radial-gradient(60% 80% at 82% 20%,rgba(255,255,255,.35),transparent 60%)}',
+  'html[data-home-skin=tech] #page-home .tc.bn b{position:absolute;left:7%;top:16%;font-weight:300;font-size:clamp(18px,2.4vw,32px);line-height:1.08;letter-spacing:-.03em;max-width:11em}',
+  'html[data-home-skin=tech] #page-home .tc.bn span{position:absolute;left:7%;bottom:12%;display:flex;gap:6px}',
+  'html[data-home-skin=tech] #page-home .tc.bn span i{font-style:normal;font-size:11px;padding:4px 10px;border:1px solid rgba(255,255,255,.7);border-radius:999px}',
+  'html[data-home-skin=tech] #page-home .tc.bd{right:1%;bottom:-2%;width:25%;aspect-ratio:3/4.3;background:#fff;color:#0D0D0F;border-radius:12px;transform:translateZ(110px) rotate(-2deg);--d:1.7s}',
+  'html[data-home-skin=tech] #page-home .tc.bd::before{content:"";position:absolute;left:50%;top:3.5%;width:26%;height:4%;transform:translateX(-50%);border-radius:99px;background:#dfe2ea}',
+  'html[data-home-skin=tech] #page-home .tc.bd .av{position:absolute;left:50%;top:16%;width:44%;aspect-ratio:1;transform:translateX(-50%);border-radius:50%;background:conic-gradient(from 200deg,#4B3BFF,#FF3D9A,#FFC81E,#4B3BFF)}',
+  'html[data-home-skin=tech] #page-home .tc.bd b{position:absolute;left:0;right:0;top:50%;text-align:center;font-size:clamp(11px,1.15vw,15px);font-weight:700}',
+  'html[data-home-skin=tech] #page-home .tc.bd span{position:absolute;left:0;right:0;top:60%;text-align:center;font-size:clamp(9px,.9vw,11px);color:#555}',
+  'html[data-home-skin=tech] #page-home .tc.bd .qr{position:absolute;left:50%;bottom:7%;width:30%;aspect-ratio:1;transform:translateX(-50%);background:repeating-conic-gradient(#0D0D0F 0 25%,#fff 0 50%) 0 0/20% 20%}',
+  'html[data-home-skin=tech] #page-home .t-beam{position:absolute;left:-4%;right:-4%;top:0;height:2px;background:linear-gradient(90deg,transparent,#FF3D9A,#fff,#FF3D9A,transparent);box-shadow:0 0 24px 4px rgba(255,61,154,.7);opacity:0;pointer-events:none;transform:translateZ(150px)}',
+  'html[data-home-skin=tech] #page-home #cv150t-stage.run .t-beam{animation:cv150tbeam 2.6s ease-in-out .1s forwards}',
+  '@keyframes cv150tbeam{0%{opacity:1;top:0}100%{opacity:0;top:100%}}',
+  '@media(prefers-reduced-motion:reduce){html[data-home-skin=tech] #page-home #cv150t-stage.run .tc,html[data-home-skin=tech] #page-home #cv150t-stage.run .t-beam{animation:none}html[data-home-skin=tech] #page-home .t-in{transition:none}}',
+  'html[data-home-skin=tech] #page-home #ws-cards{order:-2;margin:0 0 22px}',
+  'html[data-home-skin=tech] #page-home #ws-cards h3{font-family:inherit;font-weight:500;font-size:14px;letter-spacing:0;text-transform:none;color:#C9CCD8;margin:0 0 6px}',
+  'html[data-home-skin=tech] #page-home #ws-cards .ws-grid{display:flex!important;gap:14px;overflow-x:auto;padding:8px 2px 18px;scroll-snap-type:x proximity;cursor:grab;scrollbar-width:none}',
+  'html[data-home-skin=tech] #page-home #ws-cards .ws-grid::-webkit-scrollbar{display:none}',
+  'html[data-home-skin=tech] #page-home #ws-cards .ws-grid.drag{cursor:grabbing;scroll-snap-type:none}html[data-home-skin=tech] #page-home #ws-cards .ws-grid.drag>*{pointer-events:none}',
+  'html[data-home-skin=tech] #page-home #ws-cards .ws-grid>*{--a:#FF3D9A;position:relative;flex:0 0 clamp(224px,20vw,280px);scroll-snap-align:start;display:flex!important;flex-direction:column;align-items:center;text-align:center;padding:28px 20px 24px!important;color:#F3F4F8;border:1px solid rgba(255,255,255,.1)!important;border-radius:18px!important;box-shadow:none!important;overflow:hidden;user-select:none;transform:none;transition:border-color .2s,transform .25s;background:radial-gradient(240px circle at var(--mx,50%) var(--my,0%),color-mix(in srgb,var(--a) 30%,transparent),transparent 70%),#11131A!important}',
+  'html[data-home-skin=tech] #page-home #ws-cards .ws-grid>[data-ws=site]{--a:#22C7E8}html[data-home-skin=tech] #page-home #ws-cards .ws-grid>[data-ws=media]{--a:#FFC81E}html[data-home-skin=tech] #page-home #ws-cards .ws-grid>[data-ws=proj]{--a:#8B7BFF}html[data-home-skin=tech] #page-home #ws-cards .ws-grid>[data-ws=ai]{--a:#2BD48A}',
+  'html[data-home-skin=tech] #page-home #ws-cards .ws-grid>*:hover{border-color:var(--a)!important;transform:translateY(-4px)}',
+  'html[data-home-skin=tech] #page-home #ws-cards .ws-grid>*::before,html[data-home-skin=tech] #page-home #ws-cards .ws-grid>*::after{display:none!important}',
+  'html[data-home-skin=tech] #page-home #ws-cards .ws-grid>* *{color:inherit;background:transparent!important;text-shadow:none}',
+  'html[data-home-skin=tech] #page-home #ws-cards .ws-grid>* .ws-ic{width:62px;height:62px;border-radius:50%;font-size:28px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;border:1px solid color-mix(in srgb,var(--a) 55%,transparent);box-shadow:0 0 30px -4px color-mix(in srgb,var(--a) 60%,transparent);background:rgba(255,255,255,.04)!important}',
+  'html[data-home-skin=tech] #page-home #ws-cards .ws-grid>* b{display:block;font-size:18px;font-weight:600;letter-spacing:-.01em;margin:0 0 6px}',
+  'html[data-home-skin=tech] #page-home #ws-cards .ws-grid>* .d{display:block;font-size:13px;line-height:1.5;max-width:22ch;margin:0 auto 16px;color:#9AA0B4}',
+  'html[data-home-skin=tech] #page-home #ws-cards .ws-grid>* .ws-ch{display:flex;flex-wrap:wrap;justify-content:center;gap:6px}',
+  'html[data-home-skin=tech] #page-home #ws-cards .ws-grid>* button{background:transparent!important;border:1px solid rgba(255,255,255,.18)!important;color:#C9CCD8!important;border-radius:999px!important;font-size:11px;padding:3px 9px}',
+  'html[data-home-skin=tech] #page-home :is(#cvHero,#ws-jobs,#l43-recent,#cv-hub110,#cvux-home-launch,#cvhs-workflows,#ws-obc,#cvux-onboarding){background:#11131A!important;border:1px solid rgba(255,255,255,.1)!important;border-radius:16px!important;box-shadow:none!important;color:#F3F4F8;margin-bottom:16px;backdrop-filter:none}',
+  'html[data-home-skin=tech] #page-home #cvHero{background:linear-gradient(135deg,#1a1342,#11131A 60%)!important}',
+  'html[data-home-skin=tech] #page-home :is(.btn-primary,#ws-jobs>button,#ws-jgo,#ws-obc button){background:#FF3D9A!important;background-image:none!important;color:#0B0B10!important;border:0!important;border-radius:10px!important;box-shadow:none!important}',
+  'html[data-home-skin=tech] #page-home :is(h1,h2,h3,h4,b,strong,label){color:inherit}',
+  'html[data-home-skin=tech] #page-home :is(#cv-hub110,#cvhs-workflows,#ws-jobs,#cvux-home-launch,#l43-recent) :is(p,small,.cvux-meta,[class*=sub],[class*=desc]){color:#9AA0B4}',
+  'html[data-home-skin=tech] #page-home .eyebrow{color:#8B90A3!important;text-transform:none!important;letter-spacing:0!important;font-size:12px!important}html[data-home-skin=tech] #page-home .eyebrow::before{display:none!important}',
+  'html[data-home-skin=tech] #page-home input,html[data-home-skin=tech] #page-home textarea,html[data-home-skin=tech] #page-home select{background:#0C0E14!important;color:#F3F4F8!important;border-color:rgba(255,255,255,.14)!important}',
+  'html[data-home-skin=tech]:has(#page-home.active) header.top{background:rgba(10,11,16,.9)!important;color:#F3F4F8!important;border:1px solid rgba(255,255,255,.1)!important;border-radius:14px!important;box-shadow:none!important}',
+  'html[data-home-skin=tech]:has(#page-home.active) header.top .btn,html[data-home-skin=tech]:has(#page-home.active) header.top button.sh-tb,html[data-home-skin=tech]:has(#page-home.active) header.top #ws-obbtn,html[data-home-skin=tech]:has(#page-home.active) header.top #ws-cmdbtn{background:rgba(255,255,255,.06)!important;color:#F3F4F8!important;border:1px solid rgba(255,255,255,.14)!important;border-radius:10px!important;box-shadow:none!important}',
+  'html[data-home-skin=tech]:has(#page-home.active) header.top #ws-export,html[data-home-skin=tech]:has(#page-home.active) header.top .cvExport{background:#FF3D9A!important;color:#0B0B10!important;border:0!important;border-radius:10px!important;box-shadow:none!important}',
+  'html[data-home-skin=tech]:has(#page-home.active) header.top .qbar{border-radius:10px!important}',
+  '@media(max-width:900px){html[data-home-skin=tech] #page-home #cv150-tech{grid-template-columns:1fr;min-height:0}html[data-home-skin=tech] #page-home #cv150t-stage{min-height:420px}html[data-home-skin=tech] #cv150-skins{position:relative!important;top:auto!important;right:auto!important;order:-5;align-self:flex-start;margin:0 0 12px}}',
+  'html[data-home-skin=tech] #page-home .t-l{min-width:0}html[data-home-skin=tech] #page-home .t-con{width:100%;max-width:560px}html[data-home-skin=tech] #page-home #cv150-skins{max-width:calc(100% - 28px);overflow-x:auto}',
+  'html[data-home-skin=tech] #page-home :is(#cv-hub110,#cvux-home-launch,#cvhs-workflows,#l43-recent,#ws-jobs,#cvux-onboarding) :is([class*=card],[class*=tile],[class*=choice],[class*=panel],[class*=box],[class*=item],[class*=cell],[class*=empty],[class*=rail],[class*=row],[class*=step],[class*=meta]){background:rgba(255,255,255,.04)!important;border-color:rgba(255,255,255,.1)!important;color:#F3F4F8!important;box-shadow:none!important}',
+  'html[data-home-skin=tech] #page-home :is(#cv-hub110,#cvux-home-launch,#cvhs-workflows,#l43-recent,#ws-jobs,#cvux-onboarding,#ws-obc) :is(.btn:not(.btn-primary),button:not(.btn-primary):not(#ws-jgo)){background:rgba(255,255,255,.06)!important;color:#F3F4F8!important;border:1px solid rgba(255,255,255,.14)!important;box-shadow:none!important}',
+  'html[data-home-skin=tech] #page-home #cv-hub110 :is(h1,h2,h3,h4,b,strong,span,div,a){color:#F3F4F8}html[data-home-skin=tech] #page-home #cv-hub110 :is(p,small,[class*=sub],[class*=desc],[class*=hint]){color:#9AA0B4!important}',
   /* bộ chuyển kiểu */
   '#cv150-skins{display:none}',
-  'html[data-home-skin=sky] #cv150-skins,html[data-home-skin=fashion] #cv150-skins{display:flex;position:absolute;top:30px;right:clamp(14px,3vw,44px);z-index:6;gap:2px;padding:3px;background:rgba(251,251,248,.92);border-radius:8px;box-shadow:0 0 0 1px rgba(21,21,28,.16)}',
+  'html[data-home-skin=sky] #cv150-skins,html[data-home-skin=fashion] #cv150-skins,html[data-home-skin=tech] #cv150-skins{display:flex;position:absolute;top:30px;right:clamp(14px,3vw,44px);z-index:6;gap:2px;padding:3px;background:rgba(251,251,248,.92);border-radius:8px;box-shadow:0 0 0 1px rgba(21,21,28,.16)}',
   '#cv150-skins button{cursor:pointer;border:0;background:transparent;color:#5b5f73;font-family:inherit;font-size:12px;font-weight:600;padding:6px 11px;border-radius:5px;white-space:nowrap}',
   '#cv150-skins button[aria-pressed=true]{background:#15151C;color:#fff}',
   '#cv150-skins button:focus-visible{outline:3px solid #FF2E93;outline-offset:2px}',
@@ -30815,9 +30897,17 @@ function build() {
     fa.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('[data-go]'); if (b && window.CVWS && CVWS.open) CVWS.open(b.getAttribute('data-go')); });
     p.insertBefore(fa, p.firstChild);
   }
+  if (!document.getElementById('cv150-tech')) {
+    var te = document.createElement('div'); te.id = 'cv150-tech';
+    te.innerHTML = '<div class="t-l"><span class="t-st"><i></i>Chạy trên máy bạn · không gửi dữ liệu</span><h2>Thương hiệu nhân sự,<em>dựng trong một phút.</em></h2><p class="t-sub">Mô tả việc cần làm. CANVIO dựng poster tuyển dụng, banner, thẻ nhân viên và sơ đồ tổ chức ngay trên máy bạn.</p>'
+      + '<form class="t-con" id="cv150t-form" autocomplete="off"><label for="cv150t-in" style="position:absolute;left:-9999px">Mô tả việc cần làm</label><input id="cv150t-in" type="text" maxlength="160" placeholder="Ví dụ: poster tuyển Product Designer, văn phòng Hà Nội"><button type="submit" id="cv150t-go">Dựng ngay</button></form>'
+      + '<div class="t-sug" role="group" aria-label="Gợi ý"><button type="button">Poster tuyển dụng</button><button type="button">Thẻ nhân viên</button><button type="button">Sơ đồ tổ chức</button><button type="button">Slide onboarding</button></div><div class="t-stat" id="cv150t-stat" aria-live="polite"></div></div>'
+      + '<div id="cv150t-stage" aria-hidden="true"><div class="t-in"><div class="tc po"><i class="pc"></i><b>Product<br>Designer</b><span>Chúng tôi đang tìm bạn</span><u>Nộp hồ sơ</u></div><div class="tc bn"><b>Nơi ý tưởng được lắng nghe</b><span><i>Văn hoá</i><i>Phúc lợi</i><i>Lộ trình</i></span></div><div class="tc bd"><div class="av"></div><b>Nguyễn Minh Anh</b><span>Product Designer</span><div class="qr"></div></div><div class="t-beam"></div></div></div>';
+    p.insertBefore(te, p.firstChild);
+  }
   if (!document.getElementById('cv150-skins')) {
     var k = document.createElement('div'); k.id = 'cv150-skins'; k.setAttribute('role', 'group'); k.setAttribute('aria-label', 'Kiểu giao diện Tổng quan');
-    [['sky', 'Bàn thiết kế'], ['fashion', 'Thời trang'], ['classic', 'Cổ điển']].forEach(function (x) { var b = document.createElement('button'); b.type = 'button'; b.setAttribute('data-skin', x[0]); b.textContent = x[1]; b.addEventListener('click', function () { set(x[0]); }); k.appendChild(b); });
+    [['tech', 'Công nghệ'], ['fashion', 'Thời trang'], ['sky', 'Bàn thiết kế'], ['classic', 'Cổ điển']].forEach(function (x) { var b = document.createElement('button'); b.type = 'button'; b.setAttribute('data-skin', x[0]); b.textContent = x[1]; b.addEventListener('click', function () { set(x[0]); }); k.appendChild(b); });
     p.appendChild(k);
   }
   return true;
@@ -30865,9 +30955,39 @@ function art() {
   function up() { if (!cur) return; cur.x.classList.remove('dr'); cur = null; [g50, g8, gh].forEach(function (g) { g.classList.remove('on'); }); }
   fr.addEventListener('pointerup', up); fr.addEventListener('pointercancel', up);
 }
-function init() { css(); if (!build()) return false; art(); drag(); apply(); toggleOutside(); return true; }
+function tech() {
+  var T = document.getElementById('cv150-tech'); if (!T || T.__cv150) return; T.__cv150 = 1;
+  var inp = document.getElementById('cv150t-in'), stage = document.getElementById('cv150t-stage'), stat = document.getElementById('cv150t-stat'), form = document.getElementById('cv150t-form');
+  var reduce = false; try { reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+  var txt = 'Poster tuyển Product Designer, văn phòng Hà Nội, hạn nộp 30/12', stopped = false;
+  function submit(v) {
+    v = (v || inp.value || '').trim(); var j = document.getElementById('ws-jin'), g = document.getElementById('ws-jgo');
+    if (j && g) { j.value = v; g.click(); } else if (window.CVWS && CVWS.open) CVWS.open('ai');
+  }
+  form.addEventListener('submit', function (e) { e.preventDefault(); submit(); });
+  T.querySelector('.t-sug').addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; stopped = true; inp.value = b.textContent; inp.focus(); });
+  inp.addEventListener('focus', function () { stopped = true; });
+  var wrap = stage;
+  if (!reduce) {
+    wrap.addEventListener('pointermove', function (e) { var r = wrap.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5; var t = wrap.firstChild; t.style.setProperty('--ry', (x * 12).toFixed(2) + 'deg'); t.style.setProperty('--rx', (-y * 9).toFixed(2) + 'deg'); });
+    wrap.addEventListener('pointerleave', function () { var t = wrap.firstChild; t.style.setProperty('--ry', '0deg'); t.style.setProperty('--rx', '0deg'); });
+  }
+  function steps() {
+    stage.classList.add('run'); stat.innerHTML = '<b>●</b> Đang dựng poster…';
+    setTimeout(function () { stat.innerHTML = '<b>●</b> Đang dựng banner…'; }, 800);
+    setTimeout(function () { stat.innerHTML = '<b>●</b> Đang dựng thẻ nhân viên…'; }, 1600);
+    setTimeout(function () { stat.innerHTML = '<b>✓</b> Xong: poster, banner, thẻ nhân viên'; stage.classList.add('done'); }, 3000);
+  }
+  if (reduce) { inp.value = txt; stage.classList.add('done'); stat.innerHTML = '<b>✓</b> Xong: poster, banner, thẻ nhân viên'; return; }
+  var i = 0; (function type() { if (stopped) { steps(); return; } if (i <= txt.length) { inp.value = txt.slice(0, i++); setTimeout(type, 26); } else setTimeout(steps, 350); })();
+}
+function spot() {
+  var g = document.querySelector('#ws-cards .ws-grid'); if (!g || g.__cv150s) return; g.__cv150s = 1;
+  g.addEventListener('pointermove', function (e) { var c = e.target.closest && e.target.closest('.ws-grid>*'); if (!c) return; var r = c.getBoundingClientRect(); c.style.setProperty('--mx', (e.clientX - r.left) + 'px'); c.style.setProperty('--my', (e.clientY - r.top) + 'px'); });
+}
+function init() { css(); if (!build()) return false; art(); drag(); tech(); spot(); apply(); toggleOutside(); return true; }
 var tries = 0; (function loop() { if (init() || ++tries > 40) return; setTimeout(loop, 250); })();
-window.CVHomeSkyP150 = { version: '150.8.0', get: get, set: set, init: init };
+window.CVHomeSkyP150 = { version: '150.10.0', get: get, set: set, init: init };
 })();
 
 </script>

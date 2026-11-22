@@ -1086,7 +1086,8 @@ Hosted verification after the ffmpeg repair is complete:
 - P114.1 addendum (2026-11-22): the three-dot "Thêm tuỳ chọn" button (`#l42-btn`) now shows an SVG sliders icon (theme-coloured via CSS mask; label/handlers untouched). On ≤560 px the top bar was already wider than the screen (this button sat off-screen at x≈412 of 390); the lot now keeps only the save-state dot, makes Spatial icon-only and tightens padding so the button is on-screen. Chrome test extended (icon is SVG, button still opens its menu; desktop + mobile).
 
 ## P150 · Tổng quan: 3 kiểu giao diện (đã làm, chờ nghiệm thu)
-- `canvio-p150-home-sky.js` (lot `canvio-lot150h`), bộ chuyển `#cv150-skins` (localStorage `canvio.homeSkin` = sky | fashion | classic).
+- `canvio-p150-home-sky.js` (lot `canvio-lot150h`), bộ chuyển `#cv150-skins` (localStorage `canvio.homeSkin` = tech | fashion | sky | classic).
+- **Công nghệ (tech, mặc định):** nền tối có lưới + vệt sáng; hero HR "Thương hiệu nhân sự, dựng trong một phút": ô mô tả tự gõ, dựng 3 sản phẩm HR (poster tuyển dụng, banner, thẻ nhân viên) xếp lớp 3D nghiêng theo con trỏ; nút Dựng ngay chuyển mô tả sang ô Việc cần làm (#ws-jin/#ws-jgo); dải 5 không gian tối có ánh sáng theo con trỏ.
 - **Bàn thiết kế (sky):** pasteboard + thước; hero có bàn thiết kế chạy thật (4 tab Poster/CV 3D/Website/Video, kéo chữ có đường gióng, 5 chấm màu, nút mở đúng Studio); 5 không gian là khung giấy kéo ngang.
 - **Thời trang (fashion):** bìa tạp chí: chữ "canvio" serif khổng lồ đè lên vòm xanh Klein (mix-blend difference), 5 không gian là bìa dọc đặc màu kéo ngang.
 - **Cổ điển:** giao diện cũ, không đổi.
