@@ -2,11 +2,11 @@
   "format": "CANVIO_DELIVERY_MANIFEST",
   "schemaVersion": 2,
   "candidate": "23.3.111-github-runtime-ci",
-  "generatedAt": "2026-11-22T18:51:08.583Z",
+  "generatedAt": "2026-11-22T19:17:26.814Z",
   "hashAlgorithm": "SHA-256",
-  "indexSha256": "479f8bc37c413c2143446a4d5be0a83fd514f7f948a86dff040557725a3932af",
-  "indexBytes": 5755532,
-  "fileCount": 313,
+  "indexSha256": "92d0d50884102dbc41a264a6d65e5378191aad21723ccf4c830fd5d592ac3623",
+  "indexBytes": 5756835,
+  "fileCount": 314,
   "releaseCertified": false,
   "releaseStatus": "BLOCKED_PENDING_REAL_WORLD_ACCEPTANCE",
   "p70ManualGates": {
@@ -32,8 +32,8 @@
     },
     {
       "path": ".github/workflows/canvio-candidate-runtime.yml",
-      "bytes": 128054,
-      "sha256": "5d4b0c0ad32cc1390a6e1d0e15e4cf93657d58b6b1c9f57270b24baf022edd27"
+      "bytes": 128131,
+      "sha256": "1589e077dcaec0db793b55e4346c975bdb2ba3f8c2679a8e4e13dfd836e41ea4"
     },
     {
       "path": ".github/workflows/canvio-lottie-web.yml",
@@ -437,13 +437,13 @@
     },
     {
       "path": "CANVIO_ROADMAP.md",
-      "bytes": 137315,
-      "sha256": "884e30cd2aa9dbdfc7fe61c0849b048932bfb47c6746747cfee75ef163b62648"
+      "bytes": 138107,
+      "sha256": "d57a376946c7a62e11c1fe1b5ce1621e7c58329d1b026df5a34835621b088469"
     },
     {
       "path": "CANVIO_SESSION_SUMMARY_2026-11-21.md",
-      "bytes": 27450,
-      "sha256": "09d88e5178df3d75dcf9c3be736d139fd8041ea8d633117ccf0b0e76ebf04d13"
+      "bytes": 27923,
+      "sha256": "e38ca5d1a64ae0c9954b96404c94599b4e55a205c3e1244898a02e4f07b92358"
     },
     {
       "path": "canvio-home-creative-flow.js",
@@ -522,8 +522,8 @@
     },
     {
       "path": "canvio-p127-loudness.js",
-      "bytes": 9180,
-      "sha256": "0b37e0ce7852aa868b306c2ecd046882740dc6d135b40a770d5ab7faf46f1ed1"
+      "bytes": 9377,
+      "sha256": "4b139d8a5e522f97542eceac8fadb124561b8ba24098c0a23d87a6fb863d34ac"
     },
     {
       "path": "canvio-p127-quality.js",
@@ -592,8 +592,8 @@
     },
     {
       "path": "canvio-p138-denoise.js",
-      "bytes": 13305,
-      "sha256": "73a0f04ed468224aa5c5f9e88c16f88e1772cc8d6d298a065f495d135d223476"
+      "bytes": 13502,
+      "sha256": "a31400fef0dc78b71e37d504c501e295e85007827846ad7bf998e1d99730e1ac"
     },
     {
       "path": "canvio-p139-motionlab.js",
@@ -732,8 +732,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 5755532,
-      "sha256": "479f8bc37c413c2143446a4d5be0a83fd514f7f948a86dff040557725a3932af"
+      "bytes": 5756835,
+      "sha256": "92d0d50884102dbc41a264a6d65e5378191aad21723ccf4c830fd5d592ac3623"
     },
     {
       "path": "patches/canvio-p42-r6.patch",
@@ -853,7 +853,7 @@
     {
       "path": "tests/hosted/hosted-runtime-report.json",
       "bytes": 16378,
-      "sha256": "dc752639249c753aa15a0195d2ee98f1deb0a9067bf9117d2c587d40551b198b"
+      "sha256": "3ba1609ba115b20c20b375706376880ac4efac6ae885920923d28abf4cf63c5a"
     },
     {
       "path": "tests/hosted/integrated-source-contracts.cjs",
@@ -1162,8 +1162,8 @@
     },
     {
       "path": "tests/p143/inline-source-inventory.json",
-      "bytes": 414696,
-      "sha256": "2387fb841a1cc04664d9908818174eae468ac95f71462cfe7b227091be3fe9d9"
+      "bytes": 415561,
+      "sha256": "54a4c2b76cebc8cc0b36eb551a1ddf96934bf5044a22d7788c9192dfecaf287f"
     },
     {
       "path": "tests/p143/js-global-scanner.cjs",
@@ -1187,8 +1187,8 @@
     },
     {
       "path": "tests/p143/style-template-loader-inventory.json",
-      "bytes": 818326,
-      "sha256": "f85f0ca0ba8045bd40f816ed8a2a730212de5d1c34654cbd6baeeb740c98eca4"
+      "bytes": 819856,
+      "sha256": "ffdea092a59963d2b0f520f1b203df172ea935c2bdcefaf1d703f0e1945d29ab"
     },
     {
       "path": "tests/p143/verify-style-template-inventory.cjs",
@@ -1249,6 +1249,11 @@
       "path": "tests/p145/run-p133m-browser.py",
       "bytes": 5320,
       "sha256": "f984d621be1c132a19497171ef4223ba462acb4dadac3ab1eb777ec31d5a37e1"
+    },
+    {
+      "path": "tests/p145/run-p133r2-browser.py",
+      "bytes": 2660,
+      "sha256": "482195809055dfb00eac6a260df1c3173f6101765f9cdb02ca706b8fd57be73b"
     },
     {
       "path": "tests/p145/run-p133w-browser.py",
