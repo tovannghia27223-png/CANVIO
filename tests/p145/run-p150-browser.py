@@ -9,7 +9,7 @@ def ck(n,c): res.append((n,bool(c))); print(('PASS ' if c else 'FAIL ')+n)
 with sync_playwright() as p:
     b=p.chromium.launch(executable_path=shutil.which('google-chrome') or shutil.which('chromium'),headless=True,args=['--no-sandbox','--disable-gpu','--host-resolver-rules=MAP * ~NOTFOUND , EXCLUDE 127.0.0.1'])
     for name,vp in (('desktop',{'width':1440,'height':900}),('mobile',{'width':390,'height':844})):
-        pg=b.new_page(viewport=vp,reduced_motion='reduce');pg.add_init_script("try{localStorage.setItem('canvio.homeSkin','sky')}catch(e){}");errs=[];pg.on('pageerror',lambda e:errs.append(str(e)))
+        pg=b.new_page(viewport=vp,reduced_motion='reduce');pg.add_init_script("try{localStorage.setItem('canvio.homeSkin.v2','sky')}catch(e){}");errs=[];pg.on('pageerror',lambda e:errs.append(str(e)))
         pg.goto('http://127.0.0.1:%d/index.html'%h.server_address[1],wait_until='commit');pg.wait_for_function('!!(window.CVHomeSkyP150&&document.getElementById("cv150-sky"))',timeout=90000);pg.wait_for_timeout(1500)
         ck(name+' skin sky mặc định',pg.evaluate('document.documentElement.dataset.homeSkin')=='sky')
         ck(name+' tiêu đề hiện',pg.is_visible('#cv150-sky h2'))
@@ -50,7 +50,8 @@ with sync_playwright() as p:
     for name,vp in (('desktop',{'width':1440,'height':900}),('mobile',{'width':390,'height':844})):
         pg=b.new_page(viewport=vp);errs=[];pg.on('pageerror',lambda e:errs.append(str(e)))
         pg.goto('http://127.0.0.1:%d/index.html'%h.server_address[1],wait_until='commit');pg.wait_for_function('!!(window.CVHomeSkyP150&&document.getElementById("cv150-tech"))',timeout=90000);pg.wait_for_timeout(1200)
-        ck(name+' tech mặc định',pg.evaluate('document.documentElement.dataset.homeSkin')=='tech')
+        ck(name+' mặc định là giao diện cổ điển',pg.evaluate('document.documentElement.dataset.homeSkin')=='classic')
+        pg.click('#cv150-skins [data-skin=tech]');pg.wait_for_timeout(500)
         ck(name+' tech hero hiện',pg.is_visible('#cv150-tech h2') and pg.is_visible('#cv150t-in') and not pg.is_visible('#cv150-sky'))
         pg.wait_for_timeout(1500)
         ck(name+' tech gõ prompt tự động',len(pg.input_value('#cv150t-in'))>10)
@@ -66,5 +67,14 @@ with sync_playwright() as p:
         pg.screenshot(path='/tmp/p150_tech_%s.png'%name)
         ck(name+' tech 0 lỗi trang',not errs)
         pg.close()
+
+    # ---- không rò rỉ sang các không gian khác
+    pg=b.new_page(viewport={'width':1440,'height':900});pg.add_init_script("try{localStorage.setItem('canvio.homeSkin.v2','tech')}catch(e){}")
+    pg.goto('http://127.0.0.1:%d/index.html'%h.server_address[1],wait_until='commit');pg.wait_for_function('!!(window.CVHomeSkyP150&&window.CVWS)',timeout=90000);pg.wait_for_timeout(1500)
+    for sp in ['design','site','media','proj','ai']:
+        pg.evaluate("CVWS.open('%s')"%sp);pg.wait_for_timeout(900)
+        ck('không gian '+sp+' không lẫn trang Tổng quan',pg.evaluate('document.getElementById("page-home").offsetHeight')==0 and not pg.is_visible('#cv150-skins'))
+        ck('không gian '+sp+' giữ nút Xuất hồng gốc',pg.evaluate('getComputedStyle(document.getElementById("ws-export")).backgroundColor')=='rgb(255, 61, 154)')
+    pg.close()
     b.close()
 bad=[n for n,c in res if not c];print('%d/%d'%(len(res)-len(bad),len(res)));sys.exit(1 if bad else 0)

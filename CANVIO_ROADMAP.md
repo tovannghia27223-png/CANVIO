@@ -1093,3 +1093,4 @@ Hosted verification after the ffmpeg repair is complete:
 - **Cổ điển:** giao diện cũ, không đổi.
 - Test: `tests/p145/run-p150-browser.py` (43 check, desktop + mobile). Phần cũ (cvHero, ws-jobs, Hub, P146…) giữ nguyên chức năng.
 - **Nút chính đồng bộ:** mọi kiểu (trừ Cổ điển) dùng nút vàng #FFD84A chữ đen; nút Xuất trên thanh menu cũng vàng đen ở mọi trang. Tab chọn của bộ chuyển kiểu cũng vàng đen.
+- **Cập nhật (P150.13):** giao diện Tổng quan MẶC ĐỊNH lại là Cổ điển (khóa lưu mới `canvio.homeSkin.v2`, mọi máy về cổ điển). Các kiểu Công nghệ/Thời trang/Bàn thiết kế là tuỳ chọn thử ở bộ chuyển góc trên Tổng quan. Sửa lỗi rò rỉ: trang Tổng quan chỉ hiện khi `.active`, bộ chuyển kiểu chỉ hiện ở Tổng quan; bỏ ghi đè màu nút Xuất ngoài Tổng quan (các không gian giữ nút hồng gốc).

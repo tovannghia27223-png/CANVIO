@@ -3,8 +3,8 @@
 (function () {
 'use strict';
 if (window.CVHomeSkyP150) return;
-var KEY = 'canvio.homeSkin';
-function get() { try { var v = localStorage.getItem(KEY); return v === 'classic' || v === 'fashion' || v === 'sky' || v === 'tech' ? v : 'tech'; } catch (e) { return 'tech'; } }
+var KEY = 'canvio.homeSkin.v2';
+function get() { try { var v = localStorage.getItem(KEY); return v === 'classic' || v === 'fashion' || v === 'sky' || v === 'tech' ? v : 'classic'; } catch (e) { return 'classic'; } }
 function set(v) { try { localStorage.setItem(KEY, v); } catch (e) {} apply(v); toggleOutside(); }
 function apply(v) {
   v = v || get(); document.documentElement.setAttribute('data-home-skin', v);
@@ -221,6 +221,8 @@ function css() {
   'html[data-home-skin=tech] #page-home :is(#cv-hub110,#cvux-home-launch,#cvhs-workflows,#l43-recent,#ws-jobs,#cvux-onboarding) :is([class*=card],[class*=tile],[class*=choice],[class*=panel],[class*=box],[class*=item],[class*=cell],[class*=empty],[class*=rail],[class*=row],[class*=step],[class*=meta]){background:rgba(255,255,255,.04)!important;border-color:rgba(255,255,255,.1)!important;color:#F3F4F8!important;box-shadow:none!important}',
   'html[data-home-skin=tech] #page-home :is(#cv-hub110,#cvux-home-launch,#cvhs-workflows,#l43-recent,#ws-jobs,#cvux-onboarding,#ws-obc) :is(.btn:not(.btn-primary),button:not(.btn-primary):not(#ws-jgo)){background:rgba(255,255,255,.06)!important;color:#F3F4F8!important;border:1px solid rgba(255,255,255,.14)!important;box-shadow:none!important}',
   'html[data-home-skin=tech] #page-home #cv-hub110 :is(h1,h2,h3,h4,b,strong,span,div,a){color:#F3F4F8}html[data-home-skin=tech] #page-home #cv-hub110 :is(p,small,[class*=sub],[class*=desc],[class*=hint]){color:#9AA0B4!important}',
+  'html[data-home-skin] #page-home:not(.active){display:none!important}',
+  'html[data-home-skin=classic]:not(:has(#page-home.active)) #cv150-skins{display:none!important}',
   /* bộ chuyển kiểu */
   '#cv150-skins{display:none}',
   'html[data-home-skin=sky] #cv150-skins,html[data-home-skin=fashion] #cv150-skins,html[data-home-skin=tech] #cv150-skins{display:flex;position:absolute;top:30px;right:clamp(14px,3vw,44px);z-index:6;gap:2px;padding:3px;background:rgba(251,251,248,.92);border-radius:8px;box-shadow:0 0 0 1px rgba(21,21,28,.16)}',
@@ -274,15 +276,9 @@ function css() {
   'html[data-home-skin=fashion] #page-home :is(.fa-cta .p,.btn-primary,#ws-jobs>button,#ws-jgo,#ws-obc button){border-radius:999px!important}',
   'html[data-home-skin=tech] #page-home .t-con button{border-color:#FFD84A!important}',
   'html[data-home-skin] #cv150-skins button[aria-pressed=true]{background:#FFD84A!important;color:#0D0D0F!important}',
-  'html[data-home-skin=sky] header.top :is(#ws-export,.cvExport),html[data-home-skin=fashion] header.top :is(#ws-export,.cvExport),html[data-home-skin=tech] header.top :is(#ws-export,.cvExport){background:#FFD84A!important;background-image:none!important;color:#0D0D0F!important;border:1.5px solid #0D0D0F!important;box-shadow:none!important}',
-  'html[data-home-skin=sky] header.top :is(#ws-export,.cvExport) *,html[data-home-skin=fashion] header.top :is(#ws-export,.cvExport) *,html[data-home-skin=tech] header.top :is(#ws-export,.cvExport) *{color:#0D0D0F!important}',
-  'html[data-home-skin=tech] header.top :is(#ws-export,.cvExport){border-color:#FFD84A!important}',
   'html[data-home-skin=sky]:has(#page-home.active) header.top #ws-export,html[data-home-skin=sky]:has(#page-home.active) header.top .btn.cvExport,html[data-home-skin=sky] header.top #ws-export,html[data-home-skin=sky] header.top .btn.cvExport,html[data-home-skin=fashion]:has(#page-home.active) header.top #ws-export,html[data-home-skin=fashion]:has(#page-home.active) header.top .btn.cvExport,html[data-home-skin=fashion] header.top #ws-export,html[data-home-skin=fashion] header.top .btn.cvExport,html[data-home-skin=tech]:has(#page-home.active) header.top #ws-export,html[data-home-skin=tech]:has(#page-home.active) header.top .btn.cvExport,html[data-home-skin=tech] header.top #ws-export,html[data-home-skin=tech] header.top .btn.cvExport{background:#FFD84A!important;background-image:none!important;color:#0D0D0F!important;border:1.5px solid #0D0D0F!important;box-shadow:none!important}',
   'html[data-home-skin=sky]:has(#page-home.active) header.top #ws-export *,html[data-home-skin=sky]:has(#page-home.active) header.top .btn.cvExport *,html[data-home-skin=sky] header.top #ws-export *,html[data-home-skin=sky] header.top .btn.cvExport *,html[data-home-skin=fashion]:has(#page-home.active) header.top #ws-export *,html[data-home-skin=fashion]:has(#page-home.active) header.top .btn.cvExport *,html[data-home-skin=fashion] header.top #ws-export *,html[data-home-skin=fashion] header.top .btn.cvExport *,html[data-home-skin=tech]:has(#page-home.active) header.top #ws-export *,html[data-home-skin=tech]:has(#page-home.active) header.top .btn.cvExport *,html[data-home-skin=tech] header.top #ws-export *,html[data-home-skin=tech] header.top .btn.cvExport *{color:#0D0D0F!important}',
   'html[data-home-skin=tech]:has(#page-home.active) header.top #ws-export,html[data-home-skin=tech]:has(#page-home.active) header.top .btn.cvExport{border-color:#FFD84A!important}',
-  'html[data-home-skin=sky][data-nav] body header.top .topRight #ws-export,html[data-home-skin=sky][data-nav] body header.top .topRight .cvExport,html[data-home-skin=fashion][data-nav] body header.top .topRight #ws-export,html[data-home-skin=fashion][data-nav] body header.top .topRight .cvExport,html[data-home-skin=tech][data-nav] body header.top .topRight #ws-export,html[data-home-skin=tech][data-nav] body header.top .topRight .cvExport{background:#FFD84A!important;background-image:none!important;color:#0D0D0F!important;border:1.5px solid #0D0D0F!important;box-shadow:none!important}',
-  'html[data-home-skin=sky][data-nav] body header.top .topRight #ws-export *,html[data-home-skin=sky][data-nav] body header.top .topRight .cvExport *,html[data-home-skin=fashion][data-nav] body header.top .topRight #ws-export *,html[data-home-skin=fashion][data-nav] body header.top .topRight .cvExport *,html[data-home-skin=tech][data-nav] body header.top .topRight #ws-export *,html[data-home-skin=tech][data-nav] body header.top .topRight .cvExport *{color:#0D0D0F!important}',
-  'html[data-home-skin=tech][data-nav] body header.top .topRight #ws-export{border-color:#FFD84A!important}',
   ].join('\n');
   document.head.appendChild(s);
 }

@@ -4050,3 +4050,4 @@ P144 tour: thêm bước bằng cách thêm vào mảng `STEPS` ({sel,title,text
 ## P150 Bàn thiết kế (Home)
 `#page-home` là flex column dùng `order` → khối mới phải có `order`. Không dùng shorthand `font:… inherit`. Font tiêu đề cần `!important` vì app đè h2. Pseudo `::after` của thẻ không gian có nền hồng cũ → phải `background-color:transparent!important`. Bản sao `canvio-p150-home-sky.js` phải khớp lot trong index.html.
 Kiểu Thời trang: dùng `mix-blend-mode:difference` cho chữ wordmark (cần `isolation:isolate` ở khung). Tránh tên class chung chung (`.stage`, `.tl`) vì app đã có CSS trùng tên.
+Bài học P150: KHÔNG đặt `display:flex` lên `#page-home` mà không kèm `:not(.active){display:none!important}` (trang sẽ hiện ở mọi không gian). Không ghi đè màu thanh menu toàn app theo kiểu Tổng quan.
