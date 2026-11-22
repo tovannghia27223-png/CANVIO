@@ -394,7 +394,7 @@ jobs:
           const fs=require('node:fs');
           const file='index.html',source=fs.readFileSync('canvio-p137-styles.js','utf8').trim();
           const id='canvio-lot137s',open='<script id="'+id+'">',close='</script>';
-          if(!source.includes("version: '137.5.0'")||!source.includes('window.CVStylesP137'))throw new Error('P137 source contract/version missing');
+          if(!source.includes("version: '137.6.0'")||!source.includes('window.CVStylesP137'))throw new Error('P137 source contract/version missing');
           let html=fs.readFileSync(file,'utf8'),at=html.indexOf(open);
           if(at<0)throw new Error('Existing canonical P137 lot is missing');
           if(html.indexOf(open,at+1)>=0)throw new Error('P137 duplicate lot');

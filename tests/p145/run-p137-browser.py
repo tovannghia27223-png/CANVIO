@@ -98,6 +98,15 @@ with sync_playwright() as p:
     c['duplicateNameRejected'] = 'Đã có' in page.inner_text('#cv137-out')
     page.fill('#cv137-newname', 'a<b>'); page.click('#cv137-new'); page.wait_for_timeout(200)
     c['badNameRejected'] = 'Tên kiểu' in page.inner_text('#cv137-out')
+    # P137.6: cắt đoạn có định dạng bên trong
+    rich = ''.join('<b>đậm%d</b> thường%d <a href="#x%d">liên kết%d</a> ' % (i, i, i, i) for i in range(500))
+    page.evaluate("(h)=>CVNativeEngines.layout.restoreState({pages:[{id:'r1',html:'<p style=\\'color:rgb(1,2,3)\\'>'+h+'</p>'}],active:0})", rich); page.wait_for_timeout(500)
+    page.click('#cv137-flow'); page.wait_for_timeout(600)
+    rp = page.evaluate("JSON.parse(CVNativeEngines.layout.snapshotState())")
+    allh = ' '.join(q['html'] for q in rp['pages']); rt = __import__('re').sub(r'<[^>]+>', '', allh).split()
+    c['richSplitKeepsAllText'] = len(rp['pages']) >= 2 and rt == [w for i in range(500) for w in ('đậm%d' % i, 'thường%d' % i, 'liên', 'kết%d' % i)]
+    c['richSplitKeepsFormatting'] = all('<b>' in q['html'] and '<a href' in q['html'] and 'color: rgb(1, 2, 3)' in q['html'].replace('color:rgb(1,2,3)', 'color: rgb(1, 2, 3)') for q in rp['pages'])
+    c['richSplitFits'] = page.evaluate("document.getElementById('lfDoc').scrollHeight") <= page.evaluate("CVStylesP137.flowLimit(document.getElementById('lfDoc'))") + 2
     b.close()
 res = {'checks': c, 'pageErrors': errs, 'failed': [k for k, v in c.items() if not v]}
 print(json.dumps(res, ensure_ascii=False, indent=1)); sys.exit(1 if res['failed'] or errs else 0)

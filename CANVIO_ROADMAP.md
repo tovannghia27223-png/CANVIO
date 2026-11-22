@@ -1107,7 +1107,7 @@ Hosted verification after the ffmpeg repair is complete:
 
 ## P137.3 — Luồng chữ sang trang sau (2026-11-22)
 - Dàn trang: nút "Chảy sang trang sau" (`#cv137-flow`, `CVStylesP137.flowNext`) đẩy các khối cuối tràn khỏi trang hiện tại sang đầu trang kế (tự tạo trang mới, tự chảy tiếp qua các trang sau), đo bằng bản sao ẩn theo khổ giấy `#lfSize`; hoàn tác bằng nút Hoàn tác hiện có.
-- Kiểm: `run-p137s-tests.cjs`, `tests/p145/run-p137-browser.py` (40 đoạn tràn → giữ đúng thứ tự, thêm trang, hoàn tác). P137.4: đoạn văn dài (chỉ chữ thuần) được cắt theo từ giữa hai trang. Chưa có: cắt đoạn có định dạng bên trong, khung chữ tự do liên kết trên poster, kiểu tên mới.
+- Kiểm: `run-p137s-tests.cjs`, `tests/p145/run-p137-browser.py` (40 đoạn tràn → giữ đúng thứ tự, thêm trang, hoàn tác). P137.4–6: đoạn văn dài được cắt theo từ giữa hai trang, kể cả đoạn có đậm/liên kết bên trong (giữ nguyên thẻ và kiểu; đoạn có ảnh/br/bảng chuyển nguyên khối). Chưa có: khung chữ tự do liên kết trên poster, kiểu tên mới.
 - P119 (kiểm bằng lottie-web thật): chưa làm được trong môi trường này (không có lottie-web, Bash không có mạng); cần thêm bước `npm i lottie-web` trong CI hoặc tệp thư viện đính kèm.
 
 ## P137.5 — Tạo kiểu đoạn tên mới (2026-11-22)
