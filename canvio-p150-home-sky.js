@@ -1,76 +1,75 @@
-/* P150 · Tổng quan phong cách "Sky Glass": nền trời xanh có mây, tiêu đề trắng nét mảnh cỡ lớn, thẻ kính mờ, chip nổi, dải thẻ không gian làm việc và wordmark lớn ở cuối trang.
-   Chỉ thêm: không xoá hay đổi chức năng của #cvHero, #ws-jobs, #ws-cards, #l43-recent, #cv-hub110, #cvhs-workflows… — chỉ phủ lớp CSS có phạm vi html[data-home-skin=sky] #page-home và chèn thêm khối #cv150-sky / #cv150-word. Nút "Giao diện cổ điển / Sky Glass" (lưu localStorage canvio.homeSkin) cho phép quay lại giao diện cũ. Tôn trọng prefers-reduced-motion. */
+/* P150 · Tổng quan "Bàn thiết kế": nền pasteboard có lưới chấm và thước, một khung poster đang được dựng (khung chọn + con trỏ), 5 không gian làm việc là các khung giấy kéo ngang được (rê chuột hiện 4 điểm chọn).
+   Chỉ thêm: không xoá hay đổi chức năng của #cvHero, #ws-jobs, #ws-cards, #l43-recent, #cv-hub110, #cvhs-workflows… — chỉ phủ lớp CSS có phạm vi html[data-home-skin=sky] #page-home và chèn khối #cv150-sky. Nút "Giao diện cổ điển / Bàn thiết kế" (localStorage canvio.homeSkin) cho phép quay lại giao diện cũ. Tôn trọng prefers-reduced-motion. */
 (function () {
 'use strict';
 if (window.CVHomeSkyP150) return;
 var KEY = 'canvio.homeSkin';
 function get() { try { return localStorage.getItem(KEY) === 'classic' ? 'classic' : 'sky'; } catch (e) { return 'sky'; } }
-function set(v) { try { localStorage.setItem(KEY, v); } catch (e) {} apply(v); }
-var PK = 'canvio.homePal';
-function getPal() { try { var p = localStorage.getItem(PK); return p === 'aurora' || p === 'sky' ? p : 'sunset'; } catch (e) { return 'sunset'; } }
-function setPal(p) { try { localStorage.setItem(PK, p); } catch (e) {} applyPal(p); }
-function applyPal(p) { p = p || getPal(); document.documentElement.setAttribute('data-home-pal', p); var w = document.getElementById('cv150-pal'); if (w) [].forEach.call(w.children, function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-pal') === p ? 'true' : 'false'); }); }
+function set(v) { try { localStorage.setItem(KEY, v); } catch (e) {} apply(v); toggleOutside(); }
 function apply(v) {
   v = v || get(); document.documentElement.setAttribute('data-home-skin', v);
-  var b = document.getElementById('cv150-toggle'); if (b) { b.textContent = v === 'sky' ? 'Giao diện cổ điển' : 'Sky Glass'; b.setAttribute('aria-pressed', v === 'sky' ? 'true' : 'false'); }
+  var b = document.getElementById('cv150-toggle'); if (b) { b.textContent = v === 'sky' ? 'Giao diện cổ điển' : 'Bàn thiết kế'; b.setAttribute('aria-pressed', v === 'sky' ? 'true' : 'false'); }
 }
 function css() {
   if (document.getElementById('canvio-lot150h-css')) return;
   var S = 'html[data-home-skin=sky] #page-home', s = document.createElement('style'); s.id = 'canvio-lot150h-css';
-  var cloud = "<svg xmlns='http://www.w3.org/2000/svg' width='1600' height='1100'><filter id='f' x='0' y='0' width='100%' height='100%'><feTurbulence type='fractalNoise' baseFrequency='.0035 .009' numOctaves='6' seed='7'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 2.6 -1.05'/></filter><rect width='100%' height='100%' filter='url(#f)'/></svg>";
-  var cloudUrl = 'url("data:image/svg+xml,' + encodeURIComponent(cloud) + '")';
-  var cloud2 = cloud.replace("seed='7'", "seed='23'").replace('.0035 .009', '.006 .016');
-  var cloudUrl2 = 'url("data:image/svg+xml,' + encodeURIComponent(cloud2) + '")';
+  var F = '"Bahnschrift","Arial Narrow","Liberation Sans Narrow","Roboto Condensed",sans-serif';
   s.textContent = [
-  'html[data-home-skin=sky]{--cv150-bg:linear-gradient(180deg,#6a3aa8 0%,#c457a8 24%,#ff7f93 50%,#ffb48a 76%,#ffe2c4 100%);--cv150-ink:#3a1747;--cv150-sub:#6b4a72;--cv150-chip:rgba(143,58,166,.12);--cv150-chipb:rgba(143,58,166,.26);--cv150-chipt:#7a2a8c;--cv150-cta:#9b2f8f}',
-  'html[data-home-skin=sky][data-home-pal=aurora]{--cv150-bg:linear-gradient(180deg,#041a33 0%,#0b4f6c 30%,#16907f 60%,#7fdcb8 86%,#d9fbe9 100%);--cv150-ink:#0a2f3a;--cv150-sub:#3e6a70;--cv150-chip:rgba(14,120,110,.12);--cv150-chipb:rgba(14,120,110,.28);--cv150-chipt:#0b6b60;--cv150-cta:#0b6b60}',
-  'html[data-home-skin=sky][data-home-pal=sky]{--cv150-bg:linear-gradient(180deg,#1f5fd8 0%,#3f86ec 30%,#7db6f7 62%,#bfdcfb 100%);--cv150-ink:#0f2247;--cv150-sub:#3b4d75;--cv150-chip:rgba(20,70,190,.1);--cv150-chipb:rgba(20,70,190,.18);--cv150-chipt:#1a3d8f;--cv150-cta:#1b4fb8}',
-  '#cv150-sky,#cv150-word,#cv150-float{display:none}',
-  S + '{position:relative;isolation:isolate;display:flex;flex-direction:column;padding:18px clamp(14px,3vw,44px) 0;border-radius:30px;overflow:hidden;color:#fff;background:var(--cv150-bg)}',
-  S + '::before,' + S + '::after{content:"";position:absolute;left:-10%;right:-10%;top:0;height:1100px;z-index:-1;pointer-events:none;background-repeat:no-repeat;background-size:100% 100%}',
-  S + '::before{background-image:' + cloudUrl + ';opacity:.85;-webkit-mask-image:linear-gradient(180deg,#000 70%,transparent);mask-image:linear-gradient(180deg,#000 70%,transparent);animation:cv150drift 80s ease-in-out infinite alternate}',
-  S + '::after{background-image:' + cloudUrl2 + ';opacity:.55;top:380px;-webkit-mask-image:linear-gradient(180deg,transparent,#000 30%,#000 70%,transparent);mask-image:linear-gradient(180deg,transparent,#000 30%,#000 70%,transparent);animation:cv150drift 110s ease-in-out infinite alternate-reverse}',
-  '@keyframes cv150drift{from{transform:translateX(-3%)}to{transform:translateX(3%)}}',
-  '@media(prefers-reduced-motion:reduce){' + S + '::before,' + S + '::after{animation:none}}',
-  S + ' #cv150-sky{order:-3;display:flex;flex-direction:column;position:relative;min-height:min(62vh,560px);padding:0 0 10px}',
-  S + ' #cv150-nav{align-self:center;display:flex;align-items:center;gap:4px;padding:6px 6px 6px 18px;border-radius:999px;background:linear-gradient(135deg,rgba(255,255,255,.42),rgba(255,255,255,.14));border:1px solid rgba(255,255,255,.7);backdrop-filter:blur(28px) saturate(1.8) brightness(1.08);-webkit-backdrop-filter:blur(28px) saturate(1.8) brightness(1.08);box-shadow:inset 0 1px 0 rgba(255,255,255,.85),inset 0 -1px 0 rgba(255,255,255,.25),0 12px 44px rgba(10,40,120,.22);max-width:100%;overflow-x:auto}',
-  S + ' #cv150-nav b{font-weight:600;letter-spacing:-.02em;font-size:17px;margin-right:12px;color:#fff}',
-  S + ' #cv150-nav button{cursor:pointer;border:0;background:transparent;color:#fff;font-family:inherit;font-weight:500;font-size:13.5px;padding:9px 14px;border-radius:999px;white-space:nowrap;transition:background .2s}',
-  S + ' #cv150-nav button:hover{background:rgba(255,255,255,.28)}',
-  S + ' #cv150-nav button.go{background:#fff;color:var(--cv150-cta);font-weight:600;margin-left:6px}',
-  S + ' #cv150-sky h2{margin:clamp(30px,9vh,96px) 0 0;font-family:inherit;font-weight:200;font-size:clamp(40px,7vw,108px);line-height:1;letter-spacing:-.045em;color:#fff;text-shadow:0 4px 40px rgba(20,60,150,.22);max-width:15ch}',
-  S + ' #cv150-sky p{margin:18px 0 0;max-width:42ch;font-size:clamp(14px,1.3vw,17px);line-height:1.55;color:rgba(255,255,255,.95)}',
-  S + ' #cv150-float{display:block;position:absolute;inset:0;pointer-events:none}',
-  S + ' #cv150-float span{position:absolute;padding:8px 16px;border-radius:999px;background:linear-gradient(135deg,rgba(255,255,255,.4),rgba(255,255,255,.12));border:1px solid rgba(255,255,255,.7);backdrop-filter:blur(24px) saturate(1.8) brightness(1.08);-webkit-backdrop-filter:blur(24px) saturate(1.8) brightness(1.08);font-size:13px;font-weight:500;box-shadow:inset 0 1px 0 rgba(255,255,255,.85),0 8px 26px rgba(10,40,120,.18);animation:cv150bob 7s ease-in-out infinite alternate}',
-  S + ' #cv150-float span:nth-child(1){right:8%;top:34%}' + S + ' #cv150-float span:nth-child(2){right:22%;top:58%;animation-delay:-2s}' + S + ' #cv150-float span:nth-child(3){right:4%;top:72%;animation-delay:-4s}',
-  '@keyframes cv150bob{from{transform:translateY(-6px)}to{transform:translateY(8px)}}',
-  '@media(prefers-reduced-motion:reduce){' + S + ' #cv150-float span{animation:none}}',
-  S + ' #cv150-toggle{position:absolute;top:62px;right:0;cursor:pointer;padding:7px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.6);background:rgba(255,255,255,.2);color:#fff;font:600 12px inherit;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}',
-  S + ' #cv150-toggle{font-family:inherit}',
-  S + ' #cv150-pal{position:absolute;top:104px;right:0;display:flex;gap:8px;z-index:2}',
-  S + ' #cv150-pal button{width:26px;height:26px;border-radius:50%;border:2px solid rgba(255,255,255,.85);cursor:pointer;padding:0;box-shadow:0 4px 14px rgba(10,20,60,.25)}',
-  S + ' #cv150-pal button[aria-pressed=true]{outline:2px solid #fff;outline-offset:2px}',
-  S + ' #cv150-pal [data-pal=sunset]{background:linear-gradient(135deg,#8f3aa6,#ffb48a)}' + S + ' #cv150-pal [data-pal=aurora]{background:linear-gradient(135deg,#0b4f6c,#7fdcb8)}' + S + ' #cv150-pal [data-pal=sky]{background:linear-gradient(135deg,#1f5fd8,#bfdcfb)}',
-  /* dải thẻ kính */
-  S + ' #ws-cards{order:-2;margin:0 0 6px}',
-  S + ' #ws-cards h3{color:#fff;font-weight:500;font-size:12px;letter-spacing:.14em;text-transform:uppercase;opacity:.92;text-shadow:0 1px 12px rgba(20,60,140,.3)}',
-  S + ' #ws-cards .ws-grid{display:flex!important;gap:14px;overflow-x:auto;padding:14px 4px 22px;scroll-snap-type:x proximity;perspective:1400px;cursor:grab;scrollbar-width:none;-webkit-overflow-scrolling:touch}',
+  'html[data-home-skin=sky]{--pb:#E4E6EE;--paper:#FBFBF8;--ink:#15151C;--sel:#FF2E93;--sun:#FFD84A;--ln:rgba(21,21,28,.14);--mute:#5b5f73}',
+  '#cv150-sky{display:none}',
+  S + '{position:relative;isolation:isolate;display:flex;flex-direction:column;padding:34px clamp(14px,3vw,44px) 28px;border-radius:14px;overflow:hidden;color:var(--ink);background-color:var(--pb);background-image:radial-gradient(rgba(21,21,28,.16) 1px,transparent 1.2px);background-size:22px 22px}',
+  S + '::before{content:"";position:absolute;left:0;right:0;top:0;height:20px;z-index:-1;background:repeating-linear-gradient(90deg,rgba(21,21,28,.38) 0 1px,transparent 1px 10px),repeating-linear-gradient(90deg,rgba(21,21,28,.6) 0 1px,transparent 1px 50px);background-size:100% 6px,100% 11px;background-repeat:repeat-x;background-position:0 100%;border-bottom:1px solid var(--ln);background-color:rgba(251,251,248,.55)}',
+  S + ' #cv150-sky{order:-3;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:clamp(20px,4vw,64px);align-items:center;position:relative;padding:clamp(10px,3vw,36px) 0 clamp(22px,3vw,40px)}',
+  S + ' #cv150-sky h2{margin:0 0 18px;font-family:' + F + '!important;font-weight:700;font-stretch:75%;font-size:clamp(46px,7vw,112px);line-height:1;letter-spacing:-.012em;color:var(--ink);max-width:10em}',
+  S + ' #cv150-sky p{margin:0 0 26px;max-width:40ch;font-size:clamp(15px,1.25vw,18px);line-height:1.55;color:var(--mute)}',
+  S + ' #cv150-cta{display:flex;flex-wrap:wrap;gap:10px}',
+  S + ' #cv150-cta button{cursor:pointer;font-family:inherit;font-size:15px;font-weight:600;padding:13px 20px;border-radius:6px;border:1.5px solid var(--ink);transition:transform .15s,background .15s}',
+  S + ' #cv150-cta .p{background:var(--ink);color:#fff}' + S + ' #cv150-cta .p:hover{background:#2c2c3a}',
+  S + ' #cv150-cta .q{background:transparent;color:var(--ink)}' + S + ' #cv150-cta .q:hover{background:rgba(21,21,28,.07)}',
+  S + ' #cv150-cta button:focus-visible,#cv150-toggle:focus-visible{outline:3px solid var(--sel);outline-offset:3px}',
+  S + ' #cv150-toggle{position:absolute;top:0;right:0;cursor:pointer;padding:6px 11px;border-radius:6px;border:1px solid var(--ln);background:rgba(251,251,248,.8);color:var(--mute);font-family:inherit;font-size:12px;font-weight:500}',
+  S + ' #cv150-toggle:hover{color:var(--ink);border-color:var(--ink)}',
+  /* khung poster */
+  S + ' #cv150-art{position:relative;justify-self:center;width:min(100%,400px)}',
+  S + ' #cv150-art .lab{display:flex;justify-content:space-between;margin:0 0 7px;font-size:12px;color:var(--mute)}',
+  S + ' #cv150-art .fr{position:relative;aspect-ratio:4/5;background:var(--paper);border-radius:2px;box-shadow:0 0 0 1px var(--ln),0 22px 40px -18px rgba(21,21,28,.35);overflow:visible}',
+  S + ' #cv150-art .bd{position:absolute;inset:0;overflow:hidden;border-radius:2px}',
+  S + ' #cv150-art .sun{position:absolute;right:-18%;top:-10%;width:78%;aspect-ratio:1;border-radius:50%;background:var(--sun)}',
+  S + ' #cv150-art .bar{position:absolute;left:8%;bottom:8%;right:8%;height:11%;background:var(--ink)}',
+  S + ' #cv150-art .bar i{position:absolute;left:5%;top:50%;width:34%;height:3px;background:var(--sun);transform:translateY(-50%)}',
+  S + ' #cv150-art .gd{position:absolute;background:var(--sel);opacity:.75}',
+  S + ' #cv150-art .gd.v{top:-6%;bottom:-6%;width:1px;left:8%}' + S + ' #cv150-art .gd.h{left:-5%;right:-5%;height:1px;top:56%}',
+  S + ' #cv150-art .tx{position:absolute;left:8%;top:36%;width:74%;animation:cv150snap 2.6s cubic-bezier(.2,.8,.2,1) .5s both}',
+  S + ' #cv150-art .tx b{display:block;font-family:' + F + '!important;font-weight:700;font-stretch:75%;font-size:clamp(30px,4.4vw,50px);line-height:.95;letter-spacing:-.01em;color:var(--ink)}',
+  S + ' #cv150-art .tx span{display:block;margin-top:10px;font-size:12px;color:#444}',
+  S + ' #cv150-art .sl{position:absolute;inset:-7px -9px;border:1.5px solid var(--sel)}',
+  S + ' #cv150-art .sl u{position:absolute;width:7px;height:7px;background:#fff;border:1.5px solid var(--sel)}',
+  S + ' #cv150-art .sl u:nth-child(1){left:-5px;top:-5px}' + S + ' #cv150-art .sl u:nth-child(2){right:-5px;top:-5px}' + S + ' #cv150-art .sl u:nth-child(3){left:-5px;bottom:-5px}' + S + ' #cv150-art .sl u:nth-child(4){right:-5px;bottom:-5px}',
+  S + ' #cv150-art .cur{position:absolute;right:-30px;bottom:-26px;display:flex;flex-direction:column;align-items:flex-start}',
+  S + ' #cv150-art .cur svg{width:18px;height:18px;fill:var(--sel);stroke:#fff;stroke-width:1.5}',
+  S + ' #cv150-art .cur em{margin:-2px 0 0 12px;font-style:normal;font-size:12px;font-weight:600;color:#fff;background:var(--sel);padding:3px 9px;border-radius:3px 9px 9px 9px}',
+  '@keyframes cv150snap{from{transform:translate(-34px,26px)}to{transform:none}}',
+  '@media(prefers-reduced-motion:reduce){' + S + ' #cv150-art .tx{animation:none}}',
+  /* 5 không gian = khung giấy */
+  S + ' #ws-cards{order:-2;margin:0 0 20px}',
+  S + ' #ws-cards h3{color:var(--ink);font-family:inherit;font-weight:600;font-size:15px;letter-spacing:0;text-transform:none;margin:0 0 4px}',
+  S + ' #ws-cards .ws-grid{display:flex!important;gap:18px;overflow-x:auto;padding:12px 8px 20px;scroll-snap-type:x proximity;cursor:grab;scrollbar-width:none}',
   S + ' #ws-cards .ws-grid::-webkit-scrollbar{display:none}',
-  S + ' #ws-cards .ws-grid.drag{cursor:grabbing;scroll-snap-type:none}',
-  S + ' #ws-cards .ws-grid.drag>*{pointer-events:none}',
-  S + ' #ws-cards .ws-grid>*{flex:0 0 clamp(220px,21vw,280px);scroll-snap-align:start;background:linear-gradient(160deg,rgba(255,255,255,.78),rgba(255,255,255,.5))!important;border:1px solid rgba(255,255,255,.9)!important;border-radius:22px!important;box-shadow:inset 0 1px 0 #fff,0 18px 44px rgba(10,40,120,.24)!important;backdrop-filter:blur(30px) saturate(1.7);-webkit-backdrop-filter:blur(30px) saturate(1.7);overflow:hidden;color:var(--cv150-ink);transform:rotateY(-7deg) rotateX(2deg);transform-origin:left center;transition:transform .3s,box-shadow .3s;user-select:none}',
-  S + ' #ws-cards .ws-grid>*:hover{transform:rotateY(0) rotateX(0) translateY(-4px)}',
-  S + ' #ws-cards .ws-grid>* *{color:inherit;background:transparent!important;text-shadow:none}',
-  S + ' #ws-cards .ws-grid>*::before,' + S + ' #ws-cards .ws-grid>*::after{display:none!important}',
-  S + ' #ws-cards .ws-grid>* [class*=chip],' + S + ' #ws-cards .ws-grid>* [class*=tag],' + S + ' #ws-cards .ws-grid>* button{background:var(--cv150-chip)!important;border:1px solid var(--cv150-chipb)!important;color:var(--cv150-chipt)!important;border-radius:999px!important}',
-  S + ' #ws-cards .ws-grid>* p,' + S + ' #ws-cards .ws-grid>* [class*=desc]{color:var(--cv150-sub)}',
-  S + ' #cv150-word{order:-1;display:block;font-family:inherit;font-weight:200;font-size:clamp(80px,22vw,340px);line-height:.85;letter-spacing:-.055em;color:#fff;padding:0;margin:4px 0 clamp(18px,3vw,36px);user-select:none;pointer-events:none;text-shadow:0 6px 50px rgba(20,60,150,.18)}',
-  /* phần còn lại: thẻ kính sáng, đọc rõ */
-  S + ' #cvHero,' + S + ' #ws-jobs,' + S + ' #l43-recent,' + S + ' #cv-hub110,' + S + ' #cvux-home-launch,' + S + ' #cvhs-workflows,' + S + ' #ws-obc,' + S + ' #cvux-onboarding{background:rgba(255,255,255,.72)!important;border:1px solid rgba(255,255,255,.8)!important;border-radius:24px!important;box-shadow:0 18px 50px rgba(20,60,140,.16)!important;backdrop-filter:blur(22px) saturate(1.2);-webkit-backdrop-filter:blur(22px) saturate(1.2);color:#10203f;margin-bottom:18px}',
-  S + ' #cvHero{background:rgba(20,40,110,.38)!important;color:#fff}',
-  S + ' #ws-jobs button[class],' + S + ' #cvHero button{border-radius:999px!important}',
+  S + ' #ws-cards .ws-grid.drag{cursor:grabbing;scroll-snap-type:none}' + S + ' #ws-cards .ws-grid.drag>*{pointer-events:none}',
+  S + ' #ws-cards .ws-grid>*{position:relative;flex:0 0 clamp(220px,21vw,270px);scroll-snap-align:start;background:var(--paper)!important;border:0!important;border-radius:2px!important;box-shadow:0 0 0 1px var(--ln),0 14px 26px -16px rgba(21,21,28,.4)!important;overflow:visible;color:var(--ink);user-select:none;backdrop-filter:none;transform:none}',
+  S + ' #ws-cards .ws-grid>*::before{display:none!important}',
+  S + ' #ws-cards .ws-grid>*::after{content:""!important;display:block!important;position:absolute;inset:-4px;pointer-events:none;opacity:0;transition:opacity .15s;border:1.5px solid var(--sel)!important;background-color:transparent!important;box-shadow:none!important;background-image:linear-gradient(var(--sel),var(--sel)),linear-gradient(var(--sel),var(--sel)),linear-gradient(var(--sel),var(--sel)),linear-gradient(var(--sel),var(--sel));background-position:0 0,100% 0,0 100%,100% 100%;background-size:7px 7px;background-repeat:no-repeat;/*,*/border-radius:0!important;width:auto;height:auto;right:auto;bottom:auto;left:-4px;top:-4px;width:calc(100% + 8px);height:calc(100% + 8px)}',
+  S + ' #ws-cards .ws-grid>*:hover::after,' + S + ' #ws-cards .ws-grid>*:focus-within::after{opacity:1}',
+  S + ' #ws-cards .ws-grid>* *{color:inherit;text-shadow:none}',
+  S + ' #ws-cards .ws-grid>* p,' + S + ' #ws-cards .ws-grid>* [class*=desc]{color:var(--mute)}',
+  S + ' #ws-cards .ws-grid>* [class*=chip],' + S + ' #ws-cards .ws-grid>* [class*=tag],' + S + ' #ws-cards .ws-grid>* button{background:transparent!important;border:1px solid var(--ln)!important;color:#3b3f52!important;border-radius:3px!important}',
+  /* phần còn lại: tờ giấy trên pasteboard */
+  S + ' #cvHero,' + S + ' #ws-jobs,' + S + ' #l43-recent,' + S + ' #cv-hub110,' + S + ' #cvux-home-launch,' + S + ' #cvhs-workflows,' + S + ' #ws-obc,' + S + ' #cvux-onboarding{background:var(--paper)!important;border:0!important;border-radius:4px!important;box-shadow:0 0 0 1px var(--ln),0 18px 30px -22px rgba(21,21,28,.45)!important;color:var(--ink);margin-bottom:18px;backdrop-filter:none}',
+  S + ' #cvHero{background:var(--ink)!important;color:#fff}',
+  S + ' #ws-jobs button[class],' + S + ' #cvHero button{border-radius:6px!important}',
   'html[data-home-skin=classic] #cv150-toggle{position:fixed;right:14px;bottom:14px;z-index:60;display:inline-block;padding:8px 14px;border-radius:999px;border:1px solid #111;background:#fff;color:#111;font:600 12px/1 inherit;cursor:pointer}',
-  '@media(max-width:560px){html[data-home-skin=classic] #cv150-toggle{bottom:76px}' + S + '{padding-top:12px;border-radius:20px}' + S + ' #cv150-float{display:none}' + S + ' #cv150-sky h2{max-width:none}' + S + ' #cv150-toggle{top:58px}' + S + ' #cv150-pal{top:98px}}'
+  '@media(max-width:820px){' + S + ' #cv150-sky{grid-template-columns:1fr}' + S + ' #cv150-art{width:min(100%,320px);margin:6px auto 24px}' + S + ' #cv150-sky h2{max-width:none}}',
+  '@media(max-width:560px){html[data-home-skin=classic] #cv150-toggle{bottom:76px}' + S + '{padding-top:30px;border-radius:10px}}'
   ].join('\n');
   document.head.appendChild(s);
 }
@@ -78,19 +77,18 @@ function build() {
   var p = document.getElementById('page-home'); if (!p) return false;
   if (!document.getElementById('cv150-sky')) {
     var d = document.createElement('div'); d.id = 'cv150-sky';
-    d.innerHTML = '<nav id="cv150-nav" aria-label="Lối tắt không gian"><b>canvio</b><button type="button" data-go="design">Thiết kế</button><button type="button" data-go="site">Website</button><button type="button" data-go="media">Ảnh &amp; video</button><button type="button" data-go="proj">Dự án</button><button type="button" data-go="ai">AI</button><button type="button" class="go" data-go="design">Bắt đầu</button></nav><div id="cv150-float" aria-hidden="true"><span>Miễn phí</span><span>Chạy ngay trên máy</span><span>Xuất PDF · MP4</span></div><h2>Sáng tạo mọi thứ, nhẹ như mây.</h2><p>Poster, website, CV 3D và video — một nơi duy nhất, miễn phí.</p>';
+    d.innerHTML = '<div><h2>Bắt đầu từ một khung trống.</h2><p>Poster, CV 3D, website và video. Làm ngay trên máy bạn, không cần tài khoản, không tốn phí.</p><div id="cv150-cta"><button type="button" class="p" data-go="design">Tạo thiết kế mới</button><button type="button" class="q" data-go="ai">Nhờ AI dựng giúp</button></div></div>'
+      + '<div id="cv150-art" aria-hidden="true"><div class="lab"><span>Poster tuyển dụng</span><span>1080 × 1350</span></div><div class="fr"><div class="bd"><div class="sun"></div><div class="bar"><i></i></div></div><div class="gd v"></div><div class="gd h"></div><div class="tx"><div class="sl"><u></u><u></u><u></u><u></u></div><b>Chúng tôi<br>đang tuyển</b><span>Nhân sự · Hà Nội · Toàn thời gian</span><div class="cur"><svg viewBox="0 0 16 16"><path d="M1 1l5.5 14 2-5.5L14 7.5z"/></svg><em>Hà</em></div></div></div></div>';
     d.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('[data-go]'); if (b && window.CVWS && CVWS.open) CVWS.open(b.getAttribute('data-go')); });
     var t = document.createElement('button'); t.id = 'cv150-toggle'; t.type = 'button'; t.addEventListener('click', function () { set(get() === 'sky' ? 'classic' : 'sky'); });
-    var pw = document.createElement('div'); pw.id = 'cv150-pal'; pw.setAttribute('role', 'group'); pw.setAttribute('aria-label', 'Bảng màu');
-    [['sunset', 'Hoàng hôn'], ['aurora', 'Cực quang'], ['sky', 'Trời xanh']].forEach(function (x) { var q = document.createElement('button'); q.type = 'button'; q.setAttribute('data-pal', x[0]); q.title = x[1]; q.setAttribute('aria-label', 'Bảng màu ' + x[1]); q.addEventListener('click', function () { setPal(x[0]); }); pw.appendChild(q); });
-    d.appendChild(pw); d.appendChild(t); p.insertBefore(d, p.firstChild);
+    d.appendChild(t); p.insertBefore(d, p.firstChild);
   }
-  if (!document.getElementById('cv150-word')) { var w = document.createElement('div'); w.id = 'cv150-word'; w.setAttribute('aria-hidden', 'true'); w.textContent = 'canvio'; p.appendChild(w); }
   return true;
 }
-function toggleOutside() { /* ở chế độ cổ điển #cv150-sky bị ẩn → nút nổi riêng để quay lại */
-  var b = document.getElementById('cv150-toggle'); if (b && b.parentNode && b.parentNode.id === 'cv150-sky' && get() === 'classic') document.body.appendChild(b);
-  if (b && get() === 'sky' && b.parentNode === document.body) { var s = document.getElementById('cv150-sky'); if (s) s.appendChild(b); }
+function toggleOutside() {
+  var b = document.getElementById('cv150-toggle'); if (!b) return;
+  if (get() === 'classic' && b.parentNode && b.parentNode.id === 'cv150-sky') document.body.appendChild(b);
+  if (get() === 'sky' && b.parentNode === document.body) { var s = document.getElementById('cv150-sky'); if (s) s.appendChild(b); }
 }
 function drag() {
   var g = document.querySelector('#ws-cards .ws-grid'); if (!g || g.__cv150) return; g.__cv150 = 1;
@@ -100,8 +98,7 @@ function drag() {
   window.addEventListener('pointerup', function () { if (!down) return; down = false; setTimeout(function () { g.classList.remove('drag'); }, 0); });
   g.addEventListener('click', function (e) { if (moved) { e.preventDefault(); e.stopPropagation(); moved = 0; } }, true);
 }
-function init() { css(); if (!build()) return false; drag(); apply(); applyPal(); toggleOutside(); return true; }
-var _set = set; set = function (v) { _set(v); toggleOutside(); };
+function init() { css(); if (!build()) return false; drag(); apply(); toggleOutside(); return true; }
 var tries = 0; (function loop() { if (init() || ++tries > 40) return; setTimeout(loop, 250); })();
-window.CVHomeSkyP150 = { version: '150.4.0', get: get, set: set, getPal: getPal, setPal: setPal, init: init };
+window.CVHomeSkyP150 = { version: '150.5.0', get: get, set: set, init: init };
 })();
