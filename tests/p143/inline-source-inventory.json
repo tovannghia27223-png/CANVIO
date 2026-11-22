@@ -1,17 +1,17 @@
 {
   "format": "CANVIO_P143_INLINE_SOURCE_INVENTORY",
   "version": 1,
-  "generatedAt": "2026-11-22T19:36:11.078Z",
+  "generatedAt": "2026-11-22T20:02:25.844Z",
   "source": "restored canonical index.html after hosted workflow integration steps",
   "purpose": "Complete script-tag inventory in browser execution order; known global reference detection is heuristic, not a semantic dependency DAG.",
-  "htmlBytes": 5762372,
-  "scriptTagCount": 164,
-  "inlineScriptCount": 164,
+  "htmlBytes": 5770928,
+  "scriptTagCount": 165,
+  "inlineScriptCount": 165,
   "externalScriptCount": 0,
   "moduleScriptCount": 0,
   "asyncScriptCount": 0,
   "deferScriptCount": 0,
-  "uniqueScriptIds": 161,
+  "uniqueScriptIds": 162,
   "duplicateScriptIds": [],
   "modules": [
     {
@@ -15275,6 +15275,68 @@
     },
     {
       "order": 140,
+      "id": "canvio-lot137f",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 8517,
+      "sha256": "b1a5d074dc47618ea1921fabf456d7a6337172559c00d5c5855792a2c55dadec",
+      "exportedGlobals": [
+        "CVFramesP137"
+      ],
+      "globalDeclarations": [],
+      "globalPropertyReads": [
+        "CVFramesP137",
+        "Konva",
+        "MutationObserver"
+      ],
+      "knownGlobalReads": [],
+      "globalReferenceEvidence": {
+        "propertyReads": [
+          {
+            "name": "CVFramesP137",
+            "count": 1,
+            "lines": [
+              7
+            ]
+          },
+          {
+            "name": "Konva",
+            "count": 3,
+            "lines": [
+              34,
+              39,
+              63
+            ]
+          },
+          {
+            "name": "MutationObserver",
+            "count": 1,
+            "lines": [
+              99
+            ]
+          }
+        ],
+        "knownReads": [],
+        "writes": [
+          {
+            "name": "CVFramesP137",
+            "line": 101,
+            "kind": "window.property"
+          }
+        ],
+        "scannerLimitations": [
+          "Template literal bodies and interpolation expressions are skipped as one lexical region.",
+          "Destructured globals, alias flow, computed property names, eval and dynamically assembled identifiers are not resolved.",
+          "Top-level bindings are detected only for simple var/let/const/function/class declarations.",
+          "This scanner is lexical evidence, not a JavaScript AST or proof of runtime data flow."
+        ]
+      }
+    },
+    {
+      "order": 141,
       "id": "canvio-lot131",
       "type": "classic",
       "src": null,
@@ -15393,7 +15455,7 @@
       }
     },
     {
-      "order": 141,
+      "order": 142,
       "id": "canvio-lot115",
       "type": "classic",
       "src": null,
@@ -15453,7 +15515,7 @@
       }
     },
     {
-      "order": 142,
+      "order": 143,
       "id": "canvio-lot1222",
       "type": "classic",
       "src": null,
@@ -15531,7 +15593,7 @@
       }
     },
     {
-      "order": 143,
+      "order": 144,
       "id": "canvio-lot127k",
       "type": "classic",
       "src": null,
@@ -15617,7 +15679,7 @@
       }
     },
     {
-      "order": 144,
+      "order": 145,
       "id": "canvio-lot1452",
       "type": "classic",
       "src": null,
@@ -15715,7 +15777,7 @@
       }
     },
     {
-      "order": 145,
+      "order": 146,
       "id": "canvio-lot1454b",
       "type": "classic",
       "src": null,
@@ -15775,7 +15837,7 @@
       }
     },
     {
-      "order": 146,
+      "order": 147,
       "id": "canvio-lot1454",
       "type": "classic",
       "src": null,
@@ -15885,7 +15947,7 @@
       }
     },
     {
-      "order": 147,
+      "order": 148,
       "id": "canvio-lot1252",
       "type": "classic",
       "src": null,
@@ -15953,7 +16015,7 @@
       }
     },
     {
-      "order": 148,
+      "order": 149,
       "id": "canvio-lot1455",
       "type": "classic",
       "src": null,
@@ -16013,7 +16075,7 @@
       }
     },
     {
-      "order": 149,
+      "order": 150,
       "id": "canvio-lot1272",
       "type": "classic",
       "src": null,
@@ -16091,7 +16153,7 @@
       }
     },
     {
-      "order": 150,
+      "order": 151,
       "id": "canvio-lot1456",
       "type": "classic",
       "src": null,
@@ -16151,7 +16213,7 @@
       }
     },
     {
-      "order": 151,
+      "order": 152,
       "id": "canvio-lot1457",
       "type": "classic",
       "src": null,
@@ -16211,7 +16273,7 @@
       }
     },
     {
-      "order": 152,
+      "order": 153,
       "id": "canvio-lot1458",
       "type": "classic",
       "src": null,
@@ -16271,7 +16333,7 @@
       }
     },
     {
-      "order": 153,
+      "order": 154,
       "id": "canvio-lot145910",
       "type": "classic",
       "src": null,
@@ -16375,7 +16437,7 @@
       }
     },
     {
-      "order": 154,
+      "order": 155,
       "id": "canvio-lot134r",
       "type": "classic",
       "src": null,
@@ -16435,7 +16497,7 @@
       }
     },
     {
-      "order": 155,
+      "order": 156,
       "id": "canvio-lot124",
       "type": "classic",
       "src": null,
@@ -16520,7 +16582,7 @@
       }
     },
     {
-      "order": 156,
+      "order": 157,
       "id": "canvio-lot133p",
       "type": "classic",
       "src": null,
@@ -16606,7 +16668,7 @@
       }
     },
     {
-      "order": 157,
+      "order": 158,
       "id": "canvio-lot135a",
       "type": "classic",
       "src": null,
@@ -16640,7 +16702,7 @@
       }
     },
     {
-      "order": 158,
+      "order": 159,
       "id": "canvio-lot133m",
       "type": "classic",
       "src": null,
@@ -16726,7 +16788,7 @@
       }
     },
     {
-      "order": 159,
+      "order": 160,
       "id": "canvio-lot139",
       "type": "classic",
       "src": null,
@@ -16752,7 +16814,7 @@
       }
     },
     {
-      "order": 160,
+      "order": 161,
       "id": "canvio-lot120126",
       "type": "classic",
       "src": null,
@@ -16841,7 +16903,7 @@
       }
     },
     {
-      "order": 161,
+      "order": 162,
       "id": "canvio-lot119v",
       "type": "classic",
       "src": null,
@@ -16867,7 +16929,7 @@
       }
     },
     {
-      "order": 162,
+      "order": 163,
       "id": "canvio-lot119w",
       "type": "classic",
       "src": null,
@@ -16893,7 +16955,7 @@
       }
     },
     {
-      "order": 163,
+      "order": 164,
       "id": "canvio-lot146",
       "type": "classic",
       "src": null,
