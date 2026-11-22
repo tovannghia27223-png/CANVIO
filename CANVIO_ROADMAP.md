@@ -1084,3 +1084,6 @@ Hosted verification after the ffmpeg repair is complete:
 - Limits: the classic sidebar itself stays hidden in shell mode (by design of P114); this only restores the entry points. Not checked on real touch devices.
 
 - P114.1 addendum (2026-11-22): the three-dot "Thêm tuỳ chọn" button (`#l42-btn`) now shows an SVG sliders icon (theme-coloured via CSS mask; label/handlers untouched). On ≤560 px the top bar was already wider than the screen (this button sat off-screen at x≈412 of 390); the lot now keeps only the save-state dot, makes Spatial icon-only and tightens padding so the button is on-screen. Chrome test extended (icon is SVG, button still opens its menu; desktop + mobile).
+
+## P150 · Tổng quan "Sky Glass" (đã làm, chờ nghiệm thu)
+- `canvio-p150-home-sky.js` (lot `canvio-lot150h`): nền trời xanh có mây, tiêu đề trắng nét mảnh cỡ lớn, chip điều hướng 5 không gian, thẻ kính mờ, dải 5 thẻ cuộn ngang, wordmark "canvio" lớn cuối trang. Chỉ phủ CSS `html[data-home-skin=sky] #page-home`, không xoá phần cũ (P110/P146 vẫn dùng được). Nút "Giao diện cổ điển / Sky Glass" lưu `canvio.homeSkin`. Test: `tests/p145/run-p150-browser.py` (24 check, desktop + mobile).

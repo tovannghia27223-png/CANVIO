@@ -4046,3 +4046,6 @@ P144 tour: thêm bước bằng cách thêm vào mảng `STEPS` ({sel,title,text
 
 ## P114.1 nav restore (2026-11-22)
 - `window.CVNavRestoreP114`: extends `#cv-studio-menu` with `proj`/`ai` routes and shows `#cv229-open` under `html[data-nav=shell]`. CVWS space ids: design, site, media, proj, ai (home via `CV.go('home')`). Standalone must equal embedded `canvio-lot114n`.
+
+## P150 Sky Glass (Home)
+Trang `#page-home` là flex column dùng `order` → khối mới phải có `order`. Không dùng shorthand `font:… inherit` (không hợp lệ). Bản sao độc lập `canvio-p150-home-sky.js` phải khớp lot trong index.html.
