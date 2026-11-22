@@ -897,6 +897,7 @@ jobs:
           /tmp/canvio-playwright/bin/python tests/p145/run-p133-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p133-proxy-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p133m-browser.py
+          /tmp/canvio-playwright/bin/python tests/p145/run-p133r2-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p144-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p144t-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p119-browser.py
