@@ -258,3 +258,13 @@ Pull trước (`git pull --rebase origin main`; CI bot hay push commit build). A
 
 - Added the loopback-only local ComfyUI bridge, Node contract tests and Chromium mock-server acceptance. It registers image/video/upscale/interpolate handlers with P128 and imports result blobs through the existing Asset Library owner.
 - Model/custom-node execution and output quality remain unverified until the user's actual free local ComfyUI environment is available. This is not cloud sync or an AI model bundle.
+
+## P120/P126 ComfyUI bridge — candidate 2026-11-21
+
+- Added the loopback-only local ComfyUI bridge, Node contract tests and Chromium mock-server acceptance. It registers image/video/upscale/interpolate handlers with P128 and imports result blobs through the existing Asset Library owner.
+- Model/custom-node execution and output quality remain unverified until the user's actual free local ComfyUI environment is available. This is not cloud sync or an AI model bundle.
+
+## P124.4 selected component layouts — candidate
+
+- Extend existing Auto Layout with selected component Grid/Stack/Row/Split CSS application and whitelisted visual variant action. Existing selected GrapesJS model/child tree remains intact.
+- Node + Chromium + P143 parity and mainline CI are required before merge. Nested variants, drag/resize, real user projects and accessibility remain open.

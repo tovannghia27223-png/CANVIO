@@ -1098,3 +1098,9 @@ Hosted verification after the ffmpeg repair is complete:
 ## P118.2 — Phông .woff (2026-11-22)
 - Trang Thương hiệu đọc được .woff (WOFF1, giải nén zlib bằng DecompressionStream) qua `CVWordmarkP118.parseAsync`; `parse` đồng bộ vẫn từ chối woff. Kiểm bằng `tests/p127/run-p118w-tests.cjs`: WOFF dựng từ TTF cho SVG giống hệt TTF, tệp cắt cụt bị từ chối.
 - Còn lại: .woff2 (Brotli), .otf/CFF, ligature, Paper.js boolean.
+
+## P124.4 — Selected component layout application
+
+- Apply Stack/Row/Grid/Split to the existing selected Website component through scoped CSS and data attributes; preserve its element and child tree.
+- Apply the existing Surface/Outline/Elevated/Soft design variants to the same component via validated metadata and GrapesJS CSS Manager.
+- Keep the existing breakpoint editor, component insertion, Website save and undo/project ownership. Nested variant graphs, drag/resize and arbitrary DOM conversion are not implied.

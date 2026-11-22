@@ -240,3 +240,9 @@ Chỉ kiểm bằng tín hiệu/tệp tổng hợp và Chromium headless; chưa 
 
 - Home now offers five goal-based brief/workflow starters using existing Home fields and Studio destinations. Preserve the single Shared Core and existing persistence owners; do not add a duplicate project/asset/prompt store.
 - Inspect hosted Node/Chromium evidence before final acceptance and manually review keyboard/focus, screen-reader, small-screen layout, user-authored project behavior and whether the five sample briefs fit real HR/business workflows.
+
+## P124.4 selected component layouts — candidate
+
+- Use the existing CVAutoLayoutP124 API and selected GrapesJS component. Layout applies scoped CSS/data attributes to the existing node without replacing its tag/content/children.
+- The four visual variants remain whitelisted; persist through the existing Website CSS Manager/save owner. No duplicate store/editor or external dependency.
+- Verify Node, Chromium, P143 parity and hosted integration. Keep nested variants, drag/resize, arbitrary component-tree conversion, accessibility and device review open.

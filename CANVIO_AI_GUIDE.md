@@ -4051,3 +4051,11 @@ P144 tour: thêm bước bằng cách thêm vào mảng `STEPS` ({sel,title,text
 `#page-home` là flex column dùng `order` → khối mới phải có `order`. Không dùng shorthand `font:… inherit`. Font tiêu đề cần `!important` vì app đè h2. Pseudo `::after` của thẻ không gian có nền hồng cũ → phải `background-color:transparent!important`. Bản sao `canvio-p150-home-sky.js` phải khớp lot trong index.html.
 Kiểu Thời trang: dùng `mix-blend-mode:difference` cho chữ wordmark (cần `isolation:isolate` ở khung). Tránh tên class chung chung (`.stage`, `.tl`) vì app đã có CSS trùng tên.
 Bài học P150: KHÔNG đặt `display:flex` lên `#page-home` mà không kèm `:not(.active){display:none!important}` (trang sẽ hiện ở mọi không gian). Không ghi đè màu thanh menu toàn app theo kiểu Tổng quan.
+
+## P124.4 — Selected component layouts and reusable variants
+
+- Extends canvio-p124-autolayout.js / canvio-lot124 / CVAutoLayoutP124 without adding an editor, component store, persistence database or CSS dependency.
+- Adds Stack, Row, Grid and Split layout application to the currently selected non-wrapper GrapesJS component. The operation adds scoped responsive CSS, data-canvio-auto-layout and data-canvio-layout-version attributes while preserving the selected component's tag, content and existing child tree.
+- Adds an explicit action to apply one of the four whitelisted visual variants (surface, outline, elevated, soft) to the selected component. Variant values are validated; CSS is stored through the existing GrapesJS CSS Manager and save path.
+- Existing preset insertion and responsive breakpoint controls remain unchanged. A selected component is not automatically decomposed, wrapped or structurally rebuilt; nested variants, drag/resize controls, arbitrary tree conversion and assistive-technology review remain separate work.
+- Node tests cover selector/variant validation, responsive layout rules, selected-component attribute/class mutation and canonical save. Chromium tests cover the existing insert flow plus selected grid layout, media rules, selected variant and no mobile overflow/page errors.

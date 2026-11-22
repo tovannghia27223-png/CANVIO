@@ -336,3 +336,9 @@ PR #71 was closed as superseded by clean-main PR #73; the latter carries the cor
 
 
 | P146.1 | **Integrated candidate — QA added** | Home guided workflow panel with five HR/business/training/marketing/video routes, existing Home prompt + Shared Core handoff; Node source-parity and hosted Chromium tests added. | Await hosted CI result after commit; human keyboard/screen-reader/mobile review and real-project acceptance remain. |
+
+## P124.4 selected layout and variant application
+
+- Adds selected-component Stack/Row/Grid/Split CSS layout and whitelisted visual variants to existing P124 Website Engine. No component tree rebuild, new editor, data store or dependency.
+- Candidate verification: 24 source contract checks, Node apply/save tests, hosted Chromium selected layout/variant and responsive CSS; P143 standalone/inline parity; integrated HTML audit and complete runtime suite.
+- Remaining P124 scope: nested variants, arbitrary structural conversion, drag/resize, user-authored complex projects, accessibility and device/browser review.

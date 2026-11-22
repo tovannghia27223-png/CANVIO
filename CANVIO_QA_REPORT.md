@@ -568,3 +568,9 @@ Mainline workflow #551 passed 53/53; Pages #275 passed build/deploy. P143 parity
 - Node source-contract checks exactly one canonical inline P146 lot, byte-normalized standalone/embedded parity, syntax, five flow definitions, existing destination fields, Shared Core API reuse and absence of a new network/storage owner.
 - Chromium acceptance covers five workflow entries, brief prefill through the existing Home prompt, HR Visual and Video Studio handoff, Shared Core ownership and no-overwrite behavior for a non-empty project brief. HR Visual’s optional AI tab is activated only to reveal `#hrPrompt`; the test asserts no Pollinations request and does not click the image-generation action.
 - Successful automated checks validate deterministic local routing only; they do not certify content quality, accessibility, physical-device UX or cloud sync.
+
+## P124.4 selected component layout QA
+
+- Node suite checks bounded responsive CSS, whitelisted selected-layout kinds, safe selectors, four design variants, metadata ownership, selected GrapesJS component class/attributes, CSS rule registration and the existing Website save hook.
+- Hosted Chromium reuses the P124 UI fixture and tests existing layout insertion/breakpoint flow, then applies Grid and a Surface/Soft variant to the selected component. The component tag/content/child model is not replaced; responsive CSS is scoped through the existing CSS Manager.
+- This is automated component-contract/browser evidence, not a manual review of user-authored nested component trees or full drag/resize behavior. Nested variants, visual breakpoint authoring, keyboard/screen-reader and physical-device review remain open.
