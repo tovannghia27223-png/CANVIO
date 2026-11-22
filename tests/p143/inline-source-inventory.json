@@ -1,10 +1,10 @@
 {
   "format": "CANVIO_P143_INLINE_SOURCE_INVENTORY",
   "version": 1,
-  "generatedAt": "2026-11-22T00:23:41.930Z",
+  "generatedAt": "2026-11-22T13:25:05.357Z",
   "source": "restored canonical index.html after hosted workflow integration steps",
   "purpose": "Complete script-tag inventory in browser execution order; known global reference detection is heuristic, not a semantic dependency DAG.",
-  "htmlBytes": 5671686,
+  "htmlBytes": 5729900,
   "scriptTagCount": 164,
   "inlineScriptCount": 164,
   "externalScriptCount": 0,
@@ -15157,21 +15157,31 @@
       "async": false,
       "defer": false,
       "noModule": false,
-      "bytes": 8595,
-      "sha256": "cdff7244f1d4660976c5e6ae636b47e34fc4878beb416d25bfc19754595ec6fb",
+      "bytes": 66809,
+      "sha256": "2bb645895378d9f9deab38bfa2e00f741c247a570a0468288ccd4b693672ae31",
       "exportedGlobals": [
         "CVHomeSkyP150"
       ],
       "globalDeclarations": [],
       "globalPropertyReads": [
+        "addEventListener",
         "CVHomeSkyP150",
-        "CVWS"
+        "CVWS",
+        "matchMedia"
       ],
       "knownGlobalReads": [
         "CVWS"
       ],
       "globalReferenceEvidence": {
         "propertyReads": [
+          {
+            "name": "addEventListener",
+            "count": 2,
+            "lines": [
+              339,
+              340
+            ]
+          },
           {
             "name": "CVHomeSkyP150",
             "count": 1,
@@ -15181,25 +15191,36 @@
           },
           {
             "name": "CVWS",
+            "count": 3,
+            "lines": [
+              306,
+              312,
+              380
+            ]
+          },
+          {
+            "name": "matchMedia",
             "count": 1,
             "lines": [
-              52
+              376
             ]
           }
         ],
         "knownReads": [
           {
             "name": "CVWS",
-            "count": 2,
+            "count": 6,
             "lines": [
-              52
+              306,
+              312,
+              380
             ]
           }
         ],
         "writes": [
           {
             "name": "CVHomeSkyP150",
-            "line": 66,
+            "line": 405,
             "kind": "window.property"
           }
         ],
