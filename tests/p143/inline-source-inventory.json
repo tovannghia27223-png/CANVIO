@@ -1,10 +1,10 @@
 {
   "format": "CANVIO_P143_INLINE_SOURCE_INVENTORY",
   "version": 1,
-  "generatedAt": "2026-11-22T13:39:25.164Z",
+  "generatedAt": "2026-11-22T14:47:17.836Z",
   "source": "restored canonical index.html after hosted workflow integration steps",
   "purpose": "Complete script-tag inventory in browser execution order; known global reference detection is heuristic, not a semantic dependency DAG.",
-  "htmlBytes": 5741649,
+  "htmlBytes": 5754689,
   "scriptTagCount": 164,
   "inlineScriptCount": 164,
   "externalScriptCount": 0,
@@ -14819,8 +14819,8 @@
       "async": false,
       "defer": false,
       "noModule": false,
-      "bytes": 16984,
-      "sha256": "dece79eec966582cbc5e539af37ef26c2964152f1cd74609b3422e8905203044",
+      "bytes": 24865,
+      "sha256": "9f232277bb6ddfadf2ca1a0051e23e100c32303a74ab69067a7f6e3fd112ec7a",
       "exportedGlobals": [
         "CVWordmarkP118"
       ],
@@ -14838,7 +14838,7 @@
             "name": "CV",
             "count": 1,
             "lines": [
-              112
+              203
             ]
           },
           {
@@ -14854,14 +14854,14 @@
             "name": "CV",
             "count": 3,
             "lines": [
-              112
+              203
             ]
           }
         ],
         "writes": [
           {
             "name": "CVWordmarkP118",
-            "line": 117,
+            "line": 208,
             "kind": "window.property"
           }
         ],
@@ -14993,8 +14993,8 @@
       "async": false,
       "defer": false,
       "noModule": false,
-      "bytes": 20811,
-      "sha256": "0aca6fda70d893ded18121e1ec90e87d07930a6cae36d66e468b1dec0a4fafc2",
+      "bytes": 25970,
+      "sha256": "28756be90f99c9f5111170b2e139c509b723c2c07762e07d32ac70c78c1b5256",
       "exportedGlobals": [
         "CVStylesP137"
       ],
@@ -15037,7 +15037,7 @@
             "name": "MutationObserver",
             "count": 1,
             "lines": [
-              192
+              243
             ]
           }
         ],
@@ -15053,7 +15053,7 @@
         "writes": [
           {
             "name": "CVStylesP137",
-            "line": 198,
+            "line": 249,
             "kind": "window.property"
           }
         ],
