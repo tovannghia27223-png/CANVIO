@@ -87,6 +87,17 @@ with sync_playwright() as p:
     txt = ' '.join(__import__('re').sub(r'<[^>]+>', ' ', q['html']) for q in sp['pages']).split()
     c['splitParagraphAcrossPages'] = len(sp['pages']) >= 2 and txt[2:] == ['từ%d' % i for i in range(1500)]
     c['splitFitsFirstPage'] = page.evaluate("document.getElementById('lfDoc').scrollHeight") <= page.evaluate("CVStylesP137.flowLimit(document.getElementById('lfDoc'))") + 2
+    # P137.5: tạo kiểu tên mới
+    page.evaluate("CVNativeEngines.layout.restoreState({pages:[{id:'n1',html:'<p id=\\'nb\\' style=\\'font-size:23px;color:rgb(200,10,10);font-weight:700\\'>Mẫu</p><p id=\\'nc\\'>Khác</p>'}],active:0})"); page.wait_for_timeout(400)
+    page.evaluate("(()=>{const e=document.getElementById('nb');const r=document.createRange();r.selectNodeContents(e);const s=getSelection();s.removeAllRanges();s.addRange(r)})()"); page.wait_for_timeout(100)
+    page.fill('#cv137-newname', 'Nổi bật'); page.click('#cv137-new'); page.wait_for_timeout(300)
+    c['newStyleListed'] = page.evaluate("[...document.querySelectorAll('#cv137-sel option')].some(o=>o.textContent==='Nổi bật')"); 
+    c['newStyleSavedWithFormat'] = page.evaluate("(()=>{const s=JSON.parse(localStorage.getItem('canvio.paraStyles.v1')||localStorage.getItem(Object.keys(localStorage).find(k=>/137|para/i.test(k))||'')||'{}');const d=s['Nổi bật'];return !!d&&String(d.fontSize||'').startsWith('23')})()")
+    c['newStyleTagsBlock'] = page.evaluate("document.getElementById('nb').getAttribute('data-cv137-style')==='Nổi bật'")
+    page.fill('#cv137-newname', 'Nổi bật'); page.click('#cv137-new'); page.wait_for_timeout(200)
+    c['duplicateNameRejected'] = 'Đã có' in page.inner_text('#cv137-out')
+    page.fill('#cv137-newname', 'a<b>'); page.click('#cv137-new'); page.wait_for_timeout(200)
+    c['badNameRejected'] = 'Tên kiểu' in page.inner_text('#cv137-out')
     b.close()
 res = {'checks': c, 'pageErrors': errs, 'failed': [k for k, v in c.items() if not v]}
 print(json.dumps(res, ensure_ascii=False, indent=1)); sys.exit(1 if res['failed'] or errs else 0)
