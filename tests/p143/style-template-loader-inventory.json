@@ -1,10 +1,10 @@
 {
   "format": "CANVIO_P143_STYLE_TEMPLATE_LOADER_INVENTORY",
   "version": 1,
-  "generatedAt": "2026-11-22T19:24:40.066Z",
+  "generatedAt": "2026-11-22T19:36:11.281Z",
   "source": "restored canonical index.html after all workflow-managed module integration steps",
   "purpose": "Inventory inline styles, template elements, dynamic resource-loader call sites and lexical global-reference ordering candidates. Global references are not a human-reviewed semantic boot-order or runtime data-flow graph.",
-  "htmlBytes": 5756835,
+  "htmlBytes": 5762372,
   "styles": {
     "blockCount": 119,
     "inlineStyleAttributeCount": 1507,
@@ -19450,7 +19450,7 @@
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 155,
         "toId": "canvio-lot124",
-        "toSha256": "94e559c7290d81c395eb5c744473753c01568b60869fabe7f45f098ee738409b",
+        "toSha256": "0ed13dbea56897d09ec3488e7abecefe1a51266f30a83632aa6058ec4b7aa7cc",
         "priorProviderCount": 1,
         "priorProviderOrders": [
           52
@@ -21899,7 +21899,7 @@
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 155,
         "toId": "canvio-lot124",
-        "toSha256": "94e559c7290d81c395eb5c744473753c01568b60869fabe7f45f098ee738409b",
+        "toSha256": "0ed13dbea56897d09ec3488e7abecefe1a51266f30a83632aa6058ec4b7aa7cc",
         "priorProviderCount": 2,
         "priorProviderOrders": [
           1,
