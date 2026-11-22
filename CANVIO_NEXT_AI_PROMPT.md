@@ -246,3 +246,10 @@ Chỉ kiểm bằng tín hiệu/tệp tổng hợp và Chromium headless; chưa 
 - Use the existing CVAutoLayoutP124 API and selected GrapesJS component. Layout applies scoped CSS/data attributes to the existing node without replacing its tag/content/children.
 - The four visual variants remain whitelisted; persist through the existing Website CSS Manager/save owner. No duplicate store/editor or external dependency.
 - Verify Node, Chromium, P143 parity and hosted integration. Keep nested variants, drag/resize, arbitrary component-tree conversion, accessibility and device review open.
+
+## Cập nhật 2026-11-23 — P118.2/.3, P119 (lottie-web), P137.3–6, P150
+- P118: `CVWordmarkP118` đọc .ttf, .woff (parseAsync) và .otf CFF Type 2; fixture `tests/p127/fixtures/subset-cff.otf` so với fontTools. Còn: .woff2 (Brotli), CFF2/CID, ligature.
+- P119: workflow riêng `.github/workflows/canvio-lottie-web.yml` chạy `tests/p145/run-p119-lottie-web.py` với lottie-web thật (xanh).
+- P137 (hiện 137.6.0): nút "Chảy sang trang sau" (cắt đoạn theo từ, giữ đậm/liên kết), "Tạo kiểu mới". Khi nâng phiên bản phải sửa chuỗi `version: '137.x.0'` trong `.github/workflows/canvio-candidate-runtime.yml` (dòng kiểm nguồn P137) — quên bước này làm CI đỏ.
+- P150: Tổng quan mặc định là giao diện cổ điển; 3 kiểu phụ (sky/fashion/tech) chọn bằng `#cv150-skins`, lưu `canvio.homeSkin.v2`.
+- Còn mở (code): P133 OffscreenCanvas + chuyển media lớn sang OPFS; P143 tách mã theo lot; P124 tương tác thành phần/breakpoint nâng cao (cần đặc tả cụ thể); P137 khung chữ liên kết trên poster. Bị chặn: P130, P122.3, P142, P70, P120, P126.
