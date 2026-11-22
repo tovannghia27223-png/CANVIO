@@ -62,7 +62,7 @@ function wav(data, sr) {
   for (i = 0; i < n; i++) { s = Math.max(-1, Math.min(1, data[i])); v.setInt16(44 + i * 2, s < 0 ? s * 0x8000 : s * 0x7FFF, true); }
   return new Uint8Array(b);
 }
-function getBlob(state, clip) { var id = clip.mediaId || clip.id, f = state.fileRefs && state.fileRefs[id]; if (f) return Promise.resolve(f); return new Promise(function (ok) { if (!state.db) { ok(null); return; } var q; try { q = state.db.transaction('media').objectStore('media').get(id); } catch (e) { ok(null); return; } q.onsuccess = function () { ok(q.result && (q.result.blob || null)); }; q.onerror = function () { ok(null); }; }); }
+function getBlob(state, clip) { var id = clip.mediaId || clip.id, f = state.fileRefs && state.fileRefs[id]; if (f) return Promise.resolve(f); return new Promise(function (ok) { if (!state.db) { ok(null); return; } var q; try { q = state.db.transaction('media').objectStore('media').get(id); } catch (e) { ok(null); return; } q.onsuccess = function () { var r = q.result; if (r && r.blob) { ok(r.blob); return; } var sc = window.CVMediaOPFSP133; if (r && r.storage === 'opfs' && sc && typeof sc.get === 'function') { sc.get(id, state).then(ok, function () { ok(null); }); return; } ok(null); }; q.onerror = function () { ok(null); }; }); }
 function processClip(state, clip, strength) {
   var AC = window.OfflineAudioContext || window.webkitOfflineAudioContext;
   if (!AC) return Promise.reject(new Error('Trình duyệt không hỗ trợ giải mã audio.'));

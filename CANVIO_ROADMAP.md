@@ -1117,3 +1117,8 @@ Hosted verification after the ffmpeg repair is complete:
 - `CVWordmarkP118.parse` đọc OpenType CFF (OTTO, cả .otf bọc trong .woff): bộ thông dịch charstring Type 2 (lineto/curveto đủ biến thể, flex, subr cục bộ/toàn cục, hintmask), xuất đường cubic `C` trong SVG; kerning/GPOS dùng chung với TTF. Chưa hỗ trợ CFF2, CID-keyed, .woff2 (Brotli).
 - Kiểm: `run-p118w-tests.cjs` với `tests/p127/fixtures/subset-cff.otf` (tập con TeX Gyre Termes, giấy phép GUST) so số đường/đường cong/bbox với fontTools cho A, a, g, o.
 - P119: workflow riêng `canvio-lottie-web.yml` + `tests/p145/run-p119-lottie-web.py` chạy Lottie xuất bằng lottie-web thật (đã chạy xanh trên CI: lottie-web nạp được tệp xuất, 32 khung, vẽ SVG, hình đổi theo khung).
+
+## P133.5 — Mọi chỗ đọc media đều hiểu OPFS (2026-11-22)
+- Phát hiện: P133.4 chuyển media >32MB sang OPFS (bản ghi IndexedDB chỉ còn con trỏ `storage:'opfs'`), nhưng vài chỗ vẫn đọc thẳng `record.blob` nên không thấy tệp lớn: Audio Studio/waveform (`getBlob`, `blobFor`), khử ồn P138, đo âm lượng P127, tạo proxy preview và chuyển proxy/gốc. Đã vá tất cả để rơi về `CVMediaOPFSP133.get` khi bản ghi là con trỏ OPFS.
+- Kiểm: `tests/p145/run-p133r2-browser.py` (34MB lưu OPFS → Audio Studio đọc đúng 34MB, xóa xong trả null); P138/P133 node + Chrome và smoke 21/21 vẫn qua.
+- P133 còn: chuyển Asset Library/Project Vault (kho khác) sang OPFS — chưa làm, kho video là phần đã chuyển.
