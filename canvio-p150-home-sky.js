@@ -6,6 +6,10 @@ if (window.CVHomeSkyP150) return;
 var KEY = 'canvio.homeSkin';
 function get() { try { return localStorage.getItem(KEY) === 'classic' ? 'classic' : 'sky'; } catch (e) { return 'sky'; } }
 function set(v) { try { localStorage.setItem(KEY, v); } catch (e) {} apply(v); }
+var PK = 'canvio.homePal';
+function getPal() { try { var p = localStorage.getItem(PK); return p === 'aurora' || p === 'sky' ? p : 'sunset'; } catch (e) { return 'sunset'; } }
+function setPal(p) { try { localStorage.setItem(PK, p); } catch (e) {} applyPal(p); }
+function applyPal(p) { p = p || getPal(); document.documentElement.setAttribute('data-home-pal', p); var w = document.getElementById('cv150-pal'); if (w) [].forEach.call(w.children, function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-pal') === p ? 'true' : 'false'); }); }
 function apply(v) {
   v = v || get(); document.documentElement.setAttribute('data-home-skin', v);
   var b = document.getElementById('cv150-toggle'); if (b) { b.textContent = v === 'sky' ? 'Giao diện cổ điển' : 'Sky Glass'; b.setAttribute('aria-pressed', v === 'sky' ? 'true' : 'false'); }
@@ -18,8 +22,11 @@ function css() {
   var cloud2 = cloud.replace("seed='7'", "seed='23'").replace('.0035 .009', '.006 .016');
   var cloudUrl2 = 'url("data:image/svg+xml,' + encodeURIComponent(cloud2) + '")';
   s.textContent = [
+  'html[data-home-skin=sky]{--cv150-bg:linear-gradient(180deg,#6a3aa8 0%,#c457a8 24%,#ff7f93 50%,#ffb48a 76%,#ffe2c4 100%);--cv150-ink:#3a1747;--cv150-sub:#6b4a72;--cv150-chip:rgba(143,58,166,.12);--cv150-chipb:rgba(143,58,166,.26);--cv150-chipt:#7a2a8c;--cv150-cta:#9b2f8f}',
+  'html[data-home-skin=sky][data-home-pal=aurora]{--cv150-bg:linear-gradient(180deg,#041a33 0%,#0b4f6c 30%,#16907f 60%,#7fdcb8 86%,#d9fbe9 100%);--cv150-ink:#0a2f3a;--cv150-sub:#3e6a70;--cv150-chip:rgba(14,120,110,.12);--cv150-chipb:rgba(14,120,110,.28);--cv150-chipt:#0b6b60;--cv150-cta:#0b6b60}',
+  'html[data-home-skin=sky][data-home-pal=sky]{--cv150-bg:linear-gradient(180deg,#1f5fd8 0%,#3f86ec 30%,#7db6f7 62%,#bfdcfb 100%);--cv150-ink:#0f2247;--cv150-sub:#3b4d75;--cv150-chip:rgba(20,70,190,.1);--cv150-chipb:rgba(20,70,190,.18);--cv150-chipt:#1a3d8f;--cv150-cta:#1b4fb8}',
   '#cv150-sky,#cv150-word,#cv150-float{display:none}',
-  S + '{position:relative;isolation:isolate;display:flex;flex-direction:column;padding:18px clamp(14px,3vw,44px) 0;border-radius:30px;overflow:hidden;color:#fff;background:linear-gradient(180deg,#1f5fd8 0%,#3f86ec 30%,#7db6f7 62%,#bfdcfb 100%)}',
+  S + '{position:relative;isolation:isolate;display:flex;flex-direction:column;padding:18px clamp(14px,3vw,44px) 0;border-radius:30px;overflow:hidden;color:#fff;background:var(--cv150-bg)}',
   S + '::before,' + S + '::after{content:"";position:absolute;left:-10%;right:-10%;top:0;height:1100px;z-index:-1;pointer-events:none;background-repeat:no-repeat;background-size:100% 100%}',
   S + '::before{background-image:' + cloudUrl + ';opacity:.85;-webkit-mask-image:linear-gradient(180deg,#000 70%,transparent);mask-image:linear-gradient(180deg,#000 70%,transparent);animation:cv150drift 80s ease-in-out infinite alternate}',
   S + '::after{background-image:' + cloudUrl2 + ';opacity:.55;top:380px;-webkit-mask-image:linear-gradient(180deg,transparent,#000 30%,#000 70%,transparent);mask-image:linear-gradient(180deg,transparent,#000 30%,#000 70%,transparent);animation:cv150drift 110s ease-in-out infinite alternate-reverse}',
@@ -30,7 +37,7 @@ function css() {
   S + ' #cv150-nav b{font-weight:600;letter-spacing:-.02em;font-size:17px;margin-right:12px;color:#fff}',
   S + ' #cv150-nav button{cursor:pointer;border:0;background:transparent;color:#fff;font-family:inherit;font-weight:500;font-size:13.5px;padding:9px 14px;border-radius:999px;white-space:nowrap;transition:background .2s}',
   S + ' #cv150-nav button:hover{background:rgba(255,255,255,.28)}',
-  S + ' #cv150-nav button.go{background:#fff;color:#1b4fb8;font-weight:600;margin-left:6px}',
+  S + ' #cv150-nav button.go{background:#fff;color:var(--cv150-cta);font-weight:600;margin-left:6px}',
   S + ' #cv150-sky h2{margin:clamp(30px,9vh,96px) 0 0;font-family:inherit;font-weight:200;font-size:clamp(40px,7vw,108px);line-height:1;letter-spacing:-.045em;color:#fff;text-shadow:0 4px 40px rgba(20,60,150,.22);max-width:15ch}',
   S + ' #cv150-sky p{margin:18px 0 0;max-width:42ch;font-size:clamp(14px,1.3vw,17px);line-height:1.55;color:rgba(255,255,255,.95)}',
   S + ' #cv150-float{display:block;position:absolute;inset:0;pointer-events:none}',
@@ -40,6 +47,10 @@ function css() {
   '@media(prefers-reduced-motion:reduce){' + S + ' #cv150-float span{animation:none}}',
   S + ' #cv150-toggle{position:absolute;top:62px;right:0;cursor:pointer;padding:7px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.6);background:rgba(255,255,255,.2);color:#fff;font:600 12px inherit;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}',
   S + ' #cv150-toggle{font-family:inherit}',
+  S + ' #cv150-pal{position:absolute;top:104px;right:0;display:flex;gap:8px;z-index:2}',
+  S + ' #cv150-pal button{width:26px;height:26px;border-radius:50%;border:2px solid rgba(255,255,255,.85);cursor:pointer;padding:0;box-shadow:0 4px 14px rgba(10,20,60,.25)}',
+  S + ' #cv150-pal button[aria-pressed=true]{outline:2px solid #fff;outline-offset:2px}',
+  S + ' #cv150-pal [data-pal=sunset]{background:linear-gradient(135deg,#8f3aa6,#ffb48a)}' + S + ' #cv150-pal [data-pal=aurora]{background:linear-gradient(135deg,#0b4f6c,#7fdcb8)}' + S + ' #cv150-pal [data-pal=sky]{background:linear-gradient(135deg,#1f5fd8,#bfdcfb)}',
   /* dải thẻ kính */
   S + ' #ws-cards{order:-2;margin:0 0 6px}',
   S + ' #ws-cards h3{color:#fff;font-weight:500;font-size:12px;letter-spacing:.14em;text-transform:uppercase;opacity:.92;text-shadow:0 1px 12px rgba(20,60,140,.3)}',
@@ -47,19 +58,19 @@ function css() {
   S + ' #ws-cards .ws-grid::-webkit-scrollbar{display:none}',
   S + ' #ws-cards .ws-grid.drag{cursor:grabbing;scroll-snap-type:none}',
   S + ' #ws-cards .ws-grid.drag>*{pointer-events:none}',
-  S + ' #ws-cards .ws-grid>*{flex:0 0 clamp(220px,21vw,280px);scroll-snap-align:start;background:linear-gradient(160deg,rgba(255,255,255,.78),rgba(255,255,255,.5))!important;border:1px solid rgba(255,255,255,.9)!important;border-radius:22px!important;box-shadow:inset 0 1px 0 #fff,0 18px 44px rgba(10,40,120,.24)!important;backdrop-filter:blur(30px) saturate(1.7);-webkit-backdrop-filter:blur(30px) saturate(1.7);overflow:hidden;color:#0f2247;transform:rotateY(-7deg) rotateX(2deg);transform-origin:left center;transition:transform .3s,box-shadow .3s;user-select:none}',
+  S + ' #ws-cards .ws-grid>*{flex:0 0 clamp(220px,21vw,280px);scroll-snap-align:start;background:linear-gradient(160deg,rgba(255,255,255,.78),rgba(255,255,255,.5))!important;border:1px solid rgba(255,255,255,.9)!important;border-radius:22px!important;box-shadow:inset 0 1px 0 #fff,0 18px 44px rgba(10,40,120,.24)!important;backdrop-filter:blur(30px) saturate(1.7);-webkit-backdrop-filter:blur(30px) saturate(1.7);overflow:hidden;color:var(--cv150-ink);transform:rotateY(-7deg) rotateX(2deg);transform-origin:left center;transition:transform .3s,box-shadow .3s;user-select:none}',
   S + ' #ws-cards .ws-grid>*:hover{transform:rotateY(0) rotateX(0) translateY(-4px)}',
   S + ' #ws-cards .ws-grid>* *{color:inherit;background:transparent!important;text-shadow:none}',
   S + ' #ws-cards .ws-grid>*::before,' + S + ' #ws-cards .ws-grid>*::after{display:none!important}',
-  S + ' #ws-cards .ws-grid>* [class*=chip],' + S + ' #ws-cards .ws-grid>* [class*=tag],' + S + ' #ws-cards .ws-grid>* button{background:rgba(20,70,190,.1)!important;border:1px solid rgba(20,70,190,.18)!important;color:#1a3d8f!important;border-radius:999px!important}',
-  S + ' #ws-cards .ws-grid>* p,' + S + ' #ws-cards .ws-grid>* [class*=desc]{color:#3b4d75}',
+  S + ' #ws-cards .ws-grid>* [class*=chip],' + S + ' #ws-cards .ws-grid>* [class*=tag],' + S + ' #ws-cards .ws-grid>* button{background:var(--cv150-chip)!important;border:1px solid var(--cv150-chipb)!important;color:var(--cv150-chipt)!important;border-radius:999px!important}',
+  S + ' #ws-cards .ws-grid>* p,' + S + ' #ws-cards .ws-grid>* [class*=desc]{color:var(--cv150-sub)}',
   S + ' #cv150-word{order:-1;display:block;font-family:inherit;font-weight:200;font-size:clamp(80px,22vw,340px);line-height:.85;letter-spacing:-.055em;color:#fff;padding:0;margin:4px 0 clamp(18px,3vw,36px);user-select:none;pointer-events:none;text-shadow:0 6px 50px rgba(20,60,150,.18)}',
   /* phần còn lại: thẻ kính sáng, đọc rõ */
   S + ' #cvHero,' + S + ' #ws-jobs,' + S + ' #l43-recent,' + S + ' #cv-hub110,' + S + ' #cvux-home-launch,' + S + ' #cvhs-workflows,' + S + ' #ws-obc,' + S + ' #cvux-onboarding{background:rgba(255,255,255,.72)!important;border:1px solid rgba(255,255,255,.8)!important;border-radius:24px!important;box-shadow:0 18px 50px rgba(20,60,140,.16)!important;backdrop-filter:blur(22px) saturate(1.2);-webkit-backdrop-filter:blur(22px) saturate(1.2);color:#10203f;margin-bottom:18px}',
   S + ' #cvHero{background:rgba(20,40,110,.38)!important;color:#fff}',
   S + ' #ws-jobs button[class],' + S + ' #cvHero button{border-radius:999px!important}',
   'html[data-home-skin=classic] #cv150-toggle{position:fixed;right:14px;bottom:14px;z-index:60;display:inline-block;padding:8px 14px;border-radius:999px;border:1px solid #111;background:#fff;color:#111;font:600 12px/1 inherit;cursor:pointer}',
-  '@media(max-width:560px){html[data-home-skin=classic] #cv150-toggle{bottom:76px}' + S + '{padding-top:12px;border-radius:20px}' + S + ' #cv150-float{display:none}' + S + ' #cv150-sky h2{max-width:none}' + S + ' #cv150-toggle{top:58px}}'
+  '@media(max-width:560px){html[data-home-skin=classic] #cv150-toggle{bottom:76px}' + S + '{padding-top:12px;border-radius:20px}' + S + ' #cv150-float{display:none}' + S + ' #cv150-sky h2{max-width:none}' + S + ' #cv150-toggle{top:58px}' + S + ' #cv150-pal{top:98px}}'
   ].join('\n');
   document.head.appendChild(s);
 }
@@ -70,7 +81,9 @@ function build() {
     d.innerHTML = '<nav id="cv150-nav" aria-label="Lối tắt không gian"><b>canvio</b><button type="button" data-go="design">Thiết kế</button><button type="button" data-go="site">Website</button><button type="button" data-go="media">Ảnh &amp; video</button><button type="button" data-go="proj">Dự án</button><button type="button" data-go="ai">AI</button><button type="button" class="go" data-go="design">Bắt đầu</button></nav><div id="cv150-float" aria-hidden="true"><span>Miễn phí</span><span>Chạy ngay trên máy</span><span>Xuất PDF · MP4</span></div><h2>Sáng tạo mọi thứ, nhẹ như mây.</h2><p>Poster, website, CV 3D và video — một nơi duy nhất, miễn phí.</p>';
     d.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('[data-go]'); if (b && window.CVWS && CVWS.open) CVWS.open(b.getAttribute('data-go')); });
     var t = document.createElement('button'); t.id = 'cv150-toggle'; t.type = 'button'; t.addEventListener('click', function () { set(get() === 'sky' ? 'classic' : 'sky'); });
-    d.appendChild(t); p.insertBefore(d, p.firstChild);
+    var pw = document.createElement('div'); pw.id = 'cv150-pal'; pw.setAttribute('role', 'group'); pw.setAttribute('aria-label', 'Bảng màu');
+    [['sunset', 'Hoàng hôn'], ['aurora', 'Cực quang'], ['sky', 'Trời xanh']].forEach(function (x) { var q = document.createElement('button'); q.type = 'button'; q.setAttribute('data-pal', x[0]); q.title = x[1]; q.setAttribute('aria-label', 'Bảng màu ' + x[1]); q.addEventListener('click', function () { setPal(x[0]); }); pw.appendChild(q); });
+    d.appendChild(pw); d.appendChild(t); p.insertBefore(d, p.firstChild);
   }
   if (!document.getElementById('cv150-word')) { var w = document.createElement('div'); w.id = 'cv150-word'; w.setAttribute('aria-hidden', 'true'); w.textContent = 'canvio'; p.appendChild(w); }
   return true;
@@ -87,8 +100,8 @@ function drag() {
   window.addEventListener('pointerup', function () { if (!down) return; down = false; setTimeout(function () { g.classList.remove('drag'); }, 0); });
   g.addEventListener('click', function (e) { if (moved) { e.preventDefault(); e.stopPropagation(); moved = 0; } }, true);
 }
-function init() { css(); if (!build()) return false; drag(); apply(); toggleOutside(); return true; }
+function init() { css(); if (!build()) return false; drag(); apply(); applyPal(); toggleOutside(); return true; }
 var _set = set; set = function (v) { _set(v); toggleOutside(); };
 var tries = 0; (function loop() { if (init() || ++tries > 40) return; setTimeout(loop, 250); })();
-window.CVHomeSkyP150 = { version: '150.0.0', get: get, set: set, init: init };
+window.CVHomeSkyP150 = { version: '150.4.0', get: get, set: set, getPal: getPal, setPal: setPal, init: init };
 })();

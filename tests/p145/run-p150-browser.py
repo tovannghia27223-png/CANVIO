@@ -31,6 +31,8 @@ with sync_playwright() as p:
         ck(name+' còn nút đổi lại',pg.is_visible('#cv150-toggle'))
         pg.click('#cv150-toggle');pg.wait_for_timeout(300)
         ck(name+' bật lại sky',pg.evaluate('document.documentElement.dataset.homeSkin')=='sky')
+        pg.click('#cv150-pal [data-pal=aurora]');ck(name+' đổi bảng màu',pg.evaluate('document.documentElement.dataset.homePal')=='aurora' and 'rgb(4, 26, 51)' in pg.evaluate('getComputedStyle(document.getElementById("page-home")).backgroundImage'))
+        pg.click('#cv150-pal [data-pal=sunset]')
         ck(name+' 0 lỗi trang',not errs)
         pg.close()
     b.close()
