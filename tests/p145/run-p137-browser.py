@@ -79,6 +79,14 @@ with sync_playwright() as p:
     c['flowIdempotentWhenFits'] = 'chưa tràn' in page.inner_text('#cv137-out')
     page.click('#cv137-undo'); page.wait_for_timeout(300)
     c['flowUndo'] = len(page.evaluate("JSON.parse(CVNativeEngines.layout.snapshotState())")['pages']) == 2
+    # P137.4: chia một đoạn dài giữa hai trang
+    words = ' '.join('từ%d' % i for i in range(1500))
+    page.evaluate("(h)=>CVNativeEngines.layout.restoreState({pages:[{id:'g1',html:'<h2>Mở đầu</h2><p>'+h+'</p>'}],active:0})", words); page.wait_for_timeout(500)
+    page.click('#cv137-flow'); page.wait_for_timeout(600)
+    sp = page.evaluate("JSON.parse(CVNativeEngines.layout.snapshotState())")
+    txt = ' '.join(__import__('re').sub(r'<[^>]+>', ' ', q['html']) for q in sp['pages']).split()
+    c['splitParagraphAcrossPages'] = len(sp['pages']) >= 2 and txt[2:] == ['từ%d' % i for i in range(1500)]
+    c['splitFitsFirstPage'] = page.evaluate("document.getElementById('lfDoc').scrollHeight") <= page.evaluate("CVStylesP137.flowLimit(document.getElementById('lfDoc'))") + 2
     b.close()
 res = {'checks': c, 'pageErrors': errs, 'failed': [k for k, v in c.items() if not v]}
 print(json.dumps(res, ensure_ascii=False, indent=1)); sys.exit(1 if res['failed'] or errs else 0)

@@ -166,7 +166,27 @@ function snapshot() { var e = eng(); if (!e) throw new Error('Mở Dàn trang tr
 function buildToc() { var s = snapshot(); undoSnap = JSON.stringify(s); var pages = s.pages.map(function (p) { return { id: p.id, html: stripToc(p.html || '') }; }), ent = entriesFrom(pages); pages[0].html = tocHtml(ent) + pages[0].html; var out = Object.assign({}, s, { pages: pages }); eng().restoreState(out); return ent.length; }
 function restyleAll(st) { var s = snapshot(); undoSnap = JSON.stringify(s); var n = 0, pages = s.pages.map(function (p) { var r = restyleHtml(p.html || '', st); n += r.n; return Object.assign({}, p, { html: r.html }); }); eng().restoreState(Object.assign({}, s, { pages: pages })); return n; }
 function flowLimit(d) { var sz = (document.getElementById('lfSize') || {}).value, r = { A4: 1.4142, Letter: 1.2941, square: 1, presentation: 0.5625 }[sz] || 1.4142; return Math.round(d.clientWidth * r); }
-function flowOverflow(box, limit) { var moved = []; while (box.children.length > 1 && box.scrollHeight > limit + 1) { var last = box.lastElementChild; moved.unshift(last.outerHTML); last.remove(); } return moved; }
+function splitPara(box, limit) {
+  var p = box.lastElementChild; if (!p || p.tagName !== 'P' || p.children.length) return null;
+  var words = (p.textContent || '').split(/(\s+)/).filter(function (w) { return w !== ''; }), toks = [], k;
+  for (k = 0; k < words.length; k++) if (!/^\s+$/.test(words[k])) toks.push(k);
+  if (toks.length < 2) return null;
+  var lo = 0, hi = toks.length - 1, cut = function (n) { return words.slice(0, toks[n]).join('').replace(/\s+$/, ''); };
+  var full = p.textContent;
+  while (lo < hi) { var mid = (lo + hi + 1) >> 1; p.textContent = cut(mid); if (box.scrollHeight <= limit + 1) lo = mid; else hi = mid - 1; }
+  if (lo < 1) { p.textContent = full; return null; }
+  var head = cut(lo), rest = full.slice(head.length).replace(/^\s+/, ''), q = p.cloneNode(false); q.textContent = rest; p.textContent = head;
+  return q.outerHTML;
+}
+function flowOverflow(box, limit) {
+  var moved = [];
+  while (box.children.length && box.scrollHeight > limit + 1) {
+    var part = splitPara(box, limit); if (part) { moved.unshift(part); break; }
+    if (box.children.length < 2) break;
+    var last = box.lastElementChild; moved.unshift(last.outerHTML); last.remove();
+  }
+  return moved;
+}
 function flowPages(pages, active, d, limit) {
   var m = d.cloneNode(false); m.removeAttribute('id'); m.removeAttribute('contenteditable'); m.style.cssText += ';position:absolute;visibility:hidden;pointer-events:none;left:-9999px;top:0;width:' + d.clientWidth + 'px;min-height:0;height:auto;box-sizing:border-box'; d.parentNode.appendChild(m);
   var out = pages.map(function (p) { return Object.assign({}, p); }), moved = 0, i;
@@ -210,5 +230,5 @@ function tests() {
   var d = clean({ fontSize: '20px', color: 'red;background:url(x)', evil: '1', level: '2', margin: 'url(javascript:1)' }), t = tocHtml([{ text: 'A <b>', level: 1, page: 1 }, { text: 'B', level: 2, page: 3 }]);
   return { characterStylePresets: Object.keys(CHAR_DEFAULTS).length === 5 && cleanChar({fontWeight:'700',backgroundColor:'url(x)',evil:'1'}).fontWeight === '700' && !('backgroundColor' in cleanChar({backgroundColor:'url(x)'})), tableStylePresets: Object.keys(TABLE_DEFAULTS).length === 3 && TABLE_DEFAULTS['Lưới'].table.borderCollapse === 'collapse' && TABLE_DEFAULTS['Báo cáo'].head.fontWeight === '700', defaultsHaveHeadings: DEFAULTS['Tiêu đề 1'].level === 1 && Object.keys(DEFAULTS).length === 5, cleanDropsUnsafe: d.fontSize === '20px' && d.level === 2 && !('evil' in d) && !('color' in d) && !('margin' in d), tocEscapes: t.indexOf('A &lt;b&gt;') > 0 && t.indexOf('<b>') < 0, tocHasPages: />3<\/span>/.test(t) && />1<\/span>/.test(t), tocEmptyMessage: tocHtml([]).indexOf('Chưa có tiêu đề') > 0, kebab: kebab('borderLeft') === 'border-left' && kebab('fontSize') === 'font-size' };
 }
-window.CVStylesP137 = { version: '137.3.0', DEFAULTS: DEFAULTS, CHAR_DEFAULTS: CHAR_DEFAULTS, TABLE_DEFAULTS: TABLE_DEFAULTS, load: load, clean: clean, loadChar: loadChar, cleanChar: cleanChar, applyCharacterStyle: applyCharacterStyle, applyTableStyle: applyTableStyle, restyleCharacterHtml: restyleCharacterHtml, restyleTableHtml: restyleTableHtml, applyToSelection: applyToSelection, restyleHtml: restyleHtml, entriesFrom: entriesFrom, tocHtml: tocHtml, stripToc: stripToc, buildToc: buildToc, flowLimit: flowLimit, flowOverflow: flowOverflow, flowPages: flowPages, flowNext: flowNext, restyleAll: restyleAll, undo: undo, mount: mount, tests: tests };
+window.CVStylesP137 = { version: '137.4.0', DEFAULTS: DEFAULTS, CHAR_DEFAULTS: CHAR_DEFAULTS, TABLE_DEFAULTS: TABLE_DEFAULTS, load: load, clean: clean, loadChar: loadChar, cleanChar: cleanChar, applyCharacterStyle: applyCharacterStyle, applyTableStyle: applyTableStyle, restyleCharacterHtml: restyleCharacterHtml, restyleTableHtml: restyleTableHtml, applyToSelection: applyToSelection, restyleHtml: restyleHtml, entriesFrom: entriesFrom, tocHtml: tocHtml, stripToc: stripToc, buildToc: buildToc, flowLimit: flowLimit, flowOverflow: flowOverflow, flowPages: flowPages, flowNext: flowNext, restyleAll: restyleAll, undo: undo, mount: mount, tests: tests };
 })();
