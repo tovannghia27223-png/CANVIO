@@ -12,7 +12,7 @@ function apply(v) {
 }
 function css() {
   if (document.getElementById('canvio-lot150h-css')) return;
-  var S = 'html[data-home-skin=sky] #page-home', s = document.createElement('style'); s.id = 'canvio-lot150h-css';
+  var S = 'html[data-home-skin=sky] #page-home', A = S + ' #cv150-art', s = document.createElement('style'); s.id = 'canvio-lot150h-css';
   var F = '"Bahnschrift","Arial Narrow","Liberation Sans Narrow","Roboto Condensed",sans-serif';
   s.textContent = [
   'html[data-home-skin=sky]{--pb:#E4E6EE;--paper:#FBFBF8;--ink:#15151C;--sel:#FF2E93;--sun:#FFD84A;--ln:rgba(21,21,28,.14);--mute:#5b5f73}',
@@ -29,27 +29,63 @@ function css() {
   S + ' #cv150-cta button:focus-visible,#cv150-toggle:focus-visible{outline:3px solid var(--sel);outline-offset:3px}',
   S + ' #cv150-toggle{position:absolute;top:0;right:0;cursor:pointer;padding:6px 11px;border-radius:6px;border:1px solid var(--ln);background:rgba(251,251,248,.8);color:var(--mute);font-family:inherit;font-size:12px;font-weight:500}',
   S + ' #cv150-toggle:hover{color:var(--ink);border-color:var(--ink)}',
-  /* khung poster */
-  S + ' #cv150-art{position:relative;justify-self:center;width:min(100%,400px)}',
+  /* bàn thiết kế chạy thật */
+  S + ' #cv150-art{position:relative;justify-self:center;width:min(100%,500px)}',
+  S + ' #cv150-art .tabs{display:flex;gap:4px;padding:4px;margin:0 0 14px;background:rgba(251,251,248,.85);border-radius:8px;box-shadow:0 0 0 1px var(--ln)}',
+  S + ' #cv150-art .tabs button{flex:1;cursor:pointer;border:0;background:transparent;color:var(--mute);font-family:inherit;font-size:13.5px;font-weight:600;padding:9px 6px;border-radius:5px;transition:background .15s,color .15s}',
+  S + ' #cv150-art .tabs button[aria-selected=true]{background:var(--ink);color:#fff}',
+  S + ' #cv150-art .tabs button:not([aria-selected=true]):hover{color:var(--ink);background:rgba(21,21,28,.06)}',
+  S + ' #cv150-art button:focus-visible{outline:3px solid var(--sel);outline-offset:2px}',
   S + ' #cv150-art .lab{display:flex;justify-content:space-between;margin:0 0 7px;font-size:12px;color:var(--mute)}',
-  S + ' #cv150-art .fr{position:relative;aspect-ratio:4/5;background:var(--paper);border-radius:2px;box-shadow:0 0 0 1px var(--ln),0 22px 40px -18px rgba(21,21,28,.35);overflow:visible}',
-  S + ' #cv150-art .bd{position:absolute;inset:0;overflow:hidden;border-radius:2px}',
-  S + ' #cv150-art .sun{position:absolute;right:-18%;top:-10%;width:78%;aspect-ratio:1;border-radius:50%;background:var(--sun)}',
-  S + ' #cv150-art .bar{position:absolute;left:8%;bottom:8%;right:8%;height:11%;background:var(--ink)}',
-  S + ' #cv150-art .bar i{position:absolute;left:5%;top:50%;width:34%;height:3px;background:var(--sun);transform:translateY(-50%)}',
-  S + ' #cv150-art .gd{position:absolute;background:var(--sel);opacity:.75}',
-  S + ' #cv150-art .gd.v{top:-6%;bottom:-6%;width:1px;left:8%}' + S + ' #cv150-art .gd.h{left:-5%;right:-5%;height:1px;top:56%}',
-  S + ' #cv150-art .tx{position:absolute;left:8%;top:36%;width:74%;animation:cv150snap 2.6s cubic-bezier(.2,.8,.2,1) .5s both}',
-  S + ' #cv150-art .tx b{display:block;font-family:' + F + '!important;font-weight:700;font-stretch:75%;font-size:clamp(30px,4.4vw,50px);line-height:.95;letter-spacing:-.01em;color:var(--ink)}',
-  S + ' #cv150-art .tx span{display:block;margin-top:10px;font-size:12px;color:#444}',
-  S + ' #cv150-art .sl{position:absolute;inset:-7px -9px;border:1.5px solid var(--sel)}',
+  S + ' #cv150-art .cvstage{position:relative;min-height:370px;display:flex;align-items:center}',
+  S + ' #cv150-art .fr{--acc:#FFD84A;position:relative;width:100%;aspect-ratio:4/5;background:var(--paper);border-radius:3px;box-shadow:0 0 0 1px var(--ln),0 30px 50px -22px rgba(21,21,28,.45);touch-action:none}',
+  S + ' #cv150-art .fr[data-t=cv],' + A + ' .fr[data-t=web]{aspect-ratio:16/10}' + A + ' .fr[data-t=video]{aspect-ratio:16/9}',
+  S + ' #cv150-art .tp{position:absolute;inset:0;display:none;overflow:hidden;border-radius:3px}',
+  S + ' #cv150-art .fr[data-t=poster] .t-poster,' + A + ' .fr[data-t=cv] .t-cv,' + A + ' .fr[data-t=web] .t-web,' + A + ' .fr[data-t=video] .t-video{display:block}',
+  S + ' #cv150-art .tx{position:absolute;cursor:grab;touch-action:none;z-index:3;user-select:none;display:none}',
+  S + ' #cv150-art .fr[data-t=poster] .tx-poster,' + A + ' .fr[data-t=cv] .tx-cv,' + A + ' .fr[data-t=web] .tx-web,' + A + ' .fr[data-t=video] .tx-video{display:block}',
+  S + ' #cv150-art .tx.dr{cursor:grabbing}',
+  S + ' #cv150-art .tx-poster{left:8%;top:36%;width:74%;animation:cv150snap 2.6s cubic-bezier(.2,.8,.2,1) .5s both}' + A + ' .tx-cv{left:8%;top:30%;width:50%}' + A + ' .tx-web{left:7%;top:34%;width:52%}' + A + ' .tx-video{left:8%;top:12%;width:50%}',
+  S + ' #cv150-art .tx b{display:block;font-family:' + F + '!important;font-weight:700;font-stretch:75%;font-size:clamp(30px,4.4vw,50px);line-height:.98;letter-spacing:-.01em;color:var(--ink)}',
+  S + ' #cv150-art .tx span{display:block;margin-top:9px;font-size:12px;color:#444}',
+  S + ' #cv150-art .tx-cv b,' + A + ' .tx-cv span,' + A + ' .tx-video b,' + A + ' .tx-video span{color:#fff}',
+  S + ' #cv150-art .tx-cv b,' + A + ' .tx-web b,' + A + ' .tx-video b{font-size:clamp(26px,3.6vw,42px)}',
+  S + ' #cv150-art .sl{position:absolute;inset:-7px -9px;border:1.5px solid var(--sel);pointer-events:none}',
   S + ' #cv150-art .sl u{position:absolute;width:7px;height:7px;background:#fff;border:1.5px solid var(--sel)}',
-  S + ' #cv150-art .sl u:nth-child(1){left:-5px;top:-5px}' + S + ' #cv150-art .sl u:nth-child(2){right:-5px;top:-5px}' + S + ' #cv150-art .sl u:nth-child(3){left:-5px;bottom:-5px}' + S + ' #cv150-art .sl u:nth-child(4){right:-5px;bottom:-5px}',
-  S + ' #cv150-art .cur{position:absolute;right:-30px;bottom:-26px;display:flex;flex-direction:column;align-items:flex-start}',
+  S + ' #cv150-art .sl u:nth-child(1){left:-5px;top:-5px}' + A + ' .sl u:nth-child(2){right:-5px;top:-5px}' + A + ' .sl u:nth-child(3){left:-5px;bottom:-5px}' + A + ' .sl u:nth-child(4){right:-5px;bottom:-5px}',
+  S + ' #cv150-art .gd{position:absolute;background:var(--sel);opacity:0;transition:opacity .12s;pointer-events:none;z-index:2}',
+  S + ' #cv150-art .gd.on{opacity:.9}' + A + ' .gv{top:-5%;bottom:-5%;width:1px}' + A + ' .gh{left:-4%;right:-4%;height:1px;top:50%}',
+  S + ' #cv150-art .cur{position:absolute;right:-30px;bottom:-26px;display:flex;flex-direction:column;align-items:flex-start;pointer-events:none}',
+  S + ' #cv150-art.live .cur{display:none}',
   S + ' #cv150-art .cur svg{width:18px;height:18px;fill:var(--sel);stroke:#fff;stroke-width:1.5}',
   S + ' #cv150-art .cur em{margin:-2px 0 0 12px;font-style:normal;font-size:12px;font-weight:700;color:#fff;background:#B80F5A;padding:3px 9px;border-radius:3px 9px 9px 9px}',
+  S + ' #cv150-art .sw{display:flex;align-items:center;gap:8px;margin:16px 0 0}',
+  S + ' #cv150-art .sw button{width:26px;height:26px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px var(--ln);cursor:pointer;padding:0}',
+  S + ' #cv150-art .sw button[aria-pressed=true]{box-shadow:0 0 0 2px var(--ink)}',
+  S + ' #cv150-art .sw i{margin-left:auto;font-style:normal;font-size:12px;color:var(--mute)}',
+  S + ' #cv150-art .go{margin-top:12px;width:100%;cursor:pointer;font-family:inherit;font-size:14px;font-weight:600;padding:11px;border-radius:6px;border:1.5px solid var(--ink);background:transparent;color:var(--ink)}' + A + ' .go:hover{background:var(--ink);color:#fff}',
+  /* các mẫu */
+  S + ' .t-poster .sun{position:absolute;right:-18%;top:-10%;width:78%;aspect-ratio:1;border-radius:50%;background:var(--acc);transition:background .25s}',
+  S + ' .t-poster .bar{position:absolute;left:8%;bottom:8%;right:8%;height:11%;background:var(--ink)}' + S + ' .t-poster .bar i{position:absolute;left:5%;top:50%;width:34%;height:3px;background:var(--acc);transform:translateY(-50%)}',
+  S + ' .t-cv{background:radial-gradient(ellipse at 78% 40%,color-mix(in srgb,var(--acc) 38%,#15151C),#15151C 70%)}',
+  S + ' .t-cv .nv,' + S + ' .t-web .nv{position:absolute;left:5%;right:5%;top:7%;display:flex;gap:7px;align-items:center}' + S + ' .nv u{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.5)}' + S + ' .t-web .nv u{background:rgba(21,21,28,.3)}',
+  S + ' .cubew{position:absolute;right:11%;top:50%;width:104px;height:104px;margin-top:-52px;perspective:700px}',
+  S + ' .cube{position:relative;width:100%;height:100%;transform-style:preserve-3d;animation:cv150spin 16s linear infinite}',
+  S + ' .cube i{position:absolute;inset:0;border:1.5px solid rgba(255,255,255,.7);background:linear-gradient(135deg,color-mix(in srgb,var(--acc) 85%,#fff),color-mix(in srgb,var(--acc) 55%,#15151C));opacity:.92}',
+  S + ' .cube i:nth-child(1){transform:translateZ(52px)}' + S + ' .cube i:nth-child(2){transform:rotateY(90deg) translateZ(52px)}' + S + ' .cube i:nth-child(3){transform:rotateY(180deg) translateZ(52px)}' + S + ' .cube i:nth-child(4){transform:rotateY(-90deg) translateZ(52px)}' + S + ' .cube i:nth-child(5){transform:rotateX(90deg) translateZ(52px)}' + S + ' .cube i:nth-child(6){transform:rotateX(-90deg) translateZ(52px)}',
+  '@keyframes cv150spin{from{transform:rotateX(-22deg) rotateY(0)}to{transform:rotateX(-22deg) rotateY(360deg)}}',
+  S + ' .t-web .hb{position:absolute;right:7%;top:20%;width:34%;height:62%;border-radius:999px 999px 8px 8px;background:var(--acc);transition:background .25s}',
+  S + ' .t-web .hb::after{content:"";position:absolute;left:18%;bottom:14%;width:64%;aspect-ratio:1;border-radius:50%;background:rgba(255,255,255,.55)}',
+  S + ' .t-web .bt{position:absolute;left:7%;bottom:12%;padding:8px 18px;border-radius:999px;background:var(--ink);color:#fff;font-size:12px;font-weight:600}',
+  S + ' .t-video{background:#15151C}',
+  S + ' .t-video .pv{position:absolute;left:0;right:0;top:0;height:60%;background:linear-gradient(120deg,color-mix(in srgb,var(--acc) 70%,#15151C),#15151C 75%)}',
+  S + ' .t-video .pl{position:absolute;right:9%;top:22%;width:0;height:0;border-left:30px solid rgba(255,255,255,.9);border-top:19px solid transparent;border-bottom:19px solid transparent}',
+  S + ' .t-video .cvtl{position:absolute;left:3%;right:3%;bottom:6%;height:30%;display:flex;flex-direction:column;gap:4px}',
+  S + ' .t-video .cvtl b{display:block;height:100%;position:relative;background:rgba(255,255,255,.07);border-radius:2px}' + S + ' .t-video .cvtl b i{position:absolute;top:0;bottom:0;border-radius:2px;background:var(--acc)}' + S + ' .t-video .cvtl b:nth-child(2) i{background:#7C4DFF}' + S + ' .t-video .cvtl b:nth-child(3) i{background:#22C7E8}',
+  S + ' .t-video .ph{position:absolute;top:56%;bottom:4%;width:2px;background:var(--sel);left:12%;animation:cv150play 7s linear infinite}',
+  '@keyframes cv150play{from{left:6%}to{left:94%}}',
   '@keyframes cv150snap{from{transform:translate(-34px,26px)}to{transform:none}}',
-  '@media(prefers-reduced-motion:reduce){' + S + ' #cv150-art .tx{animation:none}}',
+  '@media(prefers-reduced-motion:reduce){' + S + ' #cv150-art .tx-poster,' + S + ' .cube,' + S + ' .t-video .ph{animation:none}}',
   /* 5 không gian = khung giấy */
   S + ' #ws-cards{order:-2;margin:0 0 20px}',
   S + ' #ws-cards h3{color:var(--ink);font-family:inherit;font-weight:600;font-size:15px;letter-spacing:0;text-transform:none;margin:0 0 4px}',
@@ -84,7 +120,21 @@ function build() {
   if (!document.getElementById('cv150-sky')) {
     var d = document.createElement('div'); d.id = 'cv150-sky';
     d.innerHTML = '<div><h2>Bắt đầu từ một khung trống.</h2><p>Poster, CV 3D, website và video. Làm ngay trên máy bạn, không cần tài khoản, không tốn phí.</p><div id="cv150-cta"><button type="button" class="p" data-go="design">Tạo thiết kế mới</button><button type="button" class="q" data-go="ai">Nhờ AI dựng giúp</button></div></div>'
-      + '<div id="cv150-art" aria-hidden="true"><div class="lab"><span>Poster tuyển dụng</span><span>1080 × 1350</span></div><div class="fr"><div class="bd"><div class="sun"></div><div class="bar"><i></i></div></div><div class="gd v"></div><div class="gd h"></div><div class="tx"><div class="sl"><u></u><u></u><u></u><u></u></div><b>Chúng tôi<br>đang tuyển</b><span>Nhân sự · Hà Nội · Toàn thời gian</span><div class="cur"><svg viewBox="0 0 16 16"><path d="M1 1l5.5 14 2-5.5L14 7.5z"/></svg><em>Hà</em></div></div></div></div>';
+      + '<div id="cv150-art"><div class="tabs" role="tablist" aria-label="Loại sản phẩm"><button type="button" role="tab" data-t="poster" aria-selected="true">Poster</button><button type="button" role="tab" data-t="cv" aria-selected="false">CV 3D</button><button type="button" role="tab" data-t="web" aria-selected="false">Website</button><button type="button" role="tab" data-t="video" aria-selected="false">Video</button></div>'
+      + '<div class="lab"><span id="cv150-name">Poster tuyển dụng</span><span id="cv150-size">1080 × 1350</span></div>'
+      + '<div class="cvstage"><div class="fr" data-t="poster">'
+      + '<div class="tp t-poster"><div class="sun"></div><div class="bar"><i></i></div></div>'
+      + '<div class="tp t-cv"><div class="nv"><u></u><u></u><u></u></div><div class="cubew"><div class="cube"><i></i><i></i><i></i><i></i><i></i><i></i></div></div></div>'
+      + '<div class="tp t-web"><div class="nv"><u></u><u></u><u></u></div><div class="hb"></div><div class="bt">Đặt bàn ngay</div></div>'
+      + '<div class="tp t-video"><div class="pv"></div><div class="pl"></div><div class="cvtl"><b><i style="left:4%;width:38%"></i><i style="left:46%;width:30%"></i></b><b><i style="left:12%;width:52%"></i></b><b><i style="left:2%;width:24%"></i><i style="left:58%;width:34%"></i></b></div><div class="ph"></div></div>'
+      + '<div class="gd gv" data-g="50" style="left:50%"></div><div class="gd gv" data-g="8" style="left:8%"></div><div class="gd gh" data-g="h"></div>'
+      + '<div class="tx tx-poster"><div class="sl"><u></u><u></u><u></u><u></u></div><b>Chúng tôi<br>đang tuyển</b><span>Nhân sự · Hà Nội · Toàn thời gian</span><div class="cur"><svg viewBox="0 0 16 16"><path d="M1 1l5.5 14 2-5.5L14 7.5z"/></svg><em>Hà</em></div></div>'
+      + '<div class="tx tx-cv"><div class="sl"><u></u><u></u><u></u><u></u></div><b>Trần Thu Linh</b><span>Nhà thiết kế sản phẩm</span></div>'
+      + '<div class="tx tx-web"><div class="sl"><u></u><u></u><u></u><u></u></div><b>Cà phê rang<br>tại Đà Lạt</b></div>'
+      + '<div class="tx tx-video"><div class="sl"><u></u><u></u><u></u><u></u></div><b>Mở đầu</b><span>00:00 – 00:12</span></div>'
+      + '</div></div>'
+      + '<div class="sw" role="group" aria-label="Màu chủ đạo"><button type="button" data-c="#FFD84A" aria-label="Vàng" aria-pressed="true" style="background:#FFD84A"></button><button type="button" data-c="#FF5FA8" aria-label="Hồng" aria-pressed="false" style="background:#FF5FA8"></button><button type="button" data-c="#22C7E8" aria-label="Xanh ngọc" aria-pressed="false" style="background:#22C7E8"></button><button type="button" data-c="#7C4DFF" aria-label="Tím" aria-pressed="false" style="background:#7C4DFF"></button><button type="button" data-c="#2BD48A" aria-label="Xanh lá" aria-pressed="false" style="background:#2BD48A"></button><i>Kéo chữ, đổi màu thử</i></div>'
+      + '<button type="button" class="go" id="cv150-go" data-go="design">Mở trong Poster Studio</button></div>';
     d.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('[data-go]'); if (b && window.CVWS && CVWS.open) CVWS.open(b.getAttribute('data-go')); });
     var t = document.createElement('button'); t.id = 'cv150-toggle'; t.type = 'button'; t.addEventListener('click', function () { set(get() === 'sky' ? 'classic' : 'sky'); });
     d.appendChild(t); p.insertBefore(d, p.firstChild);
@@ -104,7 +154,37 @@ function drag() {
   window.addEventListener('pointerup', function () { if (!down) return; down = false; setTimeout(function () { g.classList.remove('drag'); }, 0); });
   g.addEventListener('click', function (e) { if (moved) { e.preventDefault(); e.stopPropagation(); moved = 0; } }, true);
 }
-function init() { css(); if (!build()) return false; drag(); apply(); toggleOutside(); return true; }
+var TYPES = { poster: ['Poster tuyển dụng', '1080 × 1350', 'design', 'Mở trong Poster Studio'], cv: ['CV 3D · trang cá nhân', '1440 × 900', 'site', 'Mở trong CV Studio'], web: ['Website quán cà phê', '1440 × 900', 'site', 'Mở trong Website Builder'], video: ['Video giới thiệu', '1920 × 1080', 'media', 'Mở trong Video Studio'] };
+function art() {
+  var A = document.getElementById('cv150-art'); if (!A || A.__cv150) return; A.__cv150 = 1;
+  var fr = A.querySelector('.fr'), go = document.getElementById('cv150-go');
+  function tab(t) {
+    fr.setAttribute('data-t', t); var d = TYPES[t];
+    [].forEach.call(A.querySelectorAll('.tabs button'), function (b) { b.setAttribute('aria-selected', b.getAttribute('data-t') === t ? 'true' : 'false'); });
+    document.getElementById('cv150-name').textContent = d[0]; document.getElementById('cv150-size').textContent = d[1];
+    go.textContent = d[3]; go.setAttribute('data-go', d[2]);
+    [].forEach.call(fr.querySelectorAll('.tx'), function (x) { x.style.left = ''; x.style.top = ''; });
+  }
+  A.querySelector('.tabs').addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) tab(b.getAttribute('data-t')); });
+  A.querySelector('.sw').addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; fr.style.setProperty('--acc', b.getAttribute('data-c')); [].forEach.call(A.querySelectorAll('.sw button'), function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); }); });
+  var g50 = fr.querySelector('[data-g="50"]'), g8 = fr.querySelector('[data-g="8"]'), gh = fr.querySelector('[data-g=h]'), cur = null;
+  fr.addEventListener('pointerdown', function (e) {
+    var x = e.target.closest('.tx'); if (!x || getComputedStyle(x).display === 'none') return;
+    var r = fr.getBoundingClientRect(), xr = x.getBoundingClientRect();
+    cur = { x: x, ox: e.clientX - xr.left, oy: e.clientY - xr.top, r: r }; x.classList.add('dr'); A.classList.add('live'); try { x.setPointerCapture(e.pointerId); } catch (er) {} e.preventDefault();
+  });
+  fr.addEventListener('pointermove', function (e) {
+    if (!cur) return; var r = cur.r, w = cur.x.offsetWidth, h = cur.x.offsetHeight;
+    var l = e.clientX - r.left - cur.ox, t = e.clientY - r.top - cur.oy; l = Math.max(0, Math.min(r.width - w, l)); t = Math.max(0, Math.min(r.height - h, t));
+    var on50 = Math.abs(l + w / 2 - r.width / 2) < 7, on8 = Math.abs(l - r.width * 0.08) < 7, onh = Math.abs(t + h / 2 - r.height / 2) < 7;
+    if (on50) l = r.width / 2 - w / 2; else if (on8) l = r.width * 0.08; if (onh) t = r.height / 2 - h / 2;
+    cur.x.style.left = (l / r.width * 100) + '%'; cur.x.style.top = (t / r.height * 100) + '%';
+    g50.classList.toggle('on', on50); g8.classList.toggle('on', on8 && !on50); gh.classList.toggle('on', onh);
+  });
+  function up() { if (!cur) return; cur.x.classList.remove('dr'); cur = null; [g50, g8, gh].forEach(function (g) { g.classList.remove('on'); }); }
+  fr.addEventListener('pointerup', up); fr.addEventListener('pointercancel', up);
+}
+function init() { css(); if (!build()) return false; art(); drag(); apply(); toggleOutside(); return true; }
 var tries = 0; (function loop() { if (init() || ++tries > 40) return; setTimeout(loop, 250); })();
-window.CVHomeSkyP150 = { version: '150.5.0', get: get, set: set, init: init };
+window.CVHomeSkyP150 = { version: '150.7.0', get: get, set: set, init: init };
 })();

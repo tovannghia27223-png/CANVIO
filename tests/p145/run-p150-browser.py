@@ -19,9 +19,15 @@ with sync_playwright() as p:
         ck(name+' nền pasteboard',pg.evaluate('getComputedStyle(document.getElementById("page-home")).backgroundColor=="rgb(228, 230, 238)"'))
         ck(name+' dải 5 thẻ',pg.evaluate('document.querySelectorAll("#ws-cards .ws-grid>*").length>=5'))
         if name=='desktop':
-            g=pg.query_selector('#ws-cards .ws-grid');bx=g.bounding_box();sl0=pg.evaluate('document.querySelector("#ws-cards .ws-grid").scrollLeft')
+            pg.evaluate('document.querySelector("#ws-cards .ws-grid").scrollIntoView({block:"center"})');pg.wait_for_timeout(300);g=pg.query_selector('#ws-cards .ws-grid');bx=g.bounding_box();sl0=pg.evaluate('document.querySelector("#ws-cards .ws-grid").scrollLeft')
             pg.mouse.move(bx['x']+bx['width']-40,bx['y']+60);pg.mouse.down();pg.mouse.move(bx['x']+bx['width']-340,bx['y']+60,steps=8);pg.mouse.up();pg.wait_for_timeout(200)
             ck('kéo chuột cuộn dải thẻ',pg.evaluate('document.querySelector("#ws-cards .ws-grid").scrollLeft')>sl0)
+        pg.wait_for_timeout(2800)
+        pg.evaluate('document.querySelector(".tx-poster").scrollIntoView({block:"center"})');pg.wait_for_timeout(300);tx=pg.query_selector('.tx-poster');b0=tx.bounding_box();pg.mouse.move(b0['x']+20,b0['y']+20);pg.mouse.down();pg.mouse.move(b0['x']+60,b0['y']+70,steps=6);pg.mouse.up();b1=tx.bounding_box()
+        ck(name+' kéo được khối chữ poster',abs(b1['x']-b0['x'])>10 or abs(b1['y']-b0['y'])>10)
+        for tt in ['cv','web','video','poster']:
+            pg.click('#cv150-art .tabs [data-t=%s]'%tt);ck(name+' tab '+tt,pg.evaluate('document.querySelector("#cv150-art .fr").dataset.t')==tt and pg.is_visible('.tx-'+tt))
+        pg.click('#cv150-art .sw [data-c="#7C4DFF"]');ck(name+' đổi màu chủ đạo',pg.evaluate('document.querySelector("#cv150-art .fr").style.getPropertyValue("--acc")')=='#7C4DFF')
         pg.click('#cv150-sky [data-go=design]');pg.wait_for_timeout(600)
         ck(name+' nút chip mở không gian',pg.evaluate('!!document.querySelector("#page-home")') )
         pg.evaluate('CV.go("home");scrollTo(0,0)');pg.wait_for_timeout(600)
