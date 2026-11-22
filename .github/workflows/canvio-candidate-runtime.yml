@@ -1505,6 +1505,78 @@ jobs:
           SESSION
           fi
 
+      - name: Record P124.4 selected component layouts and variants
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! grep -q '## P124.4 — Selected component layouts and reusable variants' CANVIO_AI_GUIDE.md; then
+            cat >> CANVIO_AI_GUIDE.md <<'GUIDE'
+
+          ## P124.4 — Selected component layouts and reusable variants
+
+          - Extends canvio-p124-autolayout.js / canvio-lot124 / CVAutoLayoutP124 without adding an editor, component store, persistence database or CSS dependency.
+          - Adds Stack, Row, Grid and Split layout application to the currently selected non-wrapper GrapesJS component. The operation adds scoped responsive CSS, data-canvio-auto-layout and data-canvio-layout-version attributes while preserving the selected component's tag, content and existing child tree.
+          - Adds an explicit action to apply one of the four whitelisted visual variants (surface, outline, elevated, soft) to the selected component. Variant values are validated; CSS is stored through the existing GrapesJS CSS Manager and save path.
+          - Existing preset insertion and responsive breakpoint controls remain unchanged. A selected component is not automatically decomposed, wrapped or structurally rebuilt; nested variants, drag/resize controls, arbitrary tree conversion and assistive-technology review remain separate work.
+          - Node tests cover selector/variant validation, responsive layout rules, selected-component attribute/class mutation and canonical save. Chromium tests cover the existing insert flow plus selected grid layout, media rules, selected variant and no mobile overflow/page errors.
+          GUIDE
+          fi
+          if ! grep -q '## P124.4 selected component layout QA' CANVIO_QA_REPORT.md; then
+            cat >> CANVIO_QA_REPORT.md <<'QA'
+
+          ## P124.4 selected component layout QA
+
+          - Node suite checks bounded responsive CSS, whitelisted selected-layout kinds, safe selectors, four design variants, metadata ownership, selected GrapesJS component class/attributes, CSS rule registration and the existing Website save hook.
+          - Hosted Chromium reuses the P124 UI fixture and tests existing layout insertion/breakpoint flow, then applies Grid and a Surface/Soft variant to the selected component. The component tag/content/child model is not replaced; responsive CSS is scoped through the existing CSS Manager.
+          - This is automated component-contract/browser evidence, not a manual review of user-authored nested component trees or full drag/resize behavior. Nested variants, visual breakpoint authoring, keyboard/screen-reader and physical-device review remain open.
+          QA
+          fi
+          if ! grep -q '## P124.4 — Selected component layout application' CANVIO_ROADMAP.md; then
+            cat >> CANVIO_ROADMAP.md <<'ROADMAP'
+
+          ## P124.4 — Selected component layout application
+
+          - Apply Stack/Row/Grid/Split to the existing selected Website component through scoped CSS and data attributes; preserve its element and child tree.
+          - Apply the existing Surface/Outline/Elevated/Soft design variants to the same component via validated metadata and GrapesJS CSS Manager.
+          - Keep the existing breakpoint editor, component insertion, Website save and undo/project ownership. Nested variant graphs, drag/resize and arbitrary DOM conversion are not implied.
+          ROADMAP
+          fi
+          if ! grep -q '## P124.4 selected layout and variant application' CANVIO_ALL_P_COMPLETION_TRACKER.md; then
+            cat >> CANVIO_ALL_P_COMPLETION_TRACKER.md <<'TRACKER'
+
+          ## P124.4 selected layout and variant application
+
+          - Adds selected-component Stack/Row/Grid/Split CSS layout and whitelisted visual variants to existing P124 Website Engine. No component tree rebuild, new editor, data store or dependency.
+          - Candidate verification: 24 source contract checks, Node apply/save tests, hosted Chromium selected layout/variant and responsive CSS; P143 standalone/inline parity; integrated HTML audit and complete runtime suite.
+          - Remaining P124 scope: nested variants, arbitrary structural conversion, drag/resize, user-authored complex projects, accessibility and device/browser review.
+          TRACKER
+          fi
+          if ! grep -q '| P124.4 selected component layouts |' CANVIO_FINAL_ACCEPTANCE_MATRIX.md; then
+            cat >> CANVIO_FINAL_ACCEPTANCE_MATRIX.md <<'MATRIX'
+
+          | P124.4 selected component layouts | Node/Chromium selected Grid/Stack/Row/Split, responsive CSS, whitelisted variants, existing CSS Manager/save path, P143 parity | No structural tree conversion, nested variants, drag/resize, complex user-project or assistive-technology certification. |
+          MATRIX
+          fi
+          if ! grep -q '## P124.4 selected component layouts — candidate' CANVIO_NEXT_AI_PROMPT.md; then
+            cat >> CANVIO_NEXT_AI_PROMPT.md <<'PROMPT'
+
+          ## P124.4 selected component layouts — candidate
+
+          - Use the existing CVAutoLayoutP124 API and selected GrapesJS component. Layout applies scoped CSS/data attributes to the existing node without replacing its tag/content/children.
+          - The four visual variants remain whitelisted; persist through the existing Website CSS Manager/save owner. No duplicate store/editor or external dependency.
+          - Verify Node, Chromium, P143 parity and hosted integration. Keep nested variants, drag/resize, arbitrary component-tree conversion, accessibility and device review open.
+          PROMPT
+          fi
+          if ! grep -q '## P124.4 selected component layouts — candidate' CANVIO_SESSION_SUMMARY_2026-11-21.md; then
+            cat >> CANVIO_SESSION_SUMMARY_2026-11-21.md <<'SESSION'
+
+          ## P124.4 selected component layouts — candidate
+
+          - Extend existing Auto Layout with selected component Grid/Stack/Row/Split CSS application and whitelisted visual variant action. Existing selected GrapesJS model/child tree remains intact.
+          - Node + Chromium + P143 parity and mainline CI are required before merge. Nested variants, drag/resize, real user projects and accessibility remain open.
+          SESSION
+          fi
+
       - name: Record P135.2 editable adjustment stack in project snapshots
         shell: bash
         run: |

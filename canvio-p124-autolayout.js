@@ -4,7 +4,7 @@
 'use strict';
 if (window.CVAutoLayoutP124) return;
 
-var VERSION = '124.2.0';
+var VERSION = '124.4.0';
 var INSTANCE = 0;
 var VARIANTS = {
   surface: { background: '#ffffff', border: '1px solid #e2e8f0', boxShadow: 'none' },
@@ -124,6 +124,94 @@ function selectedResponsiveCss(selector,options){
  if(!/^\.cv-p124-selected-[a-z0-9_-]{1,64}$/.test(String(selector||'')))throw new Error('Selector P124 không hợp lệ.');
  var o=normalize('grid',options),rule=function(columns,gap){return 'display:grid;grid-template-columns:repeat('+columns+',minmax(0,1fr));gap:'+gap+'px;min-width:0;box-sizing:border-box;';};
  return selector+'{'+rule(o.desktopColumns,o.gap)+'}@media(max-width:'+o.tabletBreakpoint+'px){'+selector+'{'+rule(o.tabletColumns,o.gap)+'}}@media(max-width:'+o.mobileBreakpoint+'px){'+selector+'{'+rule(o.mobileColumns,o.gap)+'}}';
+}
+function selectedLayoutRules(kind, options){
+ var o=normalize(kind,options),base,tablet=null,mobile=null;
+ if(kind==='stack'){
+  base={display:'flex','flex-direction':'column',gap:o.gap+'px',width:'100%','min-width':'0','box-sizing':'border-box'};
+ }else if(kind==='row'){
+  base={display:'flex','flex-direction':'row','flex-wrap':'wrap','align-items':'stretch',gap:o.gap+'px',width:'100%','min-width':'0','box-sizing':'border-box'};
+  mobile={'flex-direction':'column'};
+ }else if(kind==='grid'){
+  base={display:'grid','grid-template-columns':'repeat('+o.desktopColumns+',minmax(0,1fr))',gap:o.gap+'px',width:'100%','min-width':'0','box-sizing':'border-box'};
+  tablet={'grid-template-columns':'repeat('+o.tabletColumns+',minmax(0,1fr))'};
+  mobile={'grid-template-columns':'repeat('+o.mobileColumns+',minmax(0,1fr))'};
+ }else if(kind==='split'){
+  base={display:'grid','grid-template-columns':'repeat(2,minmax(0,1fr))',gap:(o.gap+8)+'px',width:'100%','min-width':'0','box-sizing':'border-box','align-items':'center'};
+  tablet={'grid-template-columns':'repeat('+Math.min(2,o.tabletColumns)+',minmax(0,1fr))'};
+  mobile={'grid-template-columns':'minmax(0,1fr)'};
+ }else throw new Error('Kiểu bố cục áp dụng không hợp lệ.');
+ return{options:o,base:base,tablet:tablet,mobile:mobile};
+}
+function cssText(style){
+ return Object.keys(style||{}).map(function(key){
+  return key.replace(/[A-Z]/g,function(c){return '-'+c.toLowerCase();})+':'+style[key]+';';
+ }).join('');
+}
+function selectedLayoutCss(selector,kind,options){
+ if(!/^\.cv-p124-selected-[a-z0-9_-]{1,64}$/.test(String(selector||'')))throw new Error('Selector P124 không hợp lệ.');
+ var rules=selectedLayoutRules(kind,options),o=rules.options,css=selector+'{'+cssText(rules.base)+'}';
+ if(rules.tablet)css+='@media(max-width:'+o.tabletBreakpoint+'px){'+selector+'{'+cssText(rules.tablet)+'}}';
+ if(rules.mobile)css+='@media(max-width:'+o.mobileBreakpoint+'px){'+selector+'{'+cssText(rules.mobile)+'}}';
+ return css;
+}
+function selectedVariantCss(selector,variant){
+ if(!/^\.cv-p124-selected-[a-z0-9_-]{1,64}$/.test(String(selector||'')))throw new Error('Selector P124 không hợp lệ.');
+ if(!Object.prototype.hasOwnProperty.call(VARIANTS,variant))throw new Error('Biến thể component không hợp lệ.');
+ var style=VARIANTS[variant];
+ return selector+'[data-canvio-variant="'+variant+'"]{background:'+style.background+';border:'+style.border+';box-shadow:'+style.boxShadow+';}';
+}
+function setSelectedRules(ed,selector,rules,css){
+ if(ed.Css&&typeof ed.Css.setRule==='function'){
+  ed.Css.setRule(selector,rules.base||rules);
+  if(rules.tablet)ed.Css.setRule(selector,rules.tablet,{atRuleType:'media',atRuleParams:'(max-width: '+rules.options.tabletBreakpoint+'px)'});
+  if(rules.mobile)ed.Css.setRule(selector,rules.mobile,{atRuleType:'media',atRuleParams:'(max-width: '+rules.options.mobileBreakpoint+'px)'});
+  return true;
+ }
+ if(typeof ed.addStyle==='function'){ed.addStyle(css);return true;}
+ return false;
+}
+async function applyLayoutToSelected(kind,options){
+ var ed=window.CVWeb,component=selectedTarget();
+ if(!ed||!component)return{ok:false,saved:false,error:'Hãy chọn một phần tử trong Website Engine trước.'};
+ if(!KINDS.filter(function(x){return x!=='card';}).includes(kind))return{ok:false,saved:false,error:'Chỉ có thể áp dụng Stack, Row, Grid hoặc Split cho phần tử đang chọn.'};
+ if(typeof component.addAttributes!=='function')return{ok:false,saved:false,error:'Phần tử được chọn không hỗ trợ thuộc tính component.'};
+ var rules,cls=selectedTargetClass(component),selector='.'+cls;
+ try{
+  rules=selectedLayoutRules(kind,options);
+  if(!setSelectedRules(ed,selector,rules,selectedLayoutCss(selector,kind,options)))return{ok:false,saved:false,error:'GrapesJS chưa sẵn sàng để lưu CSS layout.'};
+  component.addClass(cls);
+  component.addAttributes({'data-canvio-auto-layout':kind,'data-canvio-layout-version':VERSION,'data-canvio-variant':rules.options.variant});
+ }catch(error){return{ok:false,saved:false,error:'Không áp dụng được layout: '+cleanText(error&&error.message,'lỗi GrapesJS',100)};}
+ try{
+  if(!window.CV||!CV.engines||!CV.engines.web||typeof CV.engines.web.save!=='function')
+   return{ok:false,saved:false,className:cls,error:'Đã áp dụng trong phiên nhưng Website Engine chưa có hàm lưu.'};
+  var saved=await Promise.resolve(CV.engines.web.save());
+  if(saved===false)return{ok:false,saved:false,className:cls,error:'Đã áp dụng trong phiên nhưng lưu thất bại. Hãy kiểm tra và lưu lại trong Website Engine.'};
+  return{ok:true,saved:true,className:cls,kind:kind,error:''};
+ }catch(error){return{ok:false,saved:false,className:cls,error:'Đã áp dụng trong phiên nhưng lưu thất bại.'};}
+}
+async function applyVariantToSelected(variant){
+ var ed=window.CVWeb,component=selectedTarget();
+ if(!ed||!component)return{ok:false,saved:false,error:'Hãy chọn một phần tử trong Website Engine trước.'};
+ if(typeof component.addAttributes!=='function')return{ok:false,saved:false,error:'Phần tử được chọn không hỗ trợ thuộc tính component.'};
+ var cls=selectedTargetClass(component),selector='.'+cls,css;
+ try{
+  css=selectedVariantCss(selector,variant);
+  var style=VARIANTS[variant];
+  if(ed.Css&&typeof ed.Css.setRule==='function')ed.Css.setRule(selector+'[data-canvio-variant="'+variant+'"]',{background:style.background,border:style.border,'box-shadow':style.boxShadow});
+  else if(typeof ed.addStyle==='function')ed.addStyle(css);
+  else return{ok:false,saved:false,error:'GrapesJS chưa sẵn sàng để lưu biến thể.'};
+  component.addClass(cls);
+  component.addAttributes({'data-canvio-variant':variant});
+ }catch(error){return{ok:false,saved:false,error:'Không áp dụng được biến thể: '+cleanText(error&&error.message,'lỗi GrapesJS',100)};}
+ try{
+  if(!window.CV||!CV.engines||!CV.engines.web||typeof CV.engines.web.save!=='function')
+   return{ok:false,saved:false,className:cls,error:'Đã áp dụng trong phiên nhưng Website Engine chưa có hàm lưu.'};
+  var saved=await Promise.resolve(CV.engines.web.save());
+  if(saved===false)return{ok:false,saved:false,className:cls,error:'Đã áp dụng trong phiên nhưng lưu thất bại.'};
+  return{ok:true,saved:true,className:cls,variant:variant,error:''};
+ }catch(error){return{ok:false,saved:false,className:cls,error:'Đã áp dụng trong phiên nhưng lưu thất bại.'};}
 }
 async function applyResponsiveToSelected(options){
  var ed=window.CVWeb,component=selectedTarget();
@@ -256,6 +344,23 @@ function mount() {
     selectedButton.disabled = false;
   });
   row.appendChild(selectedButton);
+  var selectedLayoutSelect=make('select',{'aria-label':'Bố cục phần tử đang chọn','id':'cv-p124-selected-layout',style:'min-height:36px;padding:6px 10px;border:1px solid #cbd5e1;border-radius:8px;background:transparent;color:inherit;'});
+  ['stack','row','grid','split'].forEach(function(kind){selectedLayoutSelect.appendChild(make('option',{value:kind},kind.charAt(0).toUpperCase()+kind.slice(1)));});
+  var selectedLayoutButton=make('button',{type:'button','data-p124-apply-layout':'1',style:'min-height:36px;padding:7px 12px;border:1px solid #64748b;border-radius:8px;background:transparent;color:inherit;cursor:pointer;font:inherit;'},'Áp dụng bố cục cho phần tử đang chọn');
+  selectedLayoutButton.addEventListener('click',async function(){
+    selectedLayoutButton.disabled=true;status.textContent='Đang áp dụng bố cục cho phần tử được chọn…';
+    var result=await applyLayoutToSelected(selectedLayoutSelect.value,{variant:select.value,gap:gap.input.value,minWidth:minWidth.input.value,mobileBreakpoint:mobileBreakpoint.input.value,tabletBreakpoint:tabletBreakpoint.input.value,mobileColumns:mobileColumns.input.value,tabletColumns:tabletColumns.input.value,desktopColumns:desktopColumns.input.value});
+    status.textContent=result.ok?'Đã áp dụng và lưu '+result.kind+' cho '+result.className+'.':result.error;
+    selectedLayoutButton.disabled=false;
+  });
+  var selectedVariantButton=make('button',{type:'button','data-p124-apply-variant':'1',style:'min-height:36px;padding:7px 12px;border:1px solid #64748b;border-radius:8px;background:transparent;color:inherit;cursor:pointer;font:inherit;'},'Áp dụng biến thể cho phần tử đang chọn');
+  selectedVariantButton.addEventListener('click',async function(){
+    selectedVariantButton.disabled=true;status.textContent='Đang áp dụng biến thể…';
+    var result=await applyVariantToSelected(select.value);
+    status.textContent=result.ok?'Đã áp dụng và lưu biến thể '+result.variant+'.':result.error;
+    selectedVariantButton.disabled=false;
+  });
+  row.appendChild(selectedLayoutSelect);row.appendChild(selectedLayoutButton);row.appendChild(selectedVariantButton);
   panel.appendChild(heading); panel.appendChild(help); row.appendChild(select); panel.appendChild(row); panel.appendChild(settings); panel.appendChild(status);
   host.appendChild(panel);
   return true;
@@ -277,7 +382,7 @@ if (typeof document !== 'undefined') {
   if (document.readyState === 'loading' && document.addEventListener) document.addEventListener('DOMContentLoaded', start, { once: true });
   else start();
 }
-var api = { version: VERSION, inspect: inspect, normalize: normalize, render: render, selectedResponsiveCss: selectedResponsiveCss, applyResponsiveToSelected: applyResponsiveToSelected, insert: insert, mount: mount };
+var api = { version: VERSION, inspect: inspect, normalize: normalize, render: render, selectedResponsiveCss: selectedResponsiveCss, selectedLayoutCss: selectedLayoutCss, applyLayoutToSelected: applyLayoutToSelected, selectedVariantCss: selectedVariantCss, applyVariantToSelected: applyVariantToSelected, applyResponsiveToSelected: applyResponsiveToSelected, insert: insert, mount: mount };
 api.tests = function () {
   var n = normalize('grid', { columns: 99, gap: 1, minWidth: 900, variant: 'unknown' });
   var g = render('grid', { columns: 4, minWidth: 260, gap: 24 });
@@ -304,7 +409,11 @@ api.tests = function () {
     selectedResponsiveCssHasThreeRanges: (selectedResponsiveCss('.cv-p124-selected-unit', { desktopColumns: 4, tabletColumns: 2, mobileColumns: 1 }).match(/@media/g) || []).length === 2,
     selectedResponsiveCssRejectsUnsafeSelector: (function () { try { selectedResponsiveCss('body', {}); return false; } catch (e) { return true; } })(),
     selectedResponsiveColumnsAreBounded: normalize('grid', { desktopColumns: 99, tabletColumns: 0, mobileColumns: 9 }).desktopColumns === 6 && normalize('grid', { desktopColumns: 99, tabletColumns: 0, mobileColumns: 9 }).tabletColumns === 1 && normalize('grid', { desktopColumns: 99, tabletColumns: 0, mobileColumns: 9 }).mobileColumns === 2,
-    selectedResponsiveBreakpointsAreOrdered: normalize('grid', { mobileBreakpoint: 760, tabletBreakpoint: 768 }).tabletBreakpoint > normalize('grid', { mobileBreakpoint: 760, tabletBreakpoint: 768 }).mobileBreakpoint
+    selectedResponsiveBreakpointsAreOrdered: normalize('grid', { mobileBreakpoint: 760, tabletBreakpoint: 768 }).tabletBreakpoint > normalize('grid', { mobileBreakpoint: 760, tabletBreakpoint: 768 }).mobileBreakpoint,
+    selectedLayoutGridHasThreeBreakpoints: (selectedLayoutCss('.cv-p124-selected-unit', 'grid', { desktopColumns: 4, tabletColumns: 2, mobileColumns: 1 }).match(/@media/g) || []).length === 2,
+    selectedLayoutCssRejectsUnsafeSelector: (function () { try { selectedLayoutCss('body', 'grid', {}); return false; } catch (e) { return true; } })(),
+    selectedVariantCssRejectsUnknownVariant: (function () { try { selectedVariantCss('.cv-p124-selected-unit', 'unknown'); return false; } catch (e) { return true; } })(),
+    selectedLayoutKeepsOnlyKnownLayoutKinds: (function () { try { selectedLayoutRules('card', {}); return false; } catch (e) { return true; } })()
   };
 };
 window.CVAutoLayoutP124 = api;
