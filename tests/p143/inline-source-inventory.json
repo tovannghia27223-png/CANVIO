@@ -1,10 +1,10 @@
 {
   "format": "CANVIO_P143_INLINE_SOURCE_INVENTORY",
   "version": 1,
-  "generatedAt": "2026-11-22T14:47:17.836Z",
+  "generatedAt": "2026-11-22T18:44:12.225Z",
   "source": "restored canonical index.html after hosted workflow integration steps",
   "purpose": "Complete script-tag inventory in browser execution order; known global reference detection is heuristic, not a semantic dependency DAG.",
-  "htmlBytes": 5754689,
+  "htmlBytes": 5755532,
   "scriptTagCount": 164,
   "inlineScriptCount": 164,
   "externalScriptCount": 0,
@@ -14993,8 +14993,8 @@
       "async": false,
       "defer": false,
       "noModule": false,
-      "bytes": 25970,
-      "sha256": "28756be90f99c9f5111170b2e139c509b723c2c07762e07d32ac70c78c1b5256",
+      "bytes": 26813,
+      "sha256": "62c446cdd0ebd46c8ad1857a449b4bc0abbfdab361114079edc6f9f7c311552b",
       "exportedGlobals": [
         "CVStylesP137"
       ],
@@ -15037,7 +15037,7 @@
             "name": "MutationObserver",
             "count": 1,
             "lines": [
-              243
+              248
             ]
           }
         ],
@@ -15053,7 +15053,7 @@
         "writes": [
           {
             "name": "CVStylesP137",
-            "line": 249,
+            "line": 254,
             "kind": "window.property"
           }
         ],

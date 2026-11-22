@@ -1,10 +1,10 @@
 {
   "format": "CANVIO_P143_STYLE_TEMPLATE_LOADER_INVENTORY",
   "version": 1,
-  "generatedAt": "2026-11-22T14:47:18.011Z",
+  "generatedAt": "2026-11-22T18:44:12.444Z",
   "source": "restored canonical index.html after all workflow-managed module integration steps",
   "purpose": "Inventory inline styles, template elements, dynamic resource-loader call sites and lexical global-reference ordering candidates. Global references are not a human-reviewed semantic boot-order or runtime data-flow graph.",
-  "htmlBytes": 5754689,
+  "htmlBytes": 5755532,
   "styles": {
     "blockCount": 119,
     "inlineStyleAttributeCount": 1507,
@@ -19915,7 +19915,7 @@
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 137,
         "toId": "canvio-lot137s",
-        "toSha256": "28756be90f99c9f5111170b2e139c509b723c2c07762e07d32ac70c78c1b5256",
+        "toSha256": "62c446cdd0ebd46c8ad1857a449b4bc0abbfdab361114079edc6f9f7c311552b",
         "priorProviderCount": 1,
         "priorProviderOrders": [
           57
