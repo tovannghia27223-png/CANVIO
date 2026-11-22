@@ -1092,3 +1092,4 @@ Hosted verification after the ffmpeg repair is complete:
 - **Thời trang (fashion):** bìa tạp chí: chữ "canvio" serif khổng lồ đè lên vòm xanh Klein (mix-blend difference), 5 không gian là bìa dọc đặc màu kéo ngang.
 - **Cổ điển:** giao diện cũ, không đổi.
 - Test: `tests/p145/run-p150-browser.py` (43 check, desktop + mobile). Phần cũ (cvHero, ws-jobs, Hub, P146…) giữ nguyên chức năng.
+- **Nút chính đồng bộ:** mọi kiểu (trừ Cổ điển) dùng nút vàng #FFD84A chữ đen; nút Xuất trên thanh menu cũng vàng đen ở mọi trang. Tab chọn của bộ chuyển kiểu cũng vàng đen.
