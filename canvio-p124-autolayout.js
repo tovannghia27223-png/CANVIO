@@ -213,6 +213,41 @@ async function applyVariantToSelected(variant){
   return{ok:true,saved:true,className:cls,variant:variant,error:''};
  }catch(error){return{ok:false,saved:false,className:cls,error:'Đã áp dụng trong phiên nhưng lưu thất bại.'};}
 }
+function visibilityRanges(o){return{desktop:'(min-width: '+(o.tabletBreakpoint+1)+'px)',tablet:'(min-width: '+(o.mobileBreakpoint+1)+'px) and (max-width: '+o.tabletBreakpoint+'px)',mobile:'(max-width: '+o.mobileBreakpoint+'px)'};}
+function cleanVisibility(vis){var v={desktop:true,tablet:true,mobile:true};['desktop','tablet','mobile'].forEach(function(k){if(vis&&vis[k]===false)v[k]=false;});return v;}
+function selectedVisibilityCss(selector,vis,options){
+ if(!/^\.cv-p124-selected-[a-z0-9_-]{1,64}$/.test(String(selector||'')))throw new Error('Selector P124 không hợp lệ.');
+ var v=cleanVisibility(vis);if(!v.desktop&&!v.tablet&&!v.mobile)throw new Error('Không thể ẩn phần tử trên cả ba thiết bị.');
+ var ranges=visibilityRanges(normalize('grid',options)),css='';
+ ['desktop','tablet','mobile'].forEach(function(k){if(!v[k])css+='@media'+ranges[k].replace(/: /g,':')+'{'+selector+'{display:none!important;}}';});
+ return css;
+}
+async function applyVisibilityToSelected(vis,options){
+ var ed=window.CVWeb,component=selectedTarget();
+ if(!ed||!component)return{ok:false,saved:false,error:'Hãy chọn một phần tử trong Website Engine trước.'};
+ var v=cleanVisibility(vis),cls=selectedTargetClass(component),selector='.'+cls,css,ranges=visibilityRanges(normalize('grid',options));
+ try{
+  css=selectedVisibilityCss(selector,v,options);
+  if(ed.Css&&typeof ed.Css.setRule==='function'){
+   ['desktop','tablet','mobile'].forEach(function(k){
+    var opt={atRuleType:'media',atRuleParams:ranges[k]};
+    if(!v[k])ed.Css.setRule(selector,{display:'none !important'},opt);
+    else{var old=typeof ed.Css.getRule==='function'?ed.Css.getRule(selector,opt):null;if(old&&typeof ed.Css.remove==='function')ed.Css.remove(old);}
+   });
+  }else if(typeof ed.addStyle==='function'){if(css)ed.addStyle(css);}
+  else return{ok:false,saved:false,error:'GrapesJS chưa sẵn sàng để lưu hiển thị theo thiết bị.'};
+  component.addClass(cls);
+  var hidden=['desktop','tablet','mobile'].filter(function(k){return !v[k];});
+  if(typeof component.addAttributes==='function')component.addAttributes({'data-canvio-hide':hidden.join(',')});
+ }catch(error){return{ok:false,saved:false,error:'Không áp dụng được hiển thị theo thiết bị: '+cleanText(error&&error.message,'lỗi GrapesJS',100)};}
+ try{
+  if(!window.CV||!CV.engines||!CV.engines.web||typeof CV.engines.web.save!=='function')
+   return{ok:false,saved:false,className:cls,error:'Đã áp dụng trong phiên nhưng Website Engine chưa có hàm lưu.'};
+  var saved=await Promise.resolve(CV.engines.web.save());
+  if(saved===false)return{ok:false,saved:false,className:cls,error:'Đã áp dụng trong phiên nhưng lưu thất bại.'};
+  return{ok:true,saved:true,className:cls,visibility:v,error:''};
+ }catch(error){return{ok:false,saved:false,className:cls,error:'Đã áp dụng trong phiên nhưng lưu thất bại.'};}
+}
 async function applyResponsiveToSelected(options){
  var ed=window.CVWeb,component=selectedTarget();
  if(!ed||!component)return{ok:false,saved:false,error:'Hãy chọn một phần tử trong Website Engine trước.'};
@@ -361,6 +396,16 @@ function mount() {
     selectedVariantButton.disabled=false;
   });
   row.appendChild(selectedLayoutSelect);row.appendChild(selectedLayoutButton);row.appendChild(selectedVariantButton);
+  var visBox=make('span',{style:'display:inline-flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:13px;'}),visChecks={};
+  [['desktop','Desktop'],['tablet','Tablet'],['mobile','Mobile']].forEach(function(d){var lab=make('label',{style:'display:inline-flex;gap:4px;align-items:center;cursor:pointer;'}),cb=make('input',{type:'checkbox','data-p124-show':d[0],checked:'checked'});visChecks[d[0]]=cb;lab.appendChild(cb);lab.appendChild(document.createTextNode('Hiện trên '+d[1]));visBox.appendChild(lab);});
+  var visButton=make('button',{type:'button','data-p124-apply-visibility':'1',style:'min-height:36px;padding:7px 12px;border:1px solid #64748b;border-radius:8px;background:transparent;color:inherit;cursor:pointer;font:inherit;'},'Áp dụng hiển thị theo thiết bị');
+  visButton.addEventListener('click',async function(){
+    visButton.disabled=true;status.textContent='Đang áp dụng hiển thị theo thiết bị…';
+    var result=await applyVisibilityToSelected({desktop:visChecks.desktop.checked,tablet:visChecks.tablet.checked,mobile:visChecks.mobile.checked},{mobileBreakpoint:mobileBreakpoint.input.value,tabletBreakpoint:tabletBreakpoint.input.value});
+    status.textContent=result.ok?'Đã áp dụng và lưu hiển thị theo thiết bị cho '+result.className+'.':result.error;
+    visButton.disabled=false;
+  });
+  row.appendChild(visBox);row.appendChild(visButton);
   panel.appendChild(heading); panel.appendChild(help); row.appendChild(select); panel.appendChild(row); panel.appendChild(settings); panel.appendChild(status);
   host.appendChild(panel);
   return true;
@@ -382,7 +427,7 @@ if (typeof document !== 'undefined') {
   if (document.readyState === 'loading' && document.addEventListener) document.addEventListener('DOMContentLoaded', start, { once: true });
   else start();
 }
-var api = { version: VERSION, inspect: inspect, normalize: normalize, render: render, selectedResponsiveCss: selectedResponsiveCss, selectedLayoutCss: selectedLayoutCss, applyLayoutToSelected: applyLayoutToSelected, selectedVariantCss: selectedVariantCss, applyVariantToSelected: applyVariantToSelected, applyResponsiveToSelected: applyResponsiveToSelected, insert: insert, mount: mount };
+var api = { version: VERSION, inspect: inspect, normalize: normalize, render: render, selectedResponsiveCss: selectedResponsiveCss, selectedLayoutCss: selectedLayoutCss, applyLayoutToSelected: applyLayoutToSelected, selectedVisibilityCss: selectedVisibilityCss, applyVisibilityToSelected: applyVisibilityToSelected, selectedVariantCss: selectedVariantCss, applyVariantToSelected: applyVariantToSelected, applyResponsiveToSelected: applyResponsiveToSelected, insert: insert, mount: mount };
 api.tests = function () {
   var n = normalize('grid', { columns: 99, gap: 1, minWidth: 900, variant: 'unknown' });
   var g = render('grid', { columns: 4, minWidth: 260, gap: 24 });
@@ -413,6 +458,11 @@ api.tests = function () {
     selectedLayoutGridHasThreeBreakpoints: (selectedLayoutCss('.cv-p124-selected-unit', 'grid', { desktopColumns: 4, tabletColumns: 2, mobileColumns: 1 }).match(/@media/g) || []).length === 2,
     selectedLayoutCssRejectsUnsafeSelector: (function () { try { selectedLayoutCss('body', 'grid', {}); return false; } catch (e) { return true; } })(),
     selectedVariantCssRejectsUnknownVariant: (function () { try { selectedVariantCss('.cv-p124-selected-unit', 'unknown'); return false; } catch (e) { return true; } })(),
+    selectedVisibilityHidesOnlyChosenRanges: (function () { var c = selectedVisibilityCss('.cv-p124-selected-unit', { mobile: false }); return (c.match(/@media/g) || []).length === 1 && /max-width:640px/.test(c) && /display:none!important/.test(c); })(),
+    selectedVisibilityAllShownIsEmpty: selectedVisibilityCss('.cv-p124-selected-unit', {}) === '',
+    selectedVisibilityRangesDoNotOverlap: (function () { var o = normalize('grid', {}), r = visibilityRanges(o); return r.mobile === '(max-width: ' + o.mobileBreakpoint + 'px)' && r.tablet.indexOf('(min-width: ' + (o.mobileBreakpoint + 1) + 'px)') === 0 && r.desktop === '(min-width: ' + (o.tabletBreakpoint + 1) + 'px)' && o.mobileBreakpoint < o.tabletBreakpoint; })(),
+    selectedVisibilityRejectsHidingEverywhere: (function () { try { selectedVisibilityCss('.cv-p124-selected-unit', { desktop: false, tablet: false, mobile: false }); return false; } catch (e) { return true; } })(),
+    selectedVisibilityRejectsUnsafeSelector: (function () { try { selectedVisibilityCss('body', { mobile: false }); return false; } catch (e) { return true; } })(),
     selectedLayoutKeepsOnlyKnownLayoutKinds: (function () { try { selectedLayoutRules('card', {}); return false; } catch (e) { return true; } })()
   };
 };

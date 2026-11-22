@@ -1126,3 +1126,7 @@ Hosted verification after the ffmpeg repair is complete:
 ## P143 Phase 3 — đồ thị thứ tự nạp (2026-11-23)
 - `tests/p143/build-boot-order-graph.cjs` dựng đồ thị phụ thuộc từ inventory 164 script: 39 script độc lập (leaf), 121 script phụ thuộc theo thứ tự (chỉ đọc global do script đứng trước cung cấp), 4 tham chiếu tiến (CV, LS, CVUnifiedLayers — chỉ an toàn khi đọc muộn). Kết quả ở `tests/p143/boot-order-graph.json`; CI chạy `--check` và đỏ nếu xuất hiện tham chiếu tiến MỚI.
 - Đây vẫn là phân tích heuristic (như inventory), chưa phải trích tách mã. Việc tách thật ra tệp ngoài mâu thuẫn mục tiêu "một tệp HTML", nên giai đoạn tiếp theo chỉ nên trích các script `leaf-standalone` có parity test, và chỉ khi bạn muốn.
+
+## P124.5 — Hiển thị theo thiết bị cho phần tử đang chọn (2026-11-23)
+- Website Engine: ba ô "Hiện trên Desktop/Tablet/Mobile" + nút "Áp dụng hiển thị theo thiết bị" (`CVAutoLayoutP124.applyVisibilityToSelected`): ẩn phần tử bằng `display:none!important` trong đúng khoảng breakpoint (desktop > tablet, tablet giữa, mobile ≤ mobile), không chồng lấn, chặn ẩn cả ba, đặt `data-canvio-hide`, lưu qua `CV.engines.web.save`. Đọc breakpoint từ các ô responsive hiện có.
+- Kiểm: `run-p124-tests.cjs` (29 kiểm), `run-p124-browser.py` (22). Chưa chạy trên GrapesJS thật (test dùng adapter giả như các bước P124 trước).

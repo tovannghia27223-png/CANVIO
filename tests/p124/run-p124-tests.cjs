@@ -17,7 +17,7 @@ const api=sandbox.window.CVAutoLayoutP124;
 assert.ok(api,'P124 API');
 const checks=api.tests();
 for(const [name,passed] of Object.entries(checks)) assert.equal(passed,true,'P124: '+name);
-assert.equal(Object.keys(checks).length,24);
+assert.equal(Object.keys(checks).length,29);
 assert.equal(api.inspect().layouts.length,5);
 assert.equal(api.render('grid',{columns:4}).match(/data-canvio-component="card"/g).length,4);
 assert.match(api.render('grid',{desktopColumns:4,mobileBreakpoint:680,tabletBreakpoint:1024}),/grid-template-columns:repeat\(4,minmax\(0,1fr\)\)/);

@@ -69,6 +69,16 @@ async def main():
         await panel.locator("button[data-p124-apply-variant]").click()
         await page.wait_for_function("window.__p124Rules.length === 7 && window.__p124SaveCount === 4")
         assert await page.evaluate("window.__p124Component.attributes['data-canvio-variant'] === 'soft'")
+        await panel.locator("input[data-p124-show='tablet']").uncheck()
+        await panel.locator("input[data-p124-show='mobile']").uncheck()
+        await panel.locator("button[data-p124-apply-visibility]").click()
+        await page.wait_for_function("window.__p124Rules.length === 9 && window.__p124SaveCount === 5")
+        assert await page.evaluate("window.__p124Component.attributes['data-canvio-hide'] === 'tablet,mobile'")
+        assert await page.evaluate("window.__p124Rules[7].style.display === 'none !important' && window.__p124Rules[8].options.atRuleParams === '(max-width: 680px)'")
+        await panel.locator("input[data-p124-show='desktop']").uncheck()
+        await panel.locator("button[data-p124-apply-visibility]").click()
+        await page.wait_for_function("document.querySelector('[data-canvio-p124-panel] [role=status]').textContent.includes('cả ba thiết bị')")
+        assert await page.evaluate("window.__p124Component.attributes['data-canvio-hide'] === 'tablet,mobile'")
         await page.evaluate("""() => { window.CV.engines.web.save = () => { window.__p124SaveCount++; return false; }; }""")
         await panel.locator("button[data-p124-kind='card']").click()
         await page.wait_for_function("window.__p124Inserted.length === 2")
@@ -79,8 +89,8 @@ async def main():
         assert not errors, errors
         print(json.dumps({
             "suite": "P124 Chromium UI interaction",
-            "passed": 20,
-            "total": 20,
+            "passed": 22,
+            "total": 22,
             "checks": {
                 "panelMountsInCanonicalHost": True,
                 "fiveLayoutControls": True,
@@ -90,6 +100,8 @@ async def main():
                 "mobileAndTabletMediaQueriesApplied": True,
                 "customTitleAndDesktopColumnsApplied": True,
                 "variantSelectionApplied": True,
+                "visibilityPerBreakpointApplied": True,
+                "hidingEverywhereRejected": True,
                 "canonicalSaveCalled": True,
                 "selectedComponentReceivesResponsiveClass": True,
                 "selectedComponentGetsThreeBreakpointRules": True,
