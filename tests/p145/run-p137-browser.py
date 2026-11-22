@@ -63,6 +63,22 @@ with sync_playwright() as p:
     page.select_option('#cv137-table-sel', 'Lưới'); page.click('#cv137-table-apply'); page.wait_for_timeout(200)
     c['tableStyleApplied'] = page.evaluate("(()=>{const t=document.getElementById('rich-table'),td=t.querySelector('tbody td'),th=t.querySelector('thead th');return t.getAttribute('data-cv137-table')==='Lưới'&&t.style.borderCollapse==='collapse'&&td.style.border.indexOf('1px')>=0&&th.style.backgroundColor!==' '&&th.style.fontWeight==='700'})()")
     c['characterAndTableStylesRestyleFromHtml'] = page.evaluate("(()=>{const r=CVStylesP137.restyleHtml('<p><span data-cv137-char=\\'Tô sáng\\'>x</span></p><table data-cv137-table=\\'Báo cáo\\'><tr><th>H</th><td>D</td></tr></table>',CVStylesP137.load()),d=new DOMParser().parseFromString(r.html,'text/html'),s=d.querySelector('span'),t=d.querySelector('table'),th=t.querySelector('th');return r.n===2&&s.style.backgroundColor==='rgb(255, 243, 176)'&&t.style.borderCollapse==='collapse'&&th.style.fontWeight==='700'})()")
+    # P137.3: chảy chữ sang trang sau
+    long_html = ''.join('<p>Đoạn số %d. %s</p>' % (i, 'Chữ dài để tràn trang. ' * 14) for i in range(40))
+    page.evaluate("(h)=>CVNativeEngines.layout.restoreState({pages:[{id:'f1',html:h},{id:'f2',html:'<p>Trang sau có sẵn.</p>'}],active:0})", long_html); page.wait_for_timeout(500)
+    before = page.evaluate("document.getElementById('lfDoc').scrollHeight")
+    page.click('#cv137-flow'); page.wait_for_timeout(600)
+    st = page.evaluate("JSON.parse(CVNativeEngines.layout.snapshotState())")
+    lim = page.evaluate("CVStylesP137.flowLimit(document.getElementById('lfDoc'))")
+    after = page.evaluate("document.getElementById('lfDoc').scrollHeight")
+    c['flowShrinksCurrentPage'] = before > lim and after <= lim + 2
+    c['flowAddsPagesWhenNeeded'] = len(st['pages']) >= 3 and st['active'] == 0
+    c['flowKeepsOrderAndAllText'] = ''.join(__import__('re').findall(r'Đoạn số (\d+)', ''.join(q['html'] for q in st['pages']))) == ''.join(str(i) for i in range(40)) and 'Trang sau có sẵn' in st['pages'][-1]['html']
+    c['flowMessage'] = 'khối' in page.inner_text('#cv137-out')
+    page.click('#cv137-flow'); page.wait_for_timeout(300)
+    c['flowIdempotentWhenFits'] = 'chưa tràn' in page.inner_text('#cv137-out')
+    page.click('#cv137-undo'); page.wait_for_timeout(300)
+    c['flowUndo'] = len(page.evaluate("JSON.parse(CVNativeEngines.layout.snapshotState())")['pages']) == 2
     b.close()
 res = {'checks': c, 'pageErrors': errs, 'failed': [k for k, v in c.items() if not v]}
 print(json.dumps(res, ensure_ascii=False, indent=1)); sys.exit(1 if res['failed'] or errs else 0)

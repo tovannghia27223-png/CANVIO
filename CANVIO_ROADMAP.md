@@ -1104,3 +1104,7 @@ Hosted verification after the ffmpeg repair is complete:
 - Apply Stack/Row/Grid/Split to the existing selected Website component through scoped CSS and data attributes; preserve its element and child tree.
 - Apply the existing Surface/Outline/Elevated/Soft design variants to the same component via validated metadata and GrapesJS CSS Manager.
 - Keep the existing breakpoint editor, component insertion, Website save and undo/project ownership. Nested variant graphs, drag/resize and arbitrary DOM conversion are not implied.
+
+## P137.3 — Luồng chữ sang trang sau (2026-11-22)
+- Dàn trang: nút "Chảy sang trang sau" (`#cv137-flow`, `CVStylesP137.flowNext`) đẩy các khối cuối tràn khỏi trang hiện tại sang đầu trang kế (tự tạo trang mới, tự chảy tiếp qua các trang sau), đo bằng bản sao ẩn theo khổ giấy `#lfSize`; hoàn tác bằng nút Hoàn tác hiện có.
+- Kiểm: `run-p137s-tests.cjs`, `tests/p145/run-p137-browser.py` (40 đoạn tràn → giữ đúng thứ tự, thêm trang, hoàn tác). Chưa có: chia một đoạn dài giữa hai trang (hiện chỉ chuyển nguyên khối), khung chữ tự do liên kết trên poster, kiểu tên mới.
