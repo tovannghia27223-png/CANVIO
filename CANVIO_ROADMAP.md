@@ -1112,3 +1112,8 @@ Hosted verification after the ffmpeg repair is complete:
 
 ## P137.5 — Tạo kiểu đoạn tên mới (2026-11-22)
 - Dàn trang: ô "Tên kiểu mới" + nút "Tạo kiểu mới" (`CVStylesP137.createStyle`) lấy định dạng thật của đoạn đang đặt con trỏ, lưu vào bộ kiểu, gắn cho đoạn đó và thêm vào danh sách; từ chối tên trùng hoặc tên không hợp lệ. Kiểm trong `tests/p145/run-p137-browser.py`.
+
+## P118.3 — Phông .otf (CFF) (2026-11-22)
+- `CVWordmarkP118.parse` đọc OpenType CFF (OTTO, cả .otf bọc trong .woff): bộ thông dịch charstring Type 2 (lineto/curveto đủ biến thể, flex, subr cục bộ/toàn cục, hintmask), xuất đường cubic `C` trong SVG; kerning/GPOS dùng chung với TTF. Chưa hỗ trợ CFF2, CID-keyed, .woff2 (Brotli).
+- Kiểm: `run-p118w-tests.cjs` với `tests/p127/fixtures/subset-cff.otf` (tập con TeX Gyre Termes, giấy phép GUST) so số đường/đường cong/bbox với fontTools cho A, a, g, o.
+- P119: workflow riêng `canvio-lottie-web.yml` + `tests/p145/run-p119-lottie-web.py` chạy Lottie xuất bằng lottie-web thật (cần xem kết quả CI).

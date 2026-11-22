@@ -42,5 +42,19 @@ for(const [name,src] of [['standalone',js],['embedded',m[1]]]){
     let r=0;try{A.parse(ab)}catch(e){r++}ck(name+' sync parse rejects woff',r===1);
     let bd=0;try{await A.parseAsync(ab.slice(0,60))}catch(e){bd++}ck(name+' truncated woff rejected',bd===1);
   }
-  console.log(bad?'P118w WOFF FAIL':'P118w WOFF OK');process.exit(bad?1:0);
+  const EXP={"A": {"moves": 2, "lines": 13, "curves": 7, "xmin": 15, "xmax": 706, "ymin": 0, "ymax": 674, "adv": 722}, "a": {"moves": 2, "lines": 4, "curves": 22, "xmin": 37, "xmax": 442, "ymin": -10, "ymax": 460, "adv": 444}, "g": {"moves": 3, "lines": 6, "curves": 28, "xmin": 28, "xmax": 470, "ymin": -218, "ymax": 460, "adv": 500}, "o": {"moves": 2, "lines": 0, "curves": 9, "xmin": 29, "xmax": 470, "ymin": -10, "ymax": 460, "adv": 500}};
+  const otf=fs.readFileSync(__dirname+'/fixtures/subset-cff.otf'),oab=otf.buffer.slice(otf.byteOffset,otf.byteOffset+otf.length);
+  for(const [name,src] of [['standalone',js],['embedded',m[1]]]){
+    const sb={window:{},document:{readyState:'loading',addEventListener(){}},console,Math,Array,String,Number,Object,JSON,DataView,ArrayBuffer,Uint8Array,Promise,Response,DecompressionStream,Error};
+    vm.runInNewContext(src,sb);const A=sb.window.CVWordmarkP118,f=A.parse(oab);
+    ck(name+' otf parses',!!f.cff&&f.upm===1000);
+    for(const ch of Object.keys(EXP)){const e=EXP[ch],g=f.cmap(ch.codePointAt(0)),cs=A.glyph(f,g);let lines=0,curves=0,xs=[],ys=[];
+      cs.forEach(c=>{for(let i=1;i<c.length;){if(c[i].cu){curves++;i+=3}else{lines++;i++}}c.forEach(q=>{xs.push(q.x);ys.push(q.y)})});
+      ck(name+' otf '+ch+' contours',cs.length===e.moves);ck(name+' otf '+ch+' curves',curves===e.curves);ck(name+' otf '+ch+' lines',lines===e.lines);
+      ck(name+' otf '+ch+' bbox',Math.min(...xs)===e.xmin&&Math.max(...xs)===e.xmax&&Math.min(...ys)===e.ymin&&Math.max(...ys)===e.ymax)}
+    const sv=A.toSvg(f,'Hay',{size:100});ck(name+' otf svg has curves',/C/.test(sv.d)&&sv.d.endsWith('Z')&&sv.missing===0);
+    const nn=A.toSvg(f,'Hay',{size:100,kerning:false});ck(name+' otf layout width',sv.width>0&&nn.width>0);
+    let t=0;try{A.parse(oab.slice(0,300))}catch(e){t++}ck(name+' otf truncated rejected',t===1);
+  }
+  console.log(bad?'P118w OTF+WOFF FAIL':'P118w OTF+WOFF OK');process.exit(bad?1:0);
 })();

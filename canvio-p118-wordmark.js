@@ -8,11 +8,11 @@ function tag(d, o) { return String.fromCharCode(d.getUint8(o), d.getUint8(o + 1)
 function parse(buf) {
   var d = dv(buf), T = {}, n, i, f = { d: d };
   if (d.byteLength < 12) throw new Error('Tệp phông quá nhỏ.');
-  var sig = d.getUint32(0); if (sig === 0x4F54544F) throw new Error('Phông .otf (CFF) chưa hỗ trợ; dùng .ttf.'); if (sig === 0x774F4646) throw new Error('.woff cần giải nén bất đồng bộ (parseAsync).'); if (sig === 0x774F4632) throw new Error('.woff2 chưa hỗ trợ; dùng .ttf hoặc .woff.'); if (sig !== 0x00010000 && sig !== 0x74727565) throw new Error('Không phải TrueType (.ttf).');
+  var sig = d.getUint32(0); if (sig === 0x774F4646) throw new Error('.woff cần giải nén bất đồng bộ (parseAsync).'); if (sig === 0x774F4632) throw new Error('.woff2 chưa hỗ trợ; dùng .ttf hoặc .woff.'); var isCff = sig === 0x4F54544F; if (sig !== 0x00010000 && sig !== 0x74727565 && !isCff) throw new Error('Không phải TrueType/OpenType (.ttf/.otf).');
   n = d.getUint16(4); if (n > 64) throw new Error('Số bảng không hợp lệ.');
   for (i = 0; i < n; i++) { var o = 12 + i * 16; T[tag(d, o)] = { off: d.getUint32(o + 8), len: d.getUint32(o + 12) }; if (T[tag(d, o)].off + T[tag(d, o)].len > d.byteLength) throw new Error('Bảng phông hỏng.'); }
-  ['head', 'maxp', 'hhea', 'hmtx', 'cmap', 'loca', 'glyf'].forEach(function (k) { if (!T[k]) throw new Error('Thiếu bảng ' + k + ' (có thể là phông CFF/variable).'); });
-  f.T = T; f.upm = d.getUint16(T.head.off + 18) || 1000; f.locaLong = d.getInt16(T.head.off + 50) === 1; f.numGlyphs = d.getUint16(T.maxp.off + 4); f.nHM = d.getUint16(T.hhea.off + 34); f.asc = d.getInt16(T.hhea.off + 4); f.desc = d.getInt16(T.hhea.off + 6);
+  (isCff ? ['head', 'maxp', 'hhea', 'hmtx', 'cmap', 'CFF '] : ['head', 'maxp', 'hhea', 'hmtx', 'cmap', 'loca', 'glyf']).forEach(function (k) { if (!T[k]) throw new Error('Thiếu bảng ' + k + ' (có thể là phông CFF/variable).'); });
+  f.T = T; if (isCff) f.cff = readCff(d, T['CFF '].off, T['CFF '].len); f.upm = d.getUint16(T.head.off + 18) || 1000; f.locaLong = d.getInt16(T.head.off + 50) === 1; f.numGlyphs = d.getUint16(T.maxp.off + 4); f.nHM = d.getUint16(T.hhea.off + 34); f.asc = d.getInt16(T.hhea.off + 4); f.desc = d.getInt16(T.hhea.off + 6);
   f.cmap = readCmap(d, T.cmap); if (!f.cmap) throw new Error('Không đọc được bảng cmap (cần format 4 hoặc 12).');
   f.kern = readKern(d, T.kern); f.gpos = T.GPOS ? readGpos(d, T.GPOS.off) : null; return f;
 }
@@ -70,7 +70,97 @@ function gposPair(f, a, b) {
   } return 0;
 }
 function kernPair(f, a, b) { if (f.kern && f.kern[a * 65536 + b] !== undefined) return f.kern[a * 65536 + b]; return gposPair(f, a, b); }
+function cffIndex(d, o) {
+  var n = d.getUint16(o); if (!n) return { items: [], end: o + 2 };
+  var os = d.getUint8(o + 2), offs = [], i, j, v, base;
+  if (os < 1 || os > 4) throw new Error('CFF hỏng (offSize).');
+  for (i = 0; i <= n; i++) { v = 0; for (j = 0; j < os; j++) v = v * 256 + d.getUint8(o + 3 + i * os + j); offs.push(v); }
+  base = o + 3 + (n + 1) * os - 1; var items = [];
+  for (i = 0; i < n; i++) { if (offs[i + 1] < offs[i] || base + offs[i + 1] > d.byteLength) throw new Error('CFF hỏng (INDEX).'); items.push({ s: base + offs[i], e: base + offs[i + 1] }); }
+  return { items: items, end: base + offs[n] };
+}
+function cffDict(d, s, e) {
+  var ops = {}, st = [], p = s, b0, v;
+  while (p < e) {
+    b0 = d.getUint8(p++);
+    if (b0 <= 21) { var op = b0; if (b0 === 12) op = 1200 + d.getUint8(p++); ops[op] = st; st = []; }
+    else if (b0 === 28) { st.push(d.getInt16(p)); p += 2; }
+    else if (b0 === 29) { st.push(d.getInt32(p)); p += 4; }
+    else if (b0 === 30) { var str = '', nb, done = false; while (!done && p < e) { nb = d.getUint8(p++); [nb >> 4, nb & 15].forEach(function (q) { if (done) return; if (q === 15) done = true; else if (q === 10) str += '.'; else if (q === 11) str += 'E'; else if (q === 12) str += 'E-'; else if (q === 14) str += '-'; else if (q < 10) str += q; }); } st.push(parseFloat(str) || 0); }
+    else if (b0 >= 32 && b0 <= 246) st.push(b0 - 139);
+    else if (b0 >= 247 && b0 <= 250) { v = d.getUint8(p++); st.push((b0 - 247) * 256 + v + 108); }
+    else if (b0 >= 251 && b0 <= 254) { v = d.getUint8(p++); st.push(-(b0 - 251) * 256 - v - 108); }
+  }
+  return ops;
+}
+function readCff(d, off, len) {
+  if (d.getUint8(off) !== 1) throw new Error('Chỉ hỗ trợ CFF 1 (không phải CFF2).');
+  var hs = d.getUint8(off + 2), names = cffIndex(d, off + hs), tops = cffIndex(d, names.end), strs = cffIndex(d, tops.end), gs = cffIndex(d, strs.end);
+  if (!tops.items.length) throw new Error('CFF thiếu Top DICT.');
+  var top = cffDict(d, tops.items[0].s, tops.items[0].e);
+  if (top[1230]) throw new Error('Phông CFF dạng CID chưa hỗ trợ.');
+  if (top[1206] && top[1206][0] !== 2) throw new Error('Chỉ hỗ trợ charstring Type 2.');
+  if (!top[17]) throw new Error('CFF thiếu CharStrings.');
+  var cs = cffIndex(d, off + top[17][0]), c = { d: d, cs: cs.items, gsubrs: gs.items, lsubrs: [], defW: 0, nomW: 0 };
+  if (top[18] && top[18].length === 2) { var po = off + top[18][1], pd = cffDict(d, po, po + top[18][0]); c.defW = (pd[20] || [0])[0]; c.nomW = (pd[21] || [0])[0]; if (pd[19]) c.lsubrs = cffIndex(d, po + pd[19][0]).items; }
+  return c;
+}
+function bias(n) { return n < 1240 ? 107 : n < 33900 ? 1131 : 32768; }
+function glyphCff(f, gi) {
+  var c = f.cff; if (gi < 0 || gi >= c.cs.length) return [];
+  var d = c.d, st = [], x = 0, y = 0, nStems = 0, wDone = false, out = [], cur = null, steps = 0, done = false;
+  function wd(has) { if (!wd.d) { wd.d = true; if (has) st.shift(); } }
+  wd.d = false;
+  function close() { if (cur && cur.length > 1) out.push(cur); cur = null; }
+  function mv(dx, dy) { close(); x += dx; y += dy; cur = [{ x: x, y: y, on: true }]; }
+  function ln(dx, dy) { if (!cur) cur = [{ x: x, y: y, on: true }]; x += dx; y += dy; cur.push({ x: x, y: y, on: true }); }
+  function cv(a, b, c2, d2, e, g) { if (!cur) cur = [{ x: x, y: y, on: true }]; var x1 = x + a, y1 = y + b, x2 = x1 + c2, y2 = y1 + d2; x = x2 + e; y = y2 + g; cur.push({ x: x1, y: y1, on: false, cu: true }, { x: x2, y: y2, on: false, cu: true }, { x: x, y: y, on: true }); }
+  function run(s, e, depth) {
+    if (depth > 10) throw new Error('CFF: subr lồng quá sâu.');
+    var p = s, i, b0, a, n;
+    while (p < e && !done) {
+      if (++steps > 20000) throw new Error('CFF: charstring quá dài.');
+      b0 = d.getUint8(p++);
+      if (b0 === 28) { st.push(d.getInt16(p)); p += 2; continue; }
+      if (b0 >= 32 && b0 <= 246) { st.push(b0 - 139); continue; }
+      if (b0 >= 247 && b0 <= 250) { st.push((b0 - 247) * 256 + d.getUint8(p++) + 108); continue; }
+      if (b0 >= 251 && b0 <= 254) { st.push(-(b0 - 251) * 256 - d.getUint8(p++) - 108); continue; }
+      if (b0 === 255) { st.push(d.getInt32(p) / 65536); p += 4; continue; }
+      if (st.length > 96) throw new Error('CFF: ngăn xếp tràn.');
+      a = st;
+      switch (b0) {
+        case 1: case 3: case 18: case 23: wd(a.length % 2 === 1); nStems += a.length >> 1; st = []; break;
+        case 19: case 20: wd(a.length % 2 === 1); nStems += a.length >> 1; st = []; p += (nStems + 7) >> 3; break;
+        case 21: wd(a.length > 2); mv(a[0] || 0, a[1] || 0); st = []; break;
+        case 22: wd(a.length > 1); mv(a[0] || 0, 0); st = []; break;
+        case 4: wd(a.length > 1); mv(0, a[0] || 0); st = []; break;
+        case 5: for (i = 0; i + 1 < a.length; i += 2) ln(a[i], a[i + 1]); st = []; break;
+        case 6: case 7: { var hz = b0 === 6; for (i = 0; i < a.length; i++) { if (hz) ln(a[i], 0); else ln(0, a[i]); hz = !hz; } st = []; break; }
+        case 8: for (i = 0; i + 5 < a.length; i += 6) cv(a[i], a[i + 1], a[i + 2], a[i + 3], a[i + 4], a[i + 5]); st = []; break;
+        case 24: for (i = 0; i + 7 < a.length; i += 6) cv(a[i], a[i + 1], a[i + 2], a[i + 3], a[i + 4], a[i + 5]); ln(a[i], a[i + 1]); st = []; break;
+        case 25: for (i = 0; i + 7 < a.length; i += 2) ln(a[i], a[i + 1]); cv(a[i], a[i + 1], a[i + 2], a[i + 3], a[i + 4], a[i + 5]); st = []; break;
+        case 26: { i = 0; var dx1 = 0; if (a.length % 4) { dx1 = a[0]; i = 1; } for (; i + 3 < a.length; i += 4) { cv(dx1, a[i], a[i + 1], a[i + 2], 0, a[i + 3]); dx1 = 0; } st = []; break; }
+        case 27: { i = 0; var dy1 = 0; if (a.length % 4) { dy1 = a[0]; i = 1; } for (; i + 3 < a.length; i += 4) { cv(a[i], dy1, a[i + 1], a[i + 2], a[i + 3], 0); dy1 = 0; } st = []; break; }
+        case 30: case 31: { var h = b0 === 31; i = 0; while (i + 3 < a.length) { var last = a.length - i === 5, ex = last ? a[i + 4] : 0; if (h) cv(a[i], 0, a[i + 1], a[i + 2], ex, a[i + 3]); else cv(0, a[i], a[i + 1], a[i + 2], a[i + 3], ex); h = !h; i += last ? 5 : 4; } st = []; break; }
+        case 10: case 29: { var arr = b0 === 10 ? c.lsubrs : c.gsubrs; n = st.pop() + bias(arr.length); if (!arr[n]) throw new Error('CFF: subr không tồn tại.'); run(arr[n].s, arr[n].e, depth + 1); break; }
+        case 11: return;
+        case 14: wd(a.length === 1 || a.length === 5); close(); done = true; return;
+        case 12: {
+          var b1 = d.getUint8(p++);
+          if (b1 === 35 && a.length >= 12) { cv(a[0], a[1], a[2], a[3], a[4], a[5]); cv(a[6], a[7], a[8], a[9], a[10], a[11]); }
+          else if (b1 === 34 && a.length >= 7) { cv(a[0], 0, a[1], a[2], a[3], 0); cv(a[4], 0, a[5], -a[2], a[6], 0); }
+          else if (b1 === 36 && a.length >= 9) { cv(a[0], a[1], a[2], a[3], a[4], 0); cv(a[5], 0, a[6], a[7], a[8], -(a[1] + a[3] + a[7])); }
+          else if (b1 === 37 && a.length >= 11) { var sx = a[0] + a[2] + a[4] + a[6] + a[8], sy = a[1] + a[3] + a[5] + a[7] + a[9]; cv(a[0], a[1], a[2], a[3], a[4], a[5]); if (Math.abs(sx) > Math.abs(sy)) cv(a[6], a[7], a[8], a[9], a[10], -sy); else cv(a[6], a[7], a[8], a[9], -sx, a[10]); }
+          st = []; break;
+        }
+        default: st = [];
+      }
+    }
+  }
+  var g = c.cs[gi]; run(g.s, g.e, 0); close(); return out;
+}
 function glyph(f, gi, depth) {
+  if (f.cff) return glyphCff(f, gi);
   depth = depth || 0; if (depth > 4 || gi < 0 || gi >= f.numGlyphs) return []; var d = f.d, T = f.T, o0, o1;
   if (f.locaLong) { o0 = d.getUint32(T.loca.off + gi * 4); o1 = d.getUint32(T.loca.off + gi * 4 + 4); } else { o0 = d.getUint16(T.loca.off + gi * 2) * 2; o1 = d.getUint16(T.loca.off + gi * 2 + 2) * 2; }
   if (o1 <= o0) return []; var p = T.glyf.off + o0, nc = d.getInt16(p), i; p += 10;
@@ -83,6 +173,7 @@ function glyph(f, gi, depth) {
 }
 function advance(f, gi) { var i = Math.min(gi, f.nHM - 1); return f.d.getUint16(f.T.hmtx.off + i * 4); }
 function contourPath(c, tx, ty, sc, r) {
+  if (c.some(function (q) { return q.cu; })) { var P0 = function (q) { return r((tx + q.x * sc)) + ' ' + r((ty - q.y * sc)); }, dd = 'M' + P0(c[0]), k = 1; while (k < c.length) { if (c[k].cu && c[k + 1] && c[k + 2]) { dd += 'C' + P0(c[k]) + ' ' + P0(c[k + 1]) + ' ' + P0(c[k + 2]); k += 3; } else { dd += 'L' + P0(c[k]); k++; } } return dd + 'Z'; }
   var n = c.length; if (n < 2) return ''; var pts = [], i; for (i = 0; i < n; i++) { var a = c[i], b = c[(i + 1) % n]; pts.push(a); if (!a.on && !b.on) pts.push({ x: (a.x + b.x) / 2, y: (a.y + b.y) / 2, on: true }); }
   var st = pts.findIndex(function (q) { return q.on; }), P = function (q) { return r((tx + q.x * sc)) + ' ' + r((ty - q.y * sc)); }, d, m = pts.length;
   if (st < 0) return ''; var q0 = pts[st]; d = 'M' + P(q0); for (i = 1; i <= m; i++) { var q = pts[(st + i) % m]; if (q.on) { if (i === m) break; d += 'L' + P(q); } else { var nx = pts[(st + i + 1) % m]; d += 'Q' + P(q) + ' ' + P(nx); i++; } } return d + 'Z';
@@ -101,7 +192,7 @@ function toSvg(f, text, o) {
 function mount() {
   var page = document.getElementById('page-brand'); if (!page || page.querySelector('#cv118-card')) return false;
   var grid = page.querySelector('.grid.g2'), card = document.createElement('div'); card.className = 'card'; card.id = 'cv118-card'; card.style.marginBottom = '14px';
-  card.innerHTML = '<div class="cardTop"><h3>Wordmark outline (P118)</h3><span class="sub">chữ → đường viền SVG, có kerning</span></div><div class="row" style="gap:8px;flex-wrap:wrap;align-items:center"><input type="file" id="cv118-font" accept=".ttf,font/ttf" aria-label="Chọn phông .ttf"/><input class="input" id="cv118-text" value="AVATAR" maxlength="60" style="max-width:180px" aria-label="Chữ"/><label class="tiny">Tracking <input type="range" id="cv118-trk" min="-100" max="400" value="0" aria-label="Giãn chữ"></label><label class="tiny"><input type="checkbox" id="cv118-kern" checked> Kerning</label><button type="button" class="btn btn-soft sm" id="cv118-dl" disabled>Tải SVG</button><button type="button" class="btn btn-ghost sm" id="cv118-asset" disabled>Lưu vào thư viện</button></div><div id="cv118-prev" style="margin-top:8px;background:#fff;border-radius:8px;padding:8px;min-height:60px;overflow:auto"></div><div class="tiny" id="cv118-out" role="status" aria-live="polite">Chọn phông .ttf trên máy bạn (không tải lên đâu cả). .otf/.woff chưa hỗ trợ.</div>';
+  card.innerHTML = '<div class="cardTop"><h3>Wordmark outline (P118)</h3><span class="sub">chữ → đường viền SVG, có kerning</span></div><div class="row" style="gap:8px;flex-wrap:wrap;align-items:center"><input type="file" id="cv118-font" accept=".ttf,.otf,.woff,font/ttf,font/otf,font/woff" aria-label="Chọn phông .ttf"/><input class="input" id="cv118-text" value="AVATAR" maxlength="60" style="max-width:180px" aria-label="Chữ"/><label class="tiny">Tracking <input type="range" id="cv118-trk" min="-100" max="400" value="0" aria-label="Giãn chữ"></label><label class="tiny"><input type="checkbox" id="cv118-kern" checked> Kerning</label><button type="button" class="btn btn-soft sm" id="cv118-dl" disabled>Tải SVG</button><button type="button" class="btn btn-ghost sm" id="cv118-asset" disabled>Lưu vào thư viện</button></div><div id="cv118-prev" style="margin-top:8px;background:#fff;border-radius:8px;padding:8px;min-height:60px;overflow:auto"></div><div class="tiny" id="cv118-out" role="status" aria-live="polite">Chọn phông .ttf trên máy bạn (không tải lên đâu cả). .otf/.woff chưa hỗ trợ.</div>';
   (grid ? grid.parentNode.insertBefore(card, grid.nextSibling) : page.appendChild(card));
   var $ = function (s) { return card.querySelector(s); }, font = null, last = null;
   function render() { if (!font) return; try { last = toSvg(font, $('#cv118-text').value, { size: 120, tracking: Number($('#cv118-trk').value), kerning: $('#cv118-kern').checked }); $('#cv118-prev').innerHTML = last.svg; $('#cv118-dl').disabled = $('#cv118-asset').disabled = false; $('#cv118-out').textContent = last.width + '×' + last.height + ' · ' + (last.kerned ? 'có bảng kerning' : 'phông không có bảng kerning') + (last.missing ? ' · ' + last.missing + ' ký tự thiếu trong phông' : ''); } catch (e) { $('#cv118-out').textContent = String(e.message || e).slice(0, 140); } }
@@ -113,5 +204,5 @@ function mount() {
 }
 function ready() { try { mount(); } catch (e) {} }
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', ready, { once: true }); else ready();
-window.CVWordmarkP118 = { version: '118.2.0', parse: parse, parseAsync: parseAsync, layout: layout, glyph: glyph, kernPair: kernPair, toSvg: toSvg, mount: mount };
+window.CVWordmarkP118 = { version: '118.3.0', parse: parse, parseAsync: parseAsync, layout: layout, glyph: glyph, kernPair: kernPair, toSvg: toSvg, mount: mount };
 })();
