@@ -1,0 +1,15 @@
+name: CANVIO P119 lottie-web check
+on:
+  push:
+    paths: ['canvio-p119-easing.js', 'tests/p145/run-p119-lottie-web.py', '.github/workflows/canvio-lottie-web.yml']
+  workflow_dispatch:
+jobs:
+  lottie:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+      - run: npm i --no-save --no-package-lock lottie-web@5
+      - run: python3 -m venv /tmp/pw && /tmp/pw/bin/pip install playwright && /tmp/pw/bin/playwright install --with-deps chromium
+      - run: /tmp/pw/bin/python tests/p145/run-p119-lottie-web.py
