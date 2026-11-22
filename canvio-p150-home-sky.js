@@ -43,12 +43,16 @@ function css() {
   /* dải thẻ kính */
   S + ' #ws-cards{order:-2;margin:0 0 6px}',
   S + ' #ws-cards h3{color:#fff;font-weight:500;font-size:12px;letter-spacing:.14em;text-transform:uppercase;opacity:.92;text-shadow:0 1px 12px rgba(20,60,140,.3)}',
-  S + ' #ws-cards .ws-grid{display:flex!important;gap:12px;overflow-x:auto;padding:6px 2px 16px;scroll-snap-type:x proximity}',
-  S + ' #ws-cards .ws-grid>*{flex:0 0 clamp(210px,21vw,270px);scroll-snap-align:start;background:linear-gradient(160deg,rgba(255,255,255,.3),rgba(25,70,180,.34))!important;border:1px solid rgba(255,255,255,.6)!important;border-radius:22px!important;box-shadow:0 12px 36px rgba(10,40,120,.16)!important;backdrop-filter:blur(20px) saturate(1.3);-webkit-backdrop-filter:blur(20px) saturate(1.3);overflow:hidden;color:#fff;transition:transform .25s,background .25s}',
-  S + ' #ws-cards .ws-grid>*:hover{transform:translateY(-4px);background:rgba(255,255,255,.32)!important}',
-  S + ' #ws-cards .ws-grid>* *{color:inherit;background:transparent!important;text-shadow:0 1px 8px rgba(10,40,120,.35)}',
+  S + ' #ws-cards .ws-grid{display:flex!important;gap:14px;overflow-x:auto;padding:14px 4px 22px;scroll-snap-type:x proximity;perspective:1400px;cursor:grab;scrollbar-width:none;-webkit-overflow-scrolling:touch}',
+  S + ' #ws-cards .ws-grid::-webkit-scrollbar{display:none}',
+  S + ' #ws-cards .ws-grid.drag{cursor:grabbing;scroll-snap-type:none}',
+  S + ' #ws-cards .ws-grid.drag>*{pointer-events:none}',
+  S + ' #ws-cards .ws-grid>*{flex:0 0 clamp(220px,21vw,280px);scroll-snap-align:start;background:linear-gradient(160deg,rgba(255,255,255,.78),rgba(255,255,255,.5))!important;border:1px solid rgba(255,255,255,.9)!important;border-radius:22px!important;box-shadow:inset 0 1px 0 #fff,0 18px 44px rgba(10,40,120,.24)!important;backdrop-filter:blur(30px) saturate(1.7);-webkit-backdrop-filter:blur(30px) saturate(1.7);overflow:hidden;color:#0f2247;transform:rotateY(-7deg) rotateX(2deg);transform-origin:left center;transition:transform .3s,box-shadow .3s;user-select:none}',
+  S + ' #ws-cards .ws-grid>*:hover{transform:rotateY(0) rotateX(0) translateY(-4px)}',
+  S + ' #ws-cards .ws-grid>* *{color:inherit;background:transparent!important;text-shadow:none}',
   S + ' #ws-cards .ws-grid>*::before,' + S + ' #ws-cards .ws-grid>*::after{display:none!important}',
-  S + ' #ws-cards .ws-grid>* [class*=chip],' + S + ' #ws-cards .ws-grid>* [class*=tag],' + S + ' #ws-cards .ws-grid>* button{background:rgba(255,255,255,.24)!important;border:1px solid rgba(255,255,255,.5)!important;color:#fff!important;border-radius:999px!important}',
+  S + ' #ws-cards .ws-grid>* [class*=chip],' + S + ' #ws-cards .ws-grid>* [class*=tag],' + S + ' #ws-cards .ws-grid>* button{background:rgba(20,70,190,.1)!important;border:1px solid rgba(20,70,190,.18)!important;color:#1a3d8f!important;border-radius:999px!important}',
+  S + ' #ws-cards .ws-grid>* p,' + S + ' #ws-cards .ws-grid>* [class*=desc]{color:#3b4d75}',
   S + ' #cv150-word{order:-1;display:block;font-family:inherit;font-weight:200;font-size:clamp(80px,22vw,340px);line-height:.85;letter-spacing:-.055em;color:#fff;padding:0;margin:4px 0 clamp(18px,3vw,36px);user-select:none;pointer-events:none;text-shadow:0 6px 50px rgba(20,60,150,.18)}',
   /* phần còn lại: thẻ kính sáng, đọc rõ */
   S + ' #cvHero,' + S + ' #ws-jobs,' + S + ' #l43-recent,' + S + ' #cv-hub110,' + S + ' #cvux-home-launch,' + S + ' #cvhs-workflows,' + S + ' #ws-obc,' + S + ' #cvux-onboarding{background:rgba(255,255,255,.72)!important;border:1px solid rgba(255,255,255,.8)!important;border-radius:24px!important;box-shadow:0 18px 50px rgba(20,60,140,.16)!important;backdrop-filter:blur(22px) saturate(1.2);-webkit-backdrop-filter:blur(22px) saturate(1.2);color:#10203f;margin-bottom:18px}',
@@ -75,7 +79,15 @@ function toggleOutside() { /* ở chế độ cổ điển #cv150-sky bị ẩn 
   var b = document.getElementById('cv150-toggle'); if (b && b.parentNode && b.parentNode.id === 'cv150-sky' && get() === 'classic') document.body.appendChild(b);
   if (b && get() === 'sky' && b.parentNode === document.body) { var s = document.getElementById('cv150-sky'); if (s) s.appendChild(b); }
 }
-function init() { css(); if (!build()) return false; apply(); toggleOutside(); return true; }
+function drag() {
+  var g = document.querySelector('#ws-cards .ws-grid'); if (!g || g.__cv150) return; g.__cv150 = 1;
+  var down = false, sx = 0, sl = 0, moved = 0;
+  g.addEventListener('pointerdown', function (e) { if (e.pointerType === 'touch') return; down = true; moved = 0; sx = e.clientX; sl = g.scrollLeft; });
+  window.addEventListener('pointermove', function (e) { if (!down) return; var dx = e.clientX - sx; if (Math.abs(dx) > 4) { moved = 1; g.classList.add('drag'); } if (moved) g.scrollLeft = sl - dx; });
+  window.addEventListener('pointerup', function () { if (!down) return; down = false; setTimeout(function () { g.classList.remove('drag'); }, 0); });
+  g.addEventListener('click', function (e) { if (moved) { e.preventDefault(); e.stopPropagation(); moved = 0; } }, true);
+}
+function init() { css(); if (!build()) return false; drag(); apply(); toggleOutside(); return true; }
 var _set = set; set = function (v) { _set(v); toggleOutside(); };
 var tries = 0; (function loop() { if (init() || ++tries > 40) return; setTimeout(loop, 250); })();
 window.CVHomeSkyP150 = { version: '150.0.0', get: get, set: set, init: init };
