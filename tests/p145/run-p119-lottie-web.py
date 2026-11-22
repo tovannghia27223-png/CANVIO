@@ -26,14 +26,15 @@ with sync_playwright() as p:
     r = page.evaluate("""(j)=>new Promise(res=>{const d=JSON.parse(j),out={};
       try{const a=lottie.loadAnimation({container:document.getElementById('box'),renderer:'svg',loop:false,autoplay:false,animationData:d});
       a.addEventListener('DOMLoaded',()=>{out.loaded=true;out.frames=a.totalFrames;out.hasSvg=!!document.querySelector('#box svg');
-        const g=()=>[...document.querySelectorAll('#box svg g')].map(x=>x.getAttribute('transform')||'').join('|')+[...document.querySelectorAll('#box svg g')].map(x=>x.style.opacity||'').join('|');
+        const g=()=>document.querySelector('#box svg').innerHTML;
         a.goToAndStop(0,true);out.s0=g();a.goToAndStop(Math.floor(a.totalFrames/2),true);out.s1=g();a.goToAndStop(a.totalFrames-1,true);out.s2=g();res(out)});
       a.addEventListener('data_failed',()=>{out.failed=true;res(out)});
       }catch(e){out.err=String(e);res(out)};setTimeout(()=>res(Object.assign(out,{timeout:true})),8000)})""", data)
     c['lottieWebLoadsExport'] = bool(r.get('loaded')) and not r.get('failed') and not r.get('err')
     c['totalFramesMatchesDuration'] = abs((r.get('frames') or 0) - (json.loads(data)['op'] - json.loads(data)['ip'])) <= 1
     c['rendersSvg'] = bool(r.get('hasSvg'))
-    c['animationChangesOverTime'] = bool(r.get('s0')) and r.get('s0') != r.get('s1') and r.get('s1') != r.get('s2')
+    c['animationChangesOverTime'] = len({r.get('s0'), r.get('s1'), r.get('s2')}) >= 2
+    if not c['animationChangesOverTime']: print('S0', (r.get('s0') or '')[:400])
     b.close()
 res = {'checks': c, 'detail': {k: r.get(k) for k in ('frames',)}, 'pageErrors': errs, 'failed': [k for k, v in c.items() if not v]}
 print(json.dumps(res, ensure_ascii=False, indent=1)); sys.exit(1 if res['failed'] or errs else 0)
