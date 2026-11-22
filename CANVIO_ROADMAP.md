@@ -1130,3 +1130,8 @@ Hosted verification after the ffmpeg repair is complete:
 ## P124.5 — Hiển thị theo thiết bị cho phần tử đang chọn (2026-11-23)
 - Website Engine: ba ô "Hiện trên Desktop/Tablet/Mobile" + nút "Áp dụng hiển thị theo thiết bị" (`CVAutoLayoutP124.applyVisibilityToSelected`): ẩn phần tử bằng `display:none!important` trong đúng khoảng breakpoint (desktop > tablet, tablet giữa, mobile ≤ mobile), không chồng lấn, chặn ẩn cả ba, đặt `data-canvio-hide`, lưu qua `CV.engines.web.save`. Đọc breakpoint từ các ô responsive hiện có.
 - Kiểm: `run-p124-tests.cjs` (29 kiểm), `run-p124-browser.py` (22). Chưa chạy trên GrapesJS thật (test dùng adapter giả như các bước P124 trước).
+
+## P137.7 — Khung chữ liên kết trong Designer (2026-11-23)
+- `canvio-p137-frames.js` (CVFramesP137, lot `canvio-lot137f`): hàng "Khung chữ liên kết" trong thanh công cụ Designer. Chọn một khung chữ (Konva Text) → "Thêm khung kế tiếp" tạo khung mới cùng kiểu bên dưới (hoặc bên cạnh nếu hết chỗ) và chữ tràn khỏi khung trước tự chảy sang; "Chảy lại chữ" sau khi sửa chữ ở bất kỳ khung nào; "Gỡ liên kết" giữ nguyên chữ. Chữ tràn khỏi khung cuối được giữ ở `cvChainTail` (không mất), thông báo "còn chữ tràn". Đo bằng `Konva.Text.measureSize` cùng font/độ rộng với hiển thị.
+- Kiểm: `tests/p127/run-p137f-tests.cjs` (cắt dòng, mất chữ, đoạn, từ dài) và `tests/p145/run-p137f-browser.py` (Konva thật: 2→6 khung, không khung nào vượt sức chứa, sửa rồi chảy lại, gỡ liên kết).
+- Giới hạn: khung liên kết chọn qua một khung (Designer chỉ chọn một nút một lúc); chưa có liên kết giữa Designer và Poster cũ, chưa kéo đổi kích thước khung tự chảy (bấm "Chảy lại chữ").
