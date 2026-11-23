@@ -1138,3 +1138,10 @@ Hosted verification after the ffmpeg repair is complete:
 
 ## Công cụ kiểm tra GPU/ComfyUI một lần (2026-11-23)
 - `tools/canvio-gpu-check.html`: trang tự chứa, mở bằng Chrome/Edge trên máy có GPU. Đọc WebGL2/WebGPU (card, fallback phần mềm, shader-f16, giới hạn bộ đệm), chạy thử nhân ma trận WebGPU (GFLOPS, kiểm kết quả đúng), và (tùy chọn) gọi ComfyUI loopback `/system_stats` + `/object_info` để báo GPU/VRAM, node RIFE/ESRGAN/video, checkpoint. Chỉ chấp nhận địa chỉ 127.0.0.1/localhost, không gửi dữ liệu ra ngoài. Báo cáo JSON để dán lại làm bằng chứng nghiệm thu P120/P126.
+
+## P133.6 — Kho Tài nguyên dùng IndexedDB (2026-11-23)
+- Vấn đề: Asset Library lưu ảnh dạng dataURL trong localStorage (~5MB tổng, 40 mục, 5MB/tệp) nên "Bộ nhớ trình duyệt đã đầy" rất sớm.
+- `canvio-p133-asset-store.js` (CVAssetStoreP133, lot `canvio-lot133a`): bọc `LS.get/set/del('assets')` giữ nguyên API đồng bộ; mục ≥48KB lưu trong IndexedDB `CANVIO_ASSET_STORE`, localStorage chỉ giữ siêu dữ liệu (`store:1`). An toàn dữ liệu: mục mới giữ đủ trong localStorage tới khi IndexedDB xác nhận ghi (nếu localStorage đầy thì giữ ở bộ nhớ tạm + IndexedDB); tài nguyên cũ tự chuyển; xóa mục thì dọn IndexedDB; sau tải lại tự nạp và vẽ lại trang Tài nguyên.
+- Core: `window.LS = LS` ngay sau định nghĩa LS (trước đây `window.LS` chỉ là bản sao dự phòng nên module ngoài không thấy cùng đối tượng). Giới hạn nâng lên 25MB/tệp, 200 mục.
+- Kiểm: `tests/p145/run-p133a-browser.py` (12 ảnh ~1MB vượt quota, qua tải lại, xóa, di chuyển dữ liệu cũ, tài nguyên nhỏ ở lại localStorage, trang Tài nguyên vẽ được), smoke 21/21, P150/P133/P137 vẫn qua.
+- Chưa làm: Project Vault (kho khác), sao lưu JSON vẫn chứa dataURL đầy đủ (đúng như trước), nén ảnh.
