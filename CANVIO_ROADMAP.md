@@ -1175,3 +1175,7 @@ Hosted verification after the ffmpeg repair is complete:
 - Midnight: thẻ nền trắng cố định + chữ sáng (Creative Hub, Design System, KPI...) đổi sang nền tối cùng tông; nhãn trường sáng hơn. Tổng lỗi Midnight giảm ~50%.
 - File: `canvio-p147-contrast.css` (lot `canvio-lot147c`). Còn lại: một số mục sinh động/ẩn (opacity chuyển cảnh) báo giả; `data-theme=dark` kết hợp skin Graffiti vẫn là "nửa tối" (topbar tối, nội dung sáng) – dark thật dùng skin Midnight.
 - Icon/lệch: chip model (ArtCraft) và nút emoji ShotCraft có phần tử con tràn khỏi nút ≤ vài px (chưa sửa).
+
+## P148 — Đồng bộ màu sắc khi chuyển trang (2026-11-23)
+- Huy hiệu thông tin (badgeSoft, cv223-pill, badge, cv11-chip, cs-tag, gd-chip.ai, cv218 brand/violet) dùng chung token thương hiệu (nền `--brand-soft`, chữ `--brand-ink`), thay cho trộn hồng/chàm/tím; chip xanh "LOCAL" chữ `#0a7a55`.
+- Thanh trên cùng: các nút phụ dạng kính mờ trên nền tối; nút Xuất dùng gradient chính; select Studio cùng kiểu. Emoji ưu tiên dạng đơn sắc (`font-variant-emoji:text`). Chỉ trong skin Graffiti; lot `canvio-lot147c`.
