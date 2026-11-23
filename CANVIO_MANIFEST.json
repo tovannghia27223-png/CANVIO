@@ -2,11 +2,11 @@
   "format": "CANVIO_DELIVERY_MANIFEST",
   "schemaVersion": 2,
   "candidate": "23.3.111-github-runtime-ci",
-  "generatedAt": "2026-11-22T20:11:19.980Z",
+  "generatedAt": "2026-11-23T02:30:21.171Z",
   "hashAlgorithm": "SHA-256",
   "indexSha256": "44e7bec5829699fe4911ef1c2279a348a7ce02e5c92b474272bd402ceb9b51f3",
   "indexBytes": 5770928,
-  "fileCount": 319,
+  "fileCount": 320,
   "releaseCertified": false,
   "releaseStatus": "BLOCKED_PENDING_REAL_WORLD_ACCEPTANCE",
   "p70ManualGates": {
@@ -437,13 +437,13 @@
     },
     {
       "path": "CANVIO_ROADMAP.md",
-      "bytes": 140804,
-      "sha256": "5d2d860a0873b67696ab3bc895b216714109dbd4c34ada6078213bfb432af558"
+      "bytes": 141423,
+      "sha256": "ac2a7b76d6f0be7f641263a2067f94a657e75cfdc33863917e0c5ccfcaf9ec79"
     },
     {
       "path": "CANVIO_SESSION_SUMMARY_2026-11-21.md",
-      "bytes": 29342,
-      "sha256": "e7fd86a44015f01502c0e14a2c1fe82af98f82f988402e42883170e03fc66c87"
+      "bytes": 29815,
+      "sha256": "b6d4200bbccdb362c2fa4183aa7f18d1bdf8e5c19aca9511f363eadfd65d81fb"
     },
     {
       "path": "canvio-home-creative-flow.js",
@@ -857,8 +857,8 @@
     },
     {
       "path": "tests/hosted/hosted-runtime-report.json",
-      "bytes": 16376,
-      "sha256": "5381f38d83180cd1335d061471e57eb3edccf005b447eace1ba26ebf596a66bf"
+      "bytes": 16378,
+      "sha256": "24cb079797d270212395106265d09ab230743e0d1b8c1abc94d9c68aaf6ee59b"
     },
     {
       "path": "tests/hosted/integrated-source-contracts.cjs",
@@ -1183,7 +1183,7 @@
     {
       "path": "tests/p143/inline-source-inventory.json",
       "bytes": 417259,
-      "sha256": "fd010acc23d24b87e78facf51c60536c04102055f1930b592e3e65bdd12c063a"
+      "sha256": "20ae461d9184e58cdfbda10382fdec062e3bc24fbfeac7b953bcae81106a2e45"
     },
     {
       "path": "tests/p143/js-global-scanner.cjs",
@@ -1208,7 +1208,7 @@
     {
       "path": "tests/p143/style-template-loader-inventory.json",
       "bytes": 820048,
-      "sha256": "01118e6492ee154abc9f731e2edbe46e94855124c2ed7aee67eade5df187a503"
+      "sha256": "90a91ee1afe8d38dd886c70f58aa5674b9ed2c8a8e55e20277332012111657a7"
     },
     {
       "path": "tests/p143/verify-style-template-inventory.cjs",
@@ -1609,6 +1609,11 @@
       "path": "tests/p68-p70/verify-p68-p70-source.cjs",
       "bytes": 859,
       "sha256": "c2cd2a4bdc74ba47e25311c77c689c6d7567c668acdac74a5ec278d861b1a901"
+    },
+    {
+      "path": "tools/canvio-gpu-check.html",
+      "bytes": 12121,
+      "sha256": "0e2f4d8d3cc81be277bb70245aaa743c088587b03f7ed99a26f36b59c426b21f"
     }
   ]
 }
