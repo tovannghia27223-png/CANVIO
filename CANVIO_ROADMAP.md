@@ -1192,3 +1192,8 @@ Hosted verification after the ffmpeg repair is complete:
 - First hosted Chromium run confirmed PDF.js + worker loaded and the two-page PDF was opened, but the selector for page number remained disabled after load. This was a real UI defect, not a test-only issue.
 - Fixed `setBusy()` so the page selector is enabled only while a valid PDF is loaded and disabled during load/render/replacement. The import test now selects page 2 and awaits the existing Pixel canvas decode before checking its pixels.
 - Updated the P132.1 Node contract to assert the selector state contract. Re-run the complete hosted workflow before changing status from candidate.
+
+
+### P132.1 browser finding — invalid page error state (2026-11-23)
+- The next hosted Chromium run passed PDF open, page count and selector enablement, then found an early validation branch in `importPage()` rejected an out-of-range page without updating `role=status`.
+- Fixed both early failure paths (missing PDF and invalid page number) to announce the error before returning a rejected Promise. Added a matching Node contract assertion. Re-run complete CI; P132.1 remains candidate until it passes.
