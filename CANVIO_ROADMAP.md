@@ -1153,3 +1153,10 @@ Hosted verification after the ffmpeg repair is complete:
 
 ## P142 — đóng "không áp dụng" (2026-11-23)
 - Chủ dự án chỉ dùng Chrome và Brave (nhân Chromium, đã kiểm trên cả hai); không dùng Firefox/Safari. P142 (kiểm thật trên Safari/Firefox) đóng là không áp dụng; các lỗi tương thích đã biết vẫn ghi trong mục P142 cũ. Muốn mở lại: chạy bộ test trên Firefox/Safari và gửi kết quả.
+
+## P130 — Đồng bộ đám mây Supabase, mã hóa đầu-cuối (2026-11-23)
+- `canvio-p130-cloud.js` (+ lot `canvio-lot130c`, bản sao giống hệt), `supabase/canvio-schema.sql`, giao diện thẻ "Đồng bộ đám mây" trong trang Dự án của tôi (nút luôn hiện: Đăng nhập, Tạo tài khoản, Mở khóa, Đồng bộ ngay, Tải khóa dự phòng, Sao chép SQL).
+- Mô hình: Supabase Auth (email/mật khẩu) + cụm mật khẩu mã hóa riêng (PBKDF2-SHA256 600k vòng → AES-GCM 256, nén gzip trước khi mã hóa, AAD gắn khóa tài liệu). Máy chủ chỉ thấy bản mã; RLS `user_id = auth.uid()`; anon bị thu quyền.
+- Đồng bộ "bản mới hơn thắng" trên Project Vault; bản cục bộ bị thay được giữ trong `versions` (lý do `trước-khi-đồng-bộ`); không xóa gì ở hai phía. Chặn khóa service_role, chỉ nhận URL *.supabase.co hoặc loopback.
+- Test: `tests/p130/run-p130-tests.cjs` (33 kiểm tra, máy chủ giả `mock-supabase.cjs`: RLS, hoán đổi bản mã, hết hạn token, xác nhận email), `tests/p145/run-p130-browser.py` (2 hồ sơ Chrome, đồng bộ thật qua máy chủ giả). Cả hai đã vào CI.
+- Chưa kiểm với dự án Supabase thật (cần tài khoản của chủ dự án). Quên cụm mật khẩu và mất tệp khóa dự phòng = không khôi phục được.
