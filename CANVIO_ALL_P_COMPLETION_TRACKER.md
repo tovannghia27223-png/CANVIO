@@ -51,7 +51,7 @@
 | P131.1–P131.2 | Security hub, storage/key scan/redaction, SVG/HTML/CSS sanitizer and P66 SVG ingestion hardening integrated. | Generic hostile-format import paths and server response headers are not thereby secured. |
 | P131 export-boundary work | Shared redaction/sanitizer integrated for Print, Content Factory text exports and P73 Offline Website export. | Every remaining legacy/binary export must be inventoried; fail-closed ZIP quotas and server CSP/CORS/COOP/COEP/worker MIME headers need production-origin validation. |
 | P131.3 | Safe local HTML body-fragment import merged (PR #41); run #315: 31 Chromium checks, app smoke 21 checks across 48 routes, zero page errors. | Deliberately not a complete-page/site importer: stylesheets/scripts/forms/iframes/remote media/third-party runtimes are excluded; max 5 MiB. |
-| P132 | GIF89a timeline export and APNG export integrated. | GIF palette banding, large-file memory and real media need visual/device review; no audio. |
+| P132 | GIF/APNG/WebP timeline export is integrated. P132.1 local PDF selected-page → PNG → existing Pixel Atelier import is a candidate on `work/p132-pdf-import-20261123`; PDF.js is locally vendored with SHA manifest and Node/Chromium/P143 tests are wired into CI. | P132.1 awaits hosted acceptance; PDF import rasterizes (not editable vector/text). PPTX/PSD import, broad SVG import, large/complex PDF and real project review remain open. |
 | P132.3 | Animated WebP merged; run #304 validated RIFF/VP8X/ANIM/10 ANMF frames and Chromium decode 200×113. | No audio; alpha/color profile, real footage, mobile and long-animation memory/performance remain. |
 | P133 | P133.2/.3 proxy uses OffscreenCanvas Worker scaling with bounded frame handling and main-thread fallback; P133.4 hosted Chromium verifies OPFS write/read, proxy read, IDB→OPFS migration, metadata-failure rollback and (this PR) forced insufficient-quota fallback to IDB. | **Partial:** browser/OS termination during write, real device storage pressure, long-media migration and multi-device recovery remain open. |
 | P134 | Histogram/waveform/vectorscope scopes integrated and browser tested. | Real clip monitoring and colorist review remain; current view is based on the frame/canvas owner. |
@@ -354,3 +354,11 @@ PR #71 was closed as superseded by clean-main PR #73; the latter carries the cor
 - P143 has a 167-script inventory and a 187-edge heuristic boot-order artifact with two forward references. This is not a semantic dependency DAG or completion of Phase 3 source extraction.
 - P121, P122.3, P127 true-peak/real speech, P138 RNNoise/Piper and P142 hardware/browser matrix remain open. The focused matrix does not certify the entire historical P roadmap.
 - Release gate is unchanged: manifest `releaseCertified:false`, 14/14 real-world P70 gates pending, 0 passed.
+
+
+## P132.1 — PDF page import candidate (2026-11-23)
+
+- New owner `canvio-p132-pdf-import.js` / `canvio-lot132pdf` / `window.CVPdfImportP132` 132.1.0. It renders one selected PDF page as PNG and sends it through the existing Pixel Atelier `#pxFile` input and native pixel owner.
+- Local runtime: `pdfjs-dist@6.5.438`, pinned by `scripts/vendor-p132-pdf.sh`; PDF.js main/worker/CMaps/standard fonts are local, versioned and SHA-256 checked. License/notice retained.
+- Bounds: PDF ≤30 MiB, ≤500 pages, one page per import, ≤4096 px per side and ≤16 MP. `isEvalSupported:false`, XFA off. Unit + same-origin Chromium + P143 parity are pending hosted CI.
+- This is a raster import path, not editable PDF text/vector import. PPTX/PSD and other P132 formats remain separate; P132 is not closed by this increment.
