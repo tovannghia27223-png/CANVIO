@@ -4118,5 +4118,5 @@ Bài học P150: KHÔNG đặt `display:flex` lên `#page-home` mà không kèm 
 - These are static/heuristic ordering aids, not a semantic AST/data-flow graph or reviewed runtime dependency contract. Full Phase 3 staged extraction, dependency review, reversible rollback, CSP/PWA/offline and post-extraction app acceptance remain open.
 
 ### P129 / P70 release disposition
-- `CANVIO_P129_COVERAGE_MATRIX.md` is a focused acceptance matrix for the specific areas reconciled in the 2026-11-23 audit. It does not claim a complete global P1–P150 matrix.
+- `CANVIO_P129_COVERAGE_MATRIX.md` is a focused acceptance matrix for the 15 P items reconciled in the 2026-11-23 audit. It does not claim a complete global P1–P150 matrix.
 - Manifest remains `releaseCertified:false`, `BLOCKED_PENDING_REAL_WORLD_ACCEPTANCE`, with 14/14 P70 manual gates pending and 0 passed. Keep the fail-closed state until every real-world gate has evidence and sign-off.
