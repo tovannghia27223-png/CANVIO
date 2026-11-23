@@ -1160,3 +1160,8 @@ Hosted verification after the ffmpeg repair is complete:
 - Đồng bộ "bản mới hơn thắng" trên Project Vault; bản cục bộ bị thay được giữ trong `versions` (lý do `trước-khi-đồng-bộ`); không xóa gì ở hai phía. Chặn khóa service_role, chỉ nhận URL *.supabase.co hoặc loopback.
 - Test: `tests/p130/run-p130-tests.cjs` (33 kiểm tra, máy chủ giả `mock-supabase.cjs`: RLS, hoán đổi bản mã, hết hạn token, xác nhận email), `tests/p145/run-p130-browser.py` (2 hồ sơ Chrome, đồng bộ thật qua máy chủ giả). Cả hai đã vào CI.
 - Chưa kiểm với dự án Supabase thật (cần tài khoản của chủ dự án). Quên cụm mật khẩu và mất tệp khóa dự phòng = không khôi phục được.
+
+### P130.1 — Đồng bộ cả dữ liệu quan trọng khác (2026-11-23)
+- Ngoài Project Vault, đồng bộ mọi khóa `canvio*` trong localStorage (tài nguyên, ghi chú, thương hiệu, cài đặt...) dưới dạng "unit" mã hóa `x:k|khóa` hoặc `x:i|khóa|id` (mảng có `id` tách theo mục). Bỏ qua khóa tạm/theo thiết bị. Khóa API/token chỉ đồng bộ khi bật ô riêng (mặc định tắt).
+- Ba chiều theo băm lần đồng bộ trước; chỉ thêm/cập nhật, KHÔNG lan truyền việc xóa (mục xóa cục bộ được khôi phục từ đám mây). Xung đột: bản mới hơn thắng, bản thua lưu ở `canvio.p130.bak.<khóa>`. Tải lại trang sau khi kéo dữ liệu mới.
+- Test Node 41 kiểm tra; Chrome 13 kiểm tra; version 130.1.0.

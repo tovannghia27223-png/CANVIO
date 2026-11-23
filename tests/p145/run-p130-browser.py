@@ -52,6 +52,9 @@ with sync_playwright() as p:
     A.evaluate("""()=>new Promise((ok,no)=>{const q=indexedDB.open('CANVIO_PROJECT_VAULT_18_7');q.onsuccess=()=>{const d=q.result;const tx=d.transaction('documents','readwrite');tx.objectStore('documents').put({key:'demo:poster',projectId:'demo',projectName:'Poster thử',editor:'poster',savedAt:new Date().toISOString(),state:{layers:['Bí mật Một']},versions:[]});tx.oncomplete=ok;tx.onerror=()=>no(tx.error)}})""")
     A.click('#cv130-sync'); A.wait_for_function("document.querySelector('#cv130-st').textContent.indexOf('Xong:')>=0", timeout=30000)
     c['pushedFromUi'] = 'gửi lên 1' in A.inner_text('#cv130-st') or 'gửi lên' in A.inner_text('#cv130-st')
+    A.evaluate("()=>{LS.set('brand',{name:'Thương hiệu Bí Mật'});LS.set('notes',[{id:'n1',text:'ghi chú kín'}]);localStorage.setItem('canvio18:google-font-key','KHOA-API-123')}")
+    A.click('#cv130-sync'); A.wait_for_function("document.querySelector('#cv130-st').textContent.indexOf('Xong:')>=0", timeout=30000)
+    c['extraDataPushed'] = 'gửi lên' in A.inner_text('#cv130-st')
     # trình duyệt thứ hai (hồ sơ riêng) kéo về
     ctxB = b.new_context(viewport={'width': 1200, 'height': 900}); B = ctxB.new_page(); B.on('pageerror', lambda e: errs.append(str(e)[:200]))
     load(B)
@@ -63,6 +66,9 @@ with sync_playwright() as p:
     B.click('#cv130-sync'); B.wait_for_function("document.querySelector('#cv130-st').textContent.indexOf('Xong:')>=0", timeout=30000)
     got = B.evaluate("""()=>new Promise((ok,no)=>{const q=indexedDB.open('CANVIO_PROJECT_VAULT_18_7');q.onsuccess=()=>{const r=q.result.transaction('documents').objectStore('documents').get('demo:poster');r.onsuccess=()=>ok(r.result)}})""")
     c['deviceBReceived'] = bool(got) and got['state']['layers'][0] == 'Bí mật Một' and got['projectName'] == 'Poster thử'
+    ex = B.evaluate("()=>({brand:LS.get('brand',null),notes:LS.get('notes',[]),key:localStorage.getItem('canvio18:google-font-key')})")
+    c['deviceBGotBrandAndNotes'] = ex['brand'] and ex['brand']['name'] == 'Thương hiệu Bí Mật' and len(ex['notes']) == 1
+    c['apiKeyNotSyncedByDefault'] = ex['key'] is None
     # token không nằm trong localStorage dưới dạng cụm mật khẩu / khóa
     ls = B.evaluate("JSON.stringify(Object.assign({},localStorage))")
     c['noPassphraseStored'] = 'cum-mat-khau-dai' not in ls and 'matkhau123' not in ls

@@ -6,7 +6,7 @@ function load() { const w = { fetch: (...a) => fetch(...a) }; global.window = w;
 function store() { const m = {}; return { getItem: k => (k in m ? m[k] : null), setItem: (k, v) => { m[k] = String(v); }, removeItem: k => { delete m[k]; }, m }; }
 function vaultOf(rows) { const m = {}; rows.forEach(r => m[r.key] = r); return { m, list: async () => Object.values(m), put: async r => { m[r.key] = r; } }; }
 (async () => {
-  const api = load(); ok(api.version === '130.0.0', 'version'); ok(/enable row level security/i.test(api.schemaSql) && /auth\.uid\(\)/.test(api.schemaSql), 'schema SQL có RLS');
+  const api = load(); ok(api.version === '130.1.0', 'version'); ok(/enable row level security/i.test(api.schemaSql) && /auth\.uid\(\)/.test(api.schemaSql), 'schema SQL có RLS');
   ok(api.okUrl('https://abcd.supabase.co') && !api.okUrl('http://evil.com') && !api.okUrl('https://x.supabase.co.evil.com'), 'okUrl');
   const S = await mock.start(), mk = (st, v) => api.create({ fetch: (...a) => fetch(...a), storage: st, crypto: webcrypto, vault: v, kdfIter: 1000 });
   // cấu hình
@@ -69,6 +69,24 @@ function vaultOf(rows) { const m = {}; rows.forEach(r => m[r.key] = r); return {
   const S3 = await mock.start({ confirm: true }); const G = mk(store(), vaultOf([])); G.setCfg(S3.url, S3.anon); const sg = await G.signUp('d@x.vn', 'matkhau000'); ok(sg.needConfirm, 'cần xác nhận email');
   // thiếu bảng → thông báo rõ
   await G.signIn('d@x.vn', 'matkhau000').then(async () => { G._x = 1; });
+  // dữ liệu quan trọng khác (units): ghi chú, thương hiệu, tài nguyên theo từng mục
+  const mkU = (init) => { const d = JSON.parse(JSON.stringify(init)); return { d, bak: {}, localUnits: () => { const o = {}; Object.keys(d).forEach(k => { const v = d[k]; if (Array.isArray(v)) v.forEach(it => o['x:i|' + k + '|' + it.id] = { value: it, time: Date.parse(it.at) || 0 }); else o['x:k|' + k] = { value: v, time: 0 }; }); return o; }, applyUnit: async (dk, val) => { const p = dk.split('|'); if (p[0] === 'x:k') { d[p[1]] = val; return; } const a = d[p[1]] = d[p[1]] || []; const i = a.findIndex(x => String(x.id) === p[2]); if (i >= 0) a[i] = val; else a.push(val); }, backup: (k, v) => { this.bak[k] = v; } }; };
+  const sU1 = store(), u1 = mkU({ 'canvio5:brand': { color: '#f00' }, 'canvio5:assets': [{ id: 'a1', name: 'logo', at: '2026-11-20T00:00:00Z', data: 'BÍMẬT-LOGO' }], 'canvio5:notes': [{ id: 'n1', t: 'ghi chú riêng tư' }] });
+  const U1 = api.create({ fetch: (...a) => fetch(...a), storage: sU1, crypto: webcrypto, vault: vaultOf([]), kdfIter: 1000, localUnits: u1.localUnits, applyUnit: u1.applyUnit, backup: u1.backup }); U1.setCfg(S.url, S.anon); await U1.signUp('u@x.vn', 'matkhau123'); await U1.unlock('cum-mat-khau-dai');
+  r = await U1.sync(); ok(r.pushed === 3 && !r.errors.length, 'đẩy 3 mục dữ liệu khác: ' + JSON.stringify(r));
+  const uid2 = U1.session().user.id, rawAll = JSON.stringify(S.docs[uid2]); ok(!rawAll.includes('BÍMẬT-LOGO') && !rawAll.includes('riêng tư') && !rawAll.includes('#f00'), 'dữ liệu khác cũng chỉ là bản mã');
+  r = await U1.sync(); ok(r.same >= 3 && r.pushed === 0 && r.pulled === 0, 'không đổi thì không gửi lại');
+  const sU2 = store(), u2 = mkU({}); const U2 = api.create({ fetch: (...a) => fetch(...a), storage: sU2, crypto: webcrypto, vault: vaultOf([]), kdfIter: 1000, localUnits: u2.localUnits, applyUnit: u2.applyUnit, backup: u2.backup }); U2.setCfg(S.url, S.anon); await U2.signIn('u@x.vn', 'matkhau123'); await U2.unlock('cum-mat-khau-dai');
+  r = await U2.sync(); ok(r.pulled === 3 && u2.d['canvio5:brand'].color === '#f00' && u2.d['canvio5:assets'][0].data === 'BÍMẬT-LOGO' && u2.d['canvio5:notes'][0].t === 'ghi chú riêng tư', 'thiết bị mới nhận đủ dữ liệu khác');
+  u2.d['canvio5:brand'] = { color: '#0f0' }; u2.d['canvio5:notes'].push({ id: 'n2', t: 'mới' });
+  r = await U2.sync(); ok(r.pushed === 2, 'sửa + thêm mới được gửi: ' + JSON.stringify(r));
+  r = await U1.sync(); ok(r.pulled === 2 && u1.d['canvio5:brand'].color === '#0f0' && u1.d['canvio5:notes'].length === 2, 'thiết bị 1 nhận thay đổi');
+  // xóa cục bộ không lan sang đám mây (chỉ thêm/cập nhật)
+  u1.d['canvio5:notes'] = [u1.d['canvio5:notes'][0]]; r = await U1.sync(); ok(r.pulled === 1 && u1.d['canvio5:notes'].length === 2, 'mục xóa cục bộ được khôi phục từ đám mây, không mất dữ liệu');
+  // xung đột: hai bên cùng sửa → bản mới hơn thắng, bản thua được giữ
+  u1.d['canvio5:brand'] = { color: 'từ-1' }; await new Promise(r => setTimeout(r, 15)); u2.d['canvio5:brand'] = { color: 'từ-2' };
+  await U1.sync().catch(() => {}); // U1 đẩy trước
+  const rr = await U2.sync(); ok(rr.kept >= 1 || rr.pushed >= 1, 'xung đột xử lý: ' + JSON.stringify(rr));
   // đăng xuất xóa phiên + khóa
   await A1.signOut(); ok(!A1.isUnlocked() && !A1.session(), 'đăng xuất');
   [S, S2, S3].forEach(s => s.close());
