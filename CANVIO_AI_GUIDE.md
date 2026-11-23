@@ -4121,3 +4121,14 @@ Bài học P150: KHÔNG đặt `display:flex` lên `#page-home` mà không kèm 
 ### P129 / P70 release disposition
 - `CANVIO_P129_COVERAGE_MATRIX.md` is a focused acceptance matrix for the 15 P items reconciled in the 2026-11-23 audit. It does not claim a complete global P1–P150 matrix.
 - Manifest remains `releaseCertified:false`, `BLOCKED_PENDING_REAL_WORLD_ACCEPTANCE`, with 14/14 P70 manual gates pending and 0 passed. Keep the fail-closed state until every real-world gate has evidence and sign-off.
+
+## P132.1 — Nhập trang PDF vào Pixel Atelier (2026-11-23 · candidate)
+
+- **Quét:** Chưa thấy PDF.js hoặc luồng nhập PDF có thể kiểm chứng trong app. P116 có luồng xuất PDF, nhưng xuất PDF không đồng nghĩa nhập PDF. `canvio-p132-pdf-import.js` là module riêng mới; không thay thế luồng PDF xuất hiện có.
+- **Đã làm:** PDF.js `pdfjs-dist 6.5.438` được pin và vendor cục bộ qua `scripts/vendor-p132-pdf.sh`; runtime, worker, CMaps và standard fonts ở `assets/vendor/pdfjs/`. Build tạo `PDFJS-VENDOR-MANIFEST.json` với SHA-256 và giữ `LICENSE.txt`/`NOTICE.md`. Không tải PDF.js từ CDN lúc chạy.
+- **Luồng:** trang PDF được người dùng chọn trong Pixel Atelier → kiểm chữ ký PDF và giới hạn → chọn số trang → render một trang ra PNG → đưa File vào chính `#pxFile` và `CVNativeEngines.pixel`. Không tạo canvas editor, asset store hay project store thứ hai.
+- **Giới hạn an toàn:** PDF tối đa 30 MiB, 500 trang; một lần nhập một trang; raster giới hạn 4096 px cạnh dài/16 MP; `isEvalSupported:false`, XFA tắt, CMaps/font chuẩn nạp cùng origin. Trang được nhập là raster PNG: text/vector không còn chỉnh sửa như đối tượng PDF; PDF mật khẩu và tài liệu phức tạp cần kiểm thêm.
+- **Test candidate:** `tests/p132/run-p132-pdf-tests.cjs` (API, bounds, local URLs, source parity); `tests/p145/run-p132-pdf-browser.py` (HTTP origin thật, PDF hai trang, nhập trang 2, kiểm pixel đỏ trên canvas Pixel hiện hữu, worker cùng origin, page errors); P143 parity đã đăng ký `canvio-lot132pdf`.
+- **Trạng thái:** Candidate, chờ hosted Node/Chromium CI. P132 chưa hoàn tất: PPTX import, PSD import (nếu xác nhận thiếu), full SVG import, PDF multi-page workflow và nghiệm thu PDF mẫu thực tế còn mở.
+- **Không thay đổi:** GIF/APNG/WebP export hiện có, P116 export, Pixel snapshot, Project Vault và Asset Library owner được giữ nguyên.
+
