@@ -1186,3 +1186,9 @@ Hosted verification after the ffmpeg repair is complete:
 - **Trạng thái:** Candidate, chờ hosted Node/Chromium CI. P132 chưa hoàn tất: PPTX import, PSD import (nếu xác nhận thiếu), full SVG import, PDF multi-page workflow và nghiệm thu PDF mẫu thực tế còn mở.
 - **Không thay đổi:** GIF/APNG/WebP export hiện có, P116 export, Pixel snapshot, Project Vault và Asset Library owner được giữ nguyên.
 
+
+
+### P132.1 browser finding — page selector state (2026-11-23)
+- First hosted Chromium run confirmed PDF.js + worker loaded and the two-page PDF was opened, but the selector for page number remained disabled after load. This was a real UI defect, not a test-only issue.
+- Fixed `setBusy()` so the page selector is enabled only while a valid PDF is loaded and disabled during load/render/replacement. The import test now selects page 2 and awaits the existing Pixel canvas decode before checking its pixels.
+- Updated the P132.1 Node contract to assert the selector state contract. Re-run the complete hosted workflow before changing status from candidate.
