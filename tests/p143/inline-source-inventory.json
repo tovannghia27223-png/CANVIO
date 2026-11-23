@@ -1,17 +1,17 @@
 {
   "format": "CANVIO_P143_INLINE_SOURCE_INVENTORY",
   "version": 1,
-  "generatedAt": "2026-11-23T02:23:37.441Z",
+  "generatedAt": "2026-11-23T02:32:05.048Z",
   "source": "restored canonical index.html after hosted workflow integration steps",
   "purpose": "Complete script-tag inventory in browser execution order; known global reference detection is heuristic, not a semantic dependency DAG.",
-  "htmlBytes": 5770928,
-  "scriptTagCount": 165,
-  "inlineScriptCount": 165,
+  "htmlBytes": 5778000,
+  "scriptTagCount": 166,
+  "inlineScriptCount": 166,
   "externalScriptCount": 0,
   "moduleScriptCount": 0,
   "asyncScriptCount": 0,
   "deferScriptCount": 0,
-  "uniqueScriptIds": 162,
+  "uniqueScriptIds": 163,
   "duplicateScriptIds": [],
   "modules": [
     {
@@ -82,11 +82,12 @@
       "async": false,
       "defer": false,
       "noModule": false,
-      "bytes": 397366,
-      "sha256": "81831d5b6d5e7b83d4a7877ec52f60e8d74c6745e46ae2c55331b2fd9600f949",
+      "bytes": 397474,
+      "sha256": "3f9b382da2cf58cd959197d23827efdde17a0797f240d5bfa6fd19e098b04589",
       "exportedGlobals": [
         "CV",
         "CV190PosterSamples",
+        "LS",
         "__canvio10Keys"
       ],
       "globalDeclarations": [
@@ -147,209 +148,209 @@
             "name": "__canvio10Keys",
             "count": 1,
             "lines": [
-              3829
+              3830
             ]
           },
           {
             "name": "__cvImg",
             "count": 2,
             "lines": [
-              2828
+              2829
             ]
           },
           {
             "name": "__cvNeedLib",
             "count": 1,
             "lines": [
-              220
+              221
             ]
           },
           {
             "name": "addEventListener",
             "count": 2,
             "lines": [
-              1053,
-              3838
+              1054,
+              3839
             ]
           },
           {
             "name": "AudioContext",
             "count": 1,
             "lines": [
-              3539
+              3540
             ]
           },
           {
             "name": "confirm",
             "count": 2,
             "lines": [
-              3382
+              3383
             ]
           },
           {
             "name": "CV11",
             "count": 1,
             "lines": [
-              228
+              229
             ]
           },
           {
             "name": "CVAudioMix",
             "count": 1,
             "lines": [
-              3766
+              3767
             ]
           },
           {
             "name": "CVEasingP119",
             "count": 1,
             "lines": [
-              3430
+              3431
             ]
           },
           {
             "name": "CVHealth",
             "count": 1,
             "lines": [
-              3616
+              3617
             ]
           },
           {
             "name": "CVMediaOPFSP133",
             "count": 3,
             "lines": [
-              3395,
-              3421,
-              3422
+              3396,
+              3422,
+              3423
             ]
           },
           {
             "name": "CVPhotoTools",
             "count": 5,
             "lines": [
-              3459,
-              3463,
-              3465,
-              3472,
-              3477
+              3460,
+              3464,
+              3466,
+              3473,
+              3478
             ]
           },
           {
             "name": "CVWebsitePublishQC",
             "count": 1,
             "lines": [
-              3382
+              3383
             ]
           },
           {
             "name": "CVZip",
             "count": 1,
             "lines": [
-              2417
+              2418
             ]
           },
           {
             "name": "dispatchEvent",
             "count": 4,
             "lines": [
-              3825,
-              3849,
-              3851,
-              3862
+              3826,
+              3850,
+              3852,
+              3863
             ]
           },
           {
             "name": "grapesjs",
             "count": 1,
             "lines": [
-              3377
+              3378
             ]
           },
           {
             "name": "HRVisual",
             "count": 1,
             "lines": [
-              251
+              252
             ]
           },
           {
             "name": "indexedDB",
             "count": 2,
             "lines": [
-              3196,
-              3394
+              3197,
+              3395
             ]
           },
           {
             "name": "innerHeight",
             "count": 1,
             "lines": [
-              947
+              948
             ]
           },
           {
             "name": "Konva",
             "count": 3,
             "lines": [
-              3344,
-              3347,
-              3851
+              3345,
+              3348,
+              3852
             ]
           },
           {
             "name": "MediaRecorder",
             "count": 6,
             "lines": [
-              3248,
-              3720,
-              3729,
+              3249,
+              3721,
               3730,
-              3768,
-              3884
+              3731,
+              3769,
+              3885
             ]
           },
           {
             "name": "OfflineAudioContext",
             "count": 2,
             "lines": [
-              3539,
-              3582
+              3540,
+              3583
             ]
           },
           {
             "name": "open",
             "count": 1,
             "lines": [
-              2962
+              2963
             ]
           },
           {
             "name": "scrollTo",
             "count": 1,
             "lines": [
-              227
+              228
             ]
           },
           {
             "name": "webkitAudioContext",
             "count": 1,
             "lines": [
-              3539
+              3540
             ]
           },
           {
             "name": "webkitOfflineAudioContext",
             "count": 2,
             "lines": [
-              3539,
-              3582
+              3540,
+              3583
             ]
           },
           {
             "name": "Worker",
             "count": 1,
             "lines": [
-              3526
+              3527
             ]
           }
         ],
@@ -358,12 +359,12 @@
             "name": "CV",
             "count": 19,
             "lines": [
-              3370,
               3371,
               3372,
               3373,
-              3376,
-              3592
+              3374,
+              3377,
+              3593
             ]
           },
           {
@@ -373,26 +374,31 @@
               197,
               200,
               203,
-              1388,
               1389,
-              1401
+              1390,
+              1402
             ]
           }
         ],
         "writes": [
           {
+            "name": "LS",
+            "line": 205,
+            "kind": "window.property"
+          },
+          {
             "name": "CV190PosterSamples",
-            "line": 1223,
+            "line": 1224,
             "kind": "window.property"
           },
           {
             "name": "__canvio10Keys",
-            "line": 3829,
+            "line": 3830,
             "kind": "window.property"
           },
           {
             "name": "CV",
-            "line": 3889,
+            "line": 3890,
             "kind": "window.property"
           }
         ],
@@ -15337,6 +15343,89 @@
     },
     {
       "order": 141,
+      "id": "canvio-lot133a",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 6925,
+      "sha256": "f38878f49d4cca47c320dbcc0b613b5b54302d616d45d6f41459070d6033e7db",
+      "exportedGlobals": [
+        "CVAssetStoreP133"
+      ],
+      "globalDeclarations": [],
+      "globalPropertyReads": [
+        "CV",
+        "CVAssetStoreP133",
+        "indexedDB"
+      ],
+      "knownGlobalReads": [
+        "CV",
+        "LS"
+      ],
+      "globalReferenceEvidence": {
+        "propertyReads": [
+          {
+            "name": "CV",
+            "count": 1,
+            "lines": [
+              77
+            ]
+          },
+          {
+            "name": "CVAssetStoreP133",
+            "count": 1,
+            "lines": [
+              8
+            ]
+          },
+          {
+            "name": "indexedDB",
+            "count": 1,
+            "lines": [
+              14
+            ]
+          }
+        ],
+        "knownReads": [
+          {
+            "name": "CV",
+            "count": 3,
+            "lines": [
+              77
+            ]
+          },
+          {
+            "name": "LS",
+            "count": 8,
+            "lines": [
+              47,
+              48,
+              49,
+              50,
+              59,
+              60
+            ]
+          }
+        ],
+        "writes": [
+          {
+            "name": "CVAssetStoreP133",
+            "line": 83,
+            "kind": "window.property"
+          }
+        ],
+        "scannerLimitations": [
+          "Template literal bodies and interpolation expressions are skipped as one lexical region.",
+          "Destructured globals, alias flow, computed property names, eval and dynamically assembled identifiers are not resolved.",
+          "Top-level bindings are detected only for simple var/let/const/function/class declarations.",
+          "This scanner is lexical evidence, not a JavaScript AST or proof of runtime data flow."
+        ]
+      }
+    },
+    {
+      "order": 142,
       "id": "canvio-lot131",
       "type": "classic",
       "src": null,
@@ -15455,7 +15544,7 @@
       }
     },
     {
-      "order": 142,
+      "order": 143,
       "id": "canvio-lot115",
       "type": "classic",
       "src": null,
@@ -15515,7 +15604,7 @@
       }
     },
     {
-      "order": 143,
+      "order": 144,
       "id": "canvio-lot1222",
       "type": "classic",
       "src": null,
@@ -15593,7 +15682,7 @@
       }
     },
     {
-      "order": 144,
+      "order": 145,
       "id": "canvio-lot127k",
       "type": "classic",
       "src": null,
@@ -15679,7 +15768,7 @@
       }
     },
     {
-      "order": 145,
+      "order": 146,
       "id": "canvio-lot1452",
       "type": "classic",
       "src": null,
@@ -15777,7 +15866,7 @@
       }
     },
     {
-      "order": 146,
+      "order": 147,
       "id": "canvio-lot1454b",
       "type": "classic",
       "src": null,
@@ -15837,7 +15926,7 @@
       }
     },
     {
-      "order": 147,
+      "order": 148,
       "id": "canvio-lot1454",
       "type": "classic",
       "src": null,
@@ -15947,7 +16036,7 @@
       }
     },
     {
-      "order": 148,
+      "order": 149,
       "id": "canvio-lot1252",
       "type": "classic",
       "src": null,
@@ -16015,7 +16104,7 @@
       }
     },
     {
-      "order": 149,
+      "order": 150,
       "id": "canvio-lot1455",
       "type": "classic",
       "src": null,
@@ -16075,7 +16164,7 @@
       }
     },
     {
-      "order": 150,
+      "order": 151,
       "id": "canvio-lot1272",
       "type": "classic",
       "src": null,
@@ -16153,7 +16242,7 @@
       }
     },
     {
-      "order": 151,
+      "order": 152,
       "id": "canvio-lot1456",
       "type": "classic",
       "src": null,
@@ -16213,7 +16302,7 @@
       }
     },
     {
-      "order": 152,
+      "order": 153,
       "id": "canvio-lot1457",
       "type": "classic",
       "src": null,
@@ -16273,7 +16362,7 @@
       }
     },
     {
-      "order": 153,
+      "order": 154,
       "id": "canvio-lot1458",
       "type": "classic",
       "src": null,
@@ -16333,7 +16422,7 @@
       }
     },
     {
-      "order": 154,
+      "order": 155,
       "id": "canvio-lot145910",
       "type": "classic",
       "src": null,
@@ -16437,7 +16526,7 @@
       }
     },
     {
-      "order": 155,
+      "order": 156,
       "id": "canvio-lot134r",
       "type": "classic",
       "src": null,
@@ -16497,7 +16586,7 @@
       }
     },
     {
-      "order": 156,
+      "order": 157,
       "id": "canvio-lot124",
       "type": "classic",
       "src": null,
@@ -16582,7 +16671,7 @@
       }
     },
     {
-      "order": 157,
+      "order": 158,
       "id": "canvio-lot133p",
       "type": "classic",
       "src": null,
@@ -16668,7 +16757,7 @@
       }
     },
     {
-      "order": 158,
+      "order": 159,
       "id": "canvio-lot135a",
       "type": "classic",
       "src": null,
@@ -16702,7 +16791,7 @@
       }
     },
     {
-      "order": 159,
+      "order": 160,
       "id": "canvio-lot133m",
       "type": "classic",
       "src": null,
@@ -16788,7 +16877,7 @@
       }
     },
     {
-      "order": 160,
+      "order": 161,
       "id": "canvio-lot139",
       "type": "classic",
       "src": null,
@@ -16814,7 +16903,7 @@
       }
     },
     {
-      "order": 161,
+      "order": 162,
       "id": "canvio-lot120126",
       "type": "classic",
       "src": null,
@@ -16903,7 +16992,7 @@
       }
     },
     {
-      "order": 162,
+      "order": 163,
       "id": "canvio-lot119v",
       "type": "classic",
       "src": null,
@@ -16929,7 +17018,7 @@
       }
     },
     {
-      "order": 163,
+      "order": 164,
       "id": "canvio-lot119w",
       "type": "classic",
       "src": null,
@@ -16955,7 +17044,7 @@
       }
     },
     {
-      "order": 164,
+      "order": 165,
       "id": "canvio-lot146",
       "type": "classic",
       "src": null,
