@@ -193,11 +193,11 @@ function importPage() {
     setStatus('Đã đưa trang ' + pageNumber + ' vào Pixel Atelier (' + result.width + ' × ' + result.height + ' PNG). Chữ PDF đã được raster hóa.');
     return { ok: true, page: pageNumber, width: result.width, height: result.height, fileName: file.name, bytes: file.size };
   }).catch(function (error) {
-    setStatus(error && error.message || 'Không nhập được trang PDF.', true);
+    if (thisJob === jobId) setStatus(error && error.message || 'Không nhập được trang PDF.', true);
     throw error;
   }).finally(function () {
     renderCanvas.width = 0; renderCanvas.height = 0;
-    setBusy(false);
+    if (thisJob === jobId) setBusy(false);
   });
 }
 function mount() {
