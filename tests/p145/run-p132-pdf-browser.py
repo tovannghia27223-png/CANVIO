@@ -8,6 +8,7 @@ import shutil
 import socketserver
 import sys
 import threading
+from pathlib import Path
 from playwright.sync_api import sync_playwright
 
 ROOT=Path(__file__).resolve().parents[2]
