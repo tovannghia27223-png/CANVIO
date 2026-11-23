@@ -12,8 +12,7 @@ on:
       - work/p125-2-scroll-storyboard
       - work/p125-4-rebased-20261121
       - work/p145-asset-library-rebased-20261121
-      - work/p132-apng
-      - main
+workflow branch      - main
   pull_request:
     branches:
       - main
@@ -540,8 +539,7 @@ jobs:
           console.log('P132 GIF + APNG encoder integrated');
           NODE
 
-      - name: Integrate P127.2 caption-guided talking-head director
-        shell: bash
+P132.1 integration step        shell: bash
         run: |
           set -euo pipefail
           node <<'NODE'
@@ -623,8 +621,7 @@ jobs:
           console.log('P85 vendor manifest SHA verified:',m.files.length,'files');
           NODE
 
-      - name: Integrate P119.3 shared presets with canonical Video Engine keyframes
-        shell: bash
+vendor step insertion        shell: bash
         run: |
           set -euo pipefail
           node <<'NODE'
@@ -699,7 +696,7 @@ jobs:
           set -euo pipefail
           node scripts/extract-integrated-modules.mjs
           node tests/p146/run-p146-tests.cjs
-          for file in canvio-p74-p81-three-viewer.js canvio-p85-studio.js canvio-p102-background-removal.js canvio-p105-p107-depth-parallax.js canvio-p68-p70.js canvio-p72-glb-viewer.js canvio-p73-offline-site.js canvio-p82-p84-vector-pdf.js canvio-p87-cv-docx.js canvio-p90-p96.js canvio-p97-p101.js canvio-p104.js canvio-p127-duck.js canvio-p145-shader.js canvio-p119-video.js canvio-p119-website.js assets/canvio-rmbg-worker.js assets/canvio-depth-worker.js assets/canvio-whisper-worker.js; do node --check "$file"; done
+          for file in canvio-p74-p81-three-viewer.js canvio-p85-studio.js canvio-p102-background-removal.js canvio-p105-p107-depth-parallax.js canvio-p68-p70.js canvio-p72-glb-viewer.js canvio-p73-offline-site.js canvio-p82-p84-vector-pdf.js canvio-p87-cv-docx.js canvio-p90-p96.js canvio-p97-p101.js canvio-p104.js canvio-p127-duck.js canvio-p145-shader.js canvio-p119-video.js canvio-p119-website.js assets/canvio-rmbg-worker.js assets/canvio-depth-worker.js P132.1 syntax check "$file"; done
 
       - name: P143 standalone source and canonical lot parity audit
         shell: bash
@@ -809,8 +806,7 @@ jobs:
           node tests/p145/run-p1457-tests.cjs
           node tests/p145/run-p1458-tests.cjs
           node tests/p145/run-p145910-tests.cjs
-          node tests/p127/run-p132g-tests.cjs
-          node tests/p127/run-p145s-tests.cjs
+P132.1 node test          node tests/p127/run-p145s-tests.cjs
           node tests/p145/run-p1452-tests.cjs
           node tests/p145/run-p1454b-tests.cjs
           node tests/p145/run-p1454-tests.cjs
@@ -886,8 +882,7 @@ jobs:
           /tmp/canvio-playwright/bin/python tests/p145/run-p1457-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p1458-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p145910-browser.py
-          /tmp/canvio-playwright/bin/python tests/p127/run-p132g-browser.py
-          /tmp/canvio-playwright/bin/python tests/p145/run-p145s-browser.py
+P132.1 chromium test          /tmp/canvio-playwright/bin/python tests/p145/run-p145s-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p1452-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p1454b-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p1454-browser.py
