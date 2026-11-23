@@ -11,7 +11,19 @@ body.cv229-theme-midnight .seg button,body.cv229-theme-midnight .field>label,bod
 /* P148 · Đồng bộ màu: huy hiệu thông tin dùng chung một tông thương hiệu; thanh trên cùng nhất quán; icon emoji ưu tiên dạng đơn sắc. */
 body.cv229-theme-graffiti :is(.badgeSoft,.cv223-pill,.badge,.cv11-chip,.cs-tag,.gd-chip.ai,.cv218-chip.brand,.cv218-chip.violet){background:var(--brand-soft,#f2eaff)!important;color:var(--brand-ink,#5a2db0)!important;border-color:var(--brand-line,#e1d2ff)!important}
 body.cv229-theme-graffiti .cv97-pill{color:#0a7a55!important}
-html body.cv229-theme-graffiti :is(#ws-export,.top .btn-primary){background-size:100% 100%!important;background:var(--grad)!important;color:#fff!important;border-color:transparent!important;font-weight:800}
+html[data-skin] body.cv229-theme-graffiti :is(#ws-export,.top .btn-primary){background-size:100% 100%!important;background:var(--grad)!important;color:#fff!important;border-color:transparent!important;font-weight:800}
 body.cv229-theme-graffiti .top :is(.btn:not(.btn-primary),#ws-cmdbtn,#ws-obbtn,.sh-tb,select,button:not(#ws-export):not(.menuBtn):not(.railBtn)){background:rgba(255,255,255,.1)!important;color:#eef0fa!important;border:1px solid rgba(255,255,255,.2)!important;box-shadow:none!important}
 body.cv229-theme-graffiti .top select option{color:#10182a;background:#fff}
 body.cv229-theme-graffiti{font-variant-emoji:text}
+
+/* P149 · Hoàn thiện: nút nổi không che thanh chọn skin; nút/thẻ chứa nội dung dài không tràn khỏi khung; đồng bộ màu cho Midnight. */
+html[data-home-skin] #cv150-skins{right:62px!important}
+body.cv229-theme-midnight :is(.badgeSoft,.cv223-pill,.badge,.cv11-chip,.cs-tag,.gd-chip.ai,.cv218-chip.brand,.cv218-chip.violet){background:rgba(139,128,255,.16)!important;color:#cbc6ff!important;border-color:rgba(139,128,255,.38)!important}
+body.cv229-theme-midnight .cv97-pill{color:#4ade9f!important}
+body.cv229-theme-midnight .top :is(.btn:not(.btn-primary),#ws-cmdbtn,#ws-obbtn,.sh-tb,select){background:rgba(255,255,255,.08)!important;color:#e5ebf7!important;border:1px solid rgba(255,255,255,.18)!important;box-shadow:none!important}
+body.cv229-theme-midnight .top select option{color:#10182a;background:#fff}
+body.cv229-theme-midnight{font-variant-emoji:text}
+body :is(.btn,button):is(:has(>div),:has(>small),:has(>.tiny),:has(>b+.tiny),[id^="ac-model-"],#page-shotcraft .btn:has(>span+span)){height:auto!important;min-height:30px;white-space:normal;overflow:visible;text-overflow:clip;max-width:100%;min-width:0}
+body :is(.btn,button):is(:has(>div),:has(>small),:has(>.tiny),:has(>b+.tiny)):not(.btn-icon){flex-direction:column;align-items:flex-start;text-align:left}
+#page-templates .btn.sm,#page-responsive .btn.sm,#page-assets .btn.btn-ghost{overflow:visible;text-overflow:clip;min-width:max-content}
+#page-assets .btn.btn-ghost:has(>.tiny){min-width:0}

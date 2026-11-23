@@ -1179,3 +1179,8 @@ Hosted verification after the ffmpeg repair is complete:
 ## P148 — Đồng bộ màu sắc khi chuyển trang (2026-11-23)
 - Huy hiệu thông tin (badgeSoft, cv223-pill, badge, cv11-chip, cs-tag, gd-chip.ai, cv218 brand/violet) dùng chung token thương hiệu (nền `--brand-soft`, chữ `--brand-ink`), thay cho trộn hồng/chàm/tím; chip xanh "LOCAL" chữ `#0a7a55`.
 - Thanh trên cùng: các nút phụ dạng kính mờ trên nền tối; nút Xuất dùng gradient chính; select Studio cùng kiểu. Emoji ưu tiên dạng đơn sắc (`font-variant-emoji:text`). Chỉ trong skin Graffiti; lot `canvio-lot147c`.
+
+## P149 — Hoàn thiện đồng bộ màu & icon (2026-11-23)
+- Nút Xuất thanh trên cùng dùng gradient chính (thắng skin Holo); nút nổi đổi giao diện không còn che thanh chọn skin trang chủ.
+- Nút nhiều dòng (chọn model ArtCraft, mẫu Assets/AutoDesign/WebEngine, ShotCraft) tự cao theo nội dung, không tràn khung; "Dùng"/"Xuất" ở Templates/Responsive không bị cắt chữ.
+- Midnight: huy hiệu, nút thanh trên cùng, emoji đơn sắc cùng kiểu Graffiti. Còn lại: ô checkbox "Bloom" (VideoEngine) lệch trái 39px là thiết kế ô tùy biến, chưa đổi. Lot `canvio-lot147c`.
