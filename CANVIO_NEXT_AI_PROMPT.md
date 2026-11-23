@@ -233,7 +233,7 @@ Chỉ kiểm bằng tín hiệu/tệp tổng hợp và Chromium headless; chưa 
 
 - Share CVEasingP119.PRESETS and Motion cubic-Bezier with the existing P47 Website Motion Builder. Apply only via existing selected GrapesJS component and Website Engine save/export handlers; do not create a second timeline/store.
 - Accept only canonical cubic-bezier from CVEasingP119.css(); do not treat spring linear() as Bezier.
-- Re-run Node, Chromium and P143 34-pair parity. Manual authored-project, published-host CSP/headers, keyboard/screen-reader and physical-device acceptance remain open.
+- Re-run Node, Chromium and P143 35-pair parity. Manual authored-project, published-host CSP/headers, keyboard/screen-reader and physical-device acceptance remain open.
 
 
 ## P146.1 Home Guided Creative Workflows — follow-up scope
