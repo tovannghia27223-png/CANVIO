@@ -9,7 +9,10 @@ import socketserver
 import sys
 import threading
 from pathlib import Path
+import mimetypes
 from playwright.sync_api import sync_playwright
+
+mimetypes.add_type('text/javascript', '.mjs')
 
 ROOT=Path(__file__).resolve().parents[2]
 CHROME=os.environ.get('CHROME_BIN') or shutil.which('google-chrome') or shutil.which('chromium')
