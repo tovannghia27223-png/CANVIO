@@ -367,3 +367,7 @@ PR #71 was closed as superseded by clean-main PR #73; the latter carries the cor
 ### P132.1 browser finding and correction (2026-11-23)
 - The first hosted browser run opened the local PDF but found the page-number input stayed disabled. `setBusy()` now enables it only after a valid PDF is loaded, then disables it again during import/replacement.
 - Updated Node contract checks the page-selector state; Chromium test awaits the existing Pixel canvas decode before checking page-2 pixels. Latest full CI result is still pending.
+
+
+### P132.1 second browser finding (2026-11-23)
+- The second Chromium run passed the PDF load and selector activation checks, then caught that an out-of-range page returned a rejected Promise before setting the live status text. Fixed the early validation paths to announce the error; unit contract added. Latest rerun is pending.
