@@ -12,7 +12,9 @@ on:
       - work/p125-2-scroll-storyboard
       - work/p125-4-rebased-20261121
       - work/p145-asset-library-rebased-20261121
-workflow branch      - main
+      - work/p132-apng
+      - work/p132-pdf-import-20261123
+      - main
   pull_request:
     branches:
       - main
@@ -539,7 +541,24 @@ jobs:
           console.log('P132 GIF + APNG encoder integrated');
           NODE
 
-P132.1 integration step        shell: bash
+      - name: Integrate P132.1 local PDF page import into Pixel Atelier
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs=require('node:fs'),file='index.html',id='canvio-lot132pdf';
+          let html=fs.readFileSync(file,'utf8'),source=fs.readFileSync('canvio-p132-pdf-import.js','utf8').trim();
+          if(!source.includes("version:'132.1.0'")||!source.includes('window.CVPdfImportP132'))throw new Error('P132.1 source contract missing');
+          const open='<script id="'+id+'">',close='</script>',tag=open+'\\n'+source+'\\n'+close,pos=html.indexOf(open);
+          if(pos>=0){const end=html.indexOf(close,pos);if(end<0)throw new Error('P132.1 embedded lot is not closed');html=html.slice(0,pos)+tag+html.slice(end+close.length);}
+          else{const at=html.lastIndexOf('</body>');if(at<0)throw new Error('P132.1 closing body tag missing');html=html.slice(0,at)+tag+'\\n'+html.slice(at);}
+          if((html.match(/id="canvio-lot132pdf"/g)||[]).length!==1)throw new Error('P132.1 duplicate or missing inline lot');
+          fs.writeFileSync(file,html,'utf8');
+          console.log('P132.1 local PDF page import integrated into Pixel Atelier');
+          NODE
+
+      - name: Integrate P127.2 caption-guided talking-head director
+        shell: bash
         run: |
           set -euo pipefail
           node <<'NODE'
@@ -621,7 +640,23 @@ P132.1 integration step        shell: bash
           console.log('P85 vendor manifest SHA verified:',m.files.length,'files');
           NODE
 
-vendor step insertion        shell: bash
+      - name: Provision pinned local PDF.js for P132 PDF import
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash -n scripts/vendor-p132-pdf.sh
+          if ! test -s assets/vendor/pdfjs/PDFJS-VENDOR-MANIFEST.json; then bash scripts/vendor-p132-pdf.sh; fi
+          node <<'NODE'
+          const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
+          const root='assets/vendor/pdfjs',manifest=JSON.parse(fs.readFileSync(path.join(root,'PDFJS-VENDOR-MANIFEST.json'),'utf8'));
+          if(manifest.format!=='CANVIO_PDFJS_VENDOR_MANIFEST'||manifest.version!=='6.5.438'||manifest.license!=='Apache-2.0'||!Array.isArray(manifest.files)||!manifest.files.length)throw new Error('P132 PDF.js manifest invalid or version drift');
+          for(const e of manifest.files){const b=fs.readFileSync(path.join(root,e.path));if(b.length!==e.bytes||crypto.createHash('sha256').update(b).digest('hex')!==e.sha256)throw new Error('P132 PDF.js SHA mismatch: '+e.path);}
+          for(const f of ['pdf.mjs','pdf.worker.mjs','LICENSE.txt','cmaps','standard_fonts'])if(!fs.existsSync(path.join(root,f)))throw new Error('P132 PDF.js required asset missing: '+f);
+          console.log('P132 PDF.js 6.5.438 local vendor manifest SHA verified:',manifest.files.length,'files');
+          NODE
+
+      - name: Integrate P119.3 shared presets with canonical Video Engine keyframes
+        shell: bash
         run: |
           set -euo pipefail
           node <<'NODE'
@@ -696,7 +731,7 @@ vendor step insertion        shell: bash
           set -euo pipefail
           node scripts/extract-integrated-modules.mjs
           node tests/p146/run-p146-tests.cjs
-          for file in canvio-p74-p81-three-viewer.js canvio-p85-studio.js canvio-p102-background-removal.js canvio-p105-p107-depth-parallax.js canvio-p68-p70.js canvio-p72-glb-viewer.js canvio-p73-offline-site.js canvio-p82-p84-vector-pdf.js canvio-p87-cv-docx.js canvio-p90-p96.js canvio-p97-p101.js canvio-p104.js canvio-p127-duck.js canvio-p145-shader.js canvio-p119-video.js canvio-p119-website.js assets/canvio-rmbg-worker.js assets/canvio-depth-worker.js P132.1 syntax check "$file"; done
+          for file in canvio-p74-p81-three-viewer.js canvio-p85-studio.js canvio-p102-background-removal.js canvio-p105-p107-depth-parallax.js canvio-p68-p70.js canvio-p72-glb-viewer.js canvio-p73-offline-site.js canvio-p82-p84-vector-pdf.js canvio-p87-cv-docx.js canvio-p90-p96.js canvio-p97-p101.js canvio-p104.js canvio-p127-duck.js canvio-p145-shader.js canvio-p119-video.js canvio-p119-website.js assets/canvio-rmbg-worker.js assets/canvio-depth-worker.js assets/canvio-whisper-worker.js canvio-p132-pdf-import.js; do node --check "$file"; done
 
       - name: P143 standalone source and canonical lot parity audit
         shell: bash
@@ -806,7 +841,9 @@ vendor step insertion        shell: bash
           node tests/p145/run-p1457-tests.cjs
           node tests/p145/run-p1458-tests.cjs
           node tests/p145/run-p145910-tests.cjs
-P132.1 node test          node tests/p127/run-p145s-tests.cjs
+          node tests/p127/run-p132g-tests.cjs
+          node tests/p132/run-p132-pdf-tests.cjs
+          node tests/p127/run-p145s-tests.cjs
           node tests/p145/run-p1452-tests.cjs
           node tests/p145/run-p1454b-tests.cjs
           node tests/p145/run-p1454-tests.cjs
@@ -882,7 +919,9 @@ P132.1 node test          node tests/p127/run-p145s-tests.cjs
           /tmp/canvio-playwright/bin/python tests/p145/run-p1457-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p1458-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p145910-browser.py
-P132.1 chromium test          /tmp/canvio-playwright/bin/python tests/p145/run-p145s-browser.py
+          /tmp/canvio-playwright/bin/python tests/p127/run-p132g-browser.py
+          /tmp/canvio-playwright/bin/python tests/p145/run-p132-pdf-browser.py
+          /tmp/canvio-playwright/bin/python tests/p145/run-p145s-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p1452-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p1454b-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p1454-browser.py
