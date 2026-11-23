@@ -162,9 +162,17 @@ function sendPngToPixel(blob, pageNumber, fileName) {
   return file;
 }
 function importPage() {
-  if (busy || !pdfDoc || !activeFile) return Promise.reject(new Error('Hãy chọn và mở một tệp PDF hợp lệ trước.'));
+  if (busy || !pdfDoc || !activeFile) {
+    var unavailable = new Error('Hãy chọn và mở một tệp PDF hợp lệ trước.');
+    setStatus(unavailable.message, true);
+    return Promise.reject(unavailable);
+  }
   var pageNumber = clampPageNumber(pageInput && pageInput.value, pdfDoc.numPages);
-  if (!pageNumber) return Promise.reject(new Error('Số trang không hợp lệ.'));
+  if (!pageNumber) {
+    var invalidPage = new Error('Số trang không hợp lệ.');
+    setStatus(invalidPage.message, true);
+    return Promise.reject(invalidPage);
+  }
   var thisJob = jobId;
   setBusy(true);
   setStatus('Đang raster hóa trang ' + pageNumber + '/' + pdfDoc.numPages + '…');
