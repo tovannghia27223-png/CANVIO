@@ -1188,3 +1188,7 @@ Hosted verification after the ffmpeg repair is complete:
 ## P150 — Spatial Navigator: lỗi đè & lỗi chữ (2026-11-23)
 - Thanh công cụ sticky (z-index 680–880) đè lên bảng Spatial (z 95) → bảng nâng lên 1000. Các mục "Workspace Layouts", "Live 3D Mockup" bị co còn 22px cắt chữ (flex shrink) → `flex-shrink:0`.
 - Nhãn workspace lặp ký hiệu và dính chữ ("◈Shared Creative Core17.0", "Tạo trọn bộ1 NÚT") → `routeLabel` bỏ icon khỏi chữ và tách số phiên bản/nhãn.
+
+## P151 — Sửa lỗi hiển thị trang chủ các skin & bảo vệ độ tương phản (2026-11-23)
+- Skin Thời trang/Bàn thiết kế: thanh trên cùng sáng nên nút phụ (do P148 làm chữ sáng) bị vô hình → chữ tối khi skin sáng. Phông Bodoni/Didot trên Windows thiếu glyph tiếng Việt (dấu tách rời "Thiê´t kê´") → dùng Playfair/Cambria/Georgia. Icon thẻ không gian làm việc bị trắng trên nền trắng (do emoji đơn sắc) → icon màu đậm.
+- `canvio-p151-contrast-guard.js` (lot `canvio-lot151g`): tự đổi màu chữ/icon có tương phản < 2,4 (icon < 3) khi nền xác định được; hoàn tác khi đổi giao diện/skin; quét ~15–35 ms/trang. Quét toàn bộ trang × skin: lỗi chữ/icon vô hình từ 52 xuống ~15 (chủ yếu trạng thái chuyển động của nút đang vô hiệu).
