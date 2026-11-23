@@ -1,6 +1,6 @@
 # CANVIO P129 — Focused Coverage & Acceptance Matrix
 **Snapshot:** 2026-11-23 · **GitHub main base:** `7df9865c272dfd03dc3b4a6996951b89927066b8`  
-**Scope:** reconciles only the 14-area gap list supplied on 2026-11-23. This document is not a claim that every historical P1–P150 requirement is covered or complete.
+**Scope:** reconciles the 15 distinct P items in the supplied gap list supplied on 2026-11-23. This document is not a claim that every historical P1–P150 requirement is covered or complete.
 
 ## Status meanings
 - **Integrated / bounded PASS:** code and a named automated or external-tool test exist for the exact stated scope.
