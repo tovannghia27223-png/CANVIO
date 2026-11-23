@@ -1150,3 +1150,6 @@ Hosted verification after the ffmpeg repair is complete:
 - Máy thử chính (ASUS, GTX 1650 4GB VRAM, 8GB RAM) đã đo bằng `tools/canvio-gpu-check.html`: WebGPU dùng GTX 1650 thật (nvidia·turing, shader-f16, buffer 2GB, ~186 GFLOPS) sau khi đặt Chrome sang "High performance" trong Windows Graphics (mặc định Chrome chọn Intel UHD, ~1.7 GFLOPS).
 - Chủ dự án quyết định KHÔNG cài ComfyUI (tốn RAM, máy 8GB/4GB VRAM chỉ chạy việc nhẹ). P120 (nội suy khung RIFE qua ComfyUI) và P126 (cầu nối ComfyUI) giữ nguyên mã nhưng đóng nghiệm thu thật là "không áp dụng cho máy này"; đường chạy trong trình duyệt (WebGPU/WASM) là đường chính.
 - Muốn mở lại: cài ComfyUI portable + `--enable-cors-header "*"`, chạy lại trang kiểm tra và dán báo cáo.
+
+## P142 — đóng "không áp dụng" (2026-11-23)
+- Chủ dự án chỉ dùng Chrome và Brave (nhân Chromium, đã kiểm trên cả hai); không dùng Firefox/Safari. P142 (kiểm thật trên Safari/Firefox) đóng là không áp dụng; các lỗi tương thích đã biết vẫn ghi trong mục P142 cũ. Muốn mở lại: chạy bộ test trên Firefox/Safari và gửi kết quả.
