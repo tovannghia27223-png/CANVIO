@@ -75,6 +75,7 @@ try:
     page.locator('#cv132pdf-import').click()
     page.wait_for_function("document.querySelector('#cv132pdf-status').textContent.includes('Đã đưa trang 2')",timeout=30000)
     checks['pageTwoRasterizedAndHandedOff']=True
+    page.wait_for_function("CVNativeEngines.pixel.canvas.width===300 && CVNativeEngines.pixel.canvas.height===150 && document.querySelector('#pxStatus').textContent.includes('×')",timeout=30000)
     details=page.evaluate("""()=>{
       const input=document.querySelector('#pxFile'),c=CVNativeEngines.pixel.canvas;
       const ctx=c.getContext('2d'),px=ctx.getImageData(75,75,1,1).data;
