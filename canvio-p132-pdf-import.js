@@ -68,6 +68,7 @@ function setStatus(message, isError) {
 function setBusy(value) {
   busy = !!value;
   if (importButton) importButton.disabled = busy || !pdfDoc;
+  if (pageInput) pageInput.disabled = busy || !pdfDoc;
   if (fileInput) fileInput.disabled = busy;
 }
 function destroyDocument() {
