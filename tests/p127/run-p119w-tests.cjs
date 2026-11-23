@@ -30,6 +30,6 @@ const inline=(html.match(/<script\b[^>]*id=["']canvio-lot119w["'][^>]*>([\s\S]*?
 assert('canonical inline source is present',!!inline);
 assert('standalone and canonical inline sources match',inline.trim().replace(/\r\n/g,'\n')===source.trim().replace(/\r\n/g,'\n'));
 const pair=map.modules.filter(x=>x.source==='canvio-p119-website.js'&&x.scriptId==='canvio-lot119w');
-assert('P143 registry includes exactly one P119.4 source pair',pair.length===1&&map.totalModules===34);
+assert('P143 registry includes exactly one P119.4 source pair',pair.length===1&&map.totalModules===35);
 assert('Website easing change preserves reduced-motion export owner',html.includes('canvio-motion-runtime')||html.includes('CVWebsiteMotionBuilder'));
 console.log('P119.4 PASS: 13 assertions');

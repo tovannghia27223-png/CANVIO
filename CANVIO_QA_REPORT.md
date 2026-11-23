@@ -574,3 +574,12 @@ Mainline workflow #551 passed 53/53; Pages #275 passed build/deploy. P143 parity
 - Node suite checks bounded responsive CSS, whitelisted selected-layout kinds, safe selectors, four design variants, metadata ownership, selected GrapesJS component class/attributes, CSS rule registration and the existing Website save hook.
 - Hosted Chromium reuses the P124 UI fixture and tests existing layout insertion/breakpoint flow, then applies Grid and a Surface/Soft variant to the selected component. The component tag/content/child model is not replaced; responsive CSS is scoped through the existing CSS Manager.
 - This is automated component-contract/browser evidence, not a manual review of user-authored nested component trees or full drag/resize behavior. Nested variants, visual breakpoint authoring, keyboard/screen-reader and physical-device review remain open.
+
+## P132.1 local PDF page import — candidate (2026-11-23)
+
+- Added `canvio-p132-pdf-import.js` (`CVPdfImportP132`, version 132.1.0) to reuse Pixel Atelier’s native `#pxFile` input and `CVNativeEngines.pixel` owner.
+- A locally pinned `pdfjs-dist@6.5.438` package is provisioned by `scripts/vendor-p132-pdf.sh`; the generated manifest records file sizes and SHA-256. PDF worker, CMaps and standard fonts are same-origin.
+- Bounds and safety: PDF magic/header validation, 30 MiB maximum file, 500-page cap, one selected page per import, 4096 px maximum side, 16 MP raster budget, PDF JavaScript evaluation disabled and XFA disabled. Only the selected page is converted to PNG; no external upload or second editor/store.
+- Added `tests/p132/run-p132-pdf-tests.cjs` and `tests/p145/run-p132-pdf-browser.py`. Hosted result is pending; do not mark PASS until the Chromium test confirms PDF.js/worker load, page count, selected-page pixels in the existing Pixel canvas, same-origin requests and zero new page errors.
+- Remaining P132 scope: PPTX/PSD import if not already covered, broader SVG import, PDF document/page workflow and real customer PDF review. A PNG page import does not preserve editable PDF text/vector objects.
+
