@@ -29,6 +29,7 @@ assert.ok(source.includes("cMapUrl: new URL('./assets/vendor/pdfjs/cmaps/'"),'CM
 assert.ok(source.includes('isEvalSupported: false'),'PDF JavaScript evaluation must be disabled');
 assert.ok(source.includes('enableXfa: false'),'XFA must be disabled');
 assert.ok(source.includes('if (pageInput) pageInput.disabled = busy || !pdfDoc;'),'page selector must enable only after PDF load and lock during work');
+assert.ok(source.includes('setStatus(invalidPage.message, true);'),'invalid page selection must be announced before rejected import');
 assert.ok(source.includes('MAX_FILE_BYTES = 30 * 1024 * 1024'));
 assert.ok(source.includes('MAX_PAGES = 500'));
 assert.ok(source.includes('MAX_PIXELS = 16000000'));
