@@ -590,3 +590,8 @@ Mainline workflow #551 passed 53/53; Pages #275 passed build/deploy. P143 parity
 - The browser test exposed that the page-number input remained disabled after loading. Fixed the existing module `setBusy()` to enable it only when a valid PDF is ready and disable during loading/rendering.
 - Added a Node contract assertion and retained the browser assertion for invalid page rejection, page-2 raster output, existing Pixel input/canvas, same-origin worker requests and no page errors.
 - The previous run is **FAIL** due this real UI defect; the corrected commit is being rerun. Do not treat the earlier run as PASS.
+
+
+## P132.1 second browser finding — invalid page announcement (2026-11-23)
+- Hosted Chromium passed PDF.js load, page count and page-selector activation. It then caught that an out-of-range page returned early from `importPage()` without writing the error to `role=status`.
+- Fixed early missing-file/invalid-page branches to set a visible Vietnamese error before returning a rejected Promise; added a unit assertion. Latest full CI rerun pending. The preceding run remains FAIL and is not counted as a pass.
