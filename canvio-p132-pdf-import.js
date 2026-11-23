@@ -111,6 +111,9 @@ function openPdf(file) {
         enableXfa: false,
         disableAutoFetch: true,
         disableStream: true,
+        cMapUrl: new URL('./assets/vendor/pdfjs/cmaps/', doc.baseURI).href,
+        cMapPacked: true,
+        standardFontDataUrl: new URL('./assets/vendor/pdfjs/standard_fonts/', doc.baseURI).href,
         useWorkerFetch: false,
         useWasm: false,
         verbosity: 0
