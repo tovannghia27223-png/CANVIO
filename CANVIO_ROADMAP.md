@@ -1184,3 +1184,7 @@ Hosted verification after the ffmpeg repair is complete:
 - Nút Xuất thanh trên cùng dùng gradient chính (thắng skin Holo); nút nổi đổi giao diện không còn che thanh chọn skin trang chủ.
 - Nút nhiều dòng (chọn model ArtCraft, mẫu Assets/AutoDesign/WebEngine, ShotCraft) tự cao theo nội dung, không tràn khung; "Dùng"/"Xuất" ở Templates/Responsive không bị cắt chữ.
 - Midnight: huy hiệu, nút thanh trên cùng, emoji đơn sắc cùng kiểu Graffiti. Còn lại: ô checkbox "Bloom" (VideoEngine) lệch trái 39px là thiết kế ô tùy biến, chưa đổi. Lot `canvio-lot147c`.
+
+## P150 — Spatial Navigator: lỗi đè & lỗi chữ (2026-11-23)
+- Thanh công cụ sticky (z-index 680–880) đè lên bảng Spatial (z 95) → bảng nâng lên 1000. Các mục "Workspace Layouts", "Live 3D Mockup" bị co còn 22px cắt chữ (flex shrink) → `flex-shrink:0`.
+- Nhãn workspace lặp ký hiệu và dính chữ ("◈Shared Creative Core17.0", "Tạo trọn bộ1 NÚT") → `routeLabel` bỏ icon khỏi chữ và tách số phiên bản/nhãn.

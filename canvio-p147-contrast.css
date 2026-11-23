@@ -27,3 +27,8 @@ body :is(.btn,button):is(:has(>div),:has(>small),:has(>.tiny),:has(>b+.tiny),[id
 body :is(.btn,button):is(:has(>div),:has(>small),:has(>.tiny),:has(>b+.tiny)):not(.btn-icon){flex-direction:column;align-items:flex-start;text-align:left}
 #page-templates .btn.sm,#page-responsive .btn.sm,#page-assets .btn.btn-ghost{overflow:visible;text-overflow:clip;min-width:max-content}
 #page-assets .btn.btn-ghost:has(>.tiny){min-width:0}
+
+/* P150 · Spatial Navigator: không bị thanh công cụ sticky đè làn; các mục không bị co lại cắt chữ. */
+.cv229-inspector.float.open{z-index:1000!important}
+.cv229-inspector .cv229-section{flex-shrink:0!important}
+.cv229-inspector .cv229-route span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
