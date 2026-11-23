@@ -1165,3 +1165,7 @@ Hosted verification after the ffmpeg repair is complete:
 - Ngoài Project Vault, đồng bộ mọi khóa `canvio*` trong localStorage (tài nguyên, ghi chú, thương hiệu, cài đặt...) dưới dạng "unit" mã hóa `x:k|khóa` hoặc `x:i|khóa|id` (mảng có `id` tách theo mục). Bỏ qua khóa tạm/theo thiết bị. Khóa API/token chỉ đồng bộ khi bật ô riêng (mặc định tắt).
 - Ba chiều theo băm lần đồng bộ trước; chỉ thêm/cập nhật, KHÔNG lan truyền việc xóa (mục xóa cục bộ được khôi phục từ đám mây). Xung đột: bản mới hơn thắng, bản thua lưu ở `canvio.p130.bak.<khóa>`. Tải lại trang sau khi kéo dữ liệu mới.
 - Test Node 41 kiểm tra; Chrome 13 kiểm tra; version 130.1.0.
+
+## P146 — Rà lỗi lặt vặt index.html (2026-11-23)
+- Quét Chrome 48 trang: 0 lỗi JS, 0 ảnh thiếu alt, 0 `label[for]`/aria hỏng, không tràn ngang. Lỗi mạng duy nhất là CDN FontAwesome (môi trường kiểm không có Internet).
+- Sửa: GrapesJS `telemetry:false` (trước đó gửi thống kê tới app.grapesjs.com); `canvio-p146-a11y-labels.js` (lot `canvio-lot146a`) gán aria-label cho ô nhập/lựa chọn thiếu tên. Cập nhật `boot-order-graph.json`.

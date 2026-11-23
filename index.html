@@ -12664,7 +12664,7 @@ function wire(){
  $$('#we-empty [data-t]').forEach(function(b){b.onclick=function(){useTpl(b.dataset.t)}});
  $('#we-q').oninput=function(){var q=this.value.trim().toLowerCase();$$('#we-blocks .gjs-block').forEach(function(b){b.style.display=!q||b.textContent.toLowerCase().indexOf(q)>-1?'':'none'});$$('#we-blocks .gjs-block-category').forEach(function(c){var any=$$('.gjs-block',c).some(function(b){return b.style.display!=='none'});c.style.display=any?'':'none'})}}
 function build(){
- ed=grapesjs.init({container:'#gjs',height:'100%',width:'auto',fromElement:false,storageManager:false,noticeOnUnload:false,panels:{defaults:[]},i18n:{locale:'vi',messages:{vi:VI}},
+ ed=grapesjs.init({telemetry:false,container:'#gjs',height:'100%',width:'auto',fromElement:false,storageManager:false,noticeOnUnload:false,panels:{defaults:[]},i18n:{locale:'vi',messages:{vi:VI}},
   blockManager:{appendTo:'#we-blocks',appendOnClick:true,blocks:blocks()},layerManager:{appendTo:'#we-layers'},traitManager:{appendTo:'#we-traits'},selectorManager:{appendTo:'#we-sel',componentFirst:true},
   styleManager:{appendTo:'#we-style',sectors:[{name:'Bố cục & kích thước',open:true,properties:['display','width','height','max-width','min-height','margin','padding']},{name:'Chữ',open:true,properties:['font-family','font-size','font-weight','color','line-height','letter-spacing','text-align']},{name:'Nền & viền',open:false,properties:['background-color','border','border-radius','box-shadow']},{name:'Nâng cao (vị trí)',open:false,properties:['position','top','right','left','bottom']}]},
   deviceManager:{devices:[{id:'Desktop',name:'Desktop',width:''},{id:'Tablet',name:'Tablet',width:'768px',widthMedia:'992px'},{id:'Mobile',name:'Mobile',width:'375px',widthMedia:'480px'}]}});
@@ -31531,6 +31531,32 @@ function mount() {
 }
 function ready() { try { if (!mount() && window.MutationObserver) { var mo = new MutationObserver(function () { if (mount()) mo.disconnect(); }); mo.observe(document.body, { childList: true, subtree: true }); setTimeout(function () { mo.disconnect(); }, 30000); } } catch (e) {} }
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', ready, { once: true }); else ready();
+})();
+</script>
+<script id="canvio-lot146a">
+/* P146 · Gán nhãn truy cập cho ô nhập/lựa chọn còn thiếu tên (chỉ thêm aria-label, không đổi giao diện). */
+(function () {
+'use strict';
+if (window.CVA11yLabelsP146) return;
+function textOf(n) { return (n && n.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 80); }
+function nameFor(c) {
+  var f = c.closest('.field'), l = f && f.querySelector('label'); if (l && l.contains(c) === false && textOf(l)) return textOf(l);
+  var p = c.previousElementSibling; if (p && /^(LABEL|SPAN|B|STRONG|SMALL|DIV)$/.test(p.tagName) && !p.querySelector('input,select,textarea') && textOf(p)) return textOf(p);
+  var par = c.parentElement, pl = par && par.querySelector(':scope > label, :scope > .lbl, :scope > b'); if (pl && !pl.contains(c) && textOf(pl)) return textOf(pl);
+  return c.getAttribute('data-label') || c.name || c.id || '';
+}
+function run(root) {
+  var n = 0; (root || document).querySelectorAll('input:not([type=hidden]):not([type=file]),select,textarea').forEach(function (c) {
+    if (c.getAttribute('aria-label') || c.getAttribute('aria-labelledby') || c.title || c.closest('label') || (c.id && document.querySelector('label[for="' + c.id.replace(/"/g, '\\"') + '"]')) || (c.placeholder && c.type !== 'range')) return;
+    if (/^gjs-/.test(c.className + '') || c.closest('.gjs-editor, #gjs')) return;
+    var t = nameFor(c); if (t) { c.setAttribute('aria-label', t); n++; }
+  }); return n;
+}
+var timer = 0; function later() { clearTimeout(timer); timer = setTimeout(function () { run(); }, 500); }
+window.CVA11yLabelsP146 = { version: '146.0.0', run: run };
+if (typeof document === 'undefined') return;
+function start() { run(); if (window.MutationObserver) new MutationObserver(later).observe(document.body, { childList: true, subtree: true }); }
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true }); else start();
 })();
 </script>
 <style id="canvio-lot131-css">
