@@ -549,7 +549,7 @@ jobs:
           const fs=require('node:fs'),file='index.html',id='canvio-lot132pdf';
           let html=fs.readFileSync(file,'utf8'),source=fs.readFileSync('canvio-p132-pdf-import.js','utf8').trim();
           if(!source.includes("version:'132.1.0'")||!source.includes('window.CVPdfImportP132'))throw new Error('P132.1 source contract missing');
-          const open='<script id="'+id+'">',close='</script>',tag=open+'\\n'+source+'\\n'+close,pos=html.indexOf(open);
+          const open='<script id="'+id+'">',close='</script>',tag=open+String.fromCharCode(10)+source+String.fromCharCode(10)+close,pos=html.indexOf(open);
           if(pos>=0){const end=html.indexOf(close,pos);if(end<0)throw new Error('P132.1 embedded lot is not closed');html=html.slice(0,pos)+tag+html.slice(end+close.length);}
           else{const at=html.lastIndexOf('</body>');if(at<0)throw new Error('P132.1 closing body tag missing');html=html.slice(0,at)+tag+'\\n'+html.slice(at);}
           if((html.match(/id="canvio-lot132pdf"/g)||[]).length!==1)throw new Error('P132.1 duplicate or missing inline lot');
@@ -685,7 +685,7 @@ jobs:
           if(at>=0)map.modules[at]=item;else map.modules.push(item);
           map.totalModules=map.modules.length;
           map.description=map.description.replace(/\d+ standalone/g,map.totalModules+' standalone');
-          if((map.totalModules!==33&&map.totalModules!==34)||map.modules.filter(x=>x.source===item.source).length!==1)throw new Error('P119.3 P143 registry must contain 33 pairs before P119.4 or 34 after P119.4, with exactly one Video module');
+          if((map.totalModules!==34&&map.totalModules!==35)||map.modules.filter(x=>x.source===item.source).length!==1)throw new Error('P119.3 P143 registry must contain 34 pairs before P119.4 or 35 after P119.4, with exactly one Video module');
           fs.writeFileSync(mapPath,JSON.stringify(map,null,2)+'\n');
           console.log('P119.3 integrated shared presets and P119 easing solver into the existing Video Engine; P143 pairs:',map.totalModules);
           NODE
@@ -718,7 +718,7 @@ jobs:
           if(at>=0)map.modules[at]=item;else map.modules.push(item);
           map.description=String(map.description||'').replace(/33 standalone/g,'34 standalone');
           map.totalModules=map.modules.length;
-          if(map.totalModules!==34||map.modules.filter(x=>x.source===item.source).length!==1)throw new Error('P119.4 P143 registry must contain exactly 34 unique pairs');
+          if(map.totalModules!==35||map.modules.filter(x=>x.source===item.source).length!==1)throw new Error('P119.4 P143 registry must contain exactly 35 unique pairs');
           fs.writeFileSync(mapPath,JSON.stringify(map,null,2)+'\n');
           console.log('P119.4 uses the single P119 preset/curve registry in Website Motion Builder; P143 pairs:',map.totalModules);
           NODE
