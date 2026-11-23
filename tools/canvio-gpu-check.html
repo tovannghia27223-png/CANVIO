@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CANVIO · Kiểm tra GPU và ComfyUI</title>
+<style>
+:root{color-scheme:light dark;--bg:#f6f7fb;--fg:#172554;--mut:#64748b;--card:#fff;--line:#dbe1ee;--ok:#15803d;--warn:#b45309;--bad:#b91c1c;--brand:#4f46e5}
+@media(prefers-color-scheme:dark){:root{--bg:#0f172a;--fg:#e2e8f0;--mut:#94a3b8;--card:#1e293b;--line:#334155;--ok:#4ade80;--warn:#fbbf24;--bad:#f87171;--brand:#818cf8}}
+*{box-sizing:border-box}body{margin:0;font:15px/1.55 system-ui,"Segoe UI",sans-serif;background:var(--bg);color:var(--fg)}
+main{max-width:860px;margin:0 auto;padding:24px 16px 56px}h1{font-size:24px;margin:0 0 4px}p.sub{margin:0 0 18px;color:var(--mut)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin:0 0 14px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}input{font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:transparent;color:inherit;min-width:260px}
+button{font:inherit;padding:9px 16px;border-radius:8px;border:1px solid var(--brand);background:var(--brand);color:#fff;cursor:pointer}button.alt{background:transparent;color:var(--brand)}button:disabled{opacity:.55;cursor:wait}
+button:focus-visible,input:focus-visible{outline:3px solid var(--brand);outline-offset:2px}
+table{width:100%;border-collapse:collapse}td,th{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}th{width:38%;font-weight:600}
+.ok{color:var(--ok)}.warn{color:var(--warn)}.bad{color:var(--bad)}.tiny{font-size:13px;color:var(--mut)}textarea{width:100%;min-height:180px;font:12px/1.4 ui-monospace,Consolas,monospace;padding:10px;border:1px solid var(--line);border-radius:8px;background:transparent;color:inherit}
+</style></head><body><main>
+<h1>Kiểm tra GPU và ComfyUI cho CANVIO</h1>
+<p class="sub">Chạy một lần trên máy của bạn (Chrome hoặc Edge). Trang chỉ đọc thông tin phần cứng và gọi ComfyUI trên máy bạn (127.0.0.1); không gửi dữ liệu đi đâu.</p>
+<div class="card"><div class="row"><label for="cu">Địa chỉ ComfyUI</label><input id="cu" value="http://127.0.0.1:8188" spellcheck="false"><button id="go">Chạy kiểm tra</button></div>
+<p class="tiny">Bỏ trống ô địa chỉ nếu bạn chưa cài ComfyUI. Nếu ComfyUI chặn truy cập, khởi động nó với <code>--enable-cors-header "*"</code> rồi chạy lại.</p></div>
+<div id="out"></div>
+<div class="card"><b>Báo cáo để gửi lại</b><p class="tiny">Bấm "Sao chép báo cáo" rồi dán vào cuộc trò chuyện với Claude.</p><textarea id="rep" readonly aria-label="Báo cáo kiểm tra"></textarea><div class="row" style="margin-top:8px"><button class="alt" id="cp" type="button">Sao chép báo cáo</button></div></div>
+</main>
+<script>
+(function(){'use strict';
+var R={format:'CANVIO_GPU_CHECK',version:1,when:new Date().toISOString(),ua:navigator.userAgent,cores:navigator.hardwareConcurrency||null,memoryGB:navigator.deviceMemory||null,webgl:null,webgpu:null,compute:null,comfy:null};
+var out=document.getElementById('out');
+function card(title,rows){var d=document.createElement('div');d.className='card';var h='<b>'+title+'</b><table>';rows.forEach(function(r){h+='<tr><th>'+r[0]+'</th><td class="'+(r[2]||'')+'">'+String(r[1]).replace(/[&<>]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;'}[c]})+'</td></tr>'});d.innerHTML=h+'</table>';out.appendChild(d)}
+function syncReport(){document.getElementById('rep').value=JSON.stringify(R,null,1)}
+function webgl(){
+  var c=document.createElement('canvas'),g=c.getContext('webgl2');if(!g){R.webgl={available:false};card('WebGL2',[['Trạng thái','Không có WebGL2','bad']]);return}
+  var e=g.getExtension('WEBGL_debug_renderer_info');R.webgl={available:true,vendor:e?g.getParameter(e.UNMASKED_VENDOR_WEBGL):g.getParameter(g.VENDOR),renderer:e?g.getParameter(e.UNMASKED_RENDERER_WEBGL):g.getParameter(g.RENDERER),maxTexture:g.getParameter(g.MAX_TEXTURE_SIZE)};
+  var soft=/swiftshader|llvmpipe|software|basic render/i.test(R.webgl.renderer);R.webgl.software=soft;
+  card('WebGL2',[['Card đồ họa',R.webgl.renderer,soft?'bad':'ok'],['Nhà sản xuất',R.webgl.vendor],['Texture tối đa',R.webgl.maxTexture],['Chế độ',soft?'Đang dùng phần mềm (không có GPU thật). Bật tăng tốc phần cứng trong cài đặt trình duyệt.':'Tăng tốc phần cứng','']])
+}
+async function webgpu(){
+  if(!navigator.gpu){R.webgpu={available:false};card('WebGPU',[['Trạng thái','Trình duyệt không hỗ trợ WebGPU (dùng Chrome/Edge bản mới).','warn']]);return null}
+  var ad=null;try{ad=await navigator.gpu.requestAdapter({powerPreference:'high-performance'})}catch(e){}
+  if(!ad){R.webgpu={available:false,reason:'no-adapter'};card('WebGPU',[['Trạng thái','Không tìm thấy adapter GPU.','bad']]);return null}
+  var info=ad.info||(ad.requestAdapterInfo?await ad.requestAdapterInfo():{})||{},L=ad.limits,F=[];ad.features.forEach(function(f){F.push(f)});
+  R.webgpu={available:true,vendor:info.vendor||'',architecture:info.architecture||'',device:info.device||'',description:info.description||'',isFallback:!!ad.isFallbackAdapter||/swiftshader|llvmpipe|software/i.test((info.architecture||'')+(info.description||'')+(info.device||'')),shaderF16:F.indexOf('shader-f16')>=0,maxBufferMB:Math.round(L.maxBufferSize/1048576),maxStorageBufferMB:Math.round(L.maxStorageBufferBindingSize/1048576),maxWorkgroupSizeX:L.maxComputeWorkgroupSizeX,maxInvocations:L.maxComputeInvocationsPerWorkgroup,features:F.length};
+  card('WebGPU',[['Adapter',[info.vendor,info.architecture,info.description||info.device].filter(Boolean).join(' · ')||'(không có tên)',R.webgpu.isFallback?'bad':'ok'],['Fallback phần mềm',R.webgpu.isFallback?'Có':'Không',R.webgpu.isFallback?'bad':'ok'],['shader-f16 (mô hình nhẹ hơn)',R.webgpu.shaderF16?'Có':'Không',R.webgpu.shaderF16?'ok':'warn'],['Bộ đệm tối đa',R.webgpu.maxBufferMB+' MB'],['Storage buffer tối đa',R.webgpu.maxStorageBufferMB+' MB',R.webgpu.maxStorageBufferMB>=1024?'ok':'warn']]);
+  return ad;
+}
+async function bench(ad){
+  if(!ad){return}
+  try{
+    var dev=await ad.requestDevice(),N=512,A=new Float32Array(N*N).map(function(_,i){return (i%13)/13}),B=new Float32Array(N*N).map(function(_,i){return (i%7)/7});
+    var mk=function(a,u){var b=dev.createBuffer({size:a.byteLength,usage:u,mappedAtCreation:true});new Float32Array(b.getMappedRange()).set(a);b.unmap();return b};
+    var bA=mk(A,GPUBufferUsage.STORAGE),bB=mk(B,GPUBufferUsage.STORAGE),bC=dev.createBuffer({size:N*N*4,usage:GPUBufferUsage.STORAGE|GPUBufferUsage.COPY_SRC}),bR=dev.createBuffer({size:N*N*4,usage:GPUBufferUsage.MAP_READ|GPUBufferUsage.COPY_DST});
+    var mod=dev.createShaderModule({code:'@group(0)@binding(0) var<storage,read> a:array<f32>;@group(0)@binding(1) var<storage,read> b:array<f32>;@group(0)@binding(2) var<storage,read_write> c:array<f32>;@compute @workgroup_size(16,16) fn main(@builtin(global_invocation_id) g:vec3<u32>){let n=%N%u;if(g.x>=n||g.y>=n){return;}var s=0.0;for(var k=0u;k<n;k++){s+=a[g.y*n+k]*b[k*n+g.x];}c[g.y*n+g.x]=s;}'.replace(/%N%/g,String(N))});
+    var pipe=dev.createComputePipeline({layout:'auto',compute:{module:mod,entryPoint:'main'}}),bg=dev.createBindGroup({layout:pipe.getBindGroupLayout(0),entries:[{binding:0,resource:{buffer:bA}},{binding:1,resource:{buffer:bB}},{binding:2,resource:{buffer:bC}}]});
+    var run=async function(reps){var t=performance.now(),e=dev.createCommandEncoder();for(var i=0;i<reps;i++){var p=e.beginComputePass();p.setPipeline(pipe);p.setBindGroup(0,bg);p.dispatchWorkgroups(N/16,N/16);p.end()}dev.queue.submit([e.finish()]);await dev.queue.onSubmittedWorkDone();return performance.now()-t};
+    var t0=await run(2),reps=Math.max(2,Math.min(40,Math.floor(1500/(t0/2)))),ms=await run(reps),gf=(2*N*N*N*reps)/(ms/1000)/1e9;
+    var e2=dev.createCommandEncoder();e2.copyBufferToBuffer(bC,0,bR,0,N*N*4);dev.queue.submit([e2.finish()]);await bR.mapAsync(GPUMapMode.READ);var c=new Float32Array(bR.getMappedRange().slice(0));
+    var ref=0;for(var k=0;k<N;k++)ref+=A[3*N+k]*B[k*N+5];var okVal=Math.abs(c[3*N+5]-ref)<Math.max(1e-2,Math.abs(ref)*1e-3);
+    R.compute={ok:okVal,gflops:Math.round(gf*10)/10,reps:reps,ms:Math.round(ms)};
+    card('Thử tính toán WebGPU (nhân ma trận 512×512)',[['Kết quả đúng',okVal?'Đúng':'Sai',okVal?'ok':'bad'],['Tốc độ',R.compute.gflops+' GFLOPS',gf>100?'ok':'warn'],['Gợi ý',gf>150?'Đủ cho Whisper nhỏ và khử nền ảnh trên GPU.':'Chậm: dùng mô hình nhỏ hoặc chạy bằng CPU/WASM.','']]);
+    dev.destroy();
+  }catch(e){R.compute={ok:false,error:String(e&&e.message||e).slice(0,160)};card('Thử tính toán WebGPU',[['Lỗi',R.compute.error,'bad']])}
+}
+function getJSON(u,ms){var ctl=new AbortController(),t=setTimeout(function(){ctl.abort()},ms||6000);return fetch(u,{signal:ctl.signal,cache:'no-store'}).then(function(r){clearTimeout(t);if(!r.ok)throw new Error('HTTP '+r.status);return r.json()})}
+async function comfy(base){
+  base=String(base||'').trim().replace(/\/+$/,'');if(!base){R.comfy={skipped:true};return}
+  if(!/^https?:\/\/(127\.0\.0\.1|localhost|\[::1\])(:\d+)?$/i.test(base)){R.comfy={error:'Chỉ kiểm tra địa chỉ trên máy này (127.0.0.1 hoặc localhost).'};card('ComfyUI',[['Lỗi',R.comfy.error,'bad']]);return}
+  try{
+    var st=await getJSON(base+'/system_stats'),dev=(st.devices||[])[0]||{};
+    R.comfy={reachable:true,version:(st.system||{}).comfyui_version||'',python:(st.system||{}).python_version||'',device:dev.name||'',vramTotalMB:dev.vram_total?Math.round(dev.vram_total/1048576):null,vramFreeMB:dev.vram_free?Math.round(dev.vram_free/1048576):null};
+    var oi=null;try{oi=await getJSON(base+'/object_info',20000)}catch(e){}
+    var names=oi?Object.keys(oi):[],want={rife:/rife/i,realesrgan:/esrgan|upscale/i,video:/video|animatediff|svd|wan|ltx/i,rmbg:/rmbg|background/i};
+    R.comfy.nodeCount=names.length;R.comfy.nodes={};Object.keys(want).forEach(function(k){R.comfy.nodes[k]=names.filter(function(n){return want[k].test(n)}).slice(0,8)});
+    var models=null;try{var ck=oi&&oi.CheckpointLoaderSimple&&oi.CheckpointLoaderSimple.input&&oi.CheckpointLoaderSimple.input.required&&oi.CheckpointLoaderSimple.input.required.ckpt_name;models=ck&&ck[0]?ck[0].slice(0,12):null}catch(e){}
+    R.comfy.checkpoints=models;
+    card('ComfyUI',[['Kết nối','Được','ok'],['Phiên bản',R.comfy.version||'?'],['GPU',R.comfy.device||'?'],['VRAM',(R.comfy.vramTotalMB||'?')+' MB (còn trống '+(R.comfy.vramFreeMB||'?')+' MB)',R.comfy.vramTotalMB&&R.comfy.vramTotalMB<6000?'warn':'ok'],['Số node',R.comfy.nodeCount||'(không đọc được)'],['Node nội suy khung (RIFE)',(R.comfy.nodes.rife||[]).join(', ')||'Chưa có',(R.comfy.nodes.rife||[]).length?'ok':'warn'],['Node phóng to ảnh',(R.comfy.nodes.realesrgan||[]).join(', ')||'Chưa có',(R.comfy.nodes.realesrgan||[]).length?'ok':'warn'],['Node video',(R.comfy.nodes.video||[]).join(', ')||'Chưa có',(R.comfy.nodes.video||[]).length?'ok':'warn'],['Checkpoint',(models||[]).join(', ')||'Chưa thấy']])
+  }catch(e){R.comfy={reachable:false,error:String(e&&e.message||e).slice(0,160)};card('ComfyUI',[['Kết nối','Không được: '+R.comfy.error+'. Hãy chắc ComfyUI đang chạy và đã bật --enable-cors-header "*".','bad']])}
+}
+document.getElementById('go').addEventListener('click',async function(){
+  var b=this;b.disabled=true;out.innerHTML='';
+  try{webgl();var ad=await webgpu();syncReport();await bench(ad);syncReport();await comfy(document.getElementById('cu').value);}catch(e){R.error=String(e&&e.message||e)}
+  syncReport();b.disabled=false;b.textContent='Chạy lại';
+});
+document.getElementById('cp').addEventListener('click',function(){var t=document.getElementById('rep');t.select();try{navigator.clipboard.writeText(t.value)}catch(e){document.execCommand('copy')}this.textContent='Đã sao chép'});
+window.__CANVIO_GPU_CHECK=R;
+})();
+</script></body></html>
