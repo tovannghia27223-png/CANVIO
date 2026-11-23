@@ -1145,3 +1145,8 @@ Hosted verification after the ffmpeg repair is complete:
 - Core: `window.LS = LS` ngay sau định nghĩa LS (trước đây `window.LS` chỉ là bản sao dự phòng nên module ngoài không thấy cùng đối tượng). Giới hạn nâng lên 25MB/tệp, 200 mục.
 - Kiểm: `tests/p145/run-p133a-browser.py` (12 ảnh ~1MB vượt quota, qua tải lại, xóa, di chuyển dữ liệu cũ, tài nguyên nhỏ ở lại localStorage, trang Tài nguyên vẽ được), smoke 21/21, P150/P133/P137 vẫn qua.
 - Chưa làm: Project Vault (kho khác), sao lưu JSON vẫn chứa dataURL đầy đủ (đúng như trước), nén ảnh.
+
+## P120 / P126 — đóng "không áp dụng cho máy chính" (2026-11-23)
+- Máy thử chính (ASUS, GTX 1650 4GB VRAM, 8GB RAM) đã đo bằng `tools/canvio-gpu-check.html`: WebGPU dùng GTX 1650 thật (nvidia·turing, shader-f16, buffer 2GB, ~186 GFLOPS) sau khi đặt Chrome sang "High performance" trong Windows Graphics (mặc định Chrome chọn Intel UHD, ~1.7 GFLOPS).
+- Chủ dự án quyết định KHÔNG cài ComfyUI (tốn RAM, máy 8GB/4GB VRAM chỉ chạy việc nhẹ). P120 (nội suy khung RIFE qua ComfyUI) và P126 (cầu nối ComfyUI) giữ nguyên mã nhưng đóng nghiệm thu thật là "không áp dụng cho máy này"; đường chạy trong trình duyệt (WebGPU/WASM) là đường chính.
+- Muốn mở lại: cài ComfyUI portable + `--enable-cors-header "*"`, chạy lại trang kiểm tra và dán báo cáo.
