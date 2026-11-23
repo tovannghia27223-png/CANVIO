@@ -583,3 +583,10 @@ Mainline workflow #551 passed 53/53; Pages #275 passed build/deploy. P143 parity
 - Added `tests/p132/run-p132-pdf-tests.cjs` and `tests/p145/run-p132-pdf-browser.py`. Hosted result is pending; do not mark PASS until the Chromium test confirms PDF.js/worker load, page count, selected-page pixels in the existing Pixel canvas, same-origin requests and zero new page errors.
 - Remaining P132 scope: PPTX/PSD import if not already covered, broader SVG import, PDF document/page workflow and real customer PDF review. A PNG page import does not preserve editable PDF text/vector objects.
 
+
+
+## P132.1 first browser run — defect found and corrected (2026-11-23)
+- PDF.js 6.5.438 and its same-origin worker loaded; the generated two-page PDF was opened successfully.
+- The browser test exposed that the page-number input remained disabled after loading. Fixed the existing module `setBusy()` to enable it only when a valid PDF is ready and disable during loading/rendering.
+- Added a Node contract assertion and retained the browser assertion for invalid page rejection, page-2 raster output, existing Pixel input/canvas, same-origin worker requests and no page errors.
+- The previous run is **FAIL** due this real UI defect; the corrected commit is being rerun. Do not treat the earlier run as PASS.
