@@ -28,6 +28,17 @@ with sync_playwright() as p:
       const proxyBlob=await CVProxyP133.getBlob(state,{id,mediaId:id});
       const roundtrip={storage:stored.storage,metadataHasNoBlob:record.blob===null&&record.storage==='opfs',bytes:restored&&restored.size,proxyReaderBytes:proxyBlob&&proxyBlob.size};
       await api.remove(id,state);
+      const nativeEstimate=navigator.storage.estimate.bind(navigator.storage);
+      let quotaFallback;
+      try{
+        Object.defineProperty(navigator.storage,'estimate',{configurable:true,value:()=>Promise.resolve({quota:128,usage:128})});
+        const quotaId='p133-opfs-quota-fallback',quotaBlob=new Blob([new Uint8Array(33*1048576)],{type:'video/webm'});
+        const quotaStored=await api.put(quotaId,quotaBlob,state);
+        const quotaRecord=await new Promise((ok,no)=>{const r=db.transaction('media').objectStore('media').get(quotaId);r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error)});
+        const quotaRead=await api.get(quotaId,state);
+        quotaFallback={storage:quotaStored.storage,hasIndexedDbBlob:!!(quotaRecord&&quotaRecord.blob instanceof Blob),bytes:quotaRead&&quotaRead.size};
+        await api.remove(quotaId,state);
+      }finally{Object.defineProperty(navigator.storage,'estimate',{configurable:true,value:nativeEstimate});}
       const legacyId='p133-opfs-migrate';
       const legacy=new Blob([new Uint8Array(33*1048576)],{type:'video/webm'});
       await new Promise((ok,no)=>{const tx=db.transaction('media','readwrite');tx.objectStore('media').put({id:legacyId,blob:legacy});tx.oncomplete=ok;tx.onerror=()=>no(tx.error)});
@@ -35,11 +46,12 @@ with sync_playwright() as p:
       const migrated=await new Promise((ok,no)=>{const r=db.transaction('media').objectStore('media').get(legacyId);r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error)});
       const migratedBlob=await api.get(legacyId,state);
       await api.remove(legacyId,state);
-      return{roundtrip,report,migratedStorage:migrated&&migrated.storage,migratedBlobBytes:migratedBlob&&migratedBlob.size};
+      return{roundtrip,quotaFallback,report,migratedStorage:migrated&&migrated.storage,migratedBlobBytes:migratedBlob&&migratedBlob.size};
     }""")
     checks['largeBlobStoredInOpfs']=details['roundtrip']['storage']=='opfs' and details['roundtrip']['metadataHasNoBlob']
     checks['largeBlobRoundTripVerified']=details['roundtrip']['bytes']==34*1048576
     checks['proxyReaderSupportsOpfs']=details['roundtrip']['proxyReaderBytes']==34*1048576
+    checks['quotaReservationFallsBackToIndexedDb']=details['quotaFallback']['storage']=='indexeddb' and details['quotaFallback']['hasIndexedDbBlob'] and details['quotaFallback']['bytes']==33*1048576
     checks['legacyIdbMediaMigrates']=details['report']['migrated']>=1 and details['migratedStorage']=='opfs'
     checks['migratedBlobCanBeRead']=details['migratedBlobBytes']==33*1048576
     rollback=page.evaluate("""async()=>{
