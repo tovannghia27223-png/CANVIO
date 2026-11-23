@@ -4101,7 +4101,8 @@ Bài học P150: KHÔNG đặt `display:flex` lên `#page-home` mà không kèm 
 ### P133 — OPFS and proxy boundaries
 - Current owners: `canvio-p133-media-opfs.js` / `canvio-lot133m` (P133.4), `canvio-p133-proxy.js` / `canvio-lot133p` (P133.2/.3), and `canvio-p133-resilience.js` / `canvio-lot133r`. OPFS threshold is 32 MiB; code checks quota reserve, writes the OPFS object before updating the canonical IndexedDB pointer, and falls back to IndexedDB when OPFS is unavailable or quota is insufficient.
 - OffscreenCanvas Worker scaling is used by the local 4K-to-720p WebM proxy with main-thread fallback and bounded frame handling. Hosted proxy acceptance covers synthetic media and preserves the original clip.
-- Do not claim all media is migrated or every crash/rollback path certified: the current OPFS unit test checks source/embedded parity and API/fallback contract, not exhaustive quota exhaustion, mid-write crash, rollback, long real files or multiple real devices.
+- Hosted Chromium `tests/p145/run-p133m-browser.py` verifies actual OPFS write/read, proxy read, IndexedDB→OPFS migration and rollback when the IndexedDB metadata commit fails (original record is preserved and the staged OPFS file is removed). This continuation adds a forced insufficient-quota case and verifies safe fallback to the canonical IndexedDB Blob path.
+- Do not claim every recovery path is certified: browser/OS termination during writes, partial writer failure under actual device pressure, very long media and multi-device recovery remain open.
 
 ### P135 — adjustment metadata is not smart selection
 - P135.2 persists the existing non-destructive nine-adjustment stack inside a CRC-checked PNG tEXt metadata chunk in the existing Pixel snapshot; tests cover metadata/CRC/bounds and Chromium snapshot→reload→restore while keeping original raster bytes unchanged.
