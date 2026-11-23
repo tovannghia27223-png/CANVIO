@@ -1169,3 +1169,9 @@ Hosted verification after the ffmpeg repair is complete:
 ## P146 — Rà lỗi lặt vặt index.html (2026-11-23)
 - Quét Chrome 48 trang: 0 lỗi JS, 0 ảnh thiếu alt, 0 `label[for]`/aria hỏng, không tràn ngang. Lỗi mạng duy nhất là CDN FontAwesome (môi trường kiểm không có Internet).
 - Sửa: GrapesJS `telemetry:false` (trước đó gửi thống kê tới app.grapesjs.com); `canvio-p146-a11y-labels.js` (lot `canvio-lot146a`) gán aria-label cho ô nhập/lựa chọn thiếu tên. Cập nhật `boot-order-graph.json`.
+
+## P147 — Rà màu chữ/nền & icon (2026-11-23)
+- Quét 48 trang × (sáng mặc định Graffiti, Midnight) bằng tính toán tương phản WCAG + kiểm tra icon/con lệch khỏi nút. Chữ phụ xám `#77849a` (3,7:1) → `#586479` (≥5:1); chữ xanh "PASS/hoạt động" → `#0a7a55`; nhãn trường `.field>label` đậm hơn. Lỗi tương phản giao diện sáng giảm khoảng 70%.
+- Midnight: thẻ nền trắng cố định + chữ sáng (Creative Hub, Design System, KPI...) đổi sang nền tối cùng tông; nhãn trường sáng hơn. Tổng lỗi Midnight giảm ~50%.
+- File: `canvio-p147-contrast.css` (lot `canvio-lot147c`). Còn lại: một số mục sinh động/ẩn (opacity chuyển cảnh) báo giả; `data-theme=dark` kết hợp skin Graffiti vẫn là "nửa tối" (topbar tối, nội dung sáng) – dark thật dùng skin Midnight.
+- Icon/lệch: chip model (ArtCraft) và nút emoji ShotCraft có phần tử con tràn khỏi nút ≤ vài px (chưa sửa).

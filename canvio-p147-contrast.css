@@ -1,0 +1,9 @@
+/* P147 · Độ tương phản chữ/nền (WCAG AA) cho chữ phụ và chữ trạng thái màu xanh. Chỉ thêm, không xóa. */
+body.cv229-theme-graffiti{--ink-3:#586479}
+body.cv229-theme-graffiti .seg button{color:#586479!important}
+body.cv229-theme-graffiti .field>label,body.cv229-theme-graffiti .cv223-field label,body.cv229-theme-graffiti .cv221-label{color:#4f5b72!important}
+body.cv229-theme-graffiti #ws-tabs .ws-t{color:#586479!important}
+body.cv229-theme-graffiti b.ok,body.cv229-theme-graffiti .tiny.ok,body.cv229-theme-graffiti [style*="color:var(--mint)"]{color:#0a7a55!important}
+/* Giao diện Midnight: thẻ còn nền trắng cố định nhưng chữ sáng → đổi sang nền tối cùng tông; nhãn trường sáng hơn. */
+body.cv229-theme-midnight :is(article.ch-model,a.cvpro-provider,article.cs-card,div.pv-card,select.cvg-input,article.ch-app,div.ch-app-flow,button.cc-wf,button.cv194-row,div.cv194-flowstep,div.cv194-row,button.ch-launch,div.ch-stat,div.cc-kpi,div.ds-kpi,div.ds-item,div.cv194-kpi,div.cv194-card,div.ulh-card,div.cv11-tabs,section.cv135-panel,section.cv139-panel,div.ds-tabs,div.ulh-row,nav.cv194-tabs){background:#1d2a3d!important;border-color:#33425c!important}
+body.cv229-theme-midnight .seg button,body.cv229-theme-midnight .field>label,body.cv229-theme-midnight .cv223-field label,body.cv229-theme-midnight .cv221-label,body.cv229-theme-midnight #ws-tabs .ws-t{color:#b4c0d6!important}
