@@ -70,4 +70,4 @@ The detailed reconciliation is maintained in [`CANVIO_P129_COVERAGE_MATRIX.md`](
 | P143 | 167-script heuristic boot graph and lexical/style/template inventory. | Semantic DAG, staged extraction, rollback, offline/PWA/CSP. |
 | P70 | Fail-closed release gate in manifest. | 14/14 real-world gates open; releaseCertified remains false. |
 
-| P132.1 local PDF import | Candidate: local PDF.js 6.5.438 vendor manifest, one-page PDF→PNG handoff to existing Pixel Atelier owner; Node + hosted Chromium + P143 parity wired | Await CI; raster-only page import, not editable PDF text/vector. PPTX/PSD and full SVG/PDF workflows remain open. |
+| P132.1 local PDF import | Candidate: local PDF.js 6.5.438 vendor manifest, one-page PDF→PNG handoff to existing Pixel Atelier owner; Node + P143 parity pass; first Chromium run found disabled page-number control, fixed in latest branch | Corrected full Chromium rerun pending; raster-only page import, not editable PDF text/vector. PPTX/PSD and full SVG/PDF workflows remain open. |
