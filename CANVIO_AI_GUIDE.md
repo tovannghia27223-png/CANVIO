@@ -4294,3 +4294,10 @@ P160–P166 module APIs currently report versions P160.2.0, P161.1.0, P162.2.0, 
 - No new store, external API, paid service, package or timeline was added. Output remains saved through the current Asset Library and existing Storyboard owner.
 - Added Node coverage for overlay normalization/rendering and design-source extraction; Chromium coverage verifies Poster SVG and Designer snapshot handoff without intermediate assets, overlay preview, plus the existing GIF/WebM/Storyboard/workflow/mobile checks.
 - Status: candidate pending exact-head hosted CI, P143 standalone/inline parity, generated canonical `index.html`, and post-merge mainline verification. This is 2D image motion, not a full multi-track video editor or AI video generation.
+
+
+## P163.1.1 — Visible character-profile field labels (candidate · 2026-11-25)
+
+- `canvio-p163-character-continuity.js` / `CVCharacterContinuityP163` increments to 163.1.1. The name, fixed description, required features, reference assets, selected character profile, scene comparison details and Storyboard scene controls now have visible labels associated with their existing input/select IDs.
+- This is a presentation/accessibility improvement only. It preserves existing field IDs, data owners, project save, reference assets, prompt handoff and Storyboard behavior.
+- Hosted Chromium P169 acceptance now asserts that all seven visible labels contain their controls and have visible layout boxes. Keyboard/screen-reader manual review is still required; no WCAG certification is claimed.
