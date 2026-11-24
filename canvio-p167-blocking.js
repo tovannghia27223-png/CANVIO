@@ -193,7 +193,7 @@ function mount() {
       var center = st.mode === 'end' && selected.to ? selected.to : { x: selected.x, z: selected.z }, nearSelected = Math.abs(p.x - center.x) <= Math.max(selected.w, selected.d) / 2 + 1 && Math.abs(p.z - center.z) <= Math.max(selected.w, selected.d) / 2 + 1;
       if (nearSelected) { var dx0 = p.x - center.x, dz0 = p.z - center.z; drag = { o: selected, kind: st.mode, center: center, startAngle: Math.atan2(dz0, dx0), startDistance: Math.max(.1, Math.sqrt(dx0 * dx0 + dz0 * dz0)), startYaw: selected.yaw, startW: selected.w, startD: selected.d }; plan.setPointerCapture(e.pointerId); plan.style.cursor = 'grabbing'; e.preventDefault(); return; }
     } st.scene.objects.slice().reverse().some(function (o) { var q = st.mode === 'end' && o.to ? o.to : { x: o.x, z: o.z }; if (Math.abs(p.x - q.x) <= Math.max(o.w, o.d) / 2 + .6 && Math.abs(p.z - q.z) <= Math.max(o.w, o.d) / 2 + .6) { hit = o; return true; } });
-    if (!hit) { st.sel = null; paint(); return; } st.sel = hit.id; drag = { o: hit, dx: 0, dz: 0, p: p }; plan.setPointerCapture(e.pointerId); plan.style.cursor = 'grabbing'; paint();
+    if (!hit) { st.sel = null; paint(); return; } st.sel = hit.id; fillCtl(); drag = { o: hit, dx: 0, dz: 0, p: p }; plan.setPointerCapture(e.pointerId); plan.style.cursor = 'grabbing'; paint();
   });
   plan.addEventListener('pointermove', function (e) { if (!drag) return; var p = planPt(e), o = drag.o, x = Math.round(p.x * 2) / 2, z = Math.round(p.z * 2) / 2;
     if (drag.kind === 'rotate') { var angle = Math.atan2(p.z - drag.center.z, p.x - drag.center.x); o.yaw = num(drag.startYaw + (angle - drag.startAngle) * 180 / Math.PI, drag.startYaw, -360, 360); }
