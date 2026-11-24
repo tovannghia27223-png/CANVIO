@@ -681,3 +681,36 @@ Mainline workflow #551 passed 53/53; Pages #275 passed build/deploy. P143 parity
 
 - Source changes and expanded browser assertions are committed on the feature branch. Hosted Node/Chromium, P143 source parity, canonical `index.html` synchronization and full regression are pending; do not report P167.1 accepted until the exact branch SHA completes all required checks.
 \n\n## P167.1 + P168.1 — regression fix and candidate QA (2026-11-25)\n\n- Prior hosted run #792 failed only the P167.1 immediate object-name save assertion. The other P167.1 browser checks in that suite passed, and the browser reported zero page errors. The name handler now saves on `input`; the reload persistence assertion was added.\n- P168.1 extends the existing P168 browser and Node suites for direct Poster SVG / Designer snapshot-or-Canvas source loading, no intermediate asset creation, and a composited text overlay. Five motion modes and three styles/positions are bounded by the module API.\n- Final status remains candidate until the latest exact branch head completes the hosted Chromium, Node, P143 parity, full audit, and generated-index steps. Do not treat a cancelled/older run as acceptance.\n
+
+## P132.1 — PDF page import QA (2026-11-25 · candidate)
+
+- First Chromium evidence showed local same-origin PDF.js and worker, page 2 rasterized into Pixel Atelier's native 300×150 canvas with the expected red sample pixel, zero page errors and no external PDF runtime requests.
+- The only initial browser assertion read `#pxFile.files` after Pixel's own handler cleared the picker. The test captures `File.name/type/size` in a one-shot capture-phase `change` listener before cleanup; product cleanup is unchanged.
+- Old-base run #813 passed 65/65. This v3 branch was rebuilt on latest main; its own exact-head hosted run is the required acceptance record.
+
+
+## P163.1.1 — Visible character profile labels QA (2026-11-25 · candidate)
+
+- The previous P163 form relied on placeholder/ARIA text for seven fields. Added visible labels with matching `for` attributes while preserving input/select IDs, event listeners, Shared Core data path and Storyboard/Asset Library owners.
+- `tests/p145/run-p169-browser.py` asserts all seven labels contain the expected control and are visible in browser layout, alongside P169 profile round-trip and mobile overflow checks.
+- Earlier PR #93 run #811 passed its exact initial candidate head; the new current-mainline branch requires its own exact-head workflow before merge. Manual assistive-tech/zoom checks remain open.
+
+
+## P161.2 / P74.1 — GLB camera pose replay QA (2026-11-25 · candidate)
+
+- P74.1 adds bounded `applyCameraPose()` and `getCameraPose()` to the existing Three.js r187 viewer. It flushes pending OrbitControls damping inertia before setting an absolute pose, then restores the prior damping configuration.
+- P161 awaits the native GLB load and applies stored yaw/pitch/FOV and optional X/Y/Z through P74; the same viewer owns camera/render state. The existing `spatialWorkspace` document remains the only P161 persistence owner.
+- Hosted same-origin GLB fixture checks P74 orientation/FOV and P161 Asset Library preset replay including nonzero X/Y/Z. Previous #812 caught residual damping (requested 37°/18°, read back ~32.3°/16.1°); corrected code is in this current-mainline branch and awaits its exact-head rerun.
+
+
+## P166.2 — GrapesJS landing handoff QA correction (2026-11-25 · candidate)
+
+- Hosted run #817 reached the P160–P166 Chromium suite with all earlier P159–P165 checks passing and zero page errors. P166 failed because the test invoked `CVWeb` immediately after `CV.go('webEngine')`, before the Website Engine's lazy-loaded GrapesJS global was available.
+- Product path corrected: `sendToWebsite()` now polls for the existing editor, CSS Manager, P131 sanitizer and save owner for at most 12 seconds, then gives an explicit timeout instead of a ReferenceError. It does not instantiate a substitute editor or relax the acceptance.
+- Node test now simulates the editor becoming available after 120 ms. Chromium test continues to require actual scoped GrapesJS component insertion, CSS base/mobile rules, Shared Core metadata and canonical save, then checks mobile overflow. New exact-head full hosted run pending.
+
+
+### P166.2.1 — Node lazy-readiness fixture ordering correction (2026-11-25)
+
+- Run #827 failed in the new Node test before the Chromium stage. The fixture deleted `window.CVWeb` and started the wait before initializing the mock P131 sanitizer and `CV.engines.web.save`; the bounded helper correctly timed out because the full Website Engine contract had not been provided.
+- Reordered the fixture: initialize P131/CVWeb/save mocks first, then remove only `CVWeb`, restore it after 120 ms and await readiness. Product code is unchanged by this test-only correction. New exact-head hosted workflow is pending.
