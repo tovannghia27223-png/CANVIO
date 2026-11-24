@@ -775,7 +775,7 @@ jobs:
           const source=fs.readFileSync('canvio-p74-p81-three-viewer.js','utf8').trim();
           if(!source.includes('applyCameraPose: applyCameraPose')||!source.includes('getCameraPose: getCameraPose'))throw new Error('P74.1 camera pose API contract missing');
           let html=fs.readFileSync(file,'utf8');
-          const open='<script id="'+id+'">',close='</script>',tag=open+'\\n'+source+'\\n'+close,pos=html.indexOf(open);
+          const open='<script id="'+id+'">',close='</script>',tag=open+'\n'+source+'\n'+close,pos=html.indexOf(open);
           if(pos<0)throw new Error('Canonical P74/P81 inline viewer lot is missing');
           const end=html.indexOf(close,pos);if(end<0)throw new Error('Canonical P74/P81 viewer lot is not closed');
           html=html.slice(0,pos)+tag+html.slice(end+close.length);
