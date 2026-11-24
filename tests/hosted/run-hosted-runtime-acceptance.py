@@ -65,6 +65,28 @@ def main():
         page.wait_for_function("document.querySelector('#cv74-status')?.textContent.includes('Đã tải GLB')",timeout=180000)
         p74=page.evaluate("() => ({tests:window.CANVIOThreeGLBViewerP74.tests(),report:JSON.parse(document.querySelector('#cv74-report').textContent),webgl2:!!document.querySelector('#cv74-canvas').getContext('webgl2')})")
         record('P74/P81 loads real r187 GLB viewer with local decoders',p74['tests'].get('vendorManifestVerified') and p74['tests'].get('threeModuleLoaded') and p74['tests'].get('dracoModuleLoaded') and p74['tests'].get('meshoptDecoderReady') and p74['tests'].get('ktx2ModuleLoaded') and p74['webgl2'],p74['report'])
+        pose_api=page.evaluate("""()=>{
+          const applied=CANVIOThreeGLBViewerP74.applyCameraPose({yaw:37,pitch:18,fov:64,position:{x:0,y:0,z:0}});
+          return {applied,actual:CANVIOThreeGLBViewerP74.getCameraPose()};
+        }""")
+        record('P74.1 bounded camera pose API applies yaw/pitch/FOV',abs(pose_api['actual']['yaw']-37)<0.2 and abs(pose_api['actual']['pitch']-18)<0.2 and abs(pose_api['actual']['fov']-64)<0.01,pose_api)
+        p161id=page.evaluate("""async()=>{
+          if(!window.CVSpatialWorkspaceP161)throw Error('P161 module missing');
+          if(!CVCreativeCore.active&&CVCreativeCore.create)CVCreativeCore.create({name:'P161 GLB camera pose acceptance'});
+          const input=document.querySelector('#cv72-file'),file=input&&input.files&&input.files[0];
+          if(!file)throw Error('Hosted GLB fixture is not present in P72 file input');
+          await CV.assets.addBlob(file);
+          const asset=CV.assets.list().find(x=>String(x.name||'')==='canvio-hosted-smoke.glb');
+          if(!asset)throw Error('P161 GLB fixture was not added to Asset Library');
+          const saved=CVSpatialWorkspaceP161.savePreset('Hosted GLB camera pose',asset.id,{yaw:48,pitch:21,fov:66,x:1.5,y:0.9,z:2.25});
+          if(!saved.ok)throw Error(saved.error||'P161 preset save failed');
+          return saved.preset.id;
+        }""")
+        p161pose=page.evaluate("""async(id)=>{
+          const result=await CVSpatialWorkspaceP161.apply(id),actual=CANVIOThreeGLBViewerP74.getCameraPose();
+          return {ok:result.ok,message:result.message,cameraPose:result.cameraPose,actual:actual};
+        }""",p161id)
+        record('P161 GLB preset replays saved pose through P74/P81',p161pose['ok'] and abs(p161pose['actual']['yaw']-48)<0.2 and abs(p161pose['actual']['pitch']-21)<0.2 and abs(p161pose['actual']['fov']-66)<0.01 and abs(p161pose['actual']['position']['x']-1.5)<0.001 and abs(p161pose['actual']['position']['y']-0.9)<0.001 and abs(p161pose['actual']['position']['z']-2.25)<0.001,p161pose)
         # Compressed GLB decode (Draco + Meshopt) with fixtures generated in CI. KTX2 uses a UASTC-encoded texture from toktx.
         fx=os.environ.get('CANVIO_GLB_FIXTURES')
         for kind,ext in (('draco','KHR_draco_mesh_compression'),('meshopt','EXT_meshopt_compression'),('ktx2','KHR_texture_basisu')):
