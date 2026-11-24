@@ -574,3 +574,9 @@ Mainline workflow #551 passed 53/53; Pages #275 passed build/deploy. P143 parity
 - Node suite checks bounded responsive CSS, whitelisted selected-layout kinds, safe selectors, four design variants, metadata ownership, selected GrapesJS component class/attributes, CSS rule registration and the existing Website save hook.
 - Hosted Chromium reuses the P124 UI fixture and tests existing layout insertion/breakpoint flow, then applies Grid and a Surface/Soft variant to the selected component. The component tag/content/child model is not replaced; responsive CSS is scoped through the existing CSS Manager.
 - This is automated component-contract/browser evidence, not a manual review of user-authored nested component trees or full drag/resize behavior. Nested variants, visual breakpoint authoring, keyboard/screen-reader and physical-device review remain open.
+
+
+## P159 Shared Core integration — candidate QA (2026-11-24)
+- Node acceptance file: `tests/p159/run-p159-tests.cjs`. It exercises P153 Asset Library insertion/metadata, Core asset linking, project-scoped character/space cards, P156 P128 local handler and Storyboard append/preservation, plus P157 camera preset assignment.
+- Hosted workflow now re-embeds standalone P153/P155/P159 modules in canonical `index.html` before P143 parity and syntax audits. Run #688 is pre-embedding and expected to fail parity; run #689 includes the embedding step and is pending at report time.
+- No human acceptance claim: migration against an existing browser profile, real panorama footage, global deletion with reused assets, and real Supabase/two-device sync remain separate gates.
