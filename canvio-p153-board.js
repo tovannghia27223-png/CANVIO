@@ -71,7 +71,7 @@ function writeList(a) {
     try { if (c && typeof c.capture === 'function') c.capture('assets'); } catch (e) {}
     return true;
   }
-  try { localStorage.setItem(KEY, JSON.stringify(a || [])); return false; } catch (e) { return false; }
+  try { localStorage.setItem(KEY, JSON.stringify(a || [])); return true; } catch (e) { return false; }
 }
 var dbP = null;
 function openDb() {
