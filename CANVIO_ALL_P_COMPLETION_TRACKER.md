@@ -380,3 +380,13 @@ PR #71 was closed as superseded by clean-main PR #73; the latter carries the cor
 - All P159–P166 standalone modules, tests, source-map registration and hosted workflow wiring are present on `main` as candidate implementation.
 - Latest inspected workflow #767: P160–P166 Node contract suite passed; Chromium 27/28 passed with zero page errors. Sole failure: P164 prompt assertion case mismatch.
 - Fix committed in this candidate: P164 prompt heading normalized to `Shot list`; browser assertion now case-insensitive. Status remains **Integrated candidate / hosted rerun pending**, not accepted. Manual real-asset, GLB, local-model, project round-trip, accessibility/device and P130 sync gates remain open.
+
+
+## 2026-11-25 — P167.1/P168.1 acceptance record
+
+| P | Mainline state | Evidence | Remaining boundary |
+|---|---|---|---|
+| P167.1 | Merged and hosted-CI verified | PR #91; merge `aca4f2846637b28532110f86d82ded2ef37cde03`; workflow #796 / `45459847567` success | Canvas2D blocking tool, not full WebGL scene graph; manual real-scene/device review remains |
+| P168.1 | Merged and hosted-CI verified | PR #91; same merge and successful workflow | 2D image motion/text overlay, not multi-track editing or AI video inference; manual media review remains |
+
+The successful workflow also completed canonical index restoration, P143 parity/inventory, P47–P70 automated regression, source contracts and GLB/P85/ONNX/worker browser acceptance. This does not certify the 14 P70 manual real-world gates; keep `releaseCertified:false` until each gate has evidence.
