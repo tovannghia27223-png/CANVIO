@@ -687,3 +687,9 @@ Mainline workflow #551 passed 53/53; Pages #275 passed build/deploy. P143 parity
 - Hosted run #817 reached the P160–P166 Chromium suite with all earlier P159–P165 checks passing and zero page errors. P166 failed because the test invoked `CVWeb` immediately after `CV.go('webEngine')`, before the Website Engine's lazy-loaded GrapesJS global was available.
 - Product path corrected: `sendToWebsite()` now polls for the existing editor, CSS Manager, P131 sanitizer and save owner for at most 12 seconds, then gives an explicit timeout instead of a ReferenceError. It does not instantiate a substitute editor or relax the acceptance.
 - Node test now simulates the editor becoming available after 120 ms. Chromium test continues to require actual scoped GrapesJS component insertion, CSS base/mobile rules, Shared Core metadata and canonical save, then checks mobile overflow. New exact-head full hosted run pending.
+
+
+### P166.2.1 — Node lazy-readiness fixture ordering correction (2026-11-25)
+
+- Run #827 failed in the new Node test before the Chromium stage. The fixture deleted `window.CVWeb` and started the wait before initializing the mock P131 sanitizer and `CV.engines.web.save`; the bounded helper correctly timed out because the full Website Engine contract had not been provided.
+- Reordered the fixture: initialize P131/CVWeb/save mocks first, then remove only `CVWeb`, restore it after 120 ms and await readiness. Product code is unchanged by this test-only correction. New exact-head hosted workflow is pending.
