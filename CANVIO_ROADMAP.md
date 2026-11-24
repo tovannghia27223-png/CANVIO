@@ -1401,3 +1401,10 @@ Việc cần người dùng: duyệt thứ tự; cho biết có muốn "kênh ch
 PR #91 is merged. Merge commit: `aca4f2846637b28532110f86d82ded2ef37cde03`. Canonical generated runtime commit: `5c54e93ebad19d59548d735fcbd0520ae6fe77e7`. Hosted workflow #796 / run `45459847567` completed successfully, including canonical-index restoration, P143 source parity/inventory, P47–P70 automated regression, source contracts, same-origin GLB/P85/ONNX/worker browser acceptance, and documentation/manifest refresh.
 
 P167.1 and P168.1 are therefore mainline-integrated and hosted-CI verified, with their documented functional boundaries unchanged: P167.1 remains a Canvas2D blocking tool rather than a full WebGL scene editor; P168.1 remains 2D image motion and text compositing rather than a multi-track or AI-video editor. The 14 P70 real-world manual gates are not closed by CI and remain pending.
+
+
+## P161.2 — Đồng bộ camera preset GLB với viewer P74/P81 (candidate · 2026-11-25)
+
+- Nối `CVSpatialWorkspaceP161.apply()` → nạp GLB bằng viewer P74/P81 hiện hữu → áp preset qua API mới `CANVIOThreeGLBViewerP74.applyCameraPose()`. Không tạo renderer/scene/OrbitControls thứ hai.
+- Bổ sung X/Y/Z camera position trong P161; preset lưu và áp yaw/pitch/FOV/vị trí. P74 flush OrbitControls damping/inertia trước khi ghi pose tuyệt đối, tránh sai góc do kéo trước đó.
+- Hosted test dùng GLB fixture tự chứa để kiểm tra API P74 và replay P161→Asset Library→P74, bao gồm vị trí khác 0. Exact-head CI còn chờ; GLB phức tạp, nhiều camera thật, GPU và kiểm tra trực quan thiết bị vẫn là gate thủ công.
