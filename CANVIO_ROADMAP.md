@@ -1430,3 +1430,12 @@ P167.1 and P168.1 are therefore mainline-integrated and hosted-CI verified, with
 - Đã xử lý lỗi CI #817: test gọi `CVWeb` ngay sau điều hướng khi Website Engine chưa lazy-load xong. P166 hiện chờ readiness có giới hạn; Node test mô phỏng editor chỉ sẵn sàng sau 120 ms, Chromium kiểm tra insertion/CSS/save trên editor thật. Nếu timeout hoặc lỗi lưu, không báo thành công giả.
 - Không tạo editor/database/CSS store/timeline thứ hai; selector chỉ tác động landing root. Chờ exact-head hosted workflow và full regression trước merge.
 - Nội dung vẫn là trang tĩnh; CTA/form chưa có backend, CRM, hosting/publish service. Cần duyệt project thật, keyboard/screen-reader/zoom và thiết bị thật.
+
+## Integrated roadmap acceptance — P132.1 / P163.1.1 / P161.2 / P166.2
+
+- Integrated into main by PR #102 / commit 08efae63b9372fcf8941deac77decad99f3a5076; hosted same-tree run #836 passed 66/66.
+- P132.1 local PDF.js import is bounded to one selected page rasterized to PNG and handed to existing Pixel Atelier. PDF.js 6.5.438 / Apache-2.0 is locally vendored and SHA-verified; text/vector editability, password and batch support remain open.
+- P163.1.1 makes existing profile inputs visibly labelled without changing profile IDs, persistence, Asset Library or Storyboard ownership.
+- P161.2 adds saved GLB camera-position replay through the existing P74/P81 viewer; the current acceptance fixture covers nonzero position and exact pose readback. Complex real-world animated GLBs and physical GPU review remain manual.
+- P166.2 sends generated static landing content through P131 sanitizer into existing GrapesJS/CSS Manager and canonical Website save owner. No backend forms, CRM, hosting or publish service is claimed.
+- P70 stays blocked until its fourteen real-world gates have independently reviewed evidence.

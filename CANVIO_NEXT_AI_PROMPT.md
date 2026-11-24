@@ -400,3 +400,11 @@ Khi sửa module: sửa file standalone rồi chép y hệt vào lot (parity so 
 
 - Full hosted run #830 stopped in `tests/p145/run-p153-browser.py` after reload, before P160–P166 tests. Log: three cards existed in `#cv153-grid` but the default Playwright locator wait required visibility. The assertion being tested is persistence after reload, not a pointer interaction.
 - On combined branch `feat/canvio-final-integration-p132-p163-p161-p166`, replaced the visible-state wait with `wait_for_function(document.querySelectorAll('#cv153-grid .card').length===3)`. Subsequent DB/image and user-action checks remain intact. Re-run exact-head hosted acceptance; do not attribute #830 failure to P166.
+
+## Current mainline handoff — PR #102 merged
+
+- Main branch contains squash commit 08efae63b9372fcf8941deac77decad99f3a5076 from PR #102. P132.1, P163.1.1, P161.2/P74.1 and P166.2 are integrated; do not reopen superseded component PRs #98–#101.
+- Exact same-tree hosted run #836 passed 66/66. Artifact CANVIO-23.3.111-GITHUB-RUNTIME-VERIFIED-836 contains the source ZIP and reports; PDF.js vendor is 6.5.438 / Apache-2.0 / 189 SHA-verified files. CANVIO_MANIFEST.json certifies the index hash/byte size but keeps releaseCertified:false.
+- P132: one-page PDF raster handoff into existing Pixel Atelier; P163: visible labels only; P161: camera pose replay on existing r187 viewer; P166: P131-sanitized static landing handoff to existing GrapesJS/CSS/Website save owners.
+- Preserve explicit limits: no editable PDF vector/text/password/batch import; no WCAG certification; no universal complex-GLB/physical-GPU certification; no backend forms, CRM, hosting or publishing.
+- P70 remains blocked with fourteen manual gates pending. Never mark release certified until all have independently reviewed evidence.

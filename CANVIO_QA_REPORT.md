@@ -721,3 +721,12 @@ Mainline workflow #551 passed 53/53; Pages #275 passed build/deploy. P143 parity
 - The earlier full hosted Chromium run #830 failed before reaching the P160–P166 suite, in `tests/p145/run-p153-browser.py` after page reload. The browser log showed three persisted Asset Library cards already present in `#cv153-grid`, but the test used Playwright's default visible-state wait and timed out because the cards' container was not yet in the visible state after `CV.go('assets')`.
 - Replaced that wait with an exact DOM-count wait for three cards, matching the following persistence assertion. The test still checks the three records after reload, image blob data in IndexedDB and subsequent user interactions; no product visibility logic or source behavior was weakened.
 - This failure is unrelated to P166.2 and occurred before its browser suite. The combined PR #102 requires a fresh exact-head hosted run with this test correction.
+
+## P132/P163/P161/P166 — integrated mainline verification
+
+- PR #102 merged as 08efae63b9372fcf8941deac77decad99f3a5076. Exact same-tree GitHub-hosted run #836 passed all 66 steps with no failed steps. The main push workflow #838 repeats hosted acceptance post-merge; record its result independently.
+- P132.1 Node contract 11/11 and same-origin Chromium 8/8. Browser report confirms a two-page local PDF opens, invalid page is rejected, page 2 renders into Pixel Atelier's existing input/canvas (300×150 fixture with the expected red pixel), PDF runtime/worker are same-origin and there are no page errors or external PDF runtime requests.
+- P161.2 hosted GLB fixture loaded via P74/P81 Three.js r187; saved pose readback matched yaw 48 degrees, pitch 21 degrees, FOV 66 degrees and explicit X/Y/Z (1.5, 0.9, 2.25). The direct P74 pose API, P161 replay, and Draco/Meshopt/KTX2 fixture decoder checks passed.
+- P163.1.1/P169 Chromium confirms visible profile labels, eight labelled controls, preview/save, Shared Core round-trip and mobile no-overflow.
+- P166.2/P160–P166 Chromium passed 32/32: actual GrapesJS root insertion, P131 sanitization, scoped CSS base/mobile rule, Shared Core metadata and canonical Website Engine save. Lazy readiness is bounded; a save failure is surfaced as unsaved.
+- P143 parity, full HTML/inline-script audit, P47–P70 regression and the integrated Node/P107 ZIP stage passed. P70 remains 14/14 manual gates pending, zero passed; no stable-release or physical-GPU claim.
