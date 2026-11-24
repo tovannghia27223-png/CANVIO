@@ -119,13 +119,13 @@ function mountMotion() {
   function overlay() { return normalizeOverlay({ text: $('#cv168-text').value, effect: $('#cv168-text-effect').value, position: $('#cv168-text-position').value, style: $('#cv168-text-style').value, color: $('#cv168-text-color').value, size: $('#cv168-text-size').value }); }
   function setDirectImage(src, label) {
     return new Promise(function (resolve, reject) {
-      if (typeof src !== 'string' || !(/^(data:image\\/(?:png|jpeg|webp|gif|svg\\+xml);|blob:)/i.test(src))) { reject(new Error('Nguồn thiết kế không phải ảnh cục bộ được hỗ trợ.')); return; }
+      if (typeof src !== 'string' || !(/^(?:data:image\/(?:png|jpeg|webp|gif|svg\+xml);|blob:)/i.test(src))) { reject(new Error('Nguồn thiết kế không phải ảnh cục bộ được hỗ trợ.')); return; }
       var im = new Image(); im.onload = function () { img = im; imgId = 'direct:' + label; still(0); say('Đã lấy trực tiếp thiết kế ' + label + '.'); resolve(true); };
       im.onerror = function () { reject(new Error('Không giải mã được bản thiết kế ' + label + '.')); }; im.src = src;
     });
   }
   function setDirectSvg(svg, label) {
-    if (typeof svg !== 'string' || !/<svg\\b/i.test(svg) || /(?:href|xlink:href)\\s*=\\s*['"]\\s*(?:https?:|\\/\\/)/i.test(svg)) return Promise.reject(new Error('Poster không trả về SVG hợp lệ hoặc đang tham chiếu ảnh ngoài.'));
+    if (typeof svg !== 'string' || !/<svg\b/i.test(svg) || /(?:href|xlink:href)\s*=\s*['"]\s*(?:https?:|\/\/)/i.test(svg)) return Promise.reject(new Error('Poster không trả về SVG hợp lệ hoặc đang tham chiếu ảnh ngoài.'));
     var u = URL.createObjectURL(new Blob([svg], { type: 'image/svg+xml;charset=utf-8' }));
     return setDirectImage(u, label).then(function (v) { setTimeout(function () { URL.revokeObjectURL(u); }, 30000); return v; }, function (e) { URL.revokeObjectURL(u); throw e; });
   }
@@ -133,7 +133,7 @@ function mountMotion() {
     depth = depth || 0; if (depth > 5 || value == null) return '';
     if (typeof value === 'string') {
       var s = value.trim();
-      if (/^(data:image\\/(?:png|jpeg|webp|gif|svg\\+xml);|blob:)/i.test(s) || /^<svg\\b/i.test(s)) return s;
+      if (/^(?:data:image\/(?:png|jpeg|webp|gif|svg\+xml);|blob:)/i.test(s) || /^<svg\b/i.test(s)) return s;
       if ((s[0] === '{' || s[0] === '[') && s.length < 4000000) { try { return extractDesignSource(JSON.parse(s), depth + 1); } catch (e) {} }
       return '';
     }
