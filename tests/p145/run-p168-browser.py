@@ -28,12 +28,13 @@ with sync_playwright() as p:
     checks['designer_direct_handoff']=pg.evaluate("CV.assets.list().length===%d"%beforeDirect)
     pg.evaluate("document.querySelector('#cv168-asset').dispatchEvent(new Event('focus'));document.querySelector('#cv168-card').dispatchEvent(new Event('mouseenter'))"); pg.wait_for_timeout(600)
     checks['asset_listed']=pg.evaluate("[...document.querySelectorAll('#cv168-asset option')].some(o=>o.textContent==='anh-thu.png')")
+    pg.evaluate("document.querySelector('#cv168-asset').dispatchEvent(new Event('change',{bubbles:true}))"); pg.wait_for_timeout(400)
     def px():
         return pg.evaluate("(()=>{const c=document.querySelector('#cv168-view'),d=c.getContext('2d').getImageData(0,0,c.width,c.height).data;let s=0;for(let i=0;i<d.length;i+=4*101)s=(s*31+d[i]+d[i+1]*3+d[i+2]*7)%1000003;return s})()")
     pg.wait_for_timeout(500); a=px(); checks['still_rendered']=a!=0
     pg.fill('#cv168-text','CANVIO Motion'); pg.select_option('#cv168-text-effect','none'); pg.select_option('#cv168-text-style','banner'); pg.select_option('#cv168-text-position','bottom'); pg.wait_for_timeout(150)
     checks['text_overlay_preview']=px()!=a
-    pg.select_option('#cv168-preset','pan-right'); pg.fill('#cv168-sec','1'); pg.wait_for_timeout(400); pg.click('#cv168-play'); pg.wait_for_timeout(350); mid=px(); checks['preview_animates']=mid!=a
+    pg.select_option('#cv168-preset','pan-right'); pg.fill('#cv168-sec','1'); pg.wait_for_timeout(400); base=px(); pg.click('#cv168-play'); pg.wait_for_timeout(350); mid=px(); checks['preview_animates']=mid!=base
     pg.wait_for_timeout(900)
     n0=pg.evaluate("CV.assets.list().length"); pg.click('#cv168-gif'); pg.wait_for_function("CV.assets.list().length===%d"%(n0+1),timeout=60000)
     g=pg.evaluate("(()=>{const a=CV.assets.list()[0];return {mime:a.mime,name:a.name,head:(a.data||'').slice(0,40),size:a.size}})()")
