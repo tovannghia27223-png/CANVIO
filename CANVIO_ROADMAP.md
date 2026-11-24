@@ -1401,3 +1401,11 @@ Việc cần người dùng: duyệt thứ tự; cho biết có muốn "kênh ch
 PR #91 is merged. Merge commit: `aca4f2846637b28532110f86d82ded2ef37cde03`. Canonical generated runtime commit: `5c54e93ebad19d59548d735fcbd0520ae6fe77e7`. Hosted workflow #796 / run `45459847567` completed successfully, including canonical-index restoration, P143 source parity/inventory, P47–P70 automated regression, source contracts, same-origin GLB/P85/ONNX/worker browser acceptance, and documentation/manifest refresh.
 
 P167.1 and P168.1 are therefore mainline-integrated and hosted-CI verified, with their documented functional boundaries unchanged: P167.1 remains a Canvas2D blocking tool rather than a full WebGL scene editor; P168.1 remains 2D image motion and text compositing rather than a multi-track or AI-video editor. The 14 P70 real-world manual gates are not closed by CI and remain pending.
+
+
+## P132.1 — Nhập từng trang PDF cục bộ vào Pixel Atelier (candidate · 2026-11-25)
+
+- Thêm `canvio-p132-pdf-import.js` / `CVPdfImportP132` phiên bản 132.1.0; PDF.js 6.5.438, Apache-2.0, vendoring cục bộ với CMaps, standard fonts, worker và SHA manifest; không upload PDF, không runtime CDN.
+- Luồng chọn trang → raster PNG trong giới hạn → bàn giao input `#pxFile` và owner Pixel Atelier hiện tại. Một trang/lần; không tạo editor/database/timeline mới.
+- Giới hạn 30 MiB, 500 trang, cạnh dài 4096 px, 16 MP; tắt PDF JavaScript/XFA. Text/vector không còn editable; password, batch và PDF thật vẫn là gate mở.
+- Assertion cũ đọc file picker sau cleanup của Pixel owner; đã sửa để chụp metadata file ở capture phase. Run #813 PASS 65/65 trên nhánh cũ; nhánh mainline v3 cần exact-head rerun.
