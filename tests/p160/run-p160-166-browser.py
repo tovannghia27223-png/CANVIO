@@ -58,7 +58,7 @@ with sync_playwright() as p:
     checks['P166UIPanelVisible']=page.locator('#cv166-card').count()==1
     website_handoff=page.evaluate("""async()=>{
       const result=await CVLandingStudioP166.sendToWebsite({name:'CANVIO HR Landing',headline:'Thiết kế cho đội ngũ nhân sự',brief:'Giải pháp tuyển dụng và phát triển nhân tài',cta:'Khám phá giải pháp',color:'#174ea6'});
-      const wrapper=CVWeb.getWrapper(),top=wrapper&&wrapper.components&&wrapper.components(),models=top&&(top.models||top),root=(models||[]).find(m=>String((m.getAttributes&&m.getAttributes().class)||'').split(' ')includes(result.scope));
+      const wrapper=CVWeb.getWrapper(),top=wrapper&&wrapper.components&&wrapper.components(),models=top&&(top.models||top),root=(models||[]).find(m=>String((m.getAttributes&&m.getAttributes().class)||'').split(' ').includes(result.scope));
       const baseRule=CVWeb.Css.getRule('.'+result.scope),mobileRule=CVWeb.Css.getRule('.'+result.scope+' .hero',{atRuleType:'media',atRuleParams:'(max-width: 760px)'});
       return {result,root:!!root,baseRule:!!baseRule,mobileRule:!!mobileRule,core:(CVCreativeCore.active.documents||{}).websiteLanding||null};
     }""")
