@@ -41,7 +41,7 @@ function writeCards(a) {
     try { if (c && typeof c.capture === 'function') c.capture('videoStudio'); } catch (e) {}
     return true;
   }
-  try { localStorage.setItem(KEY, JSON.stringify(a || [])); return false; } catch (e) { return false; }
+  try { localStorage.setItem(KEY, JSON.stringify(a || [])); return true; } catch (e) { return false; }
 }
 function migrateToCore() {
   var p = coreProject(true), legacy = legacyCards(), current = readCards(), merged = legacy.slice();
