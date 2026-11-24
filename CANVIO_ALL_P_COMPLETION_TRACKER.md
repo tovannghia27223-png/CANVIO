@@ -390,3 +390,10 @@ PR #71 was closed as superseded by clean-main PR #73; the latter carries the cor
 | P168.1 | Merged and hosted-CI verified | PR #91; same merge and successful workflow | 2D image motion/text overlay, not multi-track editing or AI video inference; manual media review remains |
 
 The successful workflow also completed canonical index restoration, P143 parity/inventory, P47–P70 automated regression, source contracts and GLB/P85/ONNX/worker browser acceptance. This does not certify the 14 P70 manual real-world gates; keep `releaseCertified:false` until each gate has evidence.
+
+
+## P161.2 / P74.1 — GLB camera-pose replay (candidate · 2026-11-25)
+
+| P | Status | Implemented scope | Remaining acceptance |
+|---|---|---|---|
+| P161.2 | Candidate on `feat/p161-glb-camera-pose-mainline-v3` | P161 saves X/Y/Z in existing `spatialWorkspace`; P74.1 applies/readbacks yaw/pitch/FOV/world position; OrbitControls damping is flushed before absolute pose; hosted fixture checks both direct P74 and P161→Asset Library→P74 replay. | Exact-head CI/hosted result, real multi-mesh/animated GLBs, camera path review, physical GPU/frame-rate and visual/device acceptance. |
