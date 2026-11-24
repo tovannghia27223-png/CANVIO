@@ -102,6 +102,23 @@ function saveAsset(blob, name) {
   var f = new File([blob], name, { type: blob.type }), before = CV.assets.list().length;
   return Promise.resolve(CV.assets.addBlob(f)).then(function () { var a = CV.assets.list()[0]; if (a && window.CVCreativeCore && CVCreativeCore.active && CVCreativeCore.linkAsset) { try { CVCreativeCore.linkAsset(a.id); } catch (e) {} } return a; });
 }
+function extractDesignSource(value, depth) {
+  depth = depth || 0; if (depth > 5 || value == null) return '';
+  if (typeof value === 'string') {
+    var s = value.trim();
+    if (/^(?:data:image\/(?:png|jpeg|webp|gif|svg\+xml);|blob:)/i.test(s) || /^<svg\b/i.test(s)) return s;
+    if ((s[0] === '{' || s[0] === '[') && s.length < 4000000) { try { return extractDesignSource(JSON.parse(s), depth + 1); } catch (e) {} }
+    return '';
+  }
+  if (Array.isArray(value)) { for (var i = 0; i < Math.min(40, value.length); i++) { var found = extractDesignSource(value[i], depth + 1); if (found) return found; } return ''; }
+  if (typeof value === 'object') {
+    var keys = ['dataUrl','dataURL','previewDataUrl','preview','imageDataUrl','image','src','svg','png','output','canvas'];
+    for (var k = 0; k < keys.length; k++) if (value[keys[k]] != null) { var got = extractDesignSource(value[keys[k]], depth + 1); if (got) return got; }
+    var names = Object.keys(value).slice(0, 40);
+    for (var n = 0; n < names.length; n++) { var item = extractDesignSource(value[names[n]], depth + 1); if (item) return item; }
+  }
+  return '';
+}
 function mountMotion() {
   var page = document.getElementById('page-videoStudio'); if (!page) return false; if (page.querySelector('#cv168-card')) return true;
   var card = document.createElement('div'); card.className = 'card'; card.id = 'cv168-card'; card.style.cssText = 'margin:0;padding:14px';
@@ -129,23 +146,7 @@ function mountMotion() {
     var u = URL.createObjectURL(new Blob([svg], { type: 'image/svg+xml;charset=utf-8' }));
     return setDirectImage(u, label).then(function (v) { setTimeout(function () { URL.revokeObjectURL(u); }, 30000); return v; }, function (e) { URL.revokeObjectURL(u); throw e; });
   }
-  function extractDesignSource(value, depth) {
-    depth = depth || 0; if (depth > 5 || value == null) return '';
-    if (typeof value === 'string') {
-      var s = value.trim();
-      if (/^(?:data:image\/(?:png|jpeg|webp|gif|svg\+xml);|blob:)/i.test(s) || /^<svg\b/i.test(s)) return s;
-      if ((s[0] === '{' || s[0] === '[') && s.length < 4000000) { try { return extractDesignSource(JSON.parse(s), depth + 1); } catch (e) {} }
-      return '';
-    }
-    if (Array.isArray(value)) { for (var i = 0; i < Math.min(40, value.length); i++) { var found = extractDesignSource(value[i], depth + 1); if (found) return found; } return ''; }
-    if (typeof value === 'object') {
-      var keys = ['dataUrl','dataURL','previewDataUrl','preview','imageDataUrl','image','src','svg','png','output','canvas'];
-      for (var k = 0; k < keys.length; k++) if (value[keys[k]] != null) { var got = extractDesignSource(value[keys[k]], depth + 1); if (got) return got; }
-      var names = Object.keys(value).slice(0, 40);
-      for (var n = 0; n < names.length; n++) { var item = extractDesignSource(value[names[n]], depth + 1); if (item) return item; }
-    }
-    return '';
-  }
+
   function dims() { var s = SIZES[$('#cv168-size').value] || SIZES['800x500']; return s; }
   function sec() { return Math.max(1, Math.min(6, Number($('#cv168-sec').value) || 3)); }
   function fillAssets() { var l = assets(), cur = $('#cv168-asset').value; $('#cv168-asset').innerHTML = l.length ? l.map(function (a) { return '<option value="' + esc(a.id) + '">' + esc(a.name) + '</option>'; }).join('') : '<option value="">(Chưa có ảnh trong Tài nguyên — thêm ở trang Tài nguyên hoặc Bảng cảm hứng)</option>'; if (cur && l.some(function (a) { return a.id === cur; })) $('#cv168-asset').value = cur; }
