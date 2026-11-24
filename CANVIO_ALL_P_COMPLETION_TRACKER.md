@@ -390,3 +390,10 @@ PR #71 was closed as superseded by clean-main PR #73; the latter carries the cor
 | P168.1 | Merged and hosted-CI verified | PR #91; same merge and successful workflow | 2D image motion/text overlay, not multi-track editing or AI video inference; manual media review remains |
 
 The successful workflow also completed canonical index restoration, P143 parity/inventory, P47–P70 automated regression, source contracts and GLB/P85/ONNX/worker browser acceptance. This does not certify the 14 P70 manual real-world gates; keep `releaseCertified:false` until each gate has evidence.
+
+
+## P166.2 — Website Engine handoff (candidate · 2026-11-25)
+
+| P | Status | Implemented scope | Remaining acceptance |
+|---|---|---|---|
+| P166.2 | Candidate on `feat/p166-website-engine-handoff-mainline-v3` | P166.2.0 waits for lazy Website Engine/P131 readiness; sanitizes generated body with P131; inserts scoped root into existing GrapesJS `CVWeb`; applies base/mobile CSS through `CVWeb.Css.setRule`; saves via `CV.engines.web.save`. Node test simulates 120 ms lazy readiness; Chromium tests real editor insertion/CSS/save. | Exact-head hosted workflow/P143/full regressions; real user Website project visual review, keyboard/screen-reader/zoom and physical mobile. Backend forms, CRM, hosting and live publishing are not included. |
