@@ -4294,3 +4294,12 @@ P160–P166 module APIs currently report versions P160.2.0, P161.1.0, P162.2.0, 
 - No new store, external API, paid service, package or timeline was added. Output remains saved through the current Asset Library and existing Storyboard owner.
 - Added Node coverage for overlay normalization/rendering and design-source extraction; Chromium coverage verifies Poster SVG and Designer snapshot handoff without intermediate assets, overlay preview, plus the existing GIF/WebM/Storyboard/workflow/mobile checks.
 - Status: candidate pending exact-head hosted CI, P143 standalone/inline parity, generated canonical `index.html`, and post-merge mainline verification. This is 2D image motion, not a full multi-track video editor or AI video generation.
+
+
+## P166.2 — Brief-to-GrapesJS Website Engine handoff (candidate · 2026-11-25)
+
+- `canvio-p166-landing-studio.js` / `CVLandingStudioP166` increments to `166.2.0`. `sendToWebsite()` now performs a real local handoff rather than only dispatching an event and navigating: it opens the existing `webEngine`, extracts the generated document body, calls P131 `CANVIOSecurity.prepareHtmlImport()`, wraps the sanitized body in a unique scoped root class, adds it with `CVWeb.addComponents()`, applies scoped base/mobile rules through `CVWeb.Css.setRule()`, then awaits `CV.engines.web.save()`.
+- Responsive rules cover the hero grid, visual/hero sizing and feature grid at `max-width:760px`. The CSS selectors are scoped to the imported landing root so they do not recolor other Website Engine content. The existing Website Engine remains the sole GrapesJS editor/CSS/persistence owner; P166 creates no second editor, CSS store, page database or timeline.
+- If P131, GrapesJS CSS Manager or the canonical save method is unavailable, the function fails before inserting the landing page. If CSS or save fails after insertion, the return value explicitly reports that an unsaved component may remain and the user should inspect/undo it.
+- Node and hosted Chromium suites now cover sanitizer invocation, scoped CSS, media query rules, GrapesJS root insertion, Shared Core metadata, save path and mobile overflow. The hosted suite is required before acceptance.
+- Limits remain: generated page is static; forms/CTA do not have a backend, hosting/publishing service, external CRM, server-side submission or live-data integration. CSS selector/visual review on a real authored project, keyboard/screen-reader/zoom and physical devices remain manual gates.
