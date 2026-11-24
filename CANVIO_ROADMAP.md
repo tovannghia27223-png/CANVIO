@@ -1401,3 +1401,9 @@ Việc cần người dùng: duyệt thứ tự; cho biết có muốn "kênh ch
 PR #91 is merged. Merge commit: `aca4f2846637b28532110f86d82ded2ef37cde03`. Canonical generated runtime commit: `5c54e93ebad19d59548d735fcbd0520ae6fe77e7`. Hosted workflow #796 / run `45459847567` completed successfully, including canonical-index restoration, P143 source parity/inventory, P47–P70 automated regression, source contracts, same-origin GLB/P85/ONNX/worker browser acceptance, and documentation/manifest refresh.
 
 P167.1 and P168.1 are therefore mainline-integrated and hosted-CI verified, with their documented functional boundaries unchanged: P167.1 remains a Canvas2D blocking tool rather than a full WebGL scene editor; P168.1 remains 2D image motion and text compositing rather than a multi-track or AI-video editor. The 14 P70 real-world manual gates are not closed by CI and remain pending.
+
+
+## P163.1.1 — Nhãn hiển thị cho biểu mẫu nhất quán nhân vật (candidate · 2026-11-25)
+
+- Bổ sung nhãn chữ nhìn thấy cho bảy control P163: tên, mô tả nhận diện, đặc điểm bắt buộc, ảnh tham chiếu, hồ sơ nhân vật, đặc điểm cảnh mới và cảnh Storyboard. Nhãn gắn trực tiếp với input/select hiện hữu, không đổi ID/API hay chủ sở hữu dữ liệu.
+- Hosted Chromium mở rộng P169 để kiểm tra cả bảy nhãn liên kết đúng control và có kích thước hiển thị. Đây là kiểm tra DOM/layout, không thay thế rà soát keyboard, screen reader, zoom 200% hoặc chứng nhận WCAG thủ công.
