@@ -4141,10 +4141,22 @@ Bài học P150: KHÔNG đặt `display:flex` lên `#page-home` mà không kèm 
 
 ### P153–P157 đã triển khai (2026-11-24)
 - Module: `canvio-p153-board.js` (CVBoardP153, CVSceneStoreP153), `canvio-p154-panorama.js` (CVPanoramaP154), `canvio-p155-scene-pack.js` (CVScenePackP155); lot `canvio-lot153b/154p/155s`, đã vào parity P143 (37/37) và boot-order graph.
-- Dữ liệu: `canvio.p153.board` và `canvio.p155.cards` là mảng có `id` (Cloud Sync P130 tự đồng bộ từng mục); ảnh đầy đủ ở IndexedDB `CANVIO_SCENE_STORE` (chưa đồng bộ đám mây — chỉ thumb đi theo).
+- Dữ liệu sau P159: P153 ghi metadata vào `CVCreativeCore.active.documents.inspirationBoard.items`; ảnh gốc mới được đưa vào `CV.assets.addBlob` với `assetId` và metadata `canvioScene` (palette, loại, ghi chú, yaw/pitch/FOV), rồi liên kết vào dự án bằng `CVCreativeCore.linkAsset`. Thẻ P155 lưu trong `documents.scenePack`; các khóa/kho cũ chỉ là nguồn migration, không phải nơi ghi mới.
 - Cạm bẫy: thẻ `.card` trong `#page-assets` bị gắn `data-tilt` (nghiêng 3D) → làm lệch vùng bấm; thẻ mới phải tắt transform. `renderView` nhận `{data,w,h}`, không nhận trực tiếp `ImageData` (dùng `width/height`). Smooth-scroll của trang làm Playwright đo sai tọa độ: test nên chèn `scroll-behavior:auto`.
-- Việc kế tiếp: nối prompt P156 sang P128/ComfyUI; nối "Dùng màu này" vào Poster/Brand; P158.
+- P159 candidate: prompt P156 đi qua P128 bằng handler local deterministic `scene-compose-local` (không phải AI inference); màu P153 nối Brand Kit/Shared Core; P156/P157 append vào Storyboard Video Studio hiện có. Còn nghiệm thu trên dữ liệu legacy/profile thật và ảnh panorama 2:1 thực tế; P158 vẫn chưa triển khai.
 
 ### NGUYÊN TẮC TÍCH HỢP (người dùng đặt, 2026-11-24) — đọc trước khi làm module mới
 - Module mới phải nối với Studio, Image Library (`CV.assets`), AI Engine (`CVOrchestratorP128`), Video Editor (Storyboard/Video Studio), dữ liệu dùng chung qua `CVCreativeCore` (`linkAsset`, `context()`). Không tạo kho dữ liệu riêng, không tạo công cụ chỉ đứng một mình.
-- P153–P157 hiện CHƯA đạt nguyên tắc này (kho riêng `CANVIO_SCENE_STORE`). P159 là việc sửa bắt buộc đầu tiên. Kế hoạch P160–P166 (Inspiration, 3D, Canvas ảnh, Nhân vật, Video, AI Workflow, Website) ở ROADMAP.
+- P159 đã có candidate implementation: metadata P153/P155 đi qua Shared Core; ảnh mới vào `CV.assets`; prompt P156 qua P128 local handler; shot P156/P157 đi vào Video Studio project hiện hữu. Không kết luận hoàn tất trước hosted Node/Chromium, P143 parity và migration legacy trên profile thực. P160–P166 vẫn theo ma trận ROADMAP.
+
+
+## P159 — Shared Core integration for P153–P157 (candidate · 2026-11-24)
+- Sources: `canvio-p153-board.js` / `canvio-lot153b`, `canvio-p155-scene-pack.js` / `canvio-lot155s`, and `canvio-p159-integration.js` / `canvio-lot159i`. P143 source map now registers 38 standalone/inline pairs.
+- P153 new image records are created via `CV.assets.addBlob`; metadata (board item ID, type, colour palette, note, panorama yaw/pitch/FOV) stays on the asset object as `canvioScene`. The board's project metadata lives in `CVCreativeCore.active.documents.inspirationBoard`. New uploads no longer write the legacy board key when Shared Core is ready.
+- Legacy migration is fail-safe: `migrateToAssets()` merges the legacy board list with project documents, reads existing bytes from `CANVIO_SCENE_STORE`, copies them to Asset Library, records the returned asset ID, and only requests legacy-key/database deletion after zero image records remain without verified asset IDs. A partial failure leaves the legacy records/database for retry.
+- P155 cards use `documents.scenePack`; old `canvio.p155.cards` remains read-only migration input. Reusable cards link their P153 reference asset IDs to the Core project.
+- P156 uses `CVOrchestratorP128.register/run` with local handler `scene-prompt/scene-compose-local`. It assembles role-tagged prompt text plus Core brief/goal/channel; this is deterministic local orchestration, not a generative model call or remote AI feature.
+- P156/P157 append to the existing `canvio5:media_video_project_v1` shots, refresh the existing Video Studio render methods, and capture the current Storyboard in Shared Core. Existing shots are preserved; no second timeline/store is created.
+- P159 also connects `cv153:usecolor` to Brand Kit/Shared Core and reconciles board/card references if the canonical Asset Library removes a referenced source asset. Removing a board tile alone does not delete a shared asset.
+- CI adds `tests/p159/run-p159-tests.cjs`, checks the three inline lots, and limits the Asset Library `addBlob` convenience cap to 200 records to match other upload flows. Hosted result is pending until run #689 completes; do not mark P159 PASS before all gates pass.
+- Real user panorama footage, migration against an existing profile, physical-device memory limits, and actual P130 Supabase/two-device sync remain separate manual acceptance. Do not claim cloud sync or model inference from mocked/local tests.
