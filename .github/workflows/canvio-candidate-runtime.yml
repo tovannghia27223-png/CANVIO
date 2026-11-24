@@ -1080,6 +1080,19 @@ jobs:
           The GitHub-hosted Node 24 runner provisions same-origin Three.js r187 and P85 runtimes, verifies every vendored file against SHA-256 manifests, checks extracted module/worker syntax, runs P47–P70 regressions, validates P107 ZIP import rollback and runs Chromium against a same-origin HTTP origin. Browser inference checks execute actual P80 Whisper Tiny, P102 ORMBG and P105 Depth Anything ONNX WASM workers using synthetic test data; this verifies execution plumbing, not accuracy on real user data. SwiftShader is software, not a physical GPU. Real two-device Project Vault synchronization is not claimed. P70 remains releaseCertified:false with fourteen manual acceptance gates open.
           QA
           fi
+          if ! grep -q '## P132/P163/P161/P166 — integrated mainline verification' CANVIO_QA_REPORT.md; then
+            cat >> CANVIO_QA_REPORT.md <<'QA'
+
+          ## P132/P163/P161/P166 — integrated mainline verification
+
+          - PR #102 merged as 08efae63b9372fcf8941deac77decad99f3a5076. Exact same-tree GitHub-hosted run #836 passed all 66 steps with no failed steps. The main push workflow #838 repeats hosted acceptance post-merge; record its result independently.
+          - P132.1 Node contract 11/11 and same-origin Chromium 8/8. Browser report confirms a two-page local PDF opens, invalid page is rejected, page 2 renders into Pixel Atelier's existing input/canvas (300×150 fixture with the expected red pixel), PDF runtime/worker are same-origin and there are no page errors or external PDF runtime requests.
+          - P161.2 hosted GLB fixture loaded via P74/P81 Three.js r187; saved pose readback matched yaw 48 degrees, pitch 21 degrees, FOV 66 degrees and explicit X/Y/Z (1.5, 0.9, 2.25). The direct P74 pose API, P161 replay, and Draco/Meshopt/KTX2 fixture decoder checks passed.
+          - P163.1.1/P169 Chromium confirms visible profile labels, eight labelled controls, preview/save, Shared Core round-trip and mobile no-overflow.
+          - P166.2/P160–P166 Chromium passed 32/32: actual GrapesJS root insertion, P131 sanitization, scoped CSS base/mobile rule, Shared Core metadata and canonical Website Engine save. Lazy readiness is bounded; a save failure is surfaced as unsaved.
+          - P143 parity, full HTML/inline-script audit, P47–P70 regression and the integrated Node/P107 ZIP stage passed. P70 remains 14/14 manual gates pending, zero passed; no stable-release or physical-GPU claim.
+          QA
+          fi
           if ! grep -q '23.3.111 — Hosted runtime and release continuation' CANVIO_ROADMAP.md; then
             cat >> CANVIO_ROADMAP.md <<'ROADMAP'
 
@@ -1089,6 +1102,19 @@ jobs:
           - Run true model inference smoke for Whisper, ORMBG and Depth Anything after explicit test invocation; keep model weights outside the repository and disclose first-use network requirements.
           - Retain P107 as portable export/import through the canonical Asset Library. Cloud sync/Project Vault is not implemented without a secure backend; physical two-device acceptance remains separate.
           - Keep P70 fail-closed; physical GPU, target-device performance, real footage/audio quality, production HTTPS/security headers, print workflow, accessibility review, and rollback/observability need separately recorded evidence.
+          ROADMAP
+          fi
+          if ! grep -q '## Integrated roadmap acceptance — P132.1 / P163.1.1 / P161.2 / P166.2' CANVIO_ROADMAP.md; then
+            cat >> CANVIO_ROADMAP.md <<'ROADMAP'
+
+          ## Integrated roadmap acceptance — P132.1 / P163.1.1 / P161.2 / P166.2
+
+          - Integrated into main by PR #102 / commit 08efae63b9372fcf8941deac77decad99f3a5076; hosted same-tree run #836 passed 66/66.
+          - P132.1 local PDF.js import is bounded to one selected page rasterized to PNG and handed to existing Pixel Atelier. PDF.js 6.5.438 / Apache-2.0 is locally vendored and SHA-verified; text/vector editability, password and batch support remain open.
+          - P163.1.1 makes existing profile inputs visibly labelled without changing profile IDs, persistence, Asset Library or Storyboard ownership.
+          - P161.2 adds saved GLB camera-position replay through the existing P74/P81 viewer; the current acceptance fixture covers nonzero position and exact pose readback. Complex real-world animated GLBs and physical GPU review remain manual.
+          - P166.2 sends generated static landing content through P131 sanitizer into existing GrapesJS/CSS Manager and canonical Website save owner. No backend forms, CRM, hosting or publish service is claimed.
+          - P70 stays blocked until its fourteen real-world gates have independently reviewed evidence.
           ROADMAP
           fi
           cat > CANVIO_FINAL_ACCEPTANCE_MATRIX.md <<'MATRIX'
@@ -1107,6 +1133,10 @@ jobs:
           | P145.7 Typography presets | Six system-font presets, bounded controls, CSS export and physical Playwright hit-test | No bundled commercial fonts; OS typography review remains manual |
           | P145.8 Vector illustrations | Eight original SVG illustrations, four palettes, filter/preview/vector export; Node + Chromium | Starter pack only; not stock photography or a large illustration catalogue |
           | P145.9/.10 Asset Search & Quality Gate | Read-only local search/filter and shared license/source/size/hash gate | Full live Asset Vault enumeration and hashing every uploaded binary require canonical provider |
+          | P132.1 local PDF page import | PDF.js 6.5.438 local vendor (189 SHA-verified files, Apache-2.0); Node contract 11/11; same-origin Chromium 8/8 for local page count, page validation, page-2 PNG handoff to existing Pixel input, correct canvas pixels, same-origin worker and zero page errors | One-page raster import only; editable PDF text/vector, password files, multi-page batch and representative customer PDFs remain outside automated acceptance. |
+          | P163.1.1 visible character-profile labels | P169 Chromium verifies visible labels for existing P163 profile controls, eight labelled Character Studio fields, Shared Core profile round-trip, preview/save/reset and mobile overflow; P143 source parity | Automated label/layout checks are not WCAG certification; keyboard, screen reader, 200% zoom and physical-device review remain manual. |
+          | P161.2 / P74.1 GLB camera-pose replay | Existing Three.js r187 viewer applies and reads back yaw/pitch/FOV; hosted GLB fixture replays P161 preset through Asset Library with nonzero X/Y/Z; OrbitControls damping flush; same-origin GLB and Draco/Meshopt/KTX2 decoder fixtures | Complex animated/multi-camera production GLBs, physical GPU/frame rate and target-device visual review remain manual. |
+          | P166.2 brief-to-Website Engine handoff | P160–P166 Chromium 32/32; delayed lazy-editor Node test; P131 sanitized body inserted into existing GrapesJS owner, scoped base/mobile rules in canonical CSS Manager, Shared Core metadata and native Website Engine save; no page errors | Output is a static landing page. Backend form submission, CRM, hosting/live publishing and authored customer Website project review are not included. |
           | P70 Stable release | Fourteen fail-closed manual gates | releaseCertified:false until every gate has reviewed production evidence |
 
           ## Required manual gates
@@ -1125,6 +1155,20 @@ jobs:
           13. Cross-origin backup/restore and independent-device recovery.
           14. Rollback, release observability, alerting and production incident drill.
           MATRIX
+          if ! grep -q '## Final integrated acceptance — P132.1 / P163.1.1 / P161.2 / P166.2' CANVIO_ALL_P_COMPLETION_TRACKER.md; then
+            cat >> CANVIO_ALL_P_COMPLETION_TRACKER.md <<'TRACKER'
+
+          ## Final integrated acceptance — P132.1 / P163.1.1 / P161.2 / P166.2
+
+          | P | Integrated mainline status | Verified evidence | Remaining boundary |
+          |---|---|---|---|
+          | P132.1 | Merged in PR #102 (08efae6) | PDF.js 6.5.438 local vendor, Apache-2.0, 189 SHA-verified files; Node 11/11; Chromium 8/8; P143 51-module parity; one-page PDF-to-PNG Pixel handoff | Editable vectors/text, password PDFs, multi-page batch and customer-PDF review remain open |
+          | P163.1.1 | Merged in PR #102 (08efae6) | Visible labels on existing controls; P169 Chromium profile round-trip and mobile overflow checks; P143 parity | Manual keyboard, screen-reader, 200% zoom and physical-device review; no WCAG certification |
+          | P161.2 / P74.1 | Merged in PR #102 (08efae6) | Existing Three.js r187 camera API; hosted GLB pose readback including nonzero X/Y/Z; Draco/Meshopt/KTX2 fixtures | Complex animated/multi-camera production GLBs and physical GPU/device acceptance |
+          | P166.2 | Merged in PR #102 (08efae6) | P131 sanitizer, actual GrapesJS/CSS Manager handoff and save; lazy-readiness Node test; P160–P166 Chromium 32/32 | Static landing only; no form backend, CRM, hosting or live publish |
+          | Integrated CI | Exact same-tree run #836 PASS 66/66 | P143, full HTML audit, P47–P70, Node contracts, P107 ZIP round-trip and hosted Chromium | Post-merge #838 is tracked independently; P70 fourteen manual gates remain pending |
+          TRACKER
+          fi
           if ! grep -q 'CANVIO 23.3.111 hosted runtime handoff' CANVIO_HANDOFF.md; then
             cat >> CANVIO_HANDOFF.md <<'HANDOFF'
 
@@ -1132,6 +1176,18 @@ jobs:
 
           The candidate is built and verified by the hosted runtime workflow. Runtime vendor binaries are pinned and same-origin; model weights stay outside git and download only when a user runs the feature. Review hosted reports before promotion. Main-branch Pages auto-deploy is disabled; deployment remains manual and requires a certified P70 manifest. This version does not claim physical GPU, two-device Project Vault sync or Stable release acceptance.
           HANDOFF
+          fi
+          if ! grep -q '## Current mainline handoff — PR #102 merged' CANVIO_NEXT_AI_PROMPT.md; then
+            cat >> CANVIO_NEXT_AI_PROMPT.md <<'NEXT'
+
+          ## Current mainline handoff — PR #102 merged
+
+          - Main branch contains squash commit 08efae63b9372fcf8941deac77decad99f3a5076 from PR #102. P132.1, P163.1.1, P161.2/P74.1 and P166.2 are integrated; do not reopen superseded component PRs #98–#101.
+          - Exact same-tree hosted run #836 passed 66/66. Artifact CANVIO-23.3.111-GITHUB-RUNTIME-VERIFIED-836 contains the source ZIP and reports; PDF.js vendor is 6.5.438 / Apache-2.0 / 189 SHA-verified files. CANVIO_MANIFEST.json certifies the index hash/byte size but keeps releaseCertified:false.
+          - P132: one-page PDF raster handoff into existing Pixel Atelier; P163: visible labels only; P161: camera pose replay on existing r187 viewer; P166: P131-sanitized static landing handoff to existing GrapesJS/CSS/Website save owners.
+          - Preserve explicit limits: no editable PDF vector/text/password/batch import; no WCAG certification; no universal complex-GLB/physical-GPU certification; no backend forms, CRM, hosting or publishing.
+          - P70 remains blocked with fourteen manual gates pending. Never mark release certified until all have independently reviewed evidence.
+          NEXT
           fi
           cat > CANVIO_PATCH_NOTES.md <<'PATCH'
           # CANVIO 23.3.111 patch notes
@@ -1143,8 +1199,25 @@ jobs:
           - Added P145.2 local WebGL shader transitions/effects, Canvas2D fallback, PNG export and an optional P79-muxed video-only transition MP4 path with hosted Chromium coverage.
           - Added P125.4 optional split-asset storyboard ZIP alongside the original self-contained HTML export; hosted Chromium verifies ZIP integrity and final relative-frame decoding offline. Audio and mobile/real-media acceptance remain open.
           - Added P145.6–P145.10 Asset Library tools: 25 original SVG icons, six local typography presets, eight original SVG illustrations, and read-only asset search/quality gate, with Node and hosted Chromium acceptance.
+          - Added P132.1 local PDF page-to-PNG import using locally vendored PDF.js 6.5.438 (Apache-2.0), same-origin worker/CMaps/fonts, SHA-256 manifest, bounded one-page raster handoff into the existing Pixel Atelier owner, and Node/Chromium coverage.
+          - Added P163.1.1 visible labels for existing character-profile controls, preserving Shared Core, Asset Library and Storyboard ownership; P169 browser coverage checks visible field labels and profile round-trip.
+          - Added P161.2/P74.1 saved GLB camera-pose replay in the existing Three.js r187 viewer, including yaw/pitch/FOV/X-Y-Z, OrbitControls damping flush and same-origin GLB fixture checks.
+          - Added P166.2 brief-to-GrapesJS Website Engine handoff through P131 sanitization, scoped responsive CSS and the canonical save owner, with lazy-engine readiness and Chromium integration tests.
           - Stable release remains fail-closed at P70; no physical GPU or two-device certification is implied.
           PATCH
+          if ! grep -q '## 23.3.111 integrated acceptance — P132.1, P163.1.1, P161.2 and P166.2' CANVIO_AI_GUIDE.md; then
+            cat >> CANVIO_AI_GUIDE.md <<'GUIDE'
+
+          ## 23.3.111 integrated acceptance — P132.1, P163.1.1, P161.2 and P166.2
+
+          - Mainline integration commit: 08efae63b9372fcf8941deac77decad99f3a5076 (PR #102, squash merged). Exact same-tree hosted verification #836 completed 66/66 steps successfully before merge; P143 source/inline parity, full HTML and inline-JavaScript audit, P47–P70 regressions, Node contracts, P107 ZIP round-trip and Chromium acceptance all passed.
+          - P132.1: PDF.js 6.5.438 / Apache-2.0; 189 locally hosted files with SHA-256 manifest; Node contracts 11/11; Chromium 8/8; page 2 is rasterized and handed into the existing Pixel Atelier file input. Raster only; no editable text/vector, password support or batch import.
+          - P163.1.1: visible labels for the existing character-profile fields; P169 Chromium validates labels, eight Character Studio controls, Shared Core profile round-trip and mobile overflow. No data-owner or sync model change.
+          - P161.2/P74.1: the existing Three.js r187 viewer owns rendering, camera and OrbitControls; absolute camera presets persist yaw/pitch/FOV/X/Y/Z and flush damping before apply. Hosted fixture proves nonzero-position GLB replay; complex production assets and physical GPU/device acceptance remain manual.
+          - P166.2: P131 sanitizer to existing GrapesJS component manager to scoped canonical CSS Manager media rules to existing Website Engine save owner. Lazy readiness is bounded; failed save is never reported as success. Chromium integrated P160–P166 acceptance passed 32/32. Landing output is static; no backend forms, CRM, hosting or publishing.
+          - P70 remains fail-closed: releaseCertified:false, fourteen real-world acceptance gates pending. Hosted Chromium uses software rendering; it does not certify physical GPU, production HTTPS/security headers, independent-device recovery, human accessibility or real customer media quality.
+          GUIDE
+          fi
           if ! grep -q '## P145.2 — Shader transitions and effects' CANVIO_AI_GUIDE.md; then
             cat >> CANVIO_AI_GUIDE.md <<'GUIDE'
 
