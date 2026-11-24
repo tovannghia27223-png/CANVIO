@@ -1394,3 +1394,11 @@ Việc cần người dùng: duyệt thứ tự; cho biết có muốn "kênh ch
 - No new store, external API, paid service, package or timeline was added. Output remains saved through the current Asset Library and existing Storyboard owner.
 - Added Node coverage for overlay normalization/rendering and design-source extraction; Chromium coverage verifies Poster SVG and Designer snapshot handoff without intermediate assets, overlay preview, plus the existing GIF/WebM/Storyboard/workflow/mobile checks.
 - Status: candidate pending exact-head hosted CI, P143 standalone/inline parity, generated canonical `index.html`, and post-merge mainline verification. This is 2D image motion, not a full multi-track video editor or AI video generation.
+
+
+## P132.1 — Nhập từng trang PDF cục bộ vào Pixel Atelier (candidate · 2026-11-25)
+
+- Thêm `canvio-p132-pdf-import.js` / `CVPdfImportP132` phiên bản 132.1.0; PDF.js 6.5.438, Apache-2.0, vendoring cục bộ với CMaps, standard fonts, worker và SHA manifest. Không tải PDF lên máy chủ, không gọi CDN runtime.
+- Luồng: chọn PDF → chọn trang → raster PNG trong giới hạn → bàn giao vào input `#pxFile` và owner `CVNativeEngines.pixel` hiện hữu. Mỗi lần một trang; không tạo editor/database/timeline mới.
+- Giới hạn: 30 MiB, 500 trang, 4096 px cạnh dài, 16 MP; tắt PDF JavaScript/XFA. Text/vector không còn editable sau raster; password, batch nhiều trang và PDF khách hàng thật vẫn là gate mở.
+- Assertion cũ đọc `#pxFile.files` sau khi Pixel owner xử lý và dọn picker; log vẫn xác nhận canvas 300×150, pixel đỏ đúng, không page error. Test mới ghi metadata File ở capture phase trước cleanup. Run #810 đã PASS 65/65 trên SHA trước đó; nhánh current-mainline cần exact-head rerun trước merge.
