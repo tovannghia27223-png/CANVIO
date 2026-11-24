@@ -43,9 +43,11 @@ function landingCssRules(scope,color){
   ];
 }
 function bodyMarkup(html){
-  var m=String(html||'').match(/<body[^>]*>([\\s\\S]*?)<\\/body>/i);
-  if(!m)throw new Error('Không trích xuất được phần nội dung Landing Page.');
-  return m[1];
+  var source=String(html||''),open=source.match(/<body\\b[^>]*>/i),lower=source.toLowerCase();
+  if(!open)throw new Error('Không trích xuất được phần nội dung Landing Page.');
+  var start=source.indexOf(open[0])+open[0].length,end=lower.lastIndexOf('</body>');
+  if(end<start)throw new Error('Cấu trúc body của Landing Page không hợp lệ.');
+  return source.slice(start,end);
 }
 async function sendToWebsite(options){
   if(window.CV&&CV.go)CV.go('webEngine');
