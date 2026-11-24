@@ -1,10 +1,10 @@
 {
   "format": "CANVIO_P143_STYLE_TEMPLATE_LOADER_INVENTORY",
   "version": 1,
-  "generatedAt": "2026-11-24T18:03:08.402Z",
+  "generatedAt": "2026-11-24T18:32:50.905Z",
   "source": "restored canonical index.html after all workflow-managed module integration steps",
   "purpose": "Inventory inline styles, template elements, dynamic resource-loader call sites and lexical global-reference ordering candidates. Global references are not a human-reviewed semantic boot-order or runtime data-flow graph.",
-  "htmlBytes": 6051730,
+  "htmlBytes": 6067580,
   "styles": {
     "blockCount": 122,
     "inlineStyleAttributeCount": 1701,
@@ -14485,14 +14485,14 @@
     "blocks": []
   },
   "dynamicLoaders": {
-    "count": 80,
+    "count": 81,
     "countsByKind": {
       "dynamic-script-element": 4,
       "dedicated-worker": 5,
       "dynamic-fetch": 53,
       "document-write": 3,
       "script-src-assignment": 4,
-      "dynamic-import": 11
+      "dynamic-import": 12
     },
     "sites": [
       {
@@ -15054,6 +15054,13 @@
         "scriptId": "canvio-lot120126",
         "offset": 4097,
         "excerpt": "ut(function(){ctl.abort();},timeout||30000);} try{ var res=await fetch(base+path,init); if(!res.ok){var msg='HTTP '+res.status;try{var body=await res.clone().json();msg=body.error||body.message||msg;}ca"
+      },
+      {
+        "kind": "dynamic-import",
+        "scriptOrder": 184,
+        "scriptId": "canvio-lot132pdf",
+        "offset": 3482,
+        "excerpt": "ets/vendor/pdfjs/pdf.worker.mjs', doc.baseURI).href; pdfjsPromise = import(moduleUrl).then(function (pdfjs) { if (!pdfjs || typeof pdfjs.getDocument !== 'function' || !pdfjs.GlobalWorkerOptions) throw new"
       }
     ]
   },
