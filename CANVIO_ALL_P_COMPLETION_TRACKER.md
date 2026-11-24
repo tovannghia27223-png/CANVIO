@@ -380,3 +380,10 @@ PR #71 was closed as superseded by clean-main PR #73; the latter carries the cor
 - All P159–P166 standalone modules, tests, source-map registration and hosted workflow wiring are present on `main` as candidate implementation.
 - Latest inspected workflow #767: P160–P166 Node contract suite passed; Chromium 27/28 passed with zero page errors. Sole failure: P164 prompt assertion case mismatch.
 - Fix committed in this candidate: P164 prompt heading normalized to `Shot list`; browser assertion now case-insensitive. Status remains **Integrated candidate / hosted rerun pending**, not accepted. Manual real-asset, GLB, local-model, project round-trip, accessibility/device and P130 sync gates remain open.
+
+
+## P132.1 — Local PDF import to Pixel Atelier (candidate · 2026-11-25)
+
+| P | Status | Implemented scope | Remaining acceptance |
+|---|---|---|---|
+| P132.1 | Mainline-ready candidate on `feat/p132-pdf-import-current-main` | Local PDF.js 6.5.438 + Apache-2.0 notice/SHA manifest; one-page PDF→PNG import into existing Pixel Atelier `#pxFile` owner; bounded file/pages/pixel budgets; Node + Chromium tests and P143 51-pair registration wired into hosted workflow. | New-mainline hosted Node/Chromium/full regression rerun; real customer PDF/password handling, multi-page batch and accessibility/device review. First browser failure was a late file-input assertion after owner cleanup; corrected to inspect the change event during capture phase. Do not mark PASS until rerun succeeds. |
