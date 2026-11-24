@@ -1203,3 +1203,38 @@ Hosted verification after the ffmpeg repair is complete:
 - P133: đã xong — OPFS media >32MB (133.4/5), kho Tài nguyên IndexedDB (133.6), proxy 720p bằng OffscreenCanvas Worker (133.3), khử ồn Worker; `run-p133a/p133w` đạt (p133w từng fail một lần do đo thời gian, chạy lại đạt). Chưa làm: chuyển Project Vault sang OPFS (kho vault đang an toàn, để nguyên).
 - P124: `run-p124-tests.cjs` đạt; còn mở: biến thể lồng nhau, kéo/đổi cỡ, chuyển cây component bất kỳ — cần đặc tả.
 - P143: Phase 3 (tách mã thật) chưa làm vì rủi ro vỡ file đơn; chỉ làm khi người dùng đồng ý.
+
+## P153–P158 — Gói "Cảnh nhất quán" + Bảng cảm hứng (kế hoạch, chưa làm · 2026-11-24)
+Nguồn ý tưởng: 4 video người dùng gửi (Mewia, ZOZO Nghiện AI ×2, skill thiết kế AI). Nguyên tắc chung: miễn phí, chạy cục bộ, không thêm kho dữ liệu mới (dùng Kho Tài nguyên IndexedDB/OPFS P133 và Cloud Sync P130 sẵn có), chỉ thêm — không xóa/ghi đè chức năng cũ. Mỗi P là một file `canvio-pNNN-*.js` + lot riêng + test node/Chromium + cập nhật boot-order graph + parity P143.
+
+### P153 · Bảng cảm hứng (Inspiration Board)
+- Trang/khối trong Kho Tài nguyên: thả ảnh, dán link, ghi chú; tự tách bảng màu chủ đạo (dùng bộ tách màu sẵn có); lọc theo màu và theo loại (Poster, Web, Motion, Logo, Typography…); bấm ảnh → panel chi tiết với bảng màu, nút "Dùng màu này" (áp vào Poster/Brand).
+- Lưu: ảnh lớn qua `CVAssetStoreP133`; siêu dữ liệu đồng bộ qua P130 (đơn vị `x:i|<lskey>|<id>`).
+- Chấp nhận: thả 20 ảnh → có chip màu; lọc "Cam" chỉ còn ảnh cam; tải lại vẫn còn; xóa dọn IndexedDB; 0 lỗi console; không gọi mạng ngoài.
+
+### P154 · Trình xem toàn cảnh (Panorama Capture)
+- Nạp ảnh equirectangular 2:1; xoay yaw/pitch, zoom FOV; bấm "Chụp góc nhìn" → khung PNG theo tỉ lệ chọn (16:9/9:16/1:1) lưu vào Kho Tài nguyên kèm metadata (yaw, pitch, fov, ảnh gốc).
+- Render bằng canvas/WebGL sẵn có trong app (không thêm thư viện); chạy trên máy GTX 1650 mượt.
+- Chấp nhận: ảnh 4096×2048 → xoay mượt; chụp 3 góc → 3 khung đúng yaw/pitch (test so điểm ảnh tại tâm); tải lại giữ nguyên.
+
+### P155 · Thẻ Nhân vật và Thẻ Không gian
+- Thẻ Nhân vật: tên, mô tả ngoại hình/trang phục/đặc điểm riêng (ví dụ tàn nhang, sẹo), 1–3 ảnh tham chiếu. Thẻ Không gian: kiểu kiến trúc, ánh sáng, đồ vật, tông màu, ảnh tham chiếu (có thể lấy từ P154).
+- Lưu/đồng bộ như P153; chèn thẻ vào Storyboard (P125/P127) theo cảnh.
+- Chấp nhận: tạo thẻ, gắn vào 3 cảnh, sửa thẻ → cả 3 cảnh cập nhật; xuất/nhập JSON; tải lại còn.
+
+### P156 · Prompt có phân công
+- Biểu mẫu: chọn nguồn cho từng vai — ngoại hình nhân vật, xe cộ/môi trường, góc máy/chuyển động — rồi ghép prompt có đánh dấu vai rõ ràng; gửi qua P128 orchestrator hoặc ComfyUI adapter (P120/P126, chạy khi người dùng có máy thật). Có nút "Sao chép prompt" để dùng với công cụ ngoài.
+- Chấp nhận: prompt sinh ra đúng cấu trúc theo test snapshot; thiếu vai báo lỗi tiếng Việt rõ; không tự gửi mạng.
+
+### P157 · Thư viện góc máy dựng sẵn
+- Mẫu: toàn cảnh bám theo, bám sát thân, trong xe/vai nhân vật, cận cảnh va chạm, quỹ đạo, dolly… Mỗi mẫu: tên, mô tả, thời lượng gợi ý, câu prompt, biểu tượng sơ đồ; chèn vào Storyboard bằng một nút.
+- Kèm "kiểm tra nhất quán": so màu chủ đạo (histogram/vectorscope sẵn có P134) giữa khung cuối cảnh trước và khung đầu cảnh sau, cảnh báo "lệch tông" khi vượt ngưỡng chỉnh được.
+- Chấp nhận: chèn 5 mẫu đúng thứ tự; cảnh giả lệch tông bị cảnh báo, cảnh cùng tông thì không.
+
+### P158 · Landing page theo brief + Thiết kế → chuyển động (làm sau cùng)
+- Website Engine: nút "Landing page theo brief" (vấn đề → cấu trúc trang → chữ chuyển đổi → design tokens font/màu/bán kính/chuyển động) dựa trên P123 Layout Library và Design Taste P122; mẫu trang 404/lỗi.
+- "Thiết kế → chuyển động": biến khối tĩnh thành chuyển động vào/ra rồi xuất MP4/GIF 800×500 bằng bộ xuất GIF (P132) và MP4 sẵn có. Chi tiết nguồn (skill design-to-motion) suy từ hình nên cần xác nhận lại với người dùng trước khi làm.
+
+### Thứ tự và phụ thuộc
+P154 → P155 → P156 → P157 (gói "Cảnh nhất quán", làm liền); P153 độc lập, có thể làm trước nếu muốn thấy kết quả sớm; P158 cuối. Ước lượng mỗi P: 1 lượt làm + test + ghi 3 file MD.
+Việc cần người dùng: duyệt thứ tự; cung cấp 1–2 ảnh toàn cảnh 2:1 mẫu để test P154; xác nhận chi tiết video skill thiết kế (P158).

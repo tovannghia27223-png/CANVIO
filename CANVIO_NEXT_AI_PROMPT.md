@@ -255,3 +255,8 @@ Chỉ kiểm bằng tín hiệu/tệp tổng hợp và Chromium headless; chưa 
 - Còn mở (code): P133 OffscreenCanvas + chuyển media lớn sang OPFS; P143 tách mã theo lot; P124 tương tác thành phần/breakpoint nâng cao (cần đặc tả cụ thể); P137 khung chữ liên kết trên poster. Bị chặn: P130, P122.3, P142, P70, P120, P126.
 - P130–P152 (2026-11-24): xem mục cuối CANVIO_AI_GUIDE.md. Việc dở: đồng bộ màu Spatial (panel/rail theo token + Midnight), icon toggle sidebar tương phản thấp trên topbar tối, rà lỗi lặt vặt, kiểm tra drawer/panel đè ở các editor khác ngoài Poster, kiểm tra preview iframe diff/variants. Người dùng cần tự xác nhận P130 trên Supabase thật. Mỗi thay đổi phải ghi cả ROADMAP, AI_GUIDE và file này.
 - 2026-11-24 đối chiếu: P137, P133 đã hoàn tất (bỏ khỏi danh sách "còn mở" phía trên). Chỉ còn P124 nâng cao (cần đặc tả), P143 Phase 3 (cần người dùng đồng ý), cùng các mục bị chặn.
+
+## P153–P158 — việc kế tiếp đã lên kế hoạch (2026-11-24)
+- Chưa có dòng code nào. Đọc mục "P153–P158" trong CANVIO_ROADMAP.md trước khi làm. Thứ tự đề xuất: P154 → P155 → P156 → P157 (một gói), P153 độc lập, P158 cuối.
+- Cần hỏi người dùng: duyệt thứ tự; ảnh toàn cảnh 2:1 mẫu để test P154; xác nhận chi tiết skill "design-to-motion" (MP4/GIF 800×500) vì chỉ suy từ hình.
+- Mỗi P: test node + Chromium, boot-order graph, parity P143, rồi ghi cả ROADMAP, AI_GUIDE và file này; push thẳng `main`.

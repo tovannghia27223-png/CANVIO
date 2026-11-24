@@ -4134,3 +4134,7 @@ Bài học P150: KHÔNG đặt `display:flex` lên `#page-home` mà không kèm 
 ### Đối chiếu P124/P133/P137/P143 (2026-11-24)
 - P137 và P133 đã đủ chức năng và có test (xem ROADMAP mục đối chiếu). Còn mở thật: P124 biến thể lồng/kéo-đổi cỡ (cần đặc tả), P143 Phase 3 tách mã, Project Vault→OPFS (không bắt buộc).
 - Sửa `canvio-p124-autolayout.js` phải sửa cả bản inline trong index.html (P143 parity so khớp từng byte) và chạy lại parity + `run-p124-tests.cjs`.
+
+### P153–P158 kế hoạch (2026-11-24)
+- Gói "Cảnh nhất quán": P154 trình xem toàn cảnh → P155 thẻ Nhân vật/Không gian → P156 prompt có phân công → P157 thư viện góc máy + kiểm tra lệch tông; P153 Bảng cảm hứng; P158 Landing page + thiết kế→chuyển động. Chi tiết và tiêu chí chấp nhận ở CANVIO_ROADMAP.md.
+- Ràng buộc: miễn phí/cục bộ; dùng lại Kho Tài nguyên (P133.6), Cloud Sync (P130), bộ tách màu và đo màu (P134), Storyboard (P125/P127), P128 orchestrator; không tạo kho dữ liệu trùng. Mỗi P mới: file `canvio-pNNN-*.js`, lot riêng, thêm vào boot-order graph, parity P143, CI version string nếu có.
