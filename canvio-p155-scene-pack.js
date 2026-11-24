@@ -20,8 +20,46 @@ var SHOTS = [
   { id: 'top-down', name: 'Từ trên cao xuống', dur: 4, text: 'góc nhìn từ trên cao thẳng xuống, thấy bố cục mặt bằng' }
 ];
 function uid() { return 'c' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
-function readCards() { try { var v = JSON.parse(localStorage.getItem(KEY) || '[]'); return Array.isArray(v) ? v : []; } catch (e) { return []; } }
-function writeCards(a) { try { localStorage.setItem(KEY, JSON.stringify(a)); return true; } catch (e) { return false; } }
+function legacyCards() { try { var v = JSON.parse(localStorage.getItem(KEY) || '[]'); return Array.isArray(v) ? v : []; } catch (e) { return []; } }
+function coreProject(create) {
+  var c = window.CVCreativeCore;
+  if (!c) return null;
+  var p = c.active || null;
+  if (!p && create && typeof c.create === 'function') p = c.create({ name: 'Dự án sáng tạo' });
+  return p || null;
+}
+function readCards() {
+  var p = coreProject(false), d = p && p.documents && p.documents.scenePack;
+  if (d && Array.isArray(d.cards)) return d.cards.slice();
+  return legacyCards();
+}
+function writeCards(a) {
+  var c = window.CVCreativeCore, p = coreProject(true);
+  if (p) {
+    p.documents = p.documents || {};
+    p.documents.scenePack = { version: 1, cards: (a || []).slice() };
+    try { if (c && typeof c.capture === 'function') c.capture('videoStudio'); } catch (e) {}
+    return true;
+  }
+  try { localStorage.setItem(KEY, JSON.stringify(a || [])); return false; } catch (e) { return false; }
+}
+function migrateToCore() {
+  var p = coreProject(true), legacy = legacyCards(), current = readCards(), merged = legacy.slice();
+  current.forEach(function (c) { var i = merged.findIndex(function (x) { return x.id === c.id; }); if (i >= 0) merged[i] = c; else merged.unshift(c); });
+  if (!p) return { ok: false, count: 0 };
+  if (!merged.length) return { ok: true, count: 0 };
+  var ok = writeCards(merged);
+  if (ok) { try { localStorage.removeItem(KEY); } catch (e) {} }
+  return { ok: ok, count: merged.length };
+}
+function linkCardAssets(card) {
+  var C = window.CVCreativeCore, B = window.CVBoardP153;
+  if (!C || typeof C.linkAsset !== 'function' || !B || !card) return;
+  (card.refs || []).forEach(function (id) {
+    var item = B.list().filter(function (x) { return String(x.id) === String(id); })[0];
+    if (item && item.assetId) C.linkAsset(item.assetId);
+  });
+}
 function clip(s, n) { return String(s == null ? '' : s).replace(/\s+/g, ' ').trim().slice(0, n); }
 function saveCard(c) {
   if (!c || (c.type !== 'character' && c.type !== 'space')) return { ok: false, error: 'Loại thẻ không hợp lệ.' };
@@ -30,7 +68,8 @@ function saveCard(c) {
   var list = readCards(), old = c.id ? list.filter(function (x) { return x.id === c.id; })[0] : null;
   var card = { id: old ? old.id : uid(), type: c.type, name: name, desc: desc, traits: clip(c.traits, 300), refs: (c.refs || []).slice(0, 3).map(String), at: Date.now() };
   if (old) list[list.indexOf(old)] = card; else list.unshift(card);
-  if (!writeCards(list)) return { ok: false, error: 'Bộ nhớ trình duyệt đầy.' };
+  if (!writeCards(list)) return { ok: false, error: 'Không lưu được thẻ vào dự án.' };
+  linkCardAssets(card);
   return { ok: true, card: card };
 }
 function removeCard(id) { return writeCards(readCards().filter(function (x) { return x.id !== id; })); }
@@ -40,7 +79,9 @@ function importCards(text) {
   if (!o || o.canvio !== 'p155-cards' || !Array.isArray(o.cards)) return { ok: false, error: 'Không phải tệp thẻ CANVIO.' };
   var list = readCards(), n = 0;
   o.cards.forEach(function (c) { if (!c || (c.type !== 'character' && c.type !== 'space') || !clip(c.name, 60) || !clip(c.desc, 700)) return; var card = { id: String(c.id || uid()).slice(0, 40), type: c.type, name: clip(c.name, 60), desc: clip(c.desc, 700), traits: clip(c.traits, 300), refs: (c.refs || []).slice(0, 3).map(String), at: Date.now() }; var i = list.map(function (x) { return x.id; }).indexOf(card.id); if (i >= 0) list[i] = card; else list.unshift(card); n++; });
-  return writeCards(list) ? { ok: true, count: n } : { ok: false, error: 'Bộ nhớ trình duyệt đầy.' };
+  if (!writeCards(list)) return { ok: false, error: 'Không lưu được thẻ vào dự án.' };
+  list.forEach(linkCardAssets);
+  return { ok: true, count: n };
 }
 function shotById(id) { return SHOTS.filter(function (s) { return s.id === id; })[0] || null; }
 /* roles: { character:{cardId?, ref?}, environment:{cardId?, ref?}, camera:{shotId?, ref?} }; cards: danh sách thẻ. */
@@ -57,6 +98,68 @@ function buildPrompt(opt) {
   lines.push('[Hành động] ' + action + '.');
   lines.push('Phân công: ảnh tham chiếu nhân vật chỉ quyết định ngoại hình; ảnh không gian quyết định bối cảnh, ánh sáng, đồ vật; góc máy lấy theo mục [Góc máy].');
   return { ok: true, prompt: lines.join('\n'), shotSeconds: sh.dur };
+}
+var promptHandlerOwner = null;
+function runPrompt(opt) {
+  var built = buildPrompt(opt);
+  if (!built.ok) return Promise.resolve(built);
+  var prompt = built.prompt, core = window.CVCreativeCore, ctx = null;
+  try { ctx = core && typeof core.context === 'function' ? core.context() : null; } catch (e) {}
+  if (ctx && ctx.brief) prompt += '\n[Brief dự án] ' + clip(ctx.brief, 1200);
+  if (ctx && ctx.goal) prompt += '\n[Mục tiêu] ' + clip(ctx.goal, 180);
+  if (ctx && ctx.channel) prompt += '\n[Kênh đầu ra] ' + clip(ctx.channel, 180);
+  var O = window.CVOrchestratorP128;
+  if (!O || typeof O.register !== 'function' || typeof O.run !== 'function') return Promise.resolve({ ok: true, prompt: prompt, shotSeconds: built.shotSeconds, orchestrated: false, warning: 'P128 chưa sẵn sàng; dùng bản prompt cục bộ.' });
+  if (promptHandlerOwner !== O) {
+    O.register('scene-prompt', 'scene-compose-local', function (task) { return String(task && task.prompt || ''); });
+    promptHandlerOwner = O;
+  }
+  return O.run({ kind: 'scene-prompt', prompt: prompt, tiers: ['scene-compose-local'], cache: false, timeoutMs: 15000 }).then(function (r) {
+    if (r && r.ok) return { ok: true, prompt: String(r.text || prompt), shotSeconds: built.shotSeconds, orchestrated: true, tier: r.tier || 'scene-compose-local', projectId: ctx && ctx.projectId || null };
+    return { ok: true, prompt: prompt, shotSeconds: built.shotSeconds, orchestrated: false, warning: r && r.message || 'P128 chưa chạy được; dùng bản prompt cục bộ.' };
+  }).catch(function (e) { return { ok: true, prompt: prompt, shotSeconds: built.shotSeconds, orchestrated: false, warning: String(e && e.message || e) }; });
+}
+function assignToStoryboard(data) {
+  data = data || {};
+  var C = window.CVCreativeCore, p = coreProject(true), ctx = null;
+  if (C && typeof C.context === 'function') { try { ctx = C.context(); } catch (e) {} }
+  if (!p) return { ok: false, error: 'Shared Creative Core chưa sẵn sàng.' };
+  var key = 'canvio5:media_video_project_v1', project = null;
+  try { project = JSON.parse(localStorage.getItem(key) || 'null'); } catch (e) {}
+  if (!project || typeof project !== 'object') project = { name: (ctx && ctx.projectName || p.name || 'Dự án') + ' — Video', ratio: '16:9', resolution: 1080, media: [], shots: [] };
+  if (!Array.isArray(project.shots)) project.shots = [];
+  if (!Array.isArray(project.media)) project.media = [];
+  var roles = data.roles || {}, cards = readCards(), board = window.CVBoardP153;
+  function card(id) { return cards.filter(function (x) { return String(x.id) === String(id || ''); })[0] || null; }
+  var ch = card(roles.character && roles.character.cardId), env = card(roles.environment && roles.environment.cardId), assetIds = [];
+  function addRefs(c) {
+    if (!c || !board) return;
+    (c.refs || []).forEach(function (id) {
+      var item = board.list().filter(function (x) { return String(x.id) === String(id); })[0];
+      if (item && item.assetId && assetIds.indexOf(item.assetId) < 0) assetIds.push(item.assetId);
+    });
+  }
+  addRefs(ch); addRefs(env);
+  if (C && typeof C.linkAsset === 'function') assetIds.forEach(function (id) { C.linkAsset(id); });
+  var camera = shotById(roles.camera && roles.camera.shotId);
+  var title = clip(data.title || data.action || (camera && camera.name) || 'Cảnh mới', 90);
+  var shot = { id: uid(), title: title || 'Cảnh mới', description: String(data.prompt || ''), duration: Math.max(1, Math.min(30, Number(data.shotSeconds || camera && camera.dur || 4))), mediaId: null, transition: project.shots.length ? 'fade' : 'none', voice: '', scenePack: { characterId: ch && ch.id || null, spaceId: env && env.id || null, shotId: camera && camera.id || null, assetIds: assetIds.slice(), prompt: String(data.prompt || ''), action: clip(data.action, 400) }, createdAt: new Date().toISOString() };
+  project.shots.push(shot); project.updated = new Date().toISOString();
+  try { localStorage.setItem(key, JSON.stringify(project)); } catch (e) { return { ok: false, error: 'Không lưu được Storyboard Video Studio.' }; }
+  p.documents = p.documents || {}; p.documents.sceneAssignments = p.documents.sceneAssignments || [];
+  p.documents.sceneAssignments.push({ shotId: shot.id, title: shot.title, scenePack: shot.scenePack, at: shot.createdAt });
+  try {
+    var media = window.CV && CV.mediaStudio;
+    if (media) { if (media.renderShots) media.renderShots(); if (media.renderTimeline) media.renderTimeline(); if (media.updateVideoMeta) media.updateVideoMeta(); }
+    if (C && typeof C.capture === 'function') C.capture('videoStudio');
+  } catch (e) {}
+  try { if (document && document.dispatchEvent && window.CustomEvent) document.dispatchEvent(new CustomEvent('canvio:storyboard-updated', { detail: { projectId: ctx && ctx.projectId || p.id, shotId: shot.id, shot: shot } })); } catch (e) {}
+  return { ok: true, shot: shot, project: project };
+}
+function assignShotToStoryboard(id) {
+  var s = shotById(id);
+  if (!s) return { ok: false, error: 'Không tìm thấy góc máy.' };
+  return assignToStoryboard({ title: s.name, action: s.text, shotSeconds: s.dur, roles: { camera: { shotId: s.id } }, prompt: '[Góc máy] ' + s.name + ': ' + s.text });
 }
 /* Lệch tông: khoảng cách trung bình giữa các màu chủ đạo (hex) của hai ảnh, thang 0–100. */
 function rgbOf(h) { h = String(h || '').replace('#', ''); var n = parseInt(h, 16); return isNaN(n) ? [0, 0, 0] : [(n >> 16) & 255, (n >> 8) & 255, n & 255]; }
@@ -109,17 +212,32 @@ function mount() {
       + '<select class="input" id="cv156-sh" aria-label="Góc máy">' + opts(SHOTS, '', '— Góc máy —') + '</select><input class="input" id="cv156-ac" maxlength="400" placeholder="Hành động trong cảnh (vd: lao xe qua ngã tư, quay đầu nhìn lại)" aria-label="Hành động"></div>'
       + '<div class="row" style="gap:6px;margin-top:8px;flex-wrap:wrap"><input class="input" id="cv156-r1" maxlength="60" placeholder="Ảnh nào lo nhân vật (vd: ảnh 1)" aria-label="Ảnh lo nhân vật" style="flex:1;min-width:160px"><input class="input" id="cv156-r2" maxlength="60" placeholder="Ảnh nào lo môi trường (vd: ảnh 2)" aria-label="Ảnh lo môi trường" style="flex:1;min-width:160px"><input class="input" id="cv156-r3" maxlength="60" placeholder="Ảnh nào lo góc máy (vd: ảnh 3)" aria-label="Ảnh lo góc máy" style="flex:1;min-width:160px"></div>'
       + '<div class="row" style="gap:6px;margin-top:8px"><button class="btn btn-primary sm" id="cv156-go" type="button">Tạo prompt</button><button class="btn btn-soft sm" id="cv156-cp" type="button" disabled>Sao chép</button></div><textarea class="input" id="cv156-out" rows="7" readonly aria-label="Prompt đã tạo" style="margin-top:8px;width:100%"></textarea>';
-    var out = body.querySelector('#cv156-out'), cp = body.querySelector('#cv156-cp');
+    var out = body.querySelector('#cv156-out'), cp = body.querySelector('#cv156-cp'), lastOpt = null;
+    var assign = document.createElement('button'); assign.type = 'button'; assign.className = 'btn btn-soft sm'; assign.id = 'cv156-assign'; assign.textContent = 'Gán vào Storyboard'; assign.disabled = true; cp.parentNode.appendChild(assign);
     body.querySelector('#cv156-go').addEventListener('click', function () {
       var v = function (s) { return body.querySelector(s).value; };
-      var r = buildPrompt({ cards: cards, action: v('#cv156-ac'), roles: { character: { cardId: v('#cv156-ch'), ref: v('#cv156-r1') }, environment: { cardId: v('#cv156-sp'), ref: v('#cv156-r2') }, camera: { shotId: v('#cv156-sh'), ref: v('#cv156-r3') } } });
-      if (!r.ok) { out.value = ''; cp.disabled = true; say(r.error, true); return; } out.value = r.prompt; cp.disabled = false; say('Đã tạo prompt (gợi ý ' + r.shotSeconds + ' giây).');
+      lastOpt = { cards: cards, action: v('#cv156-ac'), roles: { character: { cardId: v('#cv156-ch'), ref: v('#cv156-r1') }, environment: { cardId: v('#cv156-sp'), ref: v('#cv156-r2') }, camera: { shotId: v('#cv156-sh'), ref: v('#cv156-r3') } } };
+      var go = body.querySelector('#cv156-go'); go.disabled = true; cp.disabled = true; assign.disabled = true;
+      runPrompt(lastOpt).then(function (r) {
+        go.disabled = false;
+        if (!r.ok) { out.value = ''; cp.disabled = true; say(r.error, true); return; }
+        out.value = r.prompt; cp.disabled = false; assign.disabled = false;
+        say('Đã tạo prompt' + (r.orchestrated ? ' qua P128 cục bộ' : ' cục bộ') + ' · gợi ý ' + r.shotSeconds + ' giây.');
+      });
+    });
+    assign.addEventListener('click', function () {
+      if (!lastOpt || !out.value) return;
+      var cam = shotById(lastOpt.roles.camera.shotId);
+      var r = assignToStoryboard({ title: lastOpt.action, action: lastOpt.action, prompt: out.value, roles: lastOpt.roles, shotSeconds: cam && cam.dur || 4 });
+      if (!r.ok) { say(r.error, true); return; }
+      say('Đã thêm “' + r.shot.title + '” vào Storyboard Video Studio.'); toast('Đã gán cảnh vào Video Studio');
     });
     cp.addEventListener('click', function () { try { navigator.clipboard.writeText(out.value).then(function () { toast('Đã sao chép prompt'); }, function () { out.select(); say('Không tự sao chép được, hãy bấm Ctrl+C.', true); }); } catch (e) { out.select(); } });
   }
   function viewShots() {
-    body.innerHTML = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px">' + SHOTS.map(function (s) { return '<div class="card" style="padding:8px"><div style="font-weight:700;font-size:13px">' + esc(s.name) + ' <span class="tiny">· ' + s.dur + ' giây</span></div><div class="tiny" style="margin:4px 0">' + esc(s.text) + '</div><button type="button" class="btn btn-ghost sm cv157-cp" data-id="' + s.id + '">Sao chép mô tả</button></div>'; }).join('') + '</div>';
+    body.innerHTML = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px">' + SHOTS.map(function (s) { return '<div class="card" style="padding:8px"><div style="font-weight:700;font-size:13px">' + esc(s.name) + ' <span class="tiny">· ' + s.dur + ' giây</span></div><div class="tiny" style="margin:4px 0">' + esc(s.text) + '</div><div class="row" style="gap:4px;flex-wrap:wrap"><button type="button" class="btn btn-ghost sm cv157-cp" data-id="' + s.id + '">Sao chép mô tả</button><button type="button" class="btn btn-soft sm cv157-use" data-id="' + s.id + '">Gán vào Storyboard</button></div></div>'; }).join('') + '</div>';
     Array.prototype.forEach.call(body.querySelectorAll('.cv157-cp'), function (b) { b.addEventListener('click', function () { var s = shotById(b.dataset.id); try { navigator.clipboard.writeText(s.name + ': ' + s.text).then(function () { toast('Đã sao chép góc máy'); }); } catch (e) {} }); });
+    Array.prototype.forEach.call(body.querySelectorAll('.cv157-use'), function (b) { b.addEventListener('click', function () { var r = assignShotToStoryboard(b.dataset.id); if (!r.ok) { say(r.error, true); return; } say('Đã thêm góc máy “' + r.shot.title + '” vào Storyboard.'); toast('Đã gán góc máy vào Video Studio'); }); });
   }
   function viewTone() {
     var imgs = boardItems().filter(function (i) { return i.colors && i.colors.length; });
@@ -136,5 +254,5 @@ function mount() {
 }
 function ready() { var n = 0; (function loop() { try { if (mount()) return; } catch (e) {} if (++n < 40) setTimeout(loop, 250); })(); }
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', ready, { once: true }); else ready();
-window.CVScenePackP155 = { version: '155.0.0', SHOTS: SHOTS, readCards: readCards, saveCard: saveCard, removeCard: removeCard, exportCards: exportCards, importCards: importCards, buildPrompt: buildPrompt, toneDelta: toneDelta, toneVerdict: toneVerdict, mount: mount };
+window.CVScenePackP155 = { version: '159.0.0', SHOTS: SHOTS, readCards: readCards, readLegacyCards: legacyCards, replaceCards: writeCards, saveCard: saveCard, removeCard: removeCard, exportCards: exportCards, importCards: importCards, buildPrompt: buildPrompt, runPrompt: runPrompt, assignToStoryboard: assignToStoryboard, assignShotToStoryboard: assignShotToStoryboard, migrateToCore: migrateToCore, toneDelta: toneDelta, toneVerdict: toneVerdict, shotById: shotById, mount: mount };
 })();
