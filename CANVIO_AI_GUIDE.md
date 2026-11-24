@@ -4267,3 +4267,12 @@ P160–P166 module APIs currently report versions P160.2.0, P161.1.0, P162.2.0, 
 - Run #785 showed the Holo-isolation suite passed all five workspaces. In the base-pink suite, P150_EXPORT_DIAGNOSTIC did not print for any of the five workspaces, which means the computed background in each non-Home workspace was already the expected pink. The six failures were the baseline assertion plus five comparisons against that baseline.
 - Cause: the fixture captured the baseline while the Home page was still visible with the tech skin active; the tech toolbar intentionally uses its own accent color. The test then compared non-Home pink against that Home-tech value.
 - Correction: the fixture now opens Design first, waits for P150's Home observer to settle, and captures the original pink computed style there. It then compares the five workspaces against that non-Home baseline. No production CSS override is added for this test-fixture issue.
+
+
+## P132.1 — Local PDF page import for Pixel Atelier (candidate · 2026-11-25)
+
+- Standalone source: `canvio-p132-pdf-import.js`; canonical inline lot: `canvio-lot132pdf`; API: `window.CVPdfImportP132`, version `132.1.0`.
+- PDF.js `pdfjs-dist@6.5.438` is provisioned locally under `assets/vendor/pdfjs` with its Apache-2.0 license, same-origin worker/CMaps/standard fonts and a SHA-256 manifest. It is lazy-loaded only after the user selects a PDF; the feature makes no PDF upload or CDN request.
+- The user selects one page and CANVIO rasterizes it to PNG, then hands a `File` to the existing Pixel Atelier `#pxFile` / `CVNativeEngines.pixel` owner. No second canvas editor, project store or timeline is introduced.
+- Bounds: 30 MiB per PDF, at most 500 pages, 4096 px per side and 16 MP per imported page. PDF JavaScript evaluation and XFA are disabled. Import is raster-only; editable PDF text/vector objects are not preserved. Password-protected PDFs, multi-page batch import and real customer-document review remain open.
+- Acceptance: `tests/p132/run-p132-pdf-tests.cjs`, `tests/p145/run-p132-pdf-browser.py`, P143 source/inline parity and full hosted runtime workflow. The first Chromium result verified page rendering and zero page errors; one test assertion read `#pxFile` after the Pixel owner had cleared the picker. The updated test now observes the native file handoff during the input's capture-phase `change` event, before owner cleanup. Re-run is pending; do not mark P132.1 accepted until it passes.
