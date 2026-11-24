@@ -23,7 +23,7 @@ function transformAt(preset, t) { var p = PRESETS[preset] || PRESETS['zoom-in'];
 function normalizeOverlay(o) {
   o = o || {};
   return {
-    text: String(o.text == null ? '' : o.text).replace(/\\s+/g, ' ').trim().slice(0, 160),
+    text: String(o.text == null ? '' : o.text).replace(/\s+/g, ' ').trim().slice(0, 160),
     effect: ['none','fade','slide','typewriter','pop'].indexOf(o.effect) >= 0 ? o.effect : 'none',
     position: ['top','middle','bottom'].indexOf(o.position) >= 0 ? o.position : 'bottom',
     style: ['plain','banner','outline'].indexOf(o.style) >= 0 ? o.style : 'plain',
