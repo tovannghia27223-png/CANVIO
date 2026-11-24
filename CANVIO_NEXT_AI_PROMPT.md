@@ -269,3 +269,10 @@ Chỉ kiểm bằng tín hiệu/tệp tổng hợp và Chromium headless; chưa 
 ## NGUYÊN TẮC TÍCH HỢP + P159–P166 (2026-11-24)
 - Làm P159 trước: chuyển P153–P157 sang `CV.assets` + `CVCreativeCore` + `CVOrchestratorP128`, nối Storyboard; di chuyển dữ liệu cũ từ `CANVIO_SCENE_STORE`/`canvio.p153.board`/`canvio.p155.cards` mà không mất. Sau đó P160→P166 theo ma trận trong ROADMAP.
 - Mọi P mới: không kho riêng; có test kiểm dữ liệu xuất hiện ở module khác; nút "Gửi sang…". Hỏi người dùng về "kênh chia sẻ" (gói file hay máy chủ).
+
+
+## P159 integration candidate — 2026-11-24
+- P153 writes board metadata to Shared Core project documents and sends image bytes to the Asset Library; legacy `CANVIO_SCENE_STORE` / `canvio.p153.board` migration is fail-safe and must leave legacy data when any image has no verified asset ID.
+- P155 cards are project-scoped; P156 runs through P128 deterministic local prompt assembly; P156/P157 append to the canonical Video Studio Storyboard without replacing existing shots. No new database, timeline or model API.
+- CI now embeds P153/P155/P159 standalone sources into `index.html` before P143 parity, and runs `tests/p159/run-p159-tests.cjs`. Inspect workflow #689/successor and fix any red checks before claiming completion. Only after Node/Chromium/P143/boot-order pass should docs be changed from candidate to PASS.
+- Continue with P158 only after clarifying its design-to-motion scope; then P160–P166 from ROADMAP. Do not begin P143 Phase 3 extraction without explicit user approval.
