@@ -1757,7 +1757,7 @@ jobs:
           const index=files.find(x=>x.path==='index.html');
           if(!index)throw new Error('Canonical index.html missing from delivery tree');
           const manifest={format:'CANVIO_DELIVERY_MANIFEST',schemaVersion:2,candidate:'23.3.111-github-runtime-ci',generatedAt:new Date().toISOString(),hashAlgorithm:'SHA-256',indexSha256:index.sha256,indexBytes:index.bytes,fileCount:files.length,releaseCertified:false,releaseStatus:'BLOCKED_PENDING_REAL_WORLD_ACCEPTANCE',p70ManualGates:{total:14,pending:14,passed:0},files};
-          fs.writeFileSync('CANVIO_MANIFEST.json',JSON.stringify(manifest,null,2)+'\\n');
+          fs.writeFileSync('CANVIO_MANIFEST.json',JSON.stringify(manifest,null,2)+String.fromCharCode(10));
           console.log('Final manifest refreshed after all documentation:',files.length,'files; index SHA-256:',index.sha256);
           NODE
 
@@ -1787,7 +1787,7 @@ jobs:
             -H "X-GitHub-Api-Version: 2022-11-28" \
             -X POST \
             "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/workflows/422482556/dispatches" \
-            -d "{\\"ref\\":\\"$PR_HEAD_REF\\"}"
+            -d "$(printf '{"ref":"%s"}' "$PR_HEAD_REF")"
           echo "Triggered final-head verification on $PR_HEAD_REF"
 
       - name: Package full source handoff and runtime evidence
