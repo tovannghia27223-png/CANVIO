@@ -276,3 +276,6 @@ Chỉ kiểm bằng tín hiệu/tệp tổng hợp và Chromium headless; chưa 
 - P155 cards are project-scoped; P156 runs through P128 deterministic local prompt assembly; P156/P157 append to the canonical Video Studio Storyboard without replacing existing shots. No new database, timeline or model API.
 - CI now embeds P153/P155/P159 standalone sources into `index.html` before P143 parity, and runs `tests/p159/run-p159-tests.cjs`. Inspect workflow #689/successor and fix any red checks before claiming completion. Only after Node/Chromium/P143/boot-order pass should docs be changed from candidate to PASS.
 - Continue with P158 only after clarifying its design-to-motion scope; then P160–P166 from ROADMAP. Do not begin P143 Phase 3 extraction without explicit user approval.
+
+## P159.1 (2026-11-24 tối)
+- P159–P166 giờ đã nhúng trong index.html và qua parity/Chromium/smoke. Việc còn: nhãn chữ cho form P163, thử ảnh/GLB thật, đồng bộ hai thiết bị, thêm test P160–P166 vào CI nếu chưa có, dock thêm tab cho P161/P162/P165/P166 nếu chúng gắn thẻ vào Video Studio.

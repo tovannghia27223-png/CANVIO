@@ -32,7 +32,12 @@ with sync_playwright() as p:
     full=pg.evaluate("CVBoardP153.list().filter(i=>i.type==='img')[0].id"); 
     checks['full_in_idb']=pg.evaluate("async id=>{const d=await CVSceneStoreP153.get(id);return typeof d==='string'&&d.indexOf('data:image')===0}",full)
     # panorama
-    pg.evaluate("CV.go('videoStudio')"); pg.wait_for_selector('#cv154-card',timeout=15000)
+    pg.evaluate("CV.go('videoStudio')"); pg.wait_for_selector('#cv159u-dock',timeout=15000)
+    pg.wait_for_function("document.querySelectorAll('#cv159u-dock [aria-label=\"Bộ công cụ cảnh\"]>[role=tab]').length===4",timeout=15000)
+    checks['dock_tabs']=pg.evaluate("document.querySelectorAll('#cv159u-dock [aria-label=\"Bộ công cụ cảnh\"]>[role=tab]').length")==4
+    checks['dock_collapsed']=pg.evaluate("[...document.querySelectorAll('#cv159u-panels>.card')].every(c=>c.offsetParent===null)")
+    pg.click('#cv159u-dock [data-id=cv154-card]'); checks['dock_opens']=pg.is_visible('#cv154-view')
+    pg.click('#cv159u-dock [data-id=cv154-card]'); pg.evaluate("document.querySelectorAll('#cv159u-panels>.card').forEach(c=>c.style.display='')")
     put(pg,'#cv154-file','pano.png',1024,512,'quad'); pg.wait_for_function("!document.querySelector('#cv154-shot').disabled",timeout=15000)
     def centre():
         return pg.evaluate("(()=>{const c=document.querySelector('#cv154-view'),d=c.getContext('2d').getImageData(c.width/2,c.height/2,1,1).data;return [d[0],d[1],d[2]]})()")

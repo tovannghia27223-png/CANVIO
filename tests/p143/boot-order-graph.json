@@ -2,11 +2,11 @@
  "format": "CANVIO_P143_BOOT_ORDER_GRAPH",
  "version": 1,
  "purpose": "Heuristic boot-order graph from the inline inventory. forwardReferences are reads of a global that only a later script defines.",
- "scriptCount": 172,
- "edgeCount": 191,
+ "scriptCount": 180,
+ "edgeCount": 200,
  "summary": {
-  "leafStandalone": 43,
-  "orderedDependent": 127,
+  "leafStandalone": 44,
+  "orderedDependent": 134,
   "reviewForwardReference": 2,
   "forwardReferenceCount": 2
  },
@@ -2185,12 +2185,13 @@
   {
    "order": 145,
    "id": "canvio-lot153b",
-   "bytes": 19656,
+   "bytes": 26617,
    "provides": [
     "CVBoardP153",
     "CVSceneStoreP153"
    ],
    "dependsOnOrders": [
+    51,
     78
    ],
    "forwardReads": [],
@@ -2200,7 +2201,7 @@
   {
    "order": 146,
    "id": "canvio-lot154p",
-   "bytes": 11331,
+   "bytes": 11447,
    "provides": [
     "CVPanoramaP154"
    ],
@@ -2214,7 +2215,7 @@
   {
    "order": 147,
    "id": "canvio-lot155s",
-   "bytes": 21610,
+   "bytes": 30429,
    "provides": [
     "CVScenePackP155"
    ],
@@ -2227,6 +2228,117 @@
   },
   {
    "order": 148,
+   "id": "canvio-lot159i",
+   "bytes": 4399,
+   "provides": [
+    "CVSceneIntegrationP159"
+   ],
+   "dependsOnOrders": [
+    51,
+    78
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 149,
+   "id": "canvio-lot160c",
+   "bytes": 15206,
+   "provides": [
+    "CVInspirationCollectionsP160"
+   ],
+   "dependsOnOrders": [
+    78
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 150,
+   "id": "canvio-lot161s",
+   "bytes": 13978,
+   "provides": [
+    "CVSpatialWorkspaceP161"
+   ],
+   "dependsOnOrders": [
+    78
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 151,
+   "id": "canvio-lot162r",
+   "bytes": 11444,
+   "provides": [
+    "CVReferenceCanvasP162"
+   ],
+   "dependsOnOrders": [
+    78
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 152,
+   "id": "canvio-lot163c",
+   "bytes": 10035,
+   "provides": [
+    "CVCharacterContinuityP163"
+   ],
+   "dependsOnOrders": [
+    78
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 153,
+   "id": "canvio-lot164s",
+   "bytes": 9518,
+   "provides": [
+    "CVShotListP164"
+   ],
+   "dependsOnOrders": [],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "leaf-standalone"
+  },
+  {
+   "order": 154,
+   "id": "canvio-lot165w",
+   "bytes": 11348,
+   "provides": [
+    "CVAiWorkflowP165"
+   ],
+   "dependsOnOrders": [
+    78
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 155,
+   "id": "canvio-lot166l",
+   "bytes": 10597,
+   "provides": [
+    "CVLandingStudioP166"
+   ],
+   "dependsOnOrders": [
+    78
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 156,
    "id": "canvio-lot131",
    "bytes": 28158,
    "provides": [
@@ -2240,7 +2352,7 @@
    "extractionClass": "ordered-dependent"
   },
   {
-   "order": 149,
+   "order": 157,
    "id": "canvio-lot115",
    "bytes": 1802,
    "provides": [
@@ -2252,7 +2364,7 @@
    "extractionClass": "leaf-standalone"
   },
   {
-   "order": 150,
+   "order": 158,
    "id": "canvio-lot1222",
    "bytes": 8252,
    "provides": [
@@ -2266,7 +2378,7 @@
    "extractionClass": "ordered-dependent"
   },
   {
-   "order": 151,
+   "order": 159,
    "id": "canvio-lot127k",
    "bytes": 9697,
    "provides": [
@@ -2280,7 +2392,7 @@
    "extractionClass": "ordered-dependent"
   },
   {
-   "order": 152,
+   "order": 160,
    "id": "canvio-lot1452",
    "bytes": 21505,
    "provides": [
@@ -2292,7 +2404,7 @@
    "extractionClass": "leaf-standalone"
   },
   {
-   "order": 153,
+   "order": 161,
    "id": "canvio-lot1454b",
    "bytes": 7650,
    "provides": [
@@ -2304,7 +2416,7 @@
    "extractionClass": "leaf-standalone"
   },
   {
-   "order": 154,
+   "order": 162,
    "id": "canvio-lot1454",
    "bytes": 10275,
    "provides": [
@@ -2318,7 +2430,7 @@
    "extractionClass": "ordered-dependent"
   },
   {
-   "order": 155,
+   "order": 163,
    "id": "canvio-lot1252",
    "bytes": 14666,
    "provides": [
@@ -2330,7 +2442,7 @@
    "extractionClass": "leaf-standalone"
   },
   {
-   "order": 156,
+   "order": 164,
    "id": "canvio-lot1455",
    "bytes": 17949,
    "provides": [
@@ -2342,7 +2454,7 @@
    "extractionClass": "leaf-standalone"
   },
   {
-   "order": 157,
+   "order": 165,
    "id": "canvio-lot1272",
    "bytes": 13645,
    "provides": [
@@ -2356,7 +2468,7 @@
    "extractionClass": "ordered-dependent"
   },
   {
-   "order": 158,
+   "order": 166,
    "id": "canvio-lot1456",
    "bytes": 12032,
    "provides": [
@@ -2368,7 +2480,7 @@
    "extractionClass": "leaf-standalone"
   },
   {
-   "order": 159,
+   "order": 167,
    "id": "canvio-lot1457",
    "bytes": 10783,
    "provides": [
@@ -2380,7 +2492,7 @@
    "extractionClass": "leaf-standalone"
   },
   {
-   "order": 160,
+   "order": 168,
    "id": "canvio-lot1458",
    "bytes": 16357,
    "provides": [
@@ -2392,7 +2504,7 @@
    "extractionClass": "leaf-standalone"
   },
   {
-   "order": 161,
+   "order": 169,
    "id": "canvio-lot145910",
    "bytes": 14535,
    "provides": [
@@ -2406,7 +2518,7 @@
    "extractionClass": "ordered-dependent"
   },
   {
-   "order": 162,
+   "order": 170,
    "id": "canvio-lot134r",
    "bytes": 16815,
    "provides": [
@@ -2418,7 +2530,7 @@
    "extractionClass": "leaf-standalone"
   },
   {
-   "order": 163,
+   "order": 171,
    "id": "canvio-lot124",
    "bytes": 37530,
    "provides": [
@@ -2432,7 +2544,7 @@
    "extractionClass": "ordered-dependent"
   },
   {
-   "order": 164,
+   "order": 172,
    "id": "canvio-lot133p",
    "bytes": 18920,
    "provides": [
@@ -2446,7 +2558,7 @@
    "extractionClass": "ordered-dependent"
   },
   {
-   "order": 165,
+   "order": 173,
    "id": "canvio-lot135a",
    "bytes": 26820,
    "provides": [
@@ -2458,7 +2570,7 @@
    "extractionClass": "leaf-standalone"
   },
   {
-   "order": 166,
+   "order": 174,
    "id": "canvio-lot133m",
    "bytes": 11640,
    "provides": [
@@ -2472,7 +2584,7 @@
    "extractionClass": "ordered-dependent"
   },
   {
-   "order": 167,
+   "order": 175,
    "id": "canvio-lot139",
    "bytes": 24291,
    "provides": [],
@@ -2482,7 +2594,7 @@
    "extractionClass": "leaf-standalone"
   },
   {
-   "order": 168,
+   "order": 176,
    "id": "canvio-lot120126",
    "bytes": 19052,
    "provides": [
@@ -2496,7 +2608,7 @@
    "extractionClass": "ordered-dependent"
   },
   {
-   "order": 169,
+   "order": 177,
    "id": "canvio-lot119v",
    "bytes": 11196,
    "provides": [],
@@ -2506,7 +2618,7 @@
    "extractionClass": "leaf-standalone"
   },
   {
-   "order": 170,
+   "order": 178,
    "id": "canvio-lot119w",
    "bytes": 5394,
    "provides": [],
@@ -2516,7 +2628,7 @@
    "extractionClass": "leaf-standalone"
   },
   {
-   "order": 171,
+   "order": 179,
    "id": "canvio-lot146",
    "bytes": 15689,
    "provides": [

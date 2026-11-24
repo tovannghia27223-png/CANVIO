@@ -31706,8 +31706,29 @@ function filterItems(items, f) {
 function safeUrl(u) { u = String(u || '').trim(); if (!u) return ''; if (!/^https?:\/\//i.test(u)) u = 'https://' + u; try { var x = new URL(u); return /^https?:$/.test(x.protocol) ? x.href : ''; } catch (e) { return ''; } }
 function uid() { return 'b' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
 /* ---------- lưu trữ ---------- */
-function readList() { try { var v = JSON.parse(localStorage.getItem(KEY) || '[]'); return Array.isArray(v) ? v : []; } catch (e) { return []; } }
-function writeList(a) { try { localStorage.setItem(KEY, JSON.stringify(a)); return true; } catch (e) { return false; } }
+function legacyList() { try { var v = JSON.parse(localStorage.getItem(KEY) || '[]'); return Array.isArray(v) ? v : []; } catch (e) { return []; } }
+function coreProject(create) {
+  var c = window.CVCreativeCore;
+  if (!c) return null;
+  var p = c.active || null;
+  if (!p && create && typeof c.create === 'function') p = c.create({ name: 'Dự án sáng tạo' });
+  return p || null;
+}
+function readList() {
+  var p = coreProject(false), d = p && p.documents && p.documents.inspirationBoard;
+  if (d && Array.isArray(d.items)) return d.items.slice();
+  return legacyList();
+}
+function writeList(a) {
+  var c = window.CVCreativeCore, p = coreProject(true);
+  if (p) {
+    p.documents = p.documents || {};
+    p.documents.inspirationBoard = { version: 1, items: (a || []).slice() };
+    try { if (c && typeof c.capture === 'function') c.capture('assets'); } catch (e) {}
+    return true;
+  }
+  try { localStorage.setItem(KEY, JSON.stringify(a || [])); return true; } catch (e) { return false; }
+}
 var dbP = null;
 function openDb() {
   if (dbP) return dbP;
@@ -31719,9 +31740,92 @@ function openDb() {
   });
   return dbP;
 }
-function idbPut(id, data) { return openDb().then(function (d) { return new Promise(function (ok, no) { var t = d.transaction(ST, 'readwrite'); t.objectStore(ST).put({ id: id, data: data, at: Date.now() }); t.oncomplete = ok; t.onerror = function () { no(t.error); }; }); }); }
-function idbGet(id) { return openDb().then(function (d) { return new Promise(function (ok, no) { var q = d.transaction(ST).objectStore(ST).get(id); q.onsuccess = function () { ok(q.result ? q.result.data : null); }; q.onerror = function () { no(q.error); }; }); }); }
-function idbDel(id) { return openDb().then(function (d) { return new Promise(function (ok) { var t = d.transaction(ST, 'readwrite'); t.objectStore(ST).delete(id); t.oncomplete = ok; t.onerror = ok; }); }); }
+function dataUrlBlob(data) {
+  var m = /^data:([^;,]+)?;base64,([A-Za-z0-9+/=]+)$/i.exec(String(data || ''));
+  if (!m || !window.atob || !window.Blob) throw new Error('Ảnh tham chiếu không đúng định dạng.');
+  var raw = window.atob(m[2]), bytes = new Uint8Array(raw.length);
+  for (var i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
+  return new Blob([bytes], { type: m[1] || 'image/jpeg' });
+}
+function findAssetForBoard(id) {
+  try { var a = window.CV && CV.assets && CV.assets.list ? CV.assets.list() : [];
+    return a.find(function (x) { return x && (String(x.id) === String(id) || (x.canvioScene && String(x.canvioScene.boardItemId) === String(id))); }) || null;
+  } catch (e) { return null; }
+}
+function idbPut(id, data, sceneMeta) {
+  var assets = window.CV && CV.assets, existing = findAssetForBoard(id);
+  if (existing && existing.id) {
+    existing.canvioScene = Object.assign({}, existing.canvioScene || {}, sceneMeta || {}, { source: 'P153', boardItemId: String(id) });
+    try { if (window.LS && LS.set) LS.set('assets', assets.list()); } catch (e) {}
+    try { var C = window.CVCreativeCore; if (C && typeof C.linkAsset === 'function') C.linkAsset(existing.id); } catch (e) {}
+    return Promise.resolve(existing.id);
+  }
+  if (assets && typeof assets.addBlob === 'function' && typeof assets.list === 'function' && window.File) {
+    coreProject(true);
+    var old = (assets.list() || []).map(function (a) { return String(a.id); });
+    var name = 'CANVIO-Inspiration-' + String(id).replace(/[^a-z0-9_-]/gi, '').slice(0, 48) + '.jpg', blob;
+    try { blob = dataUrlBlob(data); } catch (e) { return Promise.reject(e); }
+    var file = new File([blob], name, { type: blob.type || 'image/jpeg' });
+    return Promise.resolve(assets.addBlob(file)).then(function () {
+      var list = assets.list() || [], a = list.find(function (x) { return x && old.indexOf(String(x.id)) < 0 && x.name === name; });
+      if (!a || !a.id) throw new Error('Asset Library chưa xác nhận ảnh vừa nhập.');
+      a.canvioScene = Object.assign({}, a.canvioScene || {}, sceneMeta || {}, { source: 'P153', boardItemId: String(id) });
+      try { if (window.LS && LS.set) LS.set('assets', list); } catch (e) {}
+      try { var C = window.CVCreativeCore; if (C && typeof C.linkAsset === 'function') C.linkAsset(a.id); } catch (e) {}
+      try { if (assets.render) assets.render(); } catch (e) {}
+      return a.id;
+    });
+  }
+  return openDb().then(function (d) { return new Promise(function (ok, no) { var t = d.transaction(ST, 'readwrite'); t.objectStore(ST).put({ id: id, data: data, at: Date.now() }); t.oncomplete = function () { ok(null); }; t.onerror = function () { no(t.error); }; }); });
+}
+function idbGet(id) {
+  var item = readList().filter(function (x) { return String(x.id) === String(id); })[0];
+  if (item && item.assetId && window.CV && CV.assets && CV.assets.list) {
+    var found = CV.assets.list().filter(function (x) { return String(x.id) === String(item.assetId); })[0];
+    if (found && found.data) return Promise.resolve(found.data);
+  }
+  var asset = findAssetForBoard(id);
+  if (asset && asset.data) return Promise.resolve(asset.data);
+  return openDb().then(function (d) { return new Promise(function (ok, no) { var q = d.transaction(ST).objectStore(ST).get(id); q.onsuccess = function () { ok(q.result ? q.result.data : null); }; q.onerror = function () { no(q.error); }; }); });
+}
+function idbDel(id) {
+  var item = readList().filter(function (x) { return String(x.id) === String(id); })[0];
+  if (item && item.assetId) return Promise.resolve();
+  return openDb().then(function (d) { return new Promise(function (ok) { var t = d.transaction(ST, 'readwrite'); t.objectStore(ST).delete(id); t.oncomplete = ok; t.onerror = ok; }); });
+}
+function dropLegacyDb() {
+  if (!window.indexedDB || typeof indexedDB.deleteDatabase !== 'function') return Promise.resolve(false);
+  return new Promise(function (ok) {
+    if (dbP) dbP.then(function (d) { try { d.close(); } catch (e) {} }).catch(function () {});
+    var q = indexedDB.deleteDatabase(DBN);
+    q.onsuccess = function () { dbP = null; ok(true); }; q.onerror = function () { ok(false); }; q.onblocked = function () { ok(false); };
+  });
+}
+function migrateToAssets() {
+  var p = coreProject(false), assets = window.CV && CV.assets;
+  if (!p || !assets || typeof assets.addBlob !== 'function') return Promise.resolve({ ok: false, waiting: true, migrated: 0 });
+  var current = readList(), old = legacyList(), merged = old.slice();
+  current.forEach(function (x) { var i = merged.findIndex(function (y) { return y.id === x.id; }); if (i >= 0) merged[i] = x; else merged.unshift(x); });
+  var migrated = 0, failed = [];
+  return merged.reduce(function (chain, item) {
+    return chain.then(function () {
+      if (!item || item.type !== 'img' || item.assetId) return;
+      return idbGet(item.id).then(function (data) {
+        if (!data) { failed.push(item.id); return; }
+        var meta = { kind: item.kind, colors: item.colors || [], names: item.names || [], note: item.note || '', extra: item.extra || null, yaw: item.extra && item.extra.yaw, pitch: item.extra && item.extra.pitch, fov: item.extra && item.extra.fov };
+        return idbPut(item.id, data, meta).then(function (assetId) { if (!assetId) { failed.push(item.id); return; } item.assetId = assetId; migrated++; writeList(merged); });
+      }).catch(function () { failed.push(item.id); });
+    });
+  }, Promise.resolve()).then(function () {
+    writeList(merged);
+    var pending = merged.filter(function (x) { return x && x.type === 'img' && !x.assetId; }).length;
+    if (!pending) {
+      try { localStorage.removeItem(KEY); } catch (e) {}
+      return dropLegacyDb().then(function (dropped) { return { ok: true, migrated: migrated, pending: 0, legacyDbRemoved: dropped }; });
+    }
+    return { ok: false, migrated: migrated, pending: pending, failed: failed };
+  });
+}
 window.CVSceneStoreP153 = { put: idbPut, get: idbGet, del: idbDel };
 /* ---------- xử lý ảnh (trình duyệt) ---------- */
 function loadImg(src) { return new Promise(function (ok, no) { var im = new Image(); im.onload = function () { ok(im); }; im.onerror = function () { no(new Error('Không đọc được ảnh')); }; im.src = src; }); }
@@ -31734,7 +31838,8 @@ function addDataUrl(dataUrl, meta) {
     var th = draw(im, 220, 'image/jpeg', .7), full = draw(im, 1600, 'image/jpeg', .86);
     var it = { id: meta.id || uid(), type: 'img', name: String(meta.name || 'Ảnh').slice(0, 80), kind: KINDS.indexOf(meta.kind) >= 0 ? meta.kind : 'Ảnh', note: String(meta.note || '').slice(0, 400), url: safeUrl(meta.url), colors: cols, names: namesOf(cols), thumb: th.url, w: im.naturalWidth, h: im.naturalHeight, at: Date.now() };
     if (meta.extra && typeof meta.extra === 'object') it.extra = meta.extra;
-    return idbPut(it.id, full.url).then(function () { var l = readList(); l.unshift(it); if (!writeList(l)) { return idbDel(it.id).then(function () { throw new Error('Bộ nhớ trình duyệt đầy, hãy xóa bớt mục cũ.'); }); } return it; });
+    var sceneMeta = { kind: it.kind, colors: it.colors, names: it.names, note: it.note, extra: it.extra || null, yaw: it.extra && it.extra.yaw, pitch: it.extra && it.extra.pitch, fov: it.extra && it.extra.fov };
+    return idbPut(it.id, full.url, sceneMeta).then(function (assetId) { if (assetId) it.assetId = assetId; var l = readList(); l.unshift(it); if (!writeList(l)) { return idbDel(it.id).then(function () { throw new Error('Không lưu được siêu dữ liệu dự án.'); }); } return it; });
   });
 }
 function addFile(f, meta) { if (!f || !/^image\//.test(f.type)) return Promise.reject(new Error('Chỉ nhận tệp ảnh.')); if (f.size > 25 * 1024 * 1024) return Promise.reject(new Error('Ảnh quá lớn (tối đa 25MB).')); return readFile(f).then(function (d) { var m = {}; for (var k in meta) m[k] = meta[k]; if (!m.name) m.name = f.name.replace(/\.[^.]+$/, ''); return addDataUrl(d, m); }); }
@@ -31744,7 +31849,7 @@ function addLink(url, meta) {
   var it = { id: uid(), type: 'link', name: String(meta.name || host || 'Liên kết').slice(0, 80), kind: KINDS.indexOf(meta.kind) >= 0 ? meta.kind : 'Khác', note: String(meta.note || '').slice(0, 400), url: u, colors: [], names: [], at: Date.now() };
   var l = readList(); l.unshift(it); return writeList(l) ? Promise.resolve(it) : Promise.reject(new Error('Bộ nhớ trình duyệt đầy.'));
 }
-function remove(id) { var l = readList().filter(function (x) { return x.id !== id; }); writeList(l); return idbDel(id); }
+function remove(id) { var old = readList().filter(function (x) { return x.id === id; })[0], l = readList().filter(function (x) { return x.id !== id; }); writeList(l); return old && old.assetId ? Promise.resolve() : idbDel(id); }
 function update(id, patch) { var l = readList(), it = l.filter(function (x) { return x.id === id; })[0]; if (!it) return false; ['name', 'note', 'kind'].forEach(function (k) { if (patch && patch[k] != null) it[k] = String(patch[k]).slice(0, 400); }); if (KINDS.indexOf(it.kind) < 0) it.kind = 'Khác'; return writeList(l); }
 /* ---------- giao diện ---------- */
 function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
@@ -31819,7 +31924,7 @@ function mount() {
 }
 function ready() { var n = 0; (function loop() { try { if (mount()) return; } catch (e) {} if (++n < 40) setTimeout(loop, 250); })(); }
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', ready, { once: true }); else ready();
-window.CVBoardP153 = { version: '153.0.0', KINDS: KINDS, COLORS: COLORS, hex: hex, rgbOf: rgbOf, colorNameOf: colorNameOf, palette: palette, namesOf: namesOf, filterItems: filterItems, safeUrl: safeUrl, list: readList, addDataUrl: addDataUrl, addFile: addFile, addLink: addLink, remove: remove, update: update, mount: mount };
+window.CVBoardP153 = { version: '159.0.0', KINDS: KINDS, COLORS: COLORS, hex: hex, rgbOf: rgbOf, colorNameOf: colorNameOf, palette: palette, namesOf: namesOf, filterItems: filterItems, safeUrl: safeUrl, list: readList, addDataUrl: addDataUrl, addFile: addFile, addLink: addLink, remove: remove, update: update, saveList: writeList, migrateToAssets: migrateToAssets, readLegacy: legacyList, mount: mount };
 })();
 </script>
 <script id="canvio-lot154p">
@@ -31947,8 +32052,46 @@ var SHOTS = [
   { id: 'top-down', name: 'Từ trên cao xuống', dur: 4, text: 'góc nhìn từ trên cao thẳng xuống, thấy bố cục mặt bằng' }
 ];
 function uid() { return 'c' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
-function readCards() { try { var v = JSON.parse(localStorage.getItem(KEY) || '[]'); return Array.isArray(v) ? v : []; } catch (e) { return []; } }
-function writeCards(a) { try { localStorage.setItem(KEY, JSON.stringify(a)); return true; } catch (e) { return false; } }
+function legacyCards() { try { var v = JSON.parse(localStorage.getItem(KEY) || '[]'); return Array.isArray(v) ? v : []; } catch (e) { return []; } }
+function coreProject(create) {
+  var c = window.CVCreativeCore;
+  if (!c) return null;
+  var p = c.active || null;
+  if (!p && create && typeof c.create === 'function') p = c.create({ name: 'Dự án sáng tạo' });
+  return p || null;
+}
+function readCards() {
+  var p = coreProject(false), d = p && p.documents && p.documents.scenePack;
+  if (d && Array.isArray(d.cards)) return d.cards.slice();
+  return legacyCards();
+}
+function writeCards(a) {
+  var c = window.CVCreativeCore, p = coreProject(true);
+  if (p) {
+    p.documents = p.documents || {};
+    p.documents.scenePack = { version: 1, cards: (a || []).slice() };
+    try { if (c && typeof c.capture === 'function') c.capture('videoStudio'); } catch (e) {}
+    return true;
+  }
+  try { localStorage.setItem(KEY, JSON.stringify(a || [])); return true; } catch (e) { return false; }
+}
+function migrateToCore() {
+  var p = coreProject(true), legacy = legacyCards(), current = readCards(), merged = legacy.slice();
+  current.forEach(function (c) { var i = merged.findIndex(function (x) { return x.id === c.id; }); if (i >= 0) merged[i] = c; else merged.unshift(c); });
+  if (!p) return { ok: false, count: 0 };
+  if (!merged.length) return { ok: true, count: 0 };
+  var ok = writeCards(merged);
+  if (ok) { try { localStorage.removeItem(KEY); } catch (e) {} }
+  return { ok: ok, count: merged.length };
+}
+function linkCardAssets(card) {
+  var C = window.CVCreativeCore, B = window.CVBoardP153;
+  if (!C || typeof C.linkAsset !== 'function' || !B || !card) return;
+  (card.refs || []).forEach(function (id) {
+    var item = B.list().filter(function (x) { return String(x.id) === String(id); })[0];
+    if (item && item.assetId) C.linkAsset(item.assetId);
+  });
+}
 function clip(s, n) { return String(s == null ? '' : s).replace(/\s+/g, ' ').trim().slice(0, n); }
 function saveCard(c) {
   if (!c || (c.type !== 'character' && c.type !== 'space')) return { ok: false, error: 'Loại thẻ không hợp lệ.' };
@@ -31957,7 +32100,8 @@ function saveCard(c) {
   var list = readCards(), old = c.id ? list.filter(function (x) { return x.id === c.id; })[0] : null;
   var card = { id: old ? old.id : uid(), type: c.type, name: name, desc: desc, traits: clip(c.traits, 300), refs: (c.refs || []).slice(0, 3).map(String), at: Date.now() };
   if (old) list[list.indexOf(old)] = card; else list.unshift(card);
-  if (!writeCards(list)) return { ok: false, error: 'Bộ nhớ trình duyệt đầy.' };
+  if (!writeCards(list)) return { ok: false, error: 'Không lưu được thẻ vào dự án.' };
+  linkCardAssets(card);
   return { ok: true, card: card };
 }
 function removeCard(id) { return writeCards(readCards().filter(function (x) { return x.id !== id; })); }
@@ -31967,7 +32111,9 @@ function importCards(text) {
   if (!o || o.canvio !== 'p155-cards' || !Array.isArray(o.cards)) return { ok: false, error: 'Không phải tệp thẻ CANVIO.' };
   var list = readCards(), n = 0;
   o.cards.forEach(function (c) { if (!c || (c.type !== 'character' && c.type !== 'space') || !clip(c.name, 60) || !clip(c.desc, 700)) return; var card = { id: String(c.id || uid()).slice(0, 40), type: c.type, name: clip(c.name, 60), desc: clip(c.desc, 700), traits: clip(c.traits, 300), refs: (c.refs || []).slice(0, 3).map(String), at: Date.now() }; var i = list.map(function (x) { return x.id; }).indexOf(card.id); if (i >= 0) list[i] = card; else list.unshift(card); n++; });
-  return writeCards(list) ? { ok: true, count: n } : { ok: false, error: 'Bộ nhớ trình duyệt đầy.' };
+  if (!writeCards(list)) return { ok: false, error: 'Không lưu được thẻ vào dự án.' };
+  list.forEach(linkCardAssets);
+  return { ok: true, count: n };
 }
 function shotById(id) { return SHOTS.filter(function (s) { return s.id === id; })[0] || null; }
 /* roles: { character:{cardId?, ref?}, environment:{cardId?, ref?}, camera:{shotId?, ref?} }; cards: danh sách thẻ. */
@@ -31984,6 +32130,68 @@ function buildPrompt(opt) {
   lines.push('[Hành động] ' + action + '.');
   lines.push('Phân công: ảnh tham chiếu nhân vật chỉ quyết định ngoại hình; ảnh không gian quyết định bối cảnh, ánh sáng, đồ vật; góc máy lấy theo mục [Góc máy].');
   return { ok: true, prompt: lines.join('\n'), shotSeconds: sh.dur };
+}
+var promptHandlerOwner = null;
+function runPrompt(opt) {
+  var built = buildPrompt(opt);
+  if (!built.ok) return Promise.resolve(built);
+  var prompt = built.prompt, core = window.CVCreativeCore, ctx = null;
+  try { ctx = core && typeof core.context === 'function' ? core.context() : null; } catch (e) {}
+  if (ctx && ctx.brief) prompt += '\n[Brief dự án] ' + clip(ctx.brief, 1200);
+  if (ctx && ctx.goal) prompt += '\n[Mục tiêu] ' + clip(ctx.goal, 180);
+  if (ctx && ctx.channel) prompt += '\n[Kênh đầu ra] ' + clip(ctx.channel, 180);
+  var O = window.CVOrchestratorP128;
+  if (!O || typeof O.register !== 'function' || typeof O.run !== 'function') return Promise.resolve({ ok: true, prompt: prompt, shotSeconds: built.shotSeconds, orchestrated: false, warning: 'P128 chưa sẵn sàng; dùng bản prompt cục bộ.' });
+  if (promptHandlerOwner !== O) {
+    O.register('scene-prompt', 'scene-compose-local', function (task) { return String(task && task.prompt || ''); });
+    promptHandlerOwner = O;
+  }
+  return O.run({ kind: 'scene-prompt', prompt: prompt, tiers: ['scene-compose-local'], cache: false, timeoutMs: 15000 }).then(function (r) {
+    if (r && r.ok) return { ok: true, prompt: String(r.text || prompt), shotSeconds: built.shotSeconds, orchestrated: true, tier: r.tier || 'scene-compose-local', projectId: ctx && ctx.projectId || null };
+    return { ok: true, prompt: prompt, shotSeconds: built.shotSeconds, orchestrated: false, warning: r && r.message || 'P128 chưa chạy được; dùng bản prompt cục bộ.' };
+  }).catch(function (e) { return { ok: true, prompt: prompt, shotSeconds: built.shotSeconds, orchestrated: false, warning: String(e && e.message || e) }; });
+}
+function assignToStoryboard(data) {
+  data = data || {};
+  var C = window.CVCreativeCore, p = coreProject(true), ctx = null;
+  if (C && typeof C.context === 'function') { try { ctx = C.context(); } catch (e) {} }
+  if (!p) return { ok: false, error: 'Shared Creative Core chưa sẵn sàng.' };
+  var key = 'canvio5:media_video_project_v1', project = null;
+  try { project = JSON.parse(localStorage.getItem(key) || 'null'); } catch (e) {}
+  if (!project || typeof project !== 'object') project = { name: (ctx && ctx.projectName || p.name || 'Dự án') + ' — Video', ratio: '16:9', resolution: 1080, media: [], shots: [] };
+  if (!Array.isArray(project.shots)) project.shots = [];
+  if (!Array.isArray(project.media)) project.media = [];
+  var roles = data.roles || {}, cards = readCards(), board = window.CVBoardP153;
+  function card(id) { return cards.filter(function (x) { return String(x.id) === String(id || ''); })[0] || null; }
+  var ch = card(roles.character && roles.character.cardId), env = card(roles.environment && roles.environment.cardId), assetIds = [];
+  function addRefs(c) {
+    if (!c || !board) return;
+    (c.refs || []).forEach(function (id) {
+      var item = board.list().filter(function (x) { return String(x.id) === String(id); })[0];
+      if (item && item.assetId && assetIds.indexOf(item.assetId) < 0) assetIds.push(item.assetId);
+    });
+  }
+  addRefs(ch); addRefs(env);
+  if (C && typeof C.linkAsset === 'function') assetIds.forEach(function (id) { C.linkAsset(id); });
+  var camera = shotById(roles.camera && roles.camera.shotId);
+  var title = clip(data.title || data.action || (camera && camera.name) || 'Cảnh mới', 90);
+  var shot = { id: uid(), title: title || 'Cảnh mới', description: String(data.prompt || ''), duration: Math.max(1, Math.min(30, Number(data.shotSeconds || camera && camera.dur || 4))), mediaId: null, transition: project.shots.length ? 'fade' : 'none', voice: '', scenePack: { characterId: ch && ch.id || null, spaceId: env && env.id || null, shotId: camera && camera.id || null, assetIds: assetIds.slice(), prompt: String(data.prompt || ''), action: clip(data.action, 400) }, createdAt: new Date().toISOString() };
+  project.shots.push(shot); project.updated = new Date().toISOString();
+  try { localStorage.setItem(key, JSON.stringify(project)); } catch (e) { return { ok: false, error: 'Không lưu được Storyboard Video Studio.' }; }
+  p.documents = p.documents || {}; p.documents.sceneAssignments = p.documents.sceneAssignments || [];
+  p.documents.sceneAssignments.push({ shotId: shot.id, title: shot.title, scenePack: shot.scenePack, at: shot.createdAt });
+  try {
+    var media = window.CV && CV.mediaStudio;
+    if (media) { if (media.renderShots) media.renderShots(); if (media.renderTimeline) media.renderTimeline(); if (media.updateVideoMeta) media.updateVideoMeta(); }
+    if (C && typeof C.capture === 'function') C.capture('videoStudio');
+  } catch (e) {}
+  try { if (document && document.dispatchEvent && window.CustomEvent) document.dispatchEvent(new CustomEvent('canvio:storyboard-updated', { detail: { projectId: ctx && ctx.projectId || p.id, shotId: shot.id, shot: shot } })); } catch (e) {}
+  return { ok: true, shot: shot, project: project };
+}
+function assignShotToStoryboard(id) {
+  var s = shotById(id);
+  if (!s) return { ok: false, error: 'Không tìm thấy góc máy.' };
+  return assignToStoryboard({ title: s.name, action: s.text, shotSeconds: s.dur, roles: { camera: { shotId: s.id } }, prompt: '[Góc máy] ' + s.name + ': ' + s.text });
 }
 /* Lệch tông: khoảng cách trung bình giữa các màu chủ đạo (hex) của hai ảnh, thang 0–100. */
 function rgbOf(h) { h = String(h || '').replace('#', ''); var n = parseInt(h, 16); return isNaN(n) ? [0, 0, 0] : [(n >> 16) & 255, (n >> 8) & 255, n & 255]; }
@@ -32036,17 +32244,32 @@ function mount() {
       + '<select class="input" id="cv156-sh" aria-label="Góc máy">' + opts(SHOTS, '', '— Góc máy —') + '</select><input class="input" id="cv156-ac" maxlength="400" placeholder="Hành động trong cảnh (vd: lao xe qua ngã tư, quay đầu nhìn lại)" aria-label="Hành động"></div>'
       + '<div class="row" style="gap:6px;margin-top:8px;flex-wrap:wrap"><input class="input" id="cv156-r1" maxlength="60" placeholder="Ảnh nào lo nhân vật (vd: ảnh 1)" aria-label="Ảnh lo nhân vật" style="flex:1;min-width:160px"><input class="input" id="cv156-r2" maxlength="60" placeholder="Ảnh nào lo môi trường (vd: ảnh 2)" aria-label="Ảnh lo môi trường" style="flex:1;min-width:160px"><input class="input" id="cv156-r3" maxlength="60" placeholder="Ảnh nào lo góc máy (vd: ảnh 3)" aria-label="Ảnh lo góc máy" style="flex:1;min-width:160px"></div>'
       + '<div class="row" style="gap:6px;margin-top:8px"><button class="btn btn-primary sm" id="cv156-go" type="button">Tạo prompt</button><button class="btn btn-soft sm" id="cv156-cp" type="button" disabled>Sao chép</button></div><textarea class="input" id="cv156-out" rows="7" readonly aria-label="Prompt đã tạo" style="margin-top:8px;width:100%"></textarea>';
-    var out = body.querySelector('#cv156-out'), cp = body.querySelector('#cv156-cp');
+    var out = body.querySelector('#cv156-out'), cp = body.querySelector('#cv156-cp'), lastOpt = null;
+    var assign = document.createElement('button'); assign.type = 'button'; assign.className = 'btn btn-soft sm'; assign.id = 'cv156-assign'; assign.textContent = 'Gán vào Storyboard'; assign.disabled = true; cp.parentNode.appendChild(assign);
     body.querySelector('#cv156-go').addEventListener('click', function () {
       var v = function (s) { return body.querySelector(s).value; };
-      var r = buildPrompt({ cards: cards, action: v('#cv156-ac'), roles: { character: { cardId: v('#cv156-ch'), ref: v('#cv156-r1') }, environment: { cardId: v('#cv156-sp'), ref: v('#cv156-r2') }, camera: { shotId: v('#cv156-sh'), ref: v('#cv156-r3') } } });
-      if (!r.ok) { out.value = ''; cp.disabled = true; say(r.error, true); return; } out.value = r.prompt; cp.disabled = false; say('Đã tạo prompt (gợi ý ' + r.shotSeconds + ' giây).');
+      lastOpt = { cards: cards, action: v('#cv156-ac'), roles: { character: { cardId: v('#cv156-ch'), ref: v('#cv156-r1') }, environment: { cardId: v('#cv156-sp'), ref: v('#cv156-r2') }, camera: { shotId: v('#cv156-sh'), ref: v('#cv156-r3') } } };
+      var go = body.querySelector('#cv156-go'); go.disabled = true; cp.disabled = true; assign.disabled = true;
+      runPrompt(lastOpt).then(function (r) {
+        go.disabled = false;
+        if (!r.ok) { out.value = ''; cp.disabled = true; say(r.error, true); return; }
+        out.value = r.prompt; cp.disabled = false; assign.disabled = false;
+        say('Đã tạo prompt' + (r.orchestrated ? ' qua P128 cục bộ' : ' cục bộ') + ' · gợi ý ' + r.shotSeconds + ' giây.');
+      });
+    });
+    assign.addEventListener('click', function () {
+      if (!lastOpt || !out.value) return;
+      var cam = shotById(lastOpt.roles.camera.shotId);
+      var r = assignToStoryboard({ title: lastOpt.action, action: lastOpt.action, prompt: out.value, roles: lastOpt.roles, shotSeconds: cam && cam.dur || 4 });
+      if (!r.ok) { say(r.error, true); return; }
+      say('Đã thêm “' + r.shot.title + '” vào Storyboard Video Studio.'); toast('Đã gán cảnh vào Video Studio');
     });
     cp.addEventListener('click', function () { try { navigator.clipboard.writeText(out.value).then(function () { toast('Đã sao chép prompt'); }, function () { out.select(); say('Không tự sao chép được, hãy bấm Ctrl+C.', true); }); } catch (e) { out.select(); } });
   }
   function viewShots() {
-    body.innerHTML = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px">' + SHOTS.map(function (s) { return '<div class="card" style="padding:8px"><div style="font-weight:700;font-size:13px">' + esc(s.name) + ' <span class="tiny">· ' + s.dur + ' giây</span></div><div class="tiny" style="margin:4px 0">' + esc(s.text) + '</div><button type="button" class="btn btn-ghost sm cv157-cp" data-id="' + s.id + '">Sao chép mô tả</button></div>'; }).join('') + '</div>';
+    body.innerHTML = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px">' + SHOTS.map(function (s) { return '<div class="card" style="padding:8px"><div style="font-weight:700;font-size:13px">' + esc(s.name) + ' <span class="tiny">· ' + s.dur + ' giây</span></div><div class="tiny" style="margin:4px 0">' + esc(s.text) + '</div><div class="row" style="gap:4px;flex-wrap:wrap"><button type="button" class="btn btn-ghost sm cv157-cp" data-id="' + s.id + '">Sao chép mô tả</button><button type="button" class="btn btn-soft sm cv157-use" data-id="' + s.id + '">Gán vào Storyboard</button></div></div>'; }).join('') + '</div>';
     Array.prototype.forEach.call(body.querySelectorAll('.cv157-cp'), function (b) { b.addEventListener('click', function () { var s = shotById(b.dataset.id); try { navigator.clipboard.writeText(s.name + ': ' + s.text).then(function () { toast('Đã sao chép góc máy'); }); } catch (e) {} }); });
+    Array.prototype.forEach.call(body.querySelectorAll('.cv157-use'), function (b) { b.addEventListener('click', function () { var r = assignShotToStoryboard(b.dataset.id); if (!r.ok) { say(r.error, true); return; } say('Đã thêm góc máy “' + r.shot.title + '” vào Storyboard.'); toast('Đã gán góc máy vào Video Studio'); }); });
   }
   function viewTone() {
     var imgs = boardItems().filter(function (i) { return i.colors && i.colors.length; });
@@ -32063,7 +32286,375 @@ function mount() {
 }
 function ready() { var n = 0; (function loop() { try { if (mount()) return; } catch (e) {} if (++n < 40) setTimeout(loop, 250); })(); }
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', ready, { once: true }); else ready();
-window.CVScenePackP155 = { version: '155.0.0', SHOTS: SHOTS, readCards: readCards, saveCard: saveCard, removeCard: removeCard, exportCards: exportCards, importCards: importCards, buildPrompt: buildPrompt, toneDelta: toneDelta, toneVerdict: toneVerdict, mount: mount };
+window.CVScenePackP155 = { version: '159.0.0', SHOTS: SHOTS, readCards: readCards, readLegacyCards: legacyCards, replaceCards: writeCards, saveCard: saveCard, removeCard: removeCard, exportCards: exportCards, importCards: importCards, buildPrompt: buildPrompt, runPrompt: runPrompt, assignToStoryboard: assignToStoryboard, assignShotToStoryboard: assignShotToStoryboard, migrateToCore: migrateToCore, toneDelta: toneDelta, toneVerdict: toneVerdict, shotById: shotById, mount: mount };
+})();
+</script>
+<script id="canvio-lot159i">
+/* P159 · Hợp nhất Bảng cảm hứng và Cảnh nhất quán với Shared Creative Core.
+   Di chuyển dữ liệu cũ không phá huỷ; ảnh vào CV.assets, cards vào project documents, prompt/shot dùng P128/Video Studio. */
+(function () {
+'use strict';
+if (window.CVSceneIntegrationP159) return;
+var running = false, last = null;
+function migrate() {
+  if (running) return Promise.resolve(last);
+  var B = window.CVBoardP153, S = window.CVScenePackP155, C = window.CVCreativeCore, CVX = window.CV;
+  if (!B || !S || !C || !CVX || !CVX.assets) return Promise.resolve({ ok: false, waiting: true });
+  var oldBoard = B.readLegacy ? B.readLegacy() : [], oldCards = S.readLegacyCards ? S.readLegacyCards() : [];
+  if (!(C.active || oldBoard.length || oldCards.length)) return Promise.resolve({ ok: true, empty: true, migrated: 0 });
+  if (!C.active && typeof C.create === 'function') C.create({ name: 'Cảnh nhất quán' });
+  running = true;
+  return Promise.resolve(B.migrateToAssets ? B.migrateToAssets() : { ok: false })
+    .then(function (assets) {
+      var cards = S.migrateToCore ? S.migrateToCore() : { ok: false };
+      last = { ok: !!(assets && assets.ok && cards && cards.ok), assets: assets, cards: cards, projectId: (C.context && C.context().projectId) || null };
+      try { document.dispatchEvent(new CustomEvent('canvio:p159-ready', { detail: last })); } catch (e) {}
+      return last;
+    }).catch(function (e) { last = { ok: false, error: String(e && e.message || e) }; return last; })
+    .then(function (r) { running = false; return r; });
+}
+function applyInspirationColor(hex) {
+  hex = String(hex || '').trim();
+  if (!/^#[0-9a-f]{6}$/i.test(hex)) return false;
+  try {
+    var brand = window.LS && LS.get ? LS.get('brand', {}) : {};
+    brand = brand && typeof brand === 'object' ? brand : {};
+    brand.primary = hex;
+    if (window.LS && LS.set) LS.set('brand', brand);
+    var field = document.getElementById('bPrimary');
+    if (field) { field.value = hex; field.dispatchEvent(new Event('input', { bubbles: true })); }
+    if (window.CV && CV.brand && CV.brand.paint) CV.brand.paint();
+    if (window.CVCreativeCore && CVCreativeCore.applyBrandPalette) CVCreativeCore.applyBrandPalette();
+    return true;
+  } catch (e) { return false; }
+}
+function reconcileAssetRemoval(id) {
+  var B = window.CVBoardP153, S = window.CVScenePackP155, C = window.CVCreativeCore;
+  if (!B || !S) return;
+  var removedRefs = [], items = B.list().filter(function (item) {
+    if (String(item.assetId || '') === String(id)) { removedRefs.push(String(item.id)); return false; }
+    return true;
+  });
+  if (removedRefs.length && B.saveList) B.saveList(items);
+  var cards = S.readCards(), changed = false;
+  cards.forEach(function (card) {
+    if (!Array.isArray(card.refs)) return;
+    var refs = card.refs.filter(function (ref) { return removedRefs.indexOf(String(ref)) < 0; });
+    if (refs.length !== card.refs.length) { card.refs = refs; changed = true; }
+  });
+  if (changed && S.replaceCards) S.replaceCards(cards);
+  try { if (C && C.unlinkAsset) C.unlinkAsset(id); } catch (e) {}
+  try { if (C && C.capture) C.capture('assets'); } catch (e) {}
+}
+function install() {
+  if (document.__cvP159Installed) return;
+  document.__cvP159Installed = true;
+  document.addEventListener('cv153:usecolor', function (e) { applyInspirationColor(e && e.detail && e.detail.hex); });
+  var assets = window.CV && CV.assets;
+  if (assets && typeof assets.remove === 'function' && !assets.remove.__cvP159) {
+    var original = assets.remove;
+    var wrapped = function (id) {
+      var result = original.apply(this, arguments);
+      Promise.resolve(result).then(function () { reconcileAssetRemoval(id); });
+      return result;
+    };
+    wrapped.__cvP159 = true;
+    assets.remove = wrapped;
+  }
+}
+function ready() {
+  install();
+  var n = 0;
+  (function attempt() {
+    migrate().then(function (r) { if (r && r.waiting && ++n < 40) setTimeout(attempt, 250); });
+  })();
+}
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', ready, { once: true }); else ready();
+window.CVSceneIntegrationP159 = { version: '159.0.0', migrate: migrate, applyInspirationColor: applyInspirationColor, reconcileAssetRemoval: reconcileAssetRemoval, status: function () { return last; } };
+})();
+</script>
+<script id="canvio-lot160c">
+/* P160 · Bộ sưu tập cảm hứng theo dự án. Không tạo kho ảnh: chỉ giữ assetId/tag trong Shared Core; gói cộng đồng là file do người dùng tự trao đổi. */
+(function(){
+'use strict';
+if(window.CVInspirationCollectionsP160)return;
+var KEY='inspirationCollections',MAX=100,MAX_ITEMS=500;
+function project(create){var C=window.CVCreativeCore;if(!C)return null;var p=C.active||null;if(!p&&create&&typeof C.create==='function')p=C.create({name:'Bộ sưu tập sáng tạo'});return p||null;}
+function read(){var p=project(false),d=p&&p.documents&&p.documents[KEY];return d&&Array.isArray(d.collections)?d.collections:[];}
+function write(list){var p=project(true),C=window.CVCreativeCore;if(!p)return false;p.documents=p.documents||{};p.documents[KEY]={version:1,collections:list.slice(0,MAX)};try{if(C&&C.capture)C.capture('assets');}catch(e){}return true;}
+function uid(){return 'p160-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,7);}
+function clean(s,n){return String(s==null?'':s).replace(/[\u0000-\u001f]/g,' ').replace(/\s+/g,' ').trim().slice(0,n);}
+function assets(){try{return window.CV&&CV.assets&&CV.assets.list?CV.assets.list():[];}catch(e){return[];}}
+function create(name,channel,tags){name=clean(name,80);if(!name) return{ok:false,error:'Tên bộ sưu tập không được để trống.'};var list=read();if(list.length>=MAX)return{ok:false,error:'Đã đạt giới hạn 100 bộ sưu tập.'};var c={id:uid(),name:name,channel:clean(channel,60),tags:(tags||[]).map(x=>clean(x,32)).filter(Boolean).slice(0,20),items:[],createdAt:Date.now(),updatedAt:Date.now()};list.unshift(c);return write(list)?{ok:true,collection:c}:{ok:false,error:'Không lưu được vào Shared Core.'};}
+function add(collectionId,assetId,tags,note){var list=read(),c=list.find(x=>x.id===collectionId);if(!c)return{ok:false,error:'Không tìm thấy bộ sưu tập.'};var a=assets().find(x=>String(x.id)===String(assetId));if(!a)return{ok:false,error:'Asset ID không tồn tại trong Image Library.'};c.items=Array.isArray(c.items)?c.items:[];if(c.items.some(x=>x.assetId===String(assetId)))return{ok:true,duplicate:true};if(c.items.length>=MAX_ITEMS)return{ok:false,error:'Bộ sưu tập đã đạt 500 mục.'};c.items.push({assetId:String(assetId),tags:(tags||[]).map(x=>clean(x,32)).filter(Boolean).slice(0,20),note:clean(note,240),addedAt:Date.now()});c.updatedAt=Date.now();try{var C=window.CVCreativeCore;if(C&&C.linkAsset)C.linkAsset(a.id);}catch(e){}return write(list)?{ok:true,item:c.items[c.items.length-1]}:{ok:false,error:'Không lưu được.'};}
+function remove(collectionId,assetId){var list=read(),c=list.find(x=>x.id===collectionId);if(!c)return false;c.items=(c.items||[]).filter(x=>String(x.assetId)!==String(assetId));c.updatedAt=Date.now();return write(list);}
+function rename(id,name,tags){var list=read(),c=list.find(x=>x.id===id);if(!c)return false;name=clean(name,80);if(!name)return false;c.name=name;if(Array.isArray(tags))c.tags=tags.map(x=>clean(x,32)).filter(Boolean).slice(0,20);c.updatedAt=Date.now();return write(list);}
+function filter(q,tag,channel){q=clean(q,80).toLowerCase();return read().filter(c=>(!channel||c.channel===channel)&&(!tag||(c.tags||[]).includes(tag)||c.items.some(x=>(x.tags||[]).includes(tag)))&&(!q||(c.name+' '+c.channel+' '+(c.tags||[]).join(' ')+' '+c.items.map(x=>x.note).join(' ')).toLowerCase().includes(q)));}
+function moodboardPrompt(id){var c=read().find(x=>x.id===id);if(!c)throw new Error('Không tìm thấy bộ sưu tập.');var a=assets();return'[MOODBOARD] '+c.name+'\\n[BRIEF] '+String(window.CVCreativeCore&&CVCreativeCore.context&&CVCreativeCore.context().brief||'').slice(0,1000)+'\\n[KÊNH] '+c.channel+'\\n[TAGS] '+(c.tags||[]).join(', ')+'\\n[REFERENCES] '+(c.items||[]).map(x=>{var z=a.find(y=>String(y.id)===String(x.assetId));return'- '+(z&&z.name||x.assetId)+' · '+(x.tags||[]).join(', ')+' · '+x.note+' [assetId:'+x.assetId+']';}).join('\\n')+'\\nTổng hợp direction, palette và nguyên tắc bố cục; không tự nhận đã tạo ảnh.';}
+function sendToStudio(id){var prompt=moodboardPrompt(id),O=window.CVOrchestratorP128;if(O&&O.register)O.register('p160-moodboard-local','local',task=>String(task.prompt||''));var run=O&&O.run?O.run({kind:'p160-moodboard-local',tiers:['local'],cache:false,prompt:prompt}):Promise.resolve({ok:true,text:prompt,tier:'local-template'});return run.then(r=>{var detail={collectionId:id,prompt:r.text||prompt,assetIds:(read().find(x=>x.id===id).items||[]).map(x=>x.assetId)};try{document.dispatchEvent(new CustomEvent('canvio:p160-send-studio',{detail:detail}));}catch(e){}if(window.CV&&CV.go)CV.go('studio');return Object.assign({},r,{detail:detail});});}
+function packageData(){return{format:'CANVIO_P160_COLLECTIONS',version:1,createdAt:new Date().toISOString(),collections:read().map(c=>({id:c.id,name:c.name,channel:c.channel,tags:c.tags||[],items:(c.items||[]).map(x=>({assetId:x.assetId,tags:x.tags||[],note:x.note||''}))}))};}
+function exportJSON(){return JSON.stringify(packageData(),null,2);}
+function importJSON(input){var data;try{data=typeof input==='string'?JSON.parse(input):input;}catch(e){return{ok:false,error:'JSON không hợp lệ.'};}if(!data||data.format!=='CANVIO_P160_COLLECTIONS'||data.version!==1||!Array.isArray(data.collections))return{ok:false,error:'Gói không đúng định dạng P160.'};var known=new Set(assets().map(x=>String(x.id))),list=read(),added=0,missing=[];data.collections.slice(0,MAX).forEach(src=>{if(!src||!clean(src.name,80))return;var id=String(src.id||uid()).slice(0,64),items=[];(Array.isArray(src.items)?src.items:[]).slice(0,MAX_ITEMS).forEach(it=>{var aid=String(it&&it.assetId||'');if(known.has(aid)){items.push({assetId:aid,tags:(it.tags||[]).map(x=>clean(x,32)).filter(Boolean).slice(0,20),note:clean(it.note,240),addedAt:Date.now()});}else if(aid)missing.push(aid);});var c={id:id,name:clean(src.name,80),channel:clean(src.channel,60),tags:(src.tags||[]).map(x=>clean(x,32)).filter(Boolean).slice(0,20),items:items,createdAt:Date.now(),updatedAt:Date.now(),imported:true};var at=list.findIndex(x=>x.id===id);if(at>=0)list[at]=c;else list.unshift(c);added++;});if(!write(list))return{ok:false,error:'Không lưu được gói vào dự án.'};return{ok:true,collections:added,missingAssetIds:[...new Set(missing)]};}
+function crc32(bytes){var crc=-1;for(var i=0;i<bytes.length;i++){crc^=bytes[i];for(var j=0;j<8;j++)crc=(crc>>>1)^((crc&1)?0xedb88320:0);}return(crc^-1)>>>0;}
+async function zipEntryText(file,target){if(!file||!file.arrayBuffer||file.size>20*1024*1024)throw new Error('ZIP không hợp lệ hoặc vượt 20 MiB.');var buffer=await file.arrayBuffer(),bytes=new Uint8Array(buffer),view=new DataView(buffer),min=Math.max(0,bytes.length-65557),eocd=-1;for(var i=bytes.length-22;i>=min;i--){if(view.getUint32(i,true)===0x06054b50){eocd=i;break;}}if(eocd<0)throw new Error('Không tìm thấy ZIP directory.');if(view.getUint16(eocd+4,true)!==0||view.getUint16(eocd+6,true)!==0)throw new Error('Không hỗ trợ ZIP nhiều volume.');var count=view.getUint16(eocd+10,true),offset=view.getUint32(eocd+16,true);if(!count||count>100||offset>=eocd)throw new Error('ZIP entry count/offset không hợp lệ.');var pos=offset,found=null;for(var n=0;n<count;n++){if(view.getUint32(pos,true)!==0x02014b50)throw new Error('Central directory không hợp lệ.');var flags=view.getUint16(pos+8,true),method=view.getUint16(pos+10,true),crc=view.getUint32(pos+16,true),compressed=view.getUint32(pos+20,true),uncompressed=view.getUint32(pos+24,true),nameLen=view.getUint16(pos+28,true),extraLen=view.getUint16(pos+30,true),commentLen=view.getUint16(pos+32,true),localOffset=view.getUint32(pos+42,true),name=new TextDecoder('utf-8',{fatal:true}).decode(bytes.slice(pos+46,pos+46+nameLen));if(flags&1)throw new Error('Không nhập ZIP mã hóa.');if(compressed>10*1024*1024||uncompressed>10*1024*1024||uncompressed>Math.max(1,compressed)*100)throw new Error('ZIP entry vượt giới hạn an toàn.');if(name===target){found={method:method,crc:crc,compressed:compressed,uncompressed:uncompressed,localOffset:localOffset};}pos+=46+nameLen+extraLen+commentLen;if(pos>eocd)throw new Error('Central directory vượt giới hạn.');}if(!found)throw new Error('Gói ZIP thiếu CANVIO-P160-COLLECTIONS.json.');var lo=found.localOffset;if(view.getUint32(lo,true)!==0x04034b50)throw new Error('Local ZIP header không hợp lệ.');var dataOffset=lo+30+view.getUint16(lo+26,true)+view.getUint16(lo+28,true),compressedBytes=bytes.slice(dataOffset,dataOffset+found.compressed),raw;if(found.method===0)raw=compressedBytes;else if(found.method===8){if(typeof DecompressionStream==='undefined')throw new Error('Trình duyệt không hỗ trợ giải nén ZIP deflate.');var stream=new Blob([compressedBytes]).stream().pipeThrough(new DecompressionStream('deflate-raw'));raw=new Uint8Array(await new Response(stream).arrayBuffer());}else throw new Error('ZIP sử dụng thuật toán nén không được hỗ trợ.');if(raw.length!==found.uncompressed||crc32(raw)!==found.crc)throw new Error('ZIP CRC/kích thước entry không khớp.');return new TextDecoder('utf-8',{fatal:true}).decode(raw);}
+async function importZip(file){try{return importJSON(await zipEntryText(file,'CANVIO-P160-COLLECTIONS.json'));}catch(e){return{ok:false,error:clean(e&&e.message||e,220)};}}
+function download(name,blob){var u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(u),1200);}
+async function exportZip(){if(!window.CVZip||typeof window.CVZip.build!=='function')throw new Error('Bộ đóng gói ZIP cục bộ chưa sẵn sàng.');var data=exportJSON(),blob=await window.CVZip.build([{name:'CANVIO-P160-COLLECTIONS.json',data:data},{name:'README.md',data:'# CANVIO P160\nGói chỉ chứa metadata và assetId. Ảnh gốc vẫn nằm trong Asset Library; cần chuyển asset tương ứng cùng dự án.'}]);return{blob:blob,bytes:blob.size};}
+function mount(){var page=document.getElementById('page-assets');if(!page||page.querySelector('#cv160-card'))return false;var box=document.createElement('section');box.id='cv160-card';box.className='card';box.style.margin='14px 0';box.innerHTML='<div class="cardTop"><div><h3>Bộ sưu tập cảm hứng · P160</h3><span class="sub">Gom asset theo chiến dịch/kênh, tag và trao đổi bằng gói file</span></div></div><div class="row" style="gap:6px;flex-wrap:wrap"><input class="input" id="cv160-name" placeholder="Tên bộ sưu tập" aria-label="Tên bộ sưu tập"><input class="input" id="cv160-channel" placeholder="Kênh / chiến dịch" aria-label="Kênh hoặc chiến dịch"><input class="input" id="cv160-search" placeholder="Tìm bộ sưu tập / tag" aria-label="Tìm bộ sưu tập"><button class="btn btn-primary sm" id="cv160-create" type="button">Tạo bộ sưu tập</button></div><div class="row" style="gap:6px;flex-wrap:wrap;margin-top:8px"><select class="input" id="cv160-collection" aria-label="Bộ sưu tập"></select><select class="input" id="cv160-asset" aria-label="Ảnh trong Image Library"></select><input class="input" id="cv160-tags" placeholder="Tag, cách nhau dấu phẩy" aria-label="Tag"><button class="btn btn-soft sm" id="cv160-add" type="button">Thêm asset</button><button class="btn btn-ghost sm" id="cv160-studio" type="button">Dùng làm moodboard trong Studio</button><button class="btn btn-ghost sm" id="cv160-json" type="button">Xuất JSON</button><button class="btn btn-ghost sm" id="cv160-zip" type="button">Xuất ZIP</button><label class="btn btn-ghost sm">Nhập JSON<input id="cv160-import" type="file" accept="application/json,.json,.zip,application/zip" hidden></label></div><div id="cv160-list" class="tiny" aria-live="polite" style="margin-top:8px"></div>';
+var anchor=page.querySelector('#cv153-card')||page.querySelector('.head');if(anchor&&anchor.parentNode)anchor.parentNode.insertBefore(box,anchor.nextSibling);else page.appendChild(box);
+var $=s=>box.querySelector(s),status=$('#cv160-list');
+function refresh(){var cs=read(),as=assets();$('#cv160-collection').innerHTML=cs.map(c=>'<option value="'+c.id+'">'+clean(c.name,80).replace(/[&<>"]/g,'')+'</option>').join('')||'<option value="">Tạo bộ sưu tập trước</option>';$('#cv160-asset').innerHTML=as.map(a=>'<option value="'+String(a.id).replace(/["&<>]/g,'')+'">'+clean(a.name||a.id,80).replace(/[&<>"]/g,'')+'</option>').join('');var visible=filter($('#cv160-search').value);status.textContent=visible.map(c=>c.name+' · '+(c.items||[]).length+' asset · '+(c.tags||[]).join(', ')).join(' | ')||'Không có bộ sưu tập phù hợp.';}
+$('#cv160-search').oninput=refresh;$('#cv160-create').onclick=function(){var r=create($('#cv160-name').value,$('#cv160-channel').value,$('#cv160-tags').value.split(','));status.textContent=r.ok?'Đã tạo bộ sưu tập.':r.error;refresh();};
+$('#cv160-add').onclick=function(){var r=add($('#cv160-collection').value,$('#cv160-asset').value,$('#cv160-tags').value.split(','),'');status.textContent=r.ok?'Đã thêm asset.':r.error;refresh();};
+$('#cv160-studio').onclick=function(){sendToStudio($('#cv160-collection').value).then(r=>status.textContent=r.ok?'Đã gửi moodboard qua P128 và mở Studio.':r.message||'P128 chưa sẵn sàng.');};
+$('#cv160-json').onclick=function(){download('CANVIO-P160-collections.json',new Blob([exportJSON()],{type:'application/json'}));};
+$('#cv160-zip').onclick=function(){exportZip().then(r=>download('CANVIO-P160-collections.zip',r.blob)).catch(e=>status.textContent=e.message);};
+$('#cv160-import').onchange=function(e){var f=e.target.files&&e.target.files[0];if(!f)return;var isZip=/\\.zip$/i.test(f.name||'');if(isZip){importZip(f).then(function(r){status.textContent=r.ok?'Đã nhập '+r.collections+' bộ từ ZIP; asset thiếu: '+r.missingAssetIds.length:r.error;refresh();});}else{var rd=new FileReader();rd.onload=function(){var r=importJSON(String(rd.result));status.textContent=r.ok?'Đã nhập '+r.collections+' bộ; asset thiếu: '+r.missingAssetIds.length:r.error;refresh();};rd.readAsText(f);}e.target.value='';};refresh();return true;}
+function tests(){var good=create('Test P160','HR',['mood']);if(!good.ok)return{creates:false};var id=good.collection.id,a=assets()[0];if(a){var x=add(id,a.id,['blue'],'ref');return{creates:true,linksAsset:x.ok&&x.item.assetId===String(a.id),roundTrip:importJSON(exportJSON()).ok,filters:filter('test').length>0,tagFilter:filter('', 'mood').some(x=>x.id===id),zipImport:typeof importZip==='function'};}return{creates:true,roundTrip:importJSON(exportJSON()).ok,filters:filter('test').length>0};}
+window.CVInspirationCollectionsP160={version:'160.2.0',read:read,create:create,add:add,remove:remove,rename:rename,filter:filter,packageData:packageData,exportJSON:exportJSON,exportZip:exportZip,importZip:importZip,importJSON:importJSON,moodboardPrompt:moodboardPrompt,sendToStudio:sendToStudio,mount:mount,tests:tests};
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount();
+})();
+</script>
+<script id="canvio-lot161s">
+/* P161 · Camera preset cho ảnh panorama 360 và GLB Asset Library. Dùng renderer P154/P74 hiện có; không thêm Three.js hay database mới. */
+(function(){
+'use strict';
+if(window.CVSpatialWorkspaceP161)return;
+var KEY='spatialWorkspace';
+function project(create){var C=window.CVCreativeCore;if(!C)return null;var p=C.active||null;if(!p&&create&&C.create)p=C.create({name:'Spatial Workspace'});return p;}
+function read(){var p=project(false),d=p&&p.documents&&p.documents[KEY];return d&&Array.isArray(d.presets)?d:{version:1,presets:[]};}
+function write(d){var p=project(true),C=window.CVCreativeCore;if(!p)return false;p.documents=p.documents||{};p.documents[KEY]=d;try{C.capture&&C.capture('assets');}catch(e){}return true;}
+function assets(){try{return window.CV&&CV.assets&&CV.assets.list?CV.assets.list():[];}catch(e){return[];}}
+function uid(){return'p161-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,6);}
+function clamp(v,min,max){v=Number(v);return Number.isFinite(v)?Math.max(min,Math.min(max,v)):0;}
+function savePreset(name,assetId,pose){name=String(name||'').trim().slice(0,80);var a=assets().find(x=>String(x.id)===String(assetId));if(!name||!a)return{ok:false,error:'Cần tên camera và asset panorama/GLB tồn tại.'};var d=read(),p={id:uid(),name:name,assetId:String(assetId),kind:/gltf|glb|model/i.test((a.mime||'')+' '+(a.name||''))?'glb':'panorama',yaw:clamp(pose&&pose.yaw,-360,360),pitch:clamp(pose&&pose.pitch,-89,89),fov:clamp(pose&&pose.fov||90,30,120),position:{x:clamp(pose&&pose.x,-1000,1000),y:clamp(pose&&pose.y,-1000,1000),z:clamp(pose&&pose.z,-1000,1000)},createdAt:Date.now()};d.presets.unshift(p);d.presets=d.presets.slice(0,100);try{window.CVCreativeCore.linkAsset&&window.CVCreativeCore.linkAsset(a.id);}catch(e){}return write(d)?{ok:true,preset:p}:{ok:false,error:'Không lưu được camera preset.'};}
+function updatePose(id,delta){var d=read(),p=d.presets.find(x=>x.id===id);if(!p)return{ok:false,error:'Không tìm thấy camera preset.'};p.yaw=clamp(p.yaw+(delta.yaw||0),-360,360);p.pitch=clamp(p.pitch+(delta.pitch||0),-89,89);p.fov=clamp(p.fov+(delta.fov||0),30,120);['x','y','z'].forEach(k=>{if(delta[k]!=null)p.position[k]=clamp(p.position[k]+delta[k],-1000,1000);});return write(d)?{ok:true,preset:p}:{ok:false,error:'Không lưu được pose.'};}
+function apply(id){var d=read(),p=d.presets.find(x=>x.id===id),a=p&&assets().find(x=>String(x.id)===p.assetId);if(!p||!a)return{ok:false,error:'Preset hoặc asset đã bị xóa.'};var detail={preset:p,asset:a,pose:{yaw:p.yaw,pitch:p.pitch,fov:p.fov,position:p.position}};try{document.dispatchEvent(new CustomEvent('canvio:p161-camera-preset',{detail:detail}));}catch(e){}if(p.kind==='glb')return openGLB(p.assetId).then(report=>({ok:true,preset:p,glbReport:report,message:'Đã nạp mô hình bằng viewer Three.js r187 P74/P81.'}));if(p.kind==='panorama'&&a.data&&window.CVPanoramaP154)return renderPanorama(a,p).then(canvas=>({ok:true,preset:p,canvas:canvas}));return{ok:true,preset:p,message:'Camera preset đã phát qua sự kiện P161.'};}
+async function openGLB(assetId){var a=assets().find(x=>String(x.id)===String(assetId));if(!a||!/\.glb$/i.test(String(a.name||''))&&!/model\/gltf-binary|glb/i.test(String(a.mime||'')))throw new Error('Chỉ mở asset GLB tự chứa trong viewer P74/P81.');var viewer=window.CANVIOThreeGLBViewerP74;if(!viewer||!viewer.load)throw new Error('Viewer P74/P81 chưa sẵn sàng. Mở Video Engine và kiểm tra runtime Three.js cục bộ.');var blob=null;if(a.blob instanceof Blob)blob=a.blob;else if(a.data instanceof Blob)blob=a.data;else if(typeof a.data==='string'&&/^data:/i.test(a.data)){var response=await fetch(a.data);if(!response.ok)throw new Error('Không đọc được asset GLB.');blob=await response.blob();}if(!blob)throw new Error('Asset không có bytes GLB khả dụng.');if(blob.size>250*1024*1024)throw new Error('GLB vượt giới hạn 250 MiB của P74.');var file=new File([blob],/\.glb$/i.test(a.name||'')?a.name:'CANVIO-'+a.id+'.glb',{type:'model/gltf-binary'});if(window.CV&&CV.go)CV.go('videoEngine');try{window.CANVIOGLBViewerP72&&CANVIOGLBViewerP72.mount&&CANVIOGLBViewerP72.mount();viewer.mount&&viewer.mount();}catch(e){}return viewer.load(file);}
+var previewCache=null;
+function paintPreview(assetId,yaw,pitch,fov,canvas){var a=assets().find(x=>String(x.id)===String(assetId));if(!a||typeof a.data!=='string'||!/^data:image\//i.test(a.data))return Promise.resolve(false);function draw(src){var size=window.CVPanoramaP154.outSize('16:9',1280),out=canvas.getContext('2d'),image=out.createImageData(size.w,size.h);canvas.width=size.w;canvas.height=size.h;window.CVPanoramaP154.renderView(src,{data:image.data,w:size.w,h:size.h},yaw,pitch,fov);out.putImageData(image,0,0);return true;}if(previewCache&&previewCache.assetId===String(assetId))return Promise.resolve(draw(previewCache.src));return new Promise((resolve,reject)=>{var im=new Image();im.onload=function(){try{var scale=Math.min(1,2048/im.naturalWidth),c=document.createElement('canvas');c.width=Math.max(2,Math.round(im.naturalWidth*scale));c.height=Math.max(2,Math.round(im.naturalHeight*scale));var x=c.getContext('2d',{willReadFrequently:true});x.drawImage(im,0,0,c.width,c.height);previewCache={assetId:String(assetId),src:{data:x.getImageData(0,0,c.width,c.height).data,w:c.width,h:c.height}};resolve(draw(previewCache.src));}catch(e){reject(e);}};im.onerror=()=>reject(new Error('Không giải mã được panorama.'));im.src=a.data;});}
+function renderPanorama(asset,preset){return new Promise((resolve,reject)=>{var im=new Image();im.onload=function(){try{var s=Math.min(1,2048/im.naturalWidth),c=document.createElement('canvas');c.width=Math.max(2,Math.round(im.naturalWidth*s));c.height=Math.max(2,Math.round(im.naturalHeight*s));var x=c.getContext('2d',{willReadFrequently:true});x.drawImage(im,0,0,c.width,c.height);var data=x.getImageData(0,0,c.width,c.height),size=window.CVPanoramaP154.outSize('16:9',1280),out=document.createElement('canvas');out.width=size.w;out.height=size.h;var ox=out.getContext('2d'),od=ox.createImageData(size.w,size.h);window.CVPanoramaP154.renderView({data:data.data,w:c.width,h:c.height},{data:od.data,w:size.w,h:size.h},preset.yaw,preset.pitch,preset.fov);ox.putImageData(od,0,0);resolve(out);}catch(e){reject(e);}};im.onerror=()=>reject(new Error('Không đọc được panorama asset.'));im.src=asset.data;});}
+function toShot(id){var d=read(),p=d.presets.find(x=>x.id===id);if(!p)return{ok:false,error:'Không tìm thấy preset.'};var S=window.CVScenePackP155;if(!S||!S.assignShotToStoryboard)return{ok:false,error:'Video Studio chưa sẵn sàng.'};var r=S.assignShotToStoryboard('establishing');if(!r.ok)return r;try{var key='canvio5:media_video_project_v1',v=JSON.parse(localStorage.getItem(key)||'null'),s=v.shots[v.shots.length-1];s.spatialPresetId=p.id;s.spatialAssetId=p.assetId;s.cameraPose={yaw:p.yaw,pitch:p.pitch,fov:p.fov,position:p.position};localStorage.setItem(key,JSON.stringify(v));window.CVCreativeCore.capture&&window.CVCreativeCore.capture('videoStudio');}catch(e){return{ok:false,error:'Không thể gắn camera preset vào Storyboard.'};}return{ok:true,preset:p};}
+function remove(id){var d=read();d.presets=d.presets.filter(x=>x.id!==id);return write(d);}
+function mount(){var page=document.getElementById('page-videoEngine')||document.getElementById('page-designEngine')||document.getElementById('page-capcutEngine');if(!page||page.querySelector('#cv161-card'))return false;var box=document.createElement('section');box.id='cv161-card';box.className='card';box.style.margin='14px 0';box.innerHTML='<div class="cardTop"><div><h3>Spatial Camera Presets · P161</h3><span class="sub">Lưu góc nhìn panorama/GLB, di chuyển camera và chuyển góc sang Storyboard</span></div></div><div class="row" style="gap:6px;flex-wrap:wrap"><input id="cv161-name" class="input" placeholder="Tên góc máy"><select id="cv161-asset" class="input" aria-label="Ảnh panorama hoặc GLB"></select><input id="cv161-yaw" class="input" type="number" value="0" aria-label="Yaw" style="width:80px"><input id="cv161-pitch" class="input" type="number" value="0" aria-label="Pitch" style="width:80px"><input id="cv161-fov" class="input" type="number" value="90" aria-label="FOV" style="width:80px"><button id="cv161-save" class="btn btn-primary sm" type="button">Lưu preset</button></div><div class="row" style="gap:6px;margin-top:8px"><select id="cv161-preset" class="input" aria-label="Camera preset"></select><button id="cv161-apply" class="btn btn-soft sm" type="button">Áp dụng / Preview</button><button id="cv161-shot" class="btn btn-ghost sm" type="button">Gửi góc sang Storyboard</button></div><p class="tiny">Điều khiển panorama: kéo khung để xoay · WASD / phím mũi tên để di chuyển góc · lăn chuột để zoom. Với GLB, thao tác kéo/zoom dùng OrbitControls của viewer P74/P81.</p><div id="cv161-status" class="tiny" aria-live="polite" style="margin-top:8px"></div><canvas id="cv161-preview" style="max-width:100%;width:100%;margin-top:8px;border-radius:8px"></canvas>';var a=page.querySelector('.head');if(a&&a.parentNode)a.parentNode.insertBefore(box,a.nextSibling);else page.insertBefore(box,page.firstChild);var $=s=>box.querySelector(s),status=$('#cv161-status');function refresh(){var as=assets().filter(x=>x&&((x.mime||'').startsWith('image/')||/glb|gltf|model/i.test((x.mime||'')+' '+(x.name||''))));$('#cv161-asset').innerHTML=as.map(x=>'<option value="'+x.id+'">'+String(x.name||x.id).replace(/[&<>"']/g,'')+'</option>').join('');$('#cv161-preset').innerHTML=read().presets.map(x=>'<option value="'+x.id+'">'+x.name.replace(/[&<>"']/g,'')+'</option>').join('');}$('#cv161-save').onclick=function(){var r=savePreset($('#cv161-name').value,$('#cv161-asset').value,{yaw:$('#cv161-yaw').value,pitch:$('#cv161-pitch').value,fov:$('#cv161-fov').value});status.textContent=r.ok?'Đã lưu preset vào dự án.':r.error;refresh();};$('#cv161-apply').onclick=function(){var r=apply($('#cv161-preset').value);if(r&&typeof r.then==='function')r.then(show).catch(e=>status.textContent=e.message);else show(r);};function show(r){if(!r||!r.ok){status.textContent=r&&r.error||'Không áp dụng được.';return;}status.textContent=r.message||'Đã áp dụng camera preset.';if(r.canvas){var c=$('#cv161-preview');c.width=r.canvas.width;c.height=r.canvas.height;c.getContext('2d').drawImage(r.canvas,0,0);}}function show(r){if(!r||!r.ok){status.textContent=r&&r.error||'Không áp dụng được.';return;}status.textContent=r.message||'Đã áp dụng camera preset.';var p=r.preset;if(p){$('#cv161-yaw').value=p.yaw;$('#cv161-pitch').value=p.pitch;$('#cv161-fov').value=p.fov;}if(r.canvas){var c=$('#cv161-preview');c.width=r.canvas.width;c.height=r.canvas.height;c.getContext('2d').drawImage(r.canvas,0,0);}}
+function redraw(){var id=$('#cv161-asset').value;if(!id||!window.CVPanoramaP154)return;paintPreview(id,+$('#cv161-yaw').value||0,+$('#cv161-pitch').value||0,+$('#cv161-fov').value||90,$('#cv161-preview')).catch(e=>status.textContent=e.message);}
+$('#cv161-preset').onchange=function(){var p=read().presets.find(x=>x.id===this.value);if(!p)return;$('#cv161-asset').value=p.assetId;$('#cv161-yaw').value=p.yaw;$('#cv161-pitch').value=p.pitch;$('#cv161-fov').value=p.fov;redraw();};
+['yaw','pitch','fov'].forEach(k=>$('#cv161-'+k).addEventListener('input',redraw));
+var drag=null,cv=$('#cv161-preview');cv.tabIndex=0;cv.setAttribute('aria-label','Khung xem panorama tương tác');cv.style.cursor='grab';cv.addEventListener('pointerdown',e=>{drag={x:e.clientX,y:e.clientY,yaw:+$('#cv161-yaw').value||0,pitch:+$('#cv161-pitch').value||0};cv.setPointerCapture(e.pointerId);cv.style.cursor='grabbing';});cv.addEventListener('pointermove',e=>{if(!drag)return;var scale=Math.max(0.15,(+$('#cv161-fov').value||90)/Math.max(240,cv.clientWidth));$('#cv161-yaw').value=clamp(drag.yaw-(e.clientX-drag.x)*scale,-360,360);$('#cv161-pitch').value=clamp(drag.pitch+(e.clientY-drag.y)*scale,-89,89);redraw();});['pointerup','pointercancel'].forEach(ev=>cv.addEventListener(ev,()=>{drag=null;cv.style.cursor='grab';}));
+cv.addEventListener('wheel',e=>{if(!$('#cv161-asset').value)return;e.preventDefault();$('#cv161-fov').value=clamp((+$('#cv161-fov').value||90)+(e.deltaY>0?4:-4),30,120);redraw();},{passive:false});
+box.tabIndex=0;box.addEventListener('keydown',e=>{if(e.target&&/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName))return;var step=e.shiftKey?12:4,key=e.key.toLowerCase(),yaw=+$('#cv161-yaw').value||0,pitch=+$('#cv161-pitch').value||0;if(key==='a'||key==='arrowleft')yaw-=step;else if(key==='d'||key==='arrowright')yaw+=step;else if(key==='w'||key==='arrowup')pitch+=step;else if(key==='s'||key==='arrowdown')pitch-=step;else if(key==='+'||key==='=')$('#cv161-fov').value=clamp((+$('#cv161-fov').value||90)-step,30,120);else if(key==='-')$('#cv161-fov').value=clamp((+$('#cv161-fov').value||90)+step,30,120);else return;e.preventDefault();$('#cv161-yaw').value=clamp(yaw,-360,360);$('#cv161-pitch').value=clamp(pitch,-89,89);redraw();});
+$('#cv161-shot').onclick=function(){var r=toShot($('#cv161-preset').value);status.textContent=r.ok?'Đã thêm góc máy vào Storyboard.':r.error;};refresh();return true;}
+function tests(){var a=assets()[0];if(!a)return{api:true,requiresAsset:true};var r=savePreset('Test P161',a.id,{yaw:25,pitch:8,fov:80});return{save:r.ok,clamps:!!r.preset&&r.preset.pitch===8,applyFunction:typeof apply==='function',shotBridge:typeof toShot==='function',interactivePanorama:typeof paintPreview==='function'};}
+window.CVSpatialWorkspaceP161={version:'161.1.0',read:read,savePreset:savePreset,updatePose:updatePose,apply:apply,openGLB:openGLB,toShot:toShot,remove:remove,mount:mount,tests:tests,paintPreview:paintPreview};
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount();
+})();
+</script>
+<script id="canvio-lot162r">
+/* P162 · Canvas metadata nhiều ảnh tham chiếu; ảnh vẫn ở CV.assets, layer metadata nằm trong Shared Core. */
+(function(){
+'use strict';
+if(window.CVReferenceCanvasP162)return;
+var KEY='referenceCanvas';
+function project(create){var C=window.CVCreativeCore;if(!C)return null;var p=C.active||null;if(!p&&create&&C.create)p=C.create({name:'Reference Canvas'});return p;}
+function read(){var p=project(false),d=p&&p.documents&&p.documents[KEY];return d&&Array.isArray(d.boards)?d.boards:[];}
+function save(a){var p=project(true),C=window.CVCreativeCore;if(!p)return false;p.documents=p.documents||{};p.documents[KEY]={version:1,boards:a.slice(0,50)};try{C.capture&&C.capture('assets');}catch(e){}return true;}
+function assets(){try{return window.CV&&CV.assets&&CV.assets.list?CV.assets.list():[];}catch(e){return[];}}
+function clean(s,n){return String(s==null?'':s).replace(/\s+/g,' ').trim().slice(0,n);}
+function uid(){return'p162-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,6);}
+function create(name){name=clean(name,80);if(!name)return{ok:false,error:'Tên canvas bắt buộc.'};var a=read(),b={id:uid(),name:name,layers:[],createdAt:Date.now(),updatedAt:Date.now()};a.unshift(b);return save(a)?{ok:true,board:b}:{ok:false,error:'Không lưu được Shared Core.'};}
+function board(id){return read().find(x=>x.id===id)||null;}
+function addLayer(boardId,assetId,role,notes){var list=read(),b=list.find(x=>x.id===boardId),asset=assets().find(x=>String(x.id)===String(assetId));if(!b||!asset)return{ok:false,error:'Canvas hoặc asset không tồn tại.'};role=['subject','style','composition','lighting','environment','detail'].includes(role)?role:'subject';b.layers=Array.isArray(b.layers)?b.layers:[];if(b.layers.length>=40)return{ok:false,error:'Canvas tối đa 40 lớp.'};var layer={id:uid(),assetId:String(assetId),role:role,notes:clean(notes,300),x:0,y:0,scale:1,visible:true,order:b.layers.length};b.layers.push(layer);b.updatedAt=Date.now();try{window.CVCreativeCore.linkAsset&&window.CVCreativeCore.linkAsset(asset.id);}catch(e){}return save(list)?{ok:true,layer:layer}:{ok:false,error:'Không lưu được lớp.'};}
+function updateLayer(boardId,layerId,patch){var list=read(),b=list.find(x=>x.id===boardId),l=b&&b.layers.find(x=>x.id===layerId);if(!l)return false;if(patch.role&&['subject','style','composition','lighting','environment','detail'].includes(patch.role))l.role=patch.role;if(patch.notes!=null)l.notes=clean(patch.notes,300);['x','y','scale'].forEach(k=>{if(patch[k]!=null&&Number.isFinite(Number(patch[k])))l[k]=Math.max(k==='scale'?.1:-10000,Math.min(k==='scale'?8:10000,Number(patch[k])));});if(patch.visible!=null)l.visible=!!patch.visible;b.updatedAt=Date.now();return save(list);}
+function reorderLayers(boardId,sourceId,targetId){var list=read(),b=list.find(x=>x.id===boardId);if(!b)return false;var from=b.layers.findIndex(x=>x.id===sourceId),to=b.layers.findIndex(x=>x.id===targetId);if(from<0||to<0)return false;var moved=b.layers.splice(from,1)[0];b.layers.splice(to,0,moved);b.layers.forEach((x,i)=>x.order=i);return save(list);}
+function removeLayer(boardId,layerId){var list=read(),b=list.find(x=>x.id===boardId);if(!b)return false;b.layers=b.layers.filter(x=>x.id!==layerId);return save(list);}
+function buildPrompt(boardId,brief){var b=board(boardId);if(!b)throw new Error('Không tìm thấy reference canvas.');var a=assets();return'[REFERENCE CANVAS] '+b.name+'\n[BRIEF] '+clean(brief||((window.CVCreativeCore.context&&window.CVCreativeCore.context().brief)||''),1000)+'\n'+b.layers.filter(x=>x.visible!==false).map((l,i)=>{var asset=a.find(x=>String(x.id)===l.assetId);return(i+1)+'. ['+l.role.toUpperCase()+'] '+clean(asset&&asset.name||l.assetId,100)+' — '+l.notes+' (assetId: '+l.assetId+')';}).join('\n')+'\nGiữ riêng vai trò từng ảnh; không trộn chủ thể, phong cách, bố cục và ánh sáng.';}
+function send(boardId,target){var prompt=buildPrompt(boardId),O=window.CVOrchestratorP128;if(O&&O.register)O.register('reference-canvas-local','local',task=>String(task.prompt||''));var run=O&&O.run?O.run({kind:'reference-canvas-local',tiers:['local'],cache:false,prompt:prompt}):Promise.resolve({ok:true,text:prompt,tier:'local-template'});return run.then(r=>{var detail={boardId:boardId,prompt:r.text||prompt,roles:board(boardId).layers.map(x=>({assetId:x.assetId,role:x.role}))};try{document.dispatchEvent(new CustomEvent('canvio:p162-send',{detail:detail}));}catch(e){}if(target==='designer'&&window.CV&&CV.go)CV.go('designEngine');else if(target==='image'&&window.CV&&CV.go)CV.go('imageStudio');return Object.assign({},r,{detail:detail});});}
+function mount(){var page=document.getElementById('page-imageStudio')||document.getElementById('page-imageStudio');if(!page||page.querySelector('#cv162-card'))return false;var box=document.createElement('section');box.id='cv162-card';box.className='card';box.style.margin='14px 0';box.innerHTML='<div class="cardTop"><div><h3>Reference Canvas · P162</h3><span class="sub">Xếp vai ảnh tham chiếu: chủ thể, phong cách, bố cục, ánh sáng</span></div></div><div class="row" style="gap:6px;flex-wrap:wrap"><input id="cv162-name" class="input" placeholder="Tên bố cục"><button id="cv162-create" class="btn btn-soft sm" type="button">Tạo canvas</button><select id="cv162-board" class="input" aria-label="Canvas"></select><select id="cv162-asset" class="input" aria-label="Asset"></select><select id="cv162-role" class="input" aria-label="Vai trò"><option value="subject">Chủ thể</option><option value="style">Phong cách</option><option value="composition">Bố cục</option><option value="lighting">Ánh sáng</option><option value="environment">Không gian</option><option value="detail">Chi tiết</option></select><button id="cv162-add" class="btn btn-primary sm" type="button">Thêm ảnh</button></div><div class="row" style="gap:6px;margin-top:8px"><button id="cv162-image" class="btn btn-ghost sm" type="button">Gửi sang Image Studio</button><button id="cv162-design" class="btn btn-ghost sm" type="button">Gửi sang Designer</button></div><div id="cv162-layers" class="tiny" aria-live="polite" style="margin-top:8px"></div>';var anchor=page.querySelector('.head');if(anchor&&anchor.parentNode)anchor.parentNode.insertBefore(box,anchor.nextSibling);else page.insertBefore(box,page.firstChild);var $=s=>box.querySelector(s),out=$('#cv162-layers');function refresh(){var bs=read(),as=assets();$('#cv162-board').innerHTML=bs.map(b=>'<option value="'+b.id+'">'+b.name.replace(/[&<>"']/g,'')+'</option>').join('');$('#cv162-asset').innerHTML=as.map(a=>'<option value="'+a.id+'">'+clean(a.name||a.id,80).replace(/[&<>"']/g,'')+'</option>').join('');var b=board($('#cv162-board').value),asById=new Map(as.map(a=>[String(a.id),a]));out.innerHTML=b?'<div class="cv162-stage" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px">'+b.layers.map((l,i)=>{var asset=asById.get(String(l.assetId)),src=asset&&typeof asset.data==='string'&&/^data:image\//i.test(asset.data)?asset.data:'';return '<article draggable="true" data-layer="'+l.id+'" class="card" style="padding:8px;cursor:grab"><div class="tiny">'+(i+1)+' · '+l.role.toUpperCase()+'</div>'+(src?'<img alt="" src="'+src.replace(/"/g,'&quot;')+'" style="width:100%;height:90px;object-fit:cover;border-radius:6px">':'<div style="height:90px;display:grid;place-items:center;background:var(--surface-2,#eee);border-radius:6px">Asset '+l.assetId+'</div>')+'<div class="tiny" style="margin-top:5px">'+clean(asset&&asset.name||l.assetId,70).replace(/[&<>"']/g,'')+'</div><select class="input cv162-role" aria-label="Vai trò lớp" data-id="'+l.id+'">'+['subject','style','composition','lighting','environment','detail'].map(role=>'<option value="'+role+'"'+(role===l.role?' selected':'')+'>'+role+'</option>').join('')+'</select><input class="input cv162-note" data-id="'+l.id+'" aria-label="Ghi chú lớp" value="'+clean(l.notes,220).replace(/[&<>"']/g,'')+'" placeholder="Ghi chú" style="width:100%;margin-top:4px"><label class="tiny">Scale <input class="cv162-scale" data-id="'+l.id+'" type="range" min="0.1" max="4" step="0.1" value="'+Number(l.scale||1)+'"></label><button type="button" class="btn btn-soft sm cv162-save" data-id="'+l.id+'">Lưu lớp</button><button type="button" class="btn btn-ghost sm cv162-remove" data-id="'+l.id+'">Xóa lớp</button></article>';}).join('')+'</div><p class="tiny">Kéo thẻ để đổi thứ tự ảnh tham chiếu; vị trí vai trò được giữ riêng.</p>':'Chưa có canvas.';Array.prototype.forEach.call(out.querySelectorAll('[data-layer]'),el=>{el.addEventListener('dragstart',e=>{e.dataTransfer.setData('text/plain',el.dataset.layer);e.dataTransfer.effectAllowed='move';});el.addEventListener('dragover',e=>{e.preventDefault();el.style.outline='2px solid var(--brand,#2563eb)';});el.addEventListener('dragleave',()=>{el.style.outline='';});el.addEventListener('drop',e=>{e.preventDefault();el.style.outline='';var src=e.dataTransfer.getData('text/plain');reorderLayers($('#cv162-board').value,src,el.dataset.layer);refresh();});});Array.prototype.forEach.call(out.querySelectorAll('.cv162-remove'),el=>el.addEventListener('click',()=>{removeLayer($('#cv162-board').value,el.dataset.id);refresh();}));Array.prototype.forEach.call(out.querySelectorAll('.cv162-save'),el=>el.addEventListener('click',()=>{var id=el.dataset.id;updateLayer($('#cv162-board').value,id,{role:out.querySelector('.cv162-role[data-id="'+id+'"]').value,notes:out.querySelector('.cv162-note[data-id="'+id+'"]').value,scale:out.querySelector('.cv162-scale[data-id="'+id+'"]').value});refresh();}));}$('#cv162-create').onclick=()=>{var r=create($('#cv162-name').value);if(r.ok)refresh();else out.textContent=r.error;};$('#cv162-add').onclick=()=>{var r=addLayer($('#cv162-board').value,$('#cv162-asset').value,$('#cv162-role').value,'');out.textContent=r.ok?'Đã thêm lớp tham chiếu.':r.error;refresh();};$('#cv162-board').onchange=refresh;$('#cv162-image').onclick=()=>send($('#cv162-board').value,'image').then(r=>out.textContent=r.ok?'Đã gửi prompt và vai trò sang Image Studio.':r.message);$('#cv162-design').onclick=()=>send($('#cv162-board').value,'designer').then(r=>out.textContent='Đã gửi sự kiện tham chiếu sang Designer.');refresh();return true;}
+function tests(){var c=create('Test P162'),as=assets();if(!c.ok)return{create:false};if(as.length){var a=addLayer(c.board.id,as[0].id,'subject','main character');var extra=addLayer(c.board.id,as[0].id,'style','visual direction'),before=board(c.board.id).layers.map(x=>x.id),reordered=reorderLayers(c.board.id,extra.layer.id,a.layer.id),after=board(c.board.id).layers.map(x=>x.id);return{create:true,addLayer:a.ok,buildPrompt:buildPrompt(c.board.id,'brief').includes('[SUBJECT]'),roleBound:a.layer.role==='subject',reorderLayers:reordered&&after[0]===extra.layer.id,layerEdit:updateLayer(c.board.id,extra.layer.id,{notes:'changed',scale:1.5})};}return{create:true,emptyCanvasSupported:true};}
+window.CVReferenceCanvasP162={version:'162.2.0',read:read,create:create,board:board,addLayer:addLayer,updateLayer:updateLayer,reorderLayers:reorderLayers,removeLayer:removeLayer,buildPrompt:buildPrompt,send:send,mount:mount,tests:tests};
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount();
+})();
+</script>
+<script id="canvio-lot163c">
+/* P163 · Hồ sơ nhân vật, checklist thuộc tính và so khớp có giải thích. Heuristic hỗ trợ duyệt thủ công, không tuyên bố nhận diện khuôn mặt/AI vision. */
+(function(){
+'use strict';
+if(window.CVCharacterContinuityP163)return;
+var KEY='characterContinuity';
+function project(create){var C=window.CVCreativeCore;if(!C)return null;var p=C.active||null;if(!p&&create&&C.create)p=C.create({name:'Character Continuity'});return p;}
+function read(){var p=project(false),d=p&&p.documents&&p.documents[KEY];return d&&Array.isArray(d.profiles)?d.profiles:[];}
+function save(a){var p=project(true),C=window.CVCreativeCore;if(!p)return false;p.documents=p.documents||{};p.documents[KEY]={version:1,profiles:a.slice(0,200)};try{C.capture&&C.capture('videoStudio');}catch(e){}return true;}
+function clean(s,n){return String(s==null?'':s).replace(/\s+/g,' ').trim().slice(0,n);}
+function uid(){return'p163-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,6);}
+function assetIds(ids){var list=window.CV&&CV.assets&&CV.assets.list?CV.assets.list():[],known=new Set(list.map(x=>String(x.id)));return(ids||[]).map(String).filter((x,i,a)=>known.has(x)&&a.indexOf(x)===i).slice(0,12);}
+function upsert(input){input=input||{};var name=clean(input.name,80),desc=clean(input.description,500);if(!name||!desc)return{ok:false,error:'Cần tên và mô tả nhận diện.'};var list=read(),old=list.find(x=>x.id===input.id),features={};Object.keys(input.features||{}).slice(0,16).forEach(k=>{var v=clean(input.features[k],120);if(v)features[clean(k,32)]=v;});var p={id:old?old.id:uid(),name:name,description:desc,features:features,checklist:(input.checklist||Object.keys(features)).map(x=>clean(x,32)).filter(Boolean).slice(0,16),referenceAssetIds:assetIds(input.referenceAssetIds),palette:(input.palette||[]).filter(x=>/^#[0-9a-f]{6}$/i.test(x)).slice(0,8),updatedAt:Date.now()};if(old)list[list.indexOf(old)]=p;else list.unshift(p);if(!save(list))return{ok:false,error:'Không lưu được hồ sơ vào Shared Core.'};p.referenceAssetIds.forEach(id=>{try{window.CVCreativeCore.linkAsset&&window.CVCreativeCore.linkAsset(id);}catch(e){}});return{ok:true,profile:p};}
+function profile(id){return read().find(x=>x.id===id)||null;}
+function rgb(hex){var n=parseInt(String(hex||'').replace('#',''),16);return isNaN(n)?[0,0,0]:[(n>>16)&255,(n>>8)&255,n&255];}
+function colorDistance(a,b){if(!a||!b||!a.length||!b.length)return null;var n=Math.min(a.length,b.length,8),sum=0,c=0;for(var i=0;i<n;i++){if(!/^#[0-9a-f]{6}$/i.test(a[i])||!/^#[0-9a-f]{6}$/i.test(b[i]))continue;var x=rgb(a[i]),y=rgb(b[i]);sum+=Math.sqrt((x[0]-y[0])**2+(x[1]-y[1])**2+(x[2]-y[2])**2);c++;}return c?Math.round(sum/c):null;}
+function compare(id,candidate){var p=profile(id);if(!p)return{ok:false,error:'Không tìm thấy hồ sơ.'};candidate=candidate||{};var features=candidate.features||{},checks=(p.checklist||[]).map(k=>({key:k,expected:p.features[k]||'',actual:clean(features[k],120),ok:!!features[k]&&clean(features[k],120).toLowerCase()===clean(p.features[k],120).toLowerCase()}));var missing=checks.filter(x=>!x.ok),delta=colorDistance(p.palette,candidate.palette||[]),score=Math.max(0,100-missing.length*12-(delta==null?0:Math.max(0,delta-20)*.35));var result={ok:true,profileId:id,score:Math.round(score),checks:checks,missing:missing.map(x=>x.key),paletteDistance:delta,verdict:score>=85?'Phù hợp theo checklist':score>=65?'Cần rà soát thủ công':'Có điểm nhận diện không khớp',limitations:'Đối chiếu mô tả/checklist và màu; không phải nhận diện khuôn mặt hay AI vision.'};var list=read(),at=list.findIndex(x=>x.id===id);list[at].lastCheck={score:result.score,missing:result.missing,paletteDistance:delta,at:Date.now()};save(list);return result;}
+function prompt(id,scene){var p=profile(id);if(!p)throw new Error('Không tìm thấy hồ sơ nhân vật.');return'[CHARACTER CONTINUITY] '+p.name+'\nMô tả cố định: '+p.description+'\nĐặc điểm bắt buộc: '+Object.keys(p.features||{}).map(k=>k+': '+p.features[k]).join('; ')+'\nGiữ nhất quán trang phục, tóc, phụ kiện, vóc dáng và bảng màu giữa mọi cảnh.\nCảnh hiện tại: '+clean(scene,500);}
+function runPrompt(id,scene){var text=prompt(id,scene),O=window.CVOrchestratorP128;if(O&&O.register)O.register('character-continuity-local','local',task=>String(task.prompt||''));return O&&O.run?O.run({kind:'character-continuity-local',tiers:['local'],cache:false,prompt:text}):Promise.resolve({ok:true,text:text,tier:'local-template'});}
+function attachToShot(id,shotId){var p=profile(id);if(!p)return{ok:false,error:'Không có hồ sơ.'};var key='canvio5:media_video_project_v1',v;try{v=JSON.parse(localStorage.getItem(key)||'null');}catch(e){}if(!v||!Array.isArray(v.shots))return{ok:false,error:'Video Studio chưa có Storyboard.'};var s=v.shots.find(x=>String(x.id)===String(shotId));if(!s)return{ok:false,error:'Không tìm thấy cảnh.'};s.scenePack=s.scenePack||{};s.scenePack.characterProfileId=p.id;s.scenePack.characterAssetIds=p.referenceAssetIds.slice();p.referenceAssetIds.forEach(a=>{try{window.CVCreativeCore.linkAsset&&window.CVCreativeCore.linkAsset(a);}catch(e){}});localStorage.setItem(key,JSON.stringify(v));try{window.CVCreativeCore.capture&&window.CVCreativeCore.capture('videoStudio');}catch(e){}return{ok:true,shot:s};}
+function remove(id){var l=read().filter(x=>x.id!==id);return save(l);}
+function mount(){var page=document.getElementById('page-videoStudio');if(!page||page.querySelector('#cv163-card'))return false;var box=document.createElement('section');box.id='cv163-card';box.className='card';box.style.margin='14px 0';box.innerHTML='<div class="cardTop"><div><h3>Nhất quán nhân vật · P163</h3><span class="sub">Hồ sơ ngoại hình, ảnh tham chiếu và checklist giữa các cảnh</span></div></div><div class="row" style="gap:6px;flex-wrap:wrap"><input class="input" id="cv163-name" placeholder="Tên nhân vật"><input class="input" id="cv163-desc" placeholder="Mô tả nhận diện cố định"><input class="input" id="cv163-features" placeholder="thuộc tính=giá trị; ..."><select class="input" id="cv163-refs" multiple size="2" aria-label="Ảnh tham chiếu từ Image Library" style="min-width:180px"></select><button class="btn btn-primary sm" id="cv163-save" type="button">Lưu hồ sơ</button></div><div class="row" style="gap:6px;margin-top:8px;flex-wrap:wrap"><select class="input" id="cv163-profile" aria-label="Hồ sơ nhân vật"></select><input class="input" id="cv163-candidate" placeholder="Đối chiếu: tóc=ngắn; áo=khoác xanh" aria-label="Đặc điểm cảnh mới"><button class="btn btn-soft sm" id="cv163-check" type="button">Kiểm tra nhất quán</button><select class="input" id="cv163-shot" aria-label="Cảnh Storyboard"></select><button class="btn btn-ghost sm" id="cv163-attach" type="button">Gán vào cảnh</button></div><pre id="cv163-result" class="tiny" aria-live="polite" style="white-space:pre-wrap"></pre>';var a=page.querySelector('.head');if(a&&a.parentNode)a.parentNode.insertBefore(box,a.nextSibling);else page.insertBefore(box,page.firstChild);var $=s=>box.querySelector(s),out=$('#cv163-result');function refresh(){
+var profiles=read(),as=window.CV&&CV.assets&&CV.assets.list?CV.assets.list():[],video;
+try{video=JSON.parse(localStorage.getItem('canvio5:media_video_project_v1')||'null');}catch(e){}
+$('#cv163-profile').innerHTML=profiles.map(p=>'<option value="'+p.id+'">'+p.name.replace(/[&<>"']/g,'')+'</option>').join('');
+$('#cv163-refs').innerHTML=as.filter(a=>String(a.mime||'').indexOf('image/')===0).map(a=>'<option value="'+a.id+'">'+clean(a.name||a.id,70).replace(/[&<>"']/g,'')+'</option>').join('');
+$('#cv163-shot').innerHTML=(video&&Array.isArray(video.shots)?video.shots:[]).map((x,i)=>'<option value="'+String(x.id||'').replace(/["<>]/g,'')+'">'+clean(x.title||x.action||('Cảnh '+(i+1)),70).replace(/[&<>"']/g,'')+'</option>').join('');
+}$('#cv163-save').onclick=function(){var features={};$('#cv163-features').value.split(';').forEach(x=>{var i=x.indexOf('=');if(i>0)features[clean(x.slice(0,i),32)]=clean(x.slice(i+1),120);});var r=upsert({name:$('#cv163-name').value,description:$('#cv163-desc').value,features:features,referenceAssetIds:Array.from($('#cv163-refs').selectedOptions).map(x=>x.value)});out.textContent=r.ok?'Đã lưu hồ sơ vào dự án.':r.error;refresh();};$('#cv163-attach').onclick=function(){var r=attachToShot($('#cv163-profile').value,$('#cv163-shot').value);out.textContent=r.ok?'Đã gắn hồ sơ và asset tham chiếu vào cảnh.':r.error;refresh();};$('#cv163-check').onclick=function(){var f={};$('#cv163-candidate').value.split(';').forEach(x=>{var i=x.indexOf('=');if(i>0)f[clean(x.slice(0,i),32)]=clean(x.slice(i+1),120);});try{out.textContent=JSON.stringify(compare($('#cv163-profile').value,{features:f}),null,2);}catch(e){out.textContent=e.message;}};refresh();return true;}
+function tests(){var r=upsert({name:'Test character',description:'Tóc ngắn, áo xanh',features:{hair:'short',coat:'blue'},checklist:['hair','coat'],referenceAssetIds:(window.CV&&CV.assets&&CV.assets.list?CV.assets.list():[]).slice(0,1).map(x=>x.id)});if(!r.ok)return{save:false};var c=compare(r.profile.id,{features:{hair:'short',coat:'red'}});return{save:true,referenceAssetsLinked:!r.profile.referenceAssetIds.length||((window.CVCreativeCore.context&&window.CVCreativeCore.context().assetIds)||[]).includes(r.profile.referenceAssetIds[0]),detectsMismatch:c.score<100&&c.missing.includes('coat'),transparentLimit:c.limitations.indexOf('không phải nhận diện')>=0};}
+window.CVCharacterContinuityP163={version:'163.1.0',read:read,upsert:upsert,remove:remove,profile:profile,compare:compare,prompt:prompt,runPrompt:runPrompt,attachToShot:attachToShot,mount:mount,tests:tests};
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount();
+})();
+</script>
+<script id="canvio-lot164s">
+/* P164 · Shot list từ canonical Video Studio Storyboard; thêm metadata sản xuất, góc máy/chuyển cảnh, CSV và bản in PDF qua hộp thoại trình duyệt. */
+(function(){
+'use strict';
+if(window.CVShotListP164)return;
+var KEY='canvio5:media_video_project_v1';
+var TRANSITIONS=[{id:'cut',name:'Hard cut'},{id:'dissolve',name:'Cross dissolve'},{id:'fade-black',name:'Fade to black'},{id:'fade-white',name:'Fade to white'},{id:'wipe-left',name:'Wipe left'},{id:'push',name:'Push'},{id:'match-cut',name:'Match cut'},{id:'whip-pan',name:'Whip pan'}];
+function read(){try{var v=JSON.parse(localStorage.getItem(KEY)||'null');return v&&Array.isArray(v.shots)?v:null;}catch(e){return null;}}
+function write(v){if(!v||!Array.isArray(v.shots))return false;try{localStorage.setItem(KEY,JSON.stringify(v));try{window.CVCreativeCore.capture&&window.CVCreativeCore.capture('videoStudio');}catch(e){}return true;}catch(e){return false;}}
+function clean(s,n){return String(s==null?'':s).replace(/[\u0000-\u001f]/g,' ').replace(/\s+/g,' ').trim().slice(0,n);}
+function list(){var v=read();return v?v.shots.slice():[];}
+function update(id,meta){var v=read();if(!v)return{ok:false,error:'Chưa có Storyboard.'};var s=v.shots.find(x=>String(x.id)===String(id));if(!s)return{ok:false,error:'Không tìm thấy shot.'};var m=s.productionMeta||{};if(meta.angle!=null)m.angle=clean(meta.angle,80);if(meta.movement!=null)m.movement=clean(meta.movement,80);if(meta.transition!=null){var t=TRANSITIONS.find(x=>x.id===meta.transition);if(!t)return{ok:false,error:'Transition không hợp lệ.'};m.transition=t.id;}if(meta.duration!=null){var d=Number(meta.duration);if(!Number.isFinite(d)||d<0.25||d>600)return{ok:false,error:'Thời lượng phải từ 0,25 đến 600 giây.'};m.duration=d;}if(meta.notes!=null)m.notes=clean(meta.notes,400);s.productionMeta=m;return write(v)?{ok:true,shot:s}:{ok:false,error:'Không lưu được shot.'};}
+function rows(){return list().map((s,i)=>({index:i+1,id:s.id||'',title:clean(s.title||s.name||s.action||('Shot '+(i+1)),120),duration:Number(s.productionMeta&&s.productionMeta.duration||s.shotSeconds||s.duration||0),angle:clean(s.productionMeta&&s.productionMeta.angle||s.camera&&s.camera.name||'',80),movement:clean(s.productionMeta&&s.productionMeta.movement||'',80),transition:clean(s.productionMeta&&s.productionMeta.transition||'cut',40),character:clean(s.characterName||s.scenePack&&s.scenePack.characterName||'',80),space:clean(s.spaceName||s.scenePack&&s.scenePack.spaceName||'',80),notes:clean(s.productionMeta&&s.productionMeta.notes||s.action||'',400)}));}
+function csv(){var head=['#','Shot ID','Tên cảnh','Thời lượng (giây)','Góc máy','Camera movement','Transition','Nhân vật','Không gian','Ghi chú'];var q=x=>'"'+String(x==null?'':x).replace(/"/g,'""')+'"';return'\uFEFF'+[head,...rows().map(r=>[r.index,r.id,r.title,r.duration,r.angle,r.movement,r.transition,r.character,r.space,r.notes])].map(row=>row.map(q).join(',')).join('\r\n');}
+function printableHTML(){var r=rows();return'<!doctype html><html lang="vi"><meta charset="utf-8"><title>CANVIO Shot List</title><style>body{font:14px Arial,sans-serif;margin:24px;color:#18202a}h1{font-size:22px}table{border-collapse:collapse;width:100%}th,td{border:1px solid #bbb;padding:7px;text-align:left;vertical-align:top}th{background:#eef2f6}@media print{body{margin:10mm}tr{break-inside:avoid}}</style><h1>CANVIO · Shot List</h1><p>'+r.length+' cảnh · Dữ liệu từ Storyboard dự án hiện tại</p><table><thead><tr><th>#</th><th>Cảnh</th><th>Thời lượng</th><th>Góc máy / chuyển động</th><th>Transition</th><th>Ghi chú</th></tr></thead><tbody>'+r.map(x=>'<tr><td>'+x.index+'</td><td>'+escapeHtml(x.title)+'</td><td>'+x.duration+'s</td><td>'+escapeHtml(x.angle+' / '+x.movement)+'</td><td>'+escapeHtml(x.transition)+'</td><td>'+escapeHtml(x.notes)+'</td></tr>').join('')+'</tbody></table></html>';}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function download(name,data,type){var u=URL.createObjectURL(new Blob([data],{type:type})),a=document.createElement('a');a.href=u;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(u),1000);}
+function addFromPreset(shotId){var S=window.CVScenePackP155;if(!S||!S.assignShotToStoryboard)return{ok:false,error:'P155/P157 chưa sẵn sàng.'};return S.assignShotToStoryboard(shotId);}
+function sendPrompt(){var ctx=window.CVCreativeCore&&CVCreativeCore.context?CVCreativeCore.context():{},text='Shot list từ brief: '+clean(ctx.brief,1200)+'\n'+rows().map(r=>r.index+'. '+r.title+' ('+r.duration+'s), góc '+r.angle+', chuyển động '+r.movement).join('\n');var O=window.CVOrchestratorP128;if(O&&O.register)O.register('shotlist-local','local',task=>String(task.prompt||''));if(O&&O.run)return O.run({kind:'shotlist-local',tiers:['local'],cache:false,prompt:text});return Promise.resolve({ok:true,text:text,tier:'local-template'});}
+function mount(){var page=document.getElementById('page-videoStudio')||document.getElementById('page-videoEngine');if(!page||page.querySelector('#cv164-card'))return false;var box=document.createElement('section');box.id='cv164-card';box.className='card';box.style.margin='14px 0';box.innerHTML='<div class="cardTop"><div><h3>Shot List & Continuity · P164</h3><span class="sub">Lấy cảnh từ Storyboard hiện hữu; không tạo timeline mới</span></div><span class="badgeSoft" id="cv164-count"></span></div><div class="row" style="gap:6px;flex-wrap:wrap"><button class="btn btn-soft sm" id="cv164-refresh" type="button">Làm mới</button><button class="btn btn-ghost sm" id="cv164-csv" type="button">Xuất CSV</button><button class="btn btn-ghost sm" id="cv164-print" type="button">In / Lưu PDF</button><button class="btn btn-ghost sm" id="cv164-prompt" type="button">Gửi brief qua P128</button></div><div id="cv164-list" class="tiny" style="margin-top:8px" aria-live="polite"></div>';var anchor=page.querySelector('.head');if(anchor&&anchor.parentNode)anchor.parentNode.insertBefore(box,anchor.nextSibling);else page.insertBefore(box,page.firstChild);var $=s=>box.querySelector(s),out=$('#cv164-list');function refresh(){var r=rows();$('#cv164-count').textContent=r.length+' shots';out.innerHTML=r.map(x=>'<div data-shot="'+escapeHtml(x.id)+'" style="border-top:1px solid var(--line,rgba(128,128,128,.25));padding:10px 0"><b>'+x.index+'. '+escapeHtml(x.title)+'</b> · '+x.duration+'s <div class="row" style="gap:5px;flex-wrap:wrap;margin-top:6px"><input class="input cv164-angle" aria-label="Góc máy" placeholder="Góc máy" value="'+escapeHtml(x.angle)+'" style="flex:1;min-width:110px"><input class="input cv164-move" aria-label="Camera movement" placeholder="Chuyển động camera" value="'+escapeHtml(x.movement)+'" style="flex:1;min-width:130px"><input class="input cv164-duration" aria-label="Thời lượng giây" type="number" min=".25" max="600" step=".25" value="'+(Number(x.duration)||0)+'" style="width:90px"><select class="input cv164-transition" aria-label="Chuyển cảnh">'+TRANSITIONS.map(t=>'<option value="'+t.id+'"'+(t.id===x.transition?' selected':'')+'>'+t.name+'</option>').join('')+'</select><button type="button" class="btn btn-soft sm cv164-save">Lưu thông tin cảnh</button></div><div class="tiny" style="margin-top:4px">Nhân vật: '+escapeHtml(x.character||'Chưa gán')+' · Không gian: '+escapeHtml(x.space||'Chưa gán')+'</div></div>').join('')||'Storyboard chưa có cảnh.';Array.prototype.forEach.call(out.querySelectorAll('.cv164-save'),b=>b.addEventListener('click',()=>{var row=b.closest('[data-shot]'),r=update(row.dataset.shot,{angle:row.querySelector('.cv164-angle').value,movement:row.querySelector('.cv164-move').value,duration:row.querySelector('.cv164-duration').value,transition:row.querySelector('.cv164-transition').value});out.dataset.status=r.ok?'Đã lưu thông tin sản xuất vào Storyboard.':r.error;refresh();}));}$('#cv164-refresh').onclick=refresh;$('#cv164-csv').onclick=()=>download('CANVIO-Shot-List.csv',csv(),'text/csv;charset=utf-8');$('#cv164-print').onclick=()=>{var w=window.open('','_blank');if(w){w.document.write(printableHTML());w.document.close();w.focus();w.print();}else out.textContent='Trình duyệt chặn cửa sổ in; hãy cho phép pop-up để lưu PDF.';};$('#cv164-prompt').onclick=()=>sendPrompt().then(r=>out.textContent=r.ok?'Đã chuyển brief qua P128 ('+r.tier+'). '+String(r.text).slice(0,700):r.message||'P128 chưa có handler local.');refresh();return true;}
+function tests(){var src={shots:[{id:'s1',title:'Mở cảnh',shotSeconds:5}]},old=localStorage.getItem(KEY);try{localStorage.setItem(KEY,JSON.stringify(src));var r=update('s1',{angle:'Wide',transition:'dissolve',duration:7});var ok=r.ok&&rows()[0].duration===7&&csv().includes('Wide');return{updatesCanonicalStoryboard:ok,validatesTransition:!update('s1',{transition:'unknown'}).ok,printExport:printableHTML().includes('<table>')&&!printableHTML().includes('<script>')};}finally{if(old==null)localStorage.removeItem(KEY);else localStorage.setItem(KEY,old);}}
+window.CVShotListP164={version:'164.2.0',TRANSITIONS:TRANSITIONS,read:read,list:list,rows:rows,update:update,csv:csv,printableHTML:printableHTML,addFromPreset:addFromPreset,sendPrompt:sendPrompt,mount:mount,tests:tests};
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount();
+})();
+</script>
+<script id="canvio-lot165w">
+/* P165 · Workflow nhiều vai trò qua P128. Mặc định local-only; không giả vờ sinh ảnh/video và dừng theo giới hạn vòng đánh giá. */
+(function(){
+'use strict';
+if(window.CVAiWorkflowP165)return;
+var KEY='aiWorkflows',MAX_STEPS=8,MAX_RUNS=30;
+function project(create){var C=window.CVCreativeCore;if(!C)return null;var p=C.active||null;if(!p&&create&&C.create)p=C.create({name:'AI Workflow'});return p;}
+function read(){var p=project(false),d=p&&p.documents&&p.documents[KEY];return d&&Array.isArray(d.workflows)?d:{version:1,workflows:[]};}
+function write(d){var p=project(true),C=window.CVCreativeCore;if(!p)return false;p.documents=p.documents||{};p.documents[KEY]=d;try{C.capture&&C.capture('project');}catch(e){}return true;}
+function clean(s,n){return String(s==null?'':s).replace(/\s+/g,' ').trim().slice(0,n);}
+function uid(){return'p165-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,6);}
+var ROLES=['scriptwriter','prompt-director','generator-handoff','evaluator','reviser'];
+function register(){var O=window.CVOrchestratorP128;if(!O||!O.register)return false;ROLES.forEach(role=>{O.register('p165-'+role,'local',task=>{var input=String(task.prompt||'');if(role==='scriptwriter')return'KỊCH BẢN / BEATS\n'+input+'\n1. Mở cảnh và mục tiêu\n2. Hành động chính\n3. Điểm nhấn hình ảnh\n4. Kết thúc và CTA';if(role==='prompt-director')return'PROMPT PRODUCTION\n'+input+'\nYêu cầu: khóa nhân vật, bối cảnh, palette, góc máy, tỷ lệ và continuity.';if(role==='generator-handoff')return'GENERATION HANDOFF ONLY\n'+input+'\nChưa sinh media. Chọn provider local/ComfyUI và xác nhận trước khi chạy.';if(role==='evaluator'){var checks=[['brief',/brief|mục tiêu|chiến dịch/i.test(input)],['visual',/hình ảnh|palette|màu|góc máy|camera/i.test(input)],['continuity',/nhân vật|bối cảnh|continuity|nhất quán/i.test(input)],['deliverable',/xuất|đầu ra|tỷ lệ|CTA/i.test(input)]];var score=Math.round(checks.filter(x=>x[1]).length*25);return JSON.stringify({score:score,checks:checks.map(x=>({name:x[0],pass:x[1]})),recommendation:score>=80?'Ready for human review':'Add missing production details'},null,2);}return'REVISION CHECKLIST\n'+input+'\nBổ sung rõ mục tiêu, visual direction, continuity và tiêu chí đầu ra còn thiếu.';});});return true;}
+function create(name,steps){name=clean(name,80);if(!name)return{ok:false,error:'Tên workflow bắt buộc.'};steps=(steps||ROLES).filter(x=>ROLES.includes(x)).slice(0,MAX_STEPS);if(!steps.length)return{ok:false,error:'Workflow cần ít nhất một vai trò hợp lệ.'};var d=read(),w={id:uid(),name:name,steps:steps,createdAt:Date.now(),runs:[]};d.workflows.unshift(w);return write(d)?{ok:true,workflow:w}:{ok:false,error:'Không lưu được workflow vào dự án.'};}
+function workflow(id){return read().workflows.find(x=>x.id===id)||null;}
+async function run(id,input,options){
+var w=workflow(id);if(!w)return{ok:false,error:'Không tìm thấy workflow.'};
+var O=window.CVOrchestratorP128;if(!O||!O.run)return{ok:false,error:'P128 chưa sẵn sàng.'};
+register();var ctx=window.CVCreativeCore&&CVCreativeCore.context?CVCreativeCore.context():{},current=clean(input||ctx.brief,6000);
+if(!current)return{ok:false,error:'Cần brief hoặc đầu vào.'};
+var started=Date.now(),log=[],maxCycles=Math.max(1,Math.min(2,Number(options&&options.maxCycles)||2)),cycle=1,score=0,pendingRevision=false,useModel=!!(options&&options.useConfiguredLocal);
+async function executeRole(role,prompt){
+if(useModel&&role!=='generator-handoff'){
+ var modelPrompt='Bạn đang đóng vai '+role+' trong quy trình sản xuất nội dung CANVIO. Trả lời ngắn gọn, có cấu trúc, bám sát brief; không bịa số liệu. Với evaluator, chỉ trả JSON hợp lệ có score từ 0 đến 100 và checks.\\n'+prompt;
+ try{var ai=await O.run({kind:'text',tiers:['local'],cache:false,prompt:modelPrompt,timeoutMs:20000});if(ai&&ai.ok&&String(ai.text||'').trim()){return{text:String(ai.text).slice(0,8000),tier:ai.tier||'local',mode:'configured-local-model'};}}catch(e){}
+}
+var fallback=await O.run({kind:'p165-'+role,tiers:['local'],cache:false,prompt:prompt,timeoutMs:15000});
+if(!fallback||!fallback.ok)throw new Error(fallback&&fallback.message||'Không có bộ xử lý local cho vai trò '+role);
+return{text:String(fallback.text||'').slice(0,8000),tier:'local-template',mode:'deterministic-template'};
+}
+for(var i=0;i<w.steps.length;i++){
+ var role=w.steps[i];if(role==='reviser'&&!pendingRevision)continue;
+ var prompt='Project: '+clean(ctx.projectName,100)+'\\nBrief: '+clean(ctx.brief,1000)+'\\nInput:\\n'+current;
+ try{
+  var result=await executeRole(role,prompt);current=result.text;
+  var entry={role:role,tier:result.tier,mode:result.mode,status:'ok',output:current.slice(0,4000),at:Date.now()};
+  if(role==='evaluator'){
+   try{var match=current.match(/\\{[\\s\\S]*\\}/),parsed=match?JSON.parse(match[0]):null;if(parsed&&Number.isFinite(Number(parsed.score))){score=Math.max(0,Math.min(100,Number(parsed.score)));entry.score=score;entry.checks=Array.isArray(parsed.checks)?parsed.checks.slice(0,12):[];}else{var base=await O.run({kind:'p165-evaluator',tiers:['local'],cache:false,prompt:prompt});parsed=JSON.parse(base.text);score=Number(parsed.score)||0;entry.score=score;entry.mode='deterministic-evaluation';}}catch(e){score=0;entry.score=0;entry.evaluationParseFailed=true;}
+  }
+  log.push(entry);
+  if(role==='evaluator'){pendingRevision=score<80&&cycle<maxCycles&&w.steps.includes('reviser');if(pendingRevision){cycle++;i=w.steps.indexOf('reviser')-1;}}else if(role==='reviser'){pendingRevision=false;if(w.steps.includes('evaluator'))i=w.steps.indexOf('evaluator')-1;}
+ }catch(e){log.push({role:role,status:'failed',message:clean(e.message,200)});break;}
+}
+var usedModel=log.some(x=>x.mode==='configured-local-model');
+var resultRun={id:uid(),startedAt:started,finishedAt:Date.now(),durationMs:Date.now()-started,score:score,status:log.length&&log.every(x=>x.status==='ok')?'completed':'partial',cycles:cycle,log:log,output:current.slice(0,8000),claim:usedModel?'A configured local model was invoked through P128 with local-only routing. Generator stage is a handoff instruction; no image/video is generated by this workflow.':'Deterministic local role templates and evaluation; no model inference, network call or media generation occurred.'};
+var d=read(),at=d.workflows.findIndex(x=>x.id===id);if(at>=0){d.workflows[at].runs.unshift(resultRun);d.workflows[at].runs=d.workflows[at].runs.slice(0,MAX_RUNS);write(d);}
+return{ok:resultRun.status==='completed',run:resultRun};
+}
+function sendToComfyUI(id,kind){var w=workflow(id),last=w&&w.runs&&w.runs[0];if(!w||!last)return{ok:false,error:'Chạy workflow P165 trước khi gửi prompt.'};var bridge=window.CVComfyP120P126;if(!bridge)return{ok:false,error:'P120/P126 ComfyUI chưa được nạp.'};var card=document.getElementById('cv120-card'),field=document.getElementById('cv120-prompt'),selector=document.getElementById('cv120-kind');if(!card||!field||!selector)return{ok:false,error:'Mở Platform Workbench để nạp panel ComfyUI P120/P126.'};var type=['image','video','upscale','interpolate'].includes(kind)?kind:'image';field.value=String(last.output||'').slice(0,4000);field.dispatchEvent(new Event('input',{bubbles:true}));selector.value=type;try{if(window.CV&&CV.go)CV.go('platform');card.scrollIntoView({behavior:'smooth',block:'center'});field.focus();}catch(e){}return{ok:true,kind:type,manualConfirmationRequired:true,message:'Prompt đã chuyển sang P120. Hãy tự kiểm tra ComfyUI localhost, workflow API JSON, node prompt/media rồi bấm Chạy tại P120.'};}
+function remove(id){var d=read();d.workflows=d.workflows.filter(x=>x.id!==id);return write(d);}
+function mount(){var page=document.getElementById('page-platform');if(!page||page.querySelector('#cv165-card'))return false;var box=document.createElement('section');box.id='cv165-card';box.className='card';box.style.margin='14px 0';box.innerHTML='<div class="cardTop"><div><h3>Multi-role AI Workflow · P165</h3><span class="sub">Kịch bản → prompt → handoff → đánh giá → sửa; local-only mặc định</span></div></div><div class="row" style="gap:6px;flex-wrap:wrap"><input id="cv165-name" class="input" placeholder="Tên quy trình"><button id="cv165-create" class="btn btn-soft sm" type="button">Tạo workflow mẫu</button><select id="cv165-workflow" class="input" aria-label="Workflow"></select></div><textarea id="cv165-input" class="input" rows="3" placeholder="Brief / kịch bản đầu vào" style="width:100%;margin-top:8px"></textarea><label class="tiny" style="display:block;margin:8px 0"><input id="cv165-local-model" type="checkbox"> Dùng model local đã cấu hình trong P128 (chỉ local, không Gemini/paid); bỏ chọn để chạy template cục bộ</label><div class="row" style="gap:6px;margin-top:6px"><button id="cv165-run" class="btn btn-primary sm" type="button">Chạy local workflow</button><select id="cv165-comfy-kind" class="input" aria-label="Loại handoff ComfyUI"><option value="image">ComfyUI · Image</option><option value="video">ComfyUI · Video</option><option value="upscale">ComfyUI · Upscale</option><option value="interpolate">ComfyUI · Interpolate</option></select><button id="cv165-comfy" class="btn btn-ghost sm" type="button">Gửi prompt sang P120</button></div><pre id="cv165-result" class="tiny" aria-live="polite" style="white-space:pre-wrap;margin-top:8px"></pre>';var a=page.querySelector('.head');if(a&&a.parentNode)a.parentNode.insertBefore(box,a.nextSibling);else page.insertBefore(box,page.firstChild);var $=s=>box.querySelector(s),out=$('#cv165-result');function refresh(){$('#cv165-workflow').innerHTML=read().workflows.map(w=>'<option value="'+w.id+'">'+w.name.replace(/[&<>"']/g,'')+'</option>').join('');}$('#cv165-create').onclick=function(){var r=create($('#cv165-name').value||'Quy trình sản xuất nội dung');out.textContent=r.ok?'Đã tạo workflow 5 vai trò.':r.error;refresh();};$('#cv165-comfy').onclick=function(){var r=sendToComfyUI($('#cv165-workflow').value,$('#cv165-comfy-kind').value);out.textContent=r.ok?r.message:r.error;};$('#cv165-run').onclick=async function(){this.disabled=true;out.textContent='Đang chạy…';try{var r=await run($('#cv165-workflow').value,$('#cv165-input').value,{useConfiguredLocal:$('#cv165-local-model').checked});out.textContent=r.ok?JSON.stringify(r.run,null,2):r.error||r.run&&JSON.stringify(r.run,null,2);}catch(e){out.textContent=e.message;}this.disabled=false;};refresh();return true;}
+function tests(){var r=create('Test workflow');if(!r.ok)return{create:false};register();return{create:true,roles:ROLES.length===5,localRegistration:!!window.CVOrchestratorP128,stepLimit:MAX_STEPS===8,runAvailable:typeof run==='function',comfyHandoffFailClosed:!sendToComfyUI(r.workflow.id,'image').ok};}
+window.CVAiWorkflowP165={version:'165.3.0',ROLES:ROLES,read:read,create:create,workflow:workflow,run:run,sendToComfyUI:sendToComfyUI,remove:remove,register:register,mount:mount,tests:tests};
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount();
+})();
+</script>
+<script id="canvio-lot166l">
+/* P166 · Brief-to-Landing: HTML responsive tự chứa từ Shared Core + Asset Library, xuất HTML/ZIP offline; không phải dịch vụ hosting hay AI generation. */
+(function(){
+'use strict';
+if(window.CVLandingStudioP166)return;
+var KEY='websiteLanding';
+function project(create){var C=window.CVCreativeCore;if(!C)return null;var p=C.active||null;if(!p&&create&&C.create)p=C.create({name:'Landing Page'});return p;}
+function read(){var p=project(false);return p&&p.documents&&p.documents[KEY]||null;}
+function save(meta){var p=project(true),C=window.CVCreativeCore;if(!p)return false;p.documents=p.documents||{};p.documents[KEY]=meta;try{C.capture&&C.capture('project');}catch(e){}return true;}
+function clean(s,n){return String(s==null?'':s).replace(/\s+/g,' ').trim().slice(0,n);}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function context(){try{return window.CVCreativeCore&&CVCreativeCore.context?CVCreativeCore.context():{};}catch(e){return{};}}
+function assets(){try{return window.CV&&CV.assets&&CV.assets.list?CV.assets.list():[];}catch(e){return[];}}
+function safeImageData(value){value=String(value||'');if(value.length>12*1024*1024)return'';return /^data:image\/(?:png|jpeg|webp|gif);base64,[A-Za-z0-9+/]+={0,2}$/i.test(value)?value:'';}
+function build(options){options=options||{};var ctx=context(),brief=clean(options.brief||ctx.brief,1600),name=clean(options.name||ctx.projectName||'Landing Page',80),headline=clean(options.headline||brief.split(/[.!?\n]/)[0]||name,100),sub=clean(options.subheadline||brief,300),cta=clean(options.cta||'Bắt đầu ngay',40),color=/^#[0-9a-f]{6}$/i.test(options.color||'')?options.color:'#2456d8',selected=assets().find(a=>String(a.id)===String(options.heroAssetId)),hero=safeImageData(selected&&selected.data);if(!hero)selected=null;var html='<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="'+esc(sub.slice(0,155))+'"><title>'+esc(name)+'</title><style>:root{--brand:'+color+';font-family:Inter,system-ui,Arial,sans-serif;color:#172033;background:#f7f8fb}*{box-sizing:border-box}body{margin:0}header{display:flex;justify-content:space-between;align-items:center;padding:22px max(6vw,20px)}.logo{font-weight:800}a{color:inherit;text-decoration:none}.hero{display:grid;grid-template-columns:1.05fr .95fr;gap:36px;align-items:center;padding:8vh max(6vw,20px);min-height:68vh}.eyebrow{color:var(--brand);font-weight:700;letter-spacing:.1em;text-transform:uppercase;font-size:12px}h1{font-size:clamp(38px,6vw,72px);line-height:1.03;letter-spacing:-.045em;margin:14px 0}p{line-height:1.7;color:#586174}.cta{display:inline-block;background:var(--brand);color:#fff;padding:14px 22px;border-radius:999px;font-weight:700;margin-top:14px}.visual{min-height:320px;border-radius:28px;background:linear-gradient(135deg,#dbeafe,#f5eafe);overflow:hidden;display:grid;place-items:center}.visual img{width:100%;height:100%;min-height:320px;object-fit:cover}.features{padding:65px max(6vw,20px);background:#fff}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.tile{padding:24px;border:1px solid #e8eaf0;border-radius:18px}@media(max-width:760px){.hero{grid-template-columns:1fr;padding-top:40px}.grid{grid-template-columns:1fr}.visual{min-height:230px}}@media(prefers-reduced-motion:no-preference){.hero{animation:rise .55s ease both}@keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}}</style></head><body><header><a class="logo" href="#">'+esc(name)+'</a><a href="#contact">Liên hệ</a></header><main><section class="hero"><div><div class="eyebrow">Giới thiệu</div><h1>'+esc(headline)+'</h1><p>'+esc(sub)+'</p><a class="cta" href="#contact">'+esc(cta)+'</a></div><div class="visual">'+(hero?'<img alt="" src="'+hero+'">':'<div style="padding:36px;text-align:center"><strong>'+esc(name)+'</strong><p>Thêm ảnh hero từ Image Library để hoàn thiện trang</p></div>')+'</div></section><section class="features"><div class="eyebrow">Giá trị chính</div><h2>'+esc(name)+'</h2><div class="grid"><article class="tile"><b>01 · Mục tiêu</b><p>'+esc(clean(ctx.goal||'Truyền tải thông điệp rõ ràng',180))+'</p></article><article class="tile"><b>02 · Kênh</b><p>'+esc(clean(ctx.channel||'Web / đa kênh',100))+'</p></article><article class="tile"><b>03 · Hành động</b><p>'+esc(brief||'Cập nhật nội dung từ brief dự án.')+'</p></article></div></section><section id="contact" class="features"><h2>Sẵn sàng bắt đầu?</h2><p>'+esc(cta)+'</p></section></main><footer style="padding:24px max(6vw,20px);color:#667085">© '+new Date().getFullYear()+' '+esc(name)+' · Created with CANVIO</footer></body></html>';var meta={version:1,name:name,headline:headline,cta:cta,color:color,heroAssetId:selected?String(selected.id):null,updatedAt:Date.now(),brief:brief};return{html:html,meta:meta,assetIds:selected?[String(selected.id)]:[]};}
+function buildFromCore(options){var r=build(options);if(!save(r.meta))throw new Error('Không lưu được website brief vào Shared Core.');r.assetIds.forEach(id=>{try{window.CVCreativeCore.linkAsset&&window.CVCreativeCore.linkAsset(id);}catch(e){}});return r;}
+async function exportZip(options){if(!window.CVZip||typeof window.CVZip.build!=='function')throw new Error('CVZip chưa sẵn sàng; có thể xuất HTML thay thế.');var r=buildFromCore(options),files=[{name:'index.html',data:r.html},{name:'CANVIO-LANDING-MANIFEST.json',data:JSON.stringify({format:'CANVIO_P166_LANDING',version:1,project:context().projectName||'',assetIds:r.assetIds,updatedAt:r.meta.updatedAt},null,2)},{name:'README.md',data:'# CANVIO Landing Package\n\nMở index.html. Gói này không chứa backend/form service; liên kết CTA cần cấu hình trước khi phát hành.'}];return{blob:await window.CVZip.build(files),html:r.html,meta:r.meta};}
+function sendToWebsite(options){var r=buildFromCore(options);try{document.dispatchEvent(new CustomEvent('canvio:p166-send-website',{detail:r}));}catch(e){}if(window.CV&&CV.go)CV.go('webEngine');return r;}
+function download(name,data,type){var u=URL.createObjectURL(new Blob([data],{type:type})),a=document.createElement('a');a.href=u;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(u),1000);}
+function mount(){var page=document.getElementById('page-webEngine');if(!page||page.querySelector('#cv166-card'))return false;var box=document.createElement('section');box.id='cv166-card';box.className='card';box.style.margin='14px 0';box.innerHTML='<div class="cardTop"><div><h3>Brief → Landing Page · P166</h3><span class="sub">Dùng brief Shared Core, ảnh Asset Library, responsive và xuất HTML/ZIP offline</span></div></div><div class="row" style="gap:6px;flex-wrap:wrap"><input id="cv166-name" class="input" placeholder="Tên thương hiệu / chiến dịch"><input id="cv166-headline" class="input" placeholder="Tiêu đề chính"><input id="cv166-cta" class="input" placeholder="CTA" value="Bắt đầu ngay"></div><div class="row" style="gap:6px;margin-top:8px;flex-wrap:wrap"><select id="cv166-asset" class="input" aria-label="Ảnh hero từ Asset Library"></select><input id="cv166-color" type="color" value="#2456d8" aria-label="Màu thương hiệu"><button id="cv166-preview" class="btn btn-soft sm" type="button">Tạo bản xem trước</button><button id="cv166-html" class="btn btn-ghost sm" type="button">Xuất HTML</button><button id="cv166-zip" class="btn btn-primary sm" type="button">Xuất ZIP</button><button id="cv166-web" class="btn btn-ghost sm" type="button">Gửi sang Website Engine</button></div><div id="cv166-status" class="tiny" aria-live="polite" style="margin-top:8px"></div><iframe id="cv166-preview-frame" title="Landing page preview" sandbox="" style="width:100%;height:480px;border:1px solid var(--line,rgba(128,128,128,.3));border-radius:10px;margin-top:10px;background:#fff"></iframe>';var anchor=page.querySelector('.head');if(anchor&&anchor.parentNode)anchor.parentNode.insertBefore(box,anchor.nextSibling);else page.insertBefore(box,page.firstChild);var $=s=>box.querySelector(s),status=$('#cv166-status');function options(){return{name:$('#cv166-name').value,headline:$('#cv166-headline').value,cta:$('#cv166-cta').value,color:$('#cv166-color').value,heroAssetId:$('#cv166-asset').value};}function refresh(){var as=assets().filter(a=>!!safeImageData(a&&a.data));$('#cv166-asset').innerHTML='<option value="">Không dùng ảnh hero</option>'+as.map(a=>'<option value="'+a.id+'">'+clean(a.name||a.id,80).replace(/[&<>"']/g,'')+'</option>').join('');}$('#cv166-preview').onclick=()=>{try{var r=buildFromCore(options());$('#cv166-preview-frame').srcdoc=r.html;status.textContent='Đã dựng preview responsive từ brief dự án. CTA mẫu chưa nối backend.';}catch(e){status.textContent=e.message;}};$('#cv166-html').onclick=()=>{try{var r=buildFromCore(options());download('CANVIO-Landing.html',r.html,'text/html;charset=utf-8');status.textContent='Đã xuất HTML.';}catch(e){status.textContent=e.message;}};$('#cv166-zip').onclick=()=>exportZip(options()).then(r=>{download('CANVIO-Landing-Offline.zip',r.blob,'application/zip');status.textContent='Đã xuất ZIP offline.';}).catch(e=>status.textContent=e.message);$('#cv166-web').onclick=()=>{try{sendToWebsite(options());status.textContent='Đã chuyển brief/asset context sang Website Engine.';}catch(e){status.textContent=e.message;}};refresh();return true;}
+function tests(){var r=build({name:'CANVIO test',headline:'Business design',brief:'HR campaign',color:'#123456'}),stored=buildFromCore({name:'P166 Shared Core test'});return{responsive:r.html.includes('@media(max-width:760px)'),reducedMotion:r.html.includes('prefers-reduced-motion'),escapedContent:!r.html.includes('<script>'),metadata:r.meta.name==='CANVIO test',savedToSharedCore:!!stored.meta&&!!read(),noBackendClaim:!r.html.includes('action='),safePngAccepted:safeImageData('data:image/png;base64,AA==')==='data:image/png;base64,AA==',rejectsSvg:safeImageData('data:image/svg+xml;base64,PHN2Zy8+')==='',rejectsAttributeInjection:safeImageData('data:image/png;base64,AA==\" onerror=\"x')===''};}
+window.CVLandingStudioP166={version:'166.1.0',read:read,build:build,buildFromCore:buildFromCore,exportZip:exportZip,sendToWebsite:sendToWebsite,mount:mount,tests:tests};
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount();
+})();
+</script>
+<script id="canvio-lot159u">
+/* P159.1 · Dock "Bộ công cụ cảnh" trong Video Studio.
+   Gom các thẻ P164 (Shot list), P163 (Nhân vật), P154 (Toàn cảnh), P155–P157 (Thẻ/Prompt/Góc máy) vào MỘT thanh tab gọn,
+   để các thao tác chính vẫn thấy ngay mà không đẩy trình dựng video xuống dưới hàng nghìn pixel. Chỉ di chuyển nút DOM có sẵn
+   (giữ nguyên sự kiện và dữ liệu); không tạo kho dữ liệu hay module nghiệp vụ mới. Chọn tab đang mở được nhớ trong sessionStorage. */
+(function () {
+'use strict';
+if (window.CVToolkitDockP159) return;
+var TABS = [['cv164-card', 'Shot list'], ['cv163-card', 'Nhân vật'], ['cv154-card', 'Toàn cảnh'], ['cv155-card', 'Thẻ · Prompt · Góc máy']], SKEY = 'canvio.p159u.tab';
+var st = null;
+function adopt(page) {
+  var added = 0;
+  TABS.forEach(function (t, i) {
+    var c = page.querySelector('#' + t[0]); if (!c || st.done[t[0]]) return; st.done[t[0]] = 1; added++;
+    c.style.margin = '0'; c.style.display = t[0] === st.open ? '' : 'none'; c.setAttribute('role', 'tabpanel'); st.panels.appendChild(c);
+    var b = document.createElement('button'); b.type = 'button'; b.className = 'btn btn-ghost sm'; b.setAttribute('role', 'tab'); b.textContent = t[1]; b.dataset.id = t[0]; b.setAttribute('aria-controls', t[0]);
+    var before = null; st.btns.forEach(function (o) { if (!before && TABS.map(function (x) { return x[0]; }).indexOf(o.dataset.id) > i) before = o; }); st.bar.insertBefore(b, before); st.btns.push(b);
+    b.addEventListener('click', function () { st.open = st.open === t[0] ? '' : t[0]; try { sessionStorage.setItem(SKEY, st.open); } catch (e) {} show(); });
+  });
+  if (added) show();
+  return Object.keys(st.done).length === TABS.length;
+}
+function show() {
+  st.btns.forEach(function (b) { var on = b.dataset.id === st.open; b.setAttribute('aria-selected', on); b.className = 'btn ' + (on ? 'btn-primary' : 'btn-ghost') + ' sm'; });
+  TABS.forEach(function (t) { var c = document.getElementById(t[0]); if (c && st.done[t[0]]) c.style.display = t[0] === st.open ? '' : 'none'; });
+}
+function mount() {
+  var page = document.getElementById('page-videoStudio'); if (!page) return false;
+  if (st) return adopt(page);
+  var first = TABS.map(function (t) { return page.querySelector('#' + t[0]); }).filter(Boolean)[0]; if (!first) return false;
+  var dock = document.createElement('div'); dock.className = 'card'; dock.id = 'cv159u-dock'; dock.style.cssText = 'margin:0 0 14px;padding:12px 14px';
+  dock.innerHTML = '<div class="row" style="gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between"><div><h3 style="margin:0;font-size:16px">Bộ công cụ cảnh</h3><p class="tiny" style="margin:2px 0 0">Shot list, nhân vật, toàn cảnh và prompt dùng chung ảnh, dự án và AI của CANVIO.</p></div>'
+    + '<div class="row" style="gap:6px;flex-wrap:wrap" role="tablist" aria-label="Bộ công cụ cảnh"></div></div><div id="cv159u-panels" style="margin-top:10px"></div>';
+  var open = ''; try { open = sessionStorage.getItem(SKEY) || ''; } catch (e) {}
+  first.parentNode.insertBefore(dock, first);
+  st = { done: {}, btns: [], bar: dock.querySelector('[role=tablist]'), panels: dock.querySelector('#cv159u-panels'), open: open };
+  return adopt(page);
+}
+function ready() { var n = 0; (function loop() { var ok = false; try { ok = mount(); } catch (e) {} if (!ok && ++n < 80) setTimeout(loop, 250); })(); }
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', ready, { once: true }); else ready();
+window.CVToolkitDockP159 = { version: '159.1.0', mount: mount };
 })();
 </script>
 <style id="canvio-lot131-css">

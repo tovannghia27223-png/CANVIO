@@ -45,7 +45,7 @@ with sync_playwright() as p:
     checks['P165WorkflowCompletes']=p165
     page.evaluate("CV.go('assets')")
     checks['P160UIPanelVisible']=page.locator('#cv160-card').count()==1
-    page.evaluate("CV.go('videoStudio')")
+    page.evaluate("CV.go('videoStudio')"); page.wait_for_selector('#cv159u-dock',timeout=15000); page.evaluate("document.querySelectorAll('#cv159u-panels>.card').forEach(c=>c.style.display='')")
     checks['P163P164PanelsVisible']=page.locator('#cv163-card').count()==1 and page.locator('#cv164-card').count()==1
     page.evaluate("CV.go('imageStudio')")
     checks['P162UIPanelVisible']=page.locator('#cv162-card').count()==1

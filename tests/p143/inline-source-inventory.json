@@ -1,17 +1,17 @@
 {
   "format": "CANVIO_P143_INLINE_SOURCE_INVENTORY",
   "version": 1,
-  "generatedAt": "2026-11-24T06:25:03.949Z",
+  "generatedAt": "2026-11-24T11:54:09.958Z",
   "source": "restored canonical index.html after hosted workflow integration steps",
   "purpose": "Complete script-tag inventory in browser execution order; known global reference detection is heuristic, not a semantic dependency DAG.",
-  "htmlBytes": 5873770,
-  "scriptTagCount": 172,
-  "inlineScriptCount": 172,
+  "htmlBytes": 5980242,
+  "scriptTagCount": 181,
+  "inlineScriptCount": 181,
   "externalScriptCount": 0,
   "moduleScriptCount": 0,
   "asyncScriptCount": 0,
   "deferScriptCount": 0,
-  "uniqueScriptIds": 169,
+  "uniqueScriptIds": 178,
   "duplicateScriptIds": [],
   "modules": [
     {
@@ -15665,8 +15665,8 @@
       "async": false,
       "defer": false,
       "noModule": false,
-      "bytes": 19656,
-      "sha256": "aad80286353ebbe370a4beb8aecb0a103f861cc07e8b6b60f69eba4c73cf687d",
+      "bytes": 26617,
+      "sha256": "0642bdac6c90e3d1aa88a89c84855499a04bb697dfbb03eee86f12c3605b2e79",
       "exportedGlobals": [
         "CVBoardP153",
         "CVSceneStoreP153"
@@ -15674,12 +15674,18 @@
       "globalDeclarations": [],
       "globalPropertyReads": [
         "addEventListener",
+        "atob",
+        "Blob",
         "CV",
         "CVBoardP153",
-        "indexedDB"
+        "CVCreativeCore",
+        "File",
+        "indexedDB",
+        "LS"
       ],
       "knownGlobalReads": [
-        "CV"
+        "CV",
+        "LS"
       ],
       "globalReferenceEvidence": {
         "propertyReads": [
@@ -15687,14 +15693,33 @@
             "name": "addEventListener",
             "count": 1,
             "lines": [
-              155
+              267
+            ]
+          },
+          {
+            "name": "atob",
+            "count": 2,
+            "lines": [
+              90,
+              91
+            ]
+          },
+          {
+            "name": "Blob",
+            "count": 1,
+            "lines": [
+              90
             ]
           },
           {
             "name": "CV",
-            "count": 1,
+            "count": 5,
             "lines": [
-              96
+              96,
+              101,
+              128,
+              150,
+              201
             ]
           },
           {
@@ -15705,31 +15730,70 @@
             ]
           },
           {
-            "name": "indexedDB",
+            "name": "CVCreativeCore",
+            "count": 4,
+            "lines": [
+              56,
+              68,
+              105,
+              119
+            ]
+          },
+          {
+            "name": "File",
             "count": 1,
             "lines": [
-              60
+              108
+            ]
+          },
+          {
+            "name": "indexedDB",
+            "count": 2,
+            "lines": [
+              81,
+              142
+            ]
+          },
+          {
+            "name": "LS",
+            "count": 2,
+            "lines": [
+              104,
+              118
             ]
           }
         ],
         "knownReads": [
           {
             "name": "CV",
-            "count": 2,
+            "count": 10,
             "lines": [
-              96
+              96,
+              101,
+              128,
+              129,
+              150,
+              201
+            ]
+          },
+          {
+            "name": "LS",
+            "count": 4,
+            "lines": [
+              104,
+              118
             ]
           }
         ],
         "writes": [
           {
             "name": "CVSceneStoreP153",
-            "line": 70,
+            "line": 174,
             "kind": "window.property"
           },
           {
             "name": "CVBoardP153",
-            "line": 160,
+            "line": 272,
             "kind": "window.property"
           }
         ],
@@ -15749,8 +15813,8 @@
       "async": false,
       "defer": false,
       "noModule": false,
-      "bytes": 11331,
-      "sha256": "d79c9bf78fe17dc55a734fcdeed8e0290e5e096d3857055e41d0b6f854416c90",
+      "bytes": 11447,
+      "sha256": "b6820b40c6805377d25622bdac20537ca0260a8a8fe44e49e9a6fa0c403f23fc",
       "exportedGlobals": [
         "CVPanoramaP154"
       ],
@@ -15820,15 +15884,18 @@
       "async": false,
       "defer": false,
       "noModule": false,
-      "bytes": 21610,
-      "sha256": "a26751c4adbe68333fb692feae150f8f5d87fab0828125ee5fca8da17d85584a",
+      "bytes": 30429,
+      "sha256": "ae3598cdd66c66d640cc183e46018fca6013f3c14987bc9eadf1687e8eb6bab4",
       "exportedGlobals": [
         "CVScenePackP155"
       ],
       "globalDeclarations": [],
       "globalPropertyReads": [
+        "CustomEvent",
         "CV",
         "CVBoardP153",
+        "CVCreativeCore",
+        "CVOrchestratorP128",
         "CVScenePackP155"
       ],
       "knownGlobalReads": [
@@ -15837,17 +15904,45 @@
       "globalReferenceEvidence": {
         "propertyReads": [
           {
-            "name": "CV",
+            "name": "CustomEvent",
             "count": 1,
             "lines": [
-              73
+              157
+            ]
+          },
+          {
+            "name": "CV",
+            "count": 2,
+            "lines": [
+              153,
+              176
             ]
           },
           {
             "name": "CVBoardP153",
-            "count": 2,
+            "count": 4,
             "lines": [
-              84
+              57,
+              133,
+              187
+            ]
+          },
+          {
+            "name": "CVCreativeCore",
+            "count": 5,
+            "lines": [
+              26,
+              38,
+              57,
+              107,
+              125
+            ]
+          },
+          {
+            "name": "CVOrchestratorP128",
+            "count": 1,
+            "lines": [
+              112
             ]
           },
           {
@@ -15861,16 +15956,17 @@
         "knownReads": [
           {
             "name": "CV",
-            "count": 2,
+            "count": 3,
             "lines": [
-              73
+              153,
+              176
             ]
           }
         ],
         "writes": [
           {
             "name": "CVScenePackP155",
-            "line": 140,
+            "line": 258,
             "kind": "window.property"
           }
         ],
@@ -15884,6 +15980,781 @@
     },
     {
       "order": 148,
+      "id": "canvio-lot159i",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 4399,
+      "sha256": "d69f05ade6298c7d6a72285b0c57fadbdf1c74ed8165b22d23dc4259a22b3353",
+      "exportedGlobals": [
+        "CVSceneIntegrationP159"
+      ],
+      "globalDeclarations": [],
+      "globalPropertyReads": [
+        "CV",
+        "CVBoardP153",
+        "CVCreativeCore",
+        "CVSceneIntegrationP159",
+        "CVScenePackP155",
+        "LS"
+      ],
+      "knownGlobalReads": [
+        "CV",
+        "LS"
+      ],
+      "globalReferenceEvidence": {
+        "propertyReads": [
+          {
+            "name": "CV",
+            "count": 3,
+            "lines": [
+              10,
+              35,
+              62
+            ]
+          },
+          {
+            "name": "CVBoardP153",
+            "count": 2,
+            "lines": [
+              10,
+              41
+            ]
+          },
+          {
+            "name": "CVCreativeCore",
+            "count": 3,
+            "lines": [
+              10,
+              36,
+              41
+            ]
+          },
+          {
+            "name": "CVSceneIntegrationP159",
+            "count": 1,
+            "lines": [
+              6
+            ]
+          },
+          {
+            "name": "CVScenePackP155",
+            "count": 2,
+            "lines": [
+              10,
+              41
+            ]
+          },
+          {
+            "name": "LS",
+            "count": 2,
+            "lines": [
+              29,
+              32
+            ]
+          }
+        ],
+        "knownReads": [
+          {
+            "name": "CV",
+            "count": 4,
+            "lines": [
+              35,
+              62
+            ]
+          },
+          {
+            "name": "LS",
+            "count": 4,
+            "lines": [
+              29,
+              32
+            ]
+          }
+        ],
+        "writes": [
+          {
+            "name": "CVSceneIntegrationP159",
+            "line": 82,
+            "kind": "window.property"
+          }
+        ],
+        "scannerLimitations": [
+          "Template literal bodies and interpolation expressions are skipped as one lexical region.",
+          "Destructured globals, alias flow, computed property names, eval and dynamically assembled identifiers are not resolved.",
+          "Top-level bindings are detected only for simple var/let/const/function/class declarations.",
+          "This scanner is lexical evidence, not a JavaScript AST or proof of runtime data flow."
+        ]
+      }
+    },
+    {
+      "order": 149,
+      "id": "canvio-lot160c",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 15206,
+      "sha256": "d6e46f2e5318d820c71fbac876eb060a209e23dcd74c1bc94956a0412aaa6136",
+      "exportedGlobals": [
+        "CVInspirationCollectionsP160"
+      ],
+      "globalDeclarations": [],
+      "globalPropertyReads": [
+        "CV",
+        "CVCreativeCore",
+        "CVInspirationCollectionsP160",
+        "CVOrchestratorP128",
+        "CVZip"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ],
+      "globalReferenceEvidence": {
+        "propertyReads": [
+          {
+            "name": "CV",
+            "count": 2,
+            "lines": [
+              12,
+              19
+            ]
+          },
+          {
+            "name": "CVCreativeCore",
+            "count": 4,
+            "lines": [
+              7,
+              9,
+              14,
+              18
+            ]
+          },
+          {
+            "name": "CVInspirationCollectionsP160",
+            "count": 1,
+            "lines": [
+              5
+            ]
+          },
+          {
+            "name": "CVOrchestratorP128",
+            "count": 1,
+            "lines": [
+              19
+            ]
+          },
+          {
+            "name": "CVZip",
+            "count": 3,
+            "lines": [
+              27
+            ]
+          }
+        ],
+        "knownReads": [
+          {
+            "name": "CV",
+            "count": 5,
+            "lines": [
+              12,
+              19
+            ]
+          }
+        ],
+        "writes": [
+          {
+            "name": "CVInspirationCollectionsP160",
+            "line": 39,
+            "kind": "window.property"
+          }
+        ],
+        "scannerLimitations": [
+          "Template literal bodies and interpolation expressions are skipped as one lexical region.",
+          "Destructured globals, alias flow, computed property names, eval and dynamically assembled identifiers are not resolved.",
+          "Top-level bindings are detected only for simple var/let/const/function/class declarations.",
+          "This scanner is lexical evidence, not a JavaScript AST or proof of runtime data flow."
+        ]
+      }
+    },
+    {
+      "order": 150,
+      "id": "canvio-lot161s",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 13978,
+      "sha256": "fa4b5400a161fc4ccefe9e94719ffc70b5d1ca2e9e567310f672c9633d0156a5",
+      "exportedGlobals": [
+        "CVSpatialWorkspaceP161"
+      ],
+      "globalDeclarations": [],
+      "globalPropertyReads": [
+        "CANVIOGLBViewerP72",
+        "CANVIOThreeGLBViewerP74",
+        "CV",
+        "CVCreativeCore",
+        "CVPanoramaP154",
+        "CVScenePackP155",
+        "CVSpatialWorkspaceP161"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ],
+      "globalReferenceEvidence": {
+        "propertyReads": [
+          {
+            "name": "CANVIOGLBViewerP72",
+            "count": 1,
+            "lines": [
+              16
+            ]
+          },
+          {
+            "name": "CANVIOThreeGLBViewerP74",
+            "count": 1,
+            "lines": [
+              16
+            ]
+          },
+          {
+            "name": "CV",
+            "count": 2,
+            "lines": [
+              10,
+              16
+            ]
+          },
+          {
+            "name": "CVCreativeCore",
+            "count": 6,
+            "lines": [
+              7,
+              9,
+              13,
+              20
+            ]
+          },
+          {
+            "name": "CVPanoramaP154",
+            "count": 6,
+            "lines": [
+              15,
+              18,
+              19,
+              23
+            ]
+          },
+          {
+            "name": "CVScenePackP155",
+            "count": 1,
+            "lines": [
+              20
+            ]
+          },
+          {
+            "name": "CVSpatialWorkspaceP161",
+            "count": 1,
+            "lines": [
+              5
+            ]
+          }
+        ],
+        "knownReads": [
+          {
+            "name": "CV",
+            "count": 5,
+            "lines": [
+              10,
+              16
+            ]
+          }
+        ],
+        "writes": [
+          {
+            "name": "CVSpatialWorkspaceP161",
+            "line": 31,
+            "kind": "window.property"
+          }
+        ],
+        "scannerLimitations": [
+          "Template literal bodies and interpolation expressions are skipped as one lexical region.",
+          "Destructured globals, alias flow, computed property names, eval and dynamically assembled identifiers are not resolved.",
+          "Top-level bindings are detected only for simple var/let/const/function/class declarations.",
+          "This scanner is lexical evidence, not a JavaScript AST or proof of runtime data flow."
+        ]
+      }
+    },
+    {
+      "order": 151,
+      "id": "canvio-lot162r",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 11444,
+      "sha256": "cebfccf7f9bee4f52efe17427a0ef4864826af61e2c3f173529658eca93c2119",
+      "exportedGlobals": [
+        "CVReferenceCanvasP162"
+      ],
+      "globalDeclarations": [],
+      "globalPropertyReads": [
+        "CV",
+        "CVCreativeCore",
+        "CVOrchestratorP128",
+        "CVReferenceCanvasP162"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ],
+      "globalReferenceEvidence": {
+        "propertyReads": [
+          {
+            "name": "CV",
+            "count": 3,
+            "lines": [
+              10,
+              20
+            ]
+          },
+          {
+            "name": "CVCreativeCore",
+            "count": 6,
+            "lines": [
+              7,
+              9,
+              15,
+              19
+            ]
+          },
+          {
+            "name": "CVOrchestratorP128",
+            "count": 1,
+            "lines": [
+              20
+            ]
+          },
+          {
+            "name": "CVReferenceCanvasP162",
+            "count": 1,
+            "lines": [
+              5
+            ]
+          }
+        ],
+        "knownReads": [
+          {
+            "name": "CV",
+            "count": 7,
+            "lines": [
+              10,
+              20
+            ]
+          }
+        ],
+        "writes": [
+          {
+            "name": "CVReferenceCanvasP162",
+            "line": 23,
+            "kind": "window.property"
+          }
+        ],
+        "scannerLimitations": [
+          "Template literal bodies and interpolation expressions are skipped as one lexical region.",
+          "Destructured globals, alias flow, computed property names, eval and dynamically assembled identifiers are not resolved.",
+          "Top-level bindings are detected only for simple var/let/const/function/class declarations.",
+          "This scanner is lexical evidence, not a JavaScript AST or proof of runtime data flow."
+        ]
+      }
+    },
+    {
+      "order": 152,
+      "id": "canvio-lot163c",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 10035,
+      "sha256": "f0c71b6c13c960f895631961cd5c86655004e5b489992afa5d247b9c42792ecd",
+      "exportedGlobals": [
+        "CVCharacterContinuityP163"
+      ],
+      "globalDeclarations": [],
+      "globalPropertyReads": [
+        "CV",
+        "CVCharacterContinuityP163",
+        "CVCreativeCore",
+        "CVOrchestratorP128"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ],
+      "globalReferenceEvidence": {
+        "propertyReads": [
+          {
+            "name": "CV",
+            "count": 3,
+            "lines": [
+              12,
+              23,
+              29
+            ]
+          },
+          {
+            "name": "CVCharacterContinuityP163",
+            "count": 1,
+            "lines": [
+              5
+            ]
+          },
+          {
+            "name": "CVCreativeCore",
+            "count": 10,
+            "lines": [
+              7,
+              9,
+              13,
+              20,
+              29
+            ]
+          },
+          {
+            "name": "CVOrchestratorP128",
+            "count": 1,
+            "lines": [
+              19
+            ]
+          }
+        ],
+        "knownReads": [
+          {
+            "name": "CV",
+            "count": 9,
+            "lines": [
+              12,
+              23,
+              29
+            ]
+          }
+        ],
+        "writes": [
+          {
+            "name": "CVCharacterContinuityP163",
+            "line": 30,
+            "kind": "window.property"
+          }
+        ],
+        "scannerLimitations": [
+          "Template literal bodies and interpolation expressions are skipped as one lexical region.",
+          "Destructured globals, alias flow, computed property names, eval and dynamically assembled identifiers are not resolved.",
+          "Top-level bindings are detected only for simple var/let/const/function/class declarations.",
+          "This scanner is lexical evidence, not a JavaScript AST or proof of runtime data flow."
+        ]
+      }
+    },
+    {
+      "order": 153,
+      "id": "canvio-lot164s",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 9518,
+      "sha256": "ad30732c697495a19acc616d2c309d564003765ba5887834ee816ca20d37fd74",
+      "exportedGlobals": [
+        "CVShotListP164"
+      ],
+      "globalDeclarations": [],
+      "globalPropertyReads": [
+        "CVCreativeCore",
+        "CVOrchestratorP128",
+        "CVScenePackP155",
+        "CVShotListP164",
+        "open"
+      ],
+      "knownGlobalReads": [],
+      "globalReferenceEvidence": {
+        "propertyReads": [
+          {
+            "name": "CVCreativeCore",
+            "count": 3,
+            "lines": [
+              9,
+              19
+            ]
+          },
+          {
+            "name": "CVOrchestratorP128",
+            "count": 1,
+            "lines": [
+              19
+            ]
+          },
+          {
+            "name": "CVScenePackP155",
+            "count": 1,
+            "lines": [
+              18
+            ]
+          },
+          {
+            "name": "CVShotListP164",
+            "count": 1,
+            "lines": [
+              5
+            ]
+          },
+          {
+            "name": "open",
+            "count": 1,
+            "lines": [
+              20
+            ]
+          }
+        ],
+        "knownReads": [],
+        "writes": [
+          {
+            "name": "CVShotListP164",
+            "line": 22,
+            "kind": "window.property"
+          }
+        ],
+        "scannerLimitations": [
+          "Template literal bodies and interpolation expressions are skipped as one lexical region.",
+          "Destructured globals, alias flow, computed property names, eval and dynamically assembled identifiers are not resolved.",
+          "Top-level bindings are detected only for simple var/let/const/function/class declarations.",
+          "This scanner is lexical evidence, not a JavaScript AST or proof of runtime data flow."
+        ]
+      }
+    },
+    {
+      "order": 154,
+      "id": "canvio-lot165w",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 11348,
+      "sha256": "6ac38c83d1d2cb9c402feeba746ab8b5b796e5c27cd646ebc978daf421576650",
+      "exportedGlobals": [
+        "CVAiWorkflowP165"
+      ],
+      "globalDeclarations": [],
+      "globalPropertyReads": [
+        "CV",
+        "CVAiWorkflowP165",
+        "CVComfyP120P126",
+        "CVCreativeCore",
+        "CVOrchestratorP128"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ],
+      "globalReferenceEvidence": {
+        "propertyReads": [
+          {
+            "name": "CV",
+            "count": 1,
+            "lines": [
+              49
+            ]
+          },
+          {
+            "name": "CVAiWorkflowP165",
+            "count": 1,
+            "lines": [
+              5
+            ]
+          },
+          {
+            "name": "CVComfyP120P126",
+            "count": 1,
+            "lines": [
+              49
+            ]
+          },
+          {
+            "name": "CVCreativeCore",
+            "count": 3,
+            "lines": [
+              7,
+              9,
+              19
+            ]
+          },
+          {
+            "name": "CVOrchestratorP128",
+            "count": 3,
+            "lines": [
+              13,
+              18,
+              52
+            ]
+          }
+        ],
+        "knownReads": [
+          {
+            "name": "CV",
+            "count": 2,
+            "lines": [
+              49
+            ]
+          }
+        ],
+        "writes": [
+          {
+            "name": "CVAiWorkflowP165",
+            "line": 53,
+            "kind": "window.property"
+          }
+        ],
+        "scannerLimitations": [
+          "Template literal bodies and interpolation expressions are skipped as one lexical region.",
+          "Destructured globals, alias flow, computed property names, eval and dynamically assembled identifiers are not resolved.",
+          "Top-level bindings are detected only for simple var/let/const/function/class declarations.",
+          "This scanner is lexical evidence, not a JavaScript AST or proof of runtime data flow."
+        ]
+      }
+    },
+    {
+      "order": 155,
+      "id": "canvio-lot166l",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 10597,
+      "sha256": "fe2382fe514332656ecf119f16a39625a455ad96bd96c1dc2c0c8608ca6bc1a0",
+      "exportedGlobals": [
+        "CVLandingStudioP166"
+      ],
+      "globalDeclarations": [],
+      "globalPropertyReads": [
+        "CV",
+        "CVCreativeCore",
+        "CVLandingStudioP166",
+        "CVZip"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ],
+      "globalReferenceEvidence": {
+        "propertyReads": [
+          {
+            "name": "CV",
+            "count": 2,
+            "lines": [
+              13,
+              18
+            ]
+          },
+          {
+            "name": "CVCreativeCore",
+            "count": 5,
+            "lines": [
+              7,
+              9,
+              12,
+              16
+            ]
+          },
+          {
+            "name": "CVLandingStudioP166",
+            "count": 1,
+            "lines": [
+              5
+            ]
+          },
+          {
+            "name": "CVZip",
+            "count": 3,
+            "lines": [
+              17
+            ]
+          }
+        ],
+        "knownReads": [
+          {
+            "name": "CV",
+            "count": 5,
+            "lines": [
+              13,
+              18
+            ]
+          }
+        ],
+        "writes": [
+          {
+            "name": "CVLandingStudioP166",
+            "line": 22,
+            "kind": "window.property"
+          }
+        ],
+        "scannerLimitations": [
+          "Template literal bodies and interpolation expressions are skipped as one lexical region.",
+          "Destructured globals, alias flow, computed property names, eval and dynamically assembled identifiers are not resolved.",
+          "Top-level bindings are detected only for simple var/let/const/function/class declarations.",
+          "This scanner is lexical evidence, not a JavaScript AST or proof of runtime data flow."
+        ]
+      }
+    },
+    {
+      "order": 156,
+      "id": "canvio-lot159u",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 3700,
+      "sha256": "75bf055a24bfba36e509a83c3f1db7d48d43e155a444ede35083cfacd6cca778",
+      "exportedGlobals": [
+        "CVToolkitDockP159"
+      ],
+      "globalDeclarations": [],
+      "globalPropertyReads": [
+        "CVToolkitDockP159"
+      ],
+      "knownGlobalReads": [],
+      "globalReferenceEvidence": {
+        "propertyReads": [
+          {
+            "name": "CVToolkitDockP159",
+            "count": 1,
+            "lines": [
+              8
+            ]
+          }
+        ],
+        "knownReads": [],
+        "writes": [
+          {
+            "name": "CVToolkitDockP159",
+            "line": 41,
+            "kind": "window.property"
+          }
+        ],
+        "scannerLimitations": [
+          "Template literal bodies and interpolation expressions are skipped as one lexical region.",
+          "Destructured globals, alias flow, computed property names, eval and dynamically assembled identifiers are not resolved.",
+          "Top-level bindings are detected only for simple var/let/const/function/class declarations.",
+          "This scanner is lexical evidence, not a JavaScript AST or proof of runtime data flow."
+        ]
+      }
+    },
+    {
+      "order": 157,
       "id": "canvio-lot131",
       "type": "classic",
       "src": null,
@@ -16002,7 +16873,7 @@
       }
     },
     {
-      "order": 149,
+      "order": 158,
       "id": "canvio-lot115",
       "type": "classic",
       "src": null,
@@ -16062,7 +16933,7 @@
       }
     },
     {
-      "order": 150,
+      "order": 159,
       "id": "canvio-lot1222",
       "type": "classic",
       "src": null,
@@ -16140,7 +17011,7 @@
       }
     },
     {
-      "order": 151,
+      "order": 160,
       "id": "canvio-lot127k",
       "type": "classic",
       "src": null,
@@ -16226,7 +17097,7 @@
       }
     },
     {
-      "order": 152,
+      "order": 161,
       "id": "canvio-lot1452",
       "type": "classic",
       "src": null,
@@ -16324,7 +17195,7 @@
       }
     },
     {
-      "order": 153,
+      "order": 162,
       "id": "canvio-lot1454b",
       "type": "classic",
       "src": null,
@@ -16384,7 +17255,7 @@
       }
     },
     {
-      "order": 154,
+      "order": 163,
       "id": "canvio-lot1454",
       "type": "classic",
       "src": null,
@@ -16494,7 +17365,7 @@
       }
     },
     {
-      "order": 155,
+      "order": 164,
       "id": "canvio-lot1252",
       "type": "classic",
       "src": null,
@@ -16562,7 +17433,7 @@
       }
     },
     {
-      "order": 156,
+      "order": 165,
       "id": "canvio-lot1455",
       "type": "classic",
       "src": null,
@@ -16622,7 +17493,7 @@
       }
     },
     {
-      "order": 157,
+      "order": 166,
       "id": "canvio-lot1272",
       "type": "classic",
       "src": null,
@@ -16700,7 +17571,7 @@
       }
     },
     {
-      "order": 158,
+      "order": 167,
       "id": "canvio-lot1456",
       "type": "classic",
       "src": null,
@@ -16760,7 +17631,7 @@
       }
     },
     {
-      "order": 159,
+      "order": 168,
       "id": "canvio-lot1457",
       "type": "classic",
       "src": null,
@@ -16820,7 +17691,7 @@
       }
     },
     {
-      "order": 160,
+      "order": 169,
       "id": "canvio-lot1458",
       "type": "classic",
       "src": null,
@@ -16880,7 +17751,7 @@
       }
     },
     {
-      "order": 161,
+      "order": 170,
       "id": "canvio-lot145910",
       "type": "classic",
       "src": null,
@@ -16984,7 +17855,7 @@
       }
     },
     {
-      "order": 162,
+      "order": 171,
       "id": "canvio-lot134r",
       "type": "classic",
       "src": null,
@@ -17044,7 +17915,7 @@
       }
     },
     {
-      "order": 163,
+      "order": 172,
       "id": "canvio-lot124",
       "type": "classic",
       "src": null,
@@ -17129,7 +18000,7 @@
       }
     },
     {
-      "order": 164,
+      "order": 173,
       "id": "canvio-lot133p",
       "type": "classic",
       "src": null,
@@ -17215,7 +18086,7 @@
       }
     },
     {
-      "order": 165,
+      "order": 174,
       "id": "canvio-lot135a",
       "type": "classic",
       "src": null,
@@ -17249,7 +18120,7 @@
       }
     },
     {
-      "order": 166,
+      "order": 175,
       "id": "canvio-lot133m",
       "type": "classic",
       "src": null,
@@ -17335,7 +18206,7 @@
       }
     },
     {
-      "order": 167,
+      "order": 176,
       "id": "canvio-lot139",
       "type": "classic",
       "src": null,
@@ -17361,7 +18232,7 @@
       }
     },
     {
-      "order": 168,
+      "order": 177,
       "id": "canvio-lot120126",
       "type": "classic",
       "src": null,
@@ -17450,7 +18321,7 @@
       }
     },
     {
-      "order": 169,
+      "order": 178,
       "id": "canvio-lot119v",
       "type": "classic",
       "src": null,
@@ -17476,7 +18347,7 @@
       }
     },
     {
-      "order": 170,
+      "order": 179,
       "id": "canvio-lot119w",
       "type": "classic",
       "src": null,
@@ -17502,7 +18373,7 @@
       }
     },
     {
-      "order": 171,
+      "order": 180,
       "id": "canvio-lot146",
       "type": "classic",
       "src": null,

@@ -4202,3 +4202,7 @@ P160–P166 module APIs currently report versions P160.2.0, P161.1.0, P162.2.0, 
 - Candidate baseline: `4efdb5d4a3a7b3dd32f98c0bf5b7907ea57357df` (workflow #767) passed the P160–P166 Node contract suite and 27/28 Chromium integration assertions with `pageErrors: []`.
 - The only browser assertion failure was P164's P128 prompt text case check (`Shot list` vs `shot list`); P164 now emits the heading `Shot list từ brief`, and the browser assertion is case-insensitive to avoid a casing-only regression.
 - This is a candidate correction, not acceptance. Re-run hosted workflow, inspect final result, and retain manual gates for real assets/GLB/local model, project round-trip, device/accessibility, and P130 two-device sync. P70 remains fail-closed.
+
+### P159.1 (2026-11-24 tối) — quy tắc nhúng lot
+- Thêm file `canvio-pNNN-*.js` + dòng trong `tests/p143/source-module-map.json` KHÔNG đủ: phải nhúng `<script id="canvio-lotXXX">` vào index.html (trước `<style id="canvio-lot131-css">`) và chạy `run-p143-source-parity.cjs` (phải đạt hết). AI trước từng bỏ sót bước này.
+- Dock `#cv159u-dock` trong Video Studio nhận các thẻ theo id (`cv164-card`, `cv163-card`, `cv154-card`, `cv155-card`); thẻ mới của Video Studio nên thêm vào mảng `TABS` thay vì chèn thẻ riêng. Test cần mở tab hoặc bỏ `display:none` của `#cv159u-panels>.card` trước khi bấm.

@@ -181,6 +181,10 @@
     {
       "source": "canvio-p166-landing-studio.js",
       "scriptId": "canvio-lot166l"
+    },
+    {
+      "source": "canvio-p159u-dock.js",
+      "scriptId": "canvio-lot159u"
     }
   ],
   "totalModules": 45

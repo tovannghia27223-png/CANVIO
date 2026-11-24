@@ -1314,3 +1314,8 @@ Việc cần người dùng: duyệt thứ tự; cho biết có muốn "kênh ch
 
 - Workflow #767 on `4efdb5d` passed P160–P166 Node contracts and 27/28 Chromium checks; no page errors. The only failure was P164 P128 prompt heading case sensitivity.
 - Corrected P164 prompt heading and made the browser assertion case-insensitive. Hosted verification is required before marking the range accepted; real-media and P70 release gates remain separate.
+
+## P159.1 — Kiểm tra chéo bản của AI khác + sửa chặn nghiệm thu (2026-11-24 tối)
+- Phát hiện: trên `main` các file P159–P166 có đủ nhưng `index.html` CHƯA nhúng lot (trang chạy thật không có các module này; P153–P155 trong index vẫn là bản cũ) → parity P143 chỉ đạt 35/45 và Chromium P160–P166 hết thời gian chờ. Đã nhúng lot `canvio-lot159i/160c/161s/162r/163c/164s/165w/166l` và làm mới 153b/154p/155s theo nguồn → parity 46/46, Chromium P160–P166 28/28, P153 browser đạt, smoke 21/21, P130 41/41, node P160–P166 đạt, boot-order OK.
+- UI: 4 thẻ (Shot list, Nhân vật, Toàn cảnh, Thẻ·Prompt·Góc máy) xếp dọc đẩy trình dựng xuống ~1500px → gom vào dock một thanh tab `canvio-p159u-dock.js` (lot `canvio-lot159u`, 159.1.0), thanh tab luôn hiện, mặc định gập, nhớ tab bằng sessionStorage; chỉ di chuyển DOM, không thêm dữ liệu.
+- Còn lại: ô nhập của thẻ Nhân vật P163 thiếu nhãn chữ (chỉ placeholder/ô chọn trống) → cần chỉnh nhãn; ảnh/GLB thật, đồng bộ hai thiết bị, P70 chưa nghiệm thu.
