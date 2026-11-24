@@ -4211,3 +4211,11 @@ P160–P166 module APIs currently report versions P160.2.0, P161.1.0, P162.2.0, 
 - Module mới: `canvio-p167-blocking.js` (CVBlockingP167), `canvio-p168-motion.js` (CVMotionTemplatesP168); lot `canvio-lot167b`, `canvio-lot168m`; dock `canvio-p159u-dock.js` mảng `TABS` (6 tab). Mọi module Video Studio mới phải thêm vào `TABS`, không chèn thẻ riêng.
 - Tích hợp đã dùng: ảnh → `CVBoardP153.addDataUrl` hoặc `CV.assets.addBlob` + `CVCreativeCore.linkAsset`; shot → `CVScenePackP155.assignToStoryboard({title,action,prompt,shotSeconds,roles})`; AI → `CVOrchestratorP128.register(kind,'local',fn)`/`run({kind,tiers:['local'],cache:false,prompt})`; dữ liệu theo dự án → `CVCreativeCore.active.documents.<key>` rồi `capture()`.
 - Cạm bẫy: `CV.assets.addBlob` không trả id (lấy `CV.assets.list()[0]`); mount của module chạy trước khi người dùng tạo dự án nên đừng ghi vào Core khi `CVCreativeCore.active` chưa có; `.card` trong `#page-assets` có `data-tilt`; smooth-scroll làm Playwright lệch tọa độ (chèn `scroll-behavior:auto`); các test Video Studio phải mở tab dock hoặc bỏ `display:none` của `#cv159u-panels>.card`; kiểm tra số tab dùng `>=`.
+
+
+## P150.11 — Home-only export button skin (2026-11-24)
+- Root cause from failed hosted browser runs #769/#770: a late P150 CSS rule selected `header.top #ws-export` for sky/fashion/tech without requiring the Home workspace to be active. This overrode the original pink export button in design/site/media/projects/AI workspaces.
+- Fix: removed only the unscoped export-button background and descendant-color overrides in `canvio-p150-home-sky.js`; retained Home-scoped theme rules and original workspace button styling. Module version is now 150.11.0.
+- CI now replaces the canonical `canvio-lot150h` inline lot from the standalone source before browser acceptance, preventing source/embedded drift.
+- Required verification: `tests/p145/run-p150-browser.py` on desktop and mobile; its five non-Home workspace assertions must confirm original pink `rgb(255, 61, 154)`. Also run source/lot parity, full hosted Chromium suite, and zero-pageerror checks. Do not call this fixed until the new PR workflow passes.
+- Preserve all P150 prior history and keep the fourteen P70 real-world acceptance gates OPEN.
