@@ -1326,3 +1326,11 @@ Việc cần người dùng: duyệt thứ tự; cho biết có muốn "kênh ch
 - P159.1 `canvio-p159u-dock.js`: dock có thêm tab "Dựng khối" và "Ảnh → chuyển động" (nay 6 tab).
 - Kiểm: `tests/p167/run-p167-tests.cjs` (30), `tests/p167/run-p168-tests.cjs` (17), `tests/p145/run-p167-browser.py` (13), `tests/p145/run-p168-browser.py` (12), P153 browser, P160–P166 browser 28/28, smoke 21/21, parity 48/48, boot-order OK; đã thêm vào CI.
 - Chưa làm / còn mở: chỉnh nhân vật trực quan (mặt/tóc/sẹo — hiện chỉ mô tả chữ + checklist P163); nối Google Drive giữ bản gốc; WebM mới kiểm trong Chromium headless (test chấp nhận trình duyệt không hỗ trợ); dựng khối chưa có xoay (yaw) bằng chuột/đổi cỡ trực tiếp, chưa có nhiều camera chạy đồng thời; "design-to-motion" mới nhận ảnh trong Tài nguyên (chưa lấy thẳng từ Poster/Designer); chưa thử ảnh/GLB thật, sinh video AI thật, đồng bộ hai thiết bị; P70 chưa qua.
+
+
+## P150.11 continuation — restore original export button outside Home (2026-11-24)
+- Fixed the CSS regression identified by hosted runs #769 and #770: late unscoped selectors for `html[data-home-skin=sky|fashion|tech] header.top #ws-export` and descendants leaked Home themes into other workspaces.
+- Removed those unscoped overrides only. The existing Home-scoped theme behavior remains; design/site/media/projects/AI retain the original pink export control.
+- `canvio-p150-home-sky.js` version: 150.11.0. The candidate CI workflow now embeds this exact standalone source into `canvio-lot150h` before the browser suite.
+- Verification pending on branch `fix/p150-workspace-export-scope`: desktop/mobile P150 browser test (including all five non-Home workspaces), full candidate CI, Pages build/deploy, source/embedded parity and zero browser page errors. Do not mark PASS before the new run completes.
+- Evidence from failed run #770 before the fix: P167 unit suite 30 assertions PASS; P168 unit suite 17 assertions PASS; P159 integration 13/13 PASS; P160–P166 Chromium integration 28/28 PASS. The run then failed five repeated P150 assertions because the export button was not pink outside Home. This evidence is bounded to that commit and must be re-run after the fix.
