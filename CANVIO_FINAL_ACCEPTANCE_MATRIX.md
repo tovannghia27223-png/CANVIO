@@ -60,3 +60,13 @@
 | P165 Multi-role AI workflow | Five P128 roles, bounded revision loop, optional local-only model path, deterministic fallback, per-step log and explicit prompt prefill to P120/P126 ComfyUI | No media generation in generator role; actual local model quality and ComfyUI handoff remain to validate. |
 | P166 Brief-to-Landing | Shared Core brief, Asset Library hero image, responsive/reduced-motion HTML and ZIP offline export | Static package only; no automatic GrapesJS tree import, form backend or hosting. |
 
+
+
+## P150.11 — non-Home export button regression (2026-11-24)
+| Check | Expected | Evidence/status |
+|---|---|---|
+| Home theme | Tech/sky/fashion may theme the export control while Home is active | Existing scoped rules retained; re-test required |
+| Other workspaces | Original pink export button `rgb(255, 61, 154)` in design/site/media/projects/AI | Root cause fixed in source; five-route desktop browser re-test pending |
+| Mobile | Same route isolation at 390 px | Browser re-test pending |
+| Canonical parity | Inline `canvio-lot150h` equals standalone `canvio-p150-home-sky.js` | CI embedding step added; run pending |
+| Release certification | P70 manual real-world gates remain fail-closed | OPEN; not changed by this patch |
