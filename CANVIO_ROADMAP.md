@@ -1326,3 +1326,44 @@ Việc cần người dùng: duyệt thứ tự; cho biết có muốn "kênh ch
 - P159.1 `canvio-p159u-dock.js`: dock có thêm tab "Dựng khối" và "Ảnh → chuyển động" (nay 6 tab).
 - Kiểm: `tests/p167/run-p167-tests.cjs` (30), `tests/p167/run-p168-tests.cjs` (17), `tests/p145/run-p167-browser.py` (13), `tests/p145/run-p168-browser.py` (12), P153 browser, P160–P166 browser 28/28, smoke 21/21, parity 48/48, boot-order OK; đã thêm vào CI.
 - Chưa làm / còn mở: chỉnh nhân vật trực quan (mặt/tóc/sẹo — hiện chỉ mô tả chữ + checklist P163); nối Google Drive giữ bản gốc; WebM mới kiểm trong Chromium headless (test chấp nhận trình duyệt không hỗ trợ); dựng khối chưa có xoay (yaw) bằng chuột/đổi cỡ trực tiếp, chưa có nhiều camera chạy đồng thời; "design-to-motion" mới nhận ảnh trong Tài nguyên (chưa lấy thẳng từ Poster/Designer); chưa thử ảnh/GLB thật, sinh video AI thật, đồng bộ hai thiết bị; P70 chưa qua.
+
+
+## P150.11 continuation — restore original export button outside Home (2026-11-24)
+- Fixed the CSS regression identified by hosted runs #769 and #770: late unscoped selectors for `html[data-home-skin=sky|fashion|tech] header.top #ws-export` and descendants leaked Home themes into other workspaces.
+- Removed those unscoped overrides only. The existing Home-scoped theme behavior remains; design/site/media/projects/AI retain the original pink export control.
+- `canvio-p150-home-sky.js` version: 150.11.0. The candidate CI workflow now embeds this exact standalone source into `canvio-lot150h` before the browser suite.
+- Verification pending on branch `fix/p150-workspace-export-scope`: desktop/mobile P150 browser test (including all five non-Home workspaces), full candidate CI, Pages build/deploy, source/embedded parity and zero browser page errors. Do not mark PASS before the new run completes.
+- Evidence from failed run #770 before the fix: P167 unit suite 30 assertions PASS; P168 unit suite 17 assertions PASS; P159 integration 13/13 PASS; P160–P166 Chromium integration 28/28 PASS. The run then failed five repeated P150 assertions because the export button was not pink outside Home. This evidence is bounded to that commit and must be re-run after the fix.
+
+
+## P159.1–P169 — Canonical integration completion candidate · 2026-11-24
+
+- The hosted build synchronizes P159.1 dock, P167 white-box blocking, P168 image-to-motion and P169 Character Studio into unique canonical inline lots. P167/P168 already have Node and Chromium acceptance; P169 adds a dedicated 8-control visual-profile round-trip suite. P143 tracks P150 and P169 alongside existing P159u/P167/P168 source pairs.
+- P167: white-box scene and camera controls are interactive and project-backed; object position/size/yaw metadata and camera position/look/FOV/duration are bounded. Full 3D editor-grade transform gizmos, simultaneous multi-camera director and a full Three.js scene graph are not claimed.
+- P168: eight image-to-motion presets with GIF/WebM handoff and P165 workflow JSON import/export. WebM depends on browser MediaRecorder support; AI generation remains an explicit handoff, not an included video inference model.
+- P169: 2D vector Character Studio with eight appearance fields, preview, and save to P163 profile. It does not edit a rigged 3D character or infer identity from a face.
+- P150.12 Home-only toolbar visibility fix is pending hosted desktop/mobile browser verification. Do not merge/release until the P150 five-workspace pink Export regression is green and the complete candidate workflow passes.
+
+
+## P150.13 — Home skin root reset (candidate · 2026-11-24)
+
+- P150.12 was insufficient: Home scope marker correctly turned off, but `data-home-skin=tech` remained on the document root and some inherited/legacy selectors still recolored Export. P150.13 resets root skin to `classic` whenever Home is hidden and restores the saved selection only when Home is visible.
+- Acceptance adds a root-skin assertion plus the original pink Export check on all five non-Home workspaces; no merge until hosted browser and final-head verification pass.
+
+
+## P150.13 — Tách biệt P47 Holo và P150 Home skin trong QA
+
+- Nút Xuất nền hồng được kiểm tra dưới P47 `plain` để xác nhận không bị Home skin ghi đè. Thêm suite riêng cho P47 Holo: so sánh computed background/color/border của nút Xuất trước và sau khi P150 chuyển sang tech skin trong lúc Home đang ẩn, qua cả 5 workspace.
+- Kết quả #783 cho thấy P150 root đã về `classic`; tuy vậy fixture còn bật P47 Holo mặc định, vốn có CSS gradient độc lập cho nút Xuất. Lượt tiếp theo phải pass cả 2 nhánh theme.
+
+
+## P150.13 QA fixture isolation — 2026-11-24
+
+- Separate P150 Home presentation skin from P47 global Holo and P229 workspace theme. The browser suite applies the intended baseline through the existing theme APIs and compares the computed Export style before/after route changes.
+- Keep the P47 Holo case as a separate preservation test. Do not fix a test harness theme-state issue by changing global theme behavior in the P150 module.
+
+
+## P150.13 — Baseline lấy sau khi rời Home (QA fixture)
+
+- Run #785: P150 root skin fallback về classic; Holo-preservation pass 5/5; năm workspace Export không in diagnostic (computed background đúng hồng), nhưng test fail vì baseline được chụp khi Home-tech còn hiển thị.
+- Test fixture mở Design trước khi chụp baseline màu hồng, rồi so sánh năm workspace. Đây là sửa thứ tự kiểm thử, không thay đổi CSS sản phẩm.

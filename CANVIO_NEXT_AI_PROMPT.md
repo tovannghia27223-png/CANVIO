@@ -310,3 +310,45 @@ Khi sửa module: sửa file standalone rồi chép y hệt vào lot (parity so 
 **Cạm bẫy đã gặp:** sanitizer `clean()` từng xóa `srcdoc` iframe (đã whitelist iframe sandbox); `.card` trong `#page-assets` có hiệu ứng nghiêng 3D `data-tilt` làm lệch vùng bấm; Asset Library chỉ nhận qua `CV.assets.addBlob` (không trả id; lấy `list()[0]`); không ghi vào `CVCreativeCore` khi chưa có dự án; thêm file nguồn mà không nhúng lot thì parity hỏng và trang thật không có module; `html[data-theme=dark]` không ép lên skin graffiti (làm nút trắng chữ trắng — dark thật là skin Midnight).
 
 **Báo cáo trung thực:** chỉ nói "xong" khi có test chạy thật; nêu rõ phần chưa thử bằng dữ liệu thật; không tuyên bố nghiệm thu khi CI chưa xanh.
+
+
+## Handoff — P150.11 export styling regression (2026-11-24)
+- Review branch: `fix/p150-workspace-export-scope`.
+- Changed `canvio-p150-home-sky.js` to remove broad unscoped export-button selectors that leaked Home theme styling into other workspaces; module version 150.11.0.
+- Changed `.github/workflows/canvio-candidate-runtime.yml` to embed the standalone P150 source into canonical `canvio-lot150h` before browser acceptance.
+- Root cause is supported by run #769/#770 logs: five failures, one per non-Home route, all checking original pink export button; surrounding route-isolation checks passed.
+- Next: open PR to main, wait for full hosted runtime + Pages workflow, inspect logs and verify all P150 desktop/mobile checks, parity, no page errors, and no warnings. If any check fails, fix the cause and rerun. Do not merge or report complete on a red/in-progress run. Preserve all fourteen P70 real-world gates as OPEN.
+
+
+## P169 — Character Studio integration handoff
+
+- Embed `canvio-p169-character-studio.js` as `canvio-lot169c` after P163 is available; preserve P163 as the sole character profile owner. P169 writes `visual:*` fields using `CVCharacterContinuityP163.upsert`.
+- Keep P150.12 scoped to actual visible Home, not merely a retained `.active` class. The non-Home export button must remain the original pink in all five workspaces.
+- CI must run `tests/p169/run-p169-tests.cjs` and `tests/p145/run-p169-browser.py`, P143 source parity, full HTML/inline JS syntax audit, and the existing P47–P70, P153, P159–P168 suites.
+- Keep limitations explicit: P169 is 2D SVG, P163 consistency is heuristic, P167 is white-box blocking (not a full scene graph), P168 WebM depends on MediaRecorder; no model inference/cloud sync or P70 release certification unless separately evidenced.
+
+
+## P150.13 handoff
+
+- Keep the Home-skin root token at `classic` whenever Home is not visibly active. Restore the locally stored selected skin only when `#page-home` is actually visible.
+- P150.13 Chromium must pass the root-skin fallback and pink Export checks in all five workspaces at desktop/mobile. Do not merge based on the P150.12 run (#782), which failed those five color assertions.
+- Other scene and character suites were green in #782: P167 browser, P168 browser, P169 7/7, and P160–P166 28/28.
+
+
+## P150.13 QA fixture note
+
+- Keep P47's Holographic theme separate from P150 Home skins. Test original pink Export under P47 `plain`; separately assert P47 Holo's gradient appearance remains unchanged across all five workspaces.
+- Do not merge until a new hosted run passes both theme modes plus the complete regression/browser suite.
+
+
+## P150.13 — independent theme test isolation follow-up
+
+- Test baseline through the real owners: wait for CVLot47/CV229, call `CVLot47.set('plain')`, `CV229.setTheme('graffiti')`, then assert pink Export before workspace changes.
+- For each Design/Site/Media/Project/AI route, log `data-home-skin`, Home-active flag, P47 skin, P229 body theme classes, computed background/backgroundImage/color/border. Compare to the captured baseline; do not change P47 or P229 in the P150 runtime.
+- Keep a separate Holo fixture proving P47 Holo button styling is preserved when Home skin changes.
+
+
+## P150.13 test fixture baseline
+
+- Do not capture the original pink Export baseline while the Home tech skin is active. First open the Design workspace and wait for Home scope to switch to classic, then capture the non-Home pink background.
+- Run #785 showed Holo preservation passed 5/5; P150 non-Home computed backgrounds were pink (no diagnostic emitted) but comparisons failed against the Home-tech baseline. Re-run full Chromium acceptance after this test-only change.

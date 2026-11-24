@@ -614,3 +614,53 @@ Mainline workflow #551 passed 53/53; Pages #275 passed build/deploy. P143 parity
 - Candidate baseline: `4efdb5d4a3a7b3dd32f98c0bf5b7907ea57357df` (workflow #767) passed the P160–P166 Node contract suite and 27/28 Chromium integration assertions with `pageErrors: []`.
 - The only browser assertion failure was P164's P128 prompt text case check (`Shot list` vs `shot list`); P164 now emits the heading `Shot list từ brief`, and the browser assertion is case-insensitive to avoid a casing-only regression.
 - This is a candidate correction, not acceptance. Re-run hosted workflow, inspect final result, and retain manual gates for real assets/GLB/local model, project round-trip, device/accessibility, and P130 two-device sync. P70 remains fail-closed.
+
+
+## 2026-11-24 — P150.11 regression fix candidate
+- Reproduced failure from hosted runs #769 and #770: `tests/p145/run-p150-browser.py` passed all checks until the five non-Home routes (design, site, media, proj, ai), where the original pink `#ws-export` button had been recolored by broad P150 CSS selectors.
+- Corrected `canvio-p150-home-sky.js` to remove the unscoped export button and descendant text color overrides; retained the Home-only rules. Bumped module version to 150.11.0.
+- Updated candidate CI to synchronize the standalone P150.11 source into `index.html`'s `canvio-lot150h` before the existing Chromium test.
+- Prior-run context only (not a post-fix PASS): P167 Node 30/30, P168 Node 17/17, P159 integration 13/13, P160–P166 browser 28/28. New candidate CI remains the acceptance authority.
+- Status: FIX COMMITTED TO REVIEW BRANCH; browser re-test and full CI pending. No claim of zero warnings/failures until the run is green.
+
+
+## P169 Character Studio QA (candidate)
+
+- Node: `tests/p169/run-p169-tests.cjs` covers bounded fields, SVG output, profile-feature round-trip and field count.
+- Chromium: `tests/p145/run-p169-browser.py` covers mounted panel, eight controls, SVG preview update, save into selected P163 Shared Core character profile, read-back of all eight features/checklist items, visual-only reset, mobile overflow and zero page errors.
+- This is functional browser evidence, not professional character-art review, real user photo validation, rigging/3D model editing or identity recognition.
+
+## P150.12 QA correction (candidate)
+
+- Run #777 passed build, syntax, P143 and P47–P70 suites but failed 5/5 checks asserting original Export button color in non-Home workspaces. Root cause: Home toolbar CSS was keyed to a page class that could remain present while Home was hidden.
+- P150.12 uses actual visible-Home state and route mutation observation. The following hosted workflow must pass all P150 desktop/mobile checks, including the five workspace export assertions, before acceptance.
+
+## P169 dock visibility fixture correction (candidate)
+
+- The P169 Chromium test explicitly opens `#cv163-card` from the existing P159.1 dock before asserting Character Studio visibility; it continues to verify all eight fields, SVG preview, P163 profile persistence, reset isolation, mobile layout and zero page errors.
+
+
+## P150.13 follow-up after run #782
+
+- Run #782 failed only the five non-Home Export color assertions (69/74 P150 checks). The Home-only marker was off on Design/Site/Media/Project/AI; P150.13 now also resets the root `data-home-skin` to `classic` outside Home, preventing selectors scoped to retained/hidden Home descendants from affecting shared toolbar controls.
+- P167: Chromium checks passed. P168: Chromium checks passed. P169: 7/7 checks passed, including all eight character fields and P163 shared-profile persistence. P160–P166: 28/28 passed. P150 requires a fresh run.
+
+
+## P150.13 QA fixture correction after run #783
+
+- Run #783 confirmed root Home skin fallback to `classic` was applied, but the five pink-background assertions remained false because the test page retained P47's default `canvio16:skin=holo`, which independently sets a Holographic gradient on `#ws-export`.
+- Updated browser test setup: the base-pink regression explicitly selects P47 `plain`; a separate Holo regression captures the computed export appearance and verifies it is unchanged on all five non-Home workspaces after setting P150 tech while Home is hidden.
+- P150.13 is not accepted until the new complete hosted run passes both modes at desktop/mobile and all other browser suites.
+
+
+## P150.13 regression diagnosis — run #783
+
+- Run #783 passed the P150 root fallback assertion (5/5 workspaces) but failed the Export color assertion (5/5); total 74/79. P167/P168/P169 and P160–P166 browser suites passed in that same run.
+- P150.13 itself only changes `data-home-skin`; it does not own P47 `data-skin` or P229 `body.cv229-theme-*`. The next P150 fixture explicitly applies P47 plain + P229 graffiti via their public owners, validates the pink baseline first, and records full computed-style diagnostics for every workspace. The Holo regression remains a separate positive test.
+
+
+## P150.13 QA fixture correction after run #785
+
+- Run #785: P167 30/30 Node, P168 17/17 Node, P169 5/5 Node + 7/7 Chromium, P160–P166 Chromium 28/28. P85/GLB/ONNX runtime suites completed successfully; no uncaught page errors were reported in P150.
+- P150's Holo preservation checks passed 5/5. The five non-Home checks printed no P150_EXPORT_DIAGNOSTIC, indicating their computed background was exactly the expected pink. The six failed assertions were the baseline check and five comparisons to a baseline captured while Home-tech was still active.
+- Updated the test to enter Design and wait for Home scope to switch to classic before capturing the pink baseline. This corrects the fixture, not the product styles. Await a fresh hosted run before acceptance.

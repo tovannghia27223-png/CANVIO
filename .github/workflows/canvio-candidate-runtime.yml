@@ -27,6 +27,7 @@ on:
 
 permissions:
   contents: write
+  actions: write
 
 concurrency:
   group: canvio-runtime-${{ github.ref }}
@@ -106,6 +107,27 @@ jobs:
             grep -q '23.3.111-github-runtime-ci' index.html || { echo "No staged candidate chunks or pinned 23.3.111 index found." >&2; exit 1; }
             echo "Using committed CANVIO candidate index."
           fi
+
+      - name: Integrate P150.13 Home skin root isolation
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs=require('node:fs');
+          const file='index.html', source=fs.readFileSync('canvio-p150-home-sky.js','utf8').trim();
+          if(!source.includes("version: '150.13.0'"))throw new Error('P150.13 source version missing');
+          const id='canvio-lot150h', open='<script id="'+id+'">';
+          let html=fs.readFileSync(file,'utf8');
+          const at=html.indexOf(open);
+          if(at<0||html.indexOf(open,at+open.length)>=0)throw new Error('P150 expected exactly one embedded lot');
+          const start=at+open.length, end=html.indexOf('</script>',start);
+          if(end<0)throw new Error('P150 embedded lot close missing');
+          const nl=String.fromCharCode(10);
+          html=html.slice(0,at)+open+nl+source+nl+'</script>'+html.slice(end+'</script>'.length);
+          if((html.match(/id="canvio-lot150h"/g)||[]).length!==1)throw new Error('P150 duplicate/missing lot');
+          fs.writeFileSync(file,html,'utf8');
+          console.log('P150.13 Home skin root isolation synced into canonical index.html');
+          NODE
 
       - name: Integrate P125.2 scroll storyboard editor
         shell: bash
@@ -728,6 +750,10 @@ jobs:
           syncLot('canvio-lot164s','canvio-p164-shotlist.js',false);
           syncLot('canvio-lot165w','canvio-p165-ai-workflow.js',false);
           syncLot('canvio-lot166l','canvio-p166-landing-studio.js',false);
+          syncLot('canvio-lot159u','canvio-p159u-dock.js',false);
+          syncLot('canvio-lot167b','canvio-p167-blocking.js',false);
+          syncLot('canvio-lot168m','canvio-p168-motion.js',false);
+          syncLot('canvio-lot169c','canvio-p169-character-studio.js',false);
           const old="LS.set('assets',arr.slice(0,40));render();resolve()";
           const replacement="LS.set('assets',arr.slice(0,200));render();resolve()";
           const count=html.split(old).length-1;
@@ -745,7 +771,7 @@ jobs:
           set -euo pipefail
           node scripts/extract-integrated-modules.mjs
           node tests/p146/run-p146-tests.cjs
-          for file in canvio-p74-p81-three-viewer.js canvio-p85-studio.js canvio-p102-background-removal.js canvio-p105-p107-depth-parallax.js canvio-p68-p70.js canvio-p72-glb-viewer.js canvio-p73-offline-site.js canvio-p82-p84-vector-pdf.js canvio-p87-cv-docx.js canvio-p90-p96.js canvio-p97-p101.js canvio-p104.js canvio-p127-duck.js canvio-p145-shader.js canvio-p119-video.js canvio-p119-website.js canvio-p153-board.js canvio-p155-scene-pack.js canvio-p159-integration.js canvio-p160-collections.js canvio-p161-spatial-workspace.js canvio-p162-reference-canvas.js canvio-p163-character-continuity.js canvio-p164-shotlist.js canvio-p165-ai-workflow.js canvio-p166-landing-studio.js assets/canvio-rmbg-worker.js assets/canvio-depth-worker.js assets/canvio-whisper-worker.js; do node --check "$file"; done
+          for file in canvio-p74-p81-three-viewer.js canvio-p85-studio.js canvio-p102-background-removal.js canvio-p105-p107-depth-parallax.js canvio-p68-p70.js canvio-p72-glb-viewer.js canvio-p73-offline-site.js canvio-p82-p84-vector-pdf.js canvio-p87-cv-docx.js canvio-p90-p96.js canvio-p97-p101.js canvio-p104.js canvio-p127-duck.js canvio-p145-shader.js canvio-p119-video.js canvio-p119-website.js canvio-p153-board.js canvio-p155-scene-pack.js canvio-p159-integration.js canvio-p160-collections.js canvio-p161-spatial-workspace.js canvio-p162-reference-canvas.js canvio-p163-character-continuity.js canvio-p164-shotlist.js canvio-p165-ai-workflow.js canvio-p166-landing-studio.js canvio-p159u-dock.js canvio-p167-blocking.js canvio-p168-motion.js canvio-p169-character-studio.js assets/canvio-rmbg-worker.js assets/canvio-depth-worker.js assets/canvio-whisper-worker.js; do node --check "$file"; done
 
       - name: P143 standalone source and canonical lot parity audit
         shell: bash
@@ -882,6 +908,7 @@ jobs:
           node tests/p153/run-p153-tests.cjs
           node tests/p167/run-p167-tests.cjs
           node tests/p167/run-p168-tests.cjs
+          node tests/p169/run-p169-tests.cjs
           node tests/p159/run-p159-tests.cjs
           node tests/p160/run-p160-166-tests.cjs
           node tests/p127/run-p120-comfyui-tests.cjs
@@ -967,6 +994,7 @@ jobs:
           /tmp/canvio-playwright/bin/python tests/p145/run-p153-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p167-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p168-browser.py
+          /tmp/canvio-playwright/bin/python tests/p145/run-p169-browser.py
           /tmp/canvio-playwright/bin/python tests/p160/run-p160-166-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p114n-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p150-browser.py
@@ -1706,6 +1734,61 @@ jobs:
           | P135.2 editable Pixel adjustment stack | Node PNG metadata/CRC/32-layer round-trip; hosted Chromium snapshot → reload → native restore and unchanged raster check; P143 standalone/embedded parity | Independent two-device/cloud sync, third-party PNG re-encoding, masks/local corrections, smart objects, clone/patch and liquify remain unverified/out of scope. |
           MATRIX
           fi
+
+      - name: Refresh delivery manifest after all QA documentation
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
+          const files=[];
+          function walk(dir){
+            for(const e of fs.readdirSync(dir,{withFileTypes:true})){
+              if(['.git','node_modules','.canvio','dist'].includes(e.name))continue;
+              const p=path.join(dir,e.name);
+              if(e.isDirectory())walk(p);
+              else if(p!=='CANVIO_MANIFEST.json'){
+                const b=fs.readFileSync(p);
+                files.push({path:p.split(path.sep).join('/'),bytes:b.length,sha256:crypto.createHash('sha256').update(b).digest('hex')});
+              }
+            }
+          }
+          walk('.');files.sort((a,b)=>a.path.localeCompare(b.path));
+          const index=files.find(x=>x.path==='index.html');
+          if(!index)throw new Error('Canonical index.html missing from delivery tree');
+          const manifest={format:'CANVIO_DELIVERY_MANIFEST',schemaVersion:2,candidate:'23.3.111-github-runtime-ci',generatedAt:new Date().toISOString(),hashAlgorithm:'SHA-256',indexSha256:index.sha256,indexBytes:index.bytes,fileCount:files.length,releaseCertified:false,releaseStatus:'BLOCKED_PENDING_REAL_WORLD_ACCEPTANCE',p70ManualGates:{total:14,pending:14,passed:0},files};
+          fs.writeFileSync('CANVIO_MANIFEST.json',JSON.stringify(manifest,null,2)+String.fromCharCode(10));
+          console.log('Final manifest refreshed after all documentation:',files.length,'files; index SHA-256:',index.sha256);
+          NODE
+
+      - name: Commit generated canonical candidate to PR branch
+        if: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository }}
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          PR_HEAD_REF: ${{ github.event.pull_request.head.ref }}
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git reset --soft "$PR_HEAD_SHA"
+          if git diff --cached --quiet; then
+            echo "Canonical candidate already matches the PR branch."
+          else
+            git commit -m "build: embed verified runtime modules into canonical index"
+            git push origin "HEAD:$PR_HEAD_REF"
+            echo "Committed canonical index and complete candidate tree to $PR_HEAD_REF at $(git rev-parse HEAD)"
+          fi
+          curl --fail-with-body --silent --show-error \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            -X POST \
+            "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/workflows/422482556/dispatches" \
+            -d "$(printf '{"ref":"%s"}' "$PR_HEAD_REF")"
+          echo "Triggered final-head verification on $PR_HEAD_REF"
 
       - name: Package full source handoff and runtime evidence
         shell: bash

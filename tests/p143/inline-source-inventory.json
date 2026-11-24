@@ -1,17 +1,17 @@
 {
   "format": "CANVIO_P143_INLINE_SOURCE_INVENTORY",
   "version": 1,
-  "generatedAt": "2026-11-24T12:05:52.617Z",
+  "generatedAt": "2026-11-24T15:41:38.614Z",
   "source": "restored canonical index.html after hosted workflow integration steps",
   "purpose": "Complete script-tag inventory in browser execution order; known global reference detection is heuristic, not a semantic dependency DAG.",
-  "htmlBytes": 6024322,
-  "scriptTagCount": 183,
-  "inlineScriptCount": 183,
+  "htmlBytes": 6033541,
+  "scriptTagCount": 184,
+  "inlineScriptCount": 184,
   "externalScriptCount": 0,
   "moduleScriptCount": 0,
   "asyncScriptCount": 0,
   "deferScriptCount": 0,
-  "uniqueScriptIds": 180,
+  "uniqueScriptIds": 181,
   "duplicateScriptIds": [],
   "modules": [
     {
@@ -82,8 +82,8 @@
       "async": false,
       "defer": false,
       "noModule": false,
-      "bytes": 397474,
-      "sha256": "3f9b382da2cf58cd959197d23827efdde17a0797f240d5bfa6fd19e098b04589",
+      "bytes": 397475,
+      "sha256": "706e0b5f3273f8c85db1048d71add2326fc921d68d28a3c32ad7a438deb0b30a",
       "exportedGlobals": [
         "CV",
         "CV190PosterSamples",
@@ -15204,17 +15204,21 @@
       "async": false,
       "defer": false,
       "noModule": false,
-      "bytes": 66809,
-      "sha256": "2bb645895378d9f9deab38bfa2e00f741c247a570a0468288ccd4b693672ae31",
+      "bytes": 66802,
+      "sha256": "b76c7d9927c05bf91d44749026c18e5cf7e53fdcda9ff7846743cf9951f4f57d",
       "exportedGlobals": [
-        "CVHomeSkyP150"
+        "CVHomeSkyP150",
+        "__cv150HomeScopeObserver"
       ],
       "globalDeclarations": [],
       "globalPropertyReads": [
+        "__cv150HomeScopeObserver",
         "addEventListener",
         "CVHomeSkyP150",
         "CVWS",
-        "matchMedia"
+        "getComputedStyle",
+        "matchMedia",
+        "requestAnimationFrame"
       ],
       "knownGlobalReads": [
         "CVWS"
@@ -15222,11 +15226,18 @@
       "globalReferenceEvidence": {
         "propertyReads": [
           {
+            "name": "__cv150HomeScopeObserver",
+            "count": 1,
+            "lines": [
+              32
+            ]
+          },
+          {
             "name": "addEventListener",
             "count": 2,
             "lines": [
-              339,
-              340
+              367,
+              368
             ]
           },
           {
@@ -15240,16 +15251,30 @@
             "name": "CVWS",
             "count": 3,
             "lines": [
-              306,
-              312,
-              380
+              334,
+              340,
+              408
+            ]
+          },
+          {
+            "name": "getComputedStyle",
+            "count": 1,
+            "lines": [
+              18
             ]
           },
           {
             "name": "matchMedia",
             "count": 1,
             "lines": [
-              376
+              404
+            ]
+          },
+          {
+            "name": "requestAnimationFrame",
+            "count": 1,
+            "lines": [
+              37
             ]
           }
         ],
@@ -15258,16 +15283,21 @@
             "name": "CVWS",
             "count": 6,
             "lines": [
-              306,
-              312,
-              380
+              334,
+              340,
+              408
             ]
           }
         ],
         "writes": [
           {
+            "name": "__cv150HomeScopeObserver",
+            "line": 40,
+            "kind": "window.property"
+          },
+          {
             "name": "CVHomeSkyP150",
-            "line": 405,
+            "line": 433,
             "kind": "window.property"
           }
         ],
@@ -18656,6 +18686,58 @@
           {
             "name": "CVHomeCreativeFlowP146",
             "line": 120,
+            "kind": "window.property"
+          }
+        ],
+        "scannerLimitations": [
+          "Template literal bodies and interpolation expressions are skipped as one lexical region.",
+          "Destructured globals, alias flow, computed property names, eval and dynamically assembled identifiers are not resolved.",
+          "Top-level bindings are detected only for simple var/let/const/function/class declarations.",
+          "This scanner is lexical evidence, not a JavaScript AST or proof of runtime data flow."
+        ]
+      }
+    },
+    {
+      "order": 183,
+      "id": "canvio-lot169c",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 9186,
+      "sha256": "859363235c44dfb9a2827d04cd6f25e5accbc2f4ccf18994c237b51025fd7b14",
+      "exportedGlobals": [
+        "CVCharacterStudioP169"
+      ],
+      "globalDeclarations": [],
+      "globalPropertyReads": [
+        "CVCharacterContinuityP163",
+        "CVCharacterStudioP169"
+      ],
+      "knownGlobalReads": [],
+      "globalReferenceEvidence": {
+        "propertyReads": [
+          {
+            "name": "CVCharacterContinuityP163",
+            "count": 1,
+            "lines": [
+              30
+            ]
+          },
+          {
+            "name": "CVCharacterStudioP169",
+            "count": 1,
+            "lines": [
+              5
+            ]
+          }
+        ],
+        "knownReads": [],
+        "writes": [
+          {
+            "name": "CVCharacterStudioP169",
+            "line": 51,
             "kind": "window.property"
           }
         ],

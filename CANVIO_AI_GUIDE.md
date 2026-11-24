@@ -4211,3 +4211,59 @@ P160–P166 module APIs currently report versions P160.2.0, P161.1.0, P162.2.0, 
 - Module mới: `canvio-p167-blocking.js` (CVBlockingP167), `canvio-p168-motion.js` (CVMotionTemplatesP168); lot `canvio-lot167b`, `canvio-lot168m`; dock `canvio-p159u-dock.js` mảng `TABS` (6 tab). Mọi module Video Studio mới phải thêm vào `TABS`, không chèn thẻ riêng.
 - Tích hợp đã dùng: ảnh → `CVBoardP153.addDataUrl` hoặc `CV.assets.addBlob` + `CVCreativeCore.linkAsset`; shot → `CVScenePackP155.assignToStoryboard({title,action,prompt,shotSeconds,roles})`; AI → `CVOrchestratorP128.register(kind,'local',fn)`/`run({kind,tiers:['local'],cache:false,prompt})`; dữ liệu theo dự án → `CVCreativeCore.active.documents.<key>` rồi `capture()`.
 - Cạm bẫy: `CV.assets.addBlob` không trả id (lấy `CV.assets.list()[0]`); mount của module chạy trước khi người dùng tạo dự án nên đừng ghi vào Core khi `CVCreativeCore.active` chưa có; `.card` trong `#page-assets` có `data-tilt`; smooth-scroll làm Playwright lệch tọa độ (chèn `scroll-behavior:auto`); các test Video Studio phải mở tab dock hoặc bỏ `display:none` của `#cv159u-panels>.card`; kiểm tra số tab dùng `>=`.
+
+
+## P150.11 — Home-only export button skin (2026-11-24)
+- Root cause from failed hosted browser runs #769/#770: a late P150 CSS rule selected `header.top #ws-export` for sky/fashion/tech without requiring the Home workspace to be active. This overrode the original pink export button in design/site/media/projects/AI workspaces.
+- Fix: removed only the unscoped export-button background and descendant-color overrides in `canvio-p150-home-sky.js`; retained Home-scoped theme rules and original workspace button styling. Module version is now 150.11.0.
+- CI now replaces the canonical `canvio-lot150h` inline lot from the standalone source before browser acceptance, preventing source/embedded drift.
+- Required verification: `tests/p145/run-p150-browser.py` on desktop and mobile; its five non-Home workspace assertions must confirm original pink `rgb(255, 61, 154)`. Also run source/lot parity, full hosted Chromium suite, and zero-pageerror checks. Do not call this fixed until the new PR workflow passes.
+- Preserve all P150 prior history and keep the fourteen P70 real-world acceptance gates OPEN.
+
+
+## P169 — Character Studio (candidate · 2026-11-24)
+
+- Standalone source: `canvio-p169-character-studio.js`; canonical lot: `canvio-lot169c`; API: `window.CVCharacterStudioP169`, version 169.0.0. The module mounts inside the existing P163 character profile card and writes through `CVCharacterContinuityP163.upsert` into the current Shared Core profile.
+- Eight bounded visual controls: face shape, skin tone, hairstyle, hair color, identifying mark (including left/right scar, freckles and mole), outfit type/color and accessory. A vector SVG preview updates locally as controls change. Saving appends `visual:*` features/checklist entries to the selected P163 profile; reset only resets the current form until saved.
+- This is an editable 2D vector character reference, not a 3D mesh/sculptor, face recognition, identity inference, image generation model or rigged character. Images/references remain user-selected through P163/Asset Library.
+- Hosted candidate integration synchronizes P159.1 dock and P167/P168 source lots as well as P169, checks Node syntax, runs the P169 Node suite, and adds same-origin Chromium verification for controls, SVG preview, P163 profile round-trip, reset isolation and mobile overflow. P143 now pairs P150 and P169 sources with their canonical inline lots.
+- Remaining manual work: visual review with real character briefs/reference photos, accessibility review of form labels/keyboard operation, and verification in a real multi-scene project. No cloud/multi-device sync claim is added.
+
+## P150.12 — Home-only toolbar scope correction (candidate · 2026-11-24)
+
+- P150.12 replaces the brittle `:has(#page-home.active)` toolbar gate with an explicit `data-cv150-home-active=true` state computed from actual visibility of the Home page. A MutationObserver tracks route/class/style/visibility changes and removes the Home-only state when the Home page is hidden.
+- The sky/fashion/tech header skins now apply only while Home is actually visible; the original pink Export button styling is preserved in Design, Site, Media, Project and AI workspaces.
+- Browser regression checks assert the state flag is off and the original pink background remains in all five non-Home workspaces. Hosted run #777 did not pass this assertion; P150.12 is awaiting the corrected rerun and must not be marked accepted until the new hosted browser suite is green.
+
+## P169 browser integration test refinement (2026-11-24)
+
+- The P169 Chromium acceptance opens the existing Video Studio dock's `Nhân vật` tab before checking the Character Studio panel. This follows the intended collapsed dock UX and prevents a hidden-but-mounted panel from being mistaken for a mount failure.
+
+
+## P150.13 — Root skin isolation outside Home (candidate · 2026-11-24)
+
+- Run #782 confirmed the Home-only flag was off in all five workspaces, but the original Export button was still recolored 5/5. P167 passed 30/30 Node and its Chromium checks; P168 passed 17/17 Node and browser checks; P169 passed 5/5 Node and 7/7 Chromium checks; P160–P166 passed 28/28 Chromium.
+- Root cause: even when Home was hidden, the selected `data-home-skin=tech/fashion/sky` value remained on `<html>`. Legacy page-scoped selectors can still match toolbar descendants that are retained under the hidden Home subtree.
+- P150.13 changes `syncHomeScope()`: when Home is actually visible, `data-home-skin` is restored from the user's saved selection; when Home is not visible, the root skin is set to `classic` and the Home-only marker is removed. This prevents all Home-skin CSS tokens/selectors from leaking into other workspaces, instead of resetting only one button.
+- Browser regression now asserts both root skin fallback to `classic` and original pink Export background across Design, Site, Media, Project and AI. Awaiting a new full hosted browser run.
+
+
+## P150.13 browser fixture isolation (2026-11-24)
+
+- The non-Home pink Export assertion runs with the independent P47 Holographic skin explicitly set to `plain`, exposing the base CANVIO/Graffiti Export color (`#ff3d9a`) rather than the Holo gradient. This isolates P150 Home-skin bleed from the separate P47 theme owner.
+- A second browser scenario starts in Holo mode, captures the computed Export appearance after entering Design, selects P150's tech Home skin while Home is hidden, and verifies that the same Holo button appearance is preserved across Design, Site, Media, Project and AI.
+- Run #783 confirmed P150.13 correctly sets Home root skin to `classic` on non-Home routes, but the preceding test fixture retained P47's default Holo skin, which independently styles `#ws-export`. The expanded tests now cover both theme owners without conflating them; pending a fresh hosted run.
+
+
+## P150.13 test fixture correction — isolate existing global themes (2026-11-24)
+
+- Run #783 passed the added Home root-state assertions in all five workspaces, but the Export background remained non-pink. P150 must not take ownership of the independent P47 Holographic skin or P229 workspace theme.
+- The browser fixture now waits for P47/P229 APIs, explicitly calls `CVLot47.set('plain')` and `CV229.setTheme('graffiti')`, and verifies the original pink Export baseline before switching routes. Each workspace then compares the computed background to this established baseline and logs root skin, P150 marker, P47 skin, active P229 theme, background/image/color/border if a mismatch occurs.
+- The separate Holographic fixture continues to enable P47 Holo intentionally and verifies its original Export appearance remains unchanged after P150 switches Home skins. This distinguishes a genuine P150 regression from a fixture that left the global Holo theme active.
+
+
+## P150.13 browser baseline correction after run #785 (2026-11-24)
+
+- Run #785 showed the Holo-isolation suite passed all five workspaces. In the base-pink suite, P150_EXPORT_DIAGNOSTIC did not print for any of the five workspaces, which means the computed background in each non-Home workspace was already the expected pink. The six failures were the baseline assertion plus five comparisons against that baseline.
+- Cause: the fixture captured the baseline while the Home page was still visible with the tech skin active; the tech toolbar intentionally uses its own accent color. The test then compared non-Home pink against that Home-tech value.
+- Correction: the fixture now opens Design first, waits for P150's Home observer to settle, and captures the original pink computed style there. It then compares the five workspaces against that non-Home baseline. No production CSS override is added for this test-fixture issue.
