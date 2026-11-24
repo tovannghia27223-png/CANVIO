@@ -681,3 +681,9 @@ Mainline workflow #551 passed 53/53; Pages #275 passed build/deploy. P143 parity
 
 - Source changes and expanded browser assertions are committed on the feature branch. Hosted Node/Chromium, P143 source parity, canonical `index.html` synchronization and full regression are pending; do not report P167.1 accepted until the exact branch SHA completes all required checks.
 \n\n## P167.1 + P168.1 — regression fix and candidate QA (2026-11-25)\n\n- Prior hosted run #792 failed only the P167.1 immediate object-name save assertion. The other P167.1 browser checks in that suite passed, and the browser reported zero page errors. The name handler now saves on `input`; the reload persistence assertion was added.\n- P168.1 extends the existing P168 browser and Node suites for direct Poster SVG / Designer snapshot-or-Canvas source loading, no intermediate asset creation, and a composited text overlay. Five motion modes and three styles/positions are bounded by the module API.\n- Final status remains candidate until the latest exact branch head completes the hosted Chromium, Node, P143 parity, full audit, and generated-index steps. Do not treat a cancelled/older run as acceptance.\n
+
+## P161.2 / P74.1 — GLB camera-pose replay QA (2026-11-25 · candidate)
+
+- P74.1 adds a bounded `applyCameraPose()` and readback `getCameraPose()` to the existing Three.js r187 viewer. Position is interpreted relative to the normalized model origin; yaw/pitch define the orbit direction and FOV is applied to the existing perspective camera.
+- P161 now awaits the native P74 GLB load before applying the stored pose. New X/Y/Z fields are persisted in the existing Shared Core `spatialWorkspace` document.
+- Hosted runtime test now checks direct P74 yaw/pitch/FOV, then imports a self-contained GLB fixture into Asset Library, saves a P161 preset with nonzero camera position and verifies that applying P161 updates the same P74 camera. Exact-head hosted result pending.
