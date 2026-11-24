@@ -714,3 +714,10 @@ Mainline workflow #551 passed 53/53; Pages #275 passed build/deploy. P143 parity
 
 - Run #827 failed in the new Node test before the Chromium stage. The fixture deleted `window.CVWeb` and started the wait before initializing the mock P131 sanitizer and `CV.engines.web.save`; the bounded helper correctly timed out because the full Website Engine contract had not been provided.
 - Reordered the fixture: initialize P131/CVWeb/save mocks first, then remove only `CVWeb`, restore it after 120 ms and await readiness. Product code is unchanged by this test-only correction. New exact-head hosted workflow is pending.
+
+
+## P153.1 — Reload persistence browser wait correction (2026-11-25)
+
+- The earlier full hosted Chromium run #830 failed before reaching the P160–P166 suite, in `tests/p145/run-p153-browser.py` after page reload. The browser log showed three persisted Asset Library cards already present in `#cv153-grid`, but the test used Playwright's default visible-state wait and timed out because the cards' container was not yet in the visible state after `CV.go('assets')`.
+- Replaced that wait with an exact DOM-count wait for three cards, matching the following persistence assertion. The test still checks the three records after reload, image blob data in IndexedDB and subsequent user interactions; no product visibility logic or source behavior was weakened.
+- This failure is unrelated to P166.2 and occurred before its browser suite. The combined PR #102 requires a fresh exact-head hosted run with this test correction.
