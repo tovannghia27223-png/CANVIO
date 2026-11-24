@@ -107,6 +107,24 @@ jobs:
             echo "Using committed CANVIO candidate index."
           fi
 
+      - name: Integrate P150.11 Home-only export button skin
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs=require('node:fs');
+          const file='index.html', source=fs.readFileSync('canvio-p150-home-sky.js','utf8').trim();
+          if(!source.includes("version: '150.11.0'"))throw new Error('P150.11 source version missing');
+          const id='canvio-lot150h', open='<script id="'+id+'">';
+          let html=fs.readFileSync(file,'utf8');
+          const re=/(<script\\b(?=[^>]*\\bid=["']canvio-lot150h["'])[^>]*>)[\\s\\S]*?(<\\/script\\s*>)/i;
+          if(!re.test(html))throw new Error('P150 embedded lot missing');
+          html=html.replace(re,open+'\\n'+source+'\\n</script>');
+          if((html.match(/id="canvio-lot150h"/g)||[]).length!==1)throw new Error('P150 duplicate/missing lot');
+          fs.writeFileSync(file,html,'utf8');
+          console.log('P150.11 Home-only export skin synced into canonical index.html');
+          NODE
+
       - name: Integrate P125.2 scroll storyboard editor
         shell: bash
         run: |
