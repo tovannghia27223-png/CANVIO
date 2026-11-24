@@ -599,12 +599,12 @@ Mainline workflow #551 passed 53/53; Pages #275 passed build/deploy. P143 parity
 
 ### Known limitations (do not promote to PASS/complete)
 - Latest candidate workflow #727 (head `b8fdc528…`) was triggered after correcting P143 `totalModules` to 45; final result must be inspected before marking hosted acceptance.
-- P160 ZIP contains metadata and README, not the image source binaries; import currently supports JSON metadata only. Asset IDs resolve only where source assets already exist in the receiving CANVIO project.
+- P160 ZIP contains metadata and README, not image source binaries. JSON and ZIP metadata import are supported with ZIP CRC/size/method validation; Asset IDs resolve only where source assets already exist in the receiving CANVIO project.
 - P161 stores GLB camera preset metadata and opens the canonical P74/P81 viewer; exact replay of stored GLB camera pose is not yet implemented/verified. Panorama camera controls are local canvas rendering.
-- P162 has reorderable reference cards and role metadata, not a full multi-image raster compositor or Unified Layers replacement.
+- P162 has reorderable reference cards, role/note/scale controls and Asset Library bindings, not a full multi-image raster compositor or Unified Layers replacement.
 - P163 scoring is heuristic text/palette comparison, not AI vision or facial recognition.
 - P164 PDF is browser print-to-PDF, not a separate PDF rendering engine.
-- P165 only uses the P128 local tier when explicitly selected; no paid/cloud fallback. Generator step is handoff-only, no media generation claim.
+- P165 only uses P128 local tier when explicitly selected; no paid/cloud fallback. The ComfyUI button pre-fills the existing P120/P126 local panel, but does not run it; the user must load workflow, connect localhost and press Run. Generator step remains handoff-only.
 - P166 creates a static offline landing package; it does not yet import a GrapesJS component tree, provide a form backend, host the site or implement design-to-MP4/GIF.
 - Real profile migration, user media, real GLB, real configured local AI model, full Project Vault round-trip, accessibility/device acceptance and P130 real Supabase/two-device synchronization remain manual/external gates. P70 remains fail-closed with fourteen open gates.
 
