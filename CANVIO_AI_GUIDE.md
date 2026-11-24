@@ -4303,3 +4303,12 @@ P160–P166 module APIs currently report versions P160.2.0, P161.1.0, P162.2.0, 
 - P167.1 delivers the bounded Canvas2D blocking inspector, camera controls, multi-camera preview and PNG contact sheet; it is not a full WebGL scene graph or MP4 renderer.
 - P168.1 delivers direct local Poster/Designer handoff, 2D image motion/text overlays and GIF/WebM export through existing Asset Library/Storyboard owners; it is not a multi-track video editor or AI video inference.
 - Do not infer P70 manual acceptance from this hosted workflow. The 14 real-world gates remain separate and require evidence on actual devices/projects.
+
+
+## P132.1 — Local PDF page import for Pixel Atelier (candidate · 2026-11-25)
+
+- Standalone source: `canvio-p132-pdf-import.js`; canonical inline lot: `canvio-lot132pdf`; API: `window.CVPdfImportP132`, version `132.1.0`.
+- PDF.js `pdfjs-dist@6.5.438` is provisioned locally under `assets/vendor/pdfjs` with Apache-2.0 license, same-origin worker/CMaps/standard fonts and SHA-256 manifest. It is loaded only after user selects a PDF; no PDF upload or runtime CDN request is used.
+- One selected page is rasterized to PNG and handed to the existing Pixel Atelier `#pxFile` / `CVNativeEngines.pixel` owner. No second editor, project store or timeline is introduced.
+- Bounds: 30 MiB, 500 pages, 4096 px per side, 16 MP per page; PDF JavaScript evaluation and XFA disabled. Raster-only; editable text/vector content is not retained. Password files, batch import and real customer-document review remain open.
+- Acceptance: P132 Node/Chromium suites, P143 parity and exact-head hosted runtime. Old-base run #813 passed 65/65; current-mainline branch still requires its own exact-head PASS before merge.
