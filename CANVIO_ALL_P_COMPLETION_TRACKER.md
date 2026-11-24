@@ -380,3 +380,10 @@ PR #71 was closed as superseded by clean-main PR #73; the latter carries the cor
 - All P159–P166 standalone modules, tests, source-map registration and hosted workflow wiring are present on `main` as candidate implementation.
 - Latest inspected workflow #767: P160–P166 Node contract suite passed; Chromium 27/28 passed with zero page errors. Sole failure: P164 prompt assertion case mismatch.
 - Fix committed in this candidate: P164 prompt heading normalized to `Shot list`; browser assertion now case-insensitive. Status remains **Integrated candidate / hosted rerun pending**, not accepted. Manual real-asset, GLB, local-model, project round-trip, accessibility/device and P130 sync gates remain open.
+
+
+## P166.2 — Website Engine handoff (candidate · 2026-11-25)
+
+| P | Status | Implemented scope | Remaining acceptance |
+|---|---|---|---|
+| P166.2 | Candidate on `feat/p166-website-engine-handoff` | P166.2.0 imports sanitized body via P131, inserts a scoped root into the existing GrapesJS `CVWeb`, applies base/mobile responsive CSS through `CVWeb.Css.setRule`, and saves via `CV.engines.web.save`. Added Node and Chromium acceptance for sanitizer, component insertion, CSS media rule, Shared Core metadata and save. | Exact-head hosted CI/P143/full regressions; inspect a real user Website project, visual breakpoints, keyboard/screen-reader/zoom and physical mobile. Backend forms, CRM, hosting and live publishing are intentionally not included. |
