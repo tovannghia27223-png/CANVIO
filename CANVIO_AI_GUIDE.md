@@ -4160,3 +4160,39 @@ Bài học P150: KHÔNG đặt `display:flex` lên `#page-home` mà không kèm 
 - P159 also connects `cv153:usecolor` to Brand Kit/Shared Core and reconciles board/card references if the canonical Asset Library removes a referenced source asset. Removing a board tile alone does not delete a shared asset.
 - CI adds `tests/p159/run-p159-tests.cjs`, checks the three inline lots, and limits the Asset Library `addBlob` convenience cap to 200 records to match other upload flows. Hosted result is pending until run #689 completes; do not mark P159 PASS before all gates pass.
 - Real user panorama footage, migration against an existing profile, physical-device memory limits, and actual P130 Supabase/two-device sync remain separate manual acceptance. Do not claim cloud sync or model inference from mocked/local tests.
+
+## P159–P166 — current source map and integration contracts (2026-11-24)
+
+### Module owners
+| P | Standalone source | Global API | Shared Core document | Destination / bridge |
+|---|---|---|---|---|
+| P159 | `canvio-p159-integration.js` | `CVSceneIntegrationP159` | existing `inspirationBoard`, `scenePack` | P153/P155 → `CV.assets` / P128 / Video Studio Storyboard |
+| P160 | `canvio-p160-collections.js` | `CVInspirationCollectionsP160` | `inspirationCollections` | Asset Library → P128 local moodboard → `studio` |
+| P161 | `canvio-p161-spatial-workspace.js` | `CVSpatialWorkspaceP161` | `spatialWorkspace` | P154 panorama + P74/P81 GLB viewer → Storyboard |
+| P162 | `canvio-p162-reference-canvas.js` | `CVReferenceCanvasP162` | `referenceCanvas` | Asset Library → P128 local prompt → Image Studio / Designer |
+| P163 | `canvio-p163-character-continuity.js` | `CVCharacterContinuityP163` | `characterContinuity` | Asset Library → P128 local continuity prompt → native Storyboard shot |
+| P164 | `canvio-p164-shotlist.js` | `CVShotListP164` | No additional timeline; production metadata is stored on native Storyboard shot | canonical `canvio5:media_video_project_v1`, P128, CSV / print-to-PDF |
+| P165 | `canvio-p165-ai-workflow.js` | `CVAiWorkflowP165` | `aiWorkflows` | P128 `tiers:['local']`; optional configured local text model, otherwise deterministic handlers |
+| P166 | `canvio-p166-landing-studio.js` | `CVLandingStudioP166` | `websiteLanding` | Shared Core + Asset Library → responsive HTML/ZIP and Website Engine route |
+
+### Contracts and boundaries
+- P160–P166 embedded lots: `canvio-lot160c`, `canvio-lot161s`, `canvio-lot162r`, `canvio-lot163c`, `canvio-lot164s`, `canvio-lot165w`, `canvio-lot166l`. Registered in `tests/p143/source-module-map.json`; update `totalModules` whenever changing the module array.
+- Asset references must point to `CV.assets.list()` records and use `CVCreativeCore.linkAsset`; the P160/P162/P163/P161 metadata documents contain IDs and descriptive fields, not a second image binary store. P153/P154 existing migration remains fail-safe; retain legacy bytes until verified canonical asset IDs exist.
+- P161's panorama controls support drag, WASD/arrow keys and wheel zoom. P161 GLB opens through P74/P81 and reuses its OrbitControls; do not describe saved GLB pose as applied until a camera-pose adapter is verified.
+- P162 is a reference-role board with reorderable cards; it is not yet a pixel compositing editor or a replacement for `CVUnifiedLayers`. `updateLayer` supports bounded x/y/scale metadata, but current UI does not claim full layer transform authoring.
+- P163 consistency score is explainable text-feature/palette comparison, not face recognition or image-embedding similarity. It can place `characterProfileId` and linked reference IDs onto an existing Storyboard shot.
+- P164 uses native Storyboard shot objects. `productionMeta` holds angle, movement, transition, duration and notes. CSV is file export; PDF is browser Print dialog (user chooses Save as PDF).
+- P165 only routes to P128 local tier. The optional local-model checkbox is explicit; if no local adapter is configured, a deterministic local role template is used. `generator-handoff` never performs media inference. No Gemini/paid fallback is permitted by this module.
+- P166 produces static offline HTML/ZIP with responsive CSS and reduced-motion handling. It saves project metadata and navigates to Website Engine, but does not yet rehydrate the generated HTML into a GrapesJS component tree; CTA form/backend/hosting are out of scope.
+- P160 community exchange is file-based, not hosted. Current ZIP export is metadata + README; JSON import restores metadata only and lists unavailable Asset IDs. It does not package original asset binaries.
+
+### Test owners
+- `tests/p159/run-p159-tests.cjs` and `tests/p153/run-p153-tests.cjs` protect the P159/P153–P157 data path.
+- `tests/p160/run-p160-166-tests.cjs` covers the P160–P166 Node contract and cross-module Shared Core/Asset Library checks.
+- `tests/p160/run-p160-166-browser.py` covers actual app route mounting, asset→collection/reference/profile handoff, P128 local paths, Storyboard and mobile overflow.
+- Hosted integration in `.github/workflows/canvio-candidate-runtime.yml` performs source embedding, syntax, P143 parity, boot-order and browser checks. A workflow failure outside these step names does not automatically mean each P module failed; report the failing step and its scope.
+- Candidate P160–P166 has not been declared accepted until the latest hosted run finishes successfully. Real GLB, user panorama, local model, project import/export, accessibility, device/browser and real Supabase/two-device checks remain manual.
+
+### Version update note — 2026-11-24
+P160–P166 module APIs currently report versions P160.0.0, P161.0.0, P162.1.0, P163.1.0, P164.1.0, P165.1.0 and P166.0.0. P161/P162/P163/P164/P165 versions were incremented for interactive/browser integration. Preserve historical Guide sections; append new notes rather than rewriting historical release evidence.
+
