@@ -66,6 +66,7 @@ with sync_playwright() as p:
     # reload keeps scene
     pg.reload(wait_until='load'); pg.wait_for_function("!!window.CVBlockingP167&&!!window.CVCreativeCore",timeout=90000); pg.wait_for_timeout(1200)
     checks['scene_survives_reload']=pg.evaluate("(()=>{const s=CVBlockingP167.readScene();return !!s&&s.objects.some(o=>o.id==='b1')})()")
+    checks['object_name_survives_reload']=pg.evaluate("CVBlockingP167.readScene().objects.find(o=>o.id==='b1').name==='Nhà chỉnh sửa'")
     pg.evaluate("CV.go('videoStudio')"); pg.wait_for_selector('#cv159u-dock',timeout=15000); pg.set_viewport_size({'width':390,'height':800}); pg.wait_for_timeout(300)
     checks['mobile_no_overflow']=pg.evaluate("document.documentElement.scrollWidth<=window.innerWidth+2")
     pg.set_viewport_size({'width':1280,'height':900}); pg.click('#cv159u-dock [data-id=cv167-card]'); pg.wait_for_timeout(500); pg.screenshot(path='/tmp/p167.png',clip={'x':0,'y':150,'width':1280,'height':750})
