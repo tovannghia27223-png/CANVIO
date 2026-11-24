@@ -681,3 +681,9 @@ Mainline workflow #551 passed 53/53; Pages #275 passed build/deploy. P143 parity
 
 - Source changes and expanded browser assertions are committed on the feature branch. Hosted Node/Chromium, P143 source parity, canonical `index.html` synchronization and full regression are pending; do not report P167.1 accepted until the exact branch SHA completes all required checks.
 \n\n## P167.1 + P168.1 — regression fix and candidate QA (2026-11-25)\n\n- Prior hosted run #792 failed only the P167.1 immediate object-name save assertion. The other P167.1 browser checks in that suite passed, and the browser reported zero page errors. The name handler now saves on `input`; the reload persistence assertion was added.\n- P168.1 extends the existing P168 browser and Node suites for direct Poster SVG / Designer snapshot-or-Canvas source loading, no intermediate asset creation, and a composited text overlay. Five motion modes and three styles/positions are bounded by the module API.\n- Final status remains candidate until the latest exact branch head completes the hosted Chromium, Node, P143 parity, full audit, and generated-index steps. Do not treat a cancelled/older run as acceptance.\n
+
+## P132.1 — PDF page import test correction (2026-11-25 · candidate)
+
+- Initial Chromium evidence: PDF.js loaded from same-origin assets; page 2 rendered into Pixel Atelier's native canvas at 300×150 with the expected red sample pixel; no page errors or external PDF runtime requests.
+- The only failing assertion inspected `#pxFile.files` after Pixel Atelier's owner cleared the input. The browser fixture now records `File.name/type/size` using a one-shot capture-phase `change` listener before owner cleanup, preserving the real product cleanup behavior.
+- #810 passed its exact prior candidate SHA 65/65. The branch was rebuilt on current main because the previous PR base was stale; the new branch's exact-head hosted workflow is the acceptance record still required.
