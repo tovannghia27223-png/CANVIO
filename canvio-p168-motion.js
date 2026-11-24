@@ -131,13 +131,13 @@ function mountMotion() {
     + '<div style="margin-top:10px"><canvas id="cv168-view" width="800" height="500" aria-label="Xem thử chuyển động" style="width:100%;max-width:640px;border-radius:10px;background:#0f172a;display:block"></canvas></div>'
     + '<div class="row" style="gap:6px;flex-wrap:wrap;margin-top:8px"><button class="btn btn-soft sm" id="cv168-play" type="button">▶ Xem thử</button><button class="btn btn-primary sm" id="cv168-gif" type="button">Xuất GIF → Tài nguyên</button><button class="btn btn-soft sm" id="cv168-webm" type="button">Xuất WebM → Tài nguyên</button><button class="btn btn-ghost sm" id="cv168-story" type="button">Gán vào Storyboard</button></div><div id="cv168-msg" class="tiny" role="status" aria-live="polite" style="min-height:16px;margin-top:6px"></div>';
   var panels = page.querySelector('#cv159u-panels'), head = page.querySelector('.head'); if (panels) panels.appendChild(card); else if (head && head.parentNode) head.parentNode.insertBefore(card, head.nextSibling); else page.insertBefore(card, page.firstChild);
-  var $ = function (s) { return card.querySelector(s); }, cv = $('#cv168-view'), cx = cv.getContext('2d'), msg = $('#cv168-msg'), img = null, imgId = '', playing = false, t0 = 0, raf = 0;
+  var $ = function (s) { return card.querySelector(s); }, cv = $('#cv168-view'), cx = cv.getContext('2d'), msg = $('#cv168-msg'), img = null, imgId = '', directSource = false, playing = false, t0 = 0, raf = 0;
   function say(t, bad) { msg.textContent = t; msg.style.color = bad ? '#b4233b' : ''; }
   function overlay() { return normalizeOverlay({ text: $('#cv168-text').value, effect: $('#cv168-text-effect').value, position: $('#cv168-text-position').value, style: $('#cv168-text-style').value, color: $('#cv168-text-color').value, size: $('#cv168-text-size').value }); }
   function setDirectImage(src, label) {
     return new Promise(function (resolve, reject) {
       if (typeof src !== 'string' || !(/^(?:data:image\/(?:png|jpeg|webp|gif|svg\+xml);|blob:)/i.test(src))) { reject(new Error('Nguồn thiết kế không phải ảnh cục bộ được hỗ trợ.')); return; }
-      var im = new Image(); im.onload = function () { img = im; imgId = 'direct:' + label; still(0); say('Đã lấy trực tiếp thiết kế ' + label + '.'); resolve(true); };
+      var im = new Image(); im.onload = function () { img = im; imgId = 'direct:' + label; directSource = true; fillAssets(); still(0); say('Đã lấy trực tiếp thiết kế ' + label + '.'); resolve(true); };
       im.onerror = function () { reject(new Error('Không giải mã được bản thiết kế ' + label + '.')); }; im.src = src;
     });
   }
@@ -149,13 +149,24 @@ function mountMotion() {
 
   function dims() { var s = SIZES[$('#cv168-size').value] || SIZES['800x500']; return s; }
   function sec() { return Math.max(1, Math.min(6, Number($('#cv168-sec').value) || 3)); }
-  function fillAssets() { var l = assets(), cur = $('#cv168-asset').value; $('#cv168-asset').innerHTML = l.length ? l.map(function (a) { return '<option value="' + esc(a.id) + '">' + esc(a.name) + '</option>'; }).join('') : '<option value="">(Chưa có ảnh trong Tài nguyên — thêm ở trang Tài nguyên hoặc Bảng cảm hứng)</option>'; if (cur && l.some(function (a) { return a.id === cur; })) $('#cv168-asset').value = cur; }
-  function load() { var id = $('#cv168-asset').value, a = assets().filter(function (x) { return x.id === id; })[0]; if (!a) { img = null; imgId = ''; still(); return Promise.resolve(); } if (id === imgId && img) return Promise.resolve(); return new Promise(function (ok) { var im = new Image(); im.onload = function () { img = im; imgId = id; still(); ok(); }; im.onerror = function () { img = null; say('Không đọc được ảnh này.', true); ok(); }; im.src = a.data; }); }
+  function fillAssets() {
+    var l = assets(), cur = $('#cv168-asset').value, valid = cur && l.some(function (a) { return a.id === cur; });
+    var html = '<option value="">Chọn ảnh từ Thư viện Tài nguyên…</option>' + l.map(function (a) { return '<option value="' + esc(a.id) + '">' + esc(a.name) + '</option>'; }).join('');
+    $('#cv168-asset').innerHTML = html;
+    $('#cv168-asset').value = directSource ? '' : (valid ? cur : (l[0] ? l[0].id : ''));
+  }
+  function load() {
+    if (directSource && img) return Promise.resolve();
+    var id = $('#cv168-asset').value, a = assets().filter(function (x) { return x.id === id; })[0];
+    if (!a) { img = null; imgId = ''; still(); return Promise.resolve(); }
+    if (id === imgId && img) return Promise.resolve();
+    return new Promise(function (ok) { var im = new Image(); im.onload = function () { img = im; imgId = id; directSource = false; still(); ok(); }; im.onerror = function () { img = null; say('Không đọc được ảnh này.', true); ok(); }; im.src = a.data; });
+  }
   function size() { var d = dims(); if (cv.width !== d[0] || cv.height !== d[1]) { cv.width = d[0]; cv.height = d[1]; } }
   function still(t) { size(); if (!img) { cx.fillStyle = '#0f172a'; cx.fillRect(0, 0, cv.width, cv.height); cx.fillStyle = '#94a3b8'; cx.font = '20px sans-serif'; cx.textAlign = 'center'; cx.fillText('Chọn ảnh để xem thử', cv.width / 2, cv.height / 2); return; } drawFrame(cx, img, cv.width, cv.height, transformAt($('#cv168-preset').value, t || 0), overlay(), t || 0); }
   function tick(now) { if (!playing) return; var t = (now - t0) / (sec() * 1000); if (t >= 1) { playing = false; still(1); $('#cv168-play').textContent = '▶ Xem thử'; return; } still(t); raf = requestAnimationFrame(tick); }
   $('#cv168-play').addEventListener('click', function () { if (playing) { playing = false; $('#cv168-play').textContent = '▶ Xem thử'; return; } load().then(function () { if (!img) { say('Chọn ảnh trước.', true); return; } playing = true; t0 = performance.now(); $('#cv168-play').textContent = '⏸ Dừng'; raf = requestAnimationFrame(tick); }); });
-  ['#cv168-asset', '#cv168-preset', '#cv168-size'].forEach(function (s) { $(s).addEventListener('change', function () { playing = false; $('#cv168-play').textContent = '▶ Xem thử'; img = s === '#cv168-asset' ? null : img; load().then(function () { still(0); }); }); });
+  ['#cv168-asset', '#cv168-preset', '#cv168-size'].forEach(function (s) { $(s).addEventListener('change', function () { playing = false; $('#cv168-play').textContent = '▶ Xem thử'; if (s === '#cv168-asset') { directSource = false; img = null; imgId = ''; } load().then(function () { still(0); }); }); });
   function frames() { size(); var n = frameCount(sec(), +$('#cv168-fps').value), W = cv.width, H = cv.height, c = document.createElement('canvas'); c.width = W; c.height = H; var x = c.getContext('2d', { willReadFrequently: true }), out = [], i; for (i = 0; i < n; i++) { var t = n > 1 ? i / (n - 1) : 0; drawFrame(x, img, W, H, transformAt($('#cv168-preset').value, t), overlay(), t); var d = x.getImageData(0, 0, W, H); out.push({ w: W, h: H, data: d.data }); } return out; }
   $('#cv168-gif').addEventListener('click', function () {
     load().then(function () {
