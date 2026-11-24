@@ -1394,3 +1394,10 @@ Việc cần người dùng: duyệt thứ tự; cho biết có muốn "kênh ch
 - No new store, external API, paid service, package or timeline was added. Output remains saved through the current Asset Library and existing Storyboard owner.
 - Added Node coverage for overlay normalization/rendering and design-source extraction; Chromium coverage verifies Poster SVG and Designer snapshot handoff without intermediate assets, overlay preview, plus the existing GIF/WebM/Storyboard/workflow/mobile checks.
 - Status: candidate pending exact-head hosted CI, P143 standalone/inline parity, generated canonical `index.html`, and post-merge mainline verification. This is 2D image motion, not a full multi-track video editor or AI video generation.
+
+
+## P161.2 — Đồng bộ camera preset GLB với viewer P74/P81 (candidate · 2026-11-25)
+
+- Đã nối `CVSpatialWorkspaceP161.apply()` → nạp GLB bằng viewer P74/P81 hiện hữu → gọi API mới `CANVIOThreeGLBViewerP74.applyCameraPose()` sau khi model load xong. Không tạo renderer/scene/OrbitControls thứ hai.
+- Bổ sung X/Y/Z camera position trong P161; preset lưu và áp đồng thời yaw/pitch/FOV/vị trí. P74 tính camera theo góc nhìn trên model đã chuẩn hóa, clamp giới hạn, trả `getCameraPose()` để kiểm chứng.
+- Hosted test mới dùng GLB fixture tự chứa để kiểm tra P74 pose API và P161 replay end-to-end, bao gồm vị trí khác 0. Chờ exact-head full workflow; GLB phức tạp, nhiều camera thật và đánh giá trực quan trên thiết bị vẫn cần kiểm tra thủ công.
