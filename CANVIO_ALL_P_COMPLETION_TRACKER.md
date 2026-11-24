@@ -357,3 +357,19 @@ PR #71 was closed as superseded by clean-main PR #73; the latter carries the cor
 
 
 | P159 | **Candidate đã triển khai** — P153/P155 dùng Shared Core, ảnh qua `CV.assets`, P156 qua P128 local handler, P156/P157 gán vào Storyboard hiện hữu; P143 pair 38 và Node test | Chờ hosted CI #689/successor, legacy profile migration và real-image/manual acceptance; không claim cloud sync. |
+
+## P159–P166 status snapshot — 2026-11-24
+
+| P | Status on main | Evidence / implemented scope | Remaining acceptance |
+|---|---|---|---|
+| P159 | Integrated candidate | Shared Core + Asset Library migration/integration, P128 prompt path and native Storyboard bridge; earlier P159 Node suite 13/13 PASS. | Latest full hosted run; legacy profile migration, real panorama and deletion/reference reconciliation. |
+| P160 | Integrated candidate | `CVInspirationCollectionsP160`, project collections/tags/filter, JSON import/export, metadata ZIP export, P128 Studio handoff. | Image binaries are not included in ZIP; no ZIP import; hosted Node/Chromium result pending. |
+| P161 | Integrated candidate | `CVSpatialWorkspaceP161`, panorama camera presets and interactive controls, Storyboard bridge, P74/P81 GLB handoff. | Exact GLB pose replay and real GLB/panorama/device testing. |
+| P162 | Integrated candidate | `CVReferenceCanvasP162`, role-based reference cards, reorder and P128 handoff to Image Studio/Designer. | Not a full pixel compositor/Unified Layers editor; hosted result pending. |
+| P163 | Integrated candidate | `CVCharacterContinuityP163`, checklist + palette heuristic, reference Asset IDs, local prompt and Storyboard link. | Real multi-scene review; algorithm is not AI vision/face matching; hosted result pending. |
+| P164 | Integrated candidate | `CVShotListP164`, production metadata on native Storyboard shots, transitions, CSV and Print-to-PDF. | Real project/timeline round-trip and PDF print review; hosted result pending. |
+| P165 | Integrated candidate | `CVAiWorkflowP165`, role-by-role logs, bounded evaluator/reviser cycles, opt-in local P128 model and deterministic fallback. | Validate actual configured local adapter/model and output quality; generator is handoff-only; hosted result pending. |
+| P166 | Integrated candidate | `CVLandingStudioP166`, responsive static landing HTML/ZIP and Shared Core/Asset Library context. | GrapesJS component rehydration, live backend/forms and clean offline-device review not implemented/verified. |
+
+“Integrated candidate” means committed source and CI wiring are present, not hosted PASS, real-media acceptance or production certification. Candidate workflow #727 (`b8fdc528…`) is the current acceptance run at the time of this note. P70 remains `releaseCertified:false` until all fourteen manual gates have evidence.
+
