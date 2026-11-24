@@ -47,3 +47,6 @@
 | P124.4 selected component layouts | Node/Chromium selected Grid/Stack/Row/Split, responsive CSS, whitelisted variants, existing CSS Manager/save path, P143 parity | No structural tree conversion, nested variants, drag/resize, complex user-project or assistive-technology certification. |
 
 | P135.2 editable Pixel adjustment stack | Node PNG metadata/CRC/32-layer round-trip; hosted Chromium snapshot → reload → native restore and unchanged raster check; P143 standalone/embedded parity | Independent two-device/cloud sync, third-party PNG re-encoding, masks/local corrections, smart objects, clone/patch and liquify remain unverified/out of scope. |
+
+
+| P159 Shared Core integration | P159 Node contract; canonical P153/P155/P159 lot embedding; P143 source parity 38 pairs; boot-order check; hosted Chromium and same-origin smoke | Candidate only until hosted workflow #689/successor passes; legacy profile migration, real panorama, asset deletion/reference cleanup and P130 physical two-device sync remain manual. |
