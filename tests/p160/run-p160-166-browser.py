@@ -56,6 +56,16 @@ with sync_playwright() as p:
     checks['P165ComfyUIHandoff']=page.evaluate("(()=>{const r=CVAiWorkflowP165.sendToComfyUI(window.__p165workflow,'image'),field=document.getElementById('cv120-prompt');return !!(r&&r.ok&&field&&field.value.length>0&&document.getElementById('cv120-kind').value==='image')})()")
     page.evaluate("CV.go('webEngine')")
     checks['P166UIPanelVisible']=page.locator('#cv166-card').count()==1
+    website_handoff=page.evaluate("""async()=>{
+      const result=await CVLandingStudioP166.sendToWebsite({name:'CANVIO HR Landing',headline:'Thiết kế cho đội ngũ nhân sự',brief:'Giải pháp tuyển dụng và phát triển nhân tài',cta:'Khám phá giải pháp',color:'#174ea6'});
+      const wrapper=CVWeb.getWrapper(),top=wrapper&&wrapper.components&&wrapper.components(),models=top&&(top.models||top),root=(models||[]).find(m=>String((m.getAttributes&&m.getAttributes().class)||'').split(/\\s+/).includes(result.scope));
+      const baseRule=CVWeb.Css.getRule('.'+result.scope),mobileRule=CVWeb.Css.getRule('.'+result.scope+' .hero',{atRuleType:'media',atRuleParams:'(max-width: 760px)'});
+      return {result,root:!!root,baseRule:!!baseRule,mobileRule:!!mobileRule,core:(CVCreativeCore.active.documents||{}).websiteLanding||null};
+    }""")
+    checks['P166LandingInsertedIntoGrapesJS']=bool(website_handoff['result']['ok'] and website_handoff['root'])
+    checks['P166ResponsiveCSSInCanonicalManager']=bool(website_handoff['baseRule'] and website_handoff['mobileRule'])
+    checks['P166LandingMetadataSavedInSharedCore']=bool(website_handoff['core'] and website_handoff['core']['name']=='CANVIO HR Landing')
+    checks['P166HandoffUsesP131SanitizerAndExistingSave']=bool(website_handoff['result']['owner'].startswith('CANVIOSecurity.prepareHtmlImport') and website_handoff['result']['saved'])
     page.set_viewport_size({'width':390,'height':844});page.wait_for_timeout(300)
     checks['MobileNoHorizontalOverflow']=page.evaluate("document.documentElement.scrollWidth<=window.innerWidth+2")
     browser.close()
