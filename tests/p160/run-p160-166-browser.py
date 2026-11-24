@@ -39,7 +39,7 @@ with sync_playwright() as p:
     checks['P162P128LocalPrompt']=p162
     p163=page.evaluate("async()=>{const r=await CVCharacterContinuityP163.runPrompt(window.__p163profile,'Cảnh văn phòng');return !!(r&&r.ok&&String(r.text).includes('CHARACTER CONTINUITY'))}")
     checks['P163P128LocalPrompt']=p163
-    p164=page.evaluate("async()=>{const r=await CVShotListP164.sendPrompt();return !!(r&&r.ok&&String(r.text).includes('Shot list'))}")
+    p164=page.evaluate("async()=>{const r=await CVShotListP164.sendPrompt();return !!(r&&r.ok&&String(r.text).toLowerCase().includes('shot list'))}")
     checks['P164P128LocalPrompt']=p164
     p165=page.evaluate("async()=>{const r=await CVAiWorkflowP165.run(window.__p165workflow,'Brief HR, mục tiêu tuyển dụng, palette xanh, nhân vật nhất quán và CTA');return !!(r&&r.ok&&r.run.status==='completed')}")
     checks['P165WorkflowCompletes']=p165

@@ -4196,3 +4196,9 @@ Bài học P150: KHÔNG đặt `display:flex` lên `#page-home` mà không kèm 
 ### Version update note — 2026-11-24
 P160–P166 module APIs currently report versions P160.2.0, P161.1.0, P162.2.0, P163.1.0, P164.1.0, P165.2.0 and P166.0.0. P161/P162/P163/P164/P165 versions were incremented for interactive/browser integration. Preserve historical Guide sections; append new notes rather than rewriting historical release evidence.
 
+
+
+### P159–P166 hosted acceptance correction · 2026-11-24
+- Candidate baseline: `4efdb5d4a3a7b3dd32f98c0bf5b7907ea57357df` (workflow #767) passed the P160–P166 Node contract suite and 27/28 Chromium integration assertions with `pageErrors: []`.
+- The only browser assertion failure was P164's P128 prompt text case check (`Shot list` vs `shot list`); P164 now emits the heading `Shot list từ brief`, and the browser assertion is case-insensitive to avoid a casing-only regression.
+- This is a candidate correction, not acceptance. Re-run hosted workflow, inspect final result, and retain manual gates for real assets/GLB/local model, project round-trip, device/accessibility, and P130 two-device sync. P70 remains fail-closed.

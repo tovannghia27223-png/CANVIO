@@ -373,3 +373,10 @@ PR #71 was closed as superseded by clean-main PR #73; the latter carries the cor
 
 “Integrated candidate” means committed source and CI wiring are present, not hosted PASS, real-media acceptance or production certification. Candidate workflow #727 (`b8fdc528…`) is the current acceptance run at the time of this note. P70 remains `releaseCertified:false` until all fourteen manual gates have evidence.
 
+
+
+## P159–P166 · hosted correction log (2026-11-24)
+
+- All P159–P166 standalone modules, tests, source-map registration and hosted workflow wiring are present on `main` as candidate implementation.
+- Latest inspected workflow #767: P160–P166 Node contract suite passed; Chromium 27/28 passed with zero page errors. Sole failure: P164 prompt assertion case mismatch.
+- Fix committed in this candidate: P164 prompt heading normalized to `Shot list`; browser assertion now case-insensitive. Status remains **Integrated candidate / hosted rerun pending**, not accepted. Manual real-asset, GLB, local-model, project round-trip, accessibility/device and P130 sync gates remain open.

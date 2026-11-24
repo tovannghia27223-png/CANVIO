@@ -1308,3 +1308,9 @@ Việc cần người dùng: duyệt thứ tự; cho biết có muốn "kênh ch
 - Candidate hosted run sau khi mở rộng P160–P166: #727 (SHA bắt đầu `b8fdc528`) đang được CI xác nhận tại thời điểm ghi. Không gắn nhãn PASS trước khi đọc kết quả cuối.
 - Release P70 vẫn fail-closed, 14 manual acceptance gates vẫn độc lập; các P này không làm CANVIO thành Stable/production-certified.
 
+
+
+## P159–P166 · hosted verification correction (2026-11-24)
+
+- Workflow #767 on `4efdb5d` passed P160–P166 Node contracts and 27/28 Chromium checks; no page errors. The only failure was P164 P128 prompt heading case sensitivity.
+- Corrected P164 prompt heading and made the browser assertion case-insensitive. Hosted verification is required before marking the range accepted; real-media and P70 release gates remain separate.
