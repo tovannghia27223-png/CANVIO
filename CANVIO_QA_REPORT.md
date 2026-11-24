@@ -681,3 +681,9 @@ Mainline workflow #551 passed 53/53; Pages #275 passed build/deploy. P143 parity
 
 - Source changes and expanded browser assertions are committed on the feature branch. Hosted Node/Chromium, P143 source parity, canonical `index.html` synchronization and full regression are pending; do not report P167.1 accepted until the exact branch SHA completes all required checks.
 \n\n## P167.1 + P168.1 — regression fix and candidate QA (2026-11-25)\n\n- Prior hosted run #792 failed only the P167.1 immediate object-name save assertion. The other P167.1 browser checks in that suite passed, and the browser reported zero page errors. The name handler now saves on `input`; the reload persistence assertion was added.\n- P168.1 extends the existing P168 browser and Node suites for direct Poster SVG / Designer snapshot-or-Canvas source loading, no intermediate asset creation, and a composited text overlay. Five motion modes and three styles/positions are bounded by the module API.\n- Final status remains candidate until the latest exact branch head completes the hosted Chromium, Node, P143 parity, full audit, and generated-index steps. Do not treat a cancelled/older run as acceptance.\n
+
+## P163.1.1 — Visible character profile labels QA (2026-11-25 · candidate)
+
+- The previous P163 form relied on placeholder/ARIA text for seven fields. Added visible labels with matching `for` attributes while preserving input/select IDs, event listeners, Shared Core data path and Storyboard/Asset Library owners.
+- `tests/p145/run-p169-browser.py` asserts all seven labels contain the expected control and are visible in browser layout, alongside P169 profile round-trip and mobile overflow checks.
+- Earlier PR #93 run #811 passed its exact initial candidate head; the new current-mainline branch requires its own exact-head workflow before merge. Manual assistive-tech/zoom checks remain open.
