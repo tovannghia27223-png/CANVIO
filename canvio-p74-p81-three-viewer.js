@@ -156,14 +156,17 @@
     if (!Number.isFinite(currentDistance) || currentDistance <= 0) currentDistance = 1;
     var position = pose.position || {}, px = Number(position.x), py = Number(position.y), pz = Number(position.z);
     var explicitPosition = Number.isFinite(px) && Number.isFinite(py) && Number.isFinite(pz) && (Math.abs(px) + Math.abs(py) + Math.abs(pz) > 0.0001);
+    var yr = yaw * Math.PI / 180, pr = pitch * Math.PI / 180, cp = Math.cos(pr);
+    var direction = { x: cp * Math.sin(yr), y: Math.sin(pr), z: cp * Math.cos(pr) };
     if (explicitPosition) {
-      state.camera.position.set(bounded(px, 0, -1000, 1000), bounded(py, 0, -1000, 1000), bounded(pz, 0, -1000, 1000));
+      var cameraX = bounded(px, 0, -1000, 1000), cameraY = bounded(py, 0, -1000, 1000), cameraZ = bounded(pz, 0, -1000, 1000);
+      state.camera.position.set(cameraX, cameraY, cameraZ);
+      target.set(cameraX - direction.x * currentDistance, cameraY - direction.y * currentDistance, cameraZ - direction.z * currentDistance);
     } else {
-      var yr = yaw * Math.PI / 180, pr = pitch * Math.PI / 180, cp = Math.cos(pr);
       state.camera.position.set(
-        target.x + currentDistance * cp * Math.sin(yr),
-        target.y + currentDistance * Math.sin(pr),
-        target.z + currentDistance * cp * Math.cos(yr)
+        target.x + currentDistance * direction.x,
+        target.y + currentDistance * direction.y,
+        target.z + currentDistance * direction.z
       );
     }
     state.camera.fov = fov;
@@ -281,6 +284,7 @@
       animationMixer: !!(runtime && runtime.THREE && runtime.THREE.AnimationMixer),
       disposalControls: typeof disposeAll === 'function' && typeof disposeModel === 'function',
       glbOnlyBoundedInput: LIMIT_BYTES === 250 * 1024 * 1024,
+      cameraPoseApi: typeof applyCameraPose === 'function' && typeof getCameraPose === 'function',
       reusesP72FileInput: !!$('cv72-file'),
       noSecondAssetStore: true,
       noProjectMutation: true
