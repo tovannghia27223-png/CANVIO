@@ -1367,3 +1367,30 @@ Việc cần người dùng: duyệt thứ tự; cho biết có muốn "kênh ch
 
 - Run #785: P150 root skin fallback về classic; Holo-preservation pass 5/5; năm workspace Export không in diagnostic (computed background đúng hồng), nhưng test fail vì baseline được chụp khi Home-tech còn hiển thị.
 - Test fixture mở Design trước khi chụp baseline màu hồng, rồi so sánh năm workspace. Đây là sửa thứ tự kiểm thử, không thay đổi CSS sản phẩm.
+
+
+## P167.1 — Trình chỉnh đối tượng và đa camera (2026-11-24)
+
+- `canvio-p167-blocking.js` nâng lên `167.1.0`; vẫn là chủ sở hữu duy nhất của `CVCreativeCore.active.documents.blocking`.
+- Thêm inspector theo đối tượng đang chọn: tên, X/Z, rộng/sâu/cao, yaw và màu; thay đổi được chuẩn hóa theo giới hạn hiện có rồi lưu vào tài liệu dự án.
+- Bổ sung camera position X/Z và look-at X/Z bên cạnh FOV, độ cao, thời lượng và follow target.
+- Mặt bằng có chế độ kéo để xoay (yaw) và đổi cỡ (scale) đối tượng bằng chuột; chế độ di chuyển điểm đầu/điểm cuối cũ vẫn giữ.
+- Bổ sung preview đồng thời tối đa 8 camera và xuất một PNG contact sheet gồm 4 mốc thời gian cho mỗi camera (tối đa 32 khung). Đây là bảng khung tĩnh, không phải render video/chuỗi file độc lập.
+- Không thêm dependency, API, kho dữ liệu hoặc timeline mới. Renderer hiện vẫn là phép chiếu phối cảnh CPU trên Canvas 2D; P167.1 không được mô tả là scene graph/WebGL 3D đầy đủ.
+- Trạng thái: candidate; chờ hosted Node/Chromium, P143 parity, full smoke và mainline verification. Không đóng các manual gates P70 bằng kết quả CI.
+\n\n## P167.1 — QA correction and acceptance scope (2026-11-25)
+
+- Inspector name now persists on the input event, so edits are committed immediately while typing; other numeric/color fields retain their bounded change handlers.
+- Browser acceptance now checks the edited object name both immediately and after page reload, alongside object selection, mouse yaw/scale, camera position/look-at persistence, up to eight camera previews and PNG contact sheet export.
+- This remains the existing CPU Canvas2D perspective blocker. It is not a full WebGL scene graph, skeletal character editor, photoreal 3D renderer or video renderer. The PNG export is a contact sheet, not individual frames or MP4.
+- Hosted CI run #792 exposed only the immediate-name-save assertion (all other P167 checks and preceding P85/GLB/ONNX checks in the job passed). Source and regression test were corrected on this branch; final acceptance is pending the latest complete hosted run and canonical-index sync.
+
+
+## P168.1 — Direct design handoff and animated text overlays (2026-11-25 · candidate)
+
+- The existing Image → Motion panel keeps its Asset Library picker and adds direct handoff buttons for the currently open Poster and Designer. Poster uses the existing `CV.poster.doc` + `CV.export.svgString()` renderer; Designer accepts a locally rendered image/SVG from its existing `CV.engines.design.snapshotState()` payload, or a usable Canvas in its existing Designer page. It does not create an intermediate Asset Library item.
+- Direct sources are restricted to local data-image/blob/SVG sources. External HTTP image references inside Poster SVG are rejected rather than fetched. If Designer has no image-like snapshot or accessible rendered Canvas, the panel reports that the current document cannot be captured; it does not pretend an arbitrary model snapshot is renderable.
+- Add editable title/subtitle overlay (160-character bound), 5 motion modes (static, fade, slide, typewriter and pop), 3 positions, 3 styles (plain/banner/outline), color and bounded size. Text is composited in the shared Canvas frame path, so preview, GIF frames and MediaRecorder WebM all use the same text treatment.
+- No new store, external API, paid service, package or timeline was added. Output remains saved through the current Asset Library and existing Storyboard owner.
+- Added Node coverage for overlay normalization/rendering and design-source extraction; Chromium coverage verifies Poster SVG and Designer snapshot handoff without intermediate assets, overlay preview, plus the existing GIF/WebM/Storyboard/workflow/mobile checks.
+- Status: candidate pending exact-head hosted CI, P143 standalone/inline parity, generated canonical `index.html`, and post-merge mainline verification. This is 2D image motion, not a full multi-track video editor or AI video generation.

@@ -19,4 +19,14 @@ ok(!M.parseWorkflows('xx').ok&&!M.parseWorkflows('{"canvio":"other"}').ok&&!M.pa
 const r1=M.importWorkflows(j);ok(r1.ok&&r1.added===1&&store.length===1,'nhập 1');const r2=M.importWorkflows(j);ok(r2.ok&&r2.added===0&&r2.skipped===1&&store.length===1,'không nhân bản');
 const big=JSON.stringify({canvio:'p165-workflows',workflows:Array.from({length:80},(_,i)=>({name:'W'+i,steps:['reviser']}))});ok(M.parseWorkflows(big).workflows.length===50,'giới hạn 50');
 const round=M.exportWorkflows();ok(JSON.parse(round).workflows[0].name==='Quy trình A','xuất lại từ P165 đọc được');
+
+ok(M.normalizeOverlay({text:'  Tiêu đề   CANVIO ',effect:'fade',position:'top',style:'banner',color:'#123456',size:30}).text==='Tiêu đề CANVIO','normalize overlay text');
+ok(M.normalizeOverlay({text:'x'.repeat(200),effect:'unknown',position:'bad',style:'bad',color:'red',size:200}).text.length===160&&M.normalizeOverlay({effect:'unknown',position:'bad',style:'bad',color:'red',size:200}).effect==='none'&&M.normalizeOverlay({effect:'unknown',position:'bad',style:'bad',color:'red',size:200}).position==='bottom'&&M.normalizeOverlay({effect:'unknown',position:'bad',style:'bad',color:'red',size:200}).style==='plain'&&M.normalizeOverlay({effect:'unknown',position:'bad',style:'bad',color:'red',size:200}).color==='#ffffff'&&M.normalizeOverlay({size:200}).size===88,'overlay bounds and enum allow-list');
+ok(M.extractDesignSource('data:image/png;base64,AAAA')==='data:image/png;base64,AAAA','extract Designer data URL');
+ok(M.extractDesignSource({snapshot:{previewDataUrl:'blob:canvio-preview'}})==='blob:canvio-preview','extract nested Designer snapshot');
+ok(M.extractDesignSource({svg:'<svg xmlns="http://www.w3.org/2000/svg"></svg>'}).indexOf('<svg')===0,'extract Poster SVG');
+ok(M.extractDesignSource('https://example.com/image.png')===''&&M.extractDesignSource({html:'<div>unsafe</div>'})==='','reject remote/unrendered design source');
+let textCalls=0, overlayCtx={save(){},restore(){},measureText(s){return {width:String(s).length*12}},fillRect(){},fillText(){textCalls++},strokeText(){textCalls++},set globalAlpha(v){},set font(v){},set textAlign(v){},set textBaseline(v){},set fillStyle(v){},set shadowColor(v){},set shadowBlur(v){},set shadowOffsetY(v){},set strokeStyle(v){},set lineWidth(v){}};
+ok(M.drawOverlay(overlayCtx,800,500,{text:'CANVIO overlay',effect:'none',style:'banner'},1)===true&&textCalls>0,'draw text overlay and banner');
+ok(M.drawOverlay(overlayCtx,800,500,{text:'fade',effect:'fade'},0)===false&&M.drawOverlay(overlayCtx,800,500,{text:'fade',effect:'fade'},1)===true,'fade overlay timeline');
 console.log('P168 node tests passed:',n);
