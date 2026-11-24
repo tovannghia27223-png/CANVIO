@@ -1401,3 +1401,11 @@ Việc cần người dùng: duyệt thứ tự; cho biết có muốn "kênh ch
 PR #91 is merged. Merge commit: `aca4f2846637b28532110f86d82ded2ef37cde03`. Canonical generated runtime commit: `5c54e93ebad19d59548d735fcbd0520ae6fe77e7`. Hosted workflow #796 / run `45459847567` completed successfully, including canonical-index restoration, P143 source parity/inventory, P47–P70 automated regression, source contracts, same-origin GLB/P85/ONNX/worker browser acceptance, and documentation/manifest refresh.
 
 P167.1 and P168.1 are therefore mainline-integrated and hosted-CI verified, with their documented functional boundaries unchanged: P167.1 remains a Canvas2D blocking tool rather than a full WebGL scene editor; P168.1 remains 2D image motion and text compositing rather than a multi-track or AI-video editor. The 14 P70 real-world manual gates are not closed by CI and remain pending.
+
+
+## P166.2 — Gửi Landing Page thật sang Website Engine (candidate · 2026-11-25)
+
+- Nâng `CVLandingStudioP166.sendToWebsite()`: điều hướng đến Website Engine, chờ tối đa 12 giây cho GrapesJS/CSS Manager/P131 sanitizer/canonical save lazy-load xong; trích body HTML, làm sạch bằng P131, bọc root scope riêng, chèn qua `CVWeb.addComponents`, thêm CSS cơ bản và media query mobile qua `CVWeb.Css.setRule`, cuối cùng lưu bằng `CV.engines.web.save`.
+- Đã xử lý lỗi CI #817: test gọi `CVWeb` ngay sau điều hướng khi Website Engine chưa lazy-load xong. P166 hiện chờ readiness có giới hạn; Node test mô phỏng editor chỉ sẵn sàng sau 120 ms, Chromium kiểm tra insertion/CSS/save trên editor thật. Nếu timeout hoặc lỗi lưu, không báo thành công giả.
+- Không tạo editor/database/CSS store/timeline thứ hai; selector chỉ tác động landing root. Chờ exact-head hosted workflow và full regression trước merge.
+- Nội dung vẫn là trang tĩnh; CTA/form chưa có backend, CRM, hosting/publish service. Cần duyệt project thật, keyboard/screen-reader/zoom và thiết bị thật.
