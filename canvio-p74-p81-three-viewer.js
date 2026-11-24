@@ -129,6 +129,53 @@
     state.controls.target.set(0, 0, 0); state.controls.minDistance = Math.max(.01, radius * .05); state.controls.maxDistance = radius * 100; state.controls.update();
     return { min: box.min.toArray(), max: box.max.toArray(), size: size.toArray(), radius: radius };
   }
+  function getCameraPose() {
+    if (!state.camera || !state.controls) return null;
+    var target = state.controls.target, p = state.camera.position;
+    var dx = p.x - target.x, dy = p.y - target.y, dz = p.z - target.z;
+    return {
+      yaw: Math.atan2(dx, dz) * 180 / Math.PI,
+      pitch: Math.atan2(dy, Math.sqrt(dx * dx + dz * dz)) * 180 / Math.PI,
+      fov: state.camera.fov,
+      distance: Math.sqrt(dx * dx + dy * dy + dz * dz),
+      position: { x: p.x, y: p.y, z: p.z },
+      target: { x: target.x, y: target.y, z: target.z }
+    };
+  }
+  function applyCameraPose(pose) {
+    if (!state.loaded || !state.camera || !state.controls || !state.runtime) fail('Cần nạp GLB vào viewer P74/P81 trước khi áp camera preset.');
+    pose = pose || {};
+    function bounded(value, fallback, min, max) {
+      var n = Number(value);
+      return Number.isFinite(n) ? Math.max(min, Math.min(max, n)) : fallback;
+    }
+    var yaw = bounded(pose.yaw, 0, -360, 360), pitch = bounded(pose.pitch, 0, -89, 89);
+    var fov = bounded(pose.fov, state.camera.fov || 42, 30, 120);
+    var target = state.controls.target.clone();
+    var currentDistance = state.camera.position.distanceTo(target);
+    if (!Number.isFinite(currentDistance) || currentDistance <= 0) currentDistance = 1;
+    var position = pose.position || {}, px = Number(position.x), py = Number(position.y), pz = Number(position.z);
+    var explicitPosition = Number.isFinite(px) && Number.isFinite(py) && Number.isFinite(pz) && (Math.abs(px) + Math.abs(py) + Math.abs(pz) > 0.0001);
+    if (explicitPosition) {
+      state.camera.position.set(bounded(px, 0, -1000, 1000), bounded(py, 0, -1000, 1000), bounded(pz, 0, -1000, 1000));
+    } else {
+      var yr = yaw * Math.PI / 180, pr = pitch * Math.PI / 180, cp = Math.cos(pr);
+      state.camera.position.set(
+        target.x + currentDistance * cp * Math.sin(yr),
+        target.y + currentDistance * Math.sin(pr),
+        target.z + currentDistance * cp * Math.cos(yr)
+      );
+    }
+    state.camera.fov = fov;
+    state.camera.updateProjectionMatrix();
+    state.camera.lookAt(target);
+    state.controls.target.copy(target);
+    state.controls.update();
+    if (state.renderer && state.scene) state.renderer.render(state.scene, state.camera);
+    var applied = getCameraPose();
+    applied.explicitPosition = explicitPosition;
+    return applied;
+  }
   function inspectGlbBuffer(buffer) {
     if (!(buffer instanceof ArrayBuffer) || buffer.byteLength < 20 || buffer.byteLength > LIMIT_BYTES) fail('GLB buffer có kích thước không hợp lệ.');
     var view = new DataView(buffer);
@@ -240,7 +287,7 @@
     };
   }
   function moduleSource() { return String(ensureRuntime); }
-  window.CANVIOThreeGLBViewerP74 = { version: '74.0.0', load: load, ensureRuntime: ensureRuntime, snapshot: snapshot, toggleAnimation: toggleAnimation, dispose: disposeModel, disposeAll: disposeAll, inspectGlbBuffer: inspectGlbBuffer, verifyVendorManifest: verifyVendorManifest, mount: mount, tests: tests, limits: { bytes: LIMIT_BYTES }, vendorCommit: '7e89746a687bb88271253698fa108b1dd59825d0' };
+  window.CANVIOThreeGLBViewerP74 = { version: '74.1.0', load: load, ensureRuntime: ensureRuntime, snapshot: snapshot, toggleAnimation: toggleAnimation, dispose: disposeModel, disposeAll: disposeAll, applyCameraPose: applyCameraPose, getCameraPose: getCameraPose, inspectGlbBuffer: inspectGlbBuffer, verifyVendorManifest: verifyVendorManifest, mount: mount, tests: tests, limits: { bytes: LIMIT_BYTES }, vendorCommit: '7e89746a687bb88271253698fa108b1dd59825d0' };
   function boot() { try { mount(); } catch (e) { console.error('[CANVIO P74/P81 mount]', e); } }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot, { once: true }); else boot();
   window.addEventListener('pagehide', disposeAll, { once: true });
