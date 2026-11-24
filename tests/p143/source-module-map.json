@@ -153,6 +153,34 @@
     {
       "source": "canvio-p159-integration.js",
       "scriptId": "canvio-lot159i"
+    },
+    {
+      "source": "canvio-p160-collections.js",
+      "scriptId": "canvio-lot160c"
+    },
+    {
+      "source": "canvio-p161-spatial-workspace.js",
+      "scriptId": "canvio-lot161s"
+    },
+    {
+      "source": "canvio-p162-reference-canvas.js",
+      "scriptId": "canvio-lot162r"
+    },
+    {
+      "source": "canvio-p163-character-continuity.js",
+      "scriptId": "canvio-lot163c"
+    },
+    {
+      "source": "canvio-p164-shotlist.js",
+      "scriptId": "canvio-lot164s"
+    },
+    {
+      "source": "canvio-p165-ai-workflow.js",
+      "scriptId": "canvio-lot165w"
+    },
+    {
+      "source": "canvio-p166-landing-studio.js",
+      "scriptId": "canvio-lot166l"
     }
   ],
   "totalModules": 38
