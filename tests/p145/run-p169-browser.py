@@ -14,7 +14,9 @@ with sync_playwright() as p:
     pg.wait_for_function("!!window.CVCharacterStudioP169&&!!window.CVCharacterContinuityP163&&!!window.CVCreativeCore",timeout=90000)
     pg.evaluate("CVCreativeCore.create({name:'P169 character visual acceptance'})")
     pg.evaluate("CV.go('videoStudio')")
-    pg.wait_for_selector('#cv163-card',timeout=15000)
+    pg.wait_for_selector('#cv159u-dock',timeout=15000)
+    pg.click('#cv159u-dock [data-id=cv163-card]')
+    pg.wait_for_selector('#cv163-card',state='visible',timeout=15000)
     pg.wait_for_selector('#cv169-panel',state='visible',timeout=15000)
     checks['panel_mounted']=pg.is_visible('#cv169-panel')
     checks['eight_labeled_controls']=pg.locator('#cv169-controls label').count()==8 and pg.locator('#cv169-controls label select').count()==8
