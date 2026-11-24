@@ -171,7 +171,11 @@ function mount() {
   [['#cv167-fov', function (c, v) { c.fov = num(v, 60, 20, 110); }], ['#cv167-cy', function (c, v) { c.pos.y = num(v, 1.6, .1, 100); }], ['#cv167-dur', function (c, v) { c.dur = num(v, 5, 1, 60); }]].forEach(function (p) { $(p[0]).addEventListener('change', function (e) { var c = cam(); if (!c) return; p[1](c, e.target.value); save(); refresh(); }); });
   $('#cv167-follow').addEventListener('change', function (e) { var c = cam(); if (!c) return; if (e.target.value) c.follow = e.target.value; else delete c.follow; save(); paint(); });
   [['#cv167-cx', 'pos', 'x'], ['#cv167-cz', 'pos', 'z'], ['#cv167-lx', 'look', 'x'], ['#cv167-lz', 'look', 'z']].forEach(function (p) { $(p[0]).addEventListener('change', function (e) { var c = cam(); if (!c) return; c[p[1]][p[2]] = num(e.target.value, c[p[1]][p[2]], -300, 300); save(); refresh(); }); });
-  [['#cv167-obj-name', 'name'], ['#cv167-obj-x', 'x'], ['#cv167-obj-z', 'z'], ['#cv167-obj-w', 'w'], ['#cv167-obj-d', 'd'], ['#cv167-obj-h', 'h'], ['#cv167-obj-yaw', 'yaw'], ['#cv167-obj-color', 'color']].forEach(function (p) { $(p[0]).addEventListener('change', function (e) {
+  $('#cv167-obj-name').addEventListener('input', function (e) {
+    var o = st.scene.objects.filter(function (x) { return x.id === st.sel; })[0]; if (!o) return;
+    o.name = String(e.target.value || TYPES[o.type].n).slice(0, 40); save(); paint();
+  });
+  [['#cv167-obj-x', 'x'], ['#cv167-obj-z', 'z'], ['#cv167-obj-w', 'w'], ['#cv167-obj-d', 'd'], ['#cv167-obj-h', 'h'], ['#cv167-obj-yaw', 'yaw'], ['#cv167-obj-color', 'color']].forEach(function (p) { $(p[0]).addEventListener('change', function (e) {
     var o = st.scene.objects.filter(function (x) { return x.id === st.sel; })[0]; if (!o) return;
     if (p[1] === 'name') o.name = String(e.target.value || TYPES[o.type].n).slice(0, 40);
     else if (p[1] === 'color') o.color = /^#[0-9a-f]{6}$/i.test(e.target.value) ? e.target.value : TYPES[o.type].c;
