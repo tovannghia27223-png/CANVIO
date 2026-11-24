@@ -50,8 +50,29 @@ function filterItems(items, f) {
 function safeUrl(u) { u = String(u || '').trim(); if (!u) return ''; if (!/^https?:\/\//i.test(u)) u = 'https://' + u; try { var x = new URL(u); return /^https?:$/.test(x.protocol) ? x.href : ''; } catch (e) { return ''; } }
 function uid() { return 'b' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
 /* ---------- lưu trữ ---------- */
-function readList() { try { var v = JSON.parse(localStorage.getItem(KEY) || '[]'); return Array.isArray(v) ? v : []; } catch (e) { return []; } }
-function writeList(a) { try { localStorage.setItem(KEY, JSON.stringify(a)); return true; } catch (e) { return false; } }
+function legacyList() { try { var v = JSON.parse(localStorage.getItem(KEY) || '[]'); return Array.isArray(v) ? v : []; } catch (e) { return []; } }
+function coreProject(create) {
+  var c = window.CVCreativeCore;
+  if (!c) return null;
+  var p = c.active || null;
+  if (!p && create && typeof c.create === 'function') p = c.create({ name: 'Dự án sáng tạo' });
+  return p || null;
+}
+function readList() {
+  var p = coreProject(false), d = p && p.documents && p.documents.inspirationBoard;
+  if (d && Array.isArray(d.items)) return d.items.slice();
+  return legacyList();
+}
+function writeList(a) {
+  var c = window.CVCreativeCore, p = coreProject(true);
+  if (p) {
+    p.documents = p.documents || {};
+    p.documents.inspirationBoard = { version: 1, items: (a || []).slice() };
+    try { if (c && typeof c.capture === 'function') c.capture('assets'); } catch (e) {}
+    return true;
+  }
+  try { localStorage.setItem(KEY, JSON.stringify(a || [])); return false; } catch (e) { return false; }
+}
 var dbP = null;
 function openDb() {
   if (dbP) return dbP;
@@ -63,9 +84,92 @@ function openDb() {
   });
   return dbP;
 }
-function idbPut(id, data) { return openDb().then(function (d) { return new Promise(function (ok, no) { var t = d.transaction(ST, 'readwrite'); t.objectStore(ST).put({ id: id, data: data, at: Date.now() }); t.oncomplete = ok; t.onerror = function () { no(t.error); }; }); }); }
-function idbGet(id) { return openDb().then(function (d) { return new Promise(function (ok, no) { var q = d.transaction(ST).objectStore(ST).get(id); q.onsuccess = function () { ok(q.result ? q.result.data : null); }; q.onerror = function () { no(q.error); }; }); }); }
-function idbDel(id) { return openDb().then(function (d) { return new Promise(function (ok) { var t = d.transaction(ST, 'readwrite'); t.objectStore(ST).delete(id); t.oncomplete = ok; t.onerror = ok; }); }); }
+function dataUrlBlob(data) {
+  var m = /^data:([^;,]+)?;base64,([A-Za-z0-9+/=]+)$/i.exec(String(data || ''));
+  if (!m || !window.atob || !window.Blob) throw new Error('Ảnh tham chiếu không đúng định dạng.');
+  var raw = window.atob(m[2]), bytes = new Uint8Array(raw.length);
+  for (var i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
+  return new Blob([bytes], { type: m[1] || 'image/jpeg' });
+}
+function findAssetForBoard(id) {
+  try { var a = window.CV && CV.assets && CV.assets.list ? CV.assets.list() : [];
+    return a.find(function (x) { return x && (String(x.id) === String(id) || (x.canvioScene && String(x.canvioScene.boardItemId) === String(id))); }) || null;
+  } catch (e) { return null; }
+}
+function idbPut(id, data, sceneMeta) {
+  var assets = window.CV && CV.assets, existing = findAssetForBoard(id);
+  if (existing && existing.id) {
+    existing.canvioScene = Object.assign({}, existing.canvioScene || {}, sceneMeta || {}, { source: 'P153', boardItemId: String(id) });
+    try { if (window.LS && LS.set) LS.set('assets', assets.list()); } catch (e) {}
+    try { var C = window.CVCreativeCore; if (C && typeof C.linkAsset === 'function') C.linkAsset(existing.id); } catch (e) {}
+    return Promise.resolve(existing.id);
+  }
+  if (assets && typeof assets.addBlob === 'function' && typeof assets.list === 'function' && window.File) {
+    coreProject(true);
+    var old = (assets.list() || []).map(function (a) { return String(a.id); });
+    var name = 'CANVIO-Inspiration-' + String(id).replace(/[^a-z0-9_-]/gi, '').slice(0, 48) + '.jpg', blob;
+    try { blob = dataUrlBlob(data); } catch (e) { return Promise.reject(e); }
+    var file = new File([blob], name, { type: blob.type || 'image/jpeg' });
+    return Promise.resolve(assets.addBlob(file)).then(function () {
+      var list = assets.list() || [], a = list.find(function (x) { return x && old.indexOf(String(x.id)) < 0 && x.name === name; });
+      if (!a || !a.id) throw new Error('Asset Library chưa xác nhận ảnh vừa nhập.');
+      a.canvioScene = Object.assign({}, a.canvioScene || {}, sceneMeta || {}, { source: 'P153', boardItemId: String(id) });
+      try { if (window.LS && LS.set) LS.set('assets', list); } catch (e) {}
+      try { var C = window.CVCreativeCore; if (C && typeof C.linkAsset === 'function') C.linkAsset(a.id); } catch (e) {}
+      try { if (assets.render) assets.render(); } catch (e) {}
+      return a.id;
+    });
+  }
+  return openDb().then(function (d) { return new Promise(function (ok, no) { var t = d.transaction(ST, 'readwrite'); t.objectStore(ST).put({ id: id, data: data, at: Date.now() }); t.oncomplete = function () { ok(null); }; t.onerror = function () { no(t.error); }; }); });
+}
+function idbGet(id) {
+  var item = readList().filter(function (x) { return String(x.id) === String(id); })[0];
+  if (item && item.assetId && window.CV && CV.assets && CV.assets.list) {
+    var found = CV.assets.list().filter(function (x) { return String(x.id) === String(item.assetId); })[0];
+    if (found && found.data) return Promise.resolve(found.data);
+  }
+  var asset = findAssetForBoard(id);
+  if (asset && asset.data) return Promise.resolve(asset.data);
+  return openDb().then(function (d) { return new Promise(function (ok, no) { var q = d.transaction(ST).objectStore(ST).get(id); q.onsuccess = function () { ok(q.result ? q.result.data : null); }; q.onerror = function () { no(q.error); }; }); });
+}
+function idbDel(id) {
+  var item = readList().filter(function (x) { return String(x.id) === String(id); })[0];
+  if (item && item.assetId) return Promise.resolve();
+  return openDb().then(function (d) { return new Promise(function (ok) { var t = d.transaction(ST, 'readwrite'); t.objectStore(ST).delete(id); t.oncomplete = ok; t.onerror = ok; }); });
+}
+function dropLegacyDb() {
+  if (!window.indexedDB || typeof indexedDB.deleteDatabase !== 'function') return Promise.resolve(false);
+  return new Promise(function (ok) {
+    if (dbP) dbP.then(function (d) { try { d.close(); } catch (e) {} }).catch(function () {});
+    var q = indexedDB.deleteDatabase(DBN);
+    q.onsuccess = function () { dbP = null; ok(true); }; q.onerror = function () { ok(false); }; q.onblocked = function () { ok(false); };
+  });
+}
+function migrateToAssets() {
+  var p = coreProject(false), assets = window.CV && CV.assets;
+  if (!p || !assets || typeof assets.addBlob !== 'function') return Promise.resolve({ ok: false, waiting: true, migrated: 0 });
+  var current = readList(), old = legacyList(), merged = old.slice();
+  current.forEach(function (x) { var i = merged.findIndex(function (y) { return y.id === x.id; }); if (i >= 0) merged[i] = x; else merged.unshift(x); });
+  var migrated = 0, failed = [];
+  return merged.reduce(function (chain, item) {
+    return chain.then(function () {
+      if (!item || item.type !== 'img' || item.assetId) return;
+      return idbGet(item.id).then(function (data) {
+        if (!data) { failed.push(item.id); return; }
+        var meta = { kind: item.kind, colors: item.colors || [], names: item.names || [], note: item.note || '', extra: item.extra || null, yaw: item.extra && item.extra.yaw, pitch: item.extra && item.extra.pitch, fov: item.extra && item.extra.fov };
+        return idbPut(item.id, data, meta).then(function (assetId) { if (!assetId) { failed.push(item.id); return; } item.assetId = assetId; migrated++; writeList(merged); });
+      }).catch(function () { failed.push(item.id); });
+    });
+  }, Promise.resolve()).then(function () {
+    writeList(merged);
+    var pending = merged.filter(function (x) { return x && x.type === 'img' && !x.assetId; }).length;
+    if (!pending) {
+      try { localStorage.removeItem(KEY); } catch (e) {}
+      return dropLegacyDb().then(function (dropped) { return { ok: true, migrated: migrated, pending: 0, legacyDbRemoved: dropped }; });
+    }
+    return { ok: false, migrated: migrated, pending: pending, failed: failed };
+  });
+}
 window.CVSceneStoreP153 = { put: idbPut, get: idbGet, del: idbDel };
 /* ---------- xử lý ảnh (trình duyệt) ---------- */
 function loadImg(src) { return new Promise(function (ok, no) { var im = new Image(); im.onload = function () { ok(im); }; im.onerror = function () { no(new Error('Không đọc được ảnh')); }; im.src = src; }); }
@@ -78,7 +182,8 @@ function addDataUrl(dataUrl, meta) {
     var th = draw(im, 220, 'image/jpeg', .7), full = draw(im, 1600, 'image/jpeg', .86);
     var it = { id: meta.id || uid(), type: 'img', name: String(meta.name || 'Ảnh').slice(0, 80), kind: KINDS.indexOf(meta.kind) >= 0 ? meta.kind : 'Ảnh', note: String(meta.note || '').slice(0, 400), url: safeUrl(meta.url), colors: cols, names: namesOf(cols), thumb: th.url, w: im.naturalWidth, h: im.naturalHeight, at: Date.now() };
     if (meta.extra && typeof meta.extra === 'object') it.extra = meta.extra;
-    return idbPut(it.id, full.url).then(function () { var l = readList(); l.unshift(it); if (!writeList(l)) { return idbDel(it.id).then(function () { throw new Error('Bộ nhớ trình duyệt đầy, hãy xóa bớt mục cũ.'); }); } return it; });
+    var sceneMeta = { kind: it.kind, colors: it.colors, names: it.names, note: it.note, extra: it.extra || null, yaw: it.extra && it.extra.yaw, pitch: it.extra && it.extra.pitch, fov: it.extra && it.extra.fov };
+    return idbPut(it.id, full.url, sceneMeta).then(function (assetId) { if (assetId) it.assetId = assetId; var l = readList(); l.unshift(it); if (!writeList(l)) { return idbDel(it.id).then(function () { throw new Error('Không lưu được siêu dữ liệu dự án.'); }); } return it; });
   });
 }
 function addFile(f, meta) { if (!f || !/^image\//.test(f.type)) return Promise.reject(new Error('Chỉ nhận tệp ảnh.')); if (f.size > 25 * 1024 * 1024) return Promise.reject(new Error('Ảnh quá lớn (tối đa 25MB).')); return readFile(f).then(function (d) { var m = {}; for (var k in meta) m[k] = meta[k]; if (!m.name) m.name = f.name.replace(/\.[^.]+$/, ''); return addDataUrl(d, m); }); }
@@ -88,7 +193,7 @@ function addLink(url, meta) {
   var it = { id: uid(), type: 'link', name: String(meta.name || host || 'Liên kết').slice(0, 80), kind: KINDS.indexOf(meta.kind) >= 0 ? meta.kind : 'Khác', note: String(meta.note || '').slice(0, 400), url: u, colors: [], names: [], at: Date.now() };
   var l = readList(); l.unshift(it); return writeList(l) ? Promise.resolve(it) : Promise.reject(new Error('Bộ nhớ trình duyệt đầy.'));
 }
-function remove(id) { var l = readList().filter(function (x) { return x.id !== id; }); writeList(l); return idbDel(id); }
+function remove(id) { var old = readList().filter(function (x) { return x.id === id; })[0], l = readList().filter(function (x) { return x.id !== id; }); writeList(l); return old && old.assetId ? Promise.resolve() : idbDel(id); }
 function update(id, patch) { var l = readList(), it = l.filter(function (x) { return x.id === id; })[0]; if (!it) return false; ['name', 'note', 'kind'].forEach(function (k) { if (patch && patch[k] != null) it[k] = String(patch[k]).slice(0, 400); }); if (KINDS.indexOf(it.kind) < 0) it.kind = 'Khác'; return writeList(l); }
 /* ---------- giao diện ---------- */
 function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
@@ -163,5 +268,5 @@ function mount() {
 }
 function ready() { var n = 0; (function loop() { try { if (mount()) return; } catch (e) {} if (++n < 40) setTimeout(loop, 250); })(); }
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', ready, { once: true }); else ready();
-window.CVBoardP153 = { version: '153.0.0', KINDS: KINDS, COLORS: COLORS, hex: hex, rgbOf: rgbOf, colorNameOf: colorNameOf, palette: palette, namesOf: namesOf, filterItems: filterItems, safeUrl: safeUrl, list: readList, addDataUrl: addDataUrl, addFile: addFile, addLink: addLink, remove: remove, update: update, mount: mount };
+window.CVBoardP153 = { version: '159.0.0', KINDS: KINDS, COLORS: COLORS, hex: hex, rgbOf: rgbOf, colorNameOf: colorNameOf, palette: palette, namesOf: namesOf, filterItems: filterItems, safeUrl: safeUrl, list: readList, addDataUrl: addDataUrl, addFile: addFile, addLink: addLink, remove: remove, update: update, saveList: writeList, migrateToAssets: migrateToAssets, readLegacy: legacyList, mount: mount };
 })();
