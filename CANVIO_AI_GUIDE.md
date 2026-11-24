@@ -4130,3 +4130,7 @@ Bài học P150: KHÔNG đặt `display:flex` lên `#page-home` mà không kèm 
 - Nút nhiều dòng: dùng `height:auto!important` (nguyên nhân gốc là `.btn.sm` cao cố định 29px).
 - P152: bộ lọc `clean()` trong index.html từng xóa `srcdoc` của mọi iframe → Kho thành phần mất preview; nay giữ `srcdoc` cho iframe sandbox không có allow-same-origin/top-navigation. Drawer `#cv-pn.on` z-index 900 để không bị thanh nổi `.cv189-sticky` (680–880) đè; Spatial `.cv229-inspector.float.open` z-index 1000.
 - Quét click mọi nút trên ~48 trang: 0 nút chết. Còn mở: đồng bộ màu Spatial, icon toggle sidebar mờ trên topbar tối.
+
+### Đối chiếu P124/P133/P137/P143 (2026-11-24)
+- P137 và P133 đã đủ chức năng và có test (xem ROADMAP mục đối chiếu). Còn mở thật: P124 biến thể lồng/kéo-đổi cỡ (cần đặc tả), P143 Phase 3 tách mã, Project Vault→OPFS (không bắt buộc).
+- Sửa `canvio-p124-autolayout.js` phải sửa cả bản inline trong index.html (P143 parity so khớp từng byte) và chạy lại parity + `run-p124-tests.cjs`.

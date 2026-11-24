@@ -1197,3 +1197,9 @@ Hosted verification after the ffmpeg repair is complete:
 - `clean()` giữ `srcdoc` cho iframe sandbox (không allow-same-origin/top-navigation) → Kho thành phần hiện lại preview.
 - `#cv-pn.on{z-index:900}` → drawer "Mẫu" Poster không bị thanh nổi đè.
 - Quét click toàn bộ ~48 trang: 0 nút chết (trừ "Hoàn tác" khi chưa có thao tác).
+
+## Đối chiếu trạng thái "làm một phần" (2026-11-24)
+- P137: đã xong — chữ chảy trang (137.3–6) và khung chữ liên kết trong Designer (137.7, `canvio-p137-frames.js`); `run-p137f-browser.py` đạt. Ghi chú cũ "chưa có khung chữ liên kết trên poster" đã lỗi thời.
+- P133: đã xong — OPFS media >32MB (133.4/5), kho Tài nguyên IndexedDB (133.6), proxy 720p bằng OffscreenCanvas Worker (133.3), khử ồn Worker; `run-p133a/p133w` đạt (p133w từng fail một lần do đo thời gian, chạy lại đạt). Chưa làm: chuyển Project Vault sang OPFS (kho vault đang an toàn, để nguyên).
+- P124: `run-p124-tests.cjs` đạt; còn mở: biến thể lồng nhau, kéo/đổi cỡ, chuyển cây component bất kỳ — cần đặc tả.
+- P143: Phase 3 (tách mã thật) chưa làm vì rủi ro vỡ file đơn; chỉ làm khi người dùng đồng ý.
