@@ -31653,6 +31653,419 @@ function start() { later(); if (window.MutationObserver) { new MutationObserver(
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true }); else start();
 })();
 </script>
+<script id="canvio-lot153b">
+/* P153 · Bảng cảm hứng (Inspiration Board) trong trang Tài nguyên.
+   Thả ảnh / dán link / ghi chú → tự tách bảng màu chủ đạo, lọc theo màu và loại. Chạy cục bộ, không gọi mạng.
+   Lưu: siêu dữ liệu + ảnh nhỏ (thumb) trong localStorage `canvio.p153.board` (mảng có id → Cloud Sync P130 đồng bộ từng mục);
+   ảnh đầy đủ nằm trong IndexedDB `CANVIO_SCENE_STORE` (dùng chung với P154/P155). */
+(function () {
+'use strict';
+if (window.CVBoardP153) return;
+var KEY = 'canvio.p153.board', DBN = 'CANVIO_SCENE_STORE', ST = 'img';
+var KINDS = ['Poster', 'Web', 'Motion', 'Logo', 'Typography', 'Ảnh', 'Cảnh', 'Khác'];
+var COLORS = ['Đỏ', 'Cam', 'Vàng', 'Xanh lá', 'Xanh dương', 'Tím', 'Hồng', 'Nâu', 'Xám', 'Đen', 'Trắng'];
+var CHIP = { 'Đỏ': '#dc2626', 'Cam': '#f97316', 'Vàng': '#eab308', 'Xanh lá': '#16a34a', 'Xanh dương': '#2563eb', 'Tím': '#7c3aed', 'Hồng': '#ec4899', 'Nâu': '#92400e', 'Xám': '#9ca3af', 'Đen': '#111827', 'Trắng': '#f8fafc' };
+/* ---------- thuần (test được bằng Node) ---------- */
+function hex(r, g, b) { return '#' + [r, g, b].map(function (v) { v = Math.max(0, Math.min(255, Math.round(v))); return (v < 16 ? '0' : '') + v.toString(16); }).join(''); }
+function rgbOf(h) { h = String(h || '').replace('#', ''); if (h.length === 3) h = h.replace(/(.)/g, '$1$1'); var n = parseInt(h, 16); return isNaN(n) ? [0, 0, 0] : [(n >> 16) & 255, (n >> 8) & 255, n & 255]; }
+function hsl(r, g, b) {
+  r /= 255; g /= 255; b /= 255; var mx = Math.max(r, g, b), mn = Math.min(r, g, b), l = (mx + mn) / 2, d = mx - mn, h = 0, s = 0;
+  if (d) { s = l > .5 ? d / (2 - mx - mn) : d / (mx + mn); h = mx === r ? ((g - b) / d + (g < b ? 6 : 0)) : mx === g ? (b - r) / d + 2 : (r - g) / d + 4; h *= 60; }
+  return [h, s, l];
+}
+function colorNameOf(h) {
+  var c = rgbOf(h), x = hsl(c[0], c[1], c[2]), H = x[0], S = x[1], L = x[2];
+  if (L < .13) return 'Đen'; if (L > .92) return 'Trắng'; if (S < .12) return L < .22 ? 'Đen' : L > .85 ? 'Trắng' : 'Xám';
+  if (H >= 15 && H < 45 && L < .38 && S < .8) return 'Nâu';
+  if (H < 12 || H >= 345) return L > .7 ? 'Hồng' : 'Đỏ'; if (H < 45) return 'Cam'; if (H < 70) return 'Vàng'; if (H < 165) return 'Xanh lá';
+  if (H < 255) return 'Xanh dương'; if (H < 295) return 'Tím'; return 'Hồng';
+}
+/* px: Uint8ClampedArray RGBA. Trả về tối đa n màu hex, sắp theo độ phủ, bỏ qua điểm gần trong suốt. */
+function palette(px, n) {
+  n = n || 5; var bins = Object.create(null), i, a, key, b;
+  for (i = 0; i + 3 < px.length; i += 4) {
+    a = px[i + 3]; if (a < 128) continue;
+    key = (px[i] >> 4) * 256 + (px[i + 1] >> 4) * 16 + (px[i + 2] >> 4);
+    b = bins[key] || (bins[key] = [0, 0, 0, 0]); b[0]++; b[1] += px[i]; b[2] += px[i + 1]; b[3] += px[i + 2];
+  }
+  var list = Object.keys(bins).map(function (k) { var v = bins[k]; return { n: v[0], c: [v[1] / v[0], v[2] / v[0], v[3] / v[0]] }; }).sort(function (x, y) { return y.n - x.n; });
+  var out = [];
+  list.forEach(function (e) { if (out.length >= n) return; if (out.every(function (o) { var dr = o.c[0] - e.c[0], dg = o.c[1] - e.c[1], db = o.c[2] - e.c[2]; return dr * dr + dg * dg + db * db > 40 * 40; })) out.push(e); });
+  return out.map(function (e) { return hex(e.c[0], e.c[1], e.c[2]); });
+}
+function namesOf(colors) { var s = []; (colors || []).forEach(function (h) { var n = colorNameOf(h); if (s.indexOf(n) < 0) s.push(n); }); return s; }
+function filterItems(items, f) {
+  f = f || {}; var q = String(f.q || '').trim().toLowerCase();
+  return (items || []).filter(function (it) {
+    if (f.kind && it.kind !== f.kind) return false;
+    if (f.color && (it.names || []).indexOf(f.color) < 0) return false;
+    if (q && ((it.name || '') + ' ' + (it.note || '') + ' ' + (it.url || '')).toLowerCase().indexOf(q) < 0) return false;
+    return true;
+  });
+}
+function safeUrl(u) { u = String(u || '').trim(); if (!u) return ''; if (!/^https?:\/\//i.test(u)) u = 'https://' + u; try { var x = new URL(u); return /^https?:$/.test(x.protocol) ? x.href : ''; } catch (e) { return ''; } }
+function uid() { return 'b' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+/* ---------- lưu trữ ---------- */
+function readList() { try { var v = JSON.parse(localStorage.getItem(KEY) || '[]'); return Array.isArray(v) ? v : []; } catch (e) { return []; } }
+function writeList(a) { try { localStorage.setItem(KEY, JSON.stringify(a)); return true; } catch (e) { return false; } }
+var dbP = null;
+function openDb() {
+  if (dbP) return dbP;
+  dbP = new Promise(function (ok, no) {
+    if (!window.indexedDB) { no(new Error('Không có IndexedDB')); return; }
+    var q = indexedDB.open(DBN, 1);
+    q.onupgradeneeded = function () { if (!q.result.objectStoreNames.contains(ST)) q.result.createObjectStore(ST, { keyPath: 'id' }); };
+    q.onsuccess = function () { ok(q.result); }; q.onerror = function () { no(q.error); };
+  });
+  return dbP;
+}
+function idbPut(id, data) { return openDb().then(function (d) { return new Promise(function (ok, no) { var t = d.transaction(ST, 'readwrite'); t.objectStore(ST).put({ id: id, data: data, at: Date.now() }); t.oncomplete = ok; t.onerror = function () { no(t.error); }; }); }); }
+function idbGet(id) { return openDb().then(function (d) { return new Promise(function (ok, no) { var q = d.transaction(ST).objectStore(ST).get(id); q.onsuccess = function () { ok(q.result ? q.result.data : null); }; q.onerror = function () { no(q.error); }; }); }); }
+function idbDel(id) { return openDb().then(function (d) { return new Promise(function (ok) { var t = d.transaction(ST, 'readwrite'); t.objectStore(ST).delete(id); t.oncomplete = ok; t.onerror = ok; }); }); }
+window.CVSceneStoreP153 = { put: idbPut, get: idbGet, del: idbDel };
+/* ---------- xử lý ảnh (trình duyệt) ---------- */
+function loadImg(src) { return new Promise(function (ok, no) { var im = new Image(); im.onload = function () { ok(im); }; im.onerror = function () { no(new Error('Không đọc được ảnh')); }; im.src = src; }); }
+function draw(im, maxSide, type, q) { var s = Math.min(1, maxSide / Math.max(im.naturalWidth, im.naturalHeight)), c = document.createElement('canvas'); c.width = Math.max(1, Math.round(im.naturalWidth * s)); c.height = Math.max(1, Math.round(im.naturalHeight * s)); var x = c.getContext('2d', { willReadFrequently: true }); x.drawImage(im, 0, 0, c.width, c.height); return { c: c, x: x, url: c.toDataURL(type || 'image/jpeg', q || .82) }; }
+function readFile(f) { return new Promise(function (ok, no) { var r = new FileReader(); r.onload = function () { ok(r.result); }; r.onerror = function () { no(new Error('Không đọc được tệp')); }; r.readAsDataURL(f); }); }
+function addDataUrl(dataUrl, meta) {
+  meta = meta || {};
+  return loadImg(dataUrl).then(function (im) {
+    var small = draw(im, 64), px = small.x.getImageData(0, 0, small.c.width, small.c.height).data, cols = palette(px, 5);
+    var th = draw(im, 220, 'image/jpeg', .7), full = draw(im, 1600, 'image/jpeg', .86);
+    var it = { id: meta.id || uid(), type: 'img', name: String(meta.name || 'Ảnh').slice(0, 80), kind: KINDS.indexOf(meta.kind) >= 0 ? meta.kind : 'Ảnh', note: String(meta.note || '').slice(0, 400), url: safeUrl(meta.url), colors: cols, names: namesOf(cols), thumb: th.url, w: im.naturalWidth, h: im.naturalHeight, at: Date.now() };
+    if (meta.extra && typeof meta.extra === 'object') it.extra = meta.extra;
+    return idbPut(it.id, full.url).then(function () { var l = readList(); l.unshift(it); if (!writeList(l)) { return idbDel(it.id).then(function () { throw new Error('Bộ nhớ trình duyệt đầy, hãy xóa bớt mục cũ.'); }); } return it; });
+  });
+}
+function addFile(f, meta) { if (!f || !/^image\//.test(f.type)) return Promise.reject(new Error('Chỉ nhận tệp ảnh.')); if (f.size > 25 * 1024 * 1024) return Promise.reject(new Error('Ảnh quá lớn (tối đa 25MB).')); return readFile(f).then(function (d) { var m = {}; for (var k in meta) m[k] = meta[k]; if (!m.name) m.name = f.name.replace(/\.[^.]+$/, ''); return addDataUrl(d, m); }); }
+function addLink(url, meta) {
+  meta = meta || {}; var u = safeUrl(url); if (!u) return Promise.reject(new Error('Link không hợp lệ.'));
+  var host = ''; try { host = new URL(u).hostname.replace(/^www\./, ''); } catch (e) {}
+  var it = { id: uid(), type: 'link', name: String(meta.name || host || 'Liên kết').slice(0, 80), kind: KINDS.indexOf(meta.kind) >= 0 ? meta.kind : 'Khác', note: String(meta.note || '').slice(0, 400), url: u, colors: [], names: [], at: Date.now() };
+  var l = readList(); l.unshift(it); return writeList(l) ? Promise.resolve(it) : Promise.reject(new Error('Bộ nhớ trình duyệt đầy.'));
+}
+function remove(id) { var l = readList().filter(function (x) { return x.id !== id; }); writeList(l); return idbDel(id); }
+function update(id, patch) { var l = readList(), it = l.filter(function (x) { return x.id === id; })[0]; if (!it) return false; ['name', 'note', 'kind'].forEach(function (k) { if (patch && patch[k] != null) it[k] = String(patch[k]).slice(0, 400); }); if (KINDS.indexOf(it.kind) < 0) it.kind = 'Khác'; return writeList(l); }
+/* ---------- giao diện ---------- */
+function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+function toast(t) { try { if (window.CV && CV.toast) { CV.toast(t); return; } } catch (e) {} }
+function copy(t) { try { navigator.clipboard.writeText(t).then(function () { toast('Đã sao chép ' + t); }, function () { toast('Không sao chép được'); }); } catch (e) { toast('Không sao chép được'); } }
+var state = { color: '', kind: '', q: '' };
+function css() {
+  if (document.getElementById('cv153-style') || !document.head) return;
+  var st = document.createElement('style'); st.id = 'cv153-style';
+  /* Hiệu ứng nghiêng 3D của thẻ trang Tài nguyên làm lệch vùng bấm: tắt cho bảng cảm hứng và các thẻ Cảnh nhất quán. */
+  st.textContent = '#cv153-card,#cv153-card .card,#cv154-card,#cv155-card,#cv155-card .card{transform:none!important;will-change:auto!important}';
+  document.head.appendChild(st);
+}
+function mount() {
+  var page = document.getElementById('page-assets'); if (!page) return false; css(); if (page.querySelector('#cv153-card')) return true;
+  var card = document.createElement('div'); card.className = 'card'; card.id = 'cv153-card'; card.style.cssText = 'margin:0 0 14px;padding:14px';
+  card.innerHTML = '<div class="row" style="justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:center"><div><h3 style="margin:0">Bảng cảm hứng</h3><p class="tiny" style="margin:2px 0 0">Gom ảnh và link tham khảo, tự tách bảng màu, lọc theo màu hoặc loại. Lưu cục bộ trên máy bạn.</p></div><span class="tiny" id="cv153-count" role="status"></span></div>'
+    + '<div class="row" style="gap:6px;margin-top:10px;flex-wrap:wrap;align-items:center"><button class="btn btn-primary sm" id="cv153-add" type="button">+ Thêm ảnh</button><input type="file" id="cv153-file" accept="image/*" multiple style="display:none" aria-label="Chọn ảnh cảm hứng">'
+    + '<select class="input" id="cv153-newkind" aria-label="Loại cho mục mới" style="width:auto">' + KINDS.map(function (k) { return '<option>' + k + '</option>'; }).join('') + '</select>'
+    + '<input class="input" id="cv153-link" placeholder="Dán link tham khảo (https://…)" aria-label="Link tham khảo" style="flex:1;min-width:200px"><button class="btn btn-soft sm" id="cv153-addlink" type="button">Thêm link</button></div>'
+    + '<div class="row" style="gap:6px;margin-top:10px;flex-wrap:wrap;align-items:center" id="cv153-filters"></div>'
+    + '<div id="cv153-msg" class="tiny" role="status" aria-live="polite" style="min-height:16px;margin-top:6px"></div>'
+    + '<div id="cv153-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:6px"></div>';
+  var head = page.querySelector('.head'); if (head && head.parentNode) head.parentNode.insertBefore(card, head.nextSibling); else page.insertBefore(card, page.firstChild);
+  var $ = function (s) { return card.querySelector(s); }, msg = $('#cv153-msg');
+  function say(t, bad) { msg.textContent = t; msg.style.color = bad ? '#b4233b' : ''; }
+  function chips() {
+    var f = $('#cv153-filters'), h = '<input class="input" id="cv153-q" placeholder="Tìm…" aria-label="Tìm trong bảng cảm hứng" style="width:150px" value="' + esc(state.q) + '">'
+      + '<select class="input" id="cv153-kind" aria-label="Lọc theo loại" style="width:auto"><option value="">Mọi loại</option>' + KINDS.map(function (k) { return '<option' + (state.kind === k ? ' selected' : '') + '>' + k + '</option>'; }).join('') + '</select>';
+    COLORS.forEach(function (c) { h += '<button type="button" class="cv153-chip" data-c="' + c + '" aria-pressed="' + (state.color === c) + '" title="Lọc màu ' + c + '" style="width:24px;height:24px;border-radius:50%;border:2px solid ' + (state.color === c ? 'var(--brand,#2563eb)' : 'rgba(128,128,128,.45)') + ';background:' + CHIP[c] + ';padding:0;cursor:pointer"></button>'; });
+    h += '<button type="button" class="btn btn-ghost sm" id="cv153-clear"' + (state.color || state.kind || state.q ? '' : ' disabled') + '>Bỏ lọc</button>';
+    f.innerHTML = h;
+    f.querySelector('#cv153-q').addEventListener('input', function (e) { state.q = e.target.value; grid(); });
+    f.querySelector('#cv153-kind').addEventListener('change', function (e) { state.kind = e.target.value; chips(); grid(); });
+    Array.prototype.forEach.call(f.querySelectorAll('.cv153-chip'), function (b) { b.addEventListener('click', function () { state.color = state.color === b.dataset.c ? '' : b.dataset.c; chips(); grid(); }); });
+    f.querySelector('#cv153-clear').addEventListener('click', function () { state = { color: '', kind: '', q: '' }; chips(); grid(); });
+  }
+  function grid() {
+    var all = readList(), items = filterItems(all, state), g = $('#cv153-grid'); $('#cv153-count').textContent = items.length + '/' + all.length + ' mục';
+    if (!items.length) { g.innerHTML = '<div class="tiny" style="grid-column:1/-1;padding:14px;border:1px dashed rgba(128,128,128,.4);border-radius:10px">' + (all.length ? 'Không có mục nào khớp bộ lọc.' : 'Chưa có gì. Bấm “Thêm ảnh” hoặc dán link để bắt đầu bảng cảm hứng.') + '</div>'; return; }
+    g.innerHTML = items.map(function (it) {
+      var dots = (it.colors || []).map(function (c) { return '<button type="button" class="cv153-dot" data-hex="' + esc(c) + '" title="Sao chép ' + esc(c) + '" aria-label="Sao chép màu ' + esc(c) + '" style="width:18px;height:18px;border-radius:50%;border:1px solid rgba(128,128,128,.5);background:' + esc(c) + ';padding:0;cursor:pointer"></button>'; }).join('');
+      var pic = it.type === 'img' ? '<button type="button" class="cv153-open" data-id="' + esc(it.id) + '" aria-label="Xem ảnh ' + esc(it.name) + '" style="display:block;width:100%;padding:0;border:0;background:none;cursor:zoom-in"><img src="' + esc(it.thumb) + '" alt="' + esc(it.name) + '" style="width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:8px;display:block"></button>'
+        : '<div style="aspect-ratio:4/3;border-radius:8px;display:grid;place-items:center;background:rgba(128,128,128,.14);font-size:26px" aria-hidden="true">🔗</div>';
+      var link = it.url ? '<a href="' + esc(it.url) + '" target="_blank" rel="noopener noreferrer" class="tiny" style="word-break:break-all">' + esc(it.url.replace(/^https?:\/\//, '').slice(0, 34)) + '</a>' : '';
+      return '<div class="card" style="padding:8px;display:grid;gap:6px" data-id="' + esc(it.id) + '">' + pic + '<div style="font-weight:700;font-size:13px;word-break:break-word">' + esc(it.name) + '</div><div class="tiny">' + esc(it.kind) + (it.note ? ' · ' + esc(it.note) : '') + '</div>' + link
+        + '<div class="row" style="gap:4px;flex-wrap:wrap;align-items:center">' + dots + '<button type="button" class="btn btn-ghost sm cv153-del" data-id="' + esc(it.id) + '" aria-label="Xóa ' + esc(it.name) + '" style="margin-left:auto">Xóa</button></div></div>';
+    }).join('');
+    Array.prototype.forEach.call(g.querySelectorAll('.cv153-dot'), function (b) { b.addEventListener('click', function () { copy(b.dataset.hex); try { document.dispatchEvent(new CustomEvent('cv153:usecolor', { detail: { hex: b.dataset.hex } })); } catch (e) {} }); });
+    Array.prototype.forEach.call(g.querySelectorAll('.cv153-del'), function (b) { b.addEventListener('click', function () { if (!confirm('Xóa mục này khỏi bảng cảm hứng?')) return; remove(b.dataset.id).then(function () { grid(); }); }); });
+    Array.prototype.forEach.call(g.querySelectorAll('.cv153-open'), function (b) { b.addEventListener('click', function () { idbGet(b.dataset.id).then(function (d) { if (!d) { say('Không tìm thấy ảnh gốc, chỉ còn bản thu nhỏ.', true); return; } view(d); }); }); });
+  }
+  function view(src) {
+    var o = document.createElement('div'); o.setAttribute('role', 'dialog'); o.setAttribute('aria-modal', 'true'); o.setAttribute('aria-label', 'Xem ảnh');
+    o.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:3000;display:grid;place-items:center;cursor:zoom-out;padding:20px';
+    var im = document.createElement('img'); im.src = src; im.alt = ''; im.style.cssText = 'max-width:96vw;max-height:92vh;border-radius:8px'; o.appendChild(im);
+    function close() { o.remove(); document.removeEventListener('keydown', key); } function key(e) { if (e.key === 'Escape') close(); }
+    o.addEventListener('click', close); document.addEventListener('keydown', key); document.body.appendChild(o);
+  }
+  function add(files) {
+    var kind = $('#cv153-newkind').value, list = Array.prototype.slice.call(files || []), ok = 0, bad = [];
+    say('Đang xử lý ' + list.length + ' ảnh…');
+    return list.reduce(function (p, f) { return p.then(function () { return addFile(f, { kind: kind }).then(function () { ok++; }, function (e) { bad.push(f.name + ': ' + e.message); }); }); }, Promise.resolve())
+      .then(function () { say('Đã thêm ' + ok + ' ảnh' + (bad.length ? ' · lỗi: ' + bad.join('; ') : '') + '.', bad.length > 0 && !ok); grid(); });
+  }
+  $('#cv153-add').addEventListener('click', function () { $('#cv153-file').click(); });
+  $('#cv153-file').addEventListener('change', function (e) { add(e.target.files).then(function () { e.target.value = ''; }); });
+  $('#cv153-addlink').addEventListener('click', function () { addLink($('#cv153-link').value, { kind: $('#cv153-newkind').value }).then(function () { $('#cv153-link').value = ''; say('Đã thêm link.'); grid(); }, function (e) { say(e.message, true); }); });
+  ['dragover', 'drop'].forEach(function (ev) { card.addEventListener(ev, function (e) { if (!e.dataTransfer || !e.dataTransfer.files || !e.dataTransfer.files.length && ev === 'dragover') return; e.preventDefault(); if (ev === 'drop') add(e.dataTransfer.files); }); });
+  chips(); grid(); window.addEventListener('storage', function (e) { if (e.key === KEY) grid(); });
+  card.__refresh = grid; return true;
+}
+function ready() { var n = 0; (function loop() { try { if (mount()) return; } catch (e) {} if (++n < 40) setTimeout(loop, 250); })(); }
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', ready, { once: true }); else ready();
+window.CVBoardP153 = { version: '153.0.0', KINDS: KINDS, COLORS: COLORS, hex: hex, rgbOf: rgbOf, colorNameOf: colorNameOf, palette: palette, namesOf: namesOf, filterItems: filterItems, safeUrl: safeUrl, list: readList, addDataUrl: addDataUrl, addFile: addFile, addLink: addLink, remove: remove, update: update, mount: mount };
+})();
+</script>
+<script id="canvio-lot154p">
+/* P154 · Trình xem toàn cảnh (Panorama Capture) trong Video Studio.
+   Nạp ảnh equirectangular 2:1, kéo để xoay (yaw/pitch), cuộn để zoom (FOV), bấm “Chụp góc nhìn” → khung ảnh theo tỉ lệ chọn,
+   lưu vào Bảng cảm hứng (loại “Cảnh”) kèm yaw/pitch/FOV để dùng làm ảnh tham chiếu cho từng cảnh. Dựng hình bằng CPU (canvas 2D), không thêm thư viện. */
+(function () {
+'use strict';
+if (window.CVPanoramaP154) return;
+var D2R = Math.PI / 180;
+/* src: {data: Uint8ClampedArray RGBA, w, h}. out: {data, w, h}. yaw/pitch/fov: độ. Chiếu phối cảnh (pinhole) từ equirectangular. */
+function renderView(src, out, yaw, pitch, fov) {
+  var ow = out.w, oh = out.h, sw = src.w, sh = src.h, sd = src.data, od = out.data;
+  fov = Math.max(20, Math.min(120, +fov || 90)); pitch = Math.max(-89, Math.min(89, +pitch || 0)); yaw = +yaw || 0;
+  var f = (ow / 2) / Math.tan(fov * D2R / 2), cy = Math.cos(yaw * D2R), sy = Math.sin(yaw * D2R), cp = Math.cos(pitch * D2R), sp = Math.sin(pitch * D2R);
+  var x, y, dx, dy, dz, rx, ry, rz, lon, lat, u, v, i, j, o = 0, fx, fy, x0, y0, x1, a, b, c, d, w00, w10, w01, w11, k;
+  for (y = 0; y < oh; y++) {
+    for (x = 0; x < ow; x++, o += 4) {
+      dx = x - ow / 2 + .5; dy = oh / 2 - y - .5; dz = f;
+      /* xoay pitch quanh trục X rồi yaw quanh trục Y */
+      ry = dy * cp + dz * sp; rz = -dy * sp + dz * cp; rx = dx;
+      var X = rx * cy + rz * sy, Z = -rx * sy + rz * cy, Y = ry;
+      lon = Math.atan2(X, Z); lat = Math.atan2(Y, Math.sqrt(X * X + Z * Z));
+      u = (lon / (2 * Math.PI) + .5) * sw - .5; v = (.5 - lat / Math.PI) * sh - .5;
+      x0 = Math.floor(u); y0 = Math.floor(v); fx = u - x0; fy = v - y0;
+      x1 = x0 + 1; x0 = ((x0 % sw) + sw) % sw; x1 = ((x1 % sw) + sw) % sw;
+      var ya = Math.max(0, Math.min(sh - 1, Math.floor(v))), yb = Math.max(0, Math.min(sh - 1, Math.floor(v) + 1));
+      a = (ya * sw + x0) * 4; b = (ya * sw + x1) * 4; c = (yb * sw + x0) * 4; d = (yb * sw + x1) * 4;
+      w00 = (1 - fx) * (1 - fy); w10 = fx * (1 - fy); w01 = (1 - fx) * fy; w11 = fx * fy;
+      for (k = 0; k < 3; k++) od[o + k] = sd[a + k] * w00 + sd[b + k] * w10 + sd[c + k] * w01 + sd[d + k] * w11;
+      od[o + 3] = 255;
+    }
+  }
+  return out;
+}
+var RATIOS = { '16:9': [16, 9], '9:16': [9, 16], '1:1': [1, 1], '4:3': [4, 3] };
+function outSize(ratio, longSide) { var r = RATIOS[ratio] || RATIOS['16:9'], s = longSide / Math.max(r[0], r[1]); return { w: Math.round(r[0] * s), h: Math.round(r[1] * s) }; }
+function isEquirect(w, h) { return w > 0 && h > 0 && Math.abs(w / h - 2) < .06; }
+function toast(t) { try { if (window.CV && CV.toast) CV.toast(t); } catch (e) {} }
+var pano = null; /* {src, name, img} */
+function mount() {
+  var page = document.getElementById('page-videoStudio'); if (!page) return false; if (page.querySelector('#cv154-card')) return true;
+  var card = document.createElement('div'); card.className = 'card'; card.id = 'cv154-card'; card.style.cssText = 'margin:0 0 14px;padding:14px';
+  card.innerHTML = '<div class="row" style="justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:center"><div><h3 style="margin:0">Trình xem toàn cảnh</h3><p class="tiny" style="margin:2px 0 0">Nạp ảnh toàn cảnh 360° (tỉ lệ 2:1), kéo để xoay, chọn góc rồi chụp làm ảnh tham chiếu cho từng cảnh. Chạy trên máy bạn.</p></div></div>'
+    + '<div class="row" style="gap:6px;margin-top:10px;flex-wrap:wrap;align-items:center"><button class="btn btn-primary sm" id="cv154-open" type="button">Nạp ảnh toàn cảnh</button><input type="file" id="cv154-file" accept="image/*" style="display:none" aria-label="Chọn ảnh toàn cảnh 2:1">'
+    + '<label class="tiny">Tỉ lệ <select class="input" id="cv154-ratio" style="width:auto"><option>16:9</option><option>9:16</option><option>1:1</option><option>4:3</option></select></label>'
+    + '<button class="btn btn-soft sm" id="cv154-shot" type="button" disabled>Chụp góc nhìn</button><span id="cv154-msg" class="tiny" role="status" aria-live="polite"></span></div>'
+    + '<div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:10px;align-items:flex-start"><div style="flex:2 1 320px;min-width:0"><canvas id="cv154-view" width="640" height="360" tabindex="0" aria-label="Khung xem toàn cảnh. Kéo chuột hoặc dùng phím mũi tên để xoay, + và - để zoom" style="width:100%;border-radius:10px;background:#111;touch-action:none;cursor:grab"></canvas></div>'
+    + '<div style="display:grid;gap:8px;flex:1 1 200px;min-width:0"><label class="tiny">Xoay ngang (yaw) <span id="cv154-yv">0°</span><input type="range" id="cv154-yaw" min="-180" max="180" value="0" style="width:100%"></label>'
+    + '<label class="tiny">Ngẩng/cúi (pitch) <span id="cv154-pv">0°</span><input type="range" id="cv154-pitch" min="-85" max="85" value="0" style="width:100%"></label>'
+    + '<label class="tiny">Góc nhìn (FOV) <span id="cv154-fv">90°</span><input type="range" id="cv154-fov" min="30" max="110" value="90" style="width:100%"></label>'
+    + '<div class="tiny" id="cv154-list" style="display:flex;gap:6px;flex-wrap:wrap"></div></div></div>';
+  var head = page.querySelector('.head'); if (head && head.parentNode) head.parentNode.insertBefore(card, head.nextSibling); else page.insertBefore(card, page.firstChild);
+  var $ = function (s) { return card.querySelector(s); }, cv = $('#cv154-view'), cx = cv.getContext('2d', { willReadFrequently: true }), msg = $('#cv154-msg');
+  var yaw = 0, pitch = 0, fov = 90, busy = false, again = false;
+  function say(t, bad) { msg.textContent = t; msg.style.color = bad ? '#b4233b' : ''; }
+  function sync() { $('#cv154-yaw').value = Math.round(yaw); $('#cv154-pitch').value = Math.round(pitch); $('#cv154-fov').value = Math.round(fov); $('#cv154-yv').textContent = Math.round(yaw) + '°'; $('#cv154-pv').textContent = Math.round(pitch) + '°'; $('#cv154-fv').textContent = Math.round(fov) + '°'; }
+  function wrap(a) { while (a > 180) a -= 360; while (a < -180) a += 360; return a; }
+  function paint() {
+    if (!pano) { cx.fillStyle = '#111'; cx.fillRect(0, 0, cv.width, cv.height); cx.fillStyle = '#9ca3af'; cx.font = '16px sans-serif'; cx.textAlign = 'center'; cx.fillText('Chưa có ảnh toàn cảnh', cv.width / 2, cv.height / 2); return; }
+    if (busy) { again = true; return; } busy = true;
+    requestAnimationFrame(function () { var out = cx.createImageData(cv.width, cv.height); renderView(pano.src, { data: out.data, w: out.width, h: out.height }, yaw, pitch, fov); cx.putImageData(out, 0, 0); busy = false; if (again) { again = false; paint(); } });
+  }
+  function set(y, p, f) { yaw = wrap(y); pitch = Math.max(-85, Math.min(85, p)); fov = Math.max(30, Math.min(110, f)); sync(); paint(); }
+  function load(file) {
+    if (!file || !/^image\//.test(file.type)) { say('Chỉ nhận tệp ảnh.', true); return; }
+    var url = URL.createObjectURL(file), im = new Image();
+    im.onload = function () {
+      var w = im.naturalWidth, h = im.naturalHeight; URL.revokeObjectURL(url);
+      if (!isEquirect(w, h)) say('Ảnh ' + w + '×' + h + ' không đúng tỉ lệ 2:1; vẫn hiển thị nhưng có thể méo.', true); else say('Đã nạp ' + w + '×' + h + '. Kéo trong khung để xoay.');
+      var s = Math.min(1, 2048 / w), c = document.createElement('canvas'); c.width = Math.max(2, Math.round(w * s)); c.height = Math.max(2, Math.round(h * s));
+      var x = c.getContext('2d', { willReadFrequently: true }); x.drawImage(im, 0, 0, c.width, c.height); var d = x.getImageData(0, 0, c.width, c.height);
+      pano = { src: { data: d.data, w: c.width, h: c.height }, name: file.name.replace(/\.[^.]+$/, ''), full: im.src || '' };
+      $('#cv154-shot').disabled = false; set(0, 0, 90);
+    };
+    im.onerror = function () { URL.revokeObjectURL(url); say('Không đọc được ảnh.', true); }; im.src = url;
+  }
+  $('#cv154-open').addEventListener('click', function () { $('#cv154-file').click(); });
+  $('#cv154-file').addEventListener('change', function (e) { load(e.target.files[0]); e.target.value = ''; });
+  ['yaw', 'pitch', 'fov'].forEach(function (k) { $('#cv154-' + k).addEventListener('input', function () { set(+$('#cv154-yaw').value, +$('#cv154-pitch').value, +$('#cv154-fov').value); }); });
+  var drag = null;
+  cv.addEventListener('pointerdown', function (e) { drag = { x: e.clientX, y: e.clientY, yaw: yaw, pitch: pitch }; cv.setPointerCapture(e.pointerId); cv.style.cursor = 'grabbing'; });
+  cv.addEventListener('pointermove', function (e) { if (!drag) return; var k = fov / cv.clientWidth; set(drag.yaw - (e.clientX - drag.x) * k, drag.pitch + (e.clientY - drag.y) * k, fov); });
+  ['pointerup', 'pointercancel'].forEach(function (ev) { cv.addEventListener(ev, function () { drag = null; cv.style.cursor = 'grab'; }); });
+  cv.addEventListener('wheel', function (e) { if (!pano) return; e.preventDefault(); set(yaw, pitch, fov + (e.deltaY > 0 ? 4 : -4)); }, { passive: false });
+  cv.addEventListener('keydown', function (e) { var m = { ArrowLeft: [-5, 0, 0], ArrowRight: [5, 0, 0], ArrowUp: [0, 5, 0], ArrowDown: [0, -5, 0], '+': [0, 0, -5], '=': [0, 0, -5], '-': [0, 0, 5] }[e.key]; if (m) { e.preventDefault(); set(yaw + m[0], pitch + m[1], fov + m[2]); } });
+  function shot() {
+    if (!pano) return; var ratio = $('#cv154-ratio').value, sz = outSize(ratio, 1280), c = document.createElement('canvas'); c.width = sz.w; c.height = sz.h;
+    var x = c.getContext('2d'), out = x.createImageData(sz.w, sz.h); renderView(pano.src, { data: out.data, w: out.width, h: out.height }, yaw, pitch, fov); x.putImageData(out, 0, 0);
+    var url = c.toDataURL('image/jpeg', .9), B = window.CVBoardP153;
+    if (!B) { say('Chưa sẵn sàng lưu (thiếu Bảng cảm hứng).', true); return; }
+    var n = B.list().filter(function (i) { return i.extra && i.extra.pano === pano.name; }).length + 1;
+    B.addDataUrl(url, { name: pano.name + ' · góc ' + n, kind: 'Cảnh', note: 'yaw ' + Math.round(yaw) + '° · pitch ' + Math.round(pitch) + '° · FOV ' + Math.round(fov) + '°', extra: { pano: pano.name, yaw: Math.round(yaw), pitch: Math.round(pitch), fov: Math.round(fov), ratio: ratio } })
+      .then(function (it) { say('Đã lưu “' + it.name + '” vào Bảng cảm hứng (loại Cảnh).'); toast('Đã chụp góc nhìn'); list(); }, function (e) { say(e.message, true); });
+  }
+  function list() { var B = window.CVBoardP153; if (!B) return; var l = B.list().filter(function (i) { return i.extra && i.extra.pano; }).slice(0, 8); $('#cv154-list').innerHTML = l.map(function (i) { return '<img src="' + i.thumb + '" alt="' + String(i.name).replace(/"/g, '') + '" title="' + String(i.note).replace(/"/g, '') + '" style="width:64px;height:40px;object-fit:cover;border-radius:6px">'; }).join(''); }
+  $('#cv154-shot').addEventListener('click', shot);
+  paint(); list(); return true;
+}
+function ready() { var n = 0; (function loop() { try { if (mount()) return; } catch (e) {} if (++n < 40) setTimeout(loop, 250); })(); }
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', ready, { once: true }); else ready();
+window.CVPanoramaP154 = { version: '154.0.0', renderView: renderView, outSize: outSize, isEquirect: isEquirect, RATIOS: RATIOS, mount: mount };
+})();
+</script>
+<script id="canvio-lot155s">
+/* P155–P157 · Gói “Cảnh nhất quán” trong Video Studio.
+   P155 Thẻ Nhân vật / Thẻ Không gian (mô tả cố định + ảnh tham chiếu từ Bảng cảm hứng), dùng lại qua nhiều cảnh.
+   P156 Prompt có phân công vai (ai lo ngoại hình nhân vật, môi trường, góc máy).
+   P157 Thư viện góc máy dựng sẵn + kiểm tra lệch tông giữa hai ảnh/cảnh liền nhau.
+   Chạy cục bộ; không tự gửi mạng. Thẻ lưu ở localStorage `canvio.p155.cards` (mảng có id → Cloud Sync P130 đồng bộ từng thẻ). */
+(function () {
+'use strict';
+if (window.CVScenePackP155) return;
+var KEY = 'canvio.p155.cards';
+var SHOTS = [
+  { id: 'wide-follow', name: 'Toàn cảnh bám theo', dur: 5, text: 'toàn cảnh quay từ xa, máy bám theo chủ thể chuyển động, thấy rõ cả đường và môi trường xung quanh' },
+  { id: 'close-follow', name: 'Bám sát thân', dur: 4, text: 'máy bám sát sau chủ thể, khoảng cách gần, rung nhẹ tạo cảm giác tốc độ' },
+  { id: 'pov', name: 'Góc nhìn nhân vật (POV)', dur: 4, text: 'góc nhìn thứ nhất từ mắt nhân vật, thấy tay và phía trước' },
+  { id: 'over-shoulder', name: 'Qua vai', dur: 4, text: 'máy đặt sau vai nhân vật, hướng về đối tượng phía trước' },
+  { id: 'closeup', name: 'Cận mặt', dur: 3, text: 'cận cảnh khuôn mặt, nhấn vào ánh mắt và biểu cảm, nền mờ' },
+  { id: 'impact', name: 'Cận cảnh va chạm', dur: 2, text: 'cận cảnh khoảnh khắc va chạm, chuyển động chậm ngắn, bụi và mảnh vụn bay' },
+  { id: 'orbit', name: 'Quỹ đạo quanh chủ thể', dur: 5, text: 'máy quay vòng quanh chủ thể 180 độ, giữ chủ thể ở giữa khung' },
+  { id: 'dolly-in', name: 'Dolly tiến vào', dur: 4, text: 'máy tiến chậm vào chủ thể theo đường thẳng, nhấn mạnh cảm xúc' },
+  { id: 'establishing', name: 'Cảnh thiết lập', dur: 4, text: 'cảnh rộng giới thiệu không gian, máy đứng yên hoặc trượt rất chậm' },
+  { id: 'top-down', name: 'Từ trên cao xuống', dur: 4, text: 'góc nhìn từ trên cao thẳng xuống, thấy bố cục mặt bằng' }
+];
+function uid() { return 'c' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+function readCards() { try { var v = JSON.parse(localStorage.getItem(KEY) || '[]'); return Array.isArray(v) ? v : []; } catch (e) { return []; } }
+function writeCards(a) { try { localStorage.setItem(KEY, JSON.stringify(a)); return true; } catch (e) { return false; } }
+function clip(s, n) { return String(s == null ? '' : s).replace(/\s+/g, ' ').trim().slice(0, n); }
+function saveCard(c) {
+  if (!c || (c.type !== 'character' && c.type !== 'space')) return { ok: false, error: 'Loại thẻ không hợp lệ.' };
+  var name = clip(c.name, 60); if (!name) return { ok: false, error: 'Hãy đặt tên cho thẻ.' };
+  var desc = clip(c.desc, 700); if (!desc) return { ok: false, error: 'Hãy mô tả thẻ (ngoại hình/không gian).' };
+  var list = readCards(), old = c.id ? list.filter(function (x) { return x.id === c.id; })[0] : null;
+  var card = { id: old ? old.id : uid(), type: c.type, name: name, desc: desc, traits: clip(c.traits, 300), refs: (c.refs || []).slice(0, 3).map(String), at: Date.now() };
+  if (old) list[list.indexOf(old)] = card; else list.unshift(card);
+  if (!writeCards(list)) return { ok: false, error: 'Bộ nhớ trình duyệt đầy.' };
+  return { ok: true, card: card };
+}
+function removeCard(id) { return writeCards(readCards().filter(function (x) { return x.id !== id; })); }
+function exportCards() { return JSON.stringify({ canvio: 'p155-cards', version: 1, cards: readCards() }); }
+function importCards(text) {
+  var o; try { o = JSON.parse(text); } catch (e) { return { ok: false, error: 'Tệp không phải JSON hợp lệ.' }; }
+  if (!o || o.canvio !== 'p155-cards' || !Array.isArray(o.cards)) return { ok: false, error: 'Không phải tệp thẻ CANVIO.' };
+  var list = readCards(), n = 0;
+  o.cards.forEach(function (c) { if (!c || (c.type !== 'character' && c.type !== 'space') || !clip(c.name, 60) || !clip(c.desc, 700)) return; var card = { id: String(c.id || uid()).slice(0, 40), type: c.type, name: clip(c.name, 60), desc: clip(c.desc, 700), traits: clip(c.traits, 300), refs: (c.refs || []).slice(0, 3).map(String), at: Date.now() }; var i = list.map(function (x) { return x.id; }).indexOf(card.id); if (i >= 0) list[i] = card; else list.unshift(card); n++; });
+  return writeCards(list) ? { ok: true, count: n } : { ok: false, error: 'Bộ nhớ trình duyệt đầy.' };
+}
+function shotById(id) { return SHOTS.filter(function (s) { return s.id === id; })[0] || null; }
+/* roles: { character:{cardId?, ref?}, environment:{cardId?, ref?}, camera:{shotId?, ref?} }; cards: danh sách thẻ. */
+function buildPrompt(opt) {
+  opt = opt || {}; var cards = opt.cards || readCards(), roles = opt.roles || {}, lines = [], miss = [];
+  function card(id) { return cards.filter(function (c) { return c.id === id; })[0] || null; }
+  var ch = roles.character && card(roles.character.cardId), env = roles.environment && card(roles.environment.cardId), sh = roles.camera && shotById(roles.camera.shotId), action = clip(opt.action, 400);
+  if (!ch) miss.push('nhân vật'); if (!env) miss.push('không gian'); if (!sh) miss.push('góc máy'); if (!action) miss.push('hành động');
+  if (miss.length) return { ok: false, error: 'Còn thiếu: ' + miss.join(', ') + '.' };
+  function refTxt(r) { r = r && clip(r.ref, 60); return r ? ' (tham chiếu: ' + r + ')' : ''; }
+  lines.push('[Nhân vật]' + refTxt(roles.character) + ' ' + ch.name + ': ' + ch.desc + (ch.traits ? '. Đặc điểm riêng: ' + ch.traits : '') + '. Giữ nguyên ngoại hình ở mọi cảnh.');
+  lines.push('[Không gian]' + refTxt(roles.environment) + ' ' + env.name + ': ' + env.desc + (env.traits ? '. Chi tiết cố định: ' + env.traits : '') + '. Không đổi bối cảnh giữa các cảnh.');
+  lines.push('[Góc máy]' + refTxt(roles.camera) + ' ' + sh.name + ': ' + sh.text + '.');
+  lines.push('[Hành động] ' + action + '.');
+  lines.push('Phân công: ảnh tham chiếu nhân vật chỉ quyết định ngoại hình; ảnh không gian quyết định bối cảnh, ánh sáng, đồ vật; góc máy lấy theo mục [Góc máy].');
+  return { ok: true, prompt: lines.join('\n'), shotSeconds: sh.dur };
+}
+/* Lệch tông: khoảng cách trung bình giữa các màu chủ đạo (hex) của hai ảnh, thang 0–100. */
+function rgbOf(h) { h = String(h || '').replace('#', ''); var n = parseInt(h, 16); return isNaN(n) ? [0, 0, 0] : [(n >> 16) & 255, (n >> 8) & 255, n & 255]; }
+function toneDelta(a, b) {
+  if (!a || !a.length || !b || !b.length) return null;
+  function best(list, c) { var m = 1e9; list.forEach(function (h) { var r = rgbOf(h), d = Math.sqrt(Math.pow(r[0] - c[0], 2) + Math.pow(r[1] - c[1], 2) + Math.pow(r[2] - c[2], 2)); if (d < m) m = d; }); return m; }
+  var s = 0; a.forEach(function (h) { s += best(b, rgbOf(h)); }); b.forEach(function (h) { s += best(a, rgbOf(h)); });
+  return Math.round(s / (a.length + b.length) / 441.67 * 1000) / 10;
+}
+function toneVerdict(d, limit) { limit = limit == null ? 14 : limit; if (d == null) return { ok: null, text: 'Chưa đủ dữ liệu màu.' }; return d > limit ? { ok: false, text: 'Lệch tông (' + d + ' > ' + limit + '): hai cảnh trông như khác bối cảnh, hãy chỉnh màu hoặc dùng lại ảnh tham chiếu.' } : { ok: true, text: 'Cùng tông (' + d + ' ≤ ' + limit + ').' }; }
+/* ---------- giao diện ---------- */
+function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+function toast(t) { try { if (window.CV && CV.toast) CV.toast(t); } catch (e) {} }
+function mount() {
+  var page = document.getElementById('page-videoStudio'); if (!page) return false; if (page.querySelector('#cv155-card')) return true;
+  var card = document.createElement('div'); card.className = 'card'; card.id = 'cv155-card'; card.style.cssText = 'margin:0 0 14px;padding:14px';
+  card.innerHTML = '<h3 style="margin:0">Cảnh nhất quán: thẻ, góc máy, prompt</h3><p class="tiny" style="margin:2px 0 10px">Tạo thẻ Nhân vật/Không gian một lần, dùng lại cho mọi cảnh để video AI không đổi mặt hay đổi bối cảnh.</p>'
+    + '<div class="row" style="gap:6px;flex-wrap:wrap" role="tablist" aria-label="Công cụ cảnh nhất quán">'
+    + ['cards:Thẻ', 'prompt:Prompt phân công', 'shots:Góc máy', 'tone:Kiểm tra tông'].map(function (t, i) { var p = t.split(':'); return '<button type="button" role="tab" class="btn ' + (i ? 'btn-ghost' : 'btn-soft') + ' sm cv155-tab" data-t="' + p[0] + '" aria-selected="' + (i === 0) + '">' + p[1] + '</button>'; }).join('') + '</div>'
+    + '<div id="cv155-body" style="margin-top:10px"></div><div id="cv155-msg" class="tiny" role="status" aria-live="polite" style="min-height:16px;margin-top:6px"></div>';
+  var anchor = page.querySelector('#cv154-card'); if (anchor && anchor.parentNode) anchor.parentNode.insertBefore(card, anchor.nextSibling); else { var head = page.querySelector('.head'); if (head && head.parentNode) head.parentNode.insertBefore(card, head.nextSibling); else page.insertBefore(card, page.firstChild); }
+  var body = card.querySelector('#cv155-body'), msg = card.querySelector('#cv155-msg'), tab = 'cards', editing = null;
+  function say(t, bad) { msg.textContent = t; msg.style.color = bad ? '#b4233b' : ''; }
+  function boardItems() { return window.CVBoardP153 ? window.CVBoardP153.list().filter(function (i) { return i.type === 'img'; }) : []; }
+  function opts(list, sel, ph) { return '<option value="">' + ph + '</option>' + list.map(function (x) { return '<option value="' + esc(x.id) + '"' + (x.id === sel ? ' selected' : '') + '>' + esc(x.name) + '</option>'; }).join(''); }
+  function viewCards() {
+    var list = readCards(), e = editing && list.filter(function (c) { return c.id === editing; })[0] || {}, imgs = boardItems();
+    body.innerHTML = '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px"><div style="display:grid;gap:6px">'
+      + '<select class="input" id="cv155-type" aria-label="Loại thẻ"><option value="character"' + (e.type === 'character' ? ' selected' : '') + '>Thẻ Nhân vật</option><option value="space"' + (e.type === 'space' ? ' selected' : '') + '>Thẻ Không gian</option></select>'
+      + '<input class="input" id="cv155-name" maxlength="60" placeholder="Tên thẻ (vd: Thám tử Minh)" aria-label="Tên thẻ" value="' + esc(e.name) + '">'
+      + '<textarea class="input" id="cv155-desc" rows="3" maxlength="700" placeholder="Mô tả cố định: ngoại hình, trang phục / kiểu nhà, ánh sáng, tông màu…" aria-label="Mô tả thẻ">' + esc(e.desc) + '</textarea>'
+      + '<input class="input" id="cv155-traits" maxlength="300" placeholder="Đặc điểm riêng (tàn nhang, sẹo, đồ vật cố định…)" aria-label="Đặc điểm riêng" value="' + esc(e.traits) + '">'
+      + [0, 1, 2].map(function (i) { return '<select class="input cv155-ref" aria-label="Ảnh tham chiếu ' + (i + 1) + '">' + opts(imgs, (e.refs || [])[i], '— ảnh tham chiếu ' + (i + 1) + ' (từ Bảng cảm hứng) —') + '</select>'; }).join('')
+      + '<div class="row" style="gap:6px;flex-wrap:wrap"><button class="btn btn-primary sm" id="cv155-save" type="button">' + (e.id ? 'Cập nhật thẻ' : 'Lưu thẻ') + '</button>' + (e.id ? '<button class="btn btn-ghost sm" id="cv155-cancel" type="button">Hủy sửa</button>' : '') + '<button class="btn btn-ghost sm" id="cv155-exp" type="button">Xuất JSON</button><button class="btn btn-ghost sm" id="cv155-imp" type="button">Nhập JSON</button><input type="file" id="cv155-impf" accept="application/json,.json" style="display:none" aria-label="Chọn tệp thẻ JSON"></div></div>'
+      + '<div style="display:grid;gap:6px;align-content:start" id="cv155-list">' + (list.length ? list.map(function (c) { var th = (c.refs || []).map(function (id) { var it = imgs.filter(function (x) { return x.id === id; })[0]; return it ? '<img src="' + esc(it.thumb) + '" alt="" style="width:34px;height:26px;object-fit:cover;border-radius:4px">' : ''; }).join(''); return '<div class="card" style="padding:8px"><div style="font-weight:700;font-size:13px">' + (c.type === 'character' ? '🧑 ' : '🏠 ') + esc(c.name) + '</div><div class="tiny">' + esc(c.desc.slice(0, 110)) + (c.desc.length > 110 ? '…' : '') + '</div><div class="row" style="gap:4px;margin-top:4px;align-items:center">' + th + '<button type="button" class="btn btn-ghost sm cv155-edit" data-id="' + esc(c.id) + '" style="margin-left:auto">Sửa</button><button type="button" class="btn btn-ghost sm cv155-del" data-id="' + esc(c.id) + '">Xóa</button></div></div>'; }).join('') : '<div class="tiny" style="padding:12px;border:1px dashed rgba(128,128,128,.4);border-radius:10px">Chưa có thẻ nào. Tạo thẻ đầu tiên ở bên trái.</div>') + '</div></div>';
+    body.querySelector('#cv155-save').addEventListener('click', function () {
+      var r = saveCard({ id: e.id, type: body.querySelector('#cv155-type').value, name: body.querySelector('#cv155-name').value, desc: body.querySelector('#cv155-desc').value, traits: body.querySelector('#cv155-traits').value, refs: Array.prototype.map.call(body.querySelectorAll('.cv155-ref'), function (s) { return s.value; }).filter(Boolean) });
+      if (!r.ok) { say(r.error, true); return; } editing = null; say('Đã lưu thẻ “' + r.card.name + '”.'); viewCards();
+    });
+    var cn = body.querySelector('#cv155-cancel'); if (cn) cn.addEventListener('click', function () { editing = null; viewCards(); });
+    Array.prototype.forEach.call(body.querySelectorAll('.cv155-edit'), function (b) { b.addEventListener('click', function () { editing = b.dataset.id; viewCards(); }); });
+    Array.prototype.forEach.call(body.querySelectorAll('.cv155-del'), function (b) { b.addEventListener('click', function () { if (confirm('Xóa thẻ này?')) { removeCard(b.dataset.id); viewCards(); } }); });
+    body.querySelector('#cv155-exp').addEventListener('click', function () { var a = document.createElement('a'), u = URL.createObjectURL(new Blob([exportCards()], { type: 'application/json' })); a.href = u; a.download = 'canvio-the-canh.json'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(function () { URL.revokeObjectURL(u); }, 500); });
+    body.querySelector('#cv155-imp').addEventListener('click', function () { body.querySelector('#cv155-impf').click(); });
+    body.querySelector('#cv155-impf').addEventListener('change', function (ev) { var f = ev.target.files[0]; if (!f) return; f.text().then(function (t) { var r = importCards(t); say(r.ok ? 'Đã nhập ' + r.count + ' thẻ.' : r.error, !r.ok); viewCards(); }); ev.target.value = ''; });
+  }
+  function viewPrompt() {
+    var cards = readCards(), ch = cards.filter(function (c) { return c.type === 'character'; }), sp = cards.filter(function (c) { return c.type === 'space'; });
+    body.innerHTML = '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px"><select class="input" id="cv156-ch" aria-label="Thẻ nhân vật">' + opts(ch, '', '— Thẻ nhân vật —') + '</select><select class="input" id="cv156-sp" aria-label="Thẻ không gian">' + opts(sp, '', '— Thẻ không gian —') + '</select>'
+      + '<select class="input" id="cv156-sh" aria-label="Góc máy">' + opts(SHOTS, '', '— Góc máy —') + '</select><input class="input" id="cv156-ac" maxlength="400" placeholder="Hành động trong cảnh (vd: lao xe qua ngã tư, quay đầu nhìn lại)" aria-label="Hành động"></div>'
+      + '<div class="row" style="gap:6px;margin-top:8px;flex-wrap:wrap"><input class="input" id="cv156-r1" maxlength="60" placeholder="Ảnh nào lo nhân vật (vd: ảnh 1)" aria-label="Ảnh lo nhân vật" style="flex:1;min-width:160px"><input class="input" id="cv156-r2" maxlength="60" placeholder="Ảnh nào lo môi trường (vd: ảnh 2)" aria-label="Ảnh lo môi trường" style="flex:1;min-width:160px"><input class="input" id="cv156-r3" maxlength="60" placeholder="Ảnh nào lo góc máy (vd: ảnh 3)" aria-label="Ảnh lo góc máy" style="flex:1;min-width:160px"></div>'
+      + '<div class="row" style="gap:6px;margin-top:8px"><button class="btn btn-primary sm" id="cv156-go" type="button">Tạo prompt</button><button class="btn btn-soft sm" id="cv156-cp" type="button" disabled>Sao chép</button></div><textarea class="input" id="cv156-out" rows="7" readonly aria-label="Prompt đã tạo" style="margin-top:8px;width:100%"></textarea>';
+    var out = body.querySelector('#cv156-out'), cp = body.querySelector('#cv156-cp');
+    body.querySelector('#cv156-go').addEventListener('click', function () {
+      var v = function (s) { return body.querySelector(s).value; };
+      var r = buildPrompt({ cards: cards, action: v('#cv156-ac'), roles: { character: { cardId: v('#cv156-ch'), ref: v('#cv156-r1') }, environment: { cardId: v('#cv156-sp'), ref: v('#cv156-r2') }, camera: { shotId: v('#cv156-sh'), ref: v('#cv156-r3') } } });
+      if (!r.ok) { out.value = ''; cp.disabled = true; say(r.error, true); return; } out.value = r.prompt; cp.disabled = false; say('Đã tạo prompt (gợi ý ' + r.shotSeconds + ' giây).');
+    });
+    cp.addEventListener('click', function () { try { navigator.clipboard.writeText(out.value).then(function () { toast('Đã sao chép prompt'); }, function () { out.select(); say('Không tự sao chép được, hãy bấm Ctrl+C.', true); }); } catch (e) { out.select(); } });
+  }
+  function viewShots() {
+    body.innerHTML = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px">' + SHOTS.map(function (s) { return '<div class="card" style="padding:8px"><div style="font-weight:700;font-size:13px">' + esc(s.name) + ' <span class="tiny">· ' + s.dur + ' giây</span></div><div class="tiny" style="margin:4px 0">' + esc(s.text) + '</div><button type="button" class="btn btn-ghost sm cv157-cp" data-id="' + s.id + '">Sao chép mô tả</button></div>'; }).join('') + '</div>';
+    Array.prototype.forEach.call(body.querySelectorAll('.cv157-cp'), function (b) { b.addEventListener('click', function () { var s = shotById(b.dataset.id); try { navigator.clipboard.writeText(s.name + ': ' + s.text).then(function () { toast('Đã sao chép góc máy'); }); } catch (e) {} }); });
+  }
+  function viewTone() {
+    var imgs = boardItems().filter(function (i) { return i.colors && i.colors.length; });
+    body.innerHTML = '<p class="tiny" style="margin:0 0 8px">Chọn khung cuối của cảnh trước và khung đầu của cảnh sau (ảnh trong Bảng cảm hứng). Công cụ so màu chủ đạo và báo nếu hai cảnh lệch tông.</p><div class="row" style="gap:6px;flex-wrap:wrap;align-items:center"><select class="input" id="cv157-a" aria-label="Khung cuối cảnh trước" style="flex:1;min-width:180px">' + opts(imgs, '', '— Cảnh trước —') + '</select><select class="input" id="cv157-b" aria-label="Khung đầu cảnh sau" style="flex:1;min-width:180px">' + opts(imgs, '', '— Cảnh sau —') + '</select><label class="tiny">Ngưỡng <input class="input" id="cv157-t" type="number" min="1" max="60" value="14" style="width:70px"></label><button class="btn btn-primary sm" id="cv157-go" type="button">So sánh</button></div><div id="cv157-r" class="tiny" style="margin-top:8px"></div>';
+    body.querySelector('#cv157-go').addEventListener('click', function () {
+      var a = imgs.filter(function (i) { return i.id === body.querySelector('#cv157-a').value; })[0], b = imgs.filter(function (i) { return i.id === body.querySelector('#cv157-b').value; })[0], r = body.querySelector('#cv157-r');
+      if (!a || !b) { r.textContent = 'Hãy chọn đủ hai ảnh.'; r.style.color = '#b4233b'; return; }
+      var v = toneVerdict(toneDelta(a.colors, b.colors), +body.querySelector('#cv157-t').value || 14); r.style.color = v.ok === false ? '#b4233b' : '#0a7a55'; r.textContent = v.text;
+    });
+  }
+  function show() { Array.prototype.forEach.call(card.querySelectorAll('.cv155-tab'), function (b) { var on = b.dataset.t === tab; b.setAttribute('aria-selected', on); b.className = 'btn ' + (on ? 'btn-soft' : 'btn-ghost') + ' sm cv155-tab'; }); ({ cards: viewCards, prompt: viewPrompt, shots: viewShots, tone: viewTone })[tab](); }
+  Array.prototype.forEach.call(card.querySelectorAll('.cv155-tab'), function (b) { b.addEventListener('click', function () { tab = b.dataset.t; say(''); show(); }); });
+  show(); return true;
+}
+function ready() { var n = 0; (function loop() { try { if (mount()) return; } catch (e) {} if (++n < 40) setTimeout(loop, 250); })(); }
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', ready, { once: true }); else ready();
+window.CVScenePackP155 = { version: '155.0.0', SHOTS: SHOTS, readCards: readCards, saveCard: saveCard, removeCard: removeCard, exportCards: exportCards, importCards: importCards, buildPrompt: buildPrompt, toneDelta: toneDelta, toneVerdict: toneVerdict, mount: mount };
+})();
+</script>
 <style id="canvio-lot131-css">
 .cv131-overlay{position:fixed;inset:0;z-index:2147483000;background:rgba(13,26,43,.45);display:flex;align-items:center;justify-content:center;padding:16px}
 .cv131-overlay[hidden]{display:none}

@@ -4138,3 +4138,9 @@ Bài học P150: KHÔNG đặt `display:flex` lên `#page-home` mà không kèm 
 ### P153–P158 kế hoạch (2026-11-24)
 - Gói "Cảnh nhất quán": P154 trình xem toàn cảnh → P155 thẻ Nhân vật/Không gian → P156 prompt có phân công → P157 thư viện góc máy + kiểm tra lệch tông; P153 Bảng cảm hứng; P158 Landing page + thiết kế→chuyển động. Chi tiết và tiêu chí chấp nhận ở CANVIO_ROADMAP.md.
 - Ràng buộc: miễn phí/cục bộ; dùng lại Kho Tài nguyên (P133.6), Cloud Sync (P130), bộ tách màu và đo màu (P134), Storyboard (P125/P127), P128 orchestrator; không tạo kho dữ liệu trùng. Mỗi P mới: file `canvio-pNNN-*.js`, lot riêng, thêm vào boot-order graph, parity P143, CI version string nếu có.
+
+### P153–P157 đã triển khai (2026-11-24)
+- Module: `canvio-p153-board.js` (CVBoardP153, CVSceneStoreP153), `canvio-p154-panorama.js` (CVPanoramaP154), `canvio-p155-scene-pack.js` (CVScenePackP155); lot `canvio-lot153b/154p/155s`, đã vào parity P143 (37/37) và boot-order graph.
+- Dữ liệu: `canvio.p153.board` và `canvio.p155.cards` là mảng có `id` (Cloud Sync P130 tự đồng bộ từng mục); ảnh đầy đủ ở IndexedDB `CANVIO_SCENE_STORE` (chưa đồng bộ đám mây — chỉ thumb đi theo).
+- Cạm bẫy: thẻ `.card` trong `#page-assets` bị gắn `data-tilt` (nghiêng 3D) → làm lệch vùng bấm; thẻ mới phải tắt transform. `renderView` nhận `{data,w,h}`, không nhận trực tiếp `ImageData` (dùng `width/height`). Smooth-scroll của trang làm Playwright đo sai tọa độ: test nên chèn `scroll-behavior:auto`.
+- Việc kế tiếp: nối prompt P156 sang P128/ComfyUI; nối "Dùng màu này" vào Poster/Brand; P158.

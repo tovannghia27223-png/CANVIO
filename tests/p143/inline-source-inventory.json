@@ -1,17 +1,17 @@
 {
   "format": "CANVIO_P143_INLINE_SOURCE_INVENTORY",
   "version": 1,
-  "generatedAt": "2026-11-23T09:17:18.872Z",
+  "generatedAt": "2026-11-24T06:25:03.949Z",
   "source": "restored canonical index.html after hosted workflow integration steps",
   "purpose": "Complete script-tag inventory in browser execution order; known global reference detection is heuristic, not a semantic dependency DAG.",
-  "htmlBytes": 5810986,
-  "scriptTagCount": 168,
-  "inlineScriptCount": 168,
+  "htmlBytes": 5873770,
+  "scriptTagCount": 172,
+  "inlineScriptCount": 172,
   "externalScriptCount": 0,
   "moduleScriptCount": 0,
   "asyncScriptCount": 0,
   "deferScriptCount": 0,
-  "uniqueScriptIds": 165,
+  "uniqueScriptIds": 169,
   "duplicateScriptIds": [],
   "modules": [
     {
@@ -858,8 +858,8 @@
       "async": false,
       "defer": false,
       "noModule": false,
-      "bytes": 56784,
-      "sha256": "d0151d398f570afb17abee157578d654fc1205a5c17125fd909055e950c2bfab",
+      "bytes": 56921,
+      "sha256": "157145d155a3dcc3efc14828c757900a835adbe66f608f5db9a92fd67e9151b0",
       "exportedGlobals": [
         "CV11",
         "CVAudioMix",
@@ -8010,8 +8010,8 @@
       "async": false,
       "defer": false,
       "noModule": false,
-      "bytes": 292074,
-      "sha256": "d1b65a001cbd51abe1598bd9c798928338dc2e08b7890e9894e351c37b58412f",
+      "bytes": 292274,
+      "sha256": "dbda8d9850a819c6a481aad4acbb8c870b438a44d3fa753d6714ec5059b57011",
       "exportedGlobals": [
         "CANVIO22",
         "CANVIOCreativeSuite",
@@ -15599,6 +15599,291 @@
     },
     {
       "order": 144,
+      "id": "canvio-lot151g",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 5499,
+      "sha256": "cc075306f0338789ef626310bd075f496b84bee6fc1b0ec42d97d51933ad36bb",
+      "exportedGlobals": [
+        "CVContrastGuardP151"
+      ],
+      "globalDeclarations": [],
+      "globalPropertyReads": [
+        "addEventListener",
+        "CVContrastGuardP151",
+        "MutationObserver"
+      ],
+      "knownGlobalReads": [],
+      "globalReferenceEvidence": {
+        "propertyReads": [
+          {
+            "name": "addEventListener",
+            "count": 1,
+            "lines": [
+              48
+            ]
+          },
+          {
+            "name": "CVContrastGuardP151",
+            "count": 1,
+            "lines": [
+              6
+            ]
+          },
+          {
+            "name": "MutationObserver",
+            "count": 1,
+            "lines": [
+              48
+            ]
+          }
+        ],
+        "knownReads": [],
+        "writes": [
+          {
+            "name": "CVContrastGuardP151",
+            "line": 46,
+            "kind": "window.property"
+          }
+        ],
+        "scannerLimitations": [
+          "Template literal bodies and interpolation expressions are skipped as one lexical region.",
+          "Destructured globals, alias flow, computed property names, eval and dynamically assembled identifiers are not resolved.",
+          "Top-level bindings are detected only for simple var/let/const/function/class declarations.",
+          "This scanner is lexical evidence, not a JavaScript AST or proof of runtime data flow."
+        ]
+      }
+    },
+    {
+      "order": 145,
+      "id": "canvio-lot153b",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 19656,
+      "sha256": "aad80286353ebbe370a4beb8aecb0a103f861cc07e8b6b60f69eba4c73cf687d",
+      "exportedGlobals": [
+        "CVBoardP153",
+        "CVSceneStoreP153"
+      ],
+      "globalDeclarations": [],
+      "globalPropertyReads": [
+        "addEventListener",
+        "CV",
+        "CVBoardP153",
+        "indexedDB"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ],
+      "globalReferenceEvidence": {
+        "propertyReads": [
+          {
+            "name": "addEventListener",
+            "count": 1,
+            "lines": [
+              155
+            ]
+          },
+          {
+            "name": "CV",
+            "count": 1,
+            "lines": [
+              96
+            ]
+          },
+          {
+            "name": "CVBoardP153",
+            "count": 1,
+            "lines": [
+              8
+            ]
+          },
+          {
+            "name": "indexedDB",
+            "count": 1,
+            "lines": [
+              60
+            ]
+          }
+        ],
+        "knownReads": [
+          {
+            "name": "CV",
+            "count": 2,
+            "lines": [
+              96
+            ]
+          }
+        ],
+        "writes": [
+          {
+            "name": "CVSceneStoreP153",
+            "line": 70,
+            "kind": "window.property"
+          },
+          {
+            "name": "CVBoardP153",
+            "line": 160,
+            "kind": "window.property"
+          }
+        ],
+        "scannerLimitations": [
+          "Template literal bodies and interpolation expressions are skipped as one lexical region.",
+          "Destructured globals, alias flow, computed property names, eval and dynamically assembled identifiers are not resolved.",
+          "Top-level bindings are detected only for simple var/let/const/function/class declarations.",
+          "This scanner is lexical evidence, not a JavaScript AST or proof of runtime data flow."
+        ]
+      }
+    },
+    {
+      "order": 146,
+      "id": "canvio-lot154p",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 11331,
+      "sha256": "d79c9bf78fe17dc55a734fcdeed8e0290e5e096d3857055e41d0b6f854416c90",
+      "exportedGlobals": [
+        "CVPanoramaP154"
+      ],
+      "globalDeclarations": [],
+      "globalPropertyReads": [
+        "CV",
+        "CVBoardP153",
+        "CVPanoramaP154"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ],
+      "globalReferenceEvidence": {
+        "propertyReads": [
+          {
+            "name": "CV",
+            "count": 1,
+            "lines": [
+              37
+            ]
+          },
+          {
+            "name": "CVBoardP153",
+            "count": 2,
+            "lines": [
+              88,
+              94
+            ]
+          },
+          {
+            "name": "CVPanoramaP154",
+            "count": 1,
+            "lines": [
+              7
+            ]
+          }
+        ],
+        "knownReads": [
+          {
+            "name": "CV",
+            "count": 2,
+            "lines": [
+              37
+            ]
+          }
+        ],
+        "writes": [
+          {
+            "name": "CVPanoramaP154",
+            "line": 100,
+            "kind": "window.property"
+          }
+        ],
+        "scannerLimitations": [
+          "Template literal bodies and interpolation expressions are skipped as one lexical region.",
+          "Destructured globals, alias flow, computed property names, eval and dynamically assembled identifiers are not resolved.",
+          "Top-level bindings are detected only for simple var/let/const/function/class declarations.",
+          "This scanner is lexical evidence, not a JavaScript AST or proof of runtime data flow."
+        ]
+      }
+    },
+    {
+      "order": 147,
+      "id": "canvio-lot155s",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 21610,
+      "sha256": "a26751c4adbe68333fb692feae150f8f5d87fab0828125ee5fca8da17d85584a",
+      "exportedGlobals": [
+        "CVScenePackP155"
+      ],
+      "globalDeclarations": [],
+      "globalPropertyReads": [
+        "CV",
+        "CVBoardP153",
+        "CVScenePackP155"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ],
+      "globalReferenceEvidence": {
+        "propertyReads": [
+          {
+            "name": "CV",
+            "count": 1,
+            "lines": [
+              73
+            ]
+          },
+          {
+            "name": "CVBoardP153",
+            "count": 2,
+            "lines": [
+              84
+            ]
+          },
+          {
+            "name": "CVScenePackP155",
+            "count": 1,
+            "lines": [
+              9
+            ]
+          }
+        ],
+        "knownReads": [
+          {
+            "name": "CV",
+            "count": 2,
+            "lines": [
+              73
+            ]
+          }
+        ],
+        "writes": [
+          {
+            "name": "CVScenePackP155",
+            "line": 140,
+            "kind": "window.property"
+          }
+        ],
+        "scannerLimitations": [
+          "Template literal bodies and interpolation expressions are skipped as one lexical region.",
+          "Destructured globals, alias flow, computed property names, eval and dynamically assembled identifiers are not resolved.",
+          "Top-level bindings are detected only for simple var/let/const/function/class declarations.",
+          "This scanner is lexical evidence, not a JavaScript AST or proof of runtime data flow."
+        ]
+      }
+    },
+    {
+      "order": 148,
       "id": "canvio-lot131",
       "type": "classic",
       "src": null,
@@ -15717,7 +16002,7 @@
       }
     },
     {
-      "order": 145,
+      "order": 149,
       "id": "canvio-lot115",
       "type": "classic",
       "src": null,
@@ -15777,7 +16062,7 @@
       }
     },
     {
-      "order": 146,
+      "order": 150,
       "id": "canvio-lot1222",
       "type": "classic",
       "src": null,
@@ -15855,7 +16140,7 @@
       }
     },
     {
-      "order": 147,
+      "order": 151,
       "id": "canvio-lot127k",
       "type": "classic",
       "src": null,
@@ -15941,7 +16226,7 @@
       }
     },
     {
-      "order": 148,
+      "order": 152,
       "id": "canvio-lot1452",
       "type": "classic",
       "src": null,
@@ -16039,7 +16324,7 @@
       }
     },
     {
-      "order": 149,
+      "order": 153,
       "id": "canvio-lot1454b",
       "type": "classic",
       "src": null,
@@ -16099,7 +16384,7 @@
       }
     },
     {
-      "order": 150,
+      "order": 154,
       "id": "canvio-lot1454",
       "type": "classic",
       "src": null,
@@ -16209,7 +16494,7 @@
       }
     },
     {
-      "order": 151,
+      "order": 155,
       "id": "canvio-lot1252",
       "type": "classic",
       "src": null,
@@ -16277,7 +16562,7 @@
       }
     },
     {
-      "order": 152,
+      "order": 156,
       "id": "canvio-lot1455",
       "type": "classic",
       "src": null,
@@ -16337,7 +16622,7 @@
       }
     },
     {
-      "order": 153,
+      "order": 157,
       "id": "canvio-lot1272",
       "type": "classic",
       "src": null,
@@ -16415,7 +16700,7 @@
       }
     },
     {
-      "order": 154,
+      "order": 158,
       "id": "canvio-lot1456",
       "type": "classic",
       "src": null,
@@ -16475,7 +16760,7 @@
       }
     },
     {
-      "order": 155,
+      "order": 159,
       "id": "canvio-lot1457",
       "type": "classic",
       "src": null,
@@ -16535,7 +16820,7 @@
       }
     },
     {
-      "order": 156,
+      "order": 160,
       "id": "canvio-lot1458",
       "type": "classic",
       "src": null,
@@ -16595,7 +16880,7 @@
       }
     },
     {
-      "order": 157,
+      "order": 161,
       "id": "canvio-lot145910",
       "type": "classic",
       "src": null,
@@ -16699,7 +16984,7 @@
       }
     },
     {
-      "order": 158,
+      "order": 162,
       "id": "canvio-lot134r",
       "type": "classic",
       "src": null,
@@ -16759,7 +17044,7 @@
       }
     },
     {
-      "order": 159,
+      "order": 163,
       "id": "canvio-lot124",
       "type": "classic",
       "src": null,
@@ -16844,7 +17129,7 @@
       }
     },
     {
-      "order": 160,
+      "order": 164,
       "id": "canvio-lot133p",
       "type": "classic",
       "src": null,
@@ -16930,7 +17215,7 @@
       }
     },
     {
-      "order": 161,
+      "order": 165,
       "id": "canvio-lot135a",
       "type": "classic",
       "src": null,
@@ -16964,7 +17249,7 @@
       }
     },
     {
-      "order": 162,
+      "order": 166,
       "id": "canvio-lot133m",
       "type": "classic",
       "src": null,
@@ -17050,7 +17335,7 @@
       }
     },
     {
-      "order": 163,
+      "order": 167,
       "id": "canvio-lot139",
       "type": "classic",
       "src": null,
@@ -17076,7 +17361,7 @@
       }
     },
     {
-      "order": 164,
+      "order": 168,
       "id": "canvio-lot120126",
       "type": "classic",
       "src": null,
@@ -17165,7 +17450,7 @@
       }
     },
     {
-      "order": 165,
+      "order": 169,
       "id": "canvio-lot119v",
       "type": "classic",
       "src": null,
@@ -17191,7 +17476,7 @@
       }
     },
     {
-      "order": 166,
+      "order": 170,
       "id": "canvio-lot119w",
       "type": "classic",
       "src": null,
@@ -17217,7 +17502,7 @@
       }
     },
     {
-      "order": 167,
+      "order": 171,
       "id": "canvio-lot146",
       "type": "classic",
       "src": null,

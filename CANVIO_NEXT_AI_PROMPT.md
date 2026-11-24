@@ -260,3 +260,8 @@ Chỉ kiểm bằng tín hiệu/tệp tổng hợp và Chromium headless; chưa 
 - Chưa có dòng code nào. Đọc mục "P153–P158" trong CANVIO_ROADMAP.md trước khi làm. Thứ tự đề xuất: P154 → P155 → P156 → P157 (một gói), P153 độc lập, P158 cuối.
 - Cần hỏi người dùng: duyệt thứ tự; ảnh toàn cảnh 2:1 mẫu để test P154; xác nhận chi tiết skill "design-to-motion" (MP4/GIF 800×500) vì chỉ suy từ hình.
 - Mỗi P: test node + Chromium, boot-order graph, parity P143, rồi ghi cả ROADMAP, AI_GUIDE và file này; push thẳng `main`.
+
+## P153–P157 đã làm (2026-11-24) — cập nhật cho AI kế tiếp
+- Đã xong và có test: Bảng cảm hứng (P153), Trình xem toàn cảnh (P154), Thẻ/Prompt phân công/Góc máy/Kiểm tra tông (P155–P157). Xem ROADMAP mục "P153–P157 — ĐÃ LÀM".
+- Còn mở: P158; nối prompt P156 vào P128/ComfyUI; nối sự kiện `cv153:usecolor` vào Poster/Brand; thử với ảnh toàn cảnh thật của người dùng; đồng bộ ảnh đầy đủ lên cloud nếu cần.
+- Khi sửa module: sửa file standalone rồi chép y hệt vào lot trong index.html (parity P143), chạy `tests/p153/run-p153-tests.cjs`, `tests/p145/run-p153-browser.py`, smoke, boot-order `--check`.

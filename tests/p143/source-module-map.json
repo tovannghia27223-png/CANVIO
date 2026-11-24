@@ -137,6 +137,18 @@
     {
       "source": "canvio-p119-website.js",
       "scriptId": "canvio-lot119w"
+    },
+    {
+      "source": "canvio-p153-board.js",
+      "scriptId": "canvio-lot153b"
+    },
+    {
+      "source": "canvio-p154-panorama.js",
+      "scriptId": "canvio-lot154p"
+    },
+    {
+      "source": "canvio-p155-scene-pack.js",
+      "scriptId": "canvio-lot155s"
     }
   ],
   "totalModules": 34
