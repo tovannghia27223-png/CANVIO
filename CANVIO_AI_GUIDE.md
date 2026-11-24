@@ -4294,3 +4294,12 @@ P160–P166 module APIs currently report versions P160.2.0, P161.1.0, P162.2.0, 
 - No new store, external API, paid service, package or timeline was added. Output remains saved through the current Asset Library and existing Storyboard owner.
 - Added Node coverage for overlay normalization/rendering and design-source extraction; Chromium coverage verifies Poster SVG and Designer snapshot handoff without intermediate assets, overlay preview, plus the existing GIF/WebM/Storyboard/workflow/mobile checks.
 - Status: candidate pending exact-head hosted CI, P143 standalone/inline parity, generated canonical `index.html`, and post-merge mainline verification. This is 2D image motion, not a full multi-track video editor or AI video generation.
+
+
+## P167.1–P168.1 — mainline integration verified (2026-11-25)
+
+- PR #91 was merged into `main` at merge commit `aca4f2846637b28532110f86d82ded2ef37cde03`; the generated canonical runtime build is `5c54e93ebad19d59548d735fcbd0520ae6fe77e7`.
+- Hosted workflow #796 (`45459847567`) completed with conclusion `success`. All listed steps passed, including canonical index restoration, P143 standalone/inline parity and script/style/template inventories, P47–P70 regression suite, integrated source contracts, same-origin GLB/P85/ONNX/worker browser acceptance, and Guide/Roadmap/QA/manifest refresh.
+- P167.1 delivers the bounded Canvas2D blocking inspector, camera controls, multi-camera preview and PNG contact sheet; it is not a full WebGL scene graph or MP4 renderer.
+- P168.1 delivers direct local Poster/Designer handoff, 2D image motion/text overlays and GIF/WebM export through existing Asset Library/Storyboard owners; it is not a multi-track video editor or AI video inference.
+- Do not infer P70 manual acceptance from this hosted workflow. The 14 real-world gates remain separate and require evidence on actual devices/projects.
