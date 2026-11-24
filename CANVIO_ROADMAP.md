@@ -1367,3 +1367,11 @@ Việc cần người dùng: duyệt thứ tự; cho biết có muốn "kênh ch
 
 - Run #785: P150 root skin fallback về classic; Holo-preservation pass 5/5; năm workspace Export không in diagnostic (computed background đúng hồng), nhưng test fail vì baseline được chụp khi Home-tech còn hiển thị.
 - Test fixture mở Design trước khi chụp baseline màu hồng, rồi so sánh năm workspace. Đây là sửa thứ tự kiểm thử, không thay đổi CSS sản phẩm.
+
+
+## P132.1 — Nhập từng trang PDF cục bộ vào Pixel Atelier (candidate · 2026-11-25)
+
+- Thêm `canvio-p132-pdf-import.js` / `CVPdfImportP132` phiên bản 132.1.0; PDF.js 6.5.438, giấy phép Apache-2.0, được vendoring cục bộ với CMaps, standard fonts, worker và manifest SHA-256. Không tải PDF lên máy chủ, không gọi CDN.
+- Luồng: chọn PDF → chọn số trang → raster hóa thành PNG trong giới hạn → chuyển qua input `#pxFile` và owner `CVNativeEngines.pixel` hiện hữu. Chỉ một trang/lần; không tạo editor, database hay timeline mới.
+- Giới hạn bảo vệ: 30 MiB, 500 trang, 4096 px cạnh dài, 16 MP; tắt PDF JavaScript và XFA. PDF text/vector không còn editable sau raster; mật khẩu, batch nhiều trang và dự án PDF thực tế vẫn là phạm vi mở.
+- Lỗi CI trước đó chỉ ở assertion đọc `#pxFile.files` sau khi Pixel Atelier xử lý change và dọn picker; log vẫn xác nhận canvas 300×150, điểm ảnh đỏ đúng và không có page error. Test được sửa để chụp metadata file ở capture phase trước cleanup. Hosted rerun, P143 parity và full regression còn chờ.
