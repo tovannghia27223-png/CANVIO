@@ -37,7 +37,7 @@ for(var i=0;i<w.steps.length;i++){
    try{var match=current.match(/\\{[\\s\\S]*\\}/),parsed=match?JSON.parse(match[0]):null;if(parsed&&Number.isFinite(Number(parsed.score))){score=Math.max(0,Math.min(100,Number(parsed.score)));entry.score=score;entry.checks=Array.isArray(parsed.checks)?parsed.checks.slice(0,12):[];}else{var base=await O.run({kind:'p165-evaluator',tiers:['local'],cache:false,prompt:prompt});parsed=JSON.parse(base.text);score=Number(parsed.score)||0;entry.score=score;entry.mode='deterministic-evaluation';}}catch(e){score=0;entry.score=0;entry.evaluationParseFailed=true;}
   }
   log.push(entry);
-  if(role==='evaluator'){pendingRevision=score<75&&cycle<maxCycles&&w.steps.includes('reviser');if(pendingRevision)i=w.steps.indexOf('reviser')-1;}else if(role==='reviser'){pendingRevision=false;if(w.steps.includes('evaluator'))i=w.steps.indexOf('evaluator')-1;}
+  if(role==='evaluator'){pendingRevision=score<75&&cycle<maxCycles&&w.steps.includes('reviser');if(pendingRevision){cycle++;i=w.steps.indexOf('reviser')-1;}}else if(role==='reviser'){pendingRevision=false;if(w.steps.includes('evaluator'))i=w.steps.indexOf('evaluator')-1;}
  }catch(e){log.push({role:role,status:'failed',message:clean(e.message,200)});break;}
 }
 var usedModel=log.some(x=>x.mode==='configured-local-model');
