@@ -333,3 +333,9 @@ Khi sửa module: sửa file standalone rồi chép y hệt vào lot (parity so 
 - Keep the Home-skin root token at `classic` whenever Home is not visibly active. Restore the locally stored selected skin only when `#page-home` is actually visible.
 - P150.13 Chromium must pass the root-skin fallback and pink Export checks in all five workspaces at desktop/mobile. Do not merge based on the P150.12 run (#782), which failed those five color assertions.
 - Other scene and character suites were green in #782: P167 browser, P168 browser, P169 7/7, and P160–P166 28/28.
+
+
+## P150.13 QA fixture note
+
+- Keep P47's Holographic theme separate from P150 Home skins. Test original pink Export under P47 `plain`; separately assert P47 Holo's gradient appearance remains unchanged across all five workspaces.
+- Do not merge until a new hosted run passes both theme modes plus the complete regression/browser suite.

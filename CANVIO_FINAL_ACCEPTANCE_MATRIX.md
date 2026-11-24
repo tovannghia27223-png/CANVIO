@@ -20,6 +20,9 @@
 | P159.1/P167/P168 scene-production dock | P143 parity + P167/P168 Node suites + Chromium scene-blocking and image-motion tests | Real camera/GLB/project, browser MediaRecorder, real media and device review remain manual. |
 | P169 Character Studio | Node + Chromium eight-control SVG preview and P163 Shared Core feature round-trip | 2D vector reference only; not 3D rigging/sculpting, face recognition, generative imagery or professional visual acceptance. |
 
+
+| P150.13 theme-owner isolation | Chromium base-P47-plain: original pink Export retained on all five workspaces; Chromium P47-Holo: computed Export background/color/border unchanged across all five after P150 tech is selected while Home is hidden | Both modes must pass, plus Home-skin desktop/mobile checks and zero page errors. |
+
 ## Required manual gates
 1. HTTPS and supported browser matrix on deployed origin.
 2. Native IndexedDB persistence, restore and quota behavior.

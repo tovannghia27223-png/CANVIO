@@ -644,3 +644,10 @@ Mainline workflow #551 passed 53/53; Pages #275 passed build/deploy. P143 parity
 
 - Run #782 failed only the five non-Home Export color assertions (69/74 P150 checks). The Home-only marker was off on Design/Site/Media/Project/AI; P150.13 now also resets the root `data-home-skin` to `classic` outside Home, preventing selectors scoped to retained/hidden Home descendants from affecting shared toolbar controls.
 - P167: Chromium checks passed. P168: Chromium checks passed. P169: 7/7 checks passed, including all eight character fields and P163 shared-profile persistence. P160–P166: 28/28 passed. P150 requires a fresh run.
+
+
+## P150.13 QA fixture correction after run #783
+
+- Run #783 confirmed root Home skin fallback to `classic` was applied, but the five pink-background assertions remained false because the test page retained P47's default `canvio16:skin=holo`, which independently sets a Holographic gradient on `#ws-export`.
+- Updated browser test setup: the base-pink regression explicitly selects P47 `plain`; a separate Holo regression captures the computed export appearance and verifies it is unchanged on all five non-Home workspaces after setting P150 tech while Home is hidden.
+- P150.13 is not accepted until the new complete hosted run passes both modes at desktop/mobile and all other browser suites.

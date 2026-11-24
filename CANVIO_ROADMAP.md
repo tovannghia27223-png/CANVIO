@@ -1349,3 +1349,9 @@ Việc cần người dùng: duyệt thứ tự; cho biết có muốn "kênh ch
 
 - P150.12 was insufficient: Home scope marker correctly turned off, but `data-home-skin=tech` remained on the document root and some inherited/legacy selectors still recolored Export. P150.13 resets root skin to `classic` whenever Home is hidden and restores the saved selection only when Home is visible.
 - Acceptance adds a root-skin assertion plus the original pink Export check on all five non-Home workspaces; no merge until hosted browser and final-head verification pass.
+
+
+## P150.13 — Tách biệt P47 Holo và P150 Home skin trong QA
+
+- Nút Xuất nền hồng được kiểm tra dưới P47 `plain` để xác nhận không bị Home skin ghi đè. Thêm suite riêng cho P47 Holo: so sánh computed background/color/border của nút Xuất trước và sau khi P150 chuyển sang tech skin trong lúc Home đang ẩn, qua cả 5 workspace.
+- Kết quả #783 cho thấy P150 root đã về `classic`; tuy vậy fixture còn bật P47 Holo mặc định, vốn có CSS gradient độc lập cho nút Xuất. Lượt tiếp theo phải pass cả 2 nhánh theme.
