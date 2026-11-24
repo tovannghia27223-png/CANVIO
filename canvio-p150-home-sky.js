@@ -276,8 +276,8 @@ function css() {
   'html[data-home-skin=fashion] #page-home :is(.fa-cta .p,.btn-primary,#ws-jobs>button,#ws-jgo,#ws-obc button){border-radius:999px!important}',
   'html[data-home-skin=tech] #page-home .t-con button{border-color:#FFD84A!important}',
   'html[data-home-skin] #cv150-skins button[aria-pressed=true]{background:#FFD84A!important;color:#0D0D0F!important}',
-  'html[data-home-skin=sky]:has(#page-home.active) header.top #ws-export,html[data-home-skin=sky]:has(#page-home.active) header.top .btn.cvExport,html[data-home-skin=sky] header.top #ws-export,html[data-home-skin=sky] header.top .btn.cvExport,html[data-home-skin=fashion]:has(#page-home.active) header.top #ws-export,html[data-home-skin=fashion]:has(#page-home.active) header.top .btn.cvExport,html[data-home-skin=fashion] header.top #ws-export,html[data-home-skin=fashion] header.top .btn.cvExport,html[data-home-skin=tech]:has(#page-home.active) header.top #ws-export,html[data-home-skin=tech]:has(#page-home.active) header.top .btn.cvExport,html[data-home-skin=tech] header.top #ws-export,html[data-home-skin=tech] header.top .btn.cvExport{background:#FFD84A!important;background-image:none!important;color:#0D0D0F!important;border:1.5px solid #0D0D0F!important;box-shadow:none!important}',
-  'html[data-home-skin=sky]:has(#page-home.active) header.top #ws-export *,html[data-home-skin=sky]:has(#page-home.active) header.top .btn.cvExport *,html[data-home-skin=sky] header.top #ws-export *,html[data-home-skin=sky] header.top .btn.cvExport *,html[data-home-skin=fashion]:has(#page-home.active) header.top #ws-export *,html[data-home-skin=fashion]:has(#page-home.active) header.top .btn.cvExport *,html[data-home-skin=fashion] header.top #ws-export *,html[data-home-skin=fashion] header.top .btn.cvExport *,html[data-home-skin=tech]:has(#page-home.active) header.top #ws-export *,html[data-home-skin=tech]:has(#page-home.active) header.top .btn.cvExport *,html[data-home-skin=tech] header.top #ws-export *,html[data-home-skin=tech] header.top .btn.cvExport *{color:#0D0D0F!important}',
+  /* P150.11: Export button skinning is scoped to the active Home workspace only; preserve the original pink export action elsewhere. */,
+  /* P150.11: no descendant color override outside the active Home workspace. */,
   'html[data-home-skin=tech]:has(#page-home.active) header.top #ws-export,html[data-home-skin=tech]:has(#page-home.active) header.top .btn.cvExport{border-color:#FFD84A!important}',
   ].join('\n');
   document.head.appendChild(s);
@@ -401,5 +401,5 @@ function spot() {
 }
 function init() { css(); if (!build()) return false; art(); drag(); tech(); spot(); apply(); toggleOutside(); return true; }
 var tries = 0; (function loop() { if (init() || ++tries > 40) return; setTimeout(loop, 250); })();
-window.CVHomeSkyP150 = { version: '150.10.0', get: get, set: set, init: init };
+window.CVHomeSkyP150 = { version: '150.11.0', get: get, set: set, init: init };
 })();
