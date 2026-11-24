@@ -19,6 +19,7 @@ with sync_playwright() as p:
     pg.wait_for_selector('#cv163-card',state='visible',timeout=15000)
     pg.wait_for_selector('#cv169-panel',state='visible',timeout=15000)
     checks['panel_mounted']=pg.is_visible('#cv169-panel')
+    checks['P163_visible_field_labels']=pg.evaluate("""()=>['cv163-name','cv163-desc','cv163-features','cv163-refs','cv163-profile','cv163-candidate','cv163-shot'].every(id=>{const el=document.getElementById(id);return !!el&&!!el.labels&&Array.from(el.labels).some(label=>label.contains(el)&&label.offsetWidth>0&&label.innerText.trim().length>0)})""")
     checks['eight_labeled_controls']=pg.locator('#cv169-controls label').count()==8 and pg.locator('#cv169-controls label select').count()==8
     pg.fill('#cv163-name','Nhân vật nghiệm thu')
     pg.fill('#cv163-desc','Nhân vật thử nghiệm cho kiểm tra ngoại hình P169')
