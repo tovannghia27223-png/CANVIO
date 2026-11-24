@@ -149,35 +149,45 @@
       var n = Number(value);
       return Number.isFinite(n) ? Math.max(min, Math.min(max, n)) : fallback;
     }
-    var yaw = bounded(pose.yaw, 0, -360, 360), pitch = bounded(pose.pitch, 0, -89, 89);
-    var fov = bounded(pose.fov, state.camera.fov || 42, 30, 120);
-    var target = state.controls.target.clone();
-    var currentDistance = state.camera.position.distanceTo(target);
-    if (!Number.isFinite(currentDistance) || currentDistance <= 0) currentDistance = 1;
-    var position = pose.position || {}, px = Number(position.x), py = Number(position.y), pz = Number(position.z);
-    var explicitPosition = Number.isFinite(px) && Number.isFinite(py) && Number.isFinite(pz) && (Math.abs(px) + Math.abs(py) + Math.abs(pz) > 0.0001);
-    var yr = yaw * Math.PI / 180, pr = pitch * Math.PI / 180, cp = Math.cos(pr);
-    var direction = { x: cp * Math.sin(yr), y: Math.sin(pr), z: cp * Math.cos(pr) };
-    if (explicitPosition) {
-      var cameraX = bounded(px, 0, -1000, 1000), cameraY = bounded(py, 0, -1000, 1000), cameraZ = bounded(pz, 0, -1000, 1000);
-      state.camera.position.set(cameraX, cameraY, cameraZ);
-      target.set(cameraX - direction.x * currentDistance, cameraY - direction.y * currentDistance, cameraZ - direction.z * currentDistance);
-    } else {
-      state.camera.position.set(
-        target.x + currentDistance * direction.x,
-        target.y + currentDistance * direction.y,
-        target.z + currentDistance * direction.z
-      );
+    var controls = state.controls, previousDamping = controls.enableDamping;
+    try {
+      // Flush any pending OrbitControls drag inertia before writing an absolute preset.
+      // Otherwise its retained spherical delta is added to the requested yaw/pitch.
+      controls.enableDamping = false;
+      controls.update();
+      var yaw = bounded(pose.yaw, 0, -360, 360), pitch = bounded(pose.pitch, 0, -89, 89);
+      var fov = bounded(pose.fov, state.camera.fov || 42, 30, 120);
+      var target = controls.target.clone();
+      var currentDistance = state.camera.position.distanceTo(target);
+      if (!Number.isFinite(currentDistance) || currentDistance <= 0) currentDistance = 1;
+      var position = pose.position || {}, px = Number(position.x), py = Number(position.y), pz = Number(position.z);
+      var explicitPosition = Number.isFinite(px) && Number.isFinite(py) && Number.isFinite(pz) && (Math.abs(px) + Math.abs(py) + Math.abs(pz) > 0.0001);
+      var yr = yaw * Math.PI / 180, pr = pitch * Math.PI / 180, cp = Math.cos(pr);
+      var direction = { x: cp * Math.sin(yr), y: Math.sin(pr), z: cp * Math.cos(yr) };
+      if (explicitPosition) {
+        var cameraX = bounded(px, 0, -1000, 1000), cameraY = bounded(py, 0, -1000, 1000), cameraZ = bounded(pz, 0, -1000, 1000);
+        state.camera.position.set(cameraX, cameraY, cameraZ);
+        target.set(cameraX - direction.x * currentDistance, cameraY - direction.y * currentDistance, cameraZ - direction.z * currentDistance);
+      } else {
+        state.camera.position.set(
+          target.x + currentDistance * direction.x,
+          target.y + currentDistance * direction.y,
+          target.z + currentDistance * direction.z
+        );
+      }
+      state.camera.fov = fov;
+      state.camera.updateProjectionMatrix();
+      state.camera.lookAt(target);
+      controls.target.copy(target);
+      // With damping disabled this synchronizes the OrbitControls spherical state exactly.
+      controls.update();
+      if (state.renderer && state.scene) state.renderer.render(state.scene, state.camera);
+      var applied = getCameraPose();
+      applied.explicitPosition = explicitPosition;
+      return applied;
+    } finally {
+      controls.enableDamping = previousDamping;
     }
-    state.camera.fov = fov;
-    state.camera.updateProjectionMatrix();
-    state.camera.lookAt(target);
-    state.controls.target.copy(target);
-    state.controls.update();
-    if (state.renderer && state.scene) state.renderer.render(state.scene, state.camera);
-    var applied = getCameraPose();
-    applied.explicitPosition = explicitPosition;
-    return applied;
   }
   function inspectGlbBuffer(buffer) {
     if (!(buffer instanceof ArrayBuffer) || buffer.byteLength < 20 || buffer.byteLength > LIMIT_BYTES) fail('GLB buffer có kích thước không hợp lệ.');
