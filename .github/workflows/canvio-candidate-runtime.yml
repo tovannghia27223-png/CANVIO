@@ -570,9 +570,9 @@ jobs:
           const fs=require('node:fs'),file='index.html',id='canvio-lot132pdf';
           let html=fs.readFileSync(file,'utf8'),source=fs.readFileSync('canvio-p132-pdf-import.js','utf8').trim();
           if(!source.includes("var VERSION = '132.1.0'")||!source.includes('root.CVPdfImportP132 = api'))throw new Error('P132.1 source contract missing');
-          const open='<script id="'+id+'">',close='</script>',tag=open+'\\n'+source+'\\n'+close,pos=html.indexOf(open);
+          const open='<script id="'+id+'">',close='</script>',tag=open+'\n'+source+'\n'+close,pos=html.indexOf(open);
           if(pos>=0){const end=html.indexOf(close,pos);if(end<0)throw new Error('P132.1 embedded lot is not closed');html=html.slice(0,pos)+tag+html.slice(end+close.length);}
-          else{const at=html.lastIndexOf('</body>');if(at<0)throw new Error('P132.1 closing body tag missing');html=html.slice(0,at)+tag+'\\n'+html.slice(at);}
+          else{const at=html.lastIndexOf('</body>');if(at<0)throw new Error('P132.1 closing body tag missing');html=html.slice(0,at)+tag+'\n'+html.slice(at);}
           if((html.match(/id="canvio-lot132pdf"/g)||[]).length!==1)throw new Error('P132.1 duplicate or missing inline lot');
           fs.writeFileSync(file,html,'utf8');
           console.log('P132.1 local PDF page import integrated into Pixel Atelier');
