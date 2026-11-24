@@ -380,3 +380,10 @@ PR #71 was closed as superseded by clean-main PR #73; the latter carries the cor
 - All P159–P166 standalone modules, tests, source-map registration and hosted workflow wiring are present on `main` as candidate implementation.
 - Latest inspected workflow #767: P160–P166 Node contract suite passed; Chromium 27/28 passed with zero page errors. Sole failure: P164 prompt assertion case mismatch.
 - Fix committed in this candidate: P164 prompt heading normalized to `Shot list`; browser assertion now case-insensitive. Status remains **Integrated candidate / hosted rerun pending**, not accepted. Manual real-asset, GLB, local-model, project round-trip, accessibility/device and P130 sync gates remain open.
+
+
+## P161.2 / P74.1 — GLB camera-pose replay (candidate · 2026-11-25)
+
+| P | Status | Implemented scope | Remaining acceptance |
+|---|---|---|---|
+| P161.2 | Candidate on `feat/p161-glb-camera-pose` | P161 saves X/Y/Z in existing `spatialWorkspace`; after GLB load it calls P74.1 `applyCameraPose`; P74 returns measured camera pose; hosted test adds a self-contained GLB fixture and verifies yaw/pitch/FOV/nonzero position round-trip. | Exact-head CI + hosted browser run; representative multi-mesh/animated GLB, manually authored camera path, physical GPU and visual/device acceptance. |
