@@ -193,11 +193,7 @@
     {
       "source": "canvio-p168-motion.js",
       "scriptId": "canvio-lot168m"
-    },
-    {
-      "source": "canvio-p169-character-studio.js",
-      "scriptId": "canvio-lot169c"
     }
   ],
-  "totalModules": 49
+  "totalModules": 48
 }
