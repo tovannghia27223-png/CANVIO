@@ -367,3 +367,9 @@ Khi sửa module: sửa file standalone rồi chép y hệt vào lot (parity so 
 - Branch: `feat/p166-website-engine-handoff-mainline-v3`; module `CVLandingStudioP166` version 166.2.0. `sendToWebsite()` navigates to webEngine, waits up to 12s for lazy `CVWeb`/CSS Manager/P131/save availability, sanitizes body, inserts scoped root, applies base/mobile rules and saves through canonical Website Engine.
 - #817 showed a test race: `CVWeb` wasn't yet defined immediately after navigation. The source and Node suite now cover a 120 ms delayed engine; Chromium still requires real GrapesJS root, CSS Manager mobile rule, Shared Core metadata and native save. Do not mock or bypass the browser integration check.
 - Verify exact-head hosted runtime, P160–P166 Node/Chromium, P143 parity and full regression before merge. Static landing page only: no backend form submission/CRM/hosting/publish. Real design/accessibility/device review remains open.
+
+
+### P166.2.1 — Node fixture retry note (2026-11-25)
+
+- Run #827 reached P160–P166 Node checks and failed at `waitForWebsiteEngine`: the test removed `CVWeb` before it had initialized the P131 security/save mocks. This is a fixture ordering issue, not a product timeout defect.
+- Updated `tests/p160/run-p160-166-tests.cjs` to establish P131/CVWeb/save mocks first, remove only `CVWeb`, restore it after 120 ms, and await readiness. Re-run the exact current head; P166 Chromium still must exercise real GrapesJS.
