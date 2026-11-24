@@ -352,3 +352,11 @@ Khi sửa module: sửa file standalone rồi chép y hệt vào lot (parity so 
 
 - Do not capture the original pink Export baseline while the Home tech skin is active. First open the Design workspace and wait for Home scope to switch to classic, then capture the non-Home pink background.
 - Run #785 showed Holo preservation passed 5/5; P150 non-Home computed backgrounds were pink (no diagnostic emitted) but comparisons failed against the Home-tech baseline. Re-run full Chromium acceptance after this test-only change.
+
+
+## P132.1 PDF import — current-mainline continuation (2026-11-25)
+
+- Branch: `feat/p132-pdf-import-current-main`; module `canvio-p132-pdf-import.js` / inline lot `canvio-lot132pdf`; PDF.js 6.5.438 Apache-2.0 local vendor.
+- Browser test observes the existing `#pxFile` assignment in a one-shot capture-phase `change` listener before Pixel Atelier clears its picker. Do not change the native Pixel file input cleanup to satisfy the test.
+- Hosted workflow must verify vendor SHA manifest, module syntax, Node API bounds, same-origin browser PDF load/worker, actual 300×150 Pixel canvas render/red pixel, no page errors/external requests, P143 parity and full regressions. No merge on failed/in-progress CI.
+- Remaining product boundaries: one raster page per import, no editable PDF vectors/text, no password PDF, batch pages or real customer-document certification.
