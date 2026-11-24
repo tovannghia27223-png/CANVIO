@@ -418,3 +418,13 @@ The successful workflow also completed canonical index restoration, P143 parity/
 | P | Status | Implemented scope | Remaining acceptance |
 |---|---|---|---|
 | P166.2 | Candidate on `feat/p166-website-engine-handoff-mainline-v3` | P166.2.0 waits for lazy Website Engine/P131 readiness; sanitizes generated body with P131; inserts scoped root into existing GrapesJS `CVWeb`; applies base/mobile CSS through `CVWeb.Css.setRule`; saves via `CV.engines.web.save`. Node test simulates 120 ms lazy readiness; Chromium tests real editor insertion/CSS/save. | Exact-head hosted workflow/P143/full regressions; real user Website project visual review, keyboard/screen-reader/zoom and physical mobile. Backend forms, CRM, hosting and live publishing are not included. |
+
+## Final integrated acceptance — P132.1 / P163.1.1 / P161.2 / P166.2
+
+| P | Integrated mainline status | Verified evidence | Remaining boundary |
+|---|---|---|---|
+| P132.1 | Merged in PR #102 (08efae6) | PDF.js 6.5.438 local vendor, Apache-2.0, 189 SHA-verified files; Node 11/11; Chromium 8/8; P143 51-module parity; one-page PDF-to-PNG Pixel handoff | Editable vectors/text, password PDFs, multi-page batch and customer-PDF review remain open |
+| P163.1.1 | Merged in PR #102 (08efae6) | Visible labels on existing controls; P169 Chromium profile round-trip and mobile overflow checks; P143 parity | Manual keyboard, screen-reader, 200% zoom and physical-device review; no WCAG certification |
+| P161.2 / P74.1 | Merged in PR #102 (08efae6) | Existing Three.js r187 camera API; hosted GLB pose readback including nonzero X/Y/Z; Draco/Meshopt/KTX2 fixtures | Complex animated/multi-camera production GLBs and physical GPU/device acceptance |
+| P166.2 | Merged in PR #102 (08efae6) | P131 sanitizer, actual GrapesJS/CSS Manager handoff and save; lazy-readiness Node test; P160–P166 Chromium 32/32 | Static landing only; no form backend, CRM, hosting or live publish |
+| Integrated CI | Exact same-tree run #836 PASS 66/66 | P143, full HTML audit, P47–P70, Node contracts, P107 ZIP round-trip and hosted Chromium | Post-merge #838 is tracked independently; P70 fourteen manual gates remain pending |
