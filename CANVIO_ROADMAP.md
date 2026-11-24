@@ -1394,3 +1394,9 @@ Việc cần người dùng: duyệt thứ tự; cho biết có muốn "kênh ch
 - No new store, external API, paid service, package or timeline was added. Output remains saved through the current Asset Library and existing Storyboard owner.
 - Added Node coverage for overlay normalization/rendering and design-source extraction; Chromium coverage verifies Poster SVG and Designer snapshot handoff without intermediate assets, overlay preview, plus the existing GIF/WebM/Storyboard/workflow/mobile checks.
 - Status: candidate pending exact-head hosted CI, P143 standalone/inline parity, generated canonical `index.html`, and post-merge mainline verification. This is 2D image motion, not a full multi-track video editor or AI video generation.
+
+
+## P163.1.1 — Nhãn hiển thị cho biểu mẫu nhất quán nhân vật (candidate · 2026-11-25)
+
+- Bổ sung nhãn chữ thực sự cho bảy control của P163: tên, mô tả nhận diện, đặc điểm bắt buộc, ảnh tham chiếu, hồ sơ nhân vật, đặc điểm cảnh mới và cảnh Storyboard. Nhãn gắn trực tiếp với input/select hiện hữu, không đổi ID/API hay chủ sở hữu dữ liệu.
+- P169 Chromium test được mở rộng để kiểm tra cả bảy nhãn liên kết đúng control và có kích thước hiển thị. Đây là kiểm tra tự động DOM/layout, không thay thế rà soát bàn phím, screen reader hoặc chứng nhận WCAG thủ công.
