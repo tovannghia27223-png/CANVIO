@@ -4294,3 +4294,12 @@ P160–P166 module APIs currently report versions P160.2.0, P161.1.0, P162.2.0, 
 - No new store, external API, paid service, package or timeline was added. Output remains saved through the current Asset Library and existing Storyboard owner.
 - Added Node coverage for overlay normalization/rendering and design-source extraction; Chromium coverage verifies Poster SVG and Designer snapshot handoff without intermediate assets, overlay preview, plus the existing GIF/WebM/Storyboard/workflow/mobile checks.
 - Status: candidate pending exact-head hosted CI, P143 standalone/inline parity, generated canonical `index.html`, and post-merge mainline verification. This is 2D image motion, not a full multi-track video editor or AI video generation.
+
+
+## P132.1 — Local PDF page import for Pixel Atelier (candidate · 2026-11-25)
+
+- Standalone source: `canvio-p132-pdf-import.js`; canonical inline lot: `canvio-lot132pdf`; API: `window.CVPdfImportP132`, version `132.1.0`.
+- PDF.js `pdfjs-dist@6.5.438` is provisioned locally under `assets/vendor/pdfjs` with Apache-2.0 license, same-origin worker/CMaps/standard fonts and SHA-256 manifest. It is loaded only when the user selects a PDF; no PDF upload or runtime CDN request is used.
+- The user selects one page; CANVIO rasterizes it to PNG and hands a `File` to existing Pixel Atelier `#pxFile` / `CVNativeEngines.pixel`. No editor, project store or timeline is added.
+- Bounds: 30 MiB per PDF, 500 pages, 4096 px per side and 16 MP per page. PDF JavaScript evaluation and XFA are disabled. Import is raster-only; editable PDF text/vector objects are not retained. Password PDFs, batch pages and real customer-document review remain open.
+- Acceptance: `tests/p132/run-p132-pdf-tests.cjs`, `tests/p145/run-p132-pdf-browser.py`, P143 parity and full hosted runtime. The first browser test confirmed page render, correct pixel and zero page errors; the only failed assertion inspected `#pxFile` after Pixel's handler cleared it. The revised test records File metadata during the capture-phase `change` event before cleanup. Run #810 passed 65/65 on its exact candidate SHA; the current-mainline rebased branch must pass its own exact-head run before merge.
