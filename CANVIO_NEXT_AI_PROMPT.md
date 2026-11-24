@@ -361,3 +361,10 @@ Khi sửa module: sửa file standalone rồi chép y hệt vào lot (parity so 
 - Workflow must sync `canvio-p167-blocking.js` into `canvio-lot167b` in `index.html`, pass P143 parity and full Chromium suite before merge.
 - Scope limitation: CPU perspective projection on Canvas 2D, not a full WebGL scene graph or rendered 3D asset pipeline. Do not claim video rendering; the new export is a PNG contact sheet (four keyframes per camera).
 \n\n## P167.1 + P168.1 handoff (2026-11-25)\n\n- P167.1 fix: selected object name is committed on `input`; browser test checks persisted name after reload. Preserve the Canvas2D renderer limitation and PNG contact-sheet export wording.\n- P168.1 candidate: add direct current Poster SVG handoff and Designer image-like `snapshotState()` / existing rendered-Canvas fallback to the P168 motion panel; do not create an Asset Library intermediate. Local-only source validation rejects remote image references.\n- P168.1 adds a bounded text overlay with static/fade/slide/typewriter/pop, top/middle/bottom placement, plain/banner/outline styles, color and size. Preview, GIF frames and WebM record the same Canvas-composited text.\n- Node and Chromium tests were expanded. Await the exact final hosted run and generated canonical `index.html` before calling this accepted; mainline and manual P70 gates remain separate.\n
+
+## P132.1 PDF import — current-mainline continuation (2026-11-25)
+
+- Branch: `feat/p132-pdf-import-mainline-v2`; module `canvio-p132-pdf-import.js` / lot `canvio-lot132pdf`; local PDF.js 6.5.438 Apache-2.0 assets and SHA manifest.
+- Hosted workflow embeds the module in canonical `index.html`, verifies vendor hashes, runs module syntax, P132 Node + Chromium, P143 51-pair parity and full regression. Browser test captures the existing `#pxFile` handoff in a capture-phase listener before Pixel Atelier clears the picker.
+- Do not use prior #810 on the old SHA as acceptance for this rebased branch. Wait for exact-head green workflow. No merge on failed/in-progress run.
+- One-page raster only; PDF text/vector editability, passwords, batch pages and real document/accessibility/device review remain open.
