@@ -1394,3 +1394,11 @@ Việc cần người dùng: duyệt thứ tự; cho biết có muốn "kênh ch
 - No new store, external API, paid service, package or timeline was added. Output remains saved through the current Asset Library and existing Storyboard owner.
 - Added Node coverage for overlay normalization/rendering and design-source extraction; Chromium coverage verifies Poster SVG and Designer snapshot handoff without intermediate assets, overlay preview, plus the existing GIF/WebM/Storyboard/workflow/mobile checks.
 - Status: candidate pending exact-head hosted CI, P143 standalone/inline parity, generated canonical `index.html`, and post-merge mainline verification. This is 2D image motion, not a full multi-track video editor or AI video generation.
+
+
+## P166.2 — Gửi Landing Page thật sang Website Engine (candidate · 2026-11-25)
+
+- Hoàn thiện `CVLandingStudioP166.sendToWebsite()`: điều hướng tới Website Engine hiện có, lấy body từ HTML P166, làm sạch bằng P131 `CANVIOSecurity.prepareHtmlImport`, bọc bằng class scope riêng, chèn qua `CVWeb.addComponents`, áp style cơ bản + media query mobile bằng `CVWeb.Css.setRule`, rồi lưu qua `CV.engines.web.save`.
+- Không tạo editor, database, CSS store hoặc timeline mới. Các selector được scope trong landing root để không ảnh hưởng workspace Website Engine còn lại. P166 chỉ báo thành công khi save trả về không thất bại; lỗi sau khi chèn được nêu rõ để người dùng kiểm tra/hoàn tác.
+- Bổ sung Node và Chromium test kiểm sanitizer, component thật trong GrapesJS, CSS Manager base/mobile, metadata Shared Core, canonical save và mobile overflow. Chờ exact-head hosted CI.
+- Phạm vi vẫn là trang tĩnh offline; CTA/form chưa có backend, CRM, hosting/publish service hoặc ghi nhận form. Cần duyệt trực quan với project thật, keyboard/screen-reader/zoom và thiết bị thật trước release.
