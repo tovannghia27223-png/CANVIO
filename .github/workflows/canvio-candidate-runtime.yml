@@ -880,6 +880,8 @@ jobs:
           node tests/p127/run-p137f-tests.cjs
           node tests/p130/run-p130-tests.cjs
           node tests/p153/run-p153-tests.cjs
+          node tests/p167/run-p167-tests.cjs
+          node tests/p167/run-p168-tests.cjs
           node tests/p159/run-p159-tests.cjs
           node tests/p160/run-p160-166-tests.cjs
           node tests/p127/run-p120-comfyui-tests.cjs
@@ -963,6 +965,8 @@ jobs:
           /tmp/canvio-playwright/bin/python tests/p145/run-p137-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p137f-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p153-browser.py
+          /tmp/canvio-playwright/bin/python tests/p145/run-p167-browser.py
+          /tmp/canvio-playwright/bin/python tests/p145/run-p168-browser.py
           /tmp/canvio-playwright/bin/python tests/p160/run-p160-166-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p114n-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p150-browser.py

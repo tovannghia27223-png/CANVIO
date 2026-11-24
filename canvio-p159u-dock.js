@@ -5,7 +5,7 @@
 (function () {
 'use strict';
 if (window.CVToolkitDockP159) return;
-var TABS = [['cv164-card', 'Shot list'], ['cv163-card', 'Nhân vật'], ['cv154-card', 'Toàn cảnh'], ['cv155-card', 'Thẻ · Prompt · Góc máy']], SKEY = 'canvio.p159u.tab';
+var TABS = [['cv164-card', 'Shot list'], ['cv163-card', 'Nhân vật'], ['cv167-card', 'Dựng khối'], ['cv168-card', 'Ảnh → chuyển động'], ['cv154-card', 'Toàn cảnh'], ['cv155-card', 'Thẻ · Prompt · Góc máy']], SKEY = 'canvio.p159u.tab';
 var st = null;
 function adopt(page) {
   var added = 0;

@@ -279,3 +279,34 @@ Chỉ kiểm bằng tín hiệu/tệp tổng hợp và Chromium headless; chưa 
 
 ## P159.1 (2026-11-24 tối)
 - P159–P166 giờ đã nhúng trong index.html và qua parity/Chromium/smoke. Việc còn: nhãn chữ cho form P163, thử ảnh/GLB thật, đồng bộ hai thiết bị, thêm test P160–P166 vào CI nếu chưa có, dock thêm tab cho P161/P162/P165/P166 nếu chúng gắn thẻ vào Video Studio.
+
+## BÀN GIAO CHO AI TIẾP THEO (2026-11-24, sau P168) — ĐỌC KỸ TRƯỚC KHI LÀM
+
+**Vai trò:** Senior Product Designer + Frontend Engineer cho CANVIO (một file `index.html` ~6MB, người dùng nói tiếng Việt). Trả lời và ghi chú bằng tiếng Việt. Mọi thứ miễn phí, chạy cục bộ, tối thiểu tài nguyên; KHÔNG xóa chức năng cũ (chỉ gộp/thêm); giao diện tinh tế, thao tác chính luôn thấy ngay; push thẳng `main` của `https://github.com/tovannghia27223-png/CANVIO` (AI khác có thể làm qua PR → luôn `git pull --rebase origin main` trước khi push). Sau mỗi thay đổi ghi cả 3 file: `CANVIO_ROADMAP.md`, `CANVIO_AI_GUIDE.md`, `CANVIO_NEXT_AI_PROMPT.md`.
+
+**Nguyên tắc tích hợp (người dùng đặt, bắt buộc):** mọi module liên kết với Studio, Thư viện Tài nguyên (`CV.assets`), AI Engine (`CVOrchestratorP128`), Video Editor/Storyboard; dữ liệu dùng chung qua `CVCreativeCore` (`active.documents.<key>`, `linkAsset`, `context()`). Không tạo kho dữ liệu riêng, không làm công cụ đứng một mình.
+
+**Trạng thái:** P108–P145 xong phần code (trừ P124 nâng cao, P143 Phase 3, Project Vault→OPFS). P153–P157 (Bảng cảm hứng, Toàn cảnh, Thẻ/Prompt/Góc máy/Kiểm tra tông), P159–P166 (tích hợp, Collections, Spatial, Reference Canvas, Character Continuity, Shot List, AI Workflow, Landing), P167 (Dựng khối 3D trắng), P168 (Ảnh→chuyển động + bản mẫu quy trình) đã nhúng vào index.html và có test. Dock "Bộ công cụ cảnh" trong Video Studio gom các thẻ.
+
+**Quy trình thêm module (bắt buộc đủ 5 bước, AI trước từng bỏ sót bước 2):**
+1. Tạo `canvio-pNNN-*.js` (IIFE, không có chuỗi `</script`).
+2. Nhúng `<script id="canvio-lotXXX">` (CRLF) vào index.html TRƯỚC `<style id="canvio-lot131-css">` và thêm `{source, scriptId}` vào `tests/p143/source-module-map.json`.
+3. Chạy: `node tests/p143/run-p143-source-parity.cjs` (phải đạt hết), `node tests/p143/build-boot-order-graph.cjs` rồi `--check`, `node tests/p143/build-inline-source-inventory.cjs`.
+4. Viết test Node (phần thuần) + test Chromium (`tests/p145/run-pNNN-browser.py`, dùng Playwright + `google-chrome`, chèn `html,*{scroll-behavior:auto!important}`), chạy cả smoke `tests/p131/run-p131-app-smoke.py` (21/21) và `tests/p130/run-p130-tests.cjs` (41).
+5. Thêm test vào `.github/workflows/canvio-candidate-runtime.yml`, commit, push, rồi kiểm CI (`gh run list`).
+Khi sửa module: sửa file standalone rồi chép y hệt vào lot (parity so từng byte, bỏ khác biệt CRLF).
+
+**Việc còn mở (ưu tiên từ trên xuống):**
+1. Chỉnh nhân vật trực quan (mặt, tóc, sẹo, trang phục) cho P163 — hiện chỉ mô tả chữ + checklist; form P163 còn thiếu nhãn chữ cho ô nhập/ô chọn.
+2. Nối Google Drive để giữ bản gốc ảnh (ý từ video Mewia) — dùng connector/đường dẫn người dùng tự cấp, không bắt buộc.
+3. P167: xoay (yaw)/đổi cỡ đối tượng bằng chuột, nhiều camera xem cùng lúc, xuất chuỗi khung/ảnh từng camera; P168: lấy ảnh thẳng từ Poster/Designer (không chỉ Tài nguyên), thêm hiệu ứng chữ.
+4. Nối "Dùng màu này" của Bảng cảm hứng vào Poster/Brand; gửi prompt P156/P165 sang ComfyUI (P120/P126) khi người dùng bật.
+5. Đồng bộ Màu Spatial (panel/rail theo token + Midnight) và icon nút bật/tắt sidebar tương phản thấp trên topbar tối (người dùng đã báo, chưa làm).
+6. P124 nâng cao (biến thể lồng, kéo/đổi cỡ) — cần hỏi đặc tả; P143 Phase 3 (tách mã thật) — chỉ khi người dùng đồng ý, rủi ro vỡ file đơn.
+7. Rà lỗi lặt vặt: quét nút bấm toàn bộ ~48 trang đã 0 nút chết (P152) nhưng nên quét lại sau khi thêm module; kiểm tra drawer/panel đè ở các editor ngoài Poster.
+
+**Bị chặn bởi bên ngoài (đừng giả vờ xong):** P130 cần người dùng thử trên Supabase thật (hai thiết bị); P70 cần 14 cổng kiểm thử thiết bị thật; P120/P126 cần ComfyUI + GPU + model thật; P122.3 chờ hợp đồng bảo mật được duyệt; chưa thử ảnh toàn cảnh/GLB thật và sinh video AI thật. Người dùng nên đổi mật khẩu DB nếu từng chia sẻ (publishable key thì không sao).
+
+**Cạm bẫy đã gặp:** sanitizer `clean()` từng xóa `srcdoc` iframe (đã whitelist iframe sandbox); `.card` trong `#page-assets` có hiệu ứng nghiêng 3D `data-tilt` làm lệch vùng bấm; Asset Library chỉ nhận qua `CV.assets.addBlob` (không trả id; lấy `list()[0]`); không ghi vào `CVCreativeCore` khi chưa có dự án; thêm file nguồn mà không nhúng lot thì parity hỏng và trang thật không có module; `html[data-theme=dark]` không ép lên skin graffiti (làm nút trắng chữ trắng — dark thật là skin Midnight).
+
+**Báo cáo trung thực:** chỉ nói "xong" khi có test chạy thật; nêu rõ phần chưa thử bằng dữ liệu thật; không tuyên bố nghiệm thu khi CI chưa xanh.

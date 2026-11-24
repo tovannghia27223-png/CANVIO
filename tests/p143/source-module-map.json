@@ -185,6 +185,14 @@
     {
       "source": "canvio-p159u-dock.js",
       "scriptId": "canvio-lot159u"
+    },
+    {
+      "source": "canvio-p167-blocking.js",
+      "scriptId": "canvio-lot167b"
+    },
+    {
+      "source": "canvio-p168-motion.js",
+      "scriptId": "canvio-lot168m"
     }
   ],
   "totalModules": 45

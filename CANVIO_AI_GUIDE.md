@@ -4206,3 +4206,8 @@ P160–P166 module APIs currently report versions P160.2.0, P161.1.0, P162.2.0, 
 ### P159.1 (2026-11-24 tối) — quy tắc nhúng lot
 - Thêm file `canvio-pNNN-*.js` + dòng trong `tests/p143/source-module-map.json` KHÔNG đủ: phải nhúng `<script id="canvio-lotXXX">` vào index.html (trước `<style id="canvio-lot131-css">`) và chạy `run-p143-source-parity.cjs` (phải đạt hết). AI trước từng bỏ sót bước này.
 - Dock `#cv159u-dock` trong Video Studio nhận các thẻ theo id (`cv164-card`, `cv163-card`, `cv154-card`, `cv155-card`); thẻ mới của Video Studio nên thêm vào mảng `TABS` thay vì chèn thẻ riêng. Test cần mở tab hoặc bỏ `display:none` của `#cv159u-panels>.card` trước khi bấm.
+
+### P167–P168 (2026-11-24 tối)
+- Module mới: `canvio-p167-blocking.js` (CVBlockingP167), `canvio-p168-motion.js` (CVMotionTemplatesP168); lot `canvio-lot167b`, `canvio-lot168m`; dock `canvio-p159u-dock.js` mảng `TABS` (6 tab). Mọi module Video Studio mới phải thêm vào `TABS`, không chèn thẻ riêng.
+- Tích hợp đã dùng: ảnh → `CVBoardP153.addDataUrl` hoặc `CV.assets.addBlob` + `CVCreativeCore.linkAsset`; shot → `CVScenePackP155.assignToStoryboard({title,action,prompt,shotSeconds,roles})`; AI → `CVOrchestratorP128.register(kind,'local',fn)`/`run({kind,tiers:['local'],cache:false,prompt})`; dữ liệu theo dự án → `CVCreativeCore.active.documents.<key>` rồi `capture()`.
+- Cạm bẫy: `CV.assets.addBlob` không trả id (lấy `CV.assets.list()[0]`); mount của module chạy trước khi người dùng tạo dự án nên đừng ghi vào Core khi `CVCreativeCore.active` chưa có; `.card` trong `#page-assets` có `data-tilt`; smooth-scroll làm Playwright lệch tọa độ (chèn `scroll-behavior:auto`); các test Video Studio phải mở tab dock hoặc bỏ `display:none` của `#cv159u-panels>.card`; kiểm tra số tab dùng `>=`.
