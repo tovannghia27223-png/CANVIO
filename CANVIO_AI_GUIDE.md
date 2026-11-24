@@ -4121,3 +4121,12 @@ Bài học P150: KHÔNG đặt `display:flex` lên `#page-home` mà không kèm 
 ### P129 / P70 release disposition
 - `CANVIO_P129_COVERAGE_MATRIX.md` is a focused acceptance matrix for the 15 P items reconciled in the 2026-11-23 audit. It does not claim a complete global P1–P150 matrix.
 - Manifest remains `releaseCertified:false`, `BLOCKED_PENDING_REAL_WORLD_ACCEPTANCE`, with 14/14 P70 manual gates pending and 0 passed. Keep the fail-closed state until every real-world gate has evidence and sign-off.
+
+### P130–P152 (cloud sync, contrast, skins, lỗi giao diện)
+- P130/P130.1: đồng bộ Supabase mã hóa đầu-cuối (`canvio-p130-cloud.js`, lot `canvio-lot130c`, schema `supabase/canvio-schema.sql`). Mới test trên mock server; chưa test trên project Supabase thật của người dùng. Chỉ dùng publishable key ở client, không đưa mật khẩu DB vào mã.
+- P146: `canvio-p146-a11y-labels.js` thêm aria-label cho input/select thiếu nhãn; GrapesJS `telemetry:false`.
+- P147–P151: `canvio-p147-contrast.css` (quy tắc tương tác theo skin: graffiti sáng / midnight tối thật; `html[data-skin=holo]`; `html[data-home-skin]` tech/fashion/sky/classic) và `canvio-p151-contrast-guard.js` (`CVContrastGuardP151`: scan/undo/count) tự sửa độ tương phản.
+- Dark thật = skin Midnight; không ép `html[data-theme=dark]` lên graffiti (làm nút trắng chữ trắng).
+- Nút nhiều dòng: dùng `height:auto!important` (nguyên nhân gốc là `.btn.sm` cao cố định 29px).
+- P152: bộ lọc `clean()` trong index.html từng xóa `srcdoc` của mọi iframe → Kho thành phần mất preview; nay giữ `srcdoc` cho iframe sandbox không có allow-same-origin/top-navigation. Drawer `#cv-pn.on` z-index 900 để không bị thanh nổi `.cv189-sticky` (680–880) đè; Spatial `.cv229-inspector.float.open` z-index 1000.
+- Quét click mọi nút trên ~48 trang: 0 nút chết. Còn mở: đồng bộ màu Spatial, icon toggle sidebar mờ trên topbar tối.
