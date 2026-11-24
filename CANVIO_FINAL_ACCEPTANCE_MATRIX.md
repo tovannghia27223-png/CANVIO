@@ -42,32 +42,8 @@
 | P119.3 Video Engine keyframe easing | Node P119 preset/custom-Motion contracts; Chromium applies P119 to a real image clip, verifies motionAt output and existing snapshot restore; P143 source parity | Website Engine/CSS timeline, legacy curves outside P119 normalisation range, physical GPU and 60 fps target-device acceptance remain open. |
 | P143.4 lexical global evidence | PR #83 post-merge #551 53/53; Pages #275; 32/32 parity, 14/14 scanner, 17/17 inventory verifier | Lexical candidates only; semantic data flow and Phase 3 staged extraction/rollback/offline/CSP remain open. |
 
-| P119.4 Website Motion shared easing | Node derives six curves from CVEasingP119; Chromium checks import/apply/clear, canonical component attributes/styles, Website save hook and reduced-motion export; P143 35-pair parity | Real authored projects, production publish host/CSP, keyboard/screen-reader and physical device review remain manual. |
+| P119.4 Website Motion shared easing | Node derives six curves from CVEasingP119; Chromium checks import/apply/clear, canonical component attributes/styles, Website save hook and reduced-motion export; P143 34-pair parity | Real authored projects, production publish host/CSP, keyboard/screen-reader and physical device review remain manual. |
 
 | P124.4 selected component layouts | Node/Chromium selected Grid/Stack/Row/Split, responsive CSS, whitelisted variants, existing CSS Manager/save path, P143 parity | No structural tree conversion, nested variants, drag/resize, complex user-project or assistive-technology certification. |
 
 | P135.2 editable Pixel adjustment stack | Node PNG metadata/CRC/32-layer round-trip; hosted Chromium snapshot → reload → native restore and unchanged raster check; P143 standalone/embedded parity | Independent two-device/cloud sync, third-party PNG re-encoding, masks/local corrections, smart objects, clone/patch and liquify remain unverified/out of scope. |
-
-## Focused continuation matrix — 2026-11-23
-
-The detailed reconciliation is maintained in [`CANVIO_P129_COVERAGE_MATRIX.md`](CANVIO_P129_COVERAGE_MATRIX.md). This focused matrix does not replace a complete global P1–P150 audit.
-
-| Item | Automated/source evidence | Acceptance boundary still open |
-|---|---|---|
-| P115 | Local vendor SHA manifest, PWA/service-worker contract tests and hosted HTML audit. | Airplane-mode/install/update acceptance; exported 3D external runtime exceptions; physical devices. |
-| P116 | DOCX, vector PDF subset, raster poster PDF and editable PPTX passed bounded external-tool self-test; see `CANVIO_P116_REPORT.md`. | Real Chrome H.264/audio and MS PowerPoint/Google Slides acceptance. |
-| P118 | Custom TTF/OpenType wordmark parser and SVG outline export; Node + Chromium tests. | Paper.js not integrated; WOFF2 and complex shaping unsupported. |
-| P121 | Partial existing raster/photo owners only. | Brush, layer masks, raster selections, licensed stock, 10+ batch and recovery workflow. |
-| P122.3 | Not implemented; no MCP endpoint or connector fabricated. | Approved transport/auth/consent/permissions/threat-model contract. |
-| P124.4 | Selected component layout/variants via existing GrapesJS CSS/save owner; Node + Chromium. | Nested variants, drag/resize, arbitrary structural conversion and accessibility. |
-| P127 | Integrated LUFS/silence/quality/ducking foundations. | Oversampled true peak, real voice/music projects and human editorial/safe-area review. |
-| P129 | Focused matrix recorded in `CANVIO_P129_COVERAGE_MATRIX.md`. | Full global roadmap-to-source/test coverage still needs owner-by-owner audit. |
-| P130.1 | Additional local-data units encrypted/synced through existing client; mock Supabase/two-profile tests. | Real Supabase project/schema/RLS/credentials and physical two-device restore. |
-| P133 | OffscreenCanvas proxy + OPFS large-media sidecar with quota guard/fallback. | Exhaustive quota/crash/rollback and long real media/device migration. |
-| P135.2 | Editable adjustment stack metadata round-trips in existing PNG project snapshot. | SAM/object selection, brush masks and advanced raster authoring. |
-| P138 | JS spectral-gating and worker path. | Genuine RNNoise and Vietnamese Piper inference, real listening. |
-| P142 | Hosted Chromium/Pages results for bounded CI. | Windows/GTX 1650, Firefox/WebKit, touch and physical GPU. |
-| P143 | 167-script heuristic boot graph and lexical/style/template inventory. | Semantic DAG, staged extraction, rollback, offline/PWA/CSP. |
-| P70 | Fail-closed release gate in manifest. | 14/14 real-world gates open; releaseCertified remains false. |
-
-| P132.1 local PDF import | Candidate: local PDF.js 6.5.438 vendor manifest, one-page PDF→PNG handoff to existing Pixel Atelier owner; Node + P143 parity pass; first Chromium run found disabled page-number control, fixed in latest branch | Corrected full Chromium rerun pending; raster-only page import, not editable PDF text/vector. PPTX/PSD and full SVG/PDF workflows remain open. |
