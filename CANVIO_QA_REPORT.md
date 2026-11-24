@@ -580,3 +580,31 @@ Mainline workflow #551 passed 53/53; Pages #275 passed build/deploy. P143 parity
 - Node acceptance file: `tests/p159/run-p159-tests.cjs`. It exercises P153 Asset Library insertion/metadata, Core asset linking, project-scoped character/space cards, P156 P128 local handler and Storyboard append/preservation, plus P157 camera preset assignment.
 - Hosted workflow now re-embeds standalone P153/P155/P159 modules in canonical `index.html` before P143 parity and syntax audits. Run #688 is pre-embedding and expected to fail parity; run #689 includes the embedding step and is pending at report time.
 - No human acceptance claim: migration against an existing browser profile, real panorama footage, global deletion with reused assets, and real Supabase/two-device sync remain separate gates.
+
+## P159–P166 integrated candidate QA — 2026-11-24
+
+### Source and integration evidence
+- Added seven standalone source modules P160–P166 and seven inline lot IDs; P143 source map expanded from 38 to 45 pairs and `totalModules` was reconciled to 45.
+- CI workflow embeds source modules before parity, syntax-checks all seven sources, runs `tests/p160/run-p160-166-tests.cjs` and `tests/p160/run-p160-166-browser.py`, then continues with P143/HTML audit and the established regression stages.
+- P159 Node test in the earlier hosted run #697 passed 13/13; P153–P157 Node suite passed 34 checks. That complete run still failed later at five P150 “export button color” browser assertions; do not misattribute those failures to P159.
+
+### P160–P166 implementation scope
+- P160 project-scoped collections and tag metadata, `CV.assets` links, JSON exchange, metadata ZIP export and P128 Studio moodboard handoff.
+- P161 project camera presets, P154 panorama renderer, panorama drag/WASD/arrow/wheel controls, Storyboard bridge and P74/P81 GLB handoff.
+- P162 reference role layers and reorderable visual cards; P128 prompt handoff to Image Studio / Designer.
+- P163 character profiles with reference asset IDs, descriptive checklist/palette comparison, P128 prompt and Storyboard attachment.
+- P164 per-shot production metadata on canonical Storyboard, transition presets, CSV export and browser Print-to-PDF.
+- P165 five local roles with step logs, maximum two evaluation/revision cycles, explicit optional P128 local-model path and deterministic fallback; generator remains a handoff.
+- P166 responsive static landing HTML, hero asset handoff, reduced-motion CSS, HTML and ZIP offline export, Shared Core metadata.
+
+### Known limitations (do not promote to PASS/complete)
+- Latest candidate workflow #727 (head `b8fdc528…`) was triggered after correcting P143 `totalModules` to 45; final result must be inspected before marking hosted acceptance.
+- P160 ZIP contains metadata and README, not the image source binaries; import currently supports JSON metadata only. Asset IDs resolve only where source assets already exist in the receiving CANVIO project.
+- P161 stores GLB camera preset metadata and opens the canonical P74/P81 viewer; exact replay of stored GLB camera pose is not yet implemented/verified. Panorama camera controls are local canvas rendering.
+- P162 has reorderable reference cards and role metadata, not a full multi-image raster compositor or Unified Layers replacement.
+- P163 scoring is heuristic text/palette comparison, not AI vision or facial recognition.
+- P164 PDF is browser print-to-PDF, not a separate PDF rendering engine.
+- P165 only uses the P128 local tier when explicitly selected; no paid/cloud fallback. Generator step is handoff-only, no media generation claim.
+- P166 creates a static offline landing package; it does not yet import a GrapesJS component tree, provide a form backend, host the site or implement design-to-MP4/GIF.
+- Real profile migration, user media, real GLB, real configured local AI model, full Project Vault round-trip, accessibility/device acceptance and P130 real Supabase/two-device synchronization remain manual/external gates. P70 remains fail-closed with fourteen open gates.
+
