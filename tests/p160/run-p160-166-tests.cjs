@@ -44,6 +44,27 @@ const suites=[
  report.checks['SharedCore.singleProjectDocumentOwner']=['inspirationCollections','spatialWorkspace','referenceCanvas','characterContinuity','aiWorkflows','websiteLanding'].every(k=>Object.prototype.hasOwnProperty.call(project.documents,k));
  report.checks['SharedCore.assetsLinked']=project.assetIds.includes('asset-1');
  report.checks['NoNewDatabaseKeys']=Object.keys(storage).every(k=>k==='canvio5:media_video_project_v1');
+ // Exercise P166 against the same canonical Website Engine contracts used by P131/P124.
+ let importedLanding='',sanitizedLanding='',websiteSaves=0,websiteNavigations=[],websiteCss=[],failWebsiteSave=false;
+ window.CANVIOSecurity={prepareHtmlImport(raw){sanitizedLanding=String(raw);return{html:String(raw),removed:{elements:0,attrs:0},remoteSourcesRemoved:0};}};
+ window.CVWeb={addComponents(markup){importedLanding=String(markup);return true;},Css:{setRule(selector,style,options){websiteCss.push({selector,style,options:options||null});}}};
+ CV.go=page=>websiteNavigations.push(page);
+ CV.engines={web:{save(){websiteSaves++;return !failWebsiteSave;}}};
+ // Simulate an asynchronously mounted/lazy GrapesJS editor while the other owner APIs are already ready.
+ const existingEditor=window.CVWeb;delete window.CVWeb;
+ const lazyWait=window.CVLandingStudioP166.waitForWebsiteEngine(2000);
+ setTimeout(()=>{window.CVWeb=existingEditor;},120);
+ await lazyWait;
+ report.checks['P166.WaitsForLazyWebsiteEngine']=window.CVWeb===existingEditor;
+ const websiteHandoff=await window.CVLandingStudioP166.sendToWebsite({name:'CANVIO P166 Handoff',headline:'Landing Page for HR',brief:'Giới thiệu giải pháp tuyển dụng',color:'#123456'});
+ report.checks['P166.SafeLandingHandoff']=websiteHandoff.ok&&websiteHandoff.inserted&&websiteHandoff.saved&&websiteHandoff.noNewStore;
+ report.checks['P166.UsesP131HtmlSanitizer']=sanitizedLanding.includes('<main>')&&!sanitizedLanding.includes('<html>')&&!sanitizedLanding.includes('<style>');
+ report.checks['P166.ReusesWebsiteComponentOwner']=importedLanding.includes(websiteHandoff.scope)&&importedLanding.includes('<main>')&&websiteNavigations.includes('webEngine');
+ report.checks['P166.ReusesGrapesJSCssManager']=websiteCss.length===websiteHandoff.rules&&websiteCss.some(x=>x.options&&x.options.atRuleType==='media')&&websiteCss.every(x=>x.selector.indexOf('.'+websiteHandoff.scope)===0);
+ report.checks['P166.SavesThroughExistingWebsiteOwner']=websiteSaves===1;
+ failWebsiteSave=true;
+ const websiteSaveFailure=await window.CVLandingStudioP166.sendToWebsite({name:'P166 save failure fixture',headline:'Should not report published'});
+ report.checks['P166.SaveFailureIsNotClaimedAsSuccess']=!websiteSaveFailure.ok&&websiteSaveFailure.inserted&&!websiteSaveFailure.saved&&/Hoàn tác/.test(websiteSaveFailure.error);
  for(const [k,v] of Object.entries(report.checks))if(!v)report.failures.push(k);
  report.passed=Object.values(report.checks).filter(Boolean).length;report.total=Object.keys(report.checks).length;
  console.log(JSON.stringify(report,null,2));
