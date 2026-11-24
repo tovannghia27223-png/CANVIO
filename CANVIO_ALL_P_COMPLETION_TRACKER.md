@@ -390,3 +390,10 @@ PR #71 was closed as superseded by clean-main PR #73; the latter carries the cor
 | P168.1 | Merged and hosted-CI verified | PR #91; same merge and successful workflow | 2D image motion/text overlay, not multi-track editing or AI video inference; manual media review remains |
 
 The successful workflow also completed canonical index restoration, P143 parity/inventory, P47–P70 automated regression, source contracts and GLB/P85/ONNX/worker browser acceptance. This does not certify the 14 P70 manual real-world gates; keep `releaseCertified:false` until each gate has evidence.
+
+
+## P163.1.1 — Visible field labels (candidate · 2026-11-25)
+
+| P | Status | Implemented scope | Remaining acceptance |
+|---|---|---|---|
+| P163.1.1 | Candidate on `feat/p163-visible-field-labels-mainline-v3` | Seven P163 profile/reference/scene controls have visible associated labels; module patch version 163.1.1; existing hosted P169 Chromium suite asserts label association and visible layout. No project/data ownership or synchronization behavior changed. | Exact-head hosted CI/P143/full regressions; manual keyboard, screen-reader, 200% zoom, responsive and physical-device review. |
