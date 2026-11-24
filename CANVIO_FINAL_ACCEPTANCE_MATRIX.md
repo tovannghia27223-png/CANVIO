@@ -50,3 +50,13 @@
 
 
 | P159 Shared Core integration | P159 Node contract; canonical P153/P155/P159 lot embedding; P143 source parity 38 pairs; boot-order check; hosted Chromium and same-origin smoke | Candidate only until hosted workflow #689/successor passes; legacy profile migration, real panorama, asset deletion/reference cleanup and P130 physical two-device sync remain manual. |
+
+| P159 Shared Core integration | P159 Node suite previously passed 13/13; P153–P157 Node suite passed 34 checks; standalone sources are embedded before P143 parity | Candidate only until latest hosted run passes; old-profile migration, real media and real Supabase/two-device sync remain manual. |
+| P160 Inspiration collections | Project-scoped collection metadata, canonical Asset IDs, P128 Studio handoff, JSON/metadata-ZIP tests | ZIP currently omits original image binaries; JSON import only; community exchange is user-file based. |
+| P161 Spatial camera presets | P154 panorama renderer/interactive controls, P74/P81 GLB handoff, Storyboard metadata bridge | Exact GLB pose replay, real GLB, panorama and target-device acceptance remain open. |
+| P162 Reference canvas | Role-tagged Asset Library layers, draggable reorder, P128 Image Studio/Designer handoff | Not a full raster compositor or Unified Layers authoring workflow. |
+| P163 Character continuity | Reference Asset IDs, trait checklist, heuristic palette comparison, prompt and Storyboard link | Not facial recognition/image embeddings; real multi-scene accuracy remains manual. |
+| P164 Shot list | Native Storyboard metadata, transition controls, CSV export and browser Print-to-PDF | Real timeline round-trip and print-layout acceptance remain manual. |
+| P165 Multi-role AI workflow | Five P128 roles, bounded revision loop, optional local-only model path, deterministic fallback and per-step log | No media generation in generator role; actual local model quality and ComfyUI handoff remain to validate. |
+| P166 Brief-to-Landing | Shared Core brief, Asset Library hero image, responsive/reduced-motion HTML and ZIP offline export | Static package only; no automatic GrapesJS tree import, form backend or hosting. |
+
