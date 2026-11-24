@@ -693,6 +693,43 @@ jobs:
           console.log('P119.4 uses the single P119 preset/curve registry in Website Motion Builder; P143 pairs:',map.totalModules);
           NODE
 
+      - name: Integrate P159 Scene Pack with canonical P153/P155 modules
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs=require('node:fs');
+          const file='index.html';
+          let html=fs.readFileSync(file,'utf8');
+          function syncLot(id,path,required){
+            const source=fs.readFileSync(path,'utf8').trim();
+            if(!source)throw new Error('P159 empty standalone source: '+path);
+            const open='<script id="'+id+'">',close='</script>',tag=open+'\r\n'+source.replace(/\r?\n/g,'\r\n')+'\r\n'+close;
+            const pos=html.indexOf(open);
+            if(pos>=0){
+              const end=html.indexOf(close,pos);
+              if(end<0)throw new Error('P159 inline lot is not closed: '+id);
+              html=html.slice(0,pos)+tag+html.slice(end+close.length);
+            }else{
+              if(required)throw new Error('P159 expected existing canonical lot: '+id);
+              const at=html.lastIndexOf('</body>');
+              if(at<0)throw new Error('P159 body close missing');
+              html=html.slice(0,at)+tag+'\r\n'+html.slice(at);
+            }
+            if((html.match(new RegExp('id="'+id+'"','g'))||[]).length!==1)throw new Error('P159 duplicate/missing inline lot: '+id);
+          }
+          syncLot('canvio-lot153b','canvio-p153-board.js',true);
+          syncLot('canvio-lot155s','canvio-p155-scene-pack.js',true);
+          syncLot('canvio-lot159i','canvio-p159-integration.js',false);
+          const old="LS.set('assets',arr.slice(0,40));render();resolve()";
+          const replacement="LS.set('assets',arr.slice(0,200));render();resolve()";
+          const count=html.split(old).length-1;
+          if(count===1)html=html.replace(old,replacement);
+          else if(count!==0)throw new Error('Asset Library addBlob capacity marker is ambiguous: '+count);
+          fs.writeFileSync(file,html,'utf8');
+          console.log('P159 standalone/inline sources integrated; Asset Library addBlob cap:',html.includes(replacement)?200:'unchanged');
+          NODE
+
       - name: Inject P146 guided creative workflows into the canonical Home page
         run: node scripts/inject-home-creative-flow.mjs
 
@@ -701,7 +738,7 @@ jobs:
           set -euo pipefail
           node scripts/extract-integrated-modules.mjs
           node tests/p146/run-p146-tests.cjs
-          for file in canvio-p74-p81-three-viewer.js canvio-p85-studio.js canvio-p102-background-removal.js canvio-p105-p107-depth-parallax.js canvio-p68-p70.js canvio-p72-glb-viewer.js canvio-p73-offline-site.js canvio-p82-p84-vector-pdf.js canvio-p87-cv-docx.js canvio-p90-p96.js canvio-p97-p101.js canvio-p104.js canvio-p127-duck.js canvio-p145-shader.js canvio-p119-video.js canvio-p119-website.js assets/canvio-rmbg-worker.js assets/canvio-depth-worker.js assets/canvio-whisper-worker.js; do node --check "$file"; done
+          for file in canvio-p74-p81-three-viewer.js canvio-p85-studio.js canvio-p102-background-removal.js canvio-p105-p107-depth-parallax.js canvio-p68-p70.js canvio-p72-glb-viewer.js canvio-p73-offline-site.js canvio-p82-p84-vector-pdf.js canvio-p87-cv-docx.js canvio-p90-p96.js canvio-p97-p101.js canvio-p104.js canvio-p127-duck.js canvio-p145-shader.js canvio-p119-video.js canvio-p119-website.js canvio-p153-board.js canvio-p155-scene-pack.js canvio-p159-integration.js assets/canvio-rmbg-worker.js assets/canvio-depth-worker.js assets/canvio-whisper-worker.js; do node --check "$file"; done
 
       - name: P143 standalone source and canonical lot parity audit
         shell: bash
