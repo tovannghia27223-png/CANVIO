@@ -1361,3 +1361,9 @@ Việc cần người dùng: duyệt thứ tự; cho biết có muốn "kênh ch
 
 - Separate P150 Home presentation skin from P47 global Holo and P229 workspace theme. The browser suite applies the intended baseline through the existing theme APIs and compares the computed Export style before/after route changes.
 - Keep the P47 Holo case as a separate preservation test. Do not fix a test harness theme-state issue by changing global theme behavior in the P150 module.
+
+
+## P150.13 — Baseline lấy sau khi rời Home (QA fixture)
+
+- Run #785: P150 root skin fallback về classic; Holo-preservation pass 5/5; năm workspace Export không in diagnostic (computed background đúng hồng), nhưng test fail vì baseline được chụp khi Home-tech còn hiển thị.
+- Test fixture mở Design trước khi chụp baseline màu hồng, rồi so sánh năm workspace. Đây là sửa thứ tự kiểm thử, không thay đổi CSS sản phẩm.

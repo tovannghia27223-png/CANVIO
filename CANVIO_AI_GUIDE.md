@@ -4260,3 +4260,10 @@ P160–P166 module APIs currently report versions P160.2.0, P161.1.0, P162.2.0, 
 - Run #783 passed the added Home root-state assertions in all five workspaces, but the Export background remained non-pink. P150 must not take ownership of the independent P47 Holographic skin or P229 workspace theme.
 - The browser fixture now waits for P47/P229 APIs, explicitly calls `CVLot47.set('plain')` and `CV229.setTheme('graffiti')`, and verifies the original pink Export baseline before switching routes. Each workspace then compares the computed background to this established baseline and logs root skin, P150 marker, P47 skin, active P229 theme, background/image/color/border if a mismatch occurs.
 - The separate Holographic fixture continues to enable P47 Holo intentionally and verifies its original Export appearance remains unchanged after P150 switches Home skins. This distinguishes a genuine P150 regression from a fixture that left the global Holo theme active.
+
+
+## P150.13 browser baseline correction after run #785 (2026-11-24)
+
+- Run #785 showed the Holo-isolation suite passed all five workspaces. In the base-pink suite, P150_EXPORT_DIAGNOSTIC did not print for any of the five workspaces, which means the computed background in each non-Home workspace was already the expected pink. The six failures were the baseline assertion plus five comparisons against that baseline.
+- Cause: the fixture captured the baseline while the Home page was still visible with the tech skin active; the tech toolbar intentionally uses its own accent color. The test then compared non-Home pink against that Home-tech value.
+- Correction: the fixture now opens Design first, waits for P150's Home observer to settle, and captures the original pink computed style there. It then compares the five workspaces against that non-Home baseline. No production CSS override is added for this test-fixture issue.

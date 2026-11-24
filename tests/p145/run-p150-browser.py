@@ -75,6 +75,9 @@ with sync_playwright() as p:
     # Merely writing localStorage does not prove the runtime has applied the skin.
     pg.evaluate("CVLot47.set('plain');CV229.setTheme('graffiti')")
     pg.wait_for_function('!document.documentElement.hasAttribute("data-skin")&&document.body.classList.contains("cv229-theme-graffiti")',timeout=10000)
+    # P150 tech intentionally changes the toolbar while Home is active.
+    # Capture the base-pink baseline only after opening a non-Home workspace.
+    pg.evaluate("CVWS.open('design')");pg.wait_for_timeout(900)
     baseline=pg.evaluate('getComputedStyle(document.getElementById("ws-export")).backgroundColor')
     ck('theme fixture baseline is original pink Export',baseline=='rgb(255, 61, 154)')
     for sp in ['design','site','media','proj','ai']:

@@ -657,3 +657,10 @@ Mainline workflow #551 passed 53/53; Pages #275 passed build/deploy. P143 parity
 
 - Run #783 passed the P150 root fallback assertion (5/5 workspaces) but failed the Export color assertion (5/5); total 74/79. P167/P168/P169 and P160–P166 browser suites passed in that same run.
 - P150.13 itself only changes `data-home-skin`; it does not own P47 `data-skin` or P229 `body.cv229-theme-*`. The next P150 fixture explicitly applies P47 plain + P229 graffiti via their public owners, validates the pink baseline first, and records full computed-style diagnostics for every workspace. The Holo regression remains a separate positive test.
+
+
+## P150.13 QA fixture correction after run #785
+
+- Run #785: P167 30/30 Node, P168 17/17 Node, P169 5/5 Node + 7/7 Chromium, P160–P166 Chromium 28/28. P85/GLB/ONNX runtime suites completed successfully; no uncaught page errors were reported in P150.
+- P150's Holo preservation checks passed 5/5. The five non-Home checks printed no P150_EXPORT_DIAGNOSTIC, indicating their computed background was exactly the expected pink. The six failed assertions were the baseline check and five comparisons to a baseline captured while Home-tech was still active.
+- Updated the test to enter Design and wait for Home scope to switch to classic before capturing the pink baseline. This corrects the fixture, not the product styles. Await a fresh hosted run before acceptance.

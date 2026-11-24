@@ -346,3 +346,9 @@ Khi sửa module: sửa file standalone rồi chép y hệt vào lot (parity so 
 - Test baseline through the real owners: wait for CVLot47/CV229, call `CVLot47.set('plain')`, `CV229.setTheme('graffiti')`, then assert pink Export before workspace changes.
 - For each Design/Site/Media/Project/AI route, log `data-home-skin`, Home-active flag, P47 skin, P229 body theme classes, computed background/backgroundImage/color/border. Compare to the captured baseline; do not change P47 or P229 in the P150 runtime.
 - Keep a separate Holo fixture proving P47 Holo button styling is preserved when Home skin changes.
+
+
+## P150.13 test fixture baseline
+
+- Do not capture the original pink Export baseline while the Home tech skin is active. First open the Design workspace and wait for Home scope to switch to classic, then capture the non-Home pink background.
+- Run #785 showed Holo preservation passed 5/5; P150 non-Home computed backgrounds were pink (no diagnostic emitted) but comparisons failed against the Home-tech baseline. Re-run full Chromium acceptance after this test-only change.
