@@ -71,18 +71,18 @@ try:
     page.locator('#cv132pdf-import').click()
     page.wait_for_function("document.querySelector('#cv132pdf-status').textContent.includes('không hợp lệ')",timeout=5000)
     checks['invalidPageRejected']=True
+    # Observe the existing Pixel file input in capture phase before its owner clears the picker.
+    page.evaluate("""()=>{const input=document.querySelector('#pxFile');window.__cv132PdfHandoff=null;input.addEventListener('change',()=>{const f=input.files&&input.files[0];window.__cv132PdfHandoff=f?{name:f.name,type:f.type,size:f.size}:null;},{capture:true,once:true});}""")
     page.locator('#cv132pdf-page').fill('2')
     page.locator('#cv132pdf-import').click()
     page.wait_for_function("document.querySelector('#cv132pdf-status').textContent.includes('Đã đưa trang 2')",timeout=30000)
     checks['pageTwoRasterizedAndHandedOff']=True
     page.wait_for_function("CVNativeEngines.pixel.canvas.width===300 && CVNativeEngines.pixel.canvas.height===150 && document.querySelector('#pxStatus').textContent.includes('×')",timeout=30000)
     details=page.evaluate("""()=>{
-      const input=document.querySelector('#pxFile'),c=CVNativeEngines.pixel.canvas;
-      const ctx=c.getContext('2d'),px=ctx.getImageData(75,75,1,1).data;
-      return {name:input.files&&input.files[0]&&input.files[0].name,type:input.files&&input.files[0]&&input.files[0].type,
-        width:c.width,height:c.height,red:Array.from(px),status:document.querySelector('#pxStatus').textContent};
+      const c=CVNativeEngines.pixel.canvas,ctx=c.getContext('2d'),px=ctx.getImageData(75,75,1,1).data;
+      return {handoff:window.__cv132PdfHandoff,width:c.width,height:c.height,red:Array.from(px),status:document.querySelector('#pxStatus').textContent};
     }""")
-    checks['usesExistingPixelFileInput']=bool(details['name'] and 'page-2.png' in details['name'] and details['type']=='image/png')
+    checks['usesExistingPixelFileInput']=bool(details['handoff'] and 'page-2.png' in details['handoff']['name'] and details['handoff']['type']=='image/png' and details['handoff']['size']>0)
     checks['existingPixelCanvasRendersPdfPage']=details['width']==300 and details['height']==150 and details['red'][0]>180 and details['red'][1]<100 and details['red'][2]<100
     checks['pdfRuntimeAndWorkerAreSameOrigin']=any('/assets/vendor/pdfjs/pdf.mjs' in u for u in requests) and any('/assets/vendor/pdfjs/pdf.worker.mjs' in u for u in requests)
     checks['noPageErrors']=not errors
