@@ -614,3 +614,11 @@ Mainline workflow #551 passed 53/53; Pages #275 passed build/deploy. P143 parity
 - Candidate baseline: `4efdb5d4a3a7b3dd32f98c0bf5b7907ea57357df` (workflow #767) passed the P160–P166 Node contract suite and 27/28 Chromium integration assertions with `pageErrors: []`.
 - The only browser assertion failure was P164's P128 prompt text case check (`Shot list` vs `shot list`); P164 now emits the heading `Shot list từ brief`, and the browser assertion is case-insensitive to avoid a casing-only regression.
 - This is a candidate correction, not acceptance. Re-run hosted workflow, inspect final result, and retain manual gates for real assets/GLB/local model, project round-trip, device/accessibility, and P130 two-device sync. P70 remains fail-closed.
+
+
+## 2026-11-24 — P150.11 regression fix candidate
+- Reproduced failure from hosted runs #769 and #770: `tests/p145/run-p150-browser.py` passed all checks until the five non-Home routes (design, site, media, proj, ai), where the original pink `#ws-export` button had been recolored by broad P150 CSS selectors.
+- Corrected `canvio-p150-home-sky.js` to remove the unscoped export button and descendant text color overrides; retained the Home-only rules. Bumped module version to 150.11.0.
+- Updated candidate CI to synchronize the standalone P150.11 source into `index.html`'s `canvio-lot150h` before the existing Chromium test.
+- Prior-run context only (not a post-fix PASS): P167 Node 30/30, P168 Node 17/17, P159 integration 13/13, P160–P166 browser 28/28. New candidate CI remains the acceptance authority.
+- Status: FIX COMMITTED TO REVIEW BRANCH; browser re-test and full CI pending. No claim of zero warnings/failures until the run is green.
