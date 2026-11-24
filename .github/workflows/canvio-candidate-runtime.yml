@@ -836,6 +836,7 @@ jobs:
           node tests/p127/run-p137f-tests.cjs
           node tests/p130/run-p130-tests.cjs
           node tests/p153/run-p153-tests.cjs
+          node tests/p159/run-p159-tests.cjs
           node tests/p127/run-p120-comfyui-tests.cjs
           node tests/p127/run-p139-tests.cjs
           node tests/p127/run-p135a-tests.cjs
