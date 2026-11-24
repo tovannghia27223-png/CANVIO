@@ -664,3 +664,10 @@ Mainline workflow #551 passed 53/53; Pages #275 passed build/deploy. P143 parity
 - Run #785: P167 30/30 Node, P168 17/17 Node, P169 5/5 Node + 7/7 Chromium, P160–P166 Chromium 28/28. P85/GLB/ONNX runtime suites completed successfully; no uncaught page errors were reported in P150.
 - P150's Holo preservation checks passed 5/5. The five non-Home checks printed no P150_EXPORT_DIAGNOSTIC, indicating their computed background was exactly the expected pink. The six failed assertions were the baseline check and five comparisons to a baseline captured while Home-tech was still active.
 - Updated the test to enter Design and wait for Home scope to switch to classic before capturing the pink baseline. This corrects the fixture, not the product styles. Await a fresh hosted run before acceptance.
+
+
+## P132.1 — Local PDF import QA correction (2026-11-25 · candidate)
+
+- The initial hosted Chromium report showed: PDF opens, page 2 rasterizes and renders into the native Pixel canvas at 300×150, expected red test pixel, same-origin PDF.js/worker, zero page errors and no external PDF runtime requests.
+- The only failing assertion was `usesExistingPixelFileInput`: the test read `#pxFile.files` after Pixel Atelier's own change handler had cleared the file picker. That did not prove a failed handoff; the canvas render proved the receiving owner had already processed it.
+- Updated the browser fixture to register a one-shot capture-phase `change` listener before import, recording the actual `File.name/type/size` at the moment P132 assigns it. This preserves the product cleanup behavior and tests the real handoff contract. New-mainline hosted rerun pending.
