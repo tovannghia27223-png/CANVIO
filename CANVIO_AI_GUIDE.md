@@ -4303,3 +4303,11 @@ P160–P166 module APIs currently report versions P160.2.0, P161.1.0, P162.2.0, 
 - P167.1 delivers the bounded Canvas2D blocking inspector, camera controls, multi-camera preview and PNG contact sheet; it is not a full WebGL scene graph or MP4 renderer.
 - P168.1 delivers direct local Poster/Designer handoff, 2D image motion/text overlays and GIF/WebM export through existing Asset Library/Storyboard owners; it is not a multi-track video editor or AI video inference.
 - Do not infer P70 manual acceptance from this hosted workflow. The 14 real-world gates remain separate and require evidence on actual devices/projects.
+
+
+## P161.2 / P74.1 — GLB camera-pose replay (candidate · 2026-11-25)
+
+- P161 passes its saved `yaw/pitch/fov/position{x,y,z}` to the existing P74/P81 Three.js viewer after `viewer.load(file)` completes. P74.1 exposes `applyCameraPose(pose)` and `getCameraPose()`; the viewer remains the single renderer, camera and OrbitControls owner.
+- Before applying an absolute preset, P74 disables damping and flushes pending OrbitControls drag inertia; it then writes camera/target and synchronizes controls exactly before restoring the prior damping setting. This avoids residual drag delta altering the stored yaw/pitch.
+- Zero/unspecified position applies yaw/pitch around the normalized model target while preserving fit distance. Explicit position applies camera X/Y/Z and derives a matching target from yaw/pitch. Bounds: yaw ±360°, pitch ±89°, FOV 30–120°, position components ±1000.
+- P161 exposes X/Y/Z inputs and persists them in the existing `spatialWorkspace` document. Hosted acceptance uses a generated self-contained GLB fixture, verifies direct P74 pose readback, then imports that same fixture into Asset Library and checks P161 preset replay through P74. Exact-head hosted rerun pending; complex production GLBs/physical GPU remain separate.
