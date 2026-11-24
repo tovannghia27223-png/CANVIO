@@ -77,7 +77,7 @@ def main():
           await CV.assets.addBlob(file);
           const asset=CV.assets.list().find(x=>String(x.name||'')==='canvio-hosted-smoke.glb');
           if(!asset)throw Error('P161 GLB fixture was not added to Asset Library');
-          const saved=CVSpatialWorkspaceP161.savePreset('Hosted GLB camera pose',asset.id,{yaw:48,pitch:21,fov:66,x:0,y:0,z:0});
+          const saved=CVSpatialWorkspaceP161.savePreset('Hosted GLB camera pose',asset.id,{yaw:48,pitch:21,fov:66,x:1.5,y:0.9,z:2.25});
           if(!saved.ok)throw Error(saved.error||'P161 preset save failed');
           return saved.preset.id;
         }""")
@@ -85,7 +85,7 @@ def main():
           const result=await CVSpatialWorkspaceP161.apply(id),actual=CANVIOThreeGLBViewerP74.getCameraPose();
           return {ok:result.ok,message:result.message,cameraPose:result.cameraPose,actual:actual};
         }""",p161id)
-        record('P161 GLB preset replays saved pose through P74/P81',p161pose['ok'] and abs(p161pose['actual']['yaw']-48)<0.2 and abs(p161pose['actual']['pitch']-21)<0.2 and abs(p161pose['actual']['fov']-66)<0.01,p161pose)
+        record('P161 GLB preset replays saved pose through P74/P81',p161pose['ok'] and abs(p161pose['actual']['yaw']-48)<0.2 and abs(p161pose['actual']['pitch']-21)<0.2 and abs(p161pose['actual']['fov']-66)<0.01 and abs(p161pose['actual']['position']['x']-1.5)<0.001 and abs(p161pose['actual']['position']['y']-0.9)<0.001 and abs(p161pose['actual']['position']['z']-2.25)<0.001,p161pose)
         # Compressed GLB decode (Draco + Meshopt) with fixtures generated in CI. KTX2 uses a UASTC-encoded texture from toktx.
         fx=os.environ.get('CANVIO_GLB_FIXTURES')
         for kind,ext in (('draco','KHR_draco_mesh_compression'),('meshopt','EXT_meshopt_compression'),('ktx2','KHR_texture_basisu')):
