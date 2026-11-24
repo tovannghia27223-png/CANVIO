@@ -53,6 +53,7 @@ with sync_playwright() as p:
     checks['P161UIPanelVisible']=page.locator('#cv161-card').count()==1
     page.evaluate("CV.go('platform')")
     checks['P165UIPanelVisible']=page.locator('#cv165-card').count()==1
+    checks['P165ComfyUIHandoff']=page.evaluate("(()=>{const r=CVAiWorkflowP165.sendToComfyUI(window.__p165workflow,'image'),field=document.getElementById('cv120-prompt');return !!(r&&r.ok&&field&&field.value.length>0&&document.getElementById('cv120-kind').value==='image')})()")
     page.evaluate("CV.go('webEngine')")
     checks['P166UIPanelVisible']=page.locator('#cv166-card').count()==1
     page.set_viewport_size({'width':390,'height':844});page.wait_for_timeout(300)
