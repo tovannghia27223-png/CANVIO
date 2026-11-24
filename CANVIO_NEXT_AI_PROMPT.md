@@ -361,3 +361,9 @@ Khi sửa module: sửa file standalone rồi chép y hệt vào lot (parity so 
 - Workflow must sync `canvio-p167-blocking.js` into `canvio-lot167b` in `index.html`, pass P143 parity and full Chromium suite before merge.
 - Scope limitation: CPU perspective projection on Canvas 2D, not a full WebGL scene graph or rendered 3D asset pipeline. Do not claim video rendering; the new export is a PNG contact sheet (four keyframes per camera).
 \n\n## P167.1 + P168.1 handoff (2026-11-25)\n\n- P167.1 fix: selected object name is committed on `input`; browser test checks persisted name after reload. Preserve the Canvas2D renderer limitation and PNG contact-sheet export wording.\n- P168.1 candidate: add direct current Poster SVG handoff and Designer image-like `snapshotState()` / existing rendered-Canvas fallback to the P168 motion panel; do not create an Asset Library intermediate. Local-only source validation rejects remote image references.\n- P168.1 adds a bounded text overlay with static/fade/slide/typewriter/pop, top/middle/bottom placement, plain/banner/outline styles, color and size. Preview, GIF frames and WebM record the same Canvas-composited text.\n- Node and Chromium tests were expanded. Await the exact final hosted run and generated canonical `index.html` before calling this accepted; mainline and manual P70 gates remain separate.\n
+
+## P163.1.1 — Visible profile field labels (2026-11-25)
+
+- Branch: `feat/p163-visible-field-labels`; `canvio-p163-character-continuity.js` version 163.1.1. Seven existing P163 controls now have visible labels; IDs, state/data owner and event handlers are unchanged.
+- `tests/p145/run-p169-browser.py` asserts visible associated labels for all seven fields, in addition to P169 save/round-trip and mobile overflow checks.
+- Verify exact-head hosted runtime, P143 parity, P163/P169 Chromium and full regressions. Do not claim WCAG certification; manual keyboard/screen-reader/200% zoom review remains open.
