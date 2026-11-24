@@ -4182,9 +4182,9 @@ Bài học P150: KHÔNG đặt `display:flex` lên `#page-home` mà không kèm 
 - P162 is a reference-role board with reorderable cards; it is not yet a pixel compositing editor or a replacement for `CVUnifiedLayers`. `updateLayer` supports bounded x/y/scale metadata, but current UI does not claim full layer transform authoring.
 - P163 consistency score is explainable text-feature/palette comparison, not face recognition or image-embedding similarity. It can place `characterProfileId` and linked reference IDs onto an existing Storyboard shot.
 - P164 uses native Storyboard shot objects. `productionMeta` holds angle, movement, transition, duration and notes. CSV is file export; PDF is browser Print dialog (user chooses Save as PDF).
-- P165 only routes to P128 local tier. The optional local-model checkbox is explicit; if no local adapter is configured, a deterministic local role template is used. `generator-handoff` never performs media inference. No Gemini/paid fallback is permitted by this module.
+- P165 routes to P128 local tier only when the opt-in checkbox is selected; if no local adapter is configured, deterministic local role templates are used. Its ComfyUI button transfers the latest prompt to the existing P120/P126 Platform panel; the user must load an API workflow, connect the allowed localhost endpoint and click Run there. `generator-handoff` itself never performs media inference. No Gemini/paid fallback is permitted by this module.
 - P166 produces static offline HTML/ZIP with responsive CSS and reduced-motion handling. It saves project metadata and navigates to Website Engine, but does not yet rehydrate the generated HTML into a GrapesJS component tree; CTA form/backend/hosting are out of scope.
-- P160 community exchange is file-based, not hosted. Current ZIP export is metadata + README; JSON import restores metadata only and lists unavailable Asset IDs. It does not package original asset binaries.
+- P160 community exchange is file-based, not hosted. JSON and ZIP import/export carry collection metadata + README only; ZIP import checks central directory, supported STORE/DEFLATE method, size bounds and CRC. Original image binaries are not included; Asset IDs must resolve in the receiving Asset Library.
 
 ### Test owners
 - `tests/p159/run-p159-tests.cjs` and `tests/p153/run-p153-tests.cjs` protect the P159/P153–P157 data path.
@@ -4194,5 +4194,5 @@ Bài học P150: KHÔNG đặt `display:flex` lên `#page-home` mà không kèm 
 - Candidate P160–P166 has not been declared accepted until the latest hosted run finishes successfully. Real GLB, user panorama, local model, project import/export, accessibility, device/browser and real Supabase/two-device checks remain manual.
 
 ### Version update note — 2026-11-24
-P160–P166 module APIs currently report versions P160.0.0, P161.0.0, P162.1.0, P163.1.0, P164.1.0, P165.1.0 and P166.0.0. P161/P162/P163/P164/P165 versions were incremented for interactive/browser integration. Preserve historical Guide sections; append new notes rather than rewriting historical release evidence.
+P160–P166 module APIs currently report versions P160.2.0, P161.1.0, P162.2.0, P163.1.0, P164.1.0, P165.2.0 and P166.0.0. P161/P162/P163/P164/P165 versions were incremented for interactive/browser integration. Preserve historical Guide sections; append new notes rather than rewriting historical release evidence.
 
