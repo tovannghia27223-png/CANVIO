@@ -27,6 +27,7 @@ on:
 
 permissions:
   contents: write
+  actions: write
 
 concurrency:
   group: canvio-runtime-${{ github.ref }}
@@ -1733,6 +1734,61 @@ jobs:
           | P135.2 editable Pixel adjustment stack | Node PNG metadata/CRC/32-layer round-trip; hosted Chromium snapshot → reload → native restore and unchanged raster check; P143 standalone/embedded parity | Independent two-device/cloud sync, third-party PNG re-encoding, masks/local corrections, smart objects, clone/patch and liquify remain unverified/out of scope. |
           MATRIX
           fi
+
+      - name: Refresh delivery manifest after all QA documentation
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
+          const files=[];
+          function walk(dir){
+            for(const e of fs.readdirSync(dir,{withFileTypes:true})){
+              if(['.git','node_modules','.canvio','dist'].includes(e.name))continue;
+              const p=path.join(dir,e.name);
+              if(e.isDirectory())walk(p);
+              else if(p!=='CANVIO_MANIFEST.json'){
+                const b=fs.readFileSync(p);
+                files.push({path:p.split(path.sep).join('/'),bytes:b.length,sha256:crypto.createHash('sha256').update(b).digest('hex')});
+              }
+            }
+          }
+          walk('.');files.sort((a,b)=>a.path.localeCompare(b.path));
+          const index=files.find(x=>x.path==='index.html');
+          if(!index)throw new Error('Canonical index.html missing from delivery tree');
+          const manifest={format:'CANVIO_DELIVERY_MANIFEST',schemaVersion:2,candidate:'23.3.111-github-runtime-ci',generatedAt:new Date().toISOString(),hashAlgorithm:'SHA-256',indexSha256:index.sha256,indexBytes:index.bytes,fileCount:files.length,releaseCertified:false,releaseStatus:'BLOCKED_PENDING_REAL_WORLD_ACCEPTANCE',p70ManualGates:{total:14,pending:14,passed:0},files};
+          fs.writeFileSync('CANVIO_MANIFEST.json',JSON.stringify(manifest,null,2)+'\\n');
+          console.log('Final manifest refreshed after all documentation:',files.length,'files; index SHA-256:',index.sha256);
+          NODE
+
+      - name: Commit generated canonical candidate to PR branch
+        if: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository }}
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          PR_HEAD_REF: ${{ github.event.pull_request.head.ref }}
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git reset --soft "$PR_HEAD_SHA"
+          if git diff --cached --quiet; then
+            echo "Canonical candidate already matches the PR branch."
+          else
+            git commit -m "build: embed verified runtime modules into canonical index"
+            git push origin "HEAD:$PR_HEAD_REF"
+            echo "Committed canonical index and complete candidate tree to $PR_HEAD_REF at $(git rev-parse HEAD)"
+          fi
+          curl --fail-with-body --silent --show-error \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            -X POST \
+            "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/workflows/422482556/dispatches" \
+            -d "{\\"ref\\":\\"$PR_HEAD_REF\\"}"
+          echo "Triggered final-head verification on $PR_HEAD_REF"
 
       - name: Package full source handoff and runtime evidence
         shell: bash

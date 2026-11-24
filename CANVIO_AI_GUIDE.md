@@ -4234,3 +4234,7 @@ P160–P166 module APIs currently report versions P160.2.0, P161.1.0, P162.2.0, 
 - P150.12 replaces the brittle `:has(#page-home.active)` toolbar gate with an explicit `data-cv150-home-active=true` state computed from actual visibility of the Home page. A MutationObserver tracks route/class/style/visibility changes and removes the Home-only state when the Home page is hidden.
 - The sky/fashion/tech header skins now apply only while Home is actually visible; the original pink Export button styling is preserved in Design, Site, Media, Project and AI workspaces.
 - Browser regression checks assert the state flag is off and the original pink background remains in all five non-Home workspaces. Hosted run #777 did not pass this assertion; P150.12 is awaiting the corrected rerun and must not be marked accepted until the new hosted browser suite is green.
+
+## P169 browser integration test refinement (2026-11-24)
+
+- The P169 Chromium acceptance opens the existing Video Studio dock's `Nhân vật` tab before checking the Character Studio panel. This follows the intended collapsed dock UX and prevents a hidden-but-mounted panel from being mistaken for a mount failure.

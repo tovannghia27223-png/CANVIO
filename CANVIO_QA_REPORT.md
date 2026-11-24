@@ -634,3 +634,7 @@ Mainline workflow #551 passed 53/53; Pages #275 passed build/deploy. P143 parity
 
 - Run #777 passed build, syntax, P143 and P47–P70 suites but failed 5/5 checks asserting original Export button color in non-Home workspaces. Root cause: Home toolbar CSS was keyed to a page class that could remain present while Home was hidden.
 - P150.12 uses actual visible-Home state and route mutation observation. The following hosted workflow must pass all P150 desktop/mobile checks, including the five workspace export assertions, before acceptance.
+
+## P169 dock visibility fixture correction (candidate)
+
+- The P169 Chromium test explicitly opens `#cv163-card` from the existing P159.1 dock before asserting Character Studio visibility; it continues to verify all eight fields, SVG preview, P163 profile persistence, reset isolation, mobile layout and zero page errors.
