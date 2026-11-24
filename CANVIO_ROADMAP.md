@@ -1274,3 +1274,13 @@ Kiểm điểm trung thực: P153–P157 đang vi phạm nguyên tắc — dùng
 ### Thứ tự đề xuất
 P159 (sửa tích hợp) → P160 → P163 → P164 → P162 → P161 → P165 → P166 (gộp P158). Mỗi P: file module riêng nhưng **không kho riêng**, test node + Chromium kiểm luồng liên-module, cập nhật boot-order/parity/CI, ghi cả 3 file MD.
 Việc cần người dùng: duyệt thứ tự; cho biết có muốn "kênh chia sẻ/cộng đồng" chỉ là gói file tự trao đổi (không máy chủ, miễn phí) hay cần máy chủ; ảnh/GLB nội thất mẫu để test P161.
+
+
+## P159 — Shared Core integration for P153–P157 (2026-11-24 · candidate)
+
+- P153 candidate now stores new inspiration metadata in `CVCreativeCore.active.documents.inspirationBoard`; source images and P154 captures are sent to the canonical `CV.assets.addBlob` and linked with `CVCreativeCore.linkAsset`. Asset metadata carries board ID, category, colour palette and panorama pose details.
+- P155 candidate stores cards in `documents.scenePack`, while retaining the legacy `canvio.p155.cards` key for migration only. P153 migration reads old `canvio.p153.board` + `CANVIO_SCENE_STORE` bytes and does not delete the old records unless all image entries have verified Asset Library IDs.
+- P156 composes role-tagged prompt text plus the current Shared Core brief and routes it through P128's deterministic local `scene-prompt` handler. This is orchestration/integration only, not remote or model-based generation.
+- P156 and P157 append shots to the existing Video Studio project, preserve earlier shots, retain character/space/camera IDs and reference Asset IDs, and refresh the native Storyboard panels.
+- Added `canvio-p159-integration.js` (inline lot `canvio-lot159i`), P159 Node tests, P143 source pair 38 and hosted workflow embedding/parity hooks. Candidate CI run #689 is the acceptance authority; run #688 is obsolete because it ran before the canonical embedding step was added.
+- Still required before P159 is marked done: hosted run #689 or its corrected successor PASS; legacy profile migration check; real image deletion/reference reconciliation; real panorama sample; zero console/page errors; Asset Library/Image Studio/Video Studio visibility. P130 real Supabase/two-device sync remains blocked independently.
