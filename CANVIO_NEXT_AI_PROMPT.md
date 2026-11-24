@@ -339,3 +339,10 @@ Khi sửa module: sửa file standalone rồi chép y hệt vào lot (parity so 
 
 - Keep P47's Holographic theme separate from P150 Home skins. Test original pink Export under P47 `plain`; separately assert P47 Holo's gradient appearance remains unchanged across all five workspaces.
 - Do not merge until a new hosted run passes both theme modes plus the complete regression/browser suite.
+
+
+## P150.13 — independent theme test isolation follow-up
+
+- Test baseline through the real owners: wait for CVLot47/CV229, call `CVLot47.set('plain')`, `CV229.setTheme('graffiti')`, then assert pink Export before workspace changes.
+- For each Design/Site/Media/Project/AI route, log `data-home-skin`, Home-active flag, P47 skin, P229 body theme classes, computed background/backgroundImage/color/border. Compare to the captured baseline; do not change P47 or P229 in the P150 runtime.
+- Keep a separate Holo fixture proving P47 Holo button styling is preserved when Home skin changes.

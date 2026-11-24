@@ -1355,3 +1355,9 @@ Việc cần người dùng: duyệt thứ tự; cho biết có muốn "kênh ch
 
 - Nút Xuất nền hồng được kiểm tra dưới P47 `plain` để xác nhận không bị Home skin ghi đè. Thêm suite riêng cho P47 Holo: so sánh computed background/color/border của nút Xuất trước và sau khi P150 chuyển sang tech skin trong lúc Home đang ẩn, qua cả 5 workspace.
 - Kết quả #783 cho thấy P150 root đã về `classic`; tuy vậy fixture còn bật P47 Holo mặc định, vốn có CSS gradient độc lập cho nút Xuất. Lượt tiếp theo phải pass cả 2 nhánh theme.
+
+
+## P150.13 QA fixture isolation — 2026-11-24
+
+- Separate P150 Home presentation skin from P47 global Holo and P229 workspace theme. The browser suite applies the intended baseline through the existing theme APIs and compares the computed Export style before/after route changes.
+- Keep the P47 Holo case as a separate preservation test. Do not fix a test harness theme-state issue by changing global theme behavior in the P150 module.

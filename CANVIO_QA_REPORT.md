@@ -651,3 +651,9 @@ Mainline workflow #551 passed 53/53; Pages #275 passed build/deploy. P143 parity
 - Run #783 confirmed root Home skin fallback to `classic` was applied, but the five pink-background assertions remained false because the test page retained P47's default `canvio16:skin=holo`, which independently sets a Holographic gradient on `#ws-export`.
 - Updated browser test setup: the base-pink regression explicitly selects P47 `plain`; a separate Holo regression captures the computed export appearance and verifies it is unchanged on all five non-Home workspaces after setting P150 tech while Home is hidden.
 - P150.13 is not accepted until the new complete hosted run passes both modes at desktop/mobile and all other browser suites.
+
+
+## P150.13 regression diagnosis — run #783
+
+- Run #783 passed the P150 root fallback assertion (5/5 workspaces) but failed the Export color assertion (5/5); total 74/79. P167/P168/P169 and P160–P166 browser suites passed in that same run.
+- P150.13 itself only changes `data-home-skin`; it does not own P47 `data-skin` or P229 `body.cv229-theme-*`. The next P150 fixture explicitly applies P47 plain + P229 graffiti via their public owners, validates the pink baseline first, and records full computed-style diagnostics for every workspace. The Holo regression remains a separate positive test.

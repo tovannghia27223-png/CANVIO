@@ -70,13 +70,21 @@ with sync_playwright() as p:
 
     # ---- không rò rỉ sang các không gian khác
     pg=b.new_page(viewport={'width':1440,'height':900});pg.add_init_script("try{localStorage.setItem('canvio.homeSkin.v2','tech');localStorage.setItem('canvio16:skin','plain')}catch(e){}")
-    pg.goto('http://127.0.0.1:%d/index.html'%h.server_address[1],wait_until='commit');pg.wait_for_function('!!(window.CVHomeSkyP150&&window.CVWS)',timeout=90000);pg.wait_for_timeout(1500)
+    pg.goto('http://127.0.0.1:%d/index.html'%h.server_address[1],wait_until='commit');pg.wait_for_function('!!(window.CVHomeSkyP150&&window.CVWS&&window.CVLot47&&window.CV229)',timeout=90000);pg.wait_for_timeout(1500)
+    # Establish the existing, intended baseline through the owning theme APIs.
+    # Merely writing localStorage does not prove the runtime has applied the skin.
+    pg.evaluate("CVLot47.set('plain');CV229.setTheme('graffiti')")
+    pg.wait_for_function('!document.documentElement.hasAttribute("data-skin")&&document.body.classList.contains("cv229-theme-graffiti")',timeout=10000)
+    baseline=pg.evaluate('getComputedStyle(document.getElementById("ws-export")).backgroundColor')
+    ck('theme fixture baseline is original pink Export',baseline=='rgb(255, 61, 154)')
     for sp in ['design','site','media','proj','ai']:
         pg.evaluate("CVWS.open('%s')"%sp);pg.wait_for_timeout(900)
         ck('không gian '+sp+' không lẫn trang Tổng quan',pg.evaluate('document.getElementById("page-home").offsetHeight')==0 and not pg.is_visible('#cv150-skins'))
         ck('không gian '+sp+' tắt Home-only toolbar scope',pg.evaluate('document.documentElement.getAttribute("data-cv150-home-active")!=="true"'))
         ck('không gian '+sp+' đưa skin gốc về classic ở root',pg.evaluate('document.documentElement.getAttribute("data-home-skin")==="classic"'))
-        ck('không gian '+sp+' giữ nút Xuất hồng gốc',pg.evaluate('getComputedStyle(document.getElementById("ws-export")).backgroundColor')=='rgb(255, 61, 154)')
+        state=pg.evaluate("""()=>{const e=document.getElementById('ws-export'),s=getComputedStyle(e);return {home:document.documentElement.getAttribute('data-home-skin'),active:document.documentElement.getAttribute('data-cv150-home-active'),skin:document.documentElement.getAttribute('data-skin'),bodyTheme:[...document.body.classList].filter(x=>x.indexOf('cv229-theme-')===0),background:s.backgroundColor,backgroundImage:s.backgroundImage,color:s.color,border:s.borderColor}}""")
+        if state['background']!='rgb(255, 61, 154)': print('P150_EXPORT_DIAGNOSTIC '+sp+' '+str(state))
+        ck('không gian '+sp+' giữ nút Xuất hồng gốc',state['background']==baseline)
     pg.close()
 
     # ---- Holographic Ocean remains independent of the Home presentation skin.

@@ -4253,3 +4253,10 @@ P160–P166 module APIs currently report versions P160.2.0, P161.1.0, P162.2.0, 
 - The non-Home pink Export assertion runs with the independent P47 Holographic skin explicitly set to `plain`, exposing the base CANVIO/Graffiti Export color (`#ff3d9a`) rather than the Holo gradient. This isolates P150 Home-skin bleed from the separate P47 theme owner.
 - A second browser scenario starts in Holo mode, captures the computed Export appearance after entering Design, selects P150's tech Home skin while Home is hidden, and verifies that the same Holo button appearance is preserved across Design, Site, Media, Project and AI.
 - Run #783 confirmed P150.13 correctly sets Home root skin to `classic` on non-Home routes, but the preceding test fixture retained P47's default Holo skin, which independently styles `#ws-export`. The expanded tests now cover both theme owners without conflating them; pending a fresh hosted run.
+
+
+## P150.13 test fixture correction — isolate existing global themes (2026-11-24)
+
+- Run #783 passed the added Home root-state assertions in all five workspaces, but the Export background remained non-pink. P150 must not take ownership of the independent P47 Holographic skin or P229 workspace theme.
+- The browser fixture now waits for P47/P229 APIs, explicitly calls `CVLot47.set('plain')` and `CV229.setTheme('graffiti')`, and verifies the original pink Export baseline before switching routes. Each workspace then compares the computed background to this established baseline and logs root skin, P150 marker, P47 skin, active P229 theme, background/image/color/border if a mismatch occurs.
+- The separate Holographic fixture continues to enable P47 Holo intentionally and verifies its original Export appearance remains unchanged after P150 switches Home skins. This distinguishes a genuine P150 regression from a fixture that left the global Holo theme active.
