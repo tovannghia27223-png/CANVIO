@@ -4303,3 +4303,10 @@ P160–P166 module APIs currently report versions P160.2.0, P161.1.0, P162.2.0, 
 - P167.1 delivers the bounded Canvas2D blocking inspector, camera controls, multi-camera preview and PNG contact sheet; it is not a full WebGL scene graph or MP4 renderer.
 - P168.1 delivers direct local Poster/Designer handoff, 2D image motion/text overlays and GIF/WebM export through existing Asset Library/Storyboard owners; it is not a multi-track video editor or AI video inference.
 - Do not infer P70 manual acceptance from this hosted workflow. The 14 real-world gates remain separate and require evidence on actual devices/projects.
+
+
+## P163.1.1 — Visible character-profile field labels (candidate · 2026-11-25)
+
+- `canvio-p163-character-continuity.js` / `CVCharacterContinuityP163` increments to `163.1.1`. The name, fixed description, required features, reference assets, selected profile, scene comparison details and Storyboard scene controls now have visible labels associated with their existing IDs.
+- Presentation/accessibility improvement only: the same P163 control IDs, Shared Core project owner, Asset Library reference IDs, save/upsert and Storyboard handoff remain unchanged.
+- Hosted P169 Chromium now verifies all seven associated labels have visible layout boxes. Keyboard, screen-reader, 200% zoom and device review remain manual; no WCAG certification is claimed.
