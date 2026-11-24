@@ -265,3 +265,7 @@ Chỉ kiểm bằng tín hiệu/tệp tổng hợp và Chromium headless; chưa 
 - Đã xong và có test: Bảng cảm hứng (P153), Trình xem toàn cảnh (P154), Thẻ/Prompt phân công/Góc máy/Kiểm tra tông (P155–P157). Xem ROADMAP mục "P153–P157 — ĐÃ LÀM".
 - Còn mở: P158; nối prompt P156 vào P128/ComfyUI; nối sự kiện `cv153:usecolor` vào Poster/Brand; thử với ảnh toàn cảnh thật của người dùng; đồng bộ ảnh đầy đủ lên cloud nếu cần.
 - Khi sửa module: sửa file standalone rồi chép y hệt vào lot trong index.html (parity P143), chạy `tests/p153/run-p153-tests.cjs`, `tests/p145/run-p153-browser.py`, smoke, boot-order `--check`.
+
+## NGUYÊN TẮC TÍCH HỢP + P159–P166 (2026-11-24)
+- Làm P159 trước: chuyển P153–P157 sang `CV.assets` + `CVCreativeCore` + `CVOrchestratorP128`, nối Storyboard; di chuyển dữ liệu cũ từ `CANVIO_SCENE_STORE`/`canvio.p153.board`/`canvio.p155.cards` mà không mất. Sau đó P160→P166 theo ma trận trong ROADMAP.
+- Mọi P mới: không kho riêng; có test kiểm dữ liệu xuất hiện ở module khác; nút "Gửi sang…". Hỏi người dùng về "kênh chia sẻ" (gói file hay máy chủ).

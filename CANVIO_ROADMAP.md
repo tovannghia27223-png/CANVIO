@@ -1246,3 +1246,31 @@ Việc cần người dùng: duyệt thứ tự; cung cấp 1–2 ảnh toàn c�
 - Kiểm: `tests/p153/run-p153-tests.cjs` (34 kiểm: tên màu, palette, lọc, link an toàn, hình học panorama yaw/pitch, thẻ, prompt, lệch tông), `tests/p145/run-p153-browser.py` (16 kiểm trong Chrome thật: thêm/lọc/tải lại/IndexedDB, panorama xoay đúng màu theo yaw, chụp 1280×720, thẻ→prompt→so tông, không tràn ngang ở 390px, 0 lỗi trang), smoke 21/21, P130 41/41, P143 parity 37/37, boot-order OK. Đã thêm 2 bước vào CI.
 - Lưu ý đã gặp: hiệu ứng nghiêng 3D `data-tilt` của thẻ trong trang Tài nguyên làm lệch vùng bấm → tắt cho các thẻ mới bằng `#cv153-style`.
 - Chưa làm: P156 chưa gửi thẳng sang ComfyUI/P128 (chỉ tạo và sao chép prompt); "Dùng màu này" mới sao chép mã màu và phát sự kiện `cv153:usecolor` (chưa nối vào Poster/Brand); P158 (Landing page + thiết kế→chuyển động) chưa làm; ảnh toàn cảnh thật của người dùng chưa thử (test dùng ảnh tổng hợp).
+
+## P159–P166 — Nhóm ý tưởng bổ sung + NGUYÊN TẮC TÍCH HỢP (kế hoạch, 2026-11-24)
+### Nguyên tắc bắt buộc (người dùng đặt)
+Mọi module phải liên kết với **Studio**, **Image Library (Asset Library `CV.assets`)**, **AI Engine (`CVOrchestratorP128`)** và **Video Editor (Storyboard P125/P127, Motion Cut/Video Studio)**; không tạo công cụ riêng lẻ, không có kho dữ liệu riêng. Dữ liệu dùng chung đi qua **Shared Creative Core (`CVCreativeCore`: project, `assetIds`, brief, brand, `context()`)**.
+Hợp đồng tích hợp cho mọi P mới: (1) ảnh/clip lưu vào `CV.assets` (không IndexedDB riêng) và gắn vào dự án bằng `CVCreativeCore.linkAsset`; (2) tác vụ AI đăng ký/chạy qua `CVOrchestratorP128`; (3) đọc brief/brand/dự án từ `CVCreativeCore.context()`; (4) có nút "Gửi sang…" Studio / Video / Website tương ứng; (5) có test kiểm dữ liệu xuất hiện ở module khác.
+
+### P159 · SỬA NGAY P153–P157 cho đúng nguyên tắc (ưu tiên cao nhất)
+Kiểm điểm trung thực: P153–P157 đang vi phạm nguyên tắc — dùng kho riêng `CANVIO_SCENE_STORE` + `canvio.p153.board`/`canvio.p155.cards`, chưa gắn dự án, chưa gọi P128, chưa gửi sang Video/Studio.
+- Ảnh bảng cảm hứng và ảnh chụp toàn cảnh → `CV.assets.addBlob` (kèm metadata màu/loại/yaw-pitch trong bảng meta của Asset Library `cv201`), tự `linkAsset` vào dự án đang chọn; bỏ `CANVIO_SCENE_STORE`, có bước di chuyển dữ liệu cũ (không mất).
+- Thẻ Nhân vật/Không gian lưu theo dự án trong Shared Core (hoặc namespace dự án) thay vì khóa riêng.
+- Prompt P156 chạy qua `CVOrchestratorP128` (task `scene-prompt`), kết quả quay về Storyboard.
+- Nút "Gán vào cảnh" đưa thẻ + góc máy + ảnh tham chiếu vào Storyboard P125/P127 của Video Studio.
+- Chấp nhận: ảnh thêm ở Bảng cảm hứng hiện trong trang Tài nguyên, Image Studio và Video Studio; xóa ở một nơi → nơi khác cập nhật; dự án xuất/nhập (Project Vault, Cloud Sync) mang theo thẻ và ảnh.
+
+### Ma trận nhóm ý tưởng → P → điểm nối bắt buộc
+| Nhóm | P | Nội dung | Nối với |
+|---|---|---|---|
+| Inspiration | P160 | Bộ sưu tập cá nhân (mở rộng P153): bộ sưu tập/kênh, tag, xuất-nhập gói chia sẻ JSON/ZIP; bảng tham khảo cộng đồng = gói do người dùng tự nhập (không máy chủ); đồng bộ riêng tư qua P130 | Asset Library, Shared Core, Studio "Dùng làm moodboard" |
+| Không gian 3D | P161 | Xem trước nội thất/không gian: nạp GLB/ảnh toàn cảnh, di chuyển (WASD/kéo), lưu nhiều góc quan sát thành "camera preset"; ghép P154 | Asset Library (ảnh), Video Editor (góc máy → shot), 3D engine sẵn có |
+| Sáng tạo hình ảnh | P162 | Canvas bố cục nhiều ảnh tham chiếu: kéo ảnh từ thư viện, đặt vai (chủ thể/phong cách/bố cục), chỉnh từng thành phần (lớp) rồi gửi AI hoặc Designer | Image Library, Unified Layers, Image Studio, AI Engine |
+| Nhân vật | P163 | Giữ nhận diện nhân vật nhiều ảnh/cảnh: bộ ảnh tham chiếu + checklist đặc điểm + kiểm tra nhất quán (màu/tóc/trang phục) giữa các ảnh sinh ra; mở rộng P155 | Asset Library, AI Engine, Storyboard |
+| Sản xuất video | P164 | Shot list từ Storyboard: bảng shot (cảnh, góc máy, thời lượng, thẻ nhân vật/không gian), thư viện chuyển cảnh + camera movement, xuất shot list CSV/PDF; dùng lại P157 | Video Editor/Timeline, Asset Library, AI Engine |
+| AI Workflow | P165 | Nhiều AI phối hợp: định nghĩa vai (viết kịch bản → dựng prompt → sinh → đánh giá → sửa), vòng đánh giá/sửa có điều kiện dừng, nhật ký từng bước; chạy cục bộ hoặc ComfyUI do người dùng bật | CVOrchestratorP128, Shared Core, mọi Studio |
+| Website | P166 | Trang từ brief (= P158 + responsive, tương tác, animation, xuất): brief từ Shared Core, ảnh từ Asset Library, chuyển động từ Motion Lab, xuất ZIP offline | Website Engine, Asset Library, Motion Lab, Shared Core |
+
+### Thứ tự đề xuất
+P159 (sửa tích hợp) → P160 → P163 → P164 → P162 → P161 → P165 → P166 (gộp P158). Mỗi P: file module riêng nhưng **không kho riêng**, test node + Chromium kiểm luồng liên-module, cập nhật boot-order/parity/CI, ghi cả 3 file MD.
+Việc cần người dùng: duyệt thứ tự; cho biết có muốn "kênh chia sẻ/cộng đồng" chỉ là gói file tự trao đổi (không máy chủ, miễn phí) hay cần máy chủ; ảnh/GLB nội thất mẫu để test P161.

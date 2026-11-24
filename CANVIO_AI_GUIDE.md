@@ -4144,3 +4144,7 @@ Bài học P150: KHÔNG đặt `display:flex` lên `#page-home` mà không kèm 
 - Dữ liệu: `canvio.p153.board` và `canvio.p155.cards` là mảng có `id` (Cloud Sync P130 tự đồng bộ từng mục); ảnh đầy đủ ở IndexedDB `CANVIO_SCENE_STORE` (chưa đồng bộ đám mây — chỉ thumb đi theo).
 - Cạm bẫy: thẻ `.card` trong `#page-assets` bị gắn `data-tilt` (nghiêng 3D) → làm lệch vùng bấm; thẻ mới phải tắt transform. `renderView` nhận `{data,w,h}`, không nhận trực tiếp `ImageData` (dùng `width/height`). Smooth-scroll của trang làm Playwright đo sai tọa độ: test nên chèn `scroll-behavior:auto`.
 - Việc kế tiếp: nối prompt P156 sang P128/ComfyUI; nối "Dùng màu này" vào Poster/Brand; P158.
+
+### NGUYÊN TẮC TÍCH HỢP (người dùng đặt, 2026-11-24) — đọc trước khi làm module mới
+- Module mới phải nối với Studio, Image Library (`CV.assets`), AI Engine (`CVOrchestratorP128`), Video Editor (Storyboard/Video Studio), dữ liệu dùng chung qua `CVCreativeCore` (`linkAsset`, `context()`). Không tạo kho dữ liệu riêng, không tạo công cụ chỉ đứng một mình.
+- P153–P157 hiện CHƯA đạt nguyên tắc này (kho riêng `CANVIO_SCENE_STORE`). P159 là việc sửa bắt buộc đầu tiên. Kế hoạch P160–P166 (Inspiration, 3D, Canvas ảnh, Nhân vật, Video, AI Workflow, Website) ở ROADMAP.
