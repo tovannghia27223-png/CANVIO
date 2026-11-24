@@ -23,12 +23,17 @@ with sync_playwright() as p:
     pg.click('#cv168-poster-source'); pg.wait_for_function("document.querySelector('#cv168-msg').textContent.includes('Poster')",timeout=10000)
     checks['poster_direct_handoff']=pg.evaluate("CV.assets.list().length===%d"%beforeDirect)
     # Designer adapter accepts a rendered preview data URL from its existing snapshotState owner.
-    pg.evaluate("""()=>{const c=document.createElement('canvas');c.width=640;c.height=400;const x=c.getContext('2d');x.fillStyle='#0f766e';x.fillRect(0,0,640,400);x.fillStyle='#fff';x.font='42px sans-serif';x.fillText('Designer fixture',40,220);const previewDataUrl=c.toDataURL('image/png');CV.engines=CV.engines||{};CV.engines.design={snapshotState:()=>({previewDataUrl})}}""")
+    pg.evaluate("""()=>{const c=document.createElement('canvas');c.width=640;c.height=400;const x=c.getContext('2d');x.fillStyle='#00ff00';x.fillRect(0,0,640,400);const previewDataUrl=c.toDataURL('image/png');CV.engines=CV.engines||{};CV.engines.design={snapshotState:()=>({previewDataUrl})}}""")
     pg.click('#cv168-designer-source'); pg.wait_for_function("document.querySelector('#cv168-msg').textContent.includes('Designer')",timeout=10000)
     checks['designer_direct_handoff']=pg.evaluate("CV.assets.list().length===%d"%beforeDirect)
+    pg.select_option('#cv168-preset','pan-right'); pg.fill('#cv168-sec','1'); pg.select_option('#cv168-fps','10'); pg.wait_for_timeout(300)
+    checks['designer_source_survives_preset']=pg.evaluate("(()=>{const d=document.querySelector('#cv168-view').getContext('2d').getImageData(32,32,1,1).data;return d[1]>230&&d[0]<30&&d[2]<30})()")
+    nDirect=pg.evaluate("CV.assets.list().length"); pg.click('#cv168-gif'); pg.wait_for_function("CV.assets.list().length===%d"%(nDirect+1),timeout=60000)
+    checks['designer_source_survives_gif_export']=pg.evaluate("(()=>{const d=document.querySelector('#cv168-view').getContext('2d').getImageData(32,32,1,1).data;return d[1]>230&&d[0]<30&&d[2]<30})()")
     pg.evaluate("document.querySelector('#cv168-asset').dispatchEvent(new Event('focus'));document.querySelector('#cv168-card').dispatchEvent(new Event('mouseenter'))"); pg.wait_for_timeout(600)
     checks['asset_listed']=pg.evaluate("[...document.querySelectorAll('#cv168-asset option')].some(o=>o.textContent==='anh-thu.png')")
-    pg.evaluate("document.querySelector('#cv168-asset').dispatchEvent(new Event('change',{bubbles:true}))"); pg.wait_for_timeout(400)
+    asset_id=pg.evaluate("[...document.querySelectorAll('#cv168-asset option')].find(o=>o.textContent==='anh-thu.png').value")
+    pg.select_option('#cv168-asset',asset_id); pg.wait_for_timeout(400)
     def px():
         return pg.evaluate("(()=>{const c=document.querySelector('#cv168-view'),d=c.getContext('2d').getImageData(0,0,c.width,c.height).data;let s=0;for(let i=0;i<d.length;i+=4*101)s=(s*31+d[i]+d[i+1]*3+d[i+2]*7)%1000003;return s})()")
     pg.wait_for_timeout(500); a=px(); checks['still_rendered']=a!=0
