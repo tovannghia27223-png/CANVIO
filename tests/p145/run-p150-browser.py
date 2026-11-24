@@ -74,6 +74,7 @@ with sync_playwright() as p:
     for sp in ['design','site','media','proj','ai']:
         pg.evaluate("CVWS.open('%s')"%sp);pg.wait_for_timeout(900)
         ck('không gian '+sp+' không lẫn trang Tổng quan',pg.evaluate('document.getElementById("page-home").offsetHeight')==0 and not pg.is_visible('#cv150-skins'))
+        ck('không gian '+sp+' tắt Home-only toolbar scope',pg.evaluate('document.documentElement.getAttribute("data-cv150-home-active")!=="true"'))
         ck('không gian '+sp+' giữ nút Xuất hồng gốc',pg.evaluate('getComputedStyle(document.getElementById("ws-export")).backgroundColor')=='rgb(255, 61, 154)')
     pg.close()
     b.close()
