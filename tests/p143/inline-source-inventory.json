@@ -1,17 +1,17 @@
 {
   "format": "CANVIO_P143_INLINE_SOURCE_INVENTORY",
   "version": 1,
-  "generatedAt": "2026-11-24T18:28:47.141Z",
+  "generatedAt": "2026-11-24T19:00:18.492Z",
   "source": "restored canonical index.html after hosted workflow integration steps",
   "purpose": "Complete script-tag inventory in browser execution order; known global reference detection is heuristic, not a semantic dependency DAG.",
-  "htmlBytes": 6051730,
-  "scriptTagCount": 184,
-  "inlineScriptCount": 184,
+  "htmlBytes": 6067580,
+  "scriptTagCount": 185,
+  "inlineScriptCount": 185,
   "externalScriptCount": 0,
   "moduleScriptCount": 0,
   "asyncScriptCount": 0,
   "deferScriptCount": 0,
-  "uniqueScriptIds": 181,
+  "uniqueScriptIds": 182,
   "duplicateScriptIds": [],
   "modules": [
     {
@@ -18744,6 +18744,32 @@
             "kind": "window.property"
           }
         ],
+        "scannerLimitations": [
+          "Template literal bodies and interpolation expressions are skipped as one lexical region.",
+          "Destructured globals, alias flow, computed property names, eval and dynamically assembled identifiers are not resolved.",
+          "Top-level bindings are detected only for simple var/let/const/function/class declarations.",
+          "This scanner is lexical evidence, not a JavaScript AST or proof of runtime data flow."
+        ]
+      }
+    },
+    {
+      "order": 184,
+      "id": "canvio-lot132pdf",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 15810,
+      "sha256": "4dd75b7c7cf8607b424579c293e16f027753f9ca369ffd5e02d0726a332d2566",
+      "exportedGlobals": [],
+      "globalDeclarations": [],
+      "globalPropertyReads": [],
+      "knownGlobalReads": [],
+      "globalReferenceEvidence": {
+        "propertyReads": [],
+        "knownReads": [],
+        "writes": [],
         "scannerLimitations": [
           "Template literal bodies and interpolation expressions are skipped as one lexical region.",
           "Destructured globals, alias flow, computed property names, eval and dynamically assembled identifiers are not resolved.",

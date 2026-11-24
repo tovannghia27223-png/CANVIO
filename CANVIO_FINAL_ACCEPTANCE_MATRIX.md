@@ -47,6 +47,3 @@
 | P124.4 selected component layouts | Node/Chromium selected Grid/Stack/Row/Split, responsive CSS, whitelisted variants, existing CSS Manager/save path, P143 parity | No structural tree conversion, nested variants, drag/resize, complex user-project or assistive-technology certification. |
 
 | P135.2 editable Pixel adjustment stack | Node PNG metadata/CRC/32-layer round-trip; hosted Chromium snapshot → reload → native restore and unchanged raster check; P143 standalone/embedded parity | Independent two-device/cloud sync, third-party PNG re-encoding, masks/local corrections, smart objects, clone/patch and liquify remain unverified/out of scope. |
-
-
-| P132.1 local PDF page import | Local SHA-verified PDF.js 6.5.438; PDF page→PNG into existing Pixel Atelier; Node contracts, same-origin Chromium and P143 51-pair parity | Current-mainline v3 exact-head hosted test pending; password/customer PDFs, batch pages, editable vector/text and device review remain open. |
