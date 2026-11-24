@@ -4294,3 +4294,11 @@ P160–P166 module APIs currently report versions P160.2.0, P161.1.0, P162.2.0, 
 - No new store, external API, paid service, package or timeline was added. Output remains saved through the current Asset Library and existing Storyboard owner.
 - Added Node coverage for overlay normalization/rendering and design-source extraction; Chromium coverage verifies Poster SVG and Designer snapshot handoff without intermediate assets, overlay preview, plus the existing GIF/WebM/Storyboard/workflow/mobile checks.
 - Status: candidate pending exact-head hosted CI, P143 standalone/inline parity, generated canonical `index.html`, and post-merge mainline verification. This is 2D image motion, not a full multi-track video editor or AI video generation.
+
+
+## P161.2 / P74.1 — GLB camera-pose replay (candidate · 2026-11-25)
+
+- P161 now passes its saved `yaw/pitch/fov/position{x,y,z}` to the existing P74/P81 Three.js viewer after `viewer.load(file)` completes. P74.1 exposes `applyCameraPose(pose)` and `getCameraPose()`; the viewer remains the single renderer, camera and OrbitControls owner.
+- With a zero/unspecified position, P74 derives camera position from yaw/pitch around the normalized model target while preserving the fit distance. With an explicit nonzero position, it applies the world position and derives a matching target from yaw/pitch. FOV is clamped to 30–120°, yaw to ±360°, pitch to ±89° and position components to ±1000.
+- P161 UI now exposes X/Y/Z camera position fields and persists them in the existing `spatialWorkspace` project document. Panorama rendering and Storyboard handoff retain their previous owners.
+- Hosted runtime acceptance uses a generated self-contained GLB fixture, checks P74 pose API values, imports that fixture into the existing Asset Library, applies a P161 GLB preset, and checks yaw/pitch/FOV/position on the P74 viewer. Exact-head hosted rerun pending; real multi-object GLB/physical camera review remains separate.
