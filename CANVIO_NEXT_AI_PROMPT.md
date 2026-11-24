@@ -394,3 +394,9 @@ Khi sửa module: sửa file standalone rồi chép y hệt vào lot (parity so 
 
 - Run #827 reached P160–P166 Node checks and failed at `waitForWebsiteEngine`: the test removed `CVWeb` before it had initialized the P131 security/save mocks. This is a fixture ordering issue, not a product timeout defect.
 - Updated `tests/p160/run-p160-166-tests.cjs` to establish P131/CVWeb/save mocks first, remove only `CVWeb`, restore it after 120 ms, and await readiness. Re-run the exact current head; P166 Chromium still must exercise real GrapesJS.
+
+
+## P153.1 hosted test correction (2026-11-25)
+
+- Full hosted run #830 stopped in `tests/p145/run-p153-browser.py` after reload, before P160–P166 tests. Log: three cards existed in `#cv153-grid` but the default Playwright locator wait required visibility. The assertion being tested is persistence after reload, not a pointer interaction.
+- On combined branch `feat/canvio-final-integration-p132-p163-p161-p166`, replaced the visible-state wait with `wait_for_function(document.querySelectorAll('#cv153-grid .card').length===3)`. Subsequent DB/image and user-action checks remain intact. Re-run exact-head hosted acceptance; do not attribute #830 failure to P166.
