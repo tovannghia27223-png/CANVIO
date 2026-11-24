@@ -1367,3 +1367,14 @@ Việc cần người dùng: duyệt thứ tự; cho biết có muốn "kênh ch
 
 - Run #785: P150 root skin fallback về classic; Holo-preservation pass 5/5; năm workspace Export không in diagnostic (computed background đúng hồng), nhưng test fail vì baseline được chụp khi Home-tech còn hiển thị.
 - Test fixture mở Design trước khi chụp baseline màu hồng, rồi so sánh năm workspace. Đây là sửa thứ tự kiểm thử, không thay đổi CSS sản phẩm.
+
+
+## P167.1 — Trình chỉnh đối tượng và đa camera (2026-11-24)
+
+- `canvio-p167-blocking.js` nâng lên `167.1.0`; vẫn là chủ sở hữu duy nhất của `CVCreativeCore.active.documents.blocking`.
+- Thêm inspector theo đối tượng đang chọn: tên, X/Z, rộng/sâu/cao, yaw và màu; thay đổi được chuẩn hóa theo giới hạn hiện có rồi lưu vào tài liệu dự án.
+- Bổ sung camera position X/Z và look-at X/Z bên cạnh FOV, độ cao, thời lượng và follow target.
+- Mặt bằng có chế độ kéo để xoay (yaw) và đổi cỡ (scale) đối tượng bằng chuột; chế độ di chuyển điểm đầu/điểm cuối cũ vẫn giữ.
+- Bổ sung preview đồng thời tối đa 8 camera và xuất một PNG contact sheet gồm 4 mốc thời gian cho mỗi camera (tối đa 32 khung). Đây là bảng khung tĩnh, không phải render video/chuỗi file độc lập.
+- Không thêm dependency, API, kho dữ liệu hoặc timeline mới. Renderer hiện vẫn là phép chiếu phối cảnh CPU trên Canvas 2D; P167.1 không được mô tả là scene graph/WebGL 3D đầy đủ.
+- Trạng thái: candidate; chờ hosted Node/Chromium, P143 parity, full smoke và mainline verification. Không đóng các manual gates P70 bằng kết quả CI.

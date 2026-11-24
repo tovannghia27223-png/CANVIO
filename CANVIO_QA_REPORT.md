@@ -664,3 +664,19 @@ Mainline workflow #551 passed 53/53; Pages #275 passed build/deploy. P143 parity
 - Run #785: P167 30/30 Node, P168 17/17 Node, P169 5/5 Node + 7/7 Chromium, P160–P166 Chromium 28/28. P85/GLB/ONNX runtime suites completed successfully; no uncaught page errors were reported in P150.
 - P150's Holo preservation checks passed 5/5. The five non-Home checks printed no P150_EXPORT_DIAGNOSTIC, indicating their computed background was exactly the expected pink. The six failed assertions were the baseline check and five comparisons to a baseline captured while Home-tech was still active.
 - Updated the test to enter Design and wait for Home scope to switch to classic before capturing the pink baseline. This corrects the fixture, not the product styles. Await a fresh hosted run before acceptance.
+
+
+## P167.1 — Trình chỉnh đối tượng và đa camera (2026-11-24)
+
+- `canvio-p167-blocking.js` nâng lên `167.1.0`; vẫn là chủ sở hữu duy nhất của `CVCreativeCore.active.documents.blocking`.
+- Thêm inspector theo đối tượng đang chọn: tên, X/Z, rộng/sâu/cao, yaw và màu; thay đổi được chuẩn hóa theo giới hạn hiện có rồi lưu vào tài liệu dự án.
+- Bổ sung camera position X/Z và look-at X/Z bên cạnh FOV, độ cao, thời lượng và follow target.
+- Mặt bằng có chế độ kéo để xoay (yaw) và đổi cỡ (scale) đối tượng bằng chuột; chế độ di chuyển điểm đầu/điểm cuối cũ vẫn giữ.
+- Bổ sung preview đồng thời tối đa 8 camera và xuất một PNG contact sheet gồm 4 mốc thời gian cho mỗi camera (tối đa 32 khung). Đây là bảng khung tĩnh, không phải render video/chuỗi file độc lập.
+- Không thêm dependency, API, kho dữ liệu hoặc timeline mới. Renderer hiện vẫn là phép chiếu phối cảnh CPU trên Canvas 2D; P167.1 không được mô tả là scene graph/WebGL 3D đầy đủ.
+- Trạng thái: candidate; chờ hosted Node/Chromium, P143 parity, full smoke và mainline verification. Không đóng các manual gates P70 bằng kết quả CI.
+
+
+### P167.1 verification record — pending
+
+- Source changes and expanded browser assertions are committed on the feature branch. Hosted Node/Chromium, P143 source parity, canonical `index.html` synchronization and full regression are pending; do not report P167.1 accepted until the exact branch SHA completes all required checks.

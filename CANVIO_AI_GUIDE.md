@@ -4267,3 +4267,14 @@ P160–P166 module APIs currently report versions P160.2.0, P161.1.0, P162.2.0, 
 - Run #785 showed the Holo-isolation suite passed all five workspaces. In the base-pink suite, P150_EXPORT_DIAGNOSTIC did not print for any of the five workspaces, which means the computed background in each non-Home workspace was already the expected pink. The six failures were the baseline assertion plus five comparisons against that baseline.
 - Cause: the fixture captured the baseline while the Home page was still visible with the tech skin active; the tech toolbar intentionally uses its own accent color. The test then compared non-Home pink against that Home-tech value.
 - Correction: the fixture now opens Design first, waits for P150's Home observer to settle, and captures the original pink computed style there. It then compares the five workspaces against that non-Home baseline. No production CSS override is added for this test-fixture issue.
+
+
+## P167.1 — Trình chỉnh đối tượng và đa camera (2026-11-24)
+
+- `canvio-p167-blocking.js` nâng lên `167.1.0`; vẫn là chủ sở hữu duy nhất của `CVCreativeCore.active.documents.blocking`.
+- Thêm inspector theo đối tượng đang chọn: tên, X/Z, rộng/sâu/cao, yaw và màu; thay đổi được chuẩn hóa theo giới hạn hiện có rồi lưu vào tài liệu dự án.
+- Bổ sung camera position X/Z và look-at X/Z bên cạnh FOV, độ cao, thời lượng và follow target.
+- Mặt bằng có chế độ kéo để xoay (yaw) và đổi cỡ (scale) đối tượng bằng chuột; chế độ di chuyển điểm đầu/điểm cuối cũ vẫn giữ.
+- Bổ sung preview đồng thời tối đa 8 camera và xuất một PNG contact sheet gồm 4 mốc thời gian cho mỗi camera (tối đa 32 khung). Đây là bảng khung tĩnh, không phải render video/chuỗi file độc lập.
+- Không thêm dependency, API, kho dữ liệu hoặc timeline mới. Renderer hiện vẫn là phép chiếu phối cảnh CPU trên Canvas 2D; P167.1 không được mô tả là scene graph/WebGL 3D đầy đủ.
+- Trạng thái: candidate; chờ hosted Node/Chromium, P143 parity, full smoke và mainline verification. Không đóng các manual gates P70 bằng kết quả CI.
