@@ -354,3 +354,6 @@ PR #71 was closed as superseded by clean-main PR #73; the latter carries the cor
 - P143 has a 167-script inventory and a 187-edge heuristic boot-order artifact with two forward references. This is not a semantic dependency DAG or completion of Phase 3 source extraction.
 - P121, P122.3, P127 true-peak/real speech, P138 RNNoise/Piper and P142 hardware/browser matrix remain open. The focused matrix does not certify the entire historical P roadmap.
 - Release gate is unchanged: manifest `releaseCertified:false`, 14/14 real-world P70 gates pending, 0 passed.
+
+
+| P159 | **Candidate đã triển khai** — P153/P155 dùng Shared Core, ảnh qua `CV.assets`, P156 qua P128 local handler, P156/P157 gán vào Storyboard hiện hữu; P143 pair 38 và Node test | Chờ hosted CI #689/successor, legacy profile migration và real-image/manual acceptance; không claim cloud sync. |
