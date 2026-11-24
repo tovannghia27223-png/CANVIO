@@ -4303,3 +4303,12 @@ P160–P166 module APIs currently report versions P160.2.0, P161.1.0, P162.2.0, 
 - P167.1 delivers the bounded Canvas2D blocking inspector, camera controls, multi-camera preview and PNG contact sheet; it is not a full WebGL scene graph or MP4 renderer.
 - P168.1 delivers direct local Poster/Designer handoff, 2D image motion/text overlays and GIF/WebM export through existing Asset Library/Storyboard owners; it is not a multi-track video editor or AI video inference.
 - Do not infer P70 manual acceptance from this hosted workflow. The 14 real-world gates remain separate and require evidence on actual devices/projects.
+
+
+## P166.2 — Brief-to-GrapesJS Website Engine handoff (candidate · 2026-11-25)
+
+- `canvio-p166-landing-studio.js` / `CVLandingStudioP166` is version 166.2.0. `sendToWebsite()` performs a real local handoff: navigate to the existing `webEngine`, wait up to 12 seconds for its lazy-loaded GrapesJS editor, CSS Manager, P131 sanitizer and canonical save API; extract the generated body; sanitize with `CANVIOSecurity.prepareHtmlImport()`; insert a scoped wrapper via `CVWeb.addComponents()`; apply base/mobile rules via `CVWeb.Css.setRule()`; await `CV.engines.web.save()`.
+- Readiness polling is bounded and reports an explicit timeout rather than dereferencing an absent `CVWeb`. If CSS or save fails after insertion, the API returns `inserted:true,saved:false` and asks the user to inspect/undo. No false success.
+- Responsive rules cover hero, visual and feature grid at max-width 760px. Selectors are scoped to the unique landing root, preserving all other Website Engine content. Existing GrapesJS/CSS/persistence owner remains canonical; no second editor, database, CSS store or timeline is created.
+- Node and Chromium acceptance verify deferred lazy engine availability, P131 sanitizer, GrapesJS root insertion, scoped CSS/media rule, Shared Core metadata, native save and mobile overflow. Exact-head hosted run is required before acceptance.
+- The package is static: CTA/forms have no backend submission, CRM, hosting or publishing service. Real authored Website project visual review, keyboard/screen-reader/zoom and physical-device checks remain manual.
