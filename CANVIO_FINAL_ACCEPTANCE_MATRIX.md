@@ -15,14 +15,6 @@
 | P145.9/.10 Asset Search & Quality Gate | Read-only local search/filter and shared license/source/size/hash gate | Full live Asset Vault enumeration and hashing every uploaded binary require canonical provider |
 | P70 Stable release | Fourteen fail-closed manual gates | releaseCertified:false until every gate has reviewed production evidence |
 
-
-| P150.12 Home-only toolbar scope | Node/source parity + hosted Chromium on Home skins and all five non-Home workspaces | Pass only when the pink Export button is preserved on Design, Site, Media, Project and AI at desktop/mobile and pageErrors is empty. |
-| P159.1/P167/P168 scene-production dock | P143 parity + P167/P168 Node suites + Chromium scene-blocking and image-motion tests | Real camera/GLB/project, browser MediaRecorder, real media and device review remain manual. |
-| P169 Character Studio | Node + Chromium eight-control SVG preview and P163 Shared Core feature round-trip | 2D vector reference only; not 3D rigging/sculpting, face recognition, generative imagery or professional visual acceptance. |
-
-
-| P150.13 theme-owner isolation | Chromium base-P47-plain: original pink Export retained on all five workspaces; Chromium P47-Holo: computed Export background/color/border unchanged across all five after P150 tech is selected while Home is hidden | Both modes must pass, plus Home-skin desktop/mobile checks and zero page errors. |
-
 ## Required manual gates
 1. HTTPS and supported browser matrix on deployed origin.
 2. Native IndexedDB persistence, restore and quota behavior.
@@ -55,26 +47,3 @@
 | P124.4 selected component layouts | Node/Chromium selected Grid/Stack/Row/Split, responsive CSS, whitelisted variants, existing CSS Manager/save path, P143 parity | No structural tree conversion, nested variants, drag/resize, complex user-project or assistive-technology certification. |
 
 | P135.2 editable Pixel adjustment stack | Node PNG metadata/CRC/32-layer round-trip; hosted Chromium snapshot → reload → native restore and unchanged raster check; P143 standalone/embedded parity | Independent two-device/cloud sync, third-party PNG re-encoding, masks/local corrections, smart objects, clone/patch and liquify remain unverified/out of scope. |
-
-
-| P159 Shared Core integration | P159 Node contract; canonical P153/P155/P159 lot embedding; P143 source parity 38 pairs; boot-order check; hosted Chromium and same-origin smoke | Candidate only until hosted workflow #689/successor passes; legacy profile migration, real panorama, asset deletion/reference cleanup and P130 physical two-device sync remain manual. |
-
-| P159 Shared Core integration | P159 Node suite previously passed 13/13; P153–P157 Node suite passed 34 checks; standalone sources are embedded before P143 parity | Candidate only until latest hosted run passes; old-profile migration, real media and real Supabase/two-device sync remain manual. |
-| P160 Inspiration collections | Project-scoped collection metadata, canonical Asset IDs, P128 Studio handoff, JSON/metadata-ZIP tests | ZIP import/export carries metadata only and validates CRC/size/method; original image binaries are omitted and must be present in the receiving Asset Library; community exchange is user-file based. |
-| P161 Spatial camera presets | P154 panorama renderer/interactive controls, P74/P81 GLB handoff, Storyboard metadata bridge | Exact GLB pose replay, real GLB, panorama and target-device acceptance remain open. |
-| P162 Reference canvas | Role-tagged Asset Library layers, draggable reorder, edit role/notes/scale, P128 Image Studio/Designer handoff | Not a full raster compositor or Unified Layers authoring workflow. |
-| P163 Character continuity | Reference Asset IDs, trait checklist, heuristic palette comparison, prompt and Storyboard link | Not facial recognition/image embeddings; real multi-scene accuracy remains manual. |
-| P164 Shot list | Native Storyboard metadata, transition controls, CSV export and browser Print-to-PDF | Real timeline round-trip and print-layout acceptance remain manual. |
-| P165 Multi-role AI workflow | Five P128 roles, bounded revision loop, optional local-only model path, deterministic fallback, per-step log and explicit prompt prefill to P120/P126 ComfyUI | No media generation in generator role; actual local model quality and ComfyUI handoff remain to validate. |
-| P166 Brief-to-Landing | Shared Core brief, Asset Library hero image, responsive/reduced-motion HTML and ZIP offline export | Static package only; no automatic GrapesJS tree import, form backend or hosting. |
-
-
-
-## P150.11 — non-Home export button regression (2026-11-24)
-| Check | Expected | Evidence/status |
-|---|---|---|
-| Home theme | Tech/sky/fashion may theme the export control while Home is active | Existing scoped rules retained; re-test required |
-| Other workspaces | Original pink export button `rgb(255, 61, 154)` in design/site/media/projects/AI | Root cause fixed in source; five-route desktop browser re-test pending |
-| Mobile | Same route isolation at 390 px | Browser re-test pending |
-| Canonical parity | Inline `canvio-lot150h` equals standalone `canvio-p150-home-sky.js` | CI embedding step added; run pending |
-| Release certification | P70 manual real-world gates remain fail-closed | OPEN; not changed by this patch |
