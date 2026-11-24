@@ -46,6 +46,11 @@ const suites=[
  report.checks['NoNewDatabaseKeys']=Object.keys(storage).every(k=>k==='canvio5:media_video_project_v1');
  // Exercise P166 against the same canonical Website Engine contracts used by P131/P124.
  let importedLanding='',sanitizedLanding='',websiteSaves=0,websiteNavigations=[],websiteCss=[],failWebsiteSave=false;
+ const existingEditor=window.CVWeb;delete window.CVWeb;
+ const lazyWait=window.CVLandingStudioP166.waitForWebsiteEngine(2000);
+ setTimeout(()=>{window.CVWeb=existingEditor;},120);
+ await lazyWait;
+ report.checks['P166.WaitsForLazyWebsiteEngine']=window.CVWeb===existingEditor;
  window.CANVIOSecurity={prepareHtmlImport(raw){sanitizedLanding=String(raw);return{html:String(raw),removed:{elements:0,attrs:0},remoteSourcesRemoved:0};}};
  window.CVWeb={addComponents(markup){importedLanding=String(markup);return true;},Css:{setRule(selector,style,options){websiteCss.push({selector,style,options:options||null});}}};
  CV.go=page=>websiteNavigations.push(page);
