@@ -40,17 +40,17 @@ with sync_playwright() as p:
     checks['object_inspector_visible']=pg.is_visible('#cv167-inspector')
     pg.fill('#cv167-obj-name','Nhà chỉnh sửa')
     checks['object_name_edit_saved']=pg.evaluate("CVBlockingP167.readScene().objects.find(o=>o.id==='b1').name==='Nhà chỉnh sửa'")
-    pg.select_option('input[name="cv167-mode"]','rotate')
+    pg.check('input[name="cv167-mode"][value="rotate"]')
     yaw0=pg.evaluate("CVBlockingP167.readScene().objects.find(o=>o.id==='b1').yaw")
     rot=pg.evaluate("""()=>{const c=document.querySelector('#cv167-plan'),r=c.getBoundingClientRect(),k=r.width/c.width,x=-8,z=8;const sx=x=>r.left+(c.width/2+x*3.2)*k,sy=z=>r.top+(c.height/2-z*3.2)*k;return [sx(x+.8),sy(z),sx(x),sy(z+.8)]}""")
     pg.mouse.move(rot[0],rot[1]);pg.mouse.down();pg.mouse.move(rot[2],rot[3],steps=6);pg.mouse.up();pg.wait_for_timeout(200)
     yaw1=pg.evaluate("CVBlockingP167.readScene().objects.find(o=>o.id==='b1').yaw");checks['mouse_rotate_object']=abs(yaw1-yaw0)>10
-    pg.select_option('input[name="cv167-mode"]','scale')
+    pg.check('input[name="cv167-mode"][value="scale"]')
     w0=pg.evaluate("CVBlockingP167.readScene().objects.find(o=>o.id==='b1').w")
     scl=pg.evaluate("""()=>{const c=document.querySelector('#cv167-plan'),r=c.getBoundingClientRect(),k=r.width/c.width,x=-8,z=8;const sx=x=>r.left+(c.width/2+x*3.2)*k,sy=z=>r.top+(c.height/2-z*3.2)*k;return [sx(x+.8),sy(z),sx(x+1.6),sy(z)]}""")
     pg.mouse.move(scl[0],scl[1]);pg.mouse.down();pg.mouse.move(scl[2],scl[3],steps=6);pg.mouse.up();pg.wait_for_timeout(200)
     w1=pg.evaluate("CVBlockingP167.readScene().objects.find(o=>o.id==='b1').w");checks['mouse_scale_object']=w1>w0
-    pg.select_option('input[name="cv167-mode"]','start')
+    pg.check('input[name="cv167-mode"][value="start"]')
     # persists in project document
     checks['saved_in_core']=pg.evaluate("!!(CVCreativeCore.active.documents&&CVCreativeCore.active.documents.blocking&&CVCreativeCore.active.documents.blocking.objects.length>=5)")
     # snapshot to assets
