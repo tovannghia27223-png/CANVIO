@@ -27454,6 +27454,66 @@ if(gate&&typeof gate.run==='function'&&!gate.run.__canvioP56Wrapped){var oldRun=
     state.controls.target.set(0, 0, 0); state.controls.minDistance = Math.max(.01, radius * .05); state.controls.maxDistance = radius * 100; state.controls.update();
     return { min: box.min.toArray(), max: box.max.toArray(), size: size.toArray(), radius: radius };
   }
+  function getCameraPose() {
+    if (!state.camera || !state.controls) return null;
+    var target = state.controls.target, p = state.camera.position;
+    var dx = p.x - target.x, dy = p.y - target.y, dz = p.z - target.z;
+    return {
+      yaw: Math.atan2(dx, dz) * 180 / Math.PI,
+      pitch: Math.atan2(dy, Math.sqrt(dx * dx + dz * dz)) * 180 / Math.PI,
+      fov: state.camera.fov,
+      distance: Math.sqrt(dx * dx + dy * dy + dz * dz),
+      position: { x: p.x, y: p.y, z: p.z },
+      target: { x: target.x, y: target.y, z: target.z }
+    };
+  }
+  function applyCameraPose(pose) {
+    if (!state.loaded || !state.camera || !state.controls || !state.runtime) fail('Cần nạp GLB vào viewer P74/P81 trước khi áp camera preset.');
+    pose = pose || {};
+    function bounded(value, fallback, min, max) {
+      var n = Number(value);
+      return Number.isFinite(n) ? Math.max(min, Math.min(max, n)) : fallback;
+    }
+    var controls = state.controls, previousDamping = controls.enableDamping;
+    try {
+      // Flush any pending OrbitControls drag inertia before writing an absolute preset.
+      // Otherwise its retained spherical delta is added to the requested yaw/pitch.
+      controls.enableDamping = false;
+      controls.update();
+      var yaw = bounded(pose.yaw, 0, -360, 360), pitch = bounded(pose.pitch, 0, -89, 89);
+      var fov = bounded(pose.fov, state.camera.fov || 42, 30, 120);
+      var target = controls.target.clone();
+      var currentDistance = state.camera.position.distanceTo(target);
+      if (!Number.isFinite(currentDistance) || currentDistance <= 0) currentDistance = 1;
+      var position = pose.position || {}, px = Number(position.x), py = Number(position.y), pz = Number(position.z);
+      var explicitPosition = Number.isFinite(px) && Number.isFinite(py) && Number.isFinite(pz) && (Math.abs(px) + Math.abs(py) + Math.abs(pz) > 0.0001);
+      var yr = yaw * Math.PI / 180, pr = pitch * Math.PI / 180, cp = Math.cos(pr);
+      var direction = { x: cp * Math.sin(yr), y: Math.sin(pr), z: cp * Math.cos(yr) };
+      if (explicitPosition) {
+        var cameraX = bounded(px, 0, -1000, 1000), cameraY = bounded(py, 0, -1000, 1000), cameraZ = bounded(pz, 0, -1000, 1000);
+        state.camera.position.set(cameraX, cameraY, cameraZ);
+        target.set(cameraX - direction.x * currentDistance, cameraY - direction.y * currentDistance, cameraZ - direction.z * currentDistance);
+      } else {
+        state.camera.position.set(
+          target.x + currentDistance * direction.x,
+          target.y + currentDistance * direction.y,
+          target.z + currentDistance * direction.z
+        );
+      }
+      state.camera.fov = fov;
+      state.camera.updateProjectionMatrix();
+      state.camera.lookAt(target);
+      controls.target.copy(target);
+      // With damping disabled this synchronizes the OrbitControls spherical state exactly.
+      controls.update();
+      if (state.renderer && state.scene) state.renderer.render(state.scene, state.camera);
+      var applied = getCameraPose();
+      applied.explicitPosition = explicitPosition;
+      return applied;
+    } finally {
+      controls.enableDamping = previousDamping;
+    }
+  }
   function inspectGlbBuffer(buffer) {
     if (!(buffer instanceof ArrayBuffer) || buffer.byteLength < 20 || buffer.byteLength > LIMIT_BYTES) fail('GLB buffer có kích thước không hợp lệ.');
     var view = new DataView(buffer);
@@ -27559,13 +27619,14 @@ if(gate&&typeof gate.run==='function'&&!gate.run.__canvioP56Wrapped){var oldRun=
       animationMixer: !!(runtime && runtime.THREE && runtime.THREE.AnimationMixer),
       disposalControls: typeof disposeAll === 'function' && typeof disposeModel === 'function',
       glbOnlyBoundedInput: LIMIT_BYTES === 250 * 1024 * 1024,
+      cameraPoseApi: typeof applyCameraPose === 'function' && typeof getCameraPose === 'function',
       reusesP72FileInput: !!$('cv72-file'),
       noSecondAssetStore: true,
       noProjectMutation: true
     };
   }
   function moduleSource() { return String(ensureRuntime); }
-  window.CANVIOThreeGLBViewerP74 = { version: '74.0.0', load: load, ensureRuntime: ensureRuntime, snapshot: snapshot, toggleAnimation: toggleAnimation, dispose: disposeModel, disposeAll: disposeAll, inspectGlbBuffer: inspectGlbBuffer, verifyVendorManifest: verifyVendorManifest, mount: mount, tests: tests, limits: { bytes: LIMIT_BYTES }, vendorCommit: '7e89746a687bb88271253698fa108b1dd59825d0' };
+  window.CANVIOThreeGLBViewerP74 = { version: '74.1.0', load: load, ensureRuntime: ensureRuntime, snapshot: snapshot, toggleAnimation: toggleAnimation, dispose: disposeModel, disposeAll: disposeAll, applyCameraPose: applyCameraPose, getCameraPose: getCameraPose, inspectGlbBuffer: inspectGlbBuffer, verifyVendorManifest: verifyVendorManifest, mount: mount, tests: tests, limits: { bytes: LIMIT_BYTES }, vendorCommit: '7e89746a687bb88271253698fa108b1dd59825d0' };
   function boot() { try { mount(); } catch (e) { console.error('[CANVIO P74/P81 mount]', e); } }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot, { once: true }); else boot();
   window.addEventListener('pagehide', disposeAll, { once: true });
@@ -32456,23 +32517,23 @@ function uid(){return'p161-'+Date.now().toString(36)+'-'+Math.random().toString(
 function clamp(v,min,max){v=Number(v);return Number.isFinite(v)?Math.max(min,Math.min(max,v)):0;}
 function savePreset(name,assetId,pose){name=String(name||'').trim().slice(0,80);var a=assets().find(x=>String(x.id)===String(assetId));if(!name||!a)return{ok:false,error:'Cần tên camera và asset panorama/GLB tồn tại.'};var d=read(),p={id:uid(),name:name,assetId:String(assetId),kind:/gltf|glb|model/i.test((a.mime||'')+' '+(a.name||''))?'glb':'panorama',yaw:clamp(pose&&pose.yaw,-360,360),pitch:clamp(pose&&pose.pitch,-89,89),fov:clamp(pose&&pose.fov||90,30,120),position:{x:clamp(pose&&pose.x,-1000,1000),y:clamp(pose&&pose.y,-1000,1000),z:clamp(pose&&pose.z,-1000,1000)},createdAt:Date.now()};d.presets.unshift(p);d.presets=d.presets.slice(0,100);try{window.CVCreativeCore.linkAsset&&window.CVCreativeCore.linkAsset(a.id);}catch(e){}return write(d)?{ok:true,preset:p}:{ok:false,error:'Không lưu được camera preset.'};}
 function updatePose(id,delta){var d=read(),p=d.presets.find(x=>x.id===id);if(!p)return{ok:false,error:'Không tìm thấy camera preset.'};p.yaw=clamp(p.yaw+(delta.yaw||0),-360,360);p.pitch=clamp(p.pitch+(delta.pitch||0),-89,89);p.fov=clamp(p.fov+(delta.fov||0),30,120);['x','y','z'].forEach(k=>{if(delta[k]!=null)p.position[k]=clamp(p.position[k]+delta[k],-1000,1000);});return write(d)?{ok:true,preset:p}:{ok:false,error:'Không lưu được pose.'};}
-function apply(id){var d=read(),p=d.presets.find(x=>x.id===id),a=p&&assets().find(x=>String(x.id)===p.assetId);if(!p||!a)return{ok:false,error:'Preset hoặc asset đã bị xóa.'};var detail={preset:p,asset:a,pose:{yaw:p.yaw,pitch:p.pitch,fov:p.fov,position:p.position}};try{document.dispatchEvent(new CustomEvent('canvio:p161-camera-preset',{detail:detail}));}catch(e){}if(p.kind==='glb')return openGLB(p.assetId).then(report=>({ok:true,preset:p,glbReport:report,message:'Đã nạp mô hình bằng viewer Three.js r187 P74/P81.'}));if(p.kind==='panorama'&&a.data&&window.CVPanoramaP154)return renderPanorama(a,p).then(canvas=>({ok:true,preset:p,canvas:canvas}));return{ok:true,preset:p,message:'Camera preset đã phát qua sự kiện P161.'};}
-async function openGLB(assetId){var a=assets().find(x=>String(x.id)===String(assetId));if(!a||!/\.glb$/i.test(String(a.name||''))&&!/model\/gltf-binary|glb/i.test(String(a.mime||'')))throw new Error('Chỉ mở asset GLB tự chứa trong viewer P74/P81.');var viewer=window.CANVIOThreeGLBViewerP74;if(!viewer||!viewer.load)throw new Error('Viewer P74/P81 chưa sẵn sàng. Mở Video Engine và kiểm tra runtime Three.js cục bộ.');var blob=null;if(a.blob instanceof Blob)blob=a.blob;else if(a.data instanceof Blob)blob=a.data;else if(typeof a.data==='string'&&/^data:/i.test(a.data)){var response=await fetch(a.data);if(!response.ok)throw new Error('Không đọc được asset GLB.');blob=await response.blob();}if(!blob)throw new Error('Asset không có bytes GLB khả dụng.');if(blob.size>250*1024*1024)throw new Error('GLB vượt giới hạn 250 MiB của P74.');var file=new File([blob],/\.glb$/i.test(a.name||'')?a.name:'CANVIO-'+a.id+'.glb',{type:'model/gltf-binary'});if(window.CV&&CV.go)CV.go('videoEngine');try{window.CANVIOGLBViewerP72&&CANVIOGLBViewerP72.mount&&CANVIOGLBViewerP72.mount();viewer.mount&&viewer.mount();}catch(e){}return viewer.load(file);}
+function apply(id){var d=read(),p=d.presets.find(x=>x.id===id),a=p&&assets().find(x=>String(x.id)===p.assetId);if(!p||!a)return{ok:false,error:'Preset hoặc asset đã bị xóa.'};var detail={preset:p,asset:a,pose:{yaw:p.yaw,pitch:p.pitch,fov:p.fov,position:p.position}};try{document.dispatchEvent(new CustomEvent('canvio:p161-camera-preset',{detail:detail}));}catch(e){}if(p.kind==='glb')return openGLB(p.assetId,detail.pose).then(report=>({ok:true,preset:p,glbReport:report,cameraPose:report.cameraPose||null,message:'Đã nạp GLB và áp dụng camera preset trong viewer Three.js r187 P74/P81.'}));if(p.kind==='panorama'&&a.data&&window.CVPanoramaP154)return renderPanorama(a,p).then(canvas=>({ok:true,preset:p,canvas:canvas}));return{ok:true,preset:p,message:'Camera preset đã phát qua sự kiện P161.'};}
+async function openGLB(assetId,pose){var a=assets().find(x=>String(x.id)===String(assetId));if(!a||!/\.glb$/i.test(String(a.name||''))&&!/model\/gltf-binary|glb/i.test(String(a.mime||'')))throw new Error('Chỉ mở asset GLB tự chứa trong viewer P74/P81.');var viewer=window.CANVIOThreeGLBViewerP74;if(!viewer||!viewer.load)throw new Error('Viewer P74/P81 chưa sẵn sàng. Mở Video Engine và kiểm tra runtime Three.js cục bộ.');var blob=null;if(a.blob instanceof Blob)blob=a.blob;else if(a.data instanceof Blob)blob=a.data;else if(typeof a.data==='string'&&/^data:/i.test(a.data)){var response=await fetch(a.data);if(!response.ok)throw new Error('Không đọc được asset GLB.');blob=await response.blob();}if(!blob)throw new Error('Asset không có bytes GLB khả dụng.');if(blob.size>250*1024*1024)throw new Error('GLB vượt giới hạn 250 MiB của P74.');var file=new File([blob],/\.glb$/i.test(a.name||'')?a.name:'CANVIO-'+a.id+'.glb',{type:'model/gltf-binary'});if(window.CV&&CV.go)CV.go('videoEngine');try{window.CANVIOGLBViewerP72&&CANVIOGLBViewerP72.mount&&CANVIOGLBViewerP72.mount();viewer.mount&&viewer.mount();}catch(e){}var report=await viewer.load(file);if(pose){if(typeof viewer.applyCameraPose!=='function')throw new Error('Viewer P74/P81 chưa có API áp dụng camera pose; hãy cập nhật runtime trước.');report.cameraPose=viewer.applyCameraPose(pose);}return report;}
 var previewCache=null;
 function paintPreview(assetId,yaw,pitch,fov,canvas){var a=assets().find(x=>String(x.id)===String(assetId));if(!a||typeof a.data!=='string'||!/^data:image\//i.test(a.data))return Promise.resolve(false);function draw(src){var size=window.CVPanoramaP154.outSize('16:9',1280),out=canvas.getContext('2d'),image=out.createImageData(size.w,size.h);canvas.width=size.w;canvas.height=size.h;window.CVPanoramaP154.renderView(src,{data:image.data,w:size.w,h:size.h},yaw,pitch,fov);out.putImageData(image,0,0);return true;}if(previewCache&&previewCache.assetId===String(assetId))return Promise.resolve(draw(previewCache.src));return new Promise((resolve,reject)=>{var im=new Image();im.onload=function(){try{var scale=Math.min(1,2048/im.naturalWidth),c=document.createElement('canvas');c.width=Math.max(2,Math.round(im.naturalWidth*scale));c.height=Math.max(2,Math.round(im.naturalHeight*scale));var x=c.getContext('2d',{willReadFrequently:true});x.drawImage(im,0,0,c.width,c.height);previewCache={assetId:String(assetId),src:{data:x.getImageData(0,0,c.width,c.height).data,w:c.width,h:c.height}};resolve(draw(previewCache.src));}catch(e){reject(e);}};im.onerror=()=>reject(new Error('Không giải mã được panorama.'));im.src=a.data;});}
 function renderPanorama(asset,preset){return new Promise((resolve,reject)=>{var im=new Image();im.onload=function(){try{var s=Math.min(1,2048/im.naturalWidth),c=document.createElement('canvas');c.width=Math.max(2,Math.round(im.naturalWidth*s));c.height=Math.max(2,Math.round(im.naturalHeight*s));var x=c.getContext('2d',{willReadFrequently:true});x.drawImage(im,0,0,c.width,c.height);var data=x.getImageData(0,0,c.width,c.height),size=window.CVPanoramaP154.outSize('16:9',1280),out=document.createElement('canvas');out.width=size.w;out.height=size.h;var ox=out.getContext('2d'),od=ox.createImageData(size.w,size.h);window.CVPanoramaP154.renderView({data:data.data,w:c.width,h:c.height},{data:od.data,w:size.w,h:size.h},preset.yaw,preset.pitch,preset.fov);ox.putImageData(od,0,0);resolve(out);}catch(e){reject(e);}};im.onerror=()=>reject(new Error('Không đọc được panorama asset.'));im.src=asset.data;});}
 function toShot(id){var d=read(),p=d.presets.find(x=>x.id===id);if(!p)return{ok:false,error:'Không tìm thấy preset.'};var S=window.CVScenePackP155;if(!S||!S.assignShotToStoryboard)return{ok:false,error:'Video Studio chưa sẵn sàng.'};var r=S.assignShotToStoryboard('establishing');if(!r.ok)return r;try{var key='canvio5:media_video_project_v1',v=JSON.parse(localStorage.getItem(key)||'null'),s=v.shots[v.shots.length-1];s.spatialPresetId=p.id;s.spatialAssetId=p.assetId;s.cameraPose={yaw:p.yaw,pitch:p.pitch,fov:p.fov,position:p.position};localStorage.setItem(key,JSON.stringify(v));window.CVCreativeCore.capture&&window.CVCreativeCore.capture('videoStudio');}catch(e){return{ok:false,error:'Không thể gắn camera preset vào Storyboard.'};}return{ok:true,preset:p};}
 function remove(id){var d=read();d.presets=d.presets.filter(x=>x.id!==id);return write(d);}
-function mount(){var page=document.getElementById('page-videoEngine')||document.getElementById('page-designEngine')||document.getElementById('page-capcutEngine');if(!page||page.querySelector('#cv161-card'))return false;var box=document.createElement('section');box.id='cv161-card';box.className='card';box.style.margin='14px 0';box.innerHTML='<div class="cardTop"><div><h3>Spatial Camera Presets · P161</h3><span class="sub">Lưu góc nhìn panorama/GLB, di chuyển camera và chuyển góc sang Storyboard</span></div></div><div class="row" style="gap:6px;flex-wrap:wrap"><input id="cv161-name" class="input" placeholder="Tên góc máy"><select id="cv161-asset" class="input" aria-label="Ảnh panorama hoặc GLB"></select><input id="cv161-yaw" class="input" type="number" value="0" aria-label="Yaw" style="width:80px"><input id="cv161-pitch" class="input" type="number" value="0" aria-label="Pitch" style="width:80px"><input id="cv161-fov" class="input" type="number" value="90" aria-label="FOV" style="width:80px"><button id="cv161-save" class="btn btn-primary sm" type="button">Lưu preset</button></div><div class="row" style="gap:6px;margin-top:8px"><select id="cv161-preset" class="input" aria-label="Camera preset"></select><button id="cv161-apply" class="btn btn-soft sm" type="button">Áp dụng / Preview</button><button id="cv161-shot" class="btn btn-ghost sm" type="button">Gửi góc sang Storyboard</button></div><p class="tiny">Điều khiển panorama: kéo khung để xoay · WASD / phím mũi tên để di chuyển góc · lăn chuột để zoom. Với GLB, thao tác kéo/zoom dùng OrbitControls của viewer P74/P81.</p><div id="cv161-status" class="tiny" aria-live="polite" style="margin-top:8px"></div><canvas id="cv161-preview" style="max-width:100%;width:100%;margin-top:8px;border-radius:8px"></canvas>';var a=page.querySelector('.head');if(a&&a.parentNode)a.parentNode.insertBefore(box,a.nextSibling);else page.insertBefore(box,page.firstChild);var $=s=>box.querySelector(s),status=$('#cv161-status');function refresh(){var as=assets().filter(x=>x&&((x.mime||'').startsWith('image/')||/glb|gltf|model/i.test((x.mime||'')+' '+(x.name||''))));$('#cv161-asset').innerHTML=as.map(x=>'<option value="'+x.id+'">'+String(x.name||x.id).replace(/[&<>"']/g,'')+'</option>').join('');$('#cv161-preset').innerHTML=read().presets.map(x=>'<option value="'+x.id+'">'+x.name.replace(/[&<>"']/g,'')+'</option>').join('');}$('#cv161-save').onclick=function(){var r=savePreset($('#cv161-name').value,$('#cv161-asset').value,{yaw:$('#cv161-yaw').value,pitch:$('#cv161-pitch').value,fov:$('#cv161-fov').value});status.textContent=r.ok?'Đã lưu preset vào dự án.':r.error;refresh();};$('#cv161-apply').onclick=function(){var r=apply($('#cv161-preset').value);if(r&&typeof r.then==='function')r.then(show).catch(e=>status.textContent=e.message);else show(r);};function show(r){if(!r||!r.ok){status.textContent=r&&r.error||'Không áp dụng được.';return;}status.textContent=r.message||'Đã áp dụng camera preset.';if(r.canvas){var c=$('#cv161-preview');c.width=r.canvas.width;c.height=r.canvas.height;c.getContext('2d').drawImage(r.canvas,0,0);}}function show(r){if(!r||!r.ok){status.textContent=r&&r.error||'Không áp dụng được.';return;}status.textContent=r.message||'Đã áp dụng camera preset.';var p=r.preset;if(p){$('#cv161-yaw').value=p.yaw;$('#cv161-pitch').value=p.pitch;$('#cv161-fov').value=p.fov;}if(r.canvas){var c=$('#cv161-preview');c.width=r.canvas.width;c.height=r.canvas.height;c.getContext('2d').drawImage(r.canvas,0,0);}}
+function mount(){var page=document.getElementById('page-videoEngine')||document.getElementById('page-designEngine')||document.getElementById('page-capcutEngine');if(!page||page.querySelector('#cv161-card'))return false;var box=document.createElement('section');box.id='cv161-card';box.className='card';box.style.margin='14px 0';box.innerHTML='<div class="cardTop"><div><h3>Spatial Camera Presets · P161</h3><span class="sub">Lưu góc nhìn panorama/GLB, di chuyển camera và chuyển góc sang Storyboard</span></div></div><div class="row" style="gap:6px;flex-wrap:wrap"><input id="cv161-name" class="input" placeholder="Tên góc máy"><select id="cv161-asset" class="input" aria-label="Ảnh panorama hoặc GLB"></select><input id="cv161-yaw" class="input" type="number" value="0" aria-label="Yaw" style="width:80px"><input id="cv161-pitch" class="input" type="number" value="0" aria-label="Pitch" style="width:80px"><input id="cv161-x" class="input" type="number" value="0" aria-label="Camera X" placeholder="X" style="width:66px"><input id="cv161-y" class="input" type="number" value="0" aria-label="Camera Y" placeholder="Y" style="width:66px"><input id="cv161-z" class="input" type="number" value="0" aria-label="Camera Z" placeholder="Z" style="width:66px"><input id="cv161-fov" class="input" type="number" value="90" aria-label="FOV" style="width:80px"><button id="cv161-save" class="btn btn-primary sm" type="button">Lưu preset</button></div><div class="row" style="gap:6px;margin-top:8px"><select id="cv161-preset" class="input" aria-label="Camera preset"></select><button id="cv161-apply" class="btn btn-soft sm" type="button">Áp dụng / Preview</button><button id="cv161-shot" class="btn btn-ghost sm" type="button">Gửi góc sang Storyboard</button></div><p class="tiny">Điều khiển panorama: kéo khung để xoay · WASD / phím mũi tên để di chuyển góc · lăn chuột để zoom. Với GLB, thao tác kéo/zoom dùng OrbitControls của viewer P74/P81.</p><div id="cv161-status" class="tiny" aria-live="polite" style="margin-top:8px"></div><canvas id="cv161-preview" style="max-width:100%;width:100%;margin-top:8px;border-radius:8px"></canvas>';var a=page.querySelector('.head');if(a&&a.parentNode)a.parentNode.insertBefore(box,a.nextSibling);else page.insertBefore(box,page.firstChild);var $=s=>box.querySelector(s),status=$('#cv161-status');function refresh(){var as=assets().filter(x=>x&&((x.mime||'').startsWith('image/')||/glb|gltf|model/i.test((x.mime||'')+' '+(x.name||''))));$('#cv161-asset').innerHTML=as.map(x=>'<option value="'+x.id+'">'+String(x.name||x.id).replace(/[&<>"']/g,'')+'</option>').join('');$('#cv161-preset').innerHTML=read().presets.map(x=>'<option value="'+x.id+'">'+x.name.replace(/[&<>"']/g,'')+'</option>').join('');}$('#cv161-save').onclick=function(){var r=savePreset($('#cv161-name').value,$('#cv161-asset').value,{yaw:$('#cv161-yaw').value,pitch:$('#cv161-pitch').value,fov:$('#cv161-fov').value,x:$('#cv161-x').value,y:$('#cv161-y').value,z:$('#cv161-z').value});status.textContent=r.ok?'Đã lưu preset vào dự án.':r.error;refresh();};$('#cv161-apply').onclick=function(){var r=apply($('#cv161-preset').value);if(r&&typeof r.then==='function')r.then(show).catch(e=>status.textContent=e.message);else show(r);};function show(r){if(!r||!r.ok){status.textContent=r&&r.error||'Không áp dụng được.';return;}status.textContent=r.message||'Đã áp dụng camera preset.';if(r.canvas){var c=$('#cv161-preview');c.width=r.canvas.width;c.height=r.canvas.height;c.getContext('2d').drawImage(r.canvas,0,0);}}function show(r){if(!r||!r.ok){status.textContent=r&&r.error||'Không áp dụng được.';return;}status.textContent=r.message||'Đã áp dụng camera preset.';var p=r.preset;if(p){$('#cv161-yaw').value=p.yaw;$('#cv161-pitch').value=p.pitch;$('#cv161-fov').value=p.fov;$('#cv161-x').value=p.position&&p.position.x||0;$('#cv161-y').value=p.position&&p.position.y||0;$('#cv161-z').value=p.position&&p.position.z||0;}if(r.canvas){var c=$('#cv161-preview');c.width=r.canvas.width;c.height=r.canvas.height;c.getContext('2d').drawImage(r.canvas,0,0);}}
 function redraw(){var id=$('#cv161-asset').value;if(!id||!window.CVPanoramaP154)return;paintPreview(id,+$('#cv161-yaw').value||0,+$('#cv161-pitch').value||0,+$('#cv161-fov').value||90,$('#cv161-preview')).catch(e=>status.textContent=e.message);}
-$('#cv161-preset').onchange=function(){var p=read().presets.find(x=>x.id===this.value);if(!p)return;$('#cv161-asset').value=p.assetId;$('#cv161-yaw').value=p.yaw;$('#cv161-pitch').value=p.pitch;$('#cv161-fov').value=p.fov;redraw();};
+$('#cv161-preset').onchange=function(){var p=read().presets.find(x=>x.id===this.value);if(!p)return;$('#cv161-asset').value=p.assetId;$('#cv161-yaw').value=p.yaw;$('#cv161-pitch').value=p.pitch;$('#cv161-fov').value=p.fov;$('#cv161-x').value=p.position&&p.position.x||0;$('#cv161-y').value=p.position&&p.position.y||0;$('#cv161-z').value=p.position&&p.position.z||0;redraw();};
 ['yaw','pitch','fov'].forEach(k=>$('#cv161-'+k).addEventListener('input',redraw));
 var drag=null,cv=$('#cv161-preview');cv.tabIndex=0;cv.setAttribute('aria-label','Khung xem panorama tương tác');cv.style.cursor='grab';cv.addEventListener('pointerdown',e=>{drag={x:e.clientX,y:e.clientY,yaw:+$('#cv161-yaw').value||0,pitch:+$('#cv161-pitch').value||0};cv.setPointerCapture(e.pointerId);cv.style.cursor='grabbing';});cv.addEventListener('pointermove',e=>{if(!drag)return;var scale=Math.max(0.15,(+$('#cv161-fov').value||90)/Math.max(240,cv.clientWidth));$('#cv161-yaw').value=clamp(drag.yaw-(e.clientX-drag.x)*scale,-360,360);$('#cv161-pitch').value=clamp(drag.pitch+(e.clientY-drag.y)*scale,-89,89);redraw();});['pointerup','pointercancel'].forEach(ev=>cv.addEventListener(ev,()=>{drag=null;cv.style.cursor='grab';}));
 cv.addEventListener('wheel',e=>{if(!$('#cv161-asset').value)return;e.preventDefault();$('#cv161-fov').value=clamp((+$('#cv161-fov').value||90)+(e.deltaY>0?4:-4),30,120);redraw();},{passive:false});
 box.tabIndex=0;box.addEventListener('keydown',e=>{if(e.target&&/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName))return;var step=e.shiftKey?12:4,key=e.key.toLowerCase(),yaw=+$('#cv161-yaw').value||0,pitch=+$('#cv161-pitch').value||0;if(key==='a'||key==='arrowleft')yaw-=step;else if(key==='d'||key==='arrowright')yaw+=step;else if(key==='w'||key==='arrowup')pitch+=step;else if(key==='s'||key==='arrowdown')pitch-=step;else if(key==='+'||key==='=')$('#cv161-fov').value=clamp((+$('#cv161-fov').value||90)-step,30,120);else if(key==='-')$('#cv161-fov').value=clamp((+$('#cv161-fov').value||90)+step,30,120);else return;e.preventDefault();$('#cv161-yaw').value=clamp(yaw,-360,360);$('#cv161-pitch').value=clamp(pitch,-89,89);redraw();});
 $('#cv161-shot').onclick=function(){var r=toShot($('#cv161-preset').value);status.textContent=r.ok?'Đã thêm góc máy vào Storyboard.':r.error;};refresh();return true;}
 function tests(){var a=assets()[0];if(!a)return{api:true,requiresAsset:true};var r=savePreset('Test P161',a.id,{yaw:25,pitch:8,fov:80});return{save:r.ok,clamps:!!r.preset&&r.preset.pitch===8,applyFunction:typeof apply==='function',shotBridge:typeof toShot==='function',interactivePanorama:typeof paintPreview==='function'};}
-window.CVSpatialWorkspaceP161={version:'161.1.0',read:read,savePreset:savePreset,updatePose:updatePose,apply:apply,openGLB:openGLB,toShot:toShot,remove:remove,mount:mount,tests:tests,paintPreview:paintPreview};
+window.CVSpatialWorkspaceP161={version:'161.2.0',read:read,savePreset:savePreset,updatePose:updatePose,apply:apply,openGLB:openGLB,toShot:toShot,remove:remove,mount:mount,tests:tests,paintPreview:paintPreview};
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount();
 })();
 </script>
@@ -32523,7 +32584,7 @@ function prompt(id,scene){var p=profile(id);if(!p)throw new Error('Không tìm t
 function runPrompt(id,scene){var text=prompt(id,scene),O=window.CVOrchestratorP128;if(O&&O.register)O.register('character-continuity-local','local',task=>String(task.prompt||''));return O&&O.run?O.run({kind:'character-continuity-local',tiers:['local'],cache:false,prompt:text}):Promise.resolve({ok:true,text:text,tier:'local-template'});}
 function attachToShot(id,shotId){var p=profile(id);if(!p)return{ok:false,error:'Không có hồ sơ.'};var key='canvio5:media_video_project_v1',v;try{v=JSON.parse(localStorage.getItem(key)||'null');}catch(e){}if(!v||!Array.isArray(v.shots))return{ok:false,error:'Video Studio chưa có Storyboard.'};var s=v.shots.find(x=>String(x.id)===String(shotId));if(!s)return{ok:false,error:'Không tìm thấy cảnh.'};s.scenePack=s.scenePack||{};s.scenePack.characterProfileId=p.id;s.scenePack.characterAssetIds=p.referenceAssetIds.slice();p.referenceAssetIds.forEach(a=>{try{window.CVCreativeCore.linkAsset&&window.CVCreativeCore.linkAsset(a);}catch(e){}});localStorage.setItem(key,JSON.stringify(v));try{window.CVCreativeCore.capture&&window.CVCreativeCore.capture('videoStudio');}catch(e){}return{ok:true,shot:s};}
 function remove(id){var l=read().filter(x=>x.id!==id);return save(l);}
-function mount(){var page=document.getElementById('page-videoStudio');if(!page||page.querySelector('#cv163-card'))return false;var box=document.createElement('section');box.id='cv163-card';box.className='card';box.style.margin='14px 0';box.innerHTML='<div class="cardTop"><div><h3>Nhất quán nhân vật · P163</h3><span class="sub">Hồ sơ ngoại hình, ảnh tham chiếu và checklist giữa các cảnh</span></div></div><div class="row" style="gap:6px;flex-wrap:wrap"><input class="input" id="cv163-name" placeholder="Tên nhân vật"><input class="input" id="cv163-desc" placeholder="Mô tả nhận diện cố định"><input class="input" id="cv163-features" placeholder="thuộc tính=giá trị; ..."><select class="input" id="cv163-refs" multiple size="2" aria-label="Ảnh tham chiếu từ Image Library" style="min-width:180px"></select><button class="btn btn-primary sm" id="cv163-save" type="button">Lưu hồ sơ</button></div><div class="row" style="gap:6px;margin-top:8px;flex-wrap:wrap"><select class="input" id="cv163-profile" aria-label="Hồ sơ nhân vật"></select><input class="input" id="cv163-candidate" placeholder="Đối chiếu: tóc=ngắn; áo=khoác xanh" aria-label="Đặc điểm cảnh mới"><button class="btn btn-soft sm" id="cv163-check" type="button">Kiểm tra nhất quán</button><select class="input" id="cv163-shot" aria-label="Cảnh Storyboard"></select><button class="btn btn-ghost sm" id="cv163-attach" type="button">Gán vào cảnh</button></div><pre id="cv163-result" class="tiny" aria-live="polite" style="white-space:pre-wrap"></pre>';var a=page.querySelector('.head');if(a&&a.parentNode)a.parentNode.insertBefore(box,a.nextSibling);else page.insertBefore(box,page.firstChild);var $=s=>box.querySelector(s),out=$('#cv163-result');function refresh(){
+function mount(){var page=document.getElementById('page-videoStudio');if(!page||page.querySelector('#cv163-card'))return false;var box=document.createElement('section');box.id='cv163-card';box.className='card';box.style.margin='14px 0';box.innerHTML='<div class="cardTop"><div><h3>Nhất quán nhân vật · P163</h3><span class="sub">Hồ sơ ngoại hình, ảnh tham chiếu và checklist giữa các cảnh</span></div></div><div class="row" style="gap:8px;flex-wrap:wrap;align-items:flex-end"><label class="tiny" for="cv163-name" style="display:flex;flex:1 1 170px;min-width:140px;flex-direction:column;gap:4px">Tên nhân vật<input class="input" id="cv163-name" aria-label="Tên nhân vật" placeholder="Tên nhân vật"></label><label class="tiny" for="cv163-desc" style="display:flex;flex:2 1 230px;min-width:160px;flex-direction:column;gap:4px">Mô tả nhận diện cố định<input class="input" id="cv163-desc" aria-label="Mô tả nhận diện cố định" placeholder="Mô tả nhận diện cố định"></label><label class="tiny" for="cv163-features" style="display:flex;flex:2 1 230px;min-width:160px;flex-direction:column;gap:4px">Đặc điểm bắt buộc<input class="input" id="cv163-features" aria-label="Đặc điểm bắt buộc" placeholder="thuộc tính=giá trị; ..."></label><label class="tiny" for="cv163-refs" style="display:flex;flex:1 1 180px;min-width:150px;flex-direction:column;gap:4px">Ảnh tham chiếu<select class="input" id="cv163-refs" multiple size="2" aria-label="Ảnh tham chiếu từ Image Library" style="min-width:0;max-width:100%"></select></label><button class="btn btn-primary sm" id="cv163-save" type="button">Lưu hồ sơ</button></div><div class="row" style="gap:8px;margin-top:10px;flex-wrap:wrap;align-items:flex-end"><label class="tiny" for="cv163-profile" style="display:flex;flex:1 1 180px;min-width:150px;flex-direction:column;gap:4px">Hồ sơ nhân vật<select class="input" id="cv163-profile" aria-label="Hồ sơ nhân vật"></select></label><label class="tiny" for="cv163-candidate" style="display:flex;flex:2 1 230px;min-width:160px;flex-direction:column;gap:4px">Đặc điểm cảnh mới<input class="input" id="cv163-candidate" placeholder="Đối chiếu: tóc=ngắn; áo=khoác xanh" aria-label="Đặc điểm cảnh mới"></label><button class="btn btn-soft sm" id="cv163-check" type="button">Kiểm tra nhất quán</button><label class="tiny" for="cv163-shot" style="display:flex;flex:1 1 180px;min-width:150px;flex-direction:column;gap:4px">Cảnh Storyboard<select class="input" id="cv163-shot" aria-label="Cảnh Storyboard"></select></label><button class="btn btn-ghost sm" id="cv163-attach" type="button">Gán vào cảnh</button></div><pre id="cv163-result" class="tiny" aria-live="polite" style="white-space:pre-wrap"></pre>';var a=page.querySelector('.head');if(a&&a.parentNode)a.parentNode.insertBefore(box,a.nextSibling);else page.insertBefore(box,page.firstChild);var $=s=>box.querySelector(s),out=$('#cv163-result');function refresh(){
 var profiles=read(),as=window.CV&&CV.assets&&CV.assets.list?CV.assets.list():[],video;
 try{video=JSON.parse(localStorage.getItem('canvio5:media_video_project_v1')||'null');}catch(e){}
 $('#cv163-profile').innerHTML=profiles.map(p=>'<option value="'+p.id+'">'+p.name.replace(/[&<>"']/g,'')+'</option>').join('');
@@ -32531,7 +32592,7 @@ $('#cv163-refs').innerHTML=as.filter(a=>String(a.mime||'').indexOf('image/')===0
 $('#cv163-shot').innerHTML=(video&&Array.isArray(video.shots)?video.shots:[]).map((x,i)=>'<option value="'+String(x.id||'').replace(/["<>]/g,'')+'">'+clean(x.title||x.action||('Cảnh '+(i+1)),70).replace(/[&<>"']/g,'')+'</option>').join('');
 }$('#cv163-save').onclick=function(){var features={};$('#cv163-features').value.split(';').forEach(x=>{var i=x.indexOf('=');if(i>0)features[clean(x.slice(0,i),32)]=clean(x.slice(i+1),120);});var r=upsert({name:$('#cv163-name').value,description:$('#cv163-desc').value,features:features,referenceAssetIds:Array.from($('#cv163-refs').selectedOptions).map(x=>x.value)});out.textContent=r.ok?'Đã lưu hồ sơ vào dự án.':r.error;refresh();};$('#cv163-attach').onclick=function(){var r=attachToShot($('#cv163-profile').value,$('#cv163-shot').value);out.textContent=r.ok?'Đã gắn hồ sơ và asset tham chiếu vào cảnh.':r.error;refresh();};$('#cv163-check').onclick=function(){var f={};$('#cv163-candidate').value.split(';').forEach(x=>{var i=x.indexOf('=');if(i>0)f[clean(x.slice(0,i),32)]=clean(x.slice(i+1),120);});try{out.textContent=JSON.stringify(compare($('#cv163-profile').value,{features:f}),null,2);}catch(e){out.textContent=e.message;}};refresh();return true;}
 function tests(){var r=upsert({name:'Test character',description:'Tóc ngắn, áo xanh',features:{hair:'short',coat:'blue'},checklist:['hair','coat'],referenceAssetIds:(window.CV&&CV.assets&&CV.assets.list?CV.assets.list():[]).slice(0,1).map(x=>x.id)});if(!r.ok)return{save:false};var c=compare(r.profile.id,{features:{hair:'short',coat:'red'}});return{save:true,referenceAssetsLinked:!r.profile.referenceAssetIds.length||((window.CVCreativeCore.context&&window.CVCreativeCore.context().assetIds)||[]).includes(r.profile.referenceAssetIds[0]),detectsMismatch:c.score<100&&c.missing.includes('coat'),transparentLimit:c.limitations.indexOf('không phải nhận diện')>=0};}
-window.CVCharacterContinuityP163={version:'163.1.0',read:read,upsert:upsert,remove:remove,profile:profile,compare:compare,prompt:prompt,runPrompt:runPrompt,attachToShot:attachToShot,mount:mount,tests:tests};
+window.CVCharacterContinuityP163={version:'163.1.1',read:read,upsert:upsert,remove:remove,profile:profile,compare:compare,prompt:prompt,runPrompt:runPrompt,attachToShot:attachToShot,mount:mount,tests:tests};
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount();
 })();
 </script>
@@ -32633,11 +32694,88 @@ function safeImageData(value){value=String(value||'');if(value.length>12*1024*10
 function build(options){options=options||{};var ctx=context(),brief=clean(options.brief||ctx.brief,1600),name=clean(options.name||ctx.projectName||'Landing Page',80),headline=clean(options.headline||brief.split(/[.!?\n]/)[0]||name,100),sub=clean(options.subheadline||brief,300),cta=clean(options.cta||'Bắt đầu ngay',40),color=/^#[0-9a-f]{6}$/i.test(options.color||'')?options.color:'#2456d8',selected=assets().find(a=>String(a.id)===String(options.heroAssetId)),hero=safeImageData(selected&&selected.data);if(!hero)selected=null;var html='<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="'+esc(sub.slice(0,155))+'"><title>'+esc(name)+'</title><style>:root{--brand:'+color+';font-family:Inter,system-ui,Arial,sans-serif;color:#172033;background:#f7f8fb}*{box-sizing:border-box}body{margin:0}header{display:flex;justify-content:space-between;align-items:center;padding:22px max(6vw,20px)}.logo{font-weight:800}a{color:inherit;text-decoration:none}.hero{display:grid;grid-template-columns:1.05fr .95fr;gap:36px;align-items:center;padding:8vh max(6vw,20px);min-height:68vh}.eyebrow{color:var(--brand);font-weight:700;letter-spacing:.1em;text-transform:uppercase;font-size:12px}h1{font-size:clamp(38px,6vw,72px);line-height:1.03;letter-spacing:-.045em;margin:14px 0}p{line-height:1.7;color:#586174}.cta{display:inline-block;background:var(--brand);color:#fff;padding:14px 22px;border-radius:999px;font-weight:700;margin-top:14px}.visual{min-height:320px;border-radius:28px;background:linear-gradient(135deg,#dbeafe,#f5eafe);overflow:hidden;display:grid;place-items:center}.visual img{width:100%;height:100%;min-height:320px;object-fit:cover}.features{padding:65px max(6vw,20px);background:#fff}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.tile{padding:24px;border:1px solid #e8eaf0;border-radius:18px}@media(max-width:760px){.hero{grid-template-columns:1fr;padding-top:40px}.grid{grid-template-columns:1fr}.visual{min-height:230px}}@media(prefers-reduced-motion:no-preference){.hero{animation:rise .55s ease both}@keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}}</style></head><body><header><a class="logo" href="#">'+esc(name)+'</a><a href="#contact">Liên hệ</a></header><main><section class="hero"><div><div class="eyebrow">Giới thiệu</div><h1>'+esc(headline)+'</h1><p>'+esc(sub)+'</p><a class="cta" href="#contact">'+esc(cta)+'</a></div><div class="visual">'+(hero?'<img alt="" src="'+hero+'">':'<div style="padding:36px;text-align:center"><strong>'+esc(name)+'</strong><p>Thêm ảnh hero từ Image Library để hoàn thiện trang</p></div>')+'</div></section><section class="features"><div class="eyebrow">Giá trị chính</div><h2>'+esc(name)+'</h2><div class="grid"><article class="tile"><b>01 · Mục tiêu</b><p>'+esc(clean(ctx.goal||'Truyền tải thông điệp rõ ràng',180))+'</p></article><article class="tile"><b>02 · Kênh</b><p>'+esc(clean(ctx.channel||'Web / đa kênh',100))+'</p></article><article class="tile"><b>03 · Hành động</b><p>'+esc(brief||'Cập nhật nội dung từ brief dự án.')+'</p></article></div></section><section id="contact" class="features"><h2>Sẵn sàng bắt đầu?</h2><p>'+esc(cta)+'</p></section></main><footer style="padding:24px max(6vw,20px);color:#667085">© '+new Date().getFullYear()+' '+esc(name)+' · Created with CANVIO</footer></body></html>';var meta={version:1,name:name,headline:headline,cta:cta,color:color,heroAssetId:selected?String(selected.id):null,updatedAt:Date.now(),brief:brief};return{html:html,meta:meta,assetIds:selected?[String(selected.id)]:[]};}
 function buildFromCore(options){var r=build(options);if(!save(r.meta))throw new Error('Không lưu được website brief vào Shared Core.');r.assetIds.forEach(id=>{try{window.CVCreativeCore.linkAsset&&window.CVCreativeCore.linkAsset(id);}catch(e){}});return r;}
 async function exportZip(options){if(!window.CVZip||typeof window.CVZip.build!=='function')throw new Error('CVZip chưa sẵn sàng; có thể xuất HTML thay thế.');var r=buildFromCore(options),files=[{name:'index.html',data:r.html},{name:'CANVIO-LANDING-MANIFEST.json',data:JSON.stringify({format:'CANVIO_P166_LANDING',version:1,project:context().projectName||'',assetIds:r.assetIds,updatedAt:r.meta.updatedAt},null,2)},{name:'README.md',data:'# CANVIO Landing Package\n\nMở index.html. Gói này không chứa backend/form service; liên kết CTA cần cấu hình trước khi phát hành.'}];return{blob:await window.CVZip.build(files),html:r.html,meta:r.meta};}
-function sendToWebsite(options){var r=buildFromCore(options);try{document.dispatchEvent(new CustomEvent('canvio:p166-send-website',{detail:r}));}catch(e){}if(window.CV&&CV.go)CV.go('webEngine');return r;}
+function landingCssRules(scope,color){
+  scope=String(scope||'');
+  if(!/^cv-p166-[a-z0-9-]{6,48}$/.test(scope))throw new Error('Phạm vi CSS Landing Page không hợp lệ.');
+  color=/^#[0-9a-f]{6}$/i.test(color||'')?color:'#2456d8';
+  var root='.'+scope,media='(max-width: 760px)';
+  return [
+    {selector:root,style:{'font-family':'Inter,system-ui,Arial,sans-serif',color:'#172033',background:'#f7f8fb','min-width':'0'}},
+    {selector:root+' *',style:{'box-sizing':'border-box'}},
+    {selector:root+' header',style:{display:'flex','justify-content':'space-between','align-items':'center',padding:'22px max(6vw,20px)'}},
+    {selector:root+' .logo',style:{'font-weight':'800'}},
+    {selector:root+' a',style:{color:'inherit','text-decoration':'none'}},
+    {selector:root+' .hero',style:{display:'grid','grid-template-columns':'1.05fr .95fr',gap:'36px','align-items':'center',padding:'8vh max(6vw,20px)','min-height':'68vh'}},
+    {selector:root+' .eyebrow',style:{color:color,'font-weight':'700','letter-spacing':'.1em','text-transform':'uppercase','font-size':'12px'}},
+    {selector:root+' h1',style:{'font-size':'clamp(38px,6vw,72px)','line-height':'1.03','letter-spacing':'-.045em',margin:'14px 0'}},
+    {selector:root+' p',style:{'line-height':'1.7',color:'#586174'}},
+    {selector:root+' .cta',style:{display:'inline-block',background:color,color:'#fff',padding:'14px 22px','border-radius':'999px','font-weight':'700','margin-top':'14px'}},
+    {selector:root+' .visual',style:{'min-height':'320px','border-radius':'28px',background:'linear-gradient(135deg,#dbeafe,#f5eafe)',overflow:'hidden',display:'grid','place-items':'center'}},
+    {selector:root+' .visual img',style:{width:'100%',height:'100%','min-height':'320px','object-fit':'cover'}},
+    {selector:root+' .features',style:{padding:'65px max(6vw,20px)',background:'#fff'}},
+    {selector:root+' .grid',style:{display:'grid','grid-template-columns':'repeat(3,minmax(0,1fr))',gap:'18px'}},
+    {selector:root+' .tile',style:{padding:'24px',border:'1px solid #e8eaf0','border-radius':'18px'}},
+    {selector:root+' footer',style:{padding:'24px max(6vw,20px)',color:'#667085'}},
+    {selector:root+' .hero',style:{'grid-template-columns':'1fr','padding-top':'40px'},media:media},
+    {selector:root+' .grid',style:{'grid-template-columns':'1fr'},media:media},
+    {selector:root+' .visual',style:{'min-height':'230px'},media:media},
+    {selector:root+' .visual img',style:{'min-height':'230px'},media:media}
+  ];
+}
+function bodyMarkup(html){
+  var source=String(html||''),lower=source.toLowerCase(),open=lower.indexOf('<body');
+  if(open<0)throw new Error('Không trích xuất được phần nội dung Landing Page.');
+  var start=source.indexOf('>',open)+1,end=lower.lastIndexOf('</body>');
+  if(start<=0||end<start)throw new Error('Cấu trúc body của Landing Page không hợp lệ.');
+  return source.slice(start,end);
+}
+function waitForWebsiteEngine(timeoutMs){
+  timeoutMs=Math.max(1000,Math.min(20000,Number(timeoutMs)||12000));
+  return new Promise(function(resolve,reject){
+    var started=Date.now();
+    (function poll(){
+      var ed=window.CVWeb,engine=window.CV&&CV.engines&&CV.engines.web,security=window.CANVIOSecurity;
+      if(ed&&typeof ed.addComponents==='function'&&ed.Css&&typeof ed.Css.setRule==='function'&&engine&&typeof engine.save==='function'&&security&&typeof security.prepareHtmlImport==='function'){
+        resolve({editor:ed,engine:engine,security:security});return;
+      }
+      if(Date.now()-started>=timeoutMs){reject(new Error('Website Engine chưa sẵn sàng sau '+Math.round(timeoutMs/1000)+' giây. Mở Website Engine, kiểm tra GrapesJS/P131 rồi thử lại.'));return;}
+      setTimeout(poll,100);
+    })();
+  });
+}
+async function sendToWebsite(options){
+  if(window.CV&&CV.go)CV.go('webEngine');
+  var ready=await waitForWebsiteEngine(12000),ed=ready.editor,engine=ready.engine,security=ready.security;
+
+  var r=buildFromCore(options),scope='cv-p166-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,6);
+  var prepared=security.prepareHtmlImport(bodyMarkup(r.html),{maxBytes:5*1024*1024});
+  if(!prepared||!prepared.html)throw new Error('Bộ làm sạch không trả về nội dung Landing Page hợp lệ.');
+  var markup='<div class="'+scope+'">'+prepared.html+'</div>';
+  var rules=landingCssRules(scope,r.meta.color);
+  var added=await Promise.resolve(ed.addComponents(markup));
+  if(added===false)return{ok:false,inserted:false,saved:false,error:'Website Engine từ chối Landing Page đã làm sạch.'};
+  try{
+    rules.forEach(function(rule){
+      var opts=rule.media?{atRuleType:'media',atRuleParams:rule.media}:undefined;
+      ed.Css.setRule(rule.selector,rule.style,opts);
+    });
+  }catch(e){
+    return{ok:false,inserted:true,saved:false,scope:scope,error:'Đã chèn nội dung nhưng không thể áp dụng đầy đủ responsive CSS: '+clean(e&&e.message,140)};
+  }
+  try{
+    var saved=await Promise.resolve(engine.save());
+    if(saved===false)return{ok:false,inserted:true,saved:false,scope:scope,error:'Đã chèn Landing Page vào phiên hiện tại nhưng Website Engine từ chối lưu. Hãy kiểm tra và Hoàn tác nếu cần.'};
+  }catch(e){
+    return{ok:false,inserted:true,saved:false,scope:scope,error:'Đã chèn Landing Page nhưng lưu thất bại. Hãy kiểm tra và Hoàn tác nếu cần.'};
+  }
+  var result={ok:true,inserted:true,saved:true,scope:scope,rules:rules.length,removedElements:Number(prepared.removed&&prepared.removed.elements)||0,removedAttributes:Number(prepared.removed&&prepared.removed.attrs)||0,remoteSourcesRemoved:Number(prepared.remoteSourcesRemoved)||0,owner:'CANVIOSecurity.prepareHtmlImport / CVWeb.addComponents / CVWeb.Css.setRule / CV.engines.web.save',noNewStore:true};
+  try{document.dispatchEvent(new CustomEvent('canvio:p166-send-website',{detail:{result:result,meta:r.meta,assetIds:r.assetIds}}));}catch(e){}
+  return result;
+}
 function download(name,data,type){var u=URL.createObjectURL(new Blob([data],{type:type})),a=document.createElement('a');a.href=u;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(u),1000);}
-function mount(){var page=document.getElementById('page-webEngine');if(!page||page.querySelector('#cv166-card'))return false;var box=document.createElement('section');box.id='cv166-card';box.className='card';box.style.margin='14px 0';box.innerHTML='<div class="cardTop"><div><h3>Brief → Landing Page · P166</h3><span class="sub">Dùng brief Shared Core, ảnh Asset Library, responsive và xuất HTML/ZIP offline</span></div></div><div class="row" style="gap:6px;flex-wrap:wrap"><input id="cv166-name" class="input" placeholder="Tên thương hiệu / chiến dịch"><input id="cv166-headline" class="input" placeholder="Tiêu đề chính"><input id="cv166-cta" class="input" placeholder="CTA" value="Bắt đầu ngay"></div><div class="row" style="gap:6px;margin-top:8px;flex-wrap:wrap"><select id="cv166-asset" class="input" aria-label="Ảnh hero từ Asset Library"></select><input id="cv166-color" type="color" value="#2456d8" aria-label="Màu thương hiệu"><button id="cv166-preview" class="btn btn-soft sm" type="button">Tạo bản xem trước</button><button id="cv166-html" class="btn btn-ghost sm" type="button">Xuất HTML</button><button id="cv166-zip" class="btn btn-primary sm" type="button">Xuất ZIP</button><button id="cv166-web" class="btn btn-ghost sm" type="button">Gửi sang Website Engine</button></div><div id="cv166-status" class="tiny" aria-live="polite" style="margin-top:8px"></div><iframe id="cv166-preview-frame" title="Landing page preview" sandbox="" style="width:100%;height:480px;border:1px solid var(--line,rgba(128,128,128,.3));border-radius:10px;margin-top:10px;background:#fff"></iframe>';var anchor=page.querySelector('.head');if(anchor&&anchor.parentNode)anchor.parentNode.insertBefore(box,anchor.nextSibling);else page.insertBefore(box,page.firstChild);var $=s=>box.querySelector(s),status=$('#cv166-status');function options(){return{name:$('#cv166-name').value,headline:$('#cv166-headline').value,cta:$('#cv166-cta').value,color:$('#cv166-color').value,heroAssetId:$('#cv166-asset').value};}function refresh(){var as=assets().filter(a=>!!safeImageData(a&&a.data));$('#cv166-asset').innerHTML='<option value="">Không dùng ảnh hero</option>'+as.map(a=>'<option value="'+a.id+'">'+clean(a.name||a.id,80).replace(/[&<>"']/g,'')+'</option>').join('');}$('#cv166-preview').onclick=()=>{try{var r=buildFromCore(options());$('#cv166-preview-frame').srcdoc=r.html;status.textContent='Đã dựng preview responsive từ brief dự án. CTA mẫu chưa nối backend.';}catch(e){status.textContent=e.message;}};$('#cv166-html').onclick=()=>{try{var r=buildFromCore(options());download('CANVIO-Landing.html',r.html,'text/html;charset=utf-8');status.textContent='Đã xuất HTML.';}catch(e){status.textContent=e.message;}};$('#cv166-zip').onclick=()=>exportZip(options()).then(r=>{download('CANVIO-Landing-Offline.zip',r.blob,'application/zip');status.textContent='Đã xuất ZIP offline.';}).catch(e=>status.textContent=e.message);$('#cv166-web').onclick=()=>{try{sendToWebsite(options());status.textContent='Đã chuyển brief/asset context sang Website Engine.';}catch(e){status.textContent=e.message;}};refresh();return true;}
-function tests(){var r=build({name:'CANVIO test',headline:'Business design',brief:'HR campaign',color:'#123456'}),stored=buildFromCore({name:'P166 Shared Core test'});return{responsive:r.html.includes('@media(max-width:760px)'),reducedMotion:r.html.includes('prefers-reduced-motion'),escapedContent:!r.html.includes('<script>'),metadata:r.meta.name==='CANVIO test',savedToSharedCore:!!stored.meta&&!!read(),noBackendClaim:!r.html.includes('action='),safePngAccepted:safeImageData('data:image/png;base64,AA==')==='data:image/png;base64,AA==',rejectsSvg:safeImageData('data:image/svg+xml;base64,PHN2Zy8+')==='',rejectsAttributeInjection:safeImageData('data:image/png;base64,AA==\" onerror=\"x')===''};}
-window.CVLandingStudioP166={version:'166.1.0',read:read,build:build,buildFromCore:buildFromCore,exportZip:exportZip,sendToWebsite:sendToWebsite,mount:mount,tests:tests};
+function mount(){var page=document.getElementById('page-webEngine');if(!page||page.querySelector('#cv166-card'))return false;var box=document.createElement('section');box.id='cv166-card';box.className='card';box.style.margin='14px 0';box.innerHTML='<div class="cardTop"><div><h3>Brief → Landing Page · P166</h3><span class="sub">Dùng brief Shared Core, ảnh Asset Library, responsive và xuất HTML/ZIP offline</span></div></div><div class="row" style="gap:6px;flex-wrap:wrap"><input id="cv166-name" class="input" placeholder="Tên thương hiệu / chiến dịch"><input id="cv166-headline" class="input" placeholder="Tiêu đề chính"><input id="cv166-cta" class="input" placeholder="CTA" value="Bắt đầu ngay"></div><div class="row" style="gap:6px;margin-top:8px;flex-wrap:wrap"><select id="cv166-asset" class="input" aria-label="Ảnh hero từ Asset Library"></select><input id="cv166-color" type="color" value="#2456d8" aria-label="Màu thương hiệu"><button id="cv166-preview" class="btn btn-soft sm" type="button">Tạo bản xem trước</button><button id="cv166-html" class="btn btn-ghost sm" type="button">Xuất HTML</button><button id="cv166-zip" class="btn btn-primary sm" type="button">Xuất ZIP</button><button id="cv166-web" class="btn btn-ghost sm" type="button">Gửi sang Website Engine</button></div><div id="cv166-status" class="tiny" aria-live="polite" style="margin-top:8px"></div><iframe id="cv166-preview-frame" title="Landing page preview" sandbox="" style="width:100%;height:480px;border:1px solid var(--line,rgba(128,128,128,.3));border-radius:10px;margin-top:10px;background:#fff"></iframe>';var anchor=page.querySelector('.head');if(anchor&&anchor.parentNode)anchor.parentNode.insertBefore(box,anchor.nextSibling);else page.insertBefore(box,page.firstChild);var $=s=>box.querySelector(s),status=$('#cv166-status');function options(){return{name:$('#cv166-name').value,headline:$('#cv166-headline').value,cta:$('#cv166-cta').value,color:$('#cv166-color').value,heroAssetId:$('#cv166-asset').value};}function refresh(){var as=assets().filter(a=>!!safeImageData(a&&a.data));$('#cv166-asset').innerHTML='<option value="">Không dùng ảnh hero</option>'+as.map(a=>'<option value="'+a.id+'">'+clean(a.name||a.id,80).replace(/[&<>"']/g,'')+'</option>').join('');}$('#cv166-preview').onclick=()=>{try{var r=buildFromCore(options());$('#cv166-preview-frame').srcdoc=r.html;status.textContent='Đã dựng preview responsive từ brief dự án. CTA mẫu chưa nối backend.';}catch(e){status.textContent=e.message;}};$('#cv166-html').onclick=()=>{try{var r=buildFromCore(options());download('CANVIO-Landing.html',r.html,'text/html;charset=utf-8');status.textContent='Đã xuất HTML.';}catch(e){status.textContent=e.message;}};$('#cv166-zip').onclick=()=>exportZip(options()).then(r=>{download('CANVIO-Landing-Offline.zip',r.blob,'application/zip');status.textContent='Đã xuất ZIP offline.';}).catch(e=>status.textContent=e.message);$('#cv166-web').onclick=()=>{var button=$('#cv166-web');button.disabled=true;sendToWebsite(options()).then(r=>{status.textContent=r.ok?'Đã chèn Landing Page vào GrapesJS và lưu bằng Website Engine · '+r.rules+' quy tắc CSS responsive.':'Không thể chuyển Landing Page: '+r.error;}).catch(e=>{status.textContent='Không thể chuyển Landing Page: '+(e&&e.message||String(e));}).finally(()=>{button.disabled=false;});};refresh();return true;}
+function tests(){var r=build({name:'CANVIO test',headline:'Business design',brief:'HR campaign',color:'#123456'}),stored=buildFromCore({name:'P166 Shared Core test'}),rules=landingCssRules('cv-p166-test-a1b2c3','#123456');return{responsive:r.html.includes('@media(max-width:760px)'),reducedMotion:r.html.includes('prefers-reduced-motion'),escapedContent:!r.html.includes('<script>'),metadata:r.meta.name==='CANVIO test',savedToSharedCore:!!stored.meta&&!!read(),noBackendClaim:!r.html.includes('action='),safePngAccepted:safeImageData('data:image/png;base64,AA==')==='data:image/png;base64,AA==',rejectsSvg:safeImageData('data:image/svg+xml;base64,PHN2Zy8+')==='',rejectsAttributeInjection:safeImageData('data:image/png;base64,AA==\" onerror=\"x')==='',bodyFragmentExtraction:bodyMarkup(r.html).includes('<main>')&&!bodyMarkup(r.html).includes('<head>'),scopedWebsiteCss:rules.length>=18&&rules.every(x=>x.selector.indexOf('.cv-p166-test-a1b2c3')===0),mobileCssUsesMediaRule:rules.some(x=>x.media==='(max-width: 760px)'&&x.selector.endsWith(' .hero'))};}
+window.CVLandingStudioP166={version:'166.2.0',read:read,build:build,buildFromCore:buildFromCore,exportZip:exportZip,sendToWebsite:sendToWebsite,landingCssRules:landingCssRules,bodyMarkup:bodyMarkup,waitForWebsiteEngine:waitForWebsiteEngine,mount:mount,tests:tests};
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount();
 })();
 </script>
@@ -37257,6 +37395,296 @@ function tests(){var a=normalize({face:'round',hair:'curly',mark:'scar-left',ski
 window.CVCharacterStudioP169={version:'169.0.0',fields:FIELDS,normalize:normalize,renderSVG:renderSVG,fromProfile:fromProfile,save:save,mount:mount,tests:tests};
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount();
 })();
+</script>
+<script id="canvio-lot132pdf">
+/* P132.1 — PDF page import for Pixel Atelier.
+ * Renders one selected PDF page through same-origin, locally pinned PDF.js and
+ * hands a PNG File to the existing #pxFile input / CVNativeEngines.pixel owner.
+ * It does not create a second canvas editor, project store or remote dependency.
+ */
+(function (root) {
+'use strict';
+if (root.CVPdfImportP132) return;
+var doc = root.document;
+var VERSION = '132.1.0';
+var MAX_FILE_BYTES = 30 * 1024 * 1024;
+var MAX_PAGES = 500;
+var MAX_SIDE = 4096;
+var MAX_PIXELS = 16000000;
+var DEFAULT_SCALE = 1.5;
+var pdfjsPromise = null;
+var pdfDoc = null;
+var activeFile = null;
+var panel = null;
+var statusNode = null;
+var importButton = null;
+var fileInput = null;
+var pageInput = null;
+var pagesNode = null;
+var busy = false;
+var jobId = 0;
+
+function validateFile(file) {
+  if (!file || typeof file !== 'object') return { ok: false, error: 'Chọn một tệp PDF trước.' };
+  var name = String(file.name || '').toLowerCase();
+  var type = String(file.type || '').toLowerCase();
+  if (type !== 'application/pdf' && !/\.pdf$/.test(name)) return { ok: false, error: 'Chỉ nhận tệp PDF.' };
+  var size = Number(file.size);
+  if (!(size > 0)) return { ok: false, error: 'Tệp PDF đang rỗng.' };
+  if (size > MAX_FILE_BYTES) return { ok: false, error: 'PDF vượt giới hạn 30 MB để tránh treo trình duyệt.' };
+  return { ok: true, error: '' };
+}
+function hasPdfHeader(buffer) {
+  if (!buffer) return false;
+  var bytes = buffer instanceof Uint8Array ? buffer : new Uint8Array(buffer);
+  var limit = Math.min(bytes.length - 4, 1024);
+  for (var i = 0; i <= limit; i++) {
+    if (bytes[i] === 37 && bytes[i + 1] === 80 && bytes[i + 2] === 68 && bytes[i + 3] === 70 && bytes[i + 4] === 45) return true;
+  }
+  return false;
+}
+function clampPageNumber(value, total) {
+  var n = Number(value);
+  if (!Number.isInteger(n) || n < 1 || n > total) return null;
+  return n;
+}
+function fitSize(width, height, scale) {
+  width = Number(width); height = Number(height); scale = Number(scale) || DEFAULT_SCALE;
+  if (!(width > 0 && height > 0 && isFinite(width) && isFinite(height))) return null;
+  scale = Math.max(0.5, Math.min(2, scale));
+  var factor = Math.min(scale, MAX_SIDE / width, MAX_SIDE / height, Math.sqrt(MAX_PIXELS / (width * height)));
+  if (!(factor > 0)) return null;
+  var w = Math.max(1, Math.floor(width * factor));
+  var h = Math.max(1, Math.floor(height * factor));
+  if (w > MAX_SIDE || h > MAX_SIDE || w * h > MAX_PIXELS) return null;
+  return { width: w, height: h, scale: factor };
+}
+function setStatus(message, isError) {
+  if (!statusNode) return;
+  statusNode.textContent = String(message || '');
+  statusNode.setAttribute('data-state', isError ? 'error' : 'info');
+}
+function setBusy(value) {
+  busy = !!value;
+  if (importButton) importButton.disabled = busy || !pdfDoc;
+  if (pageInput) pageInput.disabled = busy || !pdfDoc;
+  if (fileInput) fileInput.disabled = busy;
+}
+function destroyDocument() {
+  var old = pdfDoc;
+  pdfDoc = null;
+  activeFile = null;
+  if (importButton) importButton.disabled = true;
+  if (!old || typeof old.destroy !== 'function') return Promise.resolve();
+  try { return Promise.resolve(old.destroy()).catch(function () {}); }
+  catch (e) { return Promise.resolve(); }
+}
+function loadPdfJs() {
+  if (pdfjsPromise) return pdfjsPromise;
+  var moduleUrl = new URL('./assets/vendor/pdfjs/pdf.mjs', doc.baseURI).href;
+  var workerUrl = new URL('./assets/vendor/pdfjs/pdf.worker.mjs', doc.baseURI).href;
+  pdfjsPromise = import(moduleUrl).then(function (pdfjs) {
+    if (!pdfjs || typeof pdfjs.getDocument !== 'function' || !pdfjs.GlobalWorkerOptions) throw new Error('PDF.js local runtime không hợp lệ.');
+    pdfjs.GlobalWorkerOptions.workerSrc = workerUrl;
+    return pdfjs;
+  }).catch(function (error) {
+    pdfjsPromise = null;
+    throw error;
+  });
+  return pdfjsPromise;
+}
+function openPdf(file) {
+  var check = validateFile(file);
+  if (!check.ok) return Promise.reject(new Error(check.error));
+  var thisJob = ++jobId;
+  setBusy(true);
+  setStatus('Đang kiểm tra PDF và nạp bộ đọc cục bộ…');
+  return destroyDocument().then(function () {
+    if (thisJob !== jobId) throw new Error('Đã thay tệp PDF trong lúc đang mở.');
+    return file.arrayBuffer();
+  }).then(function (buffer) {
+    if (!hasPdfHeader(buffer)) throw new Error('Không tìm thấy chữ ký PDF hợp lệ.');
+    return loadPdfJs().then(function (pdfjs) {
+      return pdfjs.getDocument({
+        data: new Uint8Array(buffer),
+        isEvalSupported: false,
+        enableXfa: false,
+        disableAutoFetch: true,
+        disableStream: true,
+        cMapUrl: new URL('./assets/vendor/pdfjs/cmaps/', doc.baseURI).href,
+        cMapPacked: true,
+        standardFontDataUrl: new URL('./assets/vendor/pdfjs/standard_fonts/', doc.baseURI).href,
+        useWorkerFetch: false,
+        useWasm: false,
+        verbosity: 0
+      }).promise;
+    });
+  }).then(function (loaded) {
+    if (thisJob !== jobId) {
+      if (loaded && loaded.destroy) loaded.destroy();
+      throw new Error('Đã thay tệp PDF trong lúc đang mở.');
+    }
+    if (!loaded.numPages || loaded.numPages > MAX_PAGES) {
+      if (loaded.destroy) loaded.destroy();
+      throw new Error('PDF phải có từ 1 đến 500 trang trong một lần nhập.');
+    }
+    pdfDoc = loaded;
+    activeFile = file;
+    if (pageInput) { pageInput.min = '1'; pageInput.max = String(loaded.numPages); pageInput.value = '1'; }
+    if (pagesNode) pagesNode.textContent = loaded.numPages + ' trang';
+    if (importButton) importButton.disabled = false;
+    setStatus('Đã đọc PDF · chọn trang cần đưa vào Pixel Atelier.');
+    return { ok: true, pages: loaded.numPages };
+  }).catch(function (error) {
+    if (thisJob === jobId) {
+      pdfDoc = null; activeFile = null;
+      if (pagesNode) pagesNode.textContent = 'Chưa mở PDF';
+      setStatus(error && error.name === 'PasswordException' ? 'PDF có mật khẩu; luồng nhập hiện chưa hỗ trợ mật khẩu.' : (error && error.message || 'Không mở được PDF.'), true);
+    }
+    throw error;
+  }).finally(function () { if (thisJob === jobId) setBusy(false); });
+}
+function safeBaseName(name) {
+  var base = String(name || 'document').replace(/\.pdf$/i, '').replace(/[^A-Za-z0-9._-]+/g, '_').replace(/^[_\-.]+|[_\-.]+$/g, '').slice(0, 60);
+  return base || 'document';
+}
+function sendPngToPixel(blob, pageNumber, fileName) {
+  var target = doc.getElementById('pxFile');
+  if (!target || !root.CVNativeEngines || !root.CVNativeEngines.pixel) throw new Error('Pixel Atelier chưa sẵn sàng. Hãy mở Pixel Atelier rồi thử lại.');
+  if (!root.DataTransfer || !root.File) throw new Error('Trình duyệt này chưa hỗ trợ đưa ảnh vào Pixel Atelier tự động.');
+  var file = new root.File([blob], safeBaseName(fileName) + '-page-' + pageNumber + '.png', { type: 'image/png', lastModified: Date.now() });
+  var transfer = new root.DataTransfer();
+  transfer.items.add(file);
+  target.value = '';
+  target.files = transfer.files;
+  target.dispatchEvent(new root.Event('change', { bubbles: true }));
+  return file;
+}
+function importPage() {
+  if (busy || !pdfDoc || !activeFile) {
+    var unavailable = new Error('Hãy chọn và mở một tệp PDF hợp lệ trước.');
+    setStatus(unavailable.message, true);
+    return Promise.reject(unavailable);
+  }
+  var pageNumber = clampPageNumber(pageInput && pageInput.value, pdfDoc.numPages);
+  if (!pageNumber) {
+    var invalidPage = new Error('Số trang không hợp lệ.');
+    setStatus(invalidPage.message, true);
+    return Promise.reject(invalidPage);
+  }
+  var thisJob = jobId;
+  setBusy(true);
+  setStatus('Đang raster hóa trang ' + pageNumber + '/' + pdfDoc.numPages + '…');
+  var renderCanvas = doc.createElement('canvas');
+  return pdfDoc.getPage(pageNumber).then(function (page) {
+    if (thisJob !== jobId || pdfDoc === null) throw new Error('Tài liệu PDF đã được thay thế.');
+    var base = page.getViewport({ scale: 1 });
+    var fitted = fitSize(base.width, base.height, DEFAULT_SCALE);
+    if (!fitted) throw new Error('Kích thước trang PDF vượt giới hạn an toàn.');
+    var viewport = page.getViewport({ scale: fitted.scale });
+    renderCanvas.width = fitted.width;
+    renderCanvas.height = fitted.height;
+    var ctx = renderCanvas.getContext('2d', { alpha: false });
+    if (!ctx) throw new Error('Không tạo được vùng raster cho trang PDF.');
+    return page.render({ canvasContext: ctx, viewport: viewport, background: '#ffffff' }).promise.then(function () {
+      page.cleanup();
+      return new Promise(function (resolve, reject) {
+        renderCanvas.toBlob(function (blob) {
+          if (!blob || !blob.size) { reject(new Error('Không tạo được ảnh PNG từ trang PDF.')); return; }
+          resolve({ blob: blob, width: fitted.width, height: fitted.height });
+        }, 'image/png');
+      });
+    });
+  }).then(function (result) {
+    if (thisJob !== jobId || pdfDoc === null) throw new Error('Tài liệu PDF đã được thay thế.');
+    var file = sendPngToPixel(result.blob, pageNumber, activeFile.name);
+    setStatus('Đã đưa trang ' + pageNumber + ' vào Pixel Atelier (' + result.width + ' × ' + result.height + ' PNG). Chữ PDF đã được raster hóa.');
+    return { ok: true, page: pageNumber, width: result.width, height: result.height, fileName: file.name, bytes: file.size };
+  }).catch(function (error) {
+    if (thisJob === jobId) setStatus(error && error.message || 'Không nhập được trang PDF.', true);
+    throw error;
+  }).finally(function () {
+    renderCanvas.width = 0; renderCanvas.height = 0;
+    if (thisJob === jobId) setBusy(false);
+  });
+}
+function mount() {
+  if (!doc || !doc.getElementById || panel) return !!panel;
+  var page = doc.getElementById('page-pixelStudio');
+  if (!page || !doc.getElementById('pxFile')) return false;
+  panel = doc.createElement('section');
+  panel.id = 'cv132pdf-panel';
+  panel.className = 'cv132pdf';
+  panel.setAttribute('aria-labelledby', 'cv132pdf-title');
+  panel.innerHTML = '<div class="cv132pdf-head"><div><span class="cv132pdf-kicker">P132.1 · LOCAL PDF</span><h3 id="cv132pdf-title">Nhập trang PDF</h3><p>Mỗi trang được raster hóa thành PNG và mở bằng Pixel Atelier hiện có. Nội dung chữ trong trang không còn chỉnh sửa như text/vector.</p></div><span class="cv132pdf-pages" id="cv132pdf-pages">Chưa mở PDF</span></div>' +
+    '<div class="cv132pdf-row"><label for="cv132pdf-file">Tệp PDF (tối đa 30 MB)</label><input id="cv132pdf-file" type="file" accept=".pdf,application/pdf"></div>' +
+    '<div class="cv132pdf-actions"><label for="cv132pdf-page">Trang</label><input id="cv132pdf-page" type="number" min="1" value="1" disabled><button type="button" id="cv132pdf-import" disabled>Nhập trang vào Pixel Atelier</button></div>' +
+    '<p class="cv132pdf-status" id="cv132pdf-status" role="status" aria-live="polite">PDF.js được nạp cục bộ khi bạn chọn tệp. Không gửi PDF lên máy chủ.</p>' +
+    '<small class="cv132pdf-foot">Giới hạn: PDF tối đa 30 MB, 500 trang; mỗi lần nhập một trang, tối đa 4096 px cạnh dài và 16 megapixel.</small>';
+  var style = doc.createElement('style');
+  style.id = 'canvio-lot132pdf-css';
+  style.textContent = '.cv132pdf{margin:16px 0;padding:16px;border:1px solid var(--border,#dce3ee);border-radius:14px;background:var(--card,#fff);color:var(--text,#182230)}.cv132pdf-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}.cv132pdf-kicker{font-size:10px;font-weight:800;letter-spacing:.12em;color:var(--brand,#1769e0)}.cv132pdf h3{font-size:17px;margin:4px 0}.cv132pdf p,.cv132pdf small{font-size:12px;line-height:1.5;color:var(--muted,#657184);margin:5px 0}.cv132pdf-pages{font-size:11px;border-radius:999px;padding:6px 10px;background:var(--surface,#f2f5fa)}.cv132pdf-row,.cv132pdf-actions{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-top:12px}.cv132pdf label{font-size:12px;font-weight:700}.cv132pdf input{max-width:100%;border:1px solid var(--border,#dce3ee);border-radius:8px;padding:7px 9px;background:var(--input,#fff);color:inherit}.cv132pdf #cv132pdf-page{width:84px}.cv132pdf button{border:1px solid var(--border,#dce3ee);border-radius:9px;padding:8px 12px;background:var(--brand,#1769e0);color:#fff;font-size:12px;font-weight:700}.cv132pdf button:disabled{opacity:.45;cursor:not-allowed}.cv132pdf button:focus-visible,.cv132pdf input:focus-visible{outline:2px solid var(--brand,#1769e0);outline-offset:2px}.cv132pdf-status[data-state=error]{color:#b42318}.cv132pdf-foot{display:block;margin-top:9px}@media(max-width:640px){.cv132pdf-actions button{width:100%}}@media(prefers-reduced-motion:reduce){.cv132pdf *{scroll-behavior:auto!important;transition:none!important}}';
+  if (!doc.getElementById(style.id)) doc.head.appendChild(style);
+  var after = doc.getElementById('cv135-panel') || page.querySelector('.ne-note') || null;
+  if (after && after.parentNode === page) page.insertBefore(panel, after);
+  else page.appendChild(panel);
+  statusNode = panel.querySelector('#cv132pdf-status');
+  fileInput = panel.querySelector('#cv132pdf-file');
+  pageInput = panel.querySelector('#cv132pdf-page');
+  pagesNode = panel.querySelector('#cv132pdf-pages');
+  importButton = panel.querySelector('#cv132pdf-import');
+  fileInput.addEventListener('change', function () {
+    var file = fileInput.files && fileInput.files[0];
+    if (!file) return;
+    openPdf(file).catch(function () {});
+  });
+  importButton.addEventListener('click', function () { importPage().catch(function () {}); });
+  pageInput.addEventListener('change', function () {
+    var n = clampPageNumber(pageInput.value, pdfDoc && pdfDoc.numPages || 0);
+    setStatus(n ? 'Sẵn sàng nhập trang ' + n + '.' : 'Số trang nằm ngoài tài liệu.', !n);
+  });
+  root.addEventListener('pagehide', function () { jobId++; destroyDocument(); }, { once: true });
+  return true;
+}
+function tests() {
+  var oversized = validateFile({ name: 'large.pdf', type: 'application/pdf', size: MAX_FILE_BYTES + 1 });
+  var wrong = validateFile({ name: 'photo.png', type: 'image/png', size: 10 });
+  var valid = validateFile({ name: 'document.PDF', type: 'application/pdf', size: 120 });
+  var goodHeader = hasPdfHeader(new Uint8Array([0, 1, 37, 80, 68, 70, 45, 49, 46, 55]));
+  var badHeader = hasPdfHeader(new Uint8Array([80, 78, 71, 13, 10, 26, 10]));
+  var fitted = fitSize(20000, 10000, 2);
+  return {
+    acceptsPdf: valid.ok,
+    rejectsNonPdf: !wrong.ok,
+    rejectsEmpty: !validateFile({ name: 'empty.pdf', type: 'application/pdf', size: 0 }).ok,
+    enforcesThirtyMiBBound: !oversized.ok,
+    validatesPdfMagic: goodHeader && !badHeader,
+    rejectsInvalidPage: clampPageNumber(0, 2) === null && clampPageNumber(3, 2) === null,
+    acceptsValidPage: clampPageNumber(2, 2) === 2,
+    clampsLargeCanvasSide: !!fitted && fitted.width <= MAX_SIDE && fitted.height <= MAX_SIDE,
+    clampsCanvasPixelBudget: !!fitted && fitted.width * fitted.height <= MAX_PIXELS,
+    scaleIsBounded: fitSize(200, 100, 9).scale <= 2,
+    apiDeclaresExistingPixelHandoff: typeof sendPngToPixel === 'function'
+  };
+}
+var api = {
+  version: VERSION,
+  limits: { fileBytes: MAX_FILE_BYTES, pages: MAX_PAGES, maxSide: MAX_SIDE, maxPixels: MAX_PIXELS },
+  validateFile: validateFile,
+  hasPdfHeader: hasPdfHeader,
+  clampPageNumber: clampPageNumber,
+  fitSize: fitSize,
+  mount: mount,
+  tests: tests,
+  openPdf: openPdf,
+  importPage: importPage
+};
+root.CVPdfImportP132 = api;
+if (doc) {
+  if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded', mount, { once: true });
+  else mount();
+}
+})(window);
 </script>
 </body>
 </html>

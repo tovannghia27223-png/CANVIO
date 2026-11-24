@@ -361,3 +361,42 @@ Khi sửa module: sửa file standalone rồi chép y hệt vào lot (parity so 
 - Workflow must sync `canvio-p167-blocking.js` into `canvio-lot167b` in `index.html`, pass P143 parity and full Chromium suite before merge.
 - Scope limitation: CPU perspective projection on Canvas 2D, not a full WebGL scene graph or rendered 3D asset pipeline. Do not claim video rendering; the new export is a PNG contact sheet (four keyframes per camera).
 \n\n## P167.1 + P168.1 handoff (2026-11-25)\n\n- P167.1 fix: selected object name is committed on `input`; browser test checks persisted name after reload. Preserve the Canvas2D renderer limitation and PNG contact-sheet export wording.\n- P168.1 candidate: add direct current Poster SVG handoff and Designer image-like `snapshotState()` / existing rendered-Canvas fallback to the P168 motion panel; do not create an Asset Library intermediate. Local-only source validation rejects remote image references.\n- P168.1 adds a bounded text overlay with static/fade/slide/typewriter/pop, top/middle/bottom placement, plain/banner/outline styles, color and size. Preview, GIF frames and WebM record the same Canvas-composited text.\n- Node and Chromium tests were expanded. Await the exact final hosted run and generated canonical `index.html` before calling this accepted; mainline and manual P70 gates remain separate.\n
+
+## P132.1 PDF import — current-mainline v3 (2026-11-25)
+
+- Branch: `feat/p132-pdf-import-mainline-v3`; module `canvio-p132-pdf-import.js` / `canvio-lot132pdf`; PDF.js 6.5.438 Apache-2.0 local vendor and SHA manifest.
+- Verify workflow embeds the inline lot with real line breaks, validates the vendor manifest, runs P132 Node/Chromium, P143 51-pair parity and full regressions. Browser handoff assertion captures file metadata during capture phase before Pixel's picker cleanup.
+- Do not use old-branch #813 as acceptance for this v3 head. Require exact-head green CI before merge. One raster page per import; password, batch and editable vector/text are out of scope.
+
+
+## P163.1.1 — Visible profile labels (2026-11-25)
+
+- Branch: `feat/p163-visible-field-labels-mainline-v3`; `canvio-p163-character-continuity.js` version 163.1.1. Seven existing P163 controls have visible associated labels; IDs, event handlers, data owner and synchronization are unchanged.
+- `tests/p145/run-p169-browser.py` checks visible label/control association in addition to P169 profile round-trip and mobile overflow.
+- Verify exact-head hosted runtime, P143 parity, P163/P169 Chromium and full regressions before merge. Manual keyboard/screen-reader/200% zoom review remains; do not claim WCAG certification.
+
+
+## P161.2 / P74.1 — GLB camera pose continuation (2026-11-25)
+
+- Branch: `feat/p161-glb-camera-pose-mainline-v3`; P161 version 161.2.0 and P74 viewer 74.1.0. P161 awaits `viewer.load(file)` then applies the saved pose through P74's `applyCameraPose()`; same camera/renderer/OrbitControls owner.
+- Workflow step embeds P74 standalone source into canonical `canvio-p74-p81-three-viewer` before the extract step; P161 is synchronized by the existing P159 step. Verify exact-source parity, syntax, P143 and hosted tests.
+- Hosted GLB fixture checks both P74 direct pose and P161 preset replay including nonzero X/Y/Z. Previous #812 caught pending damping drift; P74 now flushes inertia before absolute pose. Require new exact-head PASS before merge. Complex GLBs and physical-device GPU/frame-rate review remain open.
+
+
+## P166.2 — GrapesJS Website Engine handoff (latest mainline · 2026-11-25)
+
+- Branch: `feat/p166-website-engine-handoff-mainline-v3`; module `CVLandingStudioP166` version 166.2.0. `sendToWebsite()` navigates to webEngine, waits up to 12s for lazy `CVWeb`/CSS Manager/P131/save availability, sanitizes body, inserts scoped root, applies base/mobile rules and saves through canonical Website Engine.
+- #817 showed a test race: `CVWeb` wasn't yet defined immediately after navigation. The source and Node suite now cover a 120 ms delayed engine; Chromium still requires real GrapesJS root, CSS Manager mobile rule, Shared Core metadata and native save. Do not mock or bypass the browser integration check.
+- Verify exact-head hosted runtime, P160–P166 Node/Chromium, P143 parity and full regression before merge. Static landing page only: no backend form submission/CRM/hosting/publish. Real design/accessibility/device review remains open.
+
+
+### P166.2.1 — Node fixture retry note (2026-11-25)
+
+- Run #827 reached P160–P166 Node checks and failed at `waitForWebsiteEngine`: the test removed `CVWeb` before it had initialized the P131 security/save mocks. This is a fixture ordering issue, not a product timeout defect.
+- Updated `tests/p160/run-p160-166-tests.cjs` to establish P131/CVWeb/save mocks first, remove only `CVWeb`, restore it after 120 ms, and await readiness. Re-run the exact current head; P166 Chromium still must exercise real GrapesJS.
+
+
+## P153.1 hosted test correction (2026-11-25)
+
+- Full hosted run #830 stopped in `tests/p145/run-p153-browser.py` after reload, before P160–P166 tests. Log: three cards existed in `#cv153-grid` but the default Playwright locator wait required visibility. The assertion being tested is persistence after reload, not a pointer interaction.
+- On combined branch `feat/canvio-final-integration-p132-p163-p161-p166`, replaced the visible-state wait with `wait_for_function(document.querySelectorAll('#cv153-grid .card').length===3)`. Subsequent DB/image and user-action checks remain intact. Re-run exact-head hosted acceptance; do not attribute #830 failure to P166.

@@ -27,7 +27,7 @@ with sync_playwright() as p:
     checks['filter_cam']=pg.evaluate("document.querySelectorAll('#cv153-grid .card').length")==1
     pg.click('#cv153-clear'); pg.fill('#cv153-link','example.com'); pg.click('#cv153-addlink'); pg.wait_for_function("document.querySelectorAll('#cv153-grid .card').length===3",timeout=5000)
     checks['link_added']=True
-    pg.reload(wait_until='load'); pg.wait_for_function("!!window.CVBoardP153",timeout=90000); pg.evaluate("CV.go('assets')"); pg.wait_for_selector('#cv153-grid .card',timeout=15000)
+    pg.reload(wait_until='load'); pg.wait_for_function("!!window.CVBoardP153",timeout=90000); pg.evaluate("CV.go('assets')"); pg.wait_for_function("document.querySelectorAll('#cv153-grid .card').length===3",timeout=15000)
     checks['persist_reload']=pg.evaluate("document.querySelectorAll('#cv153-grid .card').length")==3
     full=pg.evaluate("CVBoardP153.list().filter(i=>i.type==='img')[0].id"); 
     checks['full_in_idb']=pg.evaluate("async id=>{const d=await CVSceneStoreP153.get(id);return typeof d==='string'&&d.indexOf('data:image')===0}",full)

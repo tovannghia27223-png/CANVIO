@@ -1,17 +1,17 @@
 {
   "format": "CANVIO_P143_INLINE_SOURCE_INVENTORY",
   "version": 1,
-  "generatedAt": "2026-11-24T18:53:54.491Z",
+  "generatedAt": "2026-11-24T19:22:11.533Z",
   "source": "restored canonical index.html after hosted workflow integration steps",
   "purpose": "Complete script-tag inventory in browser execution order; known global reference detection is heuristic, not a semantic dependency DAG.",
-  "htmlBytes": 6051730,
-  "scriptTagCount": 184,
-  "inlineScriptCount": 184,
+  "htmlBytes": 6079703,
+  "scriptTagCount": 185,
+  "inlineScriptCount": 185,
   "externalScriptCount": 0,
   "moduleScriptCount": 0,
   "asyncScriptCount": 0,
   "deferScriptCount": 0,
-  "uniqueScriptIds": 181,
+  "uniqueScriptIds": 182,
   "duplicateScriptIds": [],
   "modules": [
     {
@@ -12902,8 +12902,8 @@
       "async": false,
       "defer": false,
       "noModule": false,
-      "bytes": 22493,
-      "sha256": "4056146ffb73d567943c9f2f5266e1dcc55ffa967df3f832f875f3a9cae06d40",
+      "bytes": 25834,
+      "sha256": "745936dab646c119870539b070849e90ce5f1a04ae4aab98715e0944e3a8bdfa",
       "exportedGlobals": [
         "CANVIOThreeGLBViewerP74"
       ],
@@ -12925,7 +12925,7 @@
             "count": 2,
             "lines": [
               116,
-              247
+              308
             ]
           },
           {
@@ -12954,7 +12954,7 @@
             "name": "removeEventListener",
             "count": 1,
             "lines": [
-              160
+              220
             ]
           },
           {
@@ -12976,7 +12976,7 @@
         "writes": [
           {
             "name": "CANVIOThreeGLBViewerP74",
-            "line": 244,
+            "line": 305,
             "kind": "window.property"
           }
         ],
@@ -16218,8 +16218,8 @@
       "async": false,
       "defer": false,
       "noModule": false,
-      "bytes": 13978,
-      "sha256": "fa4b5400a161fc4ccefe9e94719ffc70b5d1ca2e9e567310f672c9633d0156a5",
+      "bytes": 14986,
+      "sha256": "9ac50364c4878e3afcd61a40fcf9ef62e5b28bd421aada6b08d86b0d07b730eb",
       "exportedGlobals": [
         "CVSpatialWorkspaceP161"
       ],
@@ -16411,8 +16411,8 @@
       "async": false,
       "defer": false,
       "noModule": false,
-      "bytes": 10035,
-      "sha256": "f0c71b6c13c960f895631961cd5c86655004e5b489992afa5d247b9c42792ecd",
+      "bytes": 11270,
+      "sha256": "ed8252a72a0476fe019b870b988262e36d6cb8d887d7c9580aa9481e3a6c9636",
       "exportedGlobals": [
         "CVCharacterContinuityP163"
       ],
@@ -16664,16 +16664,18 @@
       "async": false,
       "defer": false,
       "noModule": false,
-      "bytes": 10597,
-      "sha256": "fe2382fe514332656ecf119f16a39625a455ad96bd96c1dc2c0c8608ca6bc1a0",
+      "bytes": 17136,
+      "sha256": "063acd24d69b2bcf591f927a615b5f9dd853cbb0c0f348f4a60354a5cdcb4f51",
       "exportedGlobals": [
         "CVLandingStudioP166"
       ],
       "globalDeclarations": [],
       "globalPropertyReads": [
+        "CANVIOSecurity",
         "CV",
         "CVCreativeCore",
         "CVLandingStudioP166",
+        "CVWeb",
         "CVZip"
       ],
       "knownGlobalReads": [
@@ -16682,11 +16684,19 @@
       "globalReferenceEvidence": {
         "propertyReads": [
           {
+            "name": "CANVIOSecurity",
+            "count": 1,
+            "lines": [
+              58
+            ]
+          },
+          {
             "name": "CV",
-            "count": 2,
+            "count": 3,
             "lines": [
               13,
-              18
+              58,
+              68
             ]
           },
           {
@@ -16707,6 +16717,13 @@
             ]
           },
           {
+            "name": "CVWeb",
+            "count": 1,
+            "lines": [
+              58
+            ]
+          },
+          {
             "name": "CVZip",
             "count": 3,
             "lines": [
@@ -16717,17 +16734,18 @@
         "knownReads": [
           {
             "name": "CV",
-            "count": 5,
+            "count": 7,
             "lines": [
               13,
-              18
+              58,
+              68
             ]
           }
         ],
         "writes": [
           {
             "name": "CVLandingStudioP166",
-            "line": 22,
+            "line": 99,
             "kind": "window.property"
           }
         ],
@@ -18744,6 +18762,32 @@
             "kind": "window.property"
           }
         ],
+        "scannerLimitations": [
+          "Template literal bodies and interpolation expressions are skipped as one lexical region.",
+          "Destructured globals, alias flow, computed property names, eval and dynamically assembled identifiers are not resolved.",
+          "Top-level bindings are detected only for simple var/let/const/function/class declarations.",
+          "This scanner is lexical evidence, not a JavaScript AST or proof of runtime data flow."
+        ]
+      }
+    },
+    {
+      "order": 184,
+      "id": "canvio-lot132pdf",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 15810,
+      "sha256": "4dd75b7c7cf8607b424579c293e16f027753f9ca369ffd5e02d0726a332d2566",
+      "exportedGlobals": [],
+      "globalDeclarations": [],
+      "globalPropertyReads": [],
+      "knownGlobalReads": [],
+      "globalReferenceEvidence": {
+        "propertyReads": [],
+        "knownReads": [],
+        "writes": [],
         "scannerLimitations": [
           "Template literal bodies and interpolation expressions are skipped as one lexical region.",
           "Destructured globals, alias flow, computed property names, eval and dynamically assembled identifiers are not resolved.",

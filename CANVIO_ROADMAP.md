@@ -1401,3 +1401,32 @@ Việc cần người dùng: duyệt thứ tự; cho biết có muốn "kênh ch
 PR #91 is merged. Merge commit: `aca4f2846637b28532110f86d82ded2ef37cde03`. Canonical generated runtime commit: `5c54e93ebad19d59548d735fcbd0520ae6fe77e7`. Hosted workflow #796 / run `45459847567` completed successfully, including canonical-index restoration, P143 source parity/inventory, P47–P70 automated regression, source contracts, same-origin GLB/P85/ONNX/worker browser acceptance, and documentation/manifest refresh.
 
 P167.1 and P168.1 are therefore mainline-integrated and hosted-CI verified, with their documented functional boundaries unchanged: P167.1 remains a Canvas2D blocking tool rather than a full WebGL scene editor; P168.1 remains 2D image motion and text compositing rather than a multi-track or AI-video editor. The 14 P70 real-world manual gates are not closed by CI and remain pending.
+
+
+## P132.1 — Nhập từng trang PDF cục bộ vào Pixel Atelier (candidate · 2026-11-25)
+
+- Thêm `canvio-p132-pdf-import.js` / `CVPdfImportP132` phiên bản 132.1.0; PDF.js 6.5.438, Apache-2.0, vendoring cục bộ với CMaps, standard fonts, worker và SHA manifest; không upload PDF, không runtime CDN.
+- Luồng chọn trang → raster PNG trong giới hạn → bàn giao input `#pxFile` và owner Pixel Atelier hiện tại. Một trang/lần; không tạo editor/database/timeline mới.
+- Giới hạn 30 MiB, 500 trang, cạnh dài 4096 px, 16 MP; tắt PDF JavaScript/XFA. Text/vector không còn editable; password, batch và PDF thật vẫn là gate mở.
+- Assertion cũ đọc file picker sau cleanup của Pixel owner; đã sửa để chụp metadata file ở capture phase. Run #813 PASS 65/65 trên nhánh cũ; nhánh mainline v3 cần exact-head rerun.
+
+
+## P163.1.1 — Nhãn hiển thị cho biểu mẫu nhất quán nhân vật (candidate · 2026-11-25)
+
+- Bổ sung nhãn chữ nhìn thấy cho bảy control P163: tên, mô tả nhận diện, đặc điểm bắt buộc, ảnh tham chiếu, hồ sơ nhân vật, đặc điểm cảnh mới và cảnh Storyboard. Nhãn gắn trực tiếp với input/select hiện hữu, không đổi ID/API hay chủ sở hữu dữ liệu.
+- Hosted Chromium mở rộng P169 để kiểm tra cả bảy nhãn liên kết đúng control và có kích thước hiển thị. Đây là kiểm tra DOM/layout, không thay thế rà soát keyboard, screen reader, zoom 200% hoặc chứng nhận WCAG thủ công.
+
+
+## P161.2 — Đồng bộ camera preset GLB với viewer P74/P81 (candidate · 2026-11-25)
+
+- Nối `CVSpatialWorkspaceP161.apply()` → nạp GLB bằng viewer P74/P81 hiện hữu → áp preset qua API mới `CANVIOThreeGLBViewerP74.applyCameraPose()`. Không tạo renderer/scene/OrbitControls thứ hai.
+- Bổ sung X/Y/Z camera position trong P161; preset lưu và áp yaw/pitch/FOV/vị trí. P74 flush OrbitControls damping/inertia trước khi ghi pose tuyệt đối, tránh sai góc do kéo trước đó.
+- Hosted test dùng GLB fixture tự chứa để kiểm tra API P74 và replay P161→Asset Library→P74, bao gồm vị trí khác 0. Exact-head CI còn chờ; GLB phức tạp, nhiều camera thật, GPU và kiểm tra trực quan thiết bị vẫn là gate thủ công.
+
+
+## P166.2 — Gửi Landing Page thật sang Website Engine (candidate · 2026-11-25)
+
+- Nâng `CVLandingStudioP166.sendToWebsite()`: điều hướng đến Website Engine, chờ tối đa 12 giây cho GrapesJS/CSS Manager/P131 sanitizer/canonical save lazy-load xong; trích body HTML, làm sạch bằng P131, bọc root scope riêng, chèn qua `CVWeb.addComponents`, thêm CSS cơ bản và media query mobile qua `CVWeb.Css.setRule`, cuối cùng lưu bằng `CV.engines.web.save`.
+- Đã xử lý lỗi CI #817: test gọi `CVWeb` ngay sau điều hướng khi Website Engine chưa lazy-load xong. P166 hiện chờ readiness có giới hạn; Node test mô phỏng editor chỉ sẵn sàng sau 120 ms, Chromium kiểm tra insertion/CSS/save trên editor thật. Nếu timeout hoặc lỗi lưu, không báo thành công giả.
+- Không tạo editor/database/CSS store/timeline thứ hai; selector chỉ tác động landing root. Chờ exact-head hosted workflow và full regression trước merge.
+- Nội dung vẫn là trang tĩnh; CTA/form chưa có backend, CRM, hosting/publish service. Cần duyệt project thật, keyboard/screen-reader/zoom và thiết bị thật.

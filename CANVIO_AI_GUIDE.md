@@ -4303,3 +4303,36 @@ P160–P166 module APIs currently report versions P160.2.0, P161.1.0, P162.2.0, 
 - P167.1 delivers the bounded Canvas2D blocking inspector, camera controls, multi-camera preview and PNG contact sheet; it is not a full WebGL scene graph or MP4 renderer.
 - P168.1 delivers direct local Poster/Designer handoff, 2D image motion/text overlays and GIF/WebM export through existing Asset Library/Storyboard owners; it is not a multi-track video editor or AI video inference.
 - Do not infer P70 manual acceptance from this hosted workflow. The 14 real-world gates remain separate and require evidence on actual devices/projects.
+
+
+## P132.1 — Local PDF page import for Pixel Atelier (candidate · 2026-11-25)
+
+- Standalone source: `canvio-p132-pdf-import.js`; canonical inline lot: `canvio-lot132pdf`; API: `window.CVPdfImportP132`, version `132.1.0`.
+- PDF.js `pdfjs-dist@6.5.438` is provisioned locally under `assets/vendor/pdfjs` with Apache-2.0 license, same-origin worker/CMaps/standard fonts and SHA-256 manifest. It is loaded only after user selects a PDF; no PDF upload or runtime CDN request is used.
+- One selected page is rasterized to PNG and handed to the existing Pixel Atelier `#pxFile` / `CVNativeEngines.pixel` owner. No second editor, project store or timeline is introduced.
+- Bounds: 30 MiB, 500 pages, 4096 px per side, 16 MP per page; PDF JavaScript evaluation and XFA disabled. Raster-only; editable text/vector content is not retained. Password files, batch import and real customer-document review remain open.
+- Acceptance: P132 Node/Chromium suites, P143 parity and exact-head hosted runtime. Old-base run #813 passed 65/65; current-mainline branch still requires its own exact-head PASS before merge.
+
+
+## P163.1.1 — Visible character-profile field labels (candidate · 2026-11-25)
+
+- `canvio-p163-character-continuity.js` / `CVCharacterContinuityP163` increments to `163.1.1`. The name, fixed description, required features, reference assets, selected profile, scene comparison details and Storyboard scene controls now have visible labels associated with their existing IDs.
+- Presentation/accessibility improvement only: same P163 control IDs, Shared Core project owner, Asset Library reference IDs, save/upsert and Storyboard handoff remain unchanged.
+- Hosted P169 Chromium verifies all seven associated labels have visible layout boxes. Keyboard, screen-reader, 200% zoom and device review remain manual; no WCAG certification is claimed.
+
+
+## P161.2 / P74.1 — GLB camera-pose replay (candidate · 2026-11-25)
+
+- P161 passes its saved `yaw/pitch/fov/position{x,y,z}` to the existing P74/P81 Three.js viewer after `viewer.load(file)` completes. P74.1 exposes `applyCameraPose(pose)` and `getCameraPose()`; the viewer remains the single renderer, camera and OrbitControls owner.
+- Before applying an absolute preset, P74 disables damping and flushes pending OrbitControls drag inertia; it then writes camera/target and synchronizes controls exactly before restoring the prior damping setting. This avoids residual drag delta altering the stored yaw/pitch.
+- Zero/unspecified position applies yaw/pitch around the normalized model target while preserving fit distance. Explicit position applies camera X/Y/Z and derives a matching target from yaw/pitch. Bounds: yaw ±360°, pitch ±89°, FOV 30–120°, position components ±1000.
+- P161 exposes X/Y/Z inputs and persists them in the existing `spatialWorkspace` document. Hosted acceptance uses a generated self-contained GLB fixture, verifies direct P74 pose readback, then imports that same fixture into Asset Library and checks P161 preset replay through P74. Exact-head hosted rerun pending; complex production GLBs/physical GPU remain separate.
+
+
+## P166.2 — Brief-to-GrapesJS Website Engine handoff (candidate · 2026-11-25)
+
+- `canvio-p166-landing-studio.js` / `CVLandingStudioP166` is version 166.2.0. `sendToWebsite()` performs a real local handoff: navigate to the existing `webEngine`, wait up to 12 seconds for its lazy-loaded GrapesJS editor, CSS Manager, P131 sanitizer and canonical save API; extract the generated body; sanitize with `CANVIOSecurity.prepareHtmlImport()`; insert a scoped wrapper via `CVWeb.addComponents()`; apply base/mobile rules via `CVWeb.Css.setRule()`; await `CV.engines.web.save()`.
+- Readiness polling is bounded and reports an explicit timeout rather than dereferencing an absent `CVWeb`. If CSS or save fails after insertion, the API returns `inserted:true,saved:false` and asks the user to inspect/undo. No false success.
+- Responsive rules cover hero, visual and feature grid at max-width 760px. Selectors are scoped to the unique landing root, preserving all other Website Engine content. Existing GrapesJS/CSS/persistence owner remains canonical; no second editor, database, CSS store or timeline is created.
+- Node and Chromium acceptance verify deferred lazy engine availability, P131 sanitizer, GrapesJS root insertion, scoped CSS/media rule, Shared Core metadata, native save and mobile overflow. Exact-head hosted run is required before acceptance.
+- The package is static: CTA/forms have no backend submission, CRM, hosting or publishing service. Real authored Website project visual review, keyboard/screen-reader/zoom and physical-device checks remain manual.

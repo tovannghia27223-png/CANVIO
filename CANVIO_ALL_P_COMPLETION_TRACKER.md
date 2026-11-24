@@ -390,3 +390,31 @@ PR #71 was closed as superseded by clean-main PR #73; the latter carries the cor
 | P168.1 | Merged and hosted-CI verified | PR #91; same merge and successful workflow | 2D image motion/text overlay, not multi-track editing or AI video inference; manual media review remains |
 
 The successful workflow also completed canonical index restoration, P143 parity/inventory, P47–P70 automated regression, source contracts and GLB/P85/ONNX/worker browser acceptance. This does not certify the 14 P70 manual real-world gates; keep `releaseCertified:false` until each gate has evidence.
+
+
+## P132.1 — Local PDF import to Pixel Atelier (candidate · 2026-11-25)
+
+| P | Status | Implemented scope | Remaining acceptance |
+|---|---|---|---|
+| P132.1 | Candidate on `feat/p132-pdf-import-mainline-v3` | Local PDF.js 6.5.438 vendor, Apache-2.0 notice/SHA manifest, one-page PDF→PNG handoff to existing Pixel owner, bounded file/page/pixel budgets, Node + Chromium suites, P143 51-pair parity and hosted workflow wiring. | Exact-head current-mainline hosted run/full regression; password and real customer PDFs, multi-page batch, accessibility/device review. Prior #813 passed 65/65 on old branch SHA only. |
+
+
+## P163.1.1 — Visible field labels (candidate · 2026-11-25)
+
+| P | Status | Implemented scope | Remaining acceptance |
+|---|---|---|---|
+| P163.1.1 | Candidate on `feat/p163-visible-field-labels-mainline-v3` | Seven P163 profile/reference/scene controls have visible associated labels; module patch version 163.1.1; existing hosted P169 Chromium suite asserts label association and visible layout. No project/data ownership or synchronization behavior changed. | Exact-head hosted CI/P143/full regressions; manual keyboard, screen-reader, 200% zoom, responsive and physical-device review. |
+
+
+## P161.2 / P74.1 — GLB camera-pose replay (candidate · 2026-11-25)
+
+| P | Status | Implemented scope | Remaining acceptance |
+|---|---|---|---|
+| P161.2 | Candidate on `feat/p161-glb-camera-pose-mainline-v3` | P161 saves X/Y/Z in existing `spatialWorkspace`; P74.1 applies/readbacks yaw/pitch/FOV/world position; OrbitControls damping is flushed before absolute pose; hosted fixture checks both direct P74 and P161→Asset Library→P74 replay. | Exact-head CI/hosted result, real multi-mesh/animated GLBs, camera path review, physical GPU/frame-rate and visual/device acceptance. |
+
+
+## P166.2 — Website Engine handoff (candidate · 2026-11-25)
+
+| P | Status | Implemented scope | Remaining acceptance |
+|---|---|---|---|
+| P166.2 | Candidate on `feat/p166-website-engine-handoff-mainline-v3` | P166.2.0 waits for lazy Website Engine/P131 readiness; sanitizes generated body with P131; inserts scoped root into existing GrapesJS `CVWeb`; applies base/mobile CSS through `CVWeb.Css.setRule`; saves via `CV.engines.web.save`. Node test simulates 120 ms lazy readiness; Chromium tests real editor insertion/CSS/save. | Exact-head hosted workflow/P143/full regressions; real user Website project visual review, keyboard/screen-reader/zoom and physical mobile. Backend forms, CRM, hosting and live publishing are not included. |
