@@ -638,3 +638,9 @@ Mainline workflow #551 passed 53/53; Pages #275 passed build/deploy. P143 parity
 ## P169 dock visibility fixture correction (candidate)
 
 - The P169 Chromium test explicitly opens `#cv163-card` from the existing P159.1 dock before asserting Character Studio visibility; it continues to verify all eight fields, SVG preview, P163 profile persistence, reset isolation, mobile layout and zero page errors.
+
+
+## P150.13 follow-up after run #782
+
+- Run #782 failed only the five non-Home Export color assertions (69/74 P150 checks). The Home-only marker was off on Design/Site/Media/Project/AI; P150.13 now also resets the root `data-home-skin` to `classic` outside Home, preventing selectors scoped to retained/hidden Home descendants from affecting shared toolbar controls.
+- P167: Chromium checks passed. P168: Chromium checks passed. P169: 7/7 checks passed, including all eight character fields and P163 shared-profile persistence. P160–P166: 28/28 passed. P150 requires a fresh run.

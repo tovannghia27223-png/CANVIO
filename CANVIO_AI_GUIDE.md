@@ -4238,3 +4238,11 @@ P160–P166 module APIs currently report versions P160.2.0, P161.1.0, P162.2.0, 
 ## P169 browser integration test refinement (2026-11-24)
 
 - The P169 Chromium acceptance opens the existing Video Studio dock's `Nhân vật` tab before checking the Character Studio panel. This follows the intended collapsed dock UX and prevents a hidden-but-mounted panel from being mistaken for a mount failure.
+
+
+## P150.13 — Root skin isolation outside Home (candidate · 2026-11-24)
+
+- Run #782 confirmed the Home-only flag was off in all five workspaces, but the original Export button was still recolored 5/5. P167 passed 30/30 Node and its Chromium checks; P168 passed 17/17 Node and browser checks; P169 passed 5/5 Node and 7/7 Chromium checks; P160–P166 passed 28/28 Chromium.
+- Root cause: even when Home was hidden, the selected `data-home-skin=tech/fashion/sky` value remained on `<html>`. Legacy page-scoped selectors can still match toolbar descendants that are retained under the hidden Home subtree.
+- P150.13 changes `syncHomeScope()`: when Home is actually visible, `data-home-skin` is restored from the user's saved selection; when Home is not visible, the root skin is set to `classic` and the Home-only marker is removed. This prevents all Home-skin CSS tokens/selectors from leaking into other workspaces, instead of resetting only one button.
+- Browser regression now asserts both root skin fallback to `classic` and original pink Export background across Design, Site, Media, Project and AI. Awaiting a new full hosted browser run.

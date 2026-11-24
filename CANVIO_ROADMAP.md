@@ -1343,3 +1343,9 @@ Việc cần người dùng: duyệt thứ tự; cho biết có muốn "kênh ch
 - P168: eight image-to-motion presets with GIF/WebM handoff and P165 workflow JSON import/export. WebM depends on browser MediaRecorder support; AI generation remains an explicit handoff, not an included video inference model.
 - P169: 2D vector Character Studio with eight appearance fields, preview, and save to P163 profile. It does not edit a rigged 3D character or infer identity from a face.
 - P150.12 Home-only toolbar visibility fix is pending hosted desktop/mobile browser verification. Do not merge/release until the P150 five-workspace pink Export regression is green and the complete candidate workflow passes.
+
+
+## P150.13 — Home skin root reset (candidate · 2026-11-24)
+
+- P150.12 was insufficient: Home scope marker correctly turned off, but `data-home-skin=tech` remained on the document root and some inherited/legacy selectors still recolored Export. P150.13 resets root skin to `classic` whenever Home is hidden and restores the saved selection only when Home is visible.
+- Acceptance adds a root-skin assertion plus the original pink Export check on all five non-Home workspaces; no merge until hosted browser and final-head verification pass.

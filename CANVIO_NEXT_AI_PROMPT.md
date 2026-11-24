@@ -326,3 +326,10 @@ Khi sửa module: sửa file standalone rồi chép y hệt vào lot (parity so 
 - Keep P150.12 scoped to actual visible Home, not merely a retained `.active` class. The non-Home export button must remain the original pink in all five workspaces.
 - CI must run `tests/p169/run-p169-tests.cjs` and `tests/p145/run-p169-browser.py`, P143 source parity, full HTML/inline JS syntax audit, and the existing P47–P70, P153, P159–P168 suites.
 - Keep limitations explicit: P169 is 2D SVG, P163 consistency is heuristic, P167 is white-box blocking (not a full scene graph), P168 WebM depends on MediaRecorder; no model inference/cloud sync or P70 release certification unless separately evidenced.
+
+
+## P150.13 handoff
+
+- Keep the Home-skin root token at `classic` whenever Home is not visibly active. Restore the locally stored selected skin only when `#page-home` is actually visible.
+- P150.13 Chromium must pass the root-skin fallback and pink Export checks in all five workspaces at desktop/mobile. Do not merge based on the P150.12 run (#782), which failed those five color assertions.
+- Other scene and character suites were green in #782: P167 browser, P168 browser, P169 7/7, and P160–P166 28/28.

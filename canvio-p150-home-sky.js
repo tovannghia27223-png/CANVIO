@@ -17,6 +17,11 @@ function syncHomeScope() {
     var cs = window.getComputedStyle(p), r = p.getBoundingClientRect();
     visible = !!(p.classList && p.classList.contains('active') && cs.display !== 'none' && cs.visibility !== 'hidden' && r.width > 0 && r.height > 0);
   }
+  /* Keep the selected skin token off the document root outside Home. Some legacy
+     toolbar controls share the Home subtree; page-only CSS remains matchable while
+     Home is display:none. Restore classic at root until the visible Home route returns. */
+  var skin = visible ? get() : 'classic';
+  if (root.getAttribute('data-home-skin') !== skin) root.setAttribute('data-home-skin', skin);
   if (visible) root.setAttribute('data-cv150-home-active', 'true');
   else root.removeAttribute('data-cv150-home-active');
   return visible;
@@ -424,5 +429,5 @@ function spot() {
 }
 function init() { css(); if (!build()) return false; art(); drag(); tech(); spot(); apply(); toggleOutside(); watchHomeScope(); return true; }
 var tries = 0; (function loop() { if (init() || ++tries > 40) return; setTimeout(loop, 250); })();
-window.CVHomeSkyP150 = { version: '150.12.0', get: get, set: set, init: init };
+window.CVHomeSkyP150 = { version: '150.13.0', get: get, set: set, init: init };
 })();

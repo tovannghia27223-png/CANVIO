@@ -108,14 +108,14 @@ jobs:
             echo "Using committed CANVIO candidate index."
           fi
 
-      - name: Integrate P150.12 visible-Home-only export button skin
+      - name: Integrate P150.13 Home skin root isolation
         shell: bash
         run: |
           set -euo pipefail
           node <<'NODE'
           const fs=require('node:fs');
           const file='index.html', source=fs.readFileSync('canvio-p150-home-sky.js','utf8').trim();
-          if(!source.includes("version: '150.12.0'"))throw new Error('P150.12 source version missing');
+          if(!source.includes("version: '150.13.0'"))throw new Error('P150.13 source version missing');
           const id='canvio-lot150h', open='<script id="'+id+'">';
           let html=fs.readFileSync(file,'utf8');
           const at=html.indexOf(open);
@@ -126,7 +126,7 @@ jobs:
           html=html.slice(0,at)+open+nl+source+nl+'</script>'+html.slice(end+'</script>'.length);
           if((html.match(/id="canvio-lot150h"/g)||[]).length!==1)throw new Error('P150 duplicate/missing lot');
           fs.writeFileSync(file,html,'utf8');
-          console.log('P150.12 visible-Home-only export skin synced into canonical index.html');
+          console.log('P150.13 Home skin root isolation synced into canonical index.html');
           NODE
 
       - name: Integrate P125.2 scroll storyboard editor
