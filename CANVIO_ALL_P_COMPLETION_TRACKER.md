@@ -380,3 +380,10 @@ PR #71 was closed as superseded by clean-main PR #73; the latter carries the cor
 - All P159–P166 standalone modules, tests, source-map registration and hosted workflow wiring are present on `main` as candidate implementation.
 - Latest inspected workflow #767: P160–P166 Node contract suite passed; Chromium 27/28 passed with zero page errors. Sole failure: P164 prompt assertion case mismatch.
 - Fix committed in this candidate: P164 prompt heading normalized to `Shot list`; browser assertion now case-insensitive. Status remains **Integrated candidate / hosted rerun pending**, not accepted. Manual real-asset, GLB, local-model, project round-trip, accessibility/device and P130 sync gates remain open.
+
+
+## P132.1 — Local PDF import to Pixel Atelier (candidate · 2026-11-25)
+
+| P | Status | Implemented scope | Remaining acceptance |
+|---|---|---|---|
+| P132.1 | Candidate on `feat/p132-pdf-import-mainline-v2` | Local PDF.js 6.5.438 vendor + Apache-2.0 notice/SHA manifest; one-page PDF→PNG handoff into existing Pixel Atelier; 30 MiB/500-page/4096px/16MP bounds; Node/Chromium tests; P143 51-pair registration and hosted CI wiring. | Exact-head current-mainline hosted rerun, full regressions, password and real customer PDFs, multi-page batch, accessibility/device review. Prior #810 passed 65/65 on its earlier candidate SHA; that result does not certify this rebased branch. |
