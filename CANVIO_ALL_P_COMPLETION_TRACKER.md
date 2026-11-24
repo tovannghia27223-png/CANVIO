@@ -390,3 +390,10 @@ PR #71 was closed as superseded by clean-main PR #73; the latter carries the cor
 | P168.1 | Merged and hosted-CI verified | PR #91; same merge and successful workflow | 2D image motion/text overlay, not multi-track editing or AI video inference; manual media review remains |
 
 The successful workflow also completed canonical index restoration, P143 parity/inventory, P47–P70 automated regression, source contracts and GLB/P85/ONNX/worker browser acceptance. This does not certify the 14 P70 manual real-world gates; keep `releaseCertified:false` until each gate has evidence.
+
+
+## P132.1 — Local PDF import to Pixel Atelier (candidate · 2026-11-25)
+
+| P | Status | Implemented scope | Remaining acceptance |
+|---|---|---|---|
+| P132.1 | Candidate on `feat/p132-pdf-import-mainline-v3` | Local PDF.js 6.5.438 vendor, Apache-2.0 notice/SHA manifest, one-page PDF→PNG handoff to existing Pixel owner, bounded file/page/pixel budgets, Node + Chromium suites, P143 51-pair parity and hosted workflow wiring. | Exact-head current-mainline hosted run/full regression; password and real customer PDFs, multi-page batch, accessibility/device review. Prior #813 passed 65/65 on old branch SHA only. |
