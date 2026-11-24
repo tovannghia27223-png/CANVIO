@@ -26,6 +26,7 @@ with sync_playwright() as p:
     pg.evaluate("""()=>{const c=document.createElement('canvas');c.width=640;c.height=400;const x=c.getContext('2d');x.fillStyle='#00ff00';x.fillRect(0,0,640,400);const previewDataUrl=c.toDataURL('image/png');CV.engines=CV.engines||{};CV.engines.design={snapshotState:()=>({previewDataUrl})}}""")
     pg.click('#cv168-designer-source'); pg.wait_for_function("document.querySelector('#cv168-msg').textContent.includes('Designer')",timeout=10000)
     checks['designer_direct_handoff']=pg.evaluate("CV.assets.list().length===%d"%beforeDirect)
+    checks['direct_source_clears_picker']=pg.evaluate("document.querySelector('#cv168-asset').value===''" )
     pg.select_option('#cv168-preset','pan-right'); pg.fill('#cv168-sec','1'); pg.select_option('#cv168-fps','10'); pg.wait_for_timeout(300)
     checks['designer_source_survives_preset']=pg.evaluate("(()=>{const d=document.querySelector('#cv168-view').getContext('2d').getImageData(32,32,1,1).data;return d[1]>230&&d[0]<30&&d[2]<30})()")
     nDirect=pg.evaluate("CV.assets.list().length"); pg.click('#cv168-gif'); pg.wait_for_function("CV.assets.list().length===%d"%(nDirect+1),timeout=60000)
