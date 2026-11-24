@@ -1192,3 +1192,8 @@ Hosted verification after the ffmpeg repair is complete:
 ## P151 — Sửa lỗi hiển thị trang chủ các skin & bảo vệ độ tương phản (2026-11-23)
 - Skin Thời trang/Bàn thiết kế: thanh trên cùng sáng nên nút phụ (do P148 làm chữ sáng) bị vô hình → chữ tối khi skin sáng. Phông Bodoni/Didot trên Windows thiếu glyph tiếng Việt (dấu tách rời "Thiê´t kê´") → dùng Playfair/Cambria/Georgia. Icon thẻ không gian làm việc bị trắng trên nền trắng (do emoji đơn sắc) → icon màu đậm.
 - `canvio-p151-contrast-guard.js` (lot `canvio-lot151g`): tự đổi màu chữ/icon có tương phản < 2,4 (icon < 3) khi nền xác định được; hoàn tác khi đổi giao diện/skin; quét ~15–35 ms/trang. Quét toàn bộ trang × skin: lỗi chữ/icon vô hình từ 52 xuống ~15 (chủ yếu trạng thái chuyển động của nút đang vô hiệu).
+
+## P152 — Sanitizer srcdoc, drawer z-index, quét nút
+- `clean()` giữ `srcdoc` cho iframe sandbox (không allow-same-origin/top-navigation) → Kho thành phần hiện lại preview.
+- `#cv-pn.on{z-index:900}` → drawer "Mẫu" Poster không bị thanh nổi đè.
+- Quét click toàn bộ ~48 trang: 0 nút chết (trừ "Hoàn tác" khi chưa có thao tác).

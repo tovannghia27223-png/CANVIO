@@ -37,3 +37,5 @@ body :is(.btn,button):is(:has(>div),:has(>small),:has(>.tiny),:has(>b+.tiny)):no
 html:is([data-home-skin=fashion],[data-home-skin=sky]):has(#page-home.active) body :is(.top .btn:not(.btn-primary),.top #ws-cmdbtn,.top #ws-obbtn,.top .sh-tb,.top select,.top button:not(#ws-export):not(.menuBtn):not(.railBtn)){background:rgba(21,21,28,.04)!important;color:#15151c!important;border:1px solid rgba(21,21,28,.22)!important;box-shadow:none!important}
 html[data-home-skin=fashion] :is(#page-home :is(#cvHero,#ws-jobs,#l43-recent,#cv-hub110,#cvux-home-launch,#cvhs-workflows,#ws-obc,#cvux-onboarding) :is(h1,h2,h3,h4),#page-home .fa-copy h2,#page-home .fa-word,#page-home #ws-cards h3,#page-home #ws-cards .ws-grid>* b,header.top .crumb,header.top .crumb *,header.top b#crumb){font-family:"Playfair Display","Cambria","Georgia","Times New Roman",serif!important}
 html[data-home-skin=fashion] #page-home #ws-cards .ws-grid>* .ws-ic{color:#15151c!important}
+/* P152 · Ngăn kéo bên trái (Mẫu/Thành phần/...) nằm trên các thanh sticky của editor. */
+#cv-pn.on,.cv-pn.on{z-index:900!important}
