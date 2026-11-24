@@ -31,14 +31,8 @@ const suites=[
  }
  const workflow=window.CVAiWorkflowP165.create('End-to-end local workflow');
  assert(workflow.ok,'P165 workflow creation');
- const mood=await window.CVInspirationCollectionsP160.sendToStudio(window.CVInspirationCollectionsP160.read()[0].id);
- report.checks['P160.P128MoodboardHandoff']=mood.ok&&mood.detail.prompt.includes('[MOODBOARD]');
- const zipPackage=await window.CVInspirationCollectionsP160.exportZip();
- report.checks['P160.metadataZipExport']=!!zipPackage.blob&&zipPackage.bytes>0;
- const run=await window.CVAiWorkflowP165.run(workflow.workflow.id,'Brief chiến dịch HR: giới thiệu nhân tài với visual màu xanh, góc máy wide và CTA đăng ký');
- const revisionWorkflow=window.CVAiWorkflowP165.create('Bounded revision test',['scriptwriter','evaluator','reviser']);
- const revisionRun=await window.CVAiWorkflowP165.run(revisionWorkflow.workflow.id,'x');
- report.checks['P165.boundedRevisionCycle']=revisionRun.ok&&revisionRun.run.cycles===2&&revisionRun.run.log.filter(x=>x.role==='evaluator').length===2&&revisionRun.run.log.some(x=>x.role==='reviser');
+ const mood=await window.CVInspirationCollectionsP160.sendToStudio(window.CVInspirationCollectionsP160.read()[0].id);\n report.checks['P160.P128MoodboardHandoff']=mood.ok&&mood.detail.prompt.includes('[MOODBOARD]');\n const zipPackage=await window.CVInspirationCollectionsP160.exportZip();\n report.checks['P160.metadataZipExport']=!!zipPackage.blob&&zipPackage.bytes>0;\n const run=await window.CVAiWorkflowP165.run(workflow.workflow.id,'Brief chiến dịch HR: giới thiệu nhân tài với visual màu xanh, góc máy wide và CTA đăng ký');
+ const revisionWorkflow=window.CVAiWorkflowP165.create('Bounded revision test',['scriptwriter','evaluator','reviser']);\n const revisionRun=await window.CVAiWorkflowP165.run(revisionWorkflow.workflow.id,'x');\n report.checks['P165.boundedRevisionCycle']=revisionRun.ok&&revisionRun.run.cycles===2&&revisionRun.run.log.filter(x=>x.role==='evaluator').length===2&&revisionRun.run.log.some(x=>x.role==='reviser');
  report.checks['P165.localWorkflowRuns']=run.ok&&run.run.status==='completed'&&run.run.log.length>=3;
  report.checks['P165.explicitNoInferenceBoundary']=run.run.claim.includes('no model inference');
  report.checks['SharedCore.singleProjectDocumentOwner']=['inspirationCollections','spatialWorkspace','referenceCanvas','characterContinuity','aiWorkflows','websiteLanding'].every(k=>Object.prototype.hasOwnProperty.call(project.documents,k));
