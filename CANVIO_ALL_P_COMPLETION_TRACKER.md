@@ -380,3 +380,10 @@ PR #71 was closed as superseded by clean-main PR #73; the latter carries the cor
 - All P159–P166 standalone modules, tests, source-map registration and hosted workflow wiring are present on `main` as candidate implementation.
 - Latest inspected workflow #767: P160–P166 Node contract suite passed; Chromium 27/28 passed with zero page errors. Sole failure: P164 prompt assertion case mismatch.
 - Fix committed in this candidate: P164 prompt heading normalized to `Shot list`; browser assertion now case-insensitive. Status remains **Integrated candidate / hosted rerun pending**, not accepted. Manual real-asset, GLB, local-model, project round-trip, accessibility/device and P130 sync gates remain open.
+
+
+## P163.1.1 — Visible field labels (candidate · 2026-11-25)
+
+| P | Status | Implemented scope | Remaining acceptance |
+|---|---|---|---|
+| P163.1.1 | Candidate on `feat/p163-visible-field-labels-mainline-v2` | Seven P163 profile/reference/scene controls now have visible associated labels; module patch version 163.1.1; existing hosted P169 Chromium suite asserts label association and visible layout. No project/data ownership or synchronization behavior changed. | Exact-head hosted CI/P143/full regressions; manual keyboard, screen-reader, 200% zoom, responsive and physical-device review. |
