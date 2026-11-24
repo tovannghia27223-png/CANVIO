@@ -72,6 +72,7 @@ def main():
         record('P74.1 bounded camera pose API applies yaw/pitch/FOV',abs(pose_api['actual']['yaw']-37)<0.2 and abs(pose_api['actual']['pitch']-18)<0.2 and abs(pose_api['actual']['fov']-64)<0.01,pose_api)
         p161id=page.evaluate("""async()=>{
           if(!window.CVSpatialWorkspaceP161)throw Error('P161 module missing');
+          if(!CVCreativeCore.active&&CVCreativeCore.create)CVCreativeCore.create({name:'P161 GLB camera pose acceptance'});
           const input=document.querySelector('#cv72-file'),file=input&&input.files&&input.files[0];
           if(!file)throw Error('Hosted GLB fixture is not present in P72 file input');
           await CV.assets.addBlob(file);
