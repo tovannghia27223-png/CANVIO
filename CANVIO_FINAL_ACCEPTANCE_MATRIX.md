@@ -15,6 +15,11 @@
 | P145.9/.10 Asset Search & Quality Gate | Read-only local search/filter and shared license/source/size/hash gate | Full live Asset Vault enumeration and hashing every uploaded binary require canonical provider |
 | P70 Stable release | Fourteen fail-closed manual gates | releaseCertified:false until every gate has reviewed production evidence |
 
+
+| P150.12 Home-only toolbar scope | Node/source parity + hosted Chromium on Home skins and all five non-Home workspaces | Pass only when the pink Export button is preserved on Design, Site, Media, Project and AI at desktop/mobile and pageErrors is empty. |
+| P159.1/P167/P168 scene-production dock | P143 parity + P167/P168 Node suites + Chromium scene-blocking and image-motion tests | Real camera/GLB/project, browser MediaRecorder, real media and device review remain manual. |
+| P169 Character Studio | Node + Chromium eight-control SVG preview and P163 Shared Core feature round-trip | 2D vector reference only; not 3D rigging/sculpting, face recognition, generative imagery or professional visual acceptance. |
+
 ## Required manual gates
 1. HTTPS and supported browser matrix on deployed origin.
 2. Native IndexedDB persistence, restore and quota behavior.

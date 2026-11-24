@@ -318,3 +318,11 @@ Khi sửa module: sửa file standalone rồi chép y hệt vào lot (parity so 
 - Changed `.github/workflows/canvio-candidate-runtime.yml` to embed the standalone P150 source into canonical `canvio-lot150h` before browser acceptance.
 - Root cause is supported by run #769/#770 logs: five failures, one per non-Home route, all checking original pink export button; surrounding route-isolation checks passed.
 - Next: open PR to main, wait for full hosted runtime + Pages workflow, inspect logs and verify all P150 desktop/mobile checks, parity, no page errors, and no warnings. If any check fails, fix the cause and rerun. Do not merge or report complete on a red/in-progress run. Preserve all fourteen P70 real-world gates as OPEN.
+
+
+## P169 — Character Studio integration handoff
+
+- Embed `canvio-p169-character-studio.js` as `canvio-lot169c` after P163 is available; preserve P163 as the sole character profile owner. P169 writes `visual:*` fields using `CVCharacterContinuityP163.upsert`.
+- Keep P150.12 scoped to actual visible Home, not merely a retained `.active` class. The non-Home export button must remain the original pink in all five workspaces.
+- CI must run `tests/p169/run-p169-tests.cjs` and `tests/p145/run-p169-browser.py`, P143 source parity, full HTML/inline JS syntax audit, and the existing P47–P70, P153, P159–P168 suites.
+- Keep limitations explicit: P169 is 2D SVG, P163 consistency is heuristic, P167 is white-box blocking (not a full scene graph), P168 WebM depends on MediaRecorder; no model inference/cloud sync or P70 release certification unless separately evidenced.

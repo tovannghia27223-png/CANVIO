@@ -1334,3 +1334,12 @@ Việc cần người dùng: duyệt thứ tự; cho biết có muốn "kênh ch
 - `canvio-p150-home-sky.js` version: 150.11.0. The candidate CI workflow now embeds this exact standalone source into `canvio-lot150h` before the browser suite.
 - Verification pending on branch `fix/p150-workspace-export-scope`: desktop/mobile P150 browser test (including all five non-Home workspaces), full candidate CI, Pages build/deploy, source/embedded parity and zero browser page errors. Do not mark PASS before the new run completes.
 - Evidence from failed run #770 before the fix: P167 unit suite 30 assertions PASS; P168 unit suite 17 assertions PASS; P159 integration 13/13 PASS; P160–P166 Chromium integration 28/28 PASS. The run then failed five repeated P150 assertions because the export button was not pink outside Home. This evidence is bounded to that commit and must be re-run after the fix.
+
+
+## P159.1–P169 — Canonical integration completion candidate · 2026-11-24
+
+- The hosted build synchronizes P159.1 dock, P167 white-box blocking, P168 image-to-motion and P169 Character Studio into unique canonical inline lots. P167/P168 already have Node and Chromium acceptance; P169 adds a dedicated 8-control visual-profile round-trip suite. P143 tracks P150 and P169 alongside existing P159u/P167/P168 source pairs.
+- P167: white-box scene and camera controls are interactive and project-backed; object position/size/yaw metadata and camera position/look/FOV/duration are bounded. Full 3D editor-grade transform gizmos, simultaneous multi-camera director and a full Three.js scene graph are not claimed.
+- P168: eight image-to-motion presets with GIF/WebM handoff and P165 workflow JSON import/export. WebM depends on browser MediaRecorder support; AI generation remains an explicit handoff, not an included video inference model.
+- P169: 2D vector Character Studio with eight appearance fields, preview, and save to P163 profile. It does not edit a rigged 3D character or infer identity from a face.
+- P150.12 Home-only toolbar visibility fix is pending hosted desktop/mobile browser verification. Do not merge/release until the P150 five-workspace pink Export regression is green and the complete candidate workflow passes.

@@ -4219,3 +4219,18 @@ P160–P166 module APIs currently report versions P160.2.0, P161.1.0, P162.2.0, 
 - CI now replaces the canonical `canvio-lot150h` inline lot from the standalone source before browser acceptance, preventing source/embedded drift.
 - Required verification: `tests/p145/run-p150-browser.py` on desktop and mobile; its five non-Home workspace assertions must confirm original pink `rgb(255, 61, 154)`. Also run source/lot parity, full hosted Chromium suite, and zero-pageerror checks. Do not call this fixed until the new PR workflow passes.
 - Preserve all P150 prior history and keep the fourteen P70 real-world acceptance gates OPEN.
+
+
+## P169 — Character Studio (candidate · 2026-11-24)
+
+- Standalone source: `canvio-p169-character-studio.js`; canonical lot: `canvio-lot169c`; API: `window.CVCharacterStudioP169`, version 169.0.0. The module mounts inside the existing P163 character profile card and writes through `CVCharacterContinuityP163.upsert` into the current Shared Core profile.
+- Eight bounded visual controls: face shape, skin tone, hairstyle, hair color, identifying mark (including left/right scar, freckles and mole), outfit type/color and accessory. A vector SVG preview updates locally as controls change. Saving appends `visual:*` features/checklist entries to the selected P163 profile; reset only resets the current form until saved.
+- This is an editable 2D vector character reference, not a 3D mesh/sculptor, face recognition, identity inference, image generation model or rigged character. Images/references remain user-selected through P163/Asset Library.
+- Hosted candidate integration synchronizes P159.1 dock and P167/P168 source lots as well as P169, checks Node syntax, runs the P169 Node suite, and adds same-origin Chromium verification for controls, SVG preview, P163 profile round-trip, reset isolation and mobile overflow. P143 now pairs P150 and P169 sources with their canonical inline lots.
+- Remaining manual work: visual review with real character briefs/reference photos, accessibility review of form labels/keyboard operation, and verification in a real multi-scene project. No cloud/multi-device sync claim is added.
+
+## P150.12 — Home-only toolbar scope correction (candidate · 2026-11-24)
+
+- P150.12 replaces the brittle `:has(#page-home.active)` toolbar gate with an explicit `data-cv150-home-active=true` state computed from actual visibility of the Home page. A MutationObserver tracks route/class/style/visibility changes and removes the Home-only state when the Home page is hidden.
+- The sky/fashion/tech header skins now apply only while Home is actually visible; the original pink Export button styling is preserved in Design, Site, Media, Project and AI workspaces.
+- Browser regression checks assert the state flag is off and the original pink background remains in all five non-Home workspaces. Hosted run #777 did not pass this assertion; P150.12 is awaiting the corrected rerun and must not be marked accepted until the new hosted browser suite is green.

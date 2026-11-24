@@ -622,3 +622,15 @@ Mainline workflow #551 passed 53/53; Pages #275 passed build/deploy. P143 parity
 - Updated candidate CI to synchronize the standalone P150.11 source into `index.html`'s `canvio-lot150h` before the existing Chromium test.
 - Prior-run context only (not a post-fix PASS): P167 Node 30/30, P168 Node 17/17, P159 integration 13/13, P160–P166 browser 28/28. New candidate CI remains the acceptance authority.
 - Status: FIX COMMITTED TO REVIEW BRANCH; browser re-test and full CI pending. No claim of zero warnings/failures until the run is green.
+
+
+## P169 Character Studio QA (candidate)
+
+- Node: `tests/p169/run-p169-tests.cjs` covers bounded fields, SVG output, profile-feature round-trip and field count.
+- Chromium: `tests/p145/run-p169-browser.py` covers mounted panel, eight controls, SVG preview update, save into selected P163 Shared Core character profile, read-back of all eight features/checklist items, visual-only reset, mobile overflow and zero page errors.
+- This is functional browser evidence, not professional character-art review, real user photo validation, rigging/3D model editing or identity recognition.
+
+## P150.12 QA correction (candidate)
+
+- Run #777 passed build, syntax, P143 and P47–P70 suites but failed 5/5 checks asserting original Export button color in non-Home workspaces. Root cause: Home toolbar CSS was keyed to a page class that could remain present while Home was hidden.
+- P150.12 uses actual visible-Home state and route mutation observation. The following hosted workflow must pass all P150 desktop/mobile checks, including the five workspace export assertions, before acceptance.
