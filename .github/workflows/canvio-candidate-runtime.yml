@@ -168,6 +168,9 @@ jobs:
           if(at<0)throw new Error('Canonical body close missing');
           if(html.includes(open))throw new Error('P229.1 duplicate embedded module');
           html=html.slice(0,at)+open+String.fromCharCode(10)+source+String.fromCharCode(10)+'</script>'+String.fromCharCode(10)+html.slice(at);
+          const oldCount='noNewScriptTag:document.scripts.length===79';
+          if(!html.includes(oldCount))throw new Error('CV229 script-count contract not found');
+          html=html.replace(oldCount,'noNewScriptTag:document.scripts.length===80');
           if((html.match(/id="canvio-lot229-theme-isolation"/g)||[]).length!==1)throw new Error('P229.1 embed count mismatch');
           fs.writeFileSync(file,html,'utf8');
           console.log('P229.1 Spatial theme isolation embedded before body close');
