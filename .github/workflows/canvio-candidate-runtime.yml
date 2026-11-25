@@ -212,8 +212,9 @@ jobs:
           }
           const oldCount='noNewScriptTag:document.scripts.length===79';
           const newCount='noNewScriptTag:document.scripts.length===80';
+          const finalCount='noNewScriptTag:document.scripts.length===81';
           if(html.includes(oldCount))html=html.replace(oldCount,newCount);
-          else if(!html.includes(newCount))throw new Error('CV229 script-count contract missing or unexpected');
+          else if(!html.includes(newCount)&&!html.includes(finalCount))throw new Error('CV229/P170 script-count contract missing or unexpected');
           if((html.match(/id="canvio-lot229-theme-isolation"/g)||[]).length!==1)throw new Error('P229.2 embed count mismatch');
           fs.writeFileSync(file,html,'utf8');
           NODE
