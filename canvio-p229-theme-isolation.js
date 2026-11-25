@@ -16,7 +16,7 @@
     if (!style || style.tagName !== 'STYLE' || style.dataset.cv229ThemeScoped === '1') return false;
     var source = style.textContent || '';
     if (!source.includes('cv229-theme-')) return false;
-    var scoped = source.replace(/(?:html\\s+)?body\\.cv229-theme-(glass|midnight|aurora|cyber|graffiti|neonlight)/g, '.cv229-inspector.cv229-theme-$1');
+    var scoped = source.replace(/(?:html\s+)?body\.cv229-theme-(glass|midnight|aurora|cyber|graffiti|neonlight)/g, '.cv229-inspector.cv229-theme-$1');
     if (scoped !== source) style.textContent = scoped;
     style.dataset.cv229ThemeScoped = '1';
     return scoped !== source;
@@ -77,7 +77,7 @@
         inspectorThemeClasses: names.filter(function (name) { return root.classList.contains('cv229-theme-' + name); }),
         scopedStyleCount: document.querySelectorAll('style[data-cv229-theme-scoped="1"]').length,
         globalThemeSelectors: Array.from(document.querySelectorAll('style')).filter(function (style) {
-          return /(?:html\\s+)?body\\.cv229-theme-(?:glass|midnight|aurora|cyber|graffiti|neonlight)/.test(style.textContent || '');
+          return /(?:html\s+)?body\.cv229-theme-(?:glass|midnight|aurora|cyber|graffiti|neonlight)/.test(style.textContent || '');
         }).length
       };
     }
