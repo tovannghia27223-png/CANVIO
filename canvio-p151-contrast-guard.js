@@ -1,9 +1,9 @@
-/* P151 · Bảo vệ độ tương phản: tự sửa chữ/icon gần như vô hình (chữ tối trên nền tối, chữ sáng trên nền sáng) ở mọi giao diện và skin.
-   Chỉ đổi màu chữ khi tương phản < 2.4 và nền xác định được (không gradient/ảnh); hoàn tác khi đổi giao diện/skin. Không đụng canvas, svg, iframe, trình soạn thảo. */
+/* P151.1 · Contrast guard chỉ sửa văn bản nội dung workspace; không chiếm quyền màu của menu, nút điều khiển hay Spatial Inspector.
+   Chỉ đổi màu chữ khi tương phản < 2.4 và nền xác định được; hoàn tác khi đổi giao diện/skin. */
 (function () {
 'use strict';
 if (window.CVContrastGuardP151) return;
-var MIN = 2.4, TARGET_LIGHT = '#eef2fa', TARGET_DARK = '#10182a', SKIP = 'canvas,svg,iframe,script,style,#gjs,.gjs-editor,.konvajs-content,[id*=Stage],[id*=stage],[class*=preview],[class*=Preview],[data-cvg-skip]';
+var MIN = 2.4, TARGET_LIGHT = '#eef2fa', TARGET_DARK = '#10182a', SKIP = 'canvas,svg,iframe,script,style,button,a,input,select,textarea,[role=button],[role=menuitem],[data-route],[data-cv-studio-trigger],#cv-studio-menu,#cv229-inspector,#gjs,.gjs-editor,.konvajs-content,[id*=Stage],[id*=stage],[class*=preview],[class*=Preview],[data-cvg-skip]';
 function parse(c) { var m = c && c.match(/[\d.]+/g); return m && m.length >= 3 ? { r: +m[0], g: +m[1], b: +m[2], a: m.length > 3 ? +m[3] : 1 } : null; }
 function lum(c) { function f(v) { v /= 255; return v <= .03928 ? v / 12.92 : Math.pow((v + .055) / 1.055, 2.4); } return .2126 * f(c.r) + .7152 * f(c.g) + .0722 * f(c.b); }
 function over(f, b) { return { r: f.r * f.a + b.r * (1 - f.a), g: f.g * f.a + b.g * (1 - f.a), b: f.b * f.a + b.b * (1 - f.a), a: 1 }; }
@@ -17,12 +17,12 @@ function bgOf(el) {
   return base;
 }
 var changed = [], sig = '', lastPage = '';
-function signature() { var d = document.documentElement, b = document.body; return [d.getAttribute('data-theme'), d.getAttribute('data-skin'), d.getAttribute('data-home-skin'), b && b.className].join('|'); }
+function signature() { var d = document.documentElement, b = document.body; var i = document.getElementById('cv229-inspector'); return [d.getAttribute('data-theme'), d.getAttribute('data-skin'), d.getAttribute('data-home-skin'), b && b.className, i && i.className].join('|'); }
 function undo() { changed.forEach(function (it) { if (it.el.isConnected) { if (it.prev) it.el.style.setProperty('color', it.prev, it.prio); else it.el.style.removeProperty('color'); it.el.removeAttribute('data-cvg'); } }); changed = []; }
 function scan() {
   var s = signature(); if (s !== sig) { undo(); sig = s; }
   var pages = [].filter.call(document.querySelectorAll('.page'), function (p) { return p.offsetParent !== null; });
-  var roots = pages.concat([].slice.call(document.querySelectorAll('header.top,.side,.cv229-inspector.open'))), fixed = 0, seen = 0;
+  var roots = pages, fixed = 0, seen = 0;
   roots.forEach(function (root) {
     root.querySelectorAll('*').forEach(function (el) {
       if (seen > 40000 || el.hasAttribute('data-cvg') || (el.closest && el.closest(SKIP))) return; seen++;
@@ -42,7 +42,7 @@ function scan() {
   return fixed;
 }
 var timer = 0; function later() { clearTimeout(timer); timer = setTimeout(function () { try { scan(); } catch (e) {} }, 700); }
-window.CVContrastGuardP151 = { version: '151.0.0', scan: scan, undo: undo, count: function () { return changed.length; } };
+window.CVContrastGuardP151 = { version: '151.1.0', scan: scan, undo: undo, count: function () { return changed.length; } };
 if (typeof document === 'undefined' || !document.body) return;
 function start() { later(); if (window.MutationObserver) { new MutationObserver(later).observe(document.body, { childList: true, subtree: true }); new MutationObserver(later).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme', 'data-skin', 'data-home-skin', 'class'] }); new MutationObserver(later).observe(document.body, { attributes: true, attributeFilter: ['class'] }); } window.addEventListener('hashchange', later); setInterval(function () { var pg = [].filter.call(document.querySelectorAll('.page'), function (p) { return p.offsetParent !== null; }).map(function (p) { return p.id; }).join(','); if (signature() !== sig || pg !== lastPage) { lastPage = pg; later(); } }, 1200); }
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true }); else start();
