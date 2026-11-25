@@ -88,7 +88,6 @@ with sync_playwright() as p:
         state=pg.evaluate("""()=>{const e=document.getElementById('ws-export'),s=getComputedStyle(e);return {home:document.documentElement.getAttribute('data-home-skin'),active:document.documentElement.getAttribute('data-cv150-home-active'),skin:document.documentElement.getAttribute('data-skin'),bodyTheme:[...document.body.classList].filter(x=>x.indexOf('cv229-theme-')===0),spatialTheme:[...document.getElementById('cv229-inspector').classList].filter(x=>x.indexOf('cv229-theme-')===0),background:s.backgroundColor,backgroundImage:s.backgroundImage,color:s.color,border:s.borderColor}}""")
         if state['background']!=baseline: print('P150_EXPORT_DIAGNOSTIC '+sp+' '+str(state))
         ck('không gian '+sp+' giữ màu Xuất gốc',state['background']==baseline)
-    pg.close()
 
     # P229 theme ownership: Spatial palette must not recolor shell navigation or other workspace controls.
     pg.evaluate("CV229.setTheme('graffiti');CVWS.open('design')");pg.wait_for_timeout(500)
