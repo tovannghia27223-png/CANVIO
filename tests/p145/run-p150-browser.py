@@ -74,20 +74,20 @@ with sync_playwright() as p:
     # Establish the existing, intended baseline through the owning theme APIs.
     # Merely writing localStorage does not prove the runtime has applied the skin.
     pg.evaluate("CVLot47.set('plain');CV229.setTheme('graffiti')")
-    pg.wait_for_function("""!document.documentElement.hasAttribute('data-skin')&&document.getElementById('cv229-inspector').classList.contains('cv229-theme-graffiti')&&!document.body.classList.contains('cv229-theme-graffiti')""",timeout=10000)
+    pg.wait_for_function("""window.CV229ThemeIsolationP229&&!document.documentElement.hasAttribute('data-skin')&&document.getElementById('cv229-inspector').classList.contains('cv229-theme-graffiti')&&!document.body.classList.contains('cv229-theme-graffiti')""",timeout=30000)
     # P150 tech intentionally changes the toolbar while Home is active.
-# Capture the workspace's own Export baseline; Spatial palette must not set it.
+    # Capture the workspace's own Export baseline; Spatial palette must not set it.
     pg.evaluate("CVWS.open('design')");pg.wait_for_timeout(900)
     baseline=pg.evaluate('getComputedStyle(document.getElementById("ws-export")).backgroundColor')
-ck('theme fixture captures a real workspace Export baseline',baseline not in ('rgba(0, 0, 0, 0)','transparent'))
+    ck('theme fixture captures a real workspace Export baseline',baseline not in ('rgba(0, 0, 0, 0)','transparent'))
     for sp in ['design','site','media','proj','ai']:
         pg.evaluate("CVWS.open('%s')"%sp);pg.wait_for_timeout(900)
         ck('không gian '+sp+' không lẫn trang Tổng quan',pg.evaluate('document.getElementById("page-home").offsetHeight')==0 and not pg.is_visible('#cv150-skins'))
         ck('không gian '+sp+' tắt Home-only toolbar scope',pg.evaluate('document.documentElement.getAttribute("data-cv150-home-active")!=="true"'))
         ck('không gian '+sp+' đưa skin gốc về classic ở root',pg.evaluate('document.documentElement.getAttribute("data-home-skin")==="classic"'))
         state=pg.evaluate("""()=>{const e=document.getElementById('ws-export'),s=getComputedStyle(e);return {home:document.documentElement.getAttribute('data-home-skin'),active:document.documentElement.getAttribute('data-cv150-home-active'),skin:document.documentElement.getAttribute('data-skin'),bodyTheme:[...document.body.classList].filter(x=>x.indexOf('cv229-theme-')===0),spatialTheme:[...document.getElementById('cv229-inspector').classList].filter(x=>x.indexOf('cv229-theme-')===0),background:s.backgroundColor,backgroundImage:s.backgroundImage,color:s.color,border:s.borderColor}}""")
-if state['background']!=baseline: print('P150_EXPORT_DIAGNOSTIC '+sp+' '+str(state))
-ck('không gian '+sp+' giữ màu Xuất gốc',state['background']==baseline)
+        if state['background']!=baseline: print('P150_EXPORT_DIAGNOSTIC '+sp+' '+str(state))
+        ck('không gian '+sp+' giữ màu Xuất gốc',state['background']==baseline)
     pg.close()
 
     # P229 theme ownership: Spatial palette must not recolor shell navigation or other workspace controls.
