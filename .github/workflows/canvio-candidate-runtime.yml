@@ -154,6 +154,25 @@ jobs:
           console.log('P151.1 contrast guard scope synced into canonical index.html');
           NODE
 
+      - name: Integrate P229.1 Spatial theme isolation
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs=require('node:fs');
+          const file='index.html',source=fs.readFileSync('canvio-p229-theme-isolation.js','utf8').trim();
+          const id='canvio-lot229-theme-isolation',open='<script id="'+id+'">';
+          if(!source.includes("version: '229.1.0'"))throw new Error('P229.1 source version missing');
+          let html=fs.readFileSync(file,'utf8');
+          const close='</body>',at=html.lastIndexOf(close);
+          if(at<0)throw new Error('Canonical body close missing');
+          if(html.includes(open))throw new Error('P229.1 duplicate embedded module');
+          html=html.slice(0,at)+open+'\\n'+source+'\\n</script>\\n'+html.slice(at);
+          if((html.match(/id="canvio-lot229-theme-isolation"/g)||[]).length!==1)throw new Error('P229.1 embed count mismatch');
+          fs.writeFileSync(file,html,'utf8');
+          console.log('P229.1 Spatial theme isolation embedded before body close');
+          NODE
+
       - name: Integrate P125.2 scroll storyboard editor
         shell: bash
         run: |
