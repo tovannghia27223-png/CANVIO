@@ -1,6 +1,11 @@
-import json, os, shutil
+import threading, http.server, socketserver, functools, json, os, shutil
 from playwright.sync_api import sync_playwright
 ROOT=os.path.abspath(os.path.join(os.path.dirname(__file__),'..','..'))
+class Quiet(http.server.SimpleHTTPRequestHandler):
+    def log_message(self,*a): pass
+server=socketserver.ThreadingTCPServer(('127.0.0.1',0),functools.partial(Quiet,directory=ROOT));server.daemon_threads=True
+threading.Thread(target=server.serve_forever,daemon=True).start()
+url='http://127.0.0.1:%d/index.html'%server.server_address[1]
 checks=[]; errors=[]
 def ck(name,ok):
     checks.append((name,bool(ok))); print(('PASS ' if ok else 'FAIL ')+name)
@@ -8,10 +13,8 @@ with sync_playwright() as p:
     browser=p.chromium.launch(executable_path=shutil.which('google-chrome') or shutil.which('chromium'),headless=True,args=['--no-sandbox','--disable-gpu'])
     page=browser.new_page(viewport={'width':1440,'height':900})
     page.on('pageerror',lambda e:errors.append(str(e)))
-    html=open(os.path.join(ROOT,'index.html'),encoding='utf-8').read()
-    shim="<script>try{Object.defineProperty(window,'localStorage',{value:{getItem:()=>null,setItem:()=>{},removeItem:()=>{},clear:()=>{},key:()=>null,get length(){return 0}},configurable:true});Object.defineProperty(window,'sessionStorage',{value:{getItem:()=>null,setItem:()=>{},removeItem:()=>{},clear:()=>{},key:()=>null,get length(){return 0}},configurable:true});}catch(e){}</script>"
-    html=html.replace('<head>','<head>'+shim,1)
-    page.set_content(html,wait_until='domcontentloaded',timeout=120000)
+    page.add_init_script("try{Object.defineProperty(window,'localStorage',{value:{getItem:()=>null,setItem:()=>{},removeItem:()=>{},clear:()=>{},key:()=>null,get length(){return 0}},configurable:true});Object.defineProperty(window,'sessionStorage',{value:{getItem:()=>null,setItem:()=>{},removeItem:()=>{},clear:()=>{},key:()=>null,get length(){return 0}},configurable:true});}catch(e){}")
+    page.goto(url,wait_until='domcontentloaded',timeout=120000)
     page.wait_for_function("!!window.CVEditorShellP231 && !!window.CVPosterShellP232 && !!document.querySelector('#page-poster')",timeout=90000)
     page.evaluate("CV.go('poster')")
     page.wait_for_function("!!document.querySelector('#cv231-shell-poster') && CVEditorShellP231.state('poster').enabled",timeout=30000)
@@ -57,6 +60,7 @@ with sync_playwright() as p:
     ck('No uncaught JavaScript page errors',len(errors)==0)
     if errors: print('PAGE_ERRORS '+json.dumps(errors,ensure_ascii=False))
     browser.close()
+    server.shutdown();server.server_close()
 failed=[n for n,v in checks if not v]
 print('%d/%d P231/P232 browser assertions passed'%(len(checks)-len(failed),len(checks)))
 if failed: raise SystemExit('Failures: '+', '.join(failed))
