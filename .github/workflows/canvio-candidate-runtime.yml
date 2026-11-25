@@ -108,6 +108,12 @@ jobs:
             echo "Using committed CANVIO candidate index."
           fi
 
+      - name: Synchronize P102 background removal into canonical index
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/sync-p102-background-removal.cjs
+
       - name: Integrate P150.13 Home skin root isolation
         shell: bash
         run: |
