@@ -4377,3 +4377,10 @@ P160–P166 module APIs currently report versions P160.2.0, P161.1.0, P162.2.0, 
 - `.github/workflows/canvio-candidate-runtime.yml` contains the canonical injection step: read `canvio-p230-unified-accent.js`, replace/create exactly one `<script id="canvio-lot230">` in `index.html`, then run `tests/p145/run-p230-tests.cjs` and `tests/p145/run-p230-browser.py`.
 - At this handoff the committed `CANVIO_MANIFEST.json` still does not list `canvio-p230-unified-accent.js` among the indexed delivery files. Therefore the generated canonical index/manifest must be rebuilt by a fresh push-triggered hosted workflow before claiming the P230 embed is complete. Confirm the resulting manifest includes the source and updated index SHA, and require the exact-main hosted Node/Chromium checks to pass.
 - Preserve six P229 themes and semantic success/error/warning colors. Keep the release-certification boundary unchanged; this P230 color acceptance does not close P70's fourteen manual gates.
+
+
+## P230 — canonical main rebuild triggered (2026-11-25)
+
+- Verified that `main/index.html` still lacked `canvio-lot230` immediately before this entry; the oversized direct contents write did not change the index blob. No successful index write is claimed from that attempt.
+- The existing `.github/workflows/canvio-candidate-runtime.yml` push path is the canonical integration mechanism: it injects `canvio-p230-unified-accent.js` into exactly one `canvio-lot230` script, runs `tests/p145/run-p230-tests.cjs` and `tests/p145/run-p230-browser.py`, refreshes `CANVIO_MANIFEST.json` from the completed tree, then commits the generated index and manifest to the pushed branch when the hosted job succeeds.
+- This documentation commit is intended to trigger that mainline workflow. Acceptance remains **pending** until the resulting main-branch generated commit is present and the matching hosted run is inspected. Keep `releaseCertified:false` and all fourteen P70 manual gates open.
