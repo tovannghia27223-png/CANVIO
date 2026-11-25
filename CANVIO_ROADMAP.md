@@ -1459,3 +1459,14 @@ P167.1 and P168.1 are therefore mainline-integrated and hosted-CI verified, with
 
 - Run #845 did not confirm automatic panel mount after direct CV.go route navigation. The next hosted smoke records the exact route/API/panel/control/error state and checks document order (after page heading, before Image Studio prompt builder) rather than immediate-sibling adjacency.
 - Hold merge until this run proves the automatic mount path.
+
+
+## P102/P150 — verified UI and visual regression correction (2026-11-25 · PR #104 / run #852)
+
+- P102 discoverability accepted: the module and worker were present before this change; the Image Studio page has no .engine-toolbar, so the old mount fallback appended the panel after the prompt builder/queue. The mount now inserts directly after the Image Studio heading (with a first-child fallback). Existing Apache-2.0 ORMBG model, local P85 Transformers.js/ONNX worker and Asset Library owner are unchanged.
+- Run #852 accepted P102 UI availability at 20/20: canonical CV.go('imageStudio'), visible panel, correct document order, and file/run/download controls. The real ORMBG inference remains a separate opt-in acceptance.
+- P150 accepted: run #852 browser test 86/86 desktop/mobile. The five non-Home workspaces retain their original pink Export styling; the P47 Holo theme remains independently preserved. The Tech "Dựng ngay" test now verifies the transferred prompt value and route acknowledgement rather than an always-true assertion.
+- Hosted runtime: 20/20, no page errors or console errors; zero invalid WASM MIME responses. The complete hosted workflow passed 66/66 and regenerated the candidate manifest. PR branch source commit tested: 83afb13b81a2fa035a828d0f61df41800020b6ed; generated candidate commit: 827eed312c226e0932df8377563b785a35227aa7.
+- Design-system rule: retain the 14 px P233 shell baseline and P231 36 px standard / 29 px small / 43 px large button hierarchy (compact/mobile 34/28 px). Color and typography variants are role- or editor-scoped, not a defect simply because a specialized tool uses a different accent. System font fallbacks are not guaranteed pixel-identical across operating systems.
+- Image inventory: 25-item icon catalog and eight P145.8 starter SVG illustrations exist; there is one standalone image file in the repo manifest, with additional inline/generated SVG and user Asset Library imagery. No broad built-in stock-photo catalogue is claimed. Browser-local user assets cannot be inventoried from GitHub.
+- Limitations: P102/P105/P80 model inference was skipped (full_model_acceptance=true not requested); real user-photo quality, physical GPU, accessibility/physical-device acceptance, two-device cloud sync and the fourteen P70 manual gates remain open.
