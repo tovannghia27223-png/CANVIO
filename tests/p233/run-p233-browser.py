@@ -34,7 +34,7 @@ with sync_playwright() as p:
       pageActive:document.querySelector('#page-videoEngine').classList.contains('active')
     })""")
     ck('Legacy layout restores the original video preview DOM',restored['canvasBack'])
-    ck('Legacy layout restores the External editor card',!!document.querySelector('#page-videoEngine .grid.g2 a[href^="https://reframe-os.netlify.app/"]'))
+    ck('Legacy layout restores the External editor card',page.locator('#page-videoEngine .grid.g2 a[href^="https://reframe-os.netlify.app/"]').count()==1)
     page.locator('#page-videoEngine [data-cv231-launch]').click()
     page.wait_for_function("!document.querySelector('#cv231-shell-videoEngine').hidden")
     page.set_viewport_size({'width':390,'height':844})
