@@ -730,3 +730,11 @@ Mainline workflow #551 passed 53/53; Pages #275 passed build/deploy. P143 parity
 - P163.1.1/P169 Chromium confirms visible profile labels, eight labelled controls, preview/save, Shared Core round-trip and mobile no-overflow.
 - P166.2/P160–P166 Chromium passed 32/32: actual GrapesJS root insertion, P131 sanitization, scoped CSS base/mobile rule, Shared Core metadata and canonical Website Engine save. Lazy readiness is bounded; a save failure is surfaced as unsaved.
 - P143 parity, full HTML/inline-script audit, P47–P70 regression and the integrated Node/P107 ZIP stage passed. P70 remains 14/14 manual gates pending, zero passed; no stable-release or physical-GPU claim.
+
+
+## P102 Image Studio visibility regression (2026-11-25)
+
+- Confirmed P102 module/worker and canonical inline source are present on main; the problem was discoverability, not removal: Image Studio has no .engine-toolbar, so the previous mount fallback appended the panel to the end of the page after the prompt queue.
+- Corrected mount fallback to place the panel directly after .head, before the prompt builder and queue. Existing Asset Library integration and same-origin worker/runtime paths are unchanged.
+- Added a Node source-contract assertion and a normal hosted Chromium UI smoke for visible panel + file/run/download controls. The expensive ORMBG inference remains an opt-in check and is not inferred from panel presence.
+- Pending exact-head workflow result. P150.13 cross-workspace Export color checks also remain subject to fresh hosted-browser acceptance; do not call color consistency fully certified until that run passes.
