@@ -94,12 +94,20 @@ with sync_playwright() as p:
       const c=['vtKFCurveX1','vtKFCurveY1','vtKFCurveX2','vtKFCurveY2'].map(id=>Number(document.getElementById(id).value));
       return v==='custom'&&c.every((x,i)=>Math.abs(x-[.1,.2,.3,.4][i])<.001)
     }""")
-    page.evaluate("CV.engines.video.apply()")
+    custom_motion_before_apply=page.evaluate("""()=>{
+      const get=id=>document.getElementById(id),s=CV.engines.video._state();
+      return {selected:s&&s.selected,easing:get('vtKFEasing')&&get('vtKFEasing').value,
+        curve:['vtKFCurveX1','vtKFCurveY1','vtKFCurveX2','vtKFCurveY2'].map(id=>get(id)?Number(get(id).value):null),
+        required:['vtName','vtStart','vtLen','vtTrack'].map(id=>({id,present:!!get(id),value:get(id)&&get(id).value}))};
+    }""")
+    custom_motion_apply_result=page.evaluate("CV.engines.video.apply()")
     custom_motion_debug=page.evaluate("""(id)=>{
       const c=CV.engines.video._state().clips.find(x=>x.id===id);
       const m=c&&c.motion;
       return {
         clipFound:!!c,
+        applyResult:custom_motion_apply_result,
+        beforeApply:custom_motion_before_apply,
         motionKeys:m?Object.keys(m):[],
         topLevelBezier:m&&Array.isArray(m.bezier)?m.bezier.slice():null,
         easing:m&&m.easing||null,
