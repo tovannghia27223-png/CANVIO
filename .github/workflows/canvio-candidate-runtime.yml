@@ -164,16 +164,26 @@ jobs:
           const id='canvio-lot229-theme-isolation',open='<script id="'+id+'">';
           if(!source.includes("version: '229.2.0'"))throw new Error('P229.2 source version missing');
           let html=fs.readFileSync(file,'utf8');
-          const close='</body>',at=html.lastIndexOf(close);
-          if(at<0)throw new Error('Canonical body close missing');
-          if(html.includes(open))throw new Error('P229.2 duplicate embedded module');
-          html=html.slice(0,at)+open+String.fromCharCode(10)+source+String.fromCharCode(10)+'</script>'+String.fromCharCode(10)+html.slice(at);
+          const close='</body>',bodyAt=html.lastIndexOf(close);
+          if(bodyAt<0)throw new Error('Canonical body close missing');
+          const first=html.indexOf(open),last=html.indexOf(open,first+open.length);
+          if(last>=0)throw new Error('P229.2 duplicate embedded module');
+          if(first>=0){
+            const contentAt=first+open.length,endAt=html.indexOf('</script>',contentAt);
+            if(endAt<0)throw new Error('P229.2 embedded script close missing');
+            const current=html.slice(contentAt,endAt).trim();
+            if(current!==source)html=html.slice(0,contentAt)+'\n'+source+'\n'+html.slice(endAt);
+            console.log(current===source?'P229.2 embedded module already current':'P229.2 embedded module refreshed in place');
+          }else{
+            html=html.slice(0,bodyAt)+open+'\n'+source+'\n</script>\n'+html.slice(bodyAt);
+            console.log('P229.2 Spatial theme isolation embedded before body close');
+          }
           const oldCount='noNewScriptTag:document.scripts.length===79';
-          if(!html.includes(oldCount))throw new Error('CV229 script-count contract not found');
-          html=html.replace(oldCount,'noNewScriptTag:document.scripts.length===80');
+          const newCount='noNewScriptTag:document.scripts.length===80';
+          if(html.includes(oldCount))html=html.replace(oldCount,newCount);
+          else if(!html.includes(newCount))throw new Error('CV229 script-count contract missing or unexpected');
           if((html.match(/id="canvio-lot229-theme-isolation"/g)||[]).length!==1)throw new Error('P229.2 embed count mismatch');
           fs.writeFileSync(file,html,'utf8');
-          console.log('P229.2 Spatial theme isolation embedded before body close');
           NODE
 
       - name: Integrate P125.2 scroll storyboard editor
