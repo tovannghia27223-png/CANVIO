@@ -4361,3 +4361,10 @@ P160–P166 module APIs currently report versions P160.2.0, P161.1.0, P162.2.0, 
 
 - Hosted run #842 reached the new UI smoke after P143/source contracts and P47–P70 regressions had passed. The smoke stopped before inspecting P102 because it attempted to click a sidebar item marked advanced/hidden in the default headless navigation state. This was a test-driver error, not evidence of a failing model or missing panel.
 - Updated the smoke to navigate through the existing canonical CV.go('imageStudio') route owner, then assert the panel is visible directly below the heading and exposes file/run/download controls. Await a fresh exact-head hosted run before accepting the UI regression fix.
+
+
+## P102 UI smoke diagnostics after run #845 (2026-11-25)
+
+- Run #845 passed the canonical source/inline P102 parity and integrated contracts but the browser UI smoke still timed out after CV.go('imageStudio'). The smoke now waits for DOM readiness and records route class/display, P102 API presence, panel parent/visibility, document order relative to the heading and prompt-builder, controls, page errors and console errors.
+- The placement assertion now checks DOM order rather than requiring the panel to be the immediate next sibling of .head, allowing independent helper cards without weakening the requirement that Background Remover appears before the prompt builder.
+- Acceptance remains pending; do not merge until a fresh hosted browser run proves automatic panel mount and visibility.
