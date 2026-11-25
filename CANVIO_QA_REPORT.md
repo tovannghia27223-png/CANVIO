@@ -780,3 +780,9 @@ Mainline workflow #551 passed 53/53; Pages #275 passed build/deploy. P143 parity
 - Run 879 passed the complete 68-step hosted workflow, including same-origin runtime and Chromium browser acceptance. It then committed the generated canonical candidate to the PR branch.
 - The follow-up PR run 880 failed at `Integrate P229.2 Spatial theme isolation` because the step treated the already-embedded, verified P229 module as an error. No browser test failed in run 880; execution stopped during candidate integration.
 - Commit f5b7c4c makes that workflow step idempotent by validating/reusing an identical embedded module or replacing stale content in place, while preserving the script-count and exactly-one-module checks. Exact-head CI is pending again.
+
+
+## P229/P170 script-count rerun correction — 2026-11-25
+- Combined hosted run 889 passed; P170 Node suite 28/28, hosted runtime 20/20, and P150/P229 browser suite 90/90. The candidate commit then triggered a rerun against an index already containing both P229 and P170.
+- Run 890 stopped at P229 integration because its idempotency guard accepted 79 or 80 scripts but not the correct P229+P170 count of 81. No browser test failed in that rerun.
+- Commit 558637f extends the guard to accept 81 as already-integrated state; the P170 sync step continues to validate the final count. Latest-head full CI remains required.
