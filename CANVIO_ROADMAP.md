@@ -1537,3 +1537,39 @@ Cột rail và bảng phải thu gọn được; ≤900px thành thanh dưới +
 - Chưa xác nhận với người dùng: có muốn shell áp dụng cho TẤT CẢ công cụ hay chỉ Poster/Video trước; mặc định làm Poster → Video trước.
 
 **Việc còn mở từ trước (không thuộc P231+):** "Dùng màu này" → Poster/Brand; P156/P165 → ComfyUI; đồng bộ màu Spatial; P167 yaw/đa camera nâng cao; khôi phục dự án từ thư mục máy (P170); lưu định kỳ tự động; xác nhận CI mới nhất và ảnh thực tế các theme sau P230.
+
+
+## ROADMAP P237–P248 — BIG UPDATE "CANVIO Studio Pro" · kế hoạch 2026-11-25
+Nối tiếp P231–P236 (editor vừa khít màn hình). Người dùng muốn một bản cập nhật lớn; chọn **bản gọn trước (Đợt A)**, các phần nâng cao là **Đợt B**. Mọi mục tuân thủ nguyên tắc: chỉ THÊM không xóa; nối Studio · `CV.assets` · `CVOrchestratorP128` · Video/Storyboard · `CVCreativeCore`; miễn phí (không API trả phí); local-first; test bằng trình duyệt thật; ghi cả 3 file MD; mỗi module = lot `canvio-lotNNN` + file độc lập (parity P143) + bước CI.
+
+### ĐỢT A — cốt lõi (làm theo thứ tự)
+| P | Nội dung | Nối với | Nghiệm thu |
+|---|---|---|---|
+| **P231–P233** | Editor vừa khít màn hình: shell dùng chung, Poster, Video (xem mục trước). | CVWS, dock P159u, P114 | Không cuộn trang ở 1440×900 / 1280×720; nút chính luôn thấy. |
+| **P237** | **Thanh lệnh thông minh** `CVCommandP237`: một ô Ctrl+K hiểu lệnh tiếng Việt ("đổi sang 9:16", "thêm tiêu đề", "xuất PNG", "mở Video") → chạy trên khung đang mở; có lịch sử, gợi ý, hoàn tác. Quy tắc từ khóa chạy local trước, AI (Orchestrator) chỉ khi quy tắc không hiểu. | Palette hiện có (`#ws-cmdbtn`), CVWS, shell P231 | ≥30 lệnh qua test; lệnh sai không làm hỏng tài liệu; Hoàn tác khôi phục. |
+| **P238** | **AI trợ lý trong editor** `CVAssistantP238`: khung chat bên phải shell, biết đối tượng đang chọn + Brand Kit, trả về "kế hoạch thao tác" (JSON hành động: đổi màu/cỡ chữ/bố cục/viết lại) hiển thị để duyệt rồi áp dụng; mọi thao tác nằm trong một bước hoàn tác. | Orchestrator tiers (local → miễn phí), `CVCreativeCore`, P231 | Hành động chỉ chạm đối tượng được phép; kế hoạch lỗi bị từ chối an toàn; chạy được khi không có mạng ở chế độ quy tắc. |
+| **P239** | **Brief → trọn bộ** `CVBriefPackP239` (mở rộng "Tạo trọn bộ" hiện có): một brief + Brand Kit → poster, bài đăng, slide, trang CV/website, storyboard video; mỗi sản phẩm là tài liệu thật trong dự án (`documents.*`), không phải ảnh tĩnh. | `CVCreativeCore`, Brand, Storyboard P155, Orchestrator | Bộ 5 sản phẩm tạo xong < 60s ở chế độ local; mở được từng thứ trong editor; Brand Kit áp dụng nhất quán. |
+| **P240** | **Đổi kích thước thông minh** `CVMagicResizeP240`: một thiết kế → nhiều khổ (FB, IG post/story, A4, banner) bằng ràng buộc (neo cạnh, co giãn chữ, giữ vùng an toàn), xem trước lưới và xuất cả bộ ZIP. | Responsive (P hiện có), Poster doc, `CV.assets` | 6 khổ chuẩn không tràn lề/đè nhau (kiểm tra va chạm hộp); xuất ZIP đủ tệp. |
+| **P241** | **Tạo hàng loạt từ CSV** `CVBulkP241` (data-merge): dán/tải CSV → ghép cột vào chỗ giữ `{{tên}}`, xem trước từng dòng, xuất PNG/PDF cả lô (thẻ tên, chứng nhận, thư mời, lịch phỏng vấn). Dùng web worker, giới hạn 500 dòng/lần. | Poster doc, `CV.assets`, P170 (lưu lô vào thư mục) | CSV 100 dòng xuất đúng 100 tệp; ký tự tiếng Việt/dấu phẩy trong ngoặc kép đúng; dòng lỗi báo rõ, không dừng cả lô. |
+| **P242** | **Lưu kép hoàn thiện** (nâng P170): tự lưu định kỳ khi có quyền thư mục; **khôi phục cả dự án** từ `projects/*.json`; **đóng gói `.canvio`** (ZIP: dự án + tài nguyên + manifest) xuất/nhập; hiện dung lượng đã dùng. | P170, P130, Project Vault, `CV.assets` | Xuất `.canvio` → xoá dữ liệu → nhập lại giống hệt (so sha256); tự lưu không chạy khi chưa được cấp quyền. |
+| **P243** | **Phát hành website một nút**: đưa trang CV/website đang mở lên GitHub Pages của người dùng (dùng token cá nhân do người dùng tự dán, lưu máy), kiểm tra SEO cơ bản (title, meta, alt, H1), form liên hệ gửi về Supabase. | Website engine, P130 (Supabase), Brand | Bước kiểm tra SEO chặn khi thiếu title/alt; không lưu token vào repo/Cloud Sync; trang xuất mở được offline. |
+
+### ĐỢT B — nâng cao (sau khi Đợt A nghiệm thu)
+| P | Nội dung |
+|---|---|
+| **P244** | Video: **phụ đề tự động cục bộ** (Whisper WASM/WebGPU, tải model một lần, có thanh tiến độ, chỉnh sửa từng dòng, xuất SRT + ghi vào timeline); **đọc văn bản thành giọng** (SpeechSynthesis, có chọn giọng vi-VN). |
+| **P245** | Video: **ghép cảnh theo nhịp nhạc** (phát hiện beat trong trình duyệt), keyframe, đổi tốc độ, chuyển cảnh, mẫu video có sẵn; dùng P168 ảnh→chuyển động và shot list P164. |
+| **P246** | **Cộng tác nhẹ**: link xem chia sẻ (chỉ đọc), bình luận ghim trên thiết kế, lịch sử phiên bản có so sánh — dùng Supabase miễn phí (RLS theo `auth.uid()`), dữ liệu nhạy cảm vẫn mã hoá đầu cuối. |
+| **P247** | **Hiệu năng**: chia nhỏ `index.html` ~6MB nạp theo nhu cầu (lot nặng chỉ nạp khi vào trang), PWA cài đặt/ngoại tuyến, đo thời gian mở app trước/sau, kiểm tra hồi quy ảnh chụp 5 cỡ × 4 công cụ. |
+| **P248** | **Quản lý mô hình cục bộ + ComfyUI**: danh sách model đã tải, dung lượng, chạy thử, tự chọn mức theo máy (GTX 1650 / 7GB RAM là máy thử chính), nối P156/P165 → ComfyUI cục bộ. |
+
+### Mục tiêu "cảm giác" của bản update
+1. Mở app thấy ngay việc cần làm, không cuộn. 2. Gõ một câu là chạy được. 3. Một brief ra cả bộ sản phẩm. 4. Không bao giờ mất dữ liệu (lưu kép + `.canvio`). 5. Giao diện hồng neon Graffiti nhất quán (`--cv-accent*`, không dùng màu cứng).
+
+### Rủi ro / ràng buộc cho AI làm tiếp
+- Không đặt "kế hoạch AI" tự áp dụng khi chưa được duyệt; mọi hành động phải hoàn tác được.
+- Token GitHub/khóa người dùng tự dán chỉ lưu trên máy, loại khỏi Cloud Sync (`canvio.p130.*` bị bỏ qua khi đồng bộ) và không ghi vào repo.
+- Whisper/model lớn: kiểm tra RAM, tải theo yêu cầu, có nút huỷ; không tải mặc định.
+- Giữ giới hạn Supabase miễn phí (≈1GB file, ≈50MB/tệp); video lớn ở lại máy.
+- Mọi bước dùng theo thứ tự: parity P143 → inventory → boot-order → CI; đọc mục "Bài học" các P170/P171/P230 trước khi làm giao diện.
+- Cần người dùng chốt: Đợt A có đúng thứ tự mong muốn không; có cần P243 (token GitHub) trong Đợt A hay chuyển sang Đợt B.
