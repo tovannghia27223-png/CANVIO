@@ -74,7 +74,7 @@ with sync_playwright() as p:
     # Establish the existing, intended baseline through the owning theme APIs.
     # Merely writing localStorage does not prove the runtime has applied the skin.
     pg.evaluate("CVLot47.set('plain');CV229.open();CV229.setTheme('graffiti')")
-    pg.wait_for_function("""window.CV229ThemeIsolationP229&&!document.documentElement.hasAttribute('data-skin')&&document.getElementById('cv229-inspector').classList.contains('cv229-theme-graffiti')&&!document.body.classList.contains('cv229-theme-graffiti')""",timeout=30000)
+    pg.wait_for_function("""window.CV229ThemeGlobalP229&&!document.documentElement.hasAttribute('data-skin')&&document.body.classList.contains('cv229-theme-graffiti')&&!document.getElementById('cv229-inspector').classList.contains('cv229-theme-graffiti')""",timeout=30000)
     # P150 tech intentionally changes the toolbar while Home is active.
     # Capture the workspace's own Export baseline; Spatial palette must not set it.
     pg.evaluate("CVWS.open('design')");pg.wait_for_timeout(900)
@@ -89,15 +89,15 @@ with sync_playwright() as p:
         if state['background']!=baseline: print('P150_EXPORT_DIAGNOSTIC '+sp+' '+str(state))
         ck('không gian '+sp+' giữ màu Xuất gốc',state['background']==baseline)
 
-    # P229 theme ownership: Spatial palette must not recolor shell navigation or other workspace controls.
+    # P229 global appearance: the Spatial palette picker must recolor the complete CANVIO shell and every workspace.
     pg.evaluate("CV229.setTheme('graffiti');CVWS.open('design')");pg.wait_for_timeout(500)
-    navBefore=pg.evaluate("""()=>{const pick=e=>{const s=getComputedStyle(e);return [s.backgroundColor,s.backgroundImage,s.color,s.borderColor].join('|')};return {menu:pick(document.querySelector('#cv-studio-menu [data-route]')),launcher:pick(document.getElementById('cv229-open')),export:pick(document.getElementById('ws-export'))}}""")
+    navBefore=pg.evaluate("""()=>{const pick=e=>{const s=getComputedStyle(e);return [s.backgroundColor,s.backgroundImage,s.color,s.borderColor].join('|')};return {menu:pick(document.querySelector('.side')),topbar:pick(document.querySelector('.top')),export:pick(document.getElementById('ws-export')),toolbar:pick(document.querySelector('.toolbar')),spatial:pick(document.getElementById('cv229-inspector'))}}""")
     pg.evaluate("CV229.setTheme('midnight')");pg.wait_for_timeout(500)
-    navAfter=pg.evaluate("""()=>{const pick=e=>{const s=getComputedStyle(e);return [s.backgroundColor,s.backgroundImage,s.color,s.borderColor].join('|')};return {menu:pick(document.querySelector('#cv-studio-menu [data-route]')),launcher:pick(document.getElementById('cv229-open')),export:pick(document.getElementById('ws-export'))}}""")
-    ck('P229 đổi theme chỉ trong Spatial Inspector, không đổi body class',pg.evaluate("document.getElementById('cv229-inspector').classList.contains('cv229-theme-midnight')&&!document.body.classList.contains('cv229-theme-midnight')"))
+    navAfter=pg.evaluate("""()=>{const pick=e=>{const s=getComputedStyle(e);return [s.backgroundColor,s.backgroundImage,s.color,s.borderColor].join('|')};return {menu:pick(document.querySelector('.side')),topbar:pick(document.querySelector('.top')),export:pick(document.getElementById('ws-export')),toolbar:pick(document.querySelector('.toolbar')),spatial:pick(document.getElementById('cv229-inspector'))}}""")
+    ck('P229 đổi palette đặt theme trên body dùng chung, không gắn class riêng vào Inspector',pg.evaluate("document.body.classList.contains('cv229-theme-midnight')&&!document.getElementById('cv229-inspector').classList.contains('cv229-theme-midnight')&&document.documentElement.getAttribute('data-cv229-theme')==='midnight'"))
     audit=pg.evaluate('CV229ThemeIsolationP229.audit()')
-    ck('P229 không còn CSS theme toàn cục hoặc class rò ra body',audit['globalThemeSelectors']==0 and audit['bodyThemeClasses']==[] and 'midnight' in audit['inspectorThemeClasses'])
-    ck('P229 không đổi màu menu, launcher và nút workspace',navBefore==navAfter)
+    ck('P229 giữ CSS theme toàn cục và chỉ có một body theme owner',audit['globalThemeSelectors']>0 and audit['bodyThemeClasses']==['midnight'] and audit['inspectorThemeClasses']==[] and audit['globalThemeApplied'] and audit['pickerButtonsSynced'])
+    ck('P229 đồng bộ màu menu, thanh trên, nút Xuất và Spatial khi đổi palette',navBefore!=navAfter)
     pg.evaluate("CV229.setTheme('graffiti');CV229.open()");pg.wait_for_timeout(500)
     pg.evaluate("CVContrastGuardP151.scan()")
     ck('P151 không ghi đè màu menu hoặc Spatial Inspector',pg.evaluate("!document.querySelector('#cv-studio-menu [data-route][data-cvg]')&&!document.querySelector('#cv229-inspector [data-cvg]')"))
