@@ -436,3 +436,8 @@ Khi sửa module: sửa file standalone rồi chép y hệt vào lot (parity so 
 ## P229.3 — shared global theme correction (2026-11-25)
 - P229.3 requirement: changing the Spatial palette recolors the complete CANVIO interface through the shared `body.cv229-theme-*` owner. Do not restore Spatial-only CSS scoping.
 - Audit API is `CV229ThemeGlobalP229.audit()`. Exact-head browser acceptance checks menu/topbar/Export/Spatial styles and every palette (glass, midnight, aurora, cyber, graffiti, neonlight).
+
+
+## P229.3 shared palette — verified candidate handoff
+- Hosted run #906 (`45569572321`) passed 69/69 steps on source head `2b3c9abc`; its generated candidate commit `0fc8726` contains the tested P229.3 module and canonical inline integration. P150/P229 Chromium acceptance passed 96/96: shared body theme owner, menu, topbar, primary button, Export, toolbar, Spatial surface/controls, search field, preview range and all six palettes. Artifact `CANVIO-23.3.111-GITHUB-RUNTIME-VERIFIED-906` was downloaded; nested source ZIP, internal SHA-256 file, index byte count and manifest index hash were independently verified.
+- Continue from the updated PR #104 head; do not revert to Spatial-only color isolation. No merge was performed.

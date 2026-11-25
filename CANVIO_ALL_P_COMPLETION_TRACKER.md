@@ -440,4 +440,4 @@ The successful workflow also completed canonical index restoration, P143 parity/
 
 
 ## P229.3 — shared global theme correction (2026-11-25)
-| P229.3 shared global palette | P229.3 module integrated on PR #104; browser audit call corrected to `CV229ThemeGlobalP229.audit()` and six palette transitions added; exact-head acceptance pending | One `body.cv229-theme-*` owner drives shell, navigation, menus, buttons, toolbars, workspace surfaces and Spatial | Previous P229.2 isolation acceptance is superseded as incorrect product behavior; no Stable certification implied |
+| P229.3 shared global palette | Hosted acceptance passed on run #906; candidate `0fc8726`; source and canonical inline module integrated | `body.cv229-theme-*` drives shell, navigation, menus, buttons, toolbars and workspace surfaces; Spatial bridge shares the same six-palette selection | P70's 14 real-world gates remain pending; no Stable certification implied |
