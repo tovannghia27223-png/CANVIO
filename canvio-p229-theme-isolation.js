@@ -65,7 +65,7 @@
         if (leaked) setTheme(leaked);
       }
     });
-    observer.observe(document.head || document.documentElement, { childList: true, subtree: true });
+    observer.observe(document.documentElement, { childList: true, subtree: true });
     observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
   }
   window.CV229ThemeIsolationP229 = {
