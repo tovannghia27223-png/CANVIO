@@ -36,7 +36,7 @@ function mount(){
  var toolbarCard=toolbar&&toolbar.parentElement;
  var canvas=el('vtCanvas'),preview=canvas&&canvas.closest('.card');
  var grid=canvas&&canvas.closest('.grid.g2');
- var right=grid&&grid.children.length>1?grid.children[1]:null;
+ var props=el('vtProps'),right=props&&props.parentElement&&props.parentElement.parentElement;
  var timeline=el('vtTimeline'),timelineCard=timeline&&timeline.closest('.card');
  var asset=el('vtAssetPicker'),assetCard=asset&&asset.closest('.card');
  var assetGrid=assetCard&&assetCard.parentElement;
