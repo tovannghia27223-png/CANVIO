@@ -753,3 +753,13 @@ Mainline workflow #551 passed 53/53; Pages #275 passed build/deploy. P143 parity
 - P102 smoke after switching to CV.go('imageStudio') still timed out; run #845 ended in the browser step before P150. Other pre-browser checks and P74/P81/P85 runtime checks again passed.
 - The smoke now captures route state, computed display, P102 API presence/tests, panel existence/parent/visibility, relative DOM order, controls, JS page errors and console errors. It waits for DOM readiness first. The position contract allows intervening elements but requires P102 to follow the heading and precede the prompt-builder.
 - Automatic P102 mount is not yet verified; actual ORMBG inference remains opt-in and unclaimed.
+
+
+## P102/P150 final hosted regression — run #852 (2026-11-25)
+
+- Exact-head PR #104 workflow completed 66/66 steps, success, zero failed steps. P143 extraction/source parity, full HTML/inline-JavaScript audit, P47–P70 regressions, integrated Node/source contracts, P107 ZIP round-trip and the complete Chromium acceptance stage all completed.
+- P102: Hosted runtime 20/20. The Image Studio route was opened through canonical CV.go('imageStudio'); the panel exists and is visible in #page-imageStudio, follows .head, precedes the prompt-builder, and exposes file/run/download controls. P102 API self-tests passed for the pinned Apache-2.0 model, lazy model loading, module Worker, alpha output, bounded input, canonical Asset Library owner, no additional store and unload support.
+- P150: Chromium 86/86 desktop/mobile. Includes Home theme interactions, cards/tabs, drag, Tech prompt transfer + route acknowledgement, non-Home pink Export baseline across five workspaces, root skin fallback, and separate Holo preservation across all five workspaces. The prior "or True" test bypass is removed.
+- WASM/runtime: Hosted runtime 20/20. Every successful same-origin .wasm response used application/wasm; badWasmMimeResponses=[], consoleErrors=[], pageErrors=[]. P74/P81 GLB/Draco/Meshopt/KTX2, P161 pose, P85 vendor modules/PostFX/OpenCV, and P107 portability checks passed.
+- Model inference was not run in this workflow: actualModelInference.performed=false, opt-in is workflow_dispatch with full_model_acceptance=true. P102 real ONNX inference/UI output, P105 inference and P80 Whisper inference remain unclaimed here. Historical synthetic model checks establish execution plumbing only, not real-photo accuracy.
+- P70 remains BLOCKED: fourteen manual gates pending (0 passed); SwiftShader is software rendering, not physical GPU. HTTPS/security headers, real customer media, physical devices, accessibility, two-device/cloud Project Vault sync and recovery remain separate acceptance work.
