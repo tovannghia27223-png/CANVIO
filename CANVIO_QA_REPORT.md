@@ -746,3 +746,10 @@ Mainline workflow #551 passed 53/53; Pages #275 passed build/deploy. P143 parity
 - P102 UI smoke did not reach its assertions: Playwright timed out trying to click the Image Generation nav button, which is intentionally hidden in the headless advanced-nav state. This is a test-driver selector issue, not a verified P102 UI failure.
 - Changed the smoke to invoke the existing CV.go('imageStudio') route owner directly; it still checks visible panel placement and all three controls without loading model weights. Fresh CI pending. Real ORMBG inference remains opt-in and unclaimed.
 - The browser step stopped before P150; P150 cross-workspace Export color acceptance is not established by run #842.
+
+
+## P102 run #845 — deeper browser-state diagnostic (2026-11-25)
+
+- P102 smoke after switching to CV.go('imageStudio') still timed out; run #845 ended in the browser step before P150. Other pre-browser checks and P74/P81/P85 runtime checks again passed.
+- The smoke now captures route state, computed display, P102 API presence/tests, panel existence/parent/visibility, relative DOM order, controls, JS page errors and console errors. It waits for DOM readiness first. The position contract allows intervening elements but requires P102 to follow the heading and precede the prompt-builder.
+- Automatic P102 mount is not yet verified; actual ORMBG inference remains opt-in and unclaimed.
