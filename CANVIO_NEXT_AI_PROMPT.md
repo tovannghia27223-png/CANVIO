@@ -410,11 +410,19 @@ Khi sửa module: sửa file standalone rồi chép y hệt vào lot (parity so 
 - P70 remains blocked with fourteen manual gates pending. Never mark release certified until all have independently reviewed evidence.
 
 
+## Handoff — P102/P150 verification on PR #104 (2026-11-25)
+
+- PR #104: https://github.com/tovannghia27223-png/CANVIO/pull/104. P102 background-removal panel has been moved directly below the Image Studio heading and before the prompt builder; it retains the original local ORMBG worker/model and canonical Asset Library flow.
+- Run #852 passed 66/66 workflow steps. P102 hosted UI check: 20/20; P150 desktop/mobile browser checks: 86/86; hosted runtime: 20/20; zero page errors, console errors or invalid WASM MIME responses.
+- Removed the always-true "or True" clause from the Tech prompt handoff test; it now checks the actual transferred #ws-jin value and route acknowledgement. Hosted test server now serves one validated application/wasm MIME type and asserts it.
+- The generated candidate commit on this branch is 827eed312c226e0932df8377563b785a35227aa7; exact tested source commit is 83afb13b81a2fa035a828d0f61df41800020b6ed.
+- Full model inference was intentionally not run: workflow requires explicit full_model_acceptance=true. Do not call P102 AI quality verified on real photographs. P70 remains 14 manual gates open; physical GPU, real media, accessibility/device checks and cloud/two-device sync remain open.
+- Earlier P102 #842/#845 pending notes and P150 test-isolation notes in this file are historical; this run supersedes only the P102 UI discoverability and P150 browser regression status, not the manual/model acceptance boundaries.
+
 ## P130.2 — Điền sẵn Supabase mặc định (2026-11-25)
 - `cfg()` trong `canvio-p130-cloud.js` và lot trong `index.html` (giữ parity) trả về URL `https://szdyeqzqyyxmenoiiqxe.supabase.co` + publishable key (`sb_publishable_…`, an toàn công khai) khi máy chưa lưu cấu hình; cấu hình người dùng nhập vẫn ưu tiên.
 - Việc còn lại của người dùng: chạy `supabase/canvio-schema.sql` (nút "Sao chép SQL" ở thẻ P130) trong Supabase SQL Editor, rồi đăng ký/đăng nhập và đặt cụm mật khẩu. Chưa test được với project thật.
 - Không dùng 2 schema `canvio_*` (Foundation 1.0) và "Studio 4.0" (không RLS, không mã hóa) cho P130; nếu muốn làm việc nhóm thì cần quyết định riêng. Không bao giờ đưa secret/service_role key vào repo.
-
 
 ## P170 — Kho lưu trữ kép: máy tính + Supabase (2026-11-25)
 - Module `canvio-p170-storage-hub.js` (`CVStorageHubP170`, lot `canvio-lot170h`, thẻ `#cv170-card` ngay dưới thẻ P130 trong `#page-projectVault`). Một nút "Lưu cả máy và cloud" gọi `saveBoth()`; mỗi bên độc lập, lỗi một bên không chặn bên kia.
@@ -423,3 +431,13 @@ Khi sửa module: sửa file standalone rồi chép y hệt vào lot (parity so 
 - SQL kho tài nguyên: `supabase/canvio-storage.sql` (cũng trong thẻ, nút "Sao chép SQL kho tài nguyên"); người dùng phải chạy MỘT LẦN sau SQL của P130. Test kiểm tra tệp khớp chuỗi trong module.
 - Test: `tests/p170/run-p170-tests.cjs` (28; thư mục giả + Storage giả + P130 thật bằng WebCrypto), `tests/p145/run-p170-browser.py` (12; dùng OPFS thay hộp thoại chọn thư mục). Lưu ý: đọc tay cầm OPFS từ IndexedDB làm sập Chromium headless → module giữ tay cầm trong bộ nhớ, test dùng `_setHandle`.
 - Chưa làm / chưa test: sao lưu video lớn và dữ liệu Project Vault/localStorage ra thư mục máy; khôi phục dự án (`projects/*.json`) về lại app (hiện chỉ khôi phục tài nguyên); xóa tài nguyên trên cloud; tự động lưu định kỳ; chọn thư mục thật và Supabase thật chưa được thử với tài khoản người dùng.
+
+
+## P229.3 — shared global theme correction (2026-11-25)
+- P229.3 requirement: changing the Spatial palette recolors the complete CANVIO interface through the shared `body.cv229-theme-*` owner. Do not restore Spatial-only CSS scoping.
+- Audit API is `CV229ThemeGlobalP229.audit()`. Exact-head browser acceptance checks menu/topbar/Export/Spatial styles and every palette (glass, midnight, aurora, cyber, graffiti, neonlight).
+
+
+## P229.3 shared palette — verified candidate handoff
+- Hosted run #906 (`45569572321`) passed 69/69 steps on source head `2b3c9abc`; its generated candidate commit `0fc8726` contains the tested P229.3 module and canonical inline integration. P150/P229 Chromium acceptance passed 96/96: shared body theme owner, menu, topbar, primary button, Export, toolbar, Spatial surface/controls, search field, preview range and all six palettes. Artifact `CANVIO-23.3.111-GITHUB-RUNTIME-VERIFIED-906` was downloaded; nested source ZIP, internal SHA-256 file, index byte count and manifest index hash were independently verified.
+- Continue from the updated PR #104 head; do not revert to Spatial-only color isolation. No merge was performed.

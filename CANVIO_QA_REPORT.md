@@ -730,3 +730,74 @@ Mainline workflow #551 passed 53/53; Pages #275 passed build/deploy. P143 parity
 - P163.1.1/P169 Chromium confirms visible profile labels, eight labelled controls, preview/save, Shared Core round-trip and mobile no-overflow.
 - P166.2/P160–P166 Chromium passed 32/32: actual GrapesJS root insertion, P131 sanitization, scoped CSS base/mobile rule, Shared Core metadata and canonical Website Engine save. Lazy readiness is bounded; a save failure is surfaced as unsaved.
 - P143 parity, full HTML/inline-script audit, P47–P70 regression and the integrated Node/P107 ZIP stage passed. P70 remains 14/14 manual gates pending, zero passed; no stable-release or physical-GPU claim.
+
+
+## P102 Image Studio visibility regression (2026-11-25)
+
+- Confirmed P102 module/worker and canonical inline source are present on main; the problem was discoverability, not removal: Image Studio has no .engine-toolbar, so the previous mount fallback appended the panel to the end of the page after the prompt queue.
+- Corrected mount fallback to place the panel directly after .head, before the prompt builder and queue. Existing Asset Library integration and same-origin worker/runtime paths are unchanged.
+- Added a Node source-contract assertion and a normal hosted Chromium UI smoke for visible panel + file/run/download controls. The expensive ORMBG inference remains an opt-in check and is not inferred from panel presence.
+- Pending exact-head workflow result. P150.13 cross-workspace Export color checks also remain subject to fresh hosted-browser acceptance; do not call color consistency fully certified until that run passes.
+
+
+## P102 run #842 — UI smoke driver correction (2026-11-25)
+
+- Run #842: P143 parity, full HTML/inline-JS audit, P47–P70 regressions, integrated source contracts and P107 ZIP round-trip passed. P74/P81 compressed GLB (Draco/Meshopt/KTX2), P161 camera replay, P85 runtime initialization/PostFX/OpenCV optical flow also passed.
+- P102 UI smoke did not reach its assertions: Playwright timed out trying to click the Image Generation nav button, which is intentionally hidden in the headless advanced-nav state. This is a test-driver selector issue, not a verified P102 UI failure.
+- Changed the smoke to invoke the existing CV.go('imageStudio') route owner directly; it still checks visible panel placement and all three controls without loading model weights. Fresh CI pending. Real ORMBG inference remains opt-in and unclaimed.
+- The browser step stopped before P150; P150 cross-workspace Export color acceptance is not established by run #842.
+
+
+## P102 run #845 — deeper browser-state diagnostic (2026-11-25)
+
+- P102 smoke after switching to CV.go('imageStudio') still timed out; run #845 ended in the browser step before P150. Other pre-browser checks and P74/P81/P85 runtime checks again passed.
+- The smoke now captures route state, computed display, P102 API presence/tests, panel existence/parent/visibility, relative DOM order, controls, JS page errors and console errors. It waits for DOM readiness first. The position contract allows intervening elements but requires P102 to follow the heading and precede the prompt-builder.
+- Automatic P102 mount is not yet verified; actual ORMBG inference remains opt-in and unclaimed.
+
+
+## P102/P150 final hosted regression — run #852 (2026-11-25)
+
+- Exact-head PR #104 workflow completed 66/66 steps, success, zero failed steps. P143 extraction/source parity, full HTML/inline-JavaScript audit, P47–P70 regressions, integrated Node/source contracts, P107 ZIP round-trip and the complete Chromium acceptance stage all completed.
+- P102: Hosted runtime 20/20. The Image Studio route was opened through canonical CV.go('imageStudio'); the panel exists and is visible in #page-imageStudio, follows .head, precedes the prompt-builder, and exposes file/run/download controls. P102 API self-tests passed for the pinned Apache-2.0 model, lazy model loading, module Worker, alpha output, bounded input, canonical Asset Library owner, no additional store and unload support.
+- P150: Chromium 86/86 desktop/mobile. Includes Home theme interactions, cards/tabs, drag, Tech prompt transfer + route acknowledgement, non-Home pink Export baseline across five workspaces, root skin fallback, and separate Holo preservation across all five workspaces. The prior "or True" test bypass is removed.
+- WASM/runtime: Hosted runtime 20/20. Every successful same-origin .wasm response used application/wasm; badWasmMimeResponses=[], consoleErrors=[], pageErrors=[]. P74/P81 GLB/Draco/Meshopt/KTX2, P161 pose, P85 vendor modules/PostFX/OpenCV, and P107 portability checks passed.
+- Model inference was not run in this workflow: actualModelInference.performed=false, opt-in is workflow_dispatch with full_model_acceptance=true. P102 real ONNX inference/UI output, P105 inference and P80 Whisper inference remain unclaimed here. Historical synthetic model checks establish execution plumbing only, not real-photo accuracy.
+- P70 remains BLOCKED: fourteen manual gates pending (0 passed); SwiftShader is software rendering, not physical GPU. HTTPS/security headers, real customer media, physical devices, accessibility, two-device/cloud Project Vault sync and recovery remain separate acceptance work.
+
+
+## P229 / P151.1 Spatial theme bleed — correction candidate (2026-11-25)
+- Verified root cause: P229 `applyTheme()` applied theme classes to `document.body`; broad `body.cv229-theme-*` selectors changed `.side`, `.top`, common cards, fields and buttons outside Spatial. This is why changing Spatial palette altered the menu and unrelated components.
+- Candidate fix scopes the six palette classes to `#cv229-inspector` and rewrites theme selectors to the inspector root/descendants. P151.1 additionally excludes nav, buttons, inputs, and Spatial Inspector from automatic contrast overrides.
+- Added hosted regression assertions for menu, launcher and Export computed styles across Graffiti → Midnight, plus P151 override exclusion. Status remains pending exact-head CI; no PASS claim until run completes.
+
+
+## P150/P229 browser harness correction — 2026-11-25
+- Commit 1a61509 fixes a test-driver lifecycle defect: the P150 Chromium page was closed before the P229/P151 assertions attempted to reuse it. The premature close is removed; the page remains alive through Spatial theme isolation and contrast-guard checks, then closes before the separate Holographic-skin fixture.
+- This is not a product acceptance result. Re-run the full exact-head hosted workflow and require P150/P229/P151 assertions to pass before marking Spatial theme isolation accepted.
+
+
+## P229.2 CI re-entry defect — 2026-11-25
+- Run 879 passed the complete 68-step hosted workflow, including same-origin runtime and Chromium browser acceptance. It then committed the generated canonical candidate to the PR branch.
+- The follow-up PR run 880 failed at `Integrate P229.2 Spatial theme isolation` because the step treated the already-embedded, verified P229 module as an error. No browser test failed in run 880; execution stopped during candidate integration.
+- Commit f5b7c4c makes that workflow step idempotent by validating/reusing an identical embedded module or replacing stale content in place, while preserving the script-count and exactly-one-module checks. Exact-head CI is pending again.
+
+
+## P229/P170 script-count rerun correction — 2026-11-25
+- Combined hosted run 889 passed; P170 Node suite 28/28, hosted runtime 20/20, and P150/P229 browser suite 90/90. The candidate commit then triggered a rerun against an index already containing both P229 and P170.
+- Run 890 stopped at P229 integration because its idempotency guard accepted 79 or 80 scripts but not the correct P229+P170 count of 81. No browser test failed in that rerun.
+- Commit 558637f extends the guard to accept 81 as already-integrated state; the P170 sync step continues to validate the final count. Latest-head full CI remains required.
+
+
+## P150/P151.1/P229.2 — final theme-isolation acceptance (2026-11-25)
+- Exact source/candidate chain: #895 passed on source head `84d7de0` and produced candidate `10a6ceb`; #896 re-ran on the already-generated candidate and also passed. Both workflow runs concluded `success`, with zero failed steps.
+- Chromium: 90/90 assertions in each run. Verified Spatial palette changes remain inside `#cv229-inspector`; `body` has no Spatial theme classes; global `body.cv229-theme-*` selectors are removed/scoped; menu/navigation, launcher and Export computed styles are identical before/after changing Spatial palette. P151.1 does not contrast-overwrite navigation, buttons, inputs or Spatial. P150 Home and Holographic skin roots remain isolated.
+- Run #896 reports: integrated source contracts 20/20; hosted runtime 20/20; P107 ZIP round-trip 6/6; P170 Node 28/28; no uncaught browser page errors. GLB uncompressed, Draco, Meshopt and KTX2 fixtures loaded in the real Three.js r187 viewer; P85 WASM runtimes initialized and OpenCV processed 144 tracked points across two local frames.
+- Limits: P106 ran on ANGLE SwiftShader, not physical GPU; real Supabase/cloud credentials and independent two-device recovery were not exercised; P70 has 14/14 manual gates pending. Keep `releaseCertified=false`.
+- PR #104 is still open/unmerged. GitHub marks the PR-triggered check `action_required`; exact-head workflow_dispatch #896 passed.
+
+
+## P229.3 — shared global theme correction (2026-11-25)
+- User clarified the expected behavior: the Spatial palette selector is the global CANVIO palette selector. The former P229.2 rule that kept the palette inside `#cv229-inspector` was the wrong product behavior and is superseded.
+- P229.3 uses `body.cv229-theme-*` as the shared theme root, lets Spatial inherit that theme, and keeps the canonical global CSS selectors intact.
+- Browser regression verifies body/root ownership, menu, topbar, primary button, Export, toolbar, Spatial controls, search and preview range style changes, plus all six palette transitions. Hosted run #906 (`45569572321`) passed 69/69 steps on source head `2b3c9abc`; its generated candidate commit `0fc8726` contains the tested P229.3 module and canonical inline integration. P150/P229 Chromium acceptance passed 96/96: shared body theme owner, menu, topbar, primary button, Export, toolbar, Spatial surface/controls, search field, preview range and all six palettes. Artifact `CANVIO-23.3.111-GITHUB-RUNTIME-VERIFIED-906` was downloaded; nested source ZIP, internal SHA-256 file, index byte count and manifest index hash were independently verified.
+- Run #898 had a separate `movingSubjectTracked` failure in the P145 tracking smoke. That result is not evidence for or against the theme change.

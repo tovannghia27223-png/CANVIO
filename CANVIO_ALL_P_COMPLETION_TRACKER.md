@@ -428,3 +428,16 @@ The successful workflow also completed canonical index restoration, P143 parity/
 | P161.2 / P74.1 | Merged in PR #102 (08efae6) | Existing Three.js r187 camera API; hosted GLB pose readback including nonzero X/Y/Z; Draco/Meshopt/KTX2 fixtures | Complex animated/multi-camera production GLBs and physical GPU/device acceptance |
 | P166.2 | Merged in PR #102 (08efae6) | P131 sanitizer, actual GrapesJS/CSS Manager handoff and save; lazy-readiness Node test; P160–P166 Chromium 32/32 | Static landing only; no form backend, CRM, hosting or live publish |
 | Integrated CI | Exact same-tree run #836 PASS 66/66 | P143, full HTML audit, P47–P70, Node contracts, P107 ZIP round-trip and hosted Chromium | Post-merge #838 is tracked independently; P70 fourteen manual gates remain pending |
+
+
+## P102 / P150 hosted regression tracker addendum — 2026-11-25
+
+| P | Verified status | Evidence | Remaining boundary |
+|---|---|---|---|
+| P102 Background Remover discoverability | UI integration accepted on PR #104 candidate | Run #852: hosted runtime 20/20; panel visible on Image Studio after heading and before prompt builder; file/run/download controls and P102 API contract present; P143 source/inline parity passed | Full ORMBG inference was opt-in and skipped; real user-photo quality, hair/transparency quality and physical GPU/device performance not certified |
+| P150 Home skins / workspace Export styling | Browser regression accepted on PR #104 candidate | Run #852: Chromium 86/86 desktop/mobile; Tech prompt handoff verifies input value + route acknowledgement; pink Export preserved in five non-Home workspaces; Holo preserved independently | Human visual review and physical device/accessibility checks remain separate |
+| Hosted integration | Exact-head candidate run passed | Run #852: 66/66 workflow steps; hosted runtime 20/20; zero page errors, console errors or bad WASM MIME responses | P70 has 14/14 manual release gates pending; no Stable/production certification |
+
+
+## P229.3 — shared global theme correction (2026-11-25)
+| P229.3 shared global palette | Hosted acceptance passed on run #906; candidate `0fc8726`; source and canonical inline module integrated | `body.cv229-theme-*` drives shell, navigation, menus, buttons, toolbars and workspace surfaces; Spatial bridge shares the same six-palette selection | P70's 14 real-world gates remain pending; no Stable certification implied |
