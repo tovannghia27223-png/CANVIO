@@ -1496,3 +1496,9 @@ P167.1 and P168.1 are therefore mainline-integrated and hosted-CI verified, with
 - SQL kho tài nguyên: `supabase/canvio-storage.sql` (cũng trong thẻ, nút "Sao chép SQL kho tài nguyên"); người dùng phải chạy MỘT LẦN sau SQL của P130. Test kiểm tra tệp khớp chuỗi trong module.
 - Test: `tests/p170/run-p170-tests.cjs` (28; thư mục giả + Storage giả + P130 thật bằng WebCrypto), `tests/p145/run-p170-browser.py` (12; dùng OPFS thay hộp thoại chọn thư mục). Lưu ý: đọc tay cầm OPFS từ IndexedDB làm sập Chromium headless → module giữ tay cầm trong bộ nhớ, test dùng `_setHandle`.
 - Chưa làm / chưa test: sao lưu video lớn và dữ liệu Project Vault/localStorage ra thư mục máy; khôi phục dự án (`projects/*.json`) về lại app (hiện chỉ khôi phục tài nguyên); xóa tài nguyên trên cloud; tự động lưu định kỳ; chọn thư mục thật và Supabase thật chưa được thử với tài khoản người dùng.
+
+
+## P229/P170 — rerun script-count guard correction (2026-11-25)
+- Run 889 verified the combined P229/P170 candidate (90/90 browser checks, P170 node 28/28, hosted runtime 20/20). The generated index has 81 script tags after both modules are present.
+- Run 890 revealed the P229 integration guard did not accept 81 on an already-integrated rerun. Commit 558637f accepts the existing 81-count state while preserving the 79→80→81 transition for fresh integration.
+- Final combined candidate must pass the full exact-head workflow again before merge.
