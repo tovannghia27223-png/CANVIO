@@ -1470,3 +1470,10 @@ P167.1 and P168.1 are therefore mainline-integrated and hosted-CI verified, with
 - Design-system rule: retain the 14 px P233 shell baseline and P231 36 px standard / 29 px small / 43 px large button hierarchy (compact/mobile 34/28 px). Color and typography variants are role- or editor-scoped, not a defect simply because a specialized tool uses a different accent. System font fallbacks are not guaranteed pixel-identical across operating systems.
 - Image inventory: 25-item icon catalog and eight P145.8 starter SVG illustrations exist; there is one standalone image file in the repo manifest, with additional inline/generated SVG and user Asset Library imagery. No broad built-in stock-photo catalogue is claimed. Browser-local user assets cannot be inventoried from GitHub.
 - Limitations: P102/P105/P80 model inference was skipped (full_model_acceptance=true not requested); real user-photo quality, physical GPU, accessibility/physical-device acceptance, two-device cloud sync and the fourteen P70 manual gates remain open.
+
+
+## P229 / P151.1 — Isolate Spatial theme from application shell (2026-11-25)
+- Reproduced the scope leak from source: P229 attached its six `cv229-theme-*` classes to `document.body`, while global selectors changed the topbar, sidebar, shared cards, buttons and fields. A Spatial palette therefore acted as an application-wide skin.
+- Corrected ownership: P229 applies theme classes to `#cv229-inspector`; CSS selectors are scoped to that inspector and its descendants. The theme picker still changes Spatial panel surfaces and controls but no longer owns shell navigation or other workspace colors.
+- P151.1 narrows automatic contrast correction to visible workspace text, excluding navigation, interactive controls and Spatial Inspector.
+- Browser acceptance added to `tests/p145/run-p150-browser.py`: compare computed styles for studio menu, Spatial launcher and Export across Graffiti/Midnight changes; assert no P151 override is applied to menu/inspector. Pending exact-head hosted run.
