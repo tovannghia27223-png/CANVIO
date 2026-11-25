@@ -848,11 +848,11 @@ jobs:
           for(const [path,id,contract] of modules){
             const source=fs.readFileSync(path,'utf8').trim();
             if(!contract.test(source))throw new Error(id+' source contract missing');
-            const re=new RegExp('(<script\\b(?=[^>]*\\bid=["\\']'+id+'["\\'])[^>]*>)[\\s\\S]*?(<\\/script\\s*>)','i');
+            const re=new RegExp('(<script\\b(?=[^>]*\\bid="'+id+'"[^>]*)[^>]*>)[\\s\\S]*?(<\\/script\\s*>)','i');
             const tag='<script id="'+id+'">\\n'+source+'\\n</script>';
             if(re.test(html))html=html.replace(re,tag);
             else{const at=html.lastIndexOf('</body>');if(at<0)throw new Error('index.html has no closing body tag');html=html.slice(0,at)+tag+'\\n'+html.slice(at);}
-            if((html.match(new RegExp('id=["\\']'+id+'["\\']','g'))||[]).length!==1)throw new Error(id+' embedded lot duplicate/missing');
+            if((html.match(new RegExp('id="'+id+'"','g'))||[]).length!==1)throw new Error(id+' embedded lot duplicate/missing');
           }
           fs.writeFileSync(file,html,'utf8');
           console.log('P231/P232 standalone sources synchronized into canonical index.html');
