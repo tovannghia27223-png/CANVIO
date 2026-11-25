@@ -126,6 +126,8 @@ jobs:
           fs.writeFileSync('index.html',index,'utf8');
           const p130=mainFile('canvio-p130-cloud.js');
           fs.writeFileSync('canvio-p130-cloud.js',p130,'utf8');
+          fs.writeFileSync('canvio-p170-storage-hub.js',mainFile('canvio-p170-storage-hub.js'),'utf8');
+          fs.writeFileSync('supabase/canvio-storage.sql',mainFile('supabase/canvio-storage.sql'),'utf8');
           for(const path of ['CANVIO_AI_GUIDE.md','CANVIO_ROADMAP.md','CANVIO_NEXT_AI_PROMPT.md']){
             const heading='## P130.2 — Điền sẵn Supabase mặc định';
             const mainDoc=mainFile(path),at=mainDoc.lastIndexOf(heading);
@@ -858,6 +860,7 @@ jobs:
             }
             if((html.match(new RegExp('id="'+id+'"','g'))||[]).length!==1)throw new Error('P159 duplicate/missing inline lot: '+id);
           }
+          syncLot('canvio-lot130c','canvio-p130-cloud.js',false);
           syncLot('canvio-lot153b','canvio-p153-board.js',true);
           syncLot('canvio-lot155s','canvio-p155-scene-pack.js',true);
           syncLot('canvio-lot159i','canvio-p159-integration.js',false);
@@ -872,6 +875,11 @@ jobs:
           syncLot('canvio-lot167b','canvio-p167-blocking.js',false);
           syncLot('canvio-lot168m','canvio-p168-motion.js',false);
           syncLot('canvio-lot169c','canvio-p169-character-studio.js',false);
+          syncLot('canvio-lot170h','canvio-p170-storage-hub.js',false);
+          const oldP229Count='noNewScriptTag:document.scripts.length===80';
+          const newP229Count='noNewScriptTag:document.scripts.length===81';
+          if(html.includes(oldP229Count))html=html.replace(oldP229Count,newP229Count);
+          else if(!html.includes(newP229Count))throw new Error('P229/P170 script-count contract missing or unexpected');
           const old="LS.set('assets',arr.slice(0,40));render();resolve()";
           const replacement="LS.set('assets',arr.slice(0,200));render();resolve()";
           const count=html.split(old).length-1;
@@ -907,7 +915,7 @@ jobs:
           set -euo pipefail
           node scripts/extract-integrated-modules.mjs
           node tests/p146/run-p146-tests.cjs
-          for file in canvio-p74-p81-three-viewer.js canvio-p85-studio.js canvio-p102-background-removal.js canvio-p105-p107-depth-parallax.js canvio-p68-p70.js canvio-p72-glb-viewer.js canvio-p73-offline-site.js canvio-p82-p84-vector-pdf.js canvio-p87-cv-docx.js canvio-p90-p96.js canvio-p97-p101.js canvio-p104.js canvio-p127-duck.js canvio-p145-shader.js canvio-p119-video.js canvio-p119-website.js canvio-p153-board.js canvio-p155-scene-pack.js canvio-p159-integration.js canvio-p160-collections.js canvio-p161-spatial-workspace.js canvio-p162-reference-canvas.js canvio-p163-character-continuity.js canvio-p164-shotlist.js canvio-p165-ai-workflow.js canvio-p166-landing-studio.js canvio-p159u-dock.js canvio-p167-blocking.js canvio-p168-motion.js canvio-p169-character-studio.js assets/canvio-rmbg-worker.js assets/canvio-depth-worker.js assets/canvio-whisper-worker.js canvio-p132-pdf-import.js; do node --check "$file"; done
+          for file in canvio-p74-p81-three-viewer.js canvio-p85-studio.js canvio-p102-background-removal.js canvio-p105-p107-depth-parallax.js canvio-p68-p70.js canvio-p72-glb-viewer.js canvio-p73-offline-site.js canvio-p82-p84-vector-pdf.js canvio-p87-cv-docx.js canvio-p90-p96.js canvio-p97-p101.js canvio-p104.js canvio-p127-duck.js canvio-p145-shader.js canvio-p119-video.js canvio-p119-website.js canvio-p153-board.js canvio-p155-scene-pack.js canvio-p159-integration.js canvio-p160-collections.js canvio-p161-spatial-workspace.js canvio-p162-reference-canvas.js canvio-p163-character-continuity.js canvio-p164-shotlist.js canvio-p165-ai-workflow.js canvio-p166-landing-studio.js canvio-p159u-dock.js canvio-p167-blocking.js canvio-p168-motion.js canvio-p169-character-studio.js canvio-p170-storage-hub.js assets/canvio-rmbg-worker.js assets/canvio-depth-worker.js assets/canvio-whisper-worker.js canvio-p132-pdf-import.js; do node --check "$file"; done
 
       - name: P143 standalone source and canonical lot parity audit
         shell: bash
@@ -1046,6 +1054,7 @@ jobs:
           node tests/p167/run-p167-tests.cjs
           node tests/p167/run-p168-tests.cjs
           node tests/p169/run-p169-tests.cjs
+          node tests/p170/run-p170-tests.cjs
           node tests/p159/run-p159-tests.cjs
           node tests/p160/run-p160-166-tests.cjs
           node tests/p127/run-p120-comfyui-tests.cjs
@@ -1133,6 +1142,7 @@ jobs:
           /tmp/canvio-playwright/bin/python tests/p145/run-p167-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p168-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p169-browser.py
+          /tmp/canvio-playwright/bin/python tests/p145/run-p170-browser.py
           /tmp/canvio-playwright/bin/python tests/p160/run-p160-166-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p114n-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p150-browser.py
