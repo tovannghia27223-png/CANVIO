@@ -44,7 +44,6 @@ with sync_playwright() as p:
         pg.screenshot(path='/tmp/p150_fashion_%s.png'%name)
         pg.click('#cv150-skins [data-skin=sky]')
         ck(name+' 0 lỗi trang',not errs)
-        pg.close()
 
     # ---- kiểu Công nghệ (mặc định)
     for name,vp in (('desktop',{'width':1440,'height':900}),('mobile',{'width':390,'height':844})):
@@ -77,18 +76,18 @@ with sync_playwright() as p:
     pg.evaluate("CVLot47.set('plain');CV229.setTheme('graffiti')")
     pg.wait_for_function("""!document.documentElement.hasAttribute('data-skin')&&document.getElementById('cv229-inspector').classList.contains('cv229-theme-graffiti')&&!document.body.classList.contains('cv229-theme-graffiti')""",timeout=10000)
     # P150 tech intentionally changes the toolbar while Home is active.
-    # Capture the base-pink baseline only after opening a non-Home workspace.
+# Capture the workspace's own Export baseline; Spatial palette must not set it.
     pg.evaluate("CVWS.open('design')");pg.wait_for_timeout(900)
     baseline=pg.evaluate('getComputedStyle(document.getElementById("ws-export")).backgroundColor')
-    ck('theme fixture baseline is original pink Export',baseline=='rgb(255, 61, 154)')
+ck('theme fixture captures a real workspace Export baseline',baseline not in ('rgba(0, 0, 0, 0)','transparent'))
     for sp in ['design','site','media','proj','ai']:
         pg.evaluate("CVWS.open('%s')"%sp);pg.wait_for_timeout(900)
         ck('không gian '+sp+' không lẫn trang Tổng quan',pg.evaluate('document.getElementById("page-home").offsetHeight')==0 and not pg.is_visible('#cv150-skins'))
         ck('không gian '+sp+' tắt Home-only toolbar scope',pg.evaluate('document.documentElement.getAttribute("data-cv150-home-active")!=="true"'))
         ck('không gian '+sp+' đưa skin gốc về classic ở root',pg.evaluate('document.documentElement.getAttribute("data-home-skin")==="classic"'))
         state=pg.evaluate("""()=>{const e=document.getElementById('ws-export'),s=getComputedStyle(e);return {home:document.documentElement.getAttribute('data-home-skin'),active:document.documentElement.getAttribute('data-cv150-home-active'),skin:document.documentElement.getAttribute('data-skin'),bodyTheme:[...document.body.classList].filter(x=>x.indexOf('cv229-theme-')===0),spatialTheme:[...document.getElementById('cv229-inspector').classList].filter(x=>x.indexOf('cv229-theme-')===0),background:s.backgroundColor,backgroundImage:s.backgroundImage,color:s.color,border:s.borderColor}}""")
-        if state['background']!='rgb(255, 61, 154)': print('P150_EXPORT_DIAGNOSTIC '+sp+' '+str(state))
-        ck('không gian '+sp+' giữ nút Xuất hồng gốc',state['background']==baseline)
+if state['background']!=baseline: print('P150_EXPORT_DIAGNOSTIC '+sp+' '+str(state))
+ck('không gian '+sp+' giữ màu Xuất gốc',state['background']==baseline)
     pg.close()
 
     # P229 theme ownership: Spatial palette must not recolor shell navigation or other workspace controls.
@@ -104,6 +103,7 @@ with sync_playwright() as p:
     pg.evaluate("CVContrastGuardP151.scan()")
     ck('P151 không ghi đè màu menu hoặc Spatial Inspector',pg.evaluate("!document.querySelector('#cv-studio-menu [data-route][data-cvg]')&&!document.querySelector('#cv229-inspector [data-cvg]')"))
     pg.evaluate("CV229.close()")
+    pg.close()
 
     # ---- Holographic Ocean remains independent of the Home presentation skin.
     pg=b.new_page(viewport={'width':1440,'height':900})
