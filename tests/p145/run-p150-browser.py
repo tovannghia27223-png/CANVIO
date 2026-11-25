@@ -75,8 +75,8 @@ with sync_playwright() as p:
     # Merely writing localStorage does not prove the runtime has applied the skin.
     pg.evaluate("CVLot47.set('plain');CV229.open();CV229.setTheme('graffiti')")
     pg.wait_for_function("""window.CV229ThemeGlobalP229&&!document.documentElement.hasAttribute('data-skin')&&document.body.classList.contains('cv229-theme-graffiti')&&!document.getElementById('cv229-inspector').classList.contains('cv229-theme-graffiti')""",timeout=30000)
-    # P150 tech intentionally changes the toolbar while Home is active.
-    # Capture the workspace's own Export baseline; Spatial palette must not set it.
+    # P150 Home skin changes Home presentation only. The shared Spatial palette
+    # remains global and is checked separately below across shell, controls and workspaces.
     pg.evaluate("CVWS.open('design')");pg.wait_for_timeout(900)
     baseline=pg.evaluate('getComputedStyle(document.getElementById("ws-export")).backgroundColor')
     ck('theme fixture captures a real workspace Export baseline',baseline not in ('rgba(0, 0, 0, 0)','transparent'))
@@ -91,13 +91,13 @@ with sync_playwright() as p:
 
     # P229 global appearance: the Spatial palette picker must recolor the complete CANVIO shell and every workspace.
     pg.evaluate("CV229.setTheme('graffiti');CVWS.open('design')");pg.wait_for_timeout(500)
-    navBefore=pg.evaluate("""()=>{const pick=e=>{const s=getComputedStyle(e);return [s.backgroundColor,s.backgroundImage,s.color,s.borderColor].join('|')};return {menu:pick(document.querySelector('.side')),topbar:pick(document.querySelector('.top')),export:pick(document.getElementById('ws-export')),toolbar:pick(document.querySelector('.toolbar')),spatial:pick(document.getElementById('cv229-inspector')),spatialControl:pick(document.querySelector('#cv229-inspector [data-cv229-theme]'))}}""")
+    navBefore=pg.evaluate("""()=>{const pick=e=>{const s=getComputedStyle(e);return [s.backgroundColor,s.backgroundImage,s.color,s.borderColor].join('|')};return {menu:pick(document.querySelector('.side')),topbar:pick(document.querySelector('.top')),primaryButton:pick(document.querySelector('button.btn-primary')),export:pick(document.getElementById('ws-export')),toolbar:pick(document.querySelector('.toolbar')),spatial:pick(document.getElementById('cv229-inspector')),spatialControl:pick(document.querySelector('#cv229-inspector [data-cv229-theme]'))}}""")
     pg.evaluate("CV229.setTheme('midnight')");pg.wait_for_timeout(500)
-    navAfter=pg.evaluate("""()=>{const pick=e=>{const s=getComputedStyle(e);return [s.backgroundColor,s.backgroundImage,s.color,s.borderColor].join('|')};return {menu:pick(document.querySelector('.side')),topbar:pick(document.querySelector('.top')),export:pick(document.getElementById('ws-export')),toolbar:pick(document.querySelector('.toolbar')),spatial:pick(document.getElementById('cv229-inspector')),spatialControl:pick(document.querySelector('#cv229-inspector [data-cv229-theme]'))}}""")
+    navAfter=pg.evaluate("""()=>{const pick=e=>{const s=getComputedStyle(e);return [s.backgroundColor,s.backgroundImage,s.color,s.borderColor].join('|')};return {menu:pick(document.querySelector('.side')),topbar:pick(document.querySelector('.top')),primaryButton:pick(document.querySelector('button.btn-primary')),export:pick(document.getElementById('ws-export')),toolbar:pick(document.querySelector('.toolbar')),spatial:pick(document.getElementById('cv229-inspector')),spatialControl:pick(document.querySelector('#cv229-inspector [data-cv229-theme]'))}}""")
     ck('P229 đổi palette đặt theme trên body dùng chung, không gắn class riêng vào Inspector',pg.evaluate("document.body.classList.contains('cv229-theme-midnight')&&!document.getElementById('cv229-inspector').classList.contains('cv229-theme-midnight')&&document.documentElement.getAttribute('data-cv229-theme')==='midnight'"))
     audit=pg.evaluate('CV229ThemeGlobalP229.audit()')
     ck('P229 giữ CSS theme toàn cục và chỉ có một body theme owner',audit['globalThemeSelectors']>0 and audit['bodyThemeClasses']==['midnight'] and audit['inspectorThemeClasses']==[] and audit['globalThemeApplied'] and audit['pickerButtonsSynced'])
-    ck('P229 đồng bộ màu menu, topbar, nút Xuất và Spatial controls khi đổi palette',all(navBefore[k]!=navAfter[k] for k in ['menu','topbar','export','spatial','spatialControl']))
+    ck('P229 đồng bộ màu menu, topbar, nút Xuất và Spatial controls khi đổi palette',all(navBefore[k]!=navAfter[k] for k in ['menu','topbar','primaryButton','export','toolbar','spatial','spatialControl']))
     for palette in ['glass','midnight','aurora','cyber','graffiti','neonlight']:
         pg.evaluate("CV229.setTheme('%s')"%palette);pg.wait_for_timeout(120)
         ck('P229 palette '+palette+' đồng bộ body root và picker',pg.evaluate("document.body.classList.contains('cv229-theme-%s')&&document.documentElement.getAttribute('data-cv229-theme')==='%s'&&!document.getElementById('cv229-inspector').classList.contains('cv229-theme-%s')"%(palette,palette,palette)))
