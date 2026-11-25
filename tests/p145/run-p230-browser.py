@@ -21,6 +21,12 @@ with sync_playwright() as p:
             ck(name+' '+theme+' menu active cùng màu accent',!state['menu']||state['menu']==state['accent'])
             ck(name+' '+theme+' class theme được giữ',state['activeTheme'])
         pg.evaluate("CVLot47&&CVLot47.set('plain');CV229.setTheme('graffiti')")
+        pg.evaluate("CVWS.open('design')");pg.wait_for_timeout(300)
+        pg.evaluate("CV.go('assets')");pg.wait_for_function("!!document.querySelector('.cv-pwf')",timeout=15000);pg.wait_for_timeout(150)
+        pwf=pg.evaluate("""()=>{const a=getComputedStyle(document.querySelector('.cv-pwf button[data-pwf-open]')).backgroundColor;const s=getComputedStyle(document.getElementById('cv-pwf-save')).backgroundColor;const n=getComputedStyle(document.getElementById('cv-pwf-refresh')).backgroundColor;const accent=getComputedStyle(document.body).getPropertyValue('--cv-accent').trim();const c=document.createElement('canvas').getContext('2d');c.fillStyle=accent;return {accent:c.fillStyle,open:a,save:s,refresh:n}}""")
+        ck(name+' Photo Workflow nút Mở Luma cùng màu accent',pwf['open']==pwf['accent'])
+        ck(name+' Photo Workflow nút Lưu cùng màu accent',pwf['save']==pwf['accent'])
+        ck(name+' Photo Workflow nút phụ cùng hue',bool(pwf['refresh']))
         for sp in ['design','site','media','proj','ai']:
             pg.evaluate('s=>CVWS.open(s)',sp);pg.wait_for_timeout(450)
             state=pg.evaluate("""()=>{const e=document.querySelector('.btn-primary'),m=document.querySelector('.side button.active');const s=getComputedStyle(document.body);return {api:!!window.CVUnifiedThemeP230,accent:s.getPropertyValue('--cv-accent').trim(),button:e&&getComputedStyle(e).backgroundColor,menu:m&&getComputedStyle(m).backgroundColor,style:!!document.getElementById('canvio-p230-unified-accent-css')}}""")
