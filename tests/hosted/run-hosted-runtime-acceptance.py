@@ -161,7 +161,10 @@ def main():
         record('P85 OpenCV Lucas-Kanade processes real points on local video frames',track['started'] and track['dimensions']==[320,240] and track['points']>0 and 'OpenCV.js LK optical flow' in track['status'],track)
         # P102 UI availability is a normal browser smoke; only heavy model inference is opt-in.
         try:
-            page.locator('.nav button[data-page="imageStudio"]').click()
+            page.evaluate("""() => {
+              if(!window.CV || typeof CV.go !== 'function') throw new Error('CV.go route owner is unavailable');
+              CV.go('imageStudio');
+            }""")
             page.wait_for_function("""() => {
               const route=document.querySelector('#page-imageStudio');
               const panel=document.querySelector('#cv102-background-removal');
