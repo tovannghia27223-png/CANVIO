@@ -1454,3 +1454,13 @@ P167.1 and P168.1 are therefore mainline-integrated and hosted-CI verified, with
 - SQL kho tài nguyên: `supabase/canvio-storage.sql` (cũng trong thẻ, nút "Sao chép SQL kho tài nguyên"); người dùng phải chạy MỘT LẦN sau SQL của P130. Test kiểm tra tệp khớp chuỗi trong module.
 - Test: `tests/p170/run-p170-tests.cjs` (28; thư mục giả + Storage giả + P130 thật bằng WebCrypto), `tests/p145/run-p170-browser.py` (12; dùng OPFS thay hộp thoại chọn thư mục). Lưu ý: đọc tay cầm OPFS từ IndexedDB làm sập Chromium headless → module giữ tay cầm trong bộ nhớ, test dùng `_setHandle`.
 - Chưa làm / chưa test: sao lưu video lớn và dữ liệu Project Vault/localStorage ra thư mục máy; khôi phục dự án (`projects/*.json`) về lại app (hiện chỉ khôi phục tài nguyên); xóa tài nguyên trên cloud; tự động lưu định kỳ; chọn thư mục thật và Supabase thật chưa được thử với tài khoản người dùng.
+
+
+## P170.1 — Quản lý và xóa tài nguyên cloud (candidate · 2026-11-25)
+
+- Nâng canvio-p170-storage-hub.js / CVStorageHubP170 lên 170.1.0; vẫn dùng P130 làm owner xác thực/khóa và bucket riêng tư cv-assets.
+- Thêm listCloudAssets() để đọc manifest đã mã hóa và chỉ trả metadata cần hiển thị; không đưa đường dẫn lưu trữ nội bộ hoặc nội dung file ra UI.
+- Thêm deleteCloudAsset(sha): xác thực UID/phiên mở khóa, kiểm tra SHA-256, bắt buộc path đúng dạng <uid>/a-<24 hex> trước khi gửi DELETE đến Supabase Storage; sau khi xóa object, ghi lại manifest bằng P130 AES-GCM.
+- UI Project Vault có nút tải danh sách, select tài nguyên và nút xóa kèm xác nhận. Xóa cloud không xóa bản trong Asset Library hoặc thư mục máy.
+- Nếu Storage đã xóa object nhưng việc ghi manifest thất bại, API trả deleted:true, manifestUpdated:false cùng cảnh báo; UI không báo thành công trọn vẹn.
+- Kiểm thử mở rộng: Node xác minh liệt kê, từ chối SHA không hợp lệ, xóa đúng path của UID và manifest sau xóa; Chromium xác minh các control/API được nhúng trong index. Exact-head hosted CI đang chờ; chưa thử Supabase thật.
