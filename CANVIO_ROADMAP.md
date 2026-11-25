@@ -1453,3 +1453,9 @@ P167.1 and P168.1 are therefore mainline-integrated and hosted-CI verified, with
 
 - Run #842 reached P102 UI smoke, but the test tried to click a nav entry that is hidden under the default headless advanced-navigation state. Replace the test-driver click with the existing CV.go('imageStudio') route owner; do not change the nav or app shell for a test-only visibility issue.
 - Retry exact-head acceptance before merge. Run #842's P74/P81, P85, P161, P143, P47–P70 and integrated Node contracts were green; P102 UI and P150 remained unverified in that run.
+
+
+## P102 browser diagnostic follow-up (2026-11-25)
+
+- Run #845 did not confirm automatic panel mount after direct CV.go route navigation. The next hosted smoke records the exact route/API/panel/control/error state and checks document order (after page heading, before Image Studio prompt builder) rather than immediate-sibling adjacency.
+- Hold merge until this run proves the automatic mount path.
