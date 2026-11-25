@@ -7,6 +7,6 @@ vm.runInNewContext(source,{window:root,document:doc,MutationObserver:root.Mutati
 assert.equal(root.CVUnifiedThemeP230.version,'230.1.0');
 assert.equal(doc.style.id,'canvio-p230-unified-accent-css');
 const css=doc.style.textContent;
-for(const token of ['--cv-accent:var(--brand','--primary:var(--cv-accent)','--accent:var(--cv-accent)','body .side','body #ws-tabs','body .cv229-route.active','background-image:none!important'])assert.ok(css.includes(token),'missing '+token);
+for(const token of ['--cv-accent:var(--brand','--primary:var(--cv-accent)','--accent:var(--cv-accent)','html body[class] .side','html body[class] #ws-tabs','html body[class] .cv229-route.active','background-image:none!important'])assert.ok(css.includes(token),'missing '+token);
 assert.ok(css.includes('.btn-primary')&&css.includes('.btn-soft')&&css.includes('.btn-ghost'));
 console.log('P230 unified accent tests passed');
