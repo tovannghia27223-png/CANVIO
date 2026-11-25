@@ -740,3 +740,10 @@ Mainline workflow #551 passed 53/53; Pages #275 passed build/deploy. P143 parity
 - Mainline workflow #941 was FAIL (85/86) before P231/P232. The failing assertion was a stale P150 expected-color constant (rgb(255, 61, 154)) after P230's unified accent changed to #F83E9F; the assertion is updated to compare the computed button color with the active --cv-accent token. Re-run on this exact PR head is required before treating hosted CI as PASS.
 
 - Mainline regression diagnosis: hosted run #948 failed the P150 suite at 81/86 only because its assertion compared a raw computed RGB background string with a Canvas-normalized hex baseline. The five failures were the same accent color expressed in different CSS serializations, not five distinct UI regressions. The P150 browser assertion now normalizes each observed computed color through Canvas before comparing; this changes test comparison only, not the UI theme or production button styles. Re-run is required on the updated exact PR head.
+
+## P233.1 — External editor card adapter regression (2026-11-25)
+
+- Exact-head hosted run #45617365852 reached the hosted same-origin runtime check and failed the uncaught-page-error gate with `ReferenceError: externalCard is not defined`.
+- Root cause: `canvio-p233-video-shell.js` referenced `externalCard` in its mount guard and adoption list without resolving the existing Video Engine External editor card.
+- Correction: resolve the existing Reframe anchor (`a[href^="https://reframe-os.netlify.app/"]`) and adopt its closest existing `.card` into P231's inspector. No replacement card or separate editor engine is introduced.
+- Added P233 Node source-contract and Chromium DOM assertions for inspector adoption and exact Legacy Layout restoration. The corrected exact-head hosted workflow remains required; do not mark P233–P236 accepted until it completes green.
