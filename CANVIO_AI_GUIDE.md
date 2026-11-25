@@ -4415,3 +4415,9 @@ P160–P166 module APIs currently report versions P160.2.0, P161.1.0, P162.2.0, 
 - SQL kho tài nguyên: `supabase/canvio-storage.sql` (cũng trong thẻ, nút "Sao chép SQL kho tài nguyên"); người dùng phải chạy MỘT LẦN sau SQL của P130. Test kiểm tra tệp khớp chuỗi trong module.
 - Test: `tests/p170/run-p170-tests.cjs` (28; thư mục giả + Storage giả + P130 thật bằng WebCrypto), `tests/p145/run-p170-browser.py` (12; dùng OPFS thay hộp thoại chọn thư mục). Lưu ý: đọc tay cầm OPFS từ IndexedDB làm sập Chromium headless → module giữ tay cầm trong bộ nhớ, test dùng `_setHandle`.
 - Chưa làm / chưa test: sao lưu video lớn và dữ liệu Project Vault/localStorage ra thư mục máy; khôi phục dự án (`projects/*.json`) về lại app (hiện chỉ khôi phục tài nguyên); xóa tài nguyên trên cloud; tự động lưu định kỳ; chọn thư mục thật và Supabase thật chưa được thử với tài khoản người dùng.
+
+
+## P229/P170 script-count re-entry follow-up (2026-11-25 · commit 558637f)
+- The combined 69-step run 889 passed P102/P150/P151/P229 and P170, including 90/90 browser checks and P170 node tests 28/28. Its generated candidate contains both P229 and P170, so the inline script count is 81.
+- The subsequent exact-candidate rerun exposed a narrow idempotency gap: P229's integration guard accepted the pre-P170 count 80 but not the already-integrated count 81. The module itself was already current; no browser assertion failed.
+- Commit 558637f makes P229 integration accept 79 (pre-integration), 80 (P229 only), or 81 (P229 + P170), while the later P170 sync step still enforces the final count 81. Rerun the full workflow on the latest head before merge.
