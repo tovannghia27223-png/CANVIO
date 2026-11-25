@@ -408,3 +408,13 @@ Khi sửa module: sửa file standalone rồi chép y hệt vào lot (parity so 
 - P132: one-page PDF raster handoff into existing Pixel Atelier; P163: visible labels only; P161: camera pose replay on existing r187 viewer; P166: P131-sanitized static landing handoff to existing GrapesJS/CSS/Website save owners.
 - Preserve explicit limits: no editable PDF vector/text/password/batch import; no WCAG certification; no universal complex-GLB/physical-GPU certification; no backend forms, CRM, hosting or publishing.
 - P70 remains blocked with fourteen manual gates pending. Never mark release certified until all have independently reviewed evidence.
+
+
+## Handoff — P102/P150 verification on PR #104 (2026-11-25)
+
+- PR #104: https://github.com/tovannghia27223-png/CANVIO/pull/104. P102 background-removal panel has been moved directly below the Image Studio heading and before the prompt builder; it retains the original local ORMBG worker/model and canonical Asset Library flow.
+- Run #852 passed 66/66 workflow steps. P102 hosted UI check: 20/20; P150 desktop/mobile browser checks: 86/86; hosted runtime: 20/20; zero page errors, console errors or invalid WASM MIME responses.
+- Removed the always-true "or True" clause from the Tech prompt handoff test; it now checks the actual transferred #ws-jin value and route acknowledgement. Hosted test server now serves one validated application/wasm MIME type and asserts it.
+- The generated candidate commit on this branch is 827eed312c226e0932df8377563b785a35227aa7; exact tested source commit is 83afb13b81a2fa035a828d0f61df41800020b6ed.
+- Full model inference was intentionally not run: workflow requires explicit full_model_acceptance=true. Do not call P102 AI quality verified on real photographs. P70 remains 14 manual gates open; physical GPU, real media, accessibility/device checks and cloud/two-device sync remain open.
+- Earlier P102 #842/#845 pending notes and P150 test-isolation notes in this file are historical; this run supersedes only the P102 UI discoverability and P150 browser regression status, not the manual/model acceptance boundaries.
