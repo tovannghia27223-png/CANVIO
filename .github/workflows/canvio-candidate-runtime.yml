@@ -1235,6 +1235,7 @@ jobs:
           | P163.1.1 visible character-profile labels | P169 Chromium verifies visible labels for existing P163 profile controls, eight labelled Character Studio fields, Shared Core profile round-trip, preview/save/reset and mobile overflow; P143 source parity | Automated label/layout checks are not WCAG certification; keyboard, screen reader, 200% zoom and physical-device review remain manual. |
           | P161.2 / P74.1 GLB camera-pose replay | Existing Three.js r187 viewer applies and reads back yaw/pitch/FOV; hosted GLB fixture replays P161 preset through Asset Library with nonzero X/Y/Z; OrbitControls damping flush; same-origin GLB and Draco/Meshopt/KTX2 decoder fixtures | Complex animated/multi-camera production GLBs, physical GPU/frame rate and target-device visual review remain manual. |
           | P166.2 brief-to-Website Engine handoff | P160–P166 Chromium 32/32; delayed lazy-editor Node test; P131 sanitized body inserted into existing GrapesJS owner, scoped base/mobile rules in canonical CSS Manager, Shared Core metadata and native Website Engine save; no page errors | Output is a static landing page. Backend form submission, CRM, hosting/live publishing and authored customer Website project review are not included. |
+          | P150/P151.1/P229.3 shared CANVIO palette | Run #906: P150/P229 Chromium 96/96; all six palettes, shell/menu/topbar/primary button/Export/toolbar and Spatial surfaces/controls updated together | Spatial palette is the global CANVIO palette through `body.cv229-theme-*`; Home/Holographic skin owners remain separate; P70's fourteen real-world gates remain open. |
           | P70 Stable release | Fourteen fail-closed manual gates | releaseCertified:false until every gate has reviewed production evidence |
 
           ## Required manual gates
@@ -1301,6 +1302,7 @@ jobs:
           - Added P163.1.1 visible labels for existing character-profile controls, preserving Shared Core, Asset Library and Storyboard ownership; P169 browser coverage checks visible field labels and profile round-trip.
           - Added P161.2/P74.1 saved GLB camera-pose replay in the existing Three.js r187 viewer, including yaw/pitch/FOV/X-Y-Z, OrbitControls damping flush and same-origin GLB fixture checks.
           - Added P166.2 brief-to-GrapesJS Website Engine handoff through P131 sanitization, scoped responsive CSS and the canonical save owner, with lazy-engine readiness and Chromium integration tests.
+          - P229.3 makes the Spatial Appearance picker the shared CANVIO palette: `body.cv229-theme-*` drives shell/workspaces and the Spatial palette bridge themes controls; hosted run #906 passed P150/P229 Chromium 96/96 across all six palettes.
           - Stable release remains fail-closed at P70; no physical GPU or two-device certification is implied.
           PATCH
           if ! grep -q '## 23.3.111 integrated acceptance — P132.1, P163.1.1, P161.2 and P166.2' CANVIO_AI_GUIDE.md; then
