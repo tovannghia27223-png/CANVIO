@@ -24,6 +24,10 @@ function installCss(){
  '.cv231-shell.cv233-video .cv231-props>div{display:grid;min-width:0;max-width:100%;box-sizing:border-box;align-content:start;gap:8px;max-height:100%;overflow:auto}',
  '.cv231-shell.cv233-video .cv231-props .card{margin:0!important;min-width:0}',
  '.cv231-shell.cv233-video .cv231-props #vtCapList{max-height:25dvh!important;overflow:auto}',
+ '.cv231-shell.cv233-video .cv231-top,.cv231-shell.cv233-video .cv231-layout,.cv231-shell.cv233-video .cv231-bottom{box-sizing:border-box;width:100%;max-width:100%;min-width:0}',
+ '.cv231-shell.cv233-video .cv231-ident{flex:0 1 82px;min-width:0;max-width:82px}',
+ '.cv231-shell.cv233-video .cv231-actions{flex:1 1 0;min-width:0;max-width:100%;overflow-x:auto}',
+ '.cv231-shell.cv233-video .cv231-bottom>.card,.cv231-shell.cv233-video .cv231-bottom #vtTimeline{box-sizing:border-box;width:100%;max-width:100%;min-width:0}',
  '@media(max-width:900px){.cv231-shell.cv233-video.cv231-has-bottom .cv231-layout{grid-template-columns:minmax(0,1fr)!important;grid-template-rows:minmax(190px,1fr) 54px minmax(126px,28dvh)!important}.cv231-shell.cv233-video .cv231-bottom{grid-column:1;grid-row:3}.cv231-shell.cv233-video .cv231-bottom>.card{padding:5px}.cv231-shell.cv233-video .cv231-rail{grid-column:1;grid-row:2}.cv231-shell.cv233-video .cv231-rail>.card{max-height:none;overflow:visible}.cv231-shell.cv233-video .cv231-props{z-index:1300;max-height:58dvh}.cv231-shell.cv233-video .cv231-canvas>.card{padding:6px}.cv231-shell.cv233-video .cv231-bottom #vtTimeline{overflow:auto!important}}'
  ].join('');
  d.head.appendChild(s);
