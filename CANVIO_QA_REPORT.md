@@ -763,3 +763,9 @@ Mainline workflow #551 passed 53/53; Pages #275 passed build/deploy. P143 parity
 - WASM/runtime: Hosted runtime 20/20. Every successful same-origin .wasm response used application/wasm; badWasmMimeResponses=[], consoleErrors=[], pageErrors=[]. P74/P81 GLB/Draco/Meshopt/KTX2, P161 pose, P85 vendor modules/PostFX/OpenCV, and P107 portability checks passed.
 - Model inference was not run in this workflow: actualModelInference.performed=false, opt-in is workflow_dispatch with full_model_acceptance=true. P102 real ONNX inference/UI output, P105 inference and P80 Whisper inference remain unclaimed here. Historical synthetic model checks establish execution plumbing only, not real-photo accuracy.
 - P70 remains BLOCKED: fourteen manual gates pending (0 passed); SwiftShader is software rendering, not physical GPU. HTTPS/security headers, real customer media, physical devices, accessibility, two-device/cloud Project Vault sync and recovery remain separate acceptance work.
+
+
+## P229 / P151.1 Spatial theme bleed — correction candidate (2026-11-25)
+- Verified root cause: P229 `applyTheme()` applied theme classes to `document.body`; broad `body.cv229-theme-*` selectors changed `.side`, `.top`, common cards, fields and buttons outside Spatial. This is why changing Spatial palette altered the menu and unrelated components.
+- Candidate fix scopes the six palette classes to `#cv229-inspector` and rewrites theme selectors to the inspector root/descendants. P151.1 additionally excludes nav, buttons, inputs, and Spatial Inspector from automatic contrast overrides.
+- Added hosted regression assertions for menu, launcher and Export computed styles across Graffiti → Midnight, plus P151 override exclusion. Status remains pending exact-head CI; no PASS claim until run completes.
