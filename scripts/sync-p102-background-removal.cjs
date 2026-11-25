@@ -5,7 +5,7 @@ const htmlPath = 'index.html';
 const modulePath = 'canvio-p102-background-removal.js';
 const html = fs.readFileSync(htmlPath, 'utf8');
 const source = fs.readFileSync(modulePath, 'utf8').trim();
-const tag = /(<script\\b(?=[^>]*\\bid=["']canvio-p102-background-removal["'])[^>]*>)([\\s\\S]*?)(<\\/script\\s*>)/gi;
+const tag = /(<script\b(?=[^>]*\bid=["']canvio-p102-background-removal["'])[^>]*>)([\s\S]*?)(<\/script\s*>)/gi;
 const matches = [...html.matchAll(tag)];
 
 if (matches.length !== 1) {
@@ -19,8 +19,8 @@ if (inline === source) {
   process.exit(0);
 }
 
-const leading = (match[2].match(/^\\r?\\n/) || ['\\n'])[0];
-const trailing = (match[2].match(/\\r?\\n$/) || ['\\n'])[0];
+const leading = (match[2].match(/^\r?\n/) || ['\n'])[0];
+const trailing = (match[2].match(/\r?\n$/) || ['\n'])[0];
 const replacement = match[1] + leading + source + trailing + match[3];
 const updated = html.slice(0, match.index) + replacement + html.slice(match.index + match[0].length);
 fs.writeFileSync(htmlPath, updated, 'utf8');
