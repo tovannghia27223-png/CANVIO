@@ -1447,3 +1447,9 @@ P167.1 and P168.1 are therefore mainline-integrated and hosted-CI verified, with
 - Acceptance now includes source parity and an unconditional hosted Chromium visibility check. Real ONNX inference remains a separate opt-in gate. No new storage, API, dependency or editor owner.
 - Keep the main design tokens and button variants; the goal is consistent sizing/typography within each workspace, not forcing intentionally distinct editor controls into a single visual variant.
 - Await exact-head hosted P143, P150, Chromium UI smoke and mainline checks before treating this candidate as accepted.
+
+
+## P102 acceptance follow-up — route driver adjustment (2026-11-25)
+
+- Run #842 reached P102 UI smoke, but the test tried to click a nav entry that is hidden under the default headless advanced-navigation state. Replace the test-driver click with the existing CV.go('imageStudio') route owner; do not change the nav or app shell for a test-only visibility issue.
+- Retry exact-head acceptance before merge. Run #842's P74/P81, P85, P161, P143, P47–P70 and integrated Node contracts were green; P102 UI and P150 remained unverified in that run.
