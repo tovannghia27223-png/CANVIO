@@ -1476,3 +1476,9 @@ P167.1 and P168.1 are therefore mainline-integrated and hosted-CI verified, with
 - **P230** hoàn tất phần còn dở: nhúng `canvio-lot230` vào `index.html` (cuối `</body>`, CI vẫn ghi đè idempotent), thêm vào map parity. Sửa CSS: nút chính `.cvExport` trong `header.top` bị rule Graffiti (`.top :is(...)`) ghi đè → thêm rule cùng accent. Sửa test: chọn nút chính ĐANG HIỂN THỊ (trước đó lấy nút ẩn `.cvExport`), chờ 700ms sau `setTheme` để màu hết chuyển tiếp. Kết quả cục bộ: node OK, Chromium 68 PASS / 0 FAIL.
 - Bài học: z-index trong `.app` không vượt được phần tử gắn ở cấp `body`; test màu phải đợi hết transition.
 - Chưa làm: xem ảnh thực tế các theme sau P230 trên máy người dùng; xác nhận CI đúng head.
+
+
+## P230.2 — Graffiti dùng hồng #F83E9F, bỏ tím (2026-11-25)
+- Theo yêu cầu người dùng: nút chính theme Graffiti không còn gradient hồng→tím. `canvio-p230-unified-accent.js` đặt `--brand/--cv-accent` của `body.cv229-theme-graffiti` = `#F83E9F` (ink `#C91F7A`, soft `#FFE6F2`), nút chính nền `#F83E9F` + gradient cùng tông `#F83E9F→#FF63B1`, `.ws-ic/.cc-dock-mark` cũng hồng→hồng nhạt. Các theme khác (glass, midnight, aurora, cyber, neonlight) giữ màu riêng; nếu muốn tất cả theme cùng hồng thì đổi `--brand` của từng theme.
+- Chưa đổi: hình minh họa trang chủ (chip "Offer accepted" màu tím) và vài icon trang trí Graffiti.
+- Test: Chromium P230 68 PASS / 0 FAIL.
