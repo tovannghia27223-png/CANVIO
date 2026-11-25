@@ -97,6 +97,8 @@ with sync_playwright() as p:
     pg.evaluate("CV229.setTheme('midnight')");pg.wait_for_timeout(500)
     navAfter=pg.evaluate("""()=>{const pick=e=>{const s=getComputedStyle(e);return [s.backgroundColor,s.backgroundImage,s.color,s.borderColor].join('|')};return {menu:pick(document.querySelector('#cv-studio-menu [data-route]')),launcher:pick(document.getElementById('cv229-open')),export:pick(document.getElementById('ws-export'))}}""")
     ck('P229 đổi theme chỉ trong Spatial Inspector, không đổi body class',pg.evaluate("document.getElementById('cv229-inspector').classList.contains('cv229-theme-midnight')&&!document.body.classList.contains('cv229-theme-midnight')"))
+    audit=pg.evaluate('CV229ThemeIsolationP229.audit()')
+    ck('P229 không còn CSS theme toàn cục hoặc class rò ra body',audit['globalThemeSelectors']==0 and audit['bodyThemeClasses']==[] and 'midnight' in audit['inspectorThemeClasses'])
     ck('P229 không đổi màu menu, launcher và nút workspace',navBefore==navAfter)
     pg.evaluate("CV229.setTheme('graffiti');CV229.open()");pg.wait_for_timeout(500)
     pg.evaluate("CVContrastGuardP151.scan()")
