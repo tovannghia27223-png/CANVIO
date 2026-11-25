@@ -217,7 +217,15 @@
     {
       "source": "canvio-p230-unified-accent.js",
       "scriptId": "canvio-lot230"
+    },
+    {
+      "source": "canvio-p231-editor-shell.js",
+      "scriptId": "canvio-lot231"
+    },
+    {
+      "source": "canvio-p232-poster-shell.js",
+      "scriptId": "canvio-lot232"
     }
   ],
-  "totalModules": 52
+  "totalModules": 56
 }
