@@ -4488,3 +4488,13 @@ Nối tiếp P231–P236 (editor vừa khít màn hình). Người dùng muốn 
 - Giữ giới hạn Supabase miễn phí (≈1GB file, ≈50MB/tệp); video lớn ở lại máy.
 - Mọi bước dùng theo thứ tự: parity P143 → inventory → boot-order → CI; đọc mục "Bài học" các P170/P171/P230 trước khi làm giao diện.
 - Cần người dùng chốt: Đợt A có đúng thứ tự mong muốn không; có cần P243 (token GitHub) trong Đợt A hay chuyển sang Đợt B.
+
+
+## P231–P232 — Editor Shell architecture addendum (2026-11-25)
+
+- window.CVEditorShellP231 exposes mount(pageId, options), adopt(selector, slot, pageId), toggle(pageId), state(pageId), tests(). Slot names: rail, canvas, props, bottom, actions.
+- Adoption uses real DOM nodes and comment placeholders; the reverse restoration path returns each node to its original parent/position. No node cloning, new project store, timeline, database, or asset owner is introduced.
+- window.CVPosterShellP232 adapts only the existing Poster engine surface. Ownership remains: CV.poster.history for Undo/Redo, CV.project.autosave/save for persistence, Poster fit() for canvas sizing, CV.assets and current Poster engine for media.
+- Integration order: P231 script/lot before P232 script/lot; both load after existing workspace/runtime owners. Keep the two source files byte-equivalent to embedded lots via P143 parity.
+- Responsive shell breakpoint is 900 px; mobile uses a bottom tool rail and user-opened property drawer. App-level overflow lock is scoped to .app.cv231-app-active and removed when Legacy Layout is restored.
+- Tests: tests/p231/run-p231-tests.cjs and tests/p231/run-p231-browser.py. Fixture coverage is not a substitute for live-origin persistence, accessibility or real project acceptance.
