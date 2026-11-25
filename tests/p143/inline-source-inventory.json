@@ -1,10 +1,10 @@
 {
   "format": "CANVIO_P143_INLINE_SOURCE_INVENTORY",
   "version": 1,
-  "generatedAt": "2026-11-24T21:20:56.217Z",
+  "generatedAt": "2026-11-25T02:45:53.979Z",
   "source": "restored canonical index.html after hosted workflow integration steps",
   "purpose": "Complete script-tag inventory in browser execution order; known global reference detection is heuristic, not a semantic dependency DAG.",
-  "htmlBytes": 6079703,
+  "htmlBytes": 6079846,
   "scriptTagCount": 185,
   "inlineScriptCount": 185,
   "externalScriptCount": 0,
@@ -12652,8 +12652,8 @@
       "async": false,
       "defer": false,
       "noModule": false,
-      "bytes": 9672,
-      "sha256": "19b41cb64d7dfb32c3cb4fd5779bc139e712154d6126558aadff452fd954fc7c",
+      "bytes": 9815,
+      "sha256": "34c6488e48652d0f80560ef6bf342b9b7f8349a75452fcea3ee68fd29b443fa5",
       "exportedGlobals": [
         "CANVIOBackgroundRemovalP102"
       ],

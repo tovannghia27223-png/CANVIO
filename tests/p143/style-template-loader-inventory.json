@@ -1,10 +1,10 @@
 {
   "format": "CANVIO_P143_STYLE_TEMPLATE_LOADER_INVENTORY",
   "version": 1,
-  "generatedAt": "2026-11-24T21:20:56.510Z",
+  "generatedAt": "2026-11-25T02:45:54.175Z",
   "source": "restored canonical index.html after all workflow-managed module integration steps",
   "purpose": "Inventory inline styles, template elements, dynamic resource-loader call sites and lexical global-reference ordering candidates. Global references are not a human-reviewed semantic boot-order or runtime data-flow graph.",
-  "htmlBytes": 6079703,
+  "htmlBytes": 6079846,
   "styles": {
     "blockCount": 122,
     "inlineStyleAttributeCount": 1711,
@@ -23036,7 +23036,7 @@
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 106,
         "toId": "canvio-p102-background-removal",
-        "toSha256": "19b41cb64d7dfb32c3cb4fd5779bc139e712154d6126558aadff452fd954fc7c",
+        "toSha256": "34c6488e48652d0f80560ef6bf342b9b7f8349a75452fcea3ee68fd29b443fa5",
         "priorProviderCount": 2,
         "priorProviderOrders": [
           1,
