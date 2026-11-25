@@ -24,9 +24,12 @@ def glb_fixture():
 class QuietHandler(http.server.SimpleHTTPRequestHandler):
     def __init__(self,*a,**kw): super().__init__(*a,directory=str(ROOT),**kw)
     def log_message(self,*a): pass
+    def guess_type(self,path):
+        clean=path.split('?',1)[0].split('#',1)[0].lower()
+        if clean.endswith('.wasm'): return 'application/wasm'
+        if clean.endswith('.mjs'): return 'text/javascript'
+        return super().guess_type(path)
     def end_headers(self):
-        if self.path.endswith('.wasm'): self.send_header('Content-Type','application/wasm')
-        if self.path.endswith('.mjs'): self.send_header('Content-Type','text/javascript; charset=utf-8')
         self.send_header('Cross-Origin-Opener-Policy','same-origin')
         self.send_header('Cross-Origin-Embedder-Policy','require-corp')
         self.send_header('Cross-Origin-Resource-Policy','same-origin')
@@ -36,13 +39,18 @@ def main():
     server=socketserver.ThreadingTCPServer(('127.0.0.1',0),QuietHandler); server.daemon_threads=True
     threading.Thread(target=server.serve_forever,daemon=True).start()
     origin=f'http://127.0.0.1:{server.server_address[1]}'
-    page_errors=[]; console_errors=[]
+    page_errors=[]; console_errors=[]; bad_wasm_mime=[]
     try:
       with sync_playwright() as p:
         browser=p.chromium.launch(headless=True,args=['--no-sandbox','--disable-dev-shm-usage','--use-gl=angle','--use-angle=swiftshader','--enable-webgl','--ignore-gpu-blocklist','--enable-unsafe-swiftshader','--enable-unsafe-webgpu'])
         context=browser.new_context(viewport={'width':1440,'height':1050},accept_downloads=True)
         page=context.new_page()
         page.on('request',lambda r:requests.append(r.url))
+        def check_wasm_response(response):
+            if response.url.split('?',1)[0].split('#',1)[0].lower().endswith('.wasm') and response.status==200:
+                mime=response.headers.get('content-type','').split(';',1)[0].strip().lower()
+                if mime!='application/wasm': bad_wasm_mime.append({'url':response.url,'contentType':response.headers.get('content-type')})
+        page.on('response',check_wasm_response)
         page.on('pageerror',lambda e:page_errors.append(str(e)))
         page.on('console',lambda m:console_errors.append(m.text[:500]) if m.type=='error' else None)
         page.goto(origin+'/index.html',wait_until='commit',timeout=60000)
@@ -229,9 +237,10 @@ def main():
         p107=page.evaluate("() => window.CANVIODepthParallaxP105.tests()")
         record('P107 exposes portable ZIP export/import while reusing the existing Asset Library',p107.get('portablePresetExport') and p107.get('portablePresetImport') and p107.get('strictStoreZipParser') and p107.get('noNewStore'),p107)
         record('P107 does not claim cloud Project Vault synchronization',p107.get('noNewStore') is True,'Portable ZIP round-trip is supported; Project Vault remains local-first.')
+        record('All same-origin WASM responses use the application/wasm MIME type',not bad_wasm_mime,bad_wasm_mime)
         record('No uncaught browser page errors',not page_errors,page_errors)
         # Save current report before closing browser.
-        data={'suite':'CANVIO_23.3.111_GITHUB_HOSTED_RUNTIME_ACCEPTANCE','origin':origin,'browser':browser.version,'checks':checks,'details':details,'pageErrors':page_errors,'consoleErrors':console_errors,'requests':requests,'actualModelInference':({'P102':infer['backgroundRemoval'],'P105':infer['depthEstimation'],'P80':{'textLength':len(whisper.get('text',''))}} if infer is not None else {'performed':False,'optInRequired':'workflow_dispatch with full_model_acceptance=true','skipped':skipped_models}),'physicalGpuExecuted':False,'twoPhysicalDevicesExecuted':False,'projectVaultCloudSync':False,'p70ReleaseCertified':False,'limitations':['SwiftShader is software rendering, not physical GPU acceptance.','P107 validates a portable preset ZIP and Asset Library import; Project Vault remains local-first with no server sync adapter.','A synthetic video and synthetic speech signal validate execution, not real-footage quality or transcription accuracy.']}
+        data={'suite':'CANVIO_23.3.111_GITHUB_HOSTED_RUNTIME_ACCEPTANCE','origin':origin,'browser':browser.version,'checks':checks,'details':details,'pageErrors':page_errors,'consoleErrors':console_errors,'badWasmMimeResponses':bad_wasm_mime,'requests':requests,'actualModelInference':({'P102':infer['backgroundRemoval'],'P105':infer['depthEstimation'],'P80':{'textLength':len(whisper.get('text',''))}} if infer is not None else {'performed':False,'optInRequired':'workflow_dispatch with full_model_acceptance=true','skipped':skipped_models}),'physicalGpuExecuted':False,'twoPhysicalDevicesExecuted':False,'projectVaultCloudSync':False,'p70ReleaseCertified':False,'limitations':['SwiftShader is software rendering, not physical GPU acceptance.','P107 validates a portable preset ZIP and Asset Library import; Project Vault remains local-first with no server sync adapter.','A synthetic video and synthetic speech signal validate execution, not real-footage quality or transcription accuracy.']}
         REPORT.write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
         browser.close()
     finally:
