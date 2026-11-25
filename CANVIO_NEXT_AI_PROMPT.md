@@ -456,3 +456,46 @@ Khi sửa module: sửa file standalone rồi chép y hệt vào lot (parity so 
 - `canvio-p230-unified-accent.js` thêm quy tắc: `.eyebrow`, `.cv-pwf-kicker/.cv-pwf-count/.cv-pwf-steps article>span`, `.badgeSoft`, `.cv11-chip`, `.cvh-ic` dùng `--cv-accent-ink`/`--cv-accent-soft`; vạch `.eyebrow::before` gradient hồng; thanh editor `#cv-top.cv189-sticky` nền đen→tím đậm `#0B0B10→#2A1030` + viền dưới hồng `#F83E9F`.
 - Cố ý KHÔNG đổi: nội dung mẫu trên canvas (`.ly`), chữ xám-xanh trung tính (`63,88,115`), hero trang chủ (cyan), chip lọc kind của Bảng cảm hứng (`.cv153-chip`), avatar HR. Nếu người dùng muốn đổi thêm thì thêm quy tắc P230.5.
 - Test: Chromium P230 68 PASS, smoke 21/21, P171 11/11.
+
+
+## ROADMAP P231–P236 — Editor vừa khít màn hình, không cần cuộn (kiểu Canva / CapCut) · kế hoạch 2026-11-25
+
+**Vấn đề (người dùng báo):** các công cụ xếp thẻ chồng dọc nên khung vẽ/timeline nằm dưới màn hình, phải kéo xuống mới dùng được. Poster Studio: hàng nút xuất + bảng P34 + thanh editor chiếm ~550px trước khi tới canvas; Video Studio, Pixel Atelier, Dàn trang tương tự.
+
+**Mục tiêu:** mỗi công cụ có "Chế độ Editor" cao đúng bằng cửa sổ (`100dvh` trừ thanh trên), KHÔNG cuộn cả trang; mọi thao tác chính nhìn thấy ngay.
+
+**Bố cục chuẩn (dùng chung mọi công cụ, một shell duy nhất):**
+```
+┌ thanh trên: Tên dự án · Hoàn tác/Làm lại · Lưu · Xuất (luôn hiện) ┐
+│ rail trái │         khung vẽ (tự fit)          │ Thuộc tính phải │
+│ Mẫu       │                                    │ (theo đối tượng) │
+│ Thành phần├────────────────────────────────────┤                  │
+│ Chữ/Ảnh…  │ Video: timeline · Poster: trang/zoom│                  │
+└───────────┴────────────────────────────────────┴──────────────────┘
+```
+Cột rail và bảng phải thu gọn được; ≤900px thành thanh dưới + ngăn kéo.
+
+**Nguyên tắc bắt buộc (giữ nguyên):** chỉ THÊM, không xóa chức năng/thẻ cũ — thẻ cũ được DỜI vào ngăn kéo/tab của shell (`adopt` như dock P159u `canvio-p159u-dock.js`), có nút "Bố cục cũ" để quay lại; không kho dữ liệu mới; vẫn nối Studio, `CV.assets`, `CVOrchestratorP128`, Video/Storyboard, `CVCreativeCore`; miễn phí; test bằng trình duyệt thật.
+
+**Việc đã có để tái dùng:** `body.cv229-focus` và `CV229` (Spatial Workspace, inspector, floating launch), `CVWS` (không gian làm việc), `cv189-sticky` (thanh editor Poster), dock P159u (mẫu adopt thẻ), shell điều hướng P114, ngăn kéo menu P171, accent hồng P230.
+
+| P | Nội dung | Tiêu chí nghiệm thu (test trình duyệt) |
+|---|---|---|
+| **P231** | **EditorShell dùng chung** `canvio-p231-editor-shell.js` (`CVEditorShellP231`): API `mount(pageId,{rail,canvas,props,bottom,topActions})`, `adopt(selector,slot)`, `toggle()`, lưu bố cục `sessionStorage`; lưới CSS `100dvh`, `overflow:hidden` ở vùng editor, canvas tự fit; nút "Bố cục cũ". | Ở 1440×900 và 1280×720: `document.scrollingElement.scrollHeight <= innerHeight` trong chế độ editor; canvas hiện đủ; Lưu/Xuất/Hoàn tác nhìn thấy không cuộn; không pageerror. |
+| **P232** | **Poster Studio trong shell**: rail (Mẫu, Thành phần, Chữ, Ảnh/Tài nguyên, Brand), thuộc tính phải theo đối tượng đang chọn, hàng xuất + P34 workbench dời vào ngăn kéo "Công cụ" và "Xuất". | Chọn đối tượng → bảng phải đổi; kéo thả từ rail vào canvas; mọi nút cũ (PDF/PPTX/PNG/SVG, Layers & History) vẫn gọi được; Asset Library chèn ảnh vào canvas. |
+| **P233** | **Video Studio trong shell** kiểu CapCut: khung xem trước giữa, media/asset trái, thuộc tính phải, **timeline cố định dưới**, phát/tạm dừng bằng Space, thanh Xuất trên. Nối Storyboard (`CVScenePackP155`), ảnh→chuyển động (P168), shot list (P164). | Timeline luôn hiện không cuộn; thêm clip từ `CV.assets`; xuất vẫn chạy; project `canvio5:media_video_project_v1` không đổi định dạng. |
+| **P234** | **Pixel Atelier / Ảnh & Clarity / Luma / Dàn trang** vào shell (rail công cụ + bảng điều chỉnh phải + canvas giữa). | Cùng tiêu chí P231 cho từng trang; lưu kết quả vào Assets vẫn hoạt động. |
+| **P235** | **Di động & phím tắt**: ≤900px rail → thanh dưới, bảng phải → ngăn kéo dưới; phím tắt chuẩn (Ctrl+Z/Y/S/D, Space, Del, +/−, Alt+1…5); chạm hai ngón zoom. | 390×844 không tràn ngang, mọi hành động chính chạm được ≥40px; Lighthouse/axe không lỗi nghiêm trọng mới. |
+| **P236** | **Nghiệm thu & thói quen**: ghi nhớ trạng thái cột (mở/thu), "Tập trung" ẩn thanh trên, onboarding 3 bước, tổng hợp lỗi bố cục theo màn hình (1920/1440/1280/1024/390). | Bộ ảnh chụp 5 cỡ × 4 công cụ so sánh được; không công cụ nào cần cuộn trang để dùng chức năng chính. |
+
+**Thứ tự đề xuất:** P231 → P232 (Poster, người dùng dùng nhiều nhất) → P233 (Video) → P234 → P235 → P236. Mỗi bước: đưa vào lot `canvio-lotNNN` + file độc lập (parity P143), cập nhật CI (`.github/workflows/canvio-candidate-runtime.yml`), ghi cả 3 file MD.
+
+**Rủi ro / lưu ý cho AI làm tiếp:**
+- Đừng đặt phần tử ở cấp `body` rồi mong z-index đè lên phần tử trong `.app` (đã gặp ở P171: scrim phải nằm TRONG `.app`).
+- `.card[data-tilt]` làm lệch vị trí click; thẻ dời vào shell cần tắt tilt.
+- Test màu/vị trí phải tắt `transition` hoặc chờ ≥700ms; chèn style sau `goto` có thể mất nếu trang nạp lại.
+- Đọc lại tay cầm OPFS từ IndexedDB làm sập Chromium headless (P170).
+- Theme hiện nay: accent hồng `#F83E9F` cho mọi theme (P230.3); shell mới phải dùng `--cv-accent*`, không viết màu cứng.
+- Chưa xác nhận với người dùng: có muốn shell áp dụng cho TẤT CẢ công cụ hay chỉ Poster/Video trước; mặc định làm Poster → Video trước.
+
+**Việc còn mở từ trước (không thuộc P231+):** "Dùng màu này" → Poster/Brand; P156/P165 → ComfyUI; đồng bộ màu Spatial; P167 yaw/đa camera nâng cao; khôi phục dự án từ thư mục máy (P170); lưu định kỳ tự động; xác nhận CI mới nhất và ảnh thực tế các theme sau P230.
