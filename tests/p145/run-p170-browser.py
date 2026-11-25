@@ -16,8 +16,9 @@ with sync_playwright() as p:
       const b=await new Promise(r=>c.toBlob(r,'image/png'));await CV.assets.addBlob(new File([b],'do.png',{type:'image/png'}))}""")
     pg.evaluate("CV.go('projectVault')"); pg.wait_for_selector('#cv170-card',timeout=15000)
     checks['card_under_cloud_card']=pg.evaluate("document.querySelector('#cv130-card').nextElementSibling.id==='cv170-card'")
-    checks['main_buttons_visible']=all(pg.is_visible(s) for s in ['#cv170-both','#cv170-pick','#cv170-local','#cv170-cloud','#cv170-rlocal','#cv170-rcloud','#cv170-sql'])
+    checks['main_buttons_visible']=all(pg.is_visible(s) for s in ['#cv170-both','#cv170-pick','#cv170-local','#cv170-cloud','#cv170-rlocal','#cv170-rcloud','#cv170-sql','#cv170-cloud-list','#cv170-cloud-assets','#cv170-cloud-delete'])
     checks['sql_matches_file']=pg.evaluate("CVStorageHubP170.sql.length>400&&CVStorageHubP170.sql.includes(\"'cv-assets'\")")
+    checks['cloud_asset_management_api']=pg.evaluate("typeof CVStorageHubP170.listCloudAssets==='function'&&typeof CVStorageHubP170.deleteCloudAsset==='function'")
     # Dùng thư mục riêng của trình duyệt (OPFS) thay cho hộp thoại chọn thư mục
     pg.evaluate("""async()=>{const r=await navigator.storage.getDirectory();CVStorageHubP170._setHandle(r);}""")
     st=pg.evaluate("CVStorageHubP170.folderState().then(x=>x.state)"); checks['folder_remembered']=st=='granted'

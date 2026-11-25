@@ -26,14 +26,17 @@ win.TextEncoder=TextEncoder;win.TextDecoder=TextDecoder;win.indexedDB=idb;win.Fi
 win.CV={assets:{list:()=>assets,addBlob:async f=>{const u=f.p[0];assets.unshift({id:'n'+assets.length,name:f.name,mime:f.type,data:'data:'+f.type+';base64,'+Buffer.from(u).toString('base64'),cat:'image'});}}};
 win.CVCreativeCore={active:{id:'p1',name:'Dự án thử',documents:{x:1}}};win.showDirectoryPicker=async()=>root;
 /* Supabase Storage giả + máy khách P130 thật (WebCrypto) */
-const store={};win.fetch=async(url,o)=>{const m=/\/storage\/v1\/object\/(authenticated\/)?(.+)$/.exec(url);const k=m[2];if(o.method==='POST'){store[k]=o.body;return{ok:true,status:200,text:async()=>'{}'};}
+const store={},deleted=[];win.fetch=async(url,o)=>{
+ const at=url.indexOf('/storage/v1/object/'),raw=at>=0?url.slice(at+'/storage/v1/object/'.length):'',k=raw.indexOf('authenticated/')===0?raw.slice('authenticated/'.length):raw;
+ if(o.method==='POST'){store[k]=o.body;return{ok:true,status:200,text:async()=>'{}'};}
+ if(o.method==='DELETE'){const body=JSON.parse(o.body||'{}');(body.prefixes||[]).forEach(p=>{const key='cv-assets/'+p;if(store[key]){delete store[key];deleted.push(key)}});return{ok:true,status:200,text:async()=>'{}'};}
  if(!(k in store))return{ok:false,status:404,text:async()=>'nf'};return{ok:true,status:200,text:async()=>store[k]};};
 vm.createContext(win);
 vm.runInContext(fs.readFileSync(path.join(__dirname,'..','..','canvio-p130-cloud.js'),'utf8'),win);
 vm.runInContext(fs.readFileSync(path.join(__dirname,'..','..','canvio-p170-storage-hub.js'),'utf8'),win);
 const H=win.CVStorageHubP170,P=win.CVCloudP130;
 (async()=>{
-ok(H&&H.version==='170.0.0'&&H.bucket==='cv-assets','module nạp');
+ok(H&&H.version==='170.1.0'&&H.bucket==='cv-assets','module nạp');
 ok(H.safeName('a/b:c.png')==='a_b_c.png'&&H.safeName('..x')==='x'&&H.safeName('')==='tep'&&H.safeName('x'.repeat(300)).length===80,'safeName');
 const p=H.parseDataUrl('data:image/png;base64,'+b64('hello'));ok(p&&p.mime==='image/png'&&Buffer.from(p.bytes).toString()==='hello','parseDataUrl base64');
 ok(H.parseDataUrl('rác')===null,'parseDataUrl từ chối rác');ok(Buffer.from(H.parseDataUrl('data:text/plain,a%20b').bytes).toString()==='a b','parseDataUrl text');
@@ -67,6 +70,13 @@ r=await H.saveCloud();ok(r.uploaded===0&&r.already===2,'cloud: không tải lạ
 /* khôi phục sang "máy mới" */
 assets=[{id:'z',name:'a/b:c.png',mime:'image/png',data:'data:image/png;base64,'+b64('AAAA-1'),cat:'image'}];
 r=await H.restoreCloud();ok(r.restored===1&&r.already===1&&r.failed===0,'khôi phục cloud chỉ lấy tệp thiếu '+JSON.stringify(r));
+let cloudItems=await H.listCloudAssets();ok(cloudItems.length===2&&cloudItems.every(x=>/^[a-f0-9]{64}$/.test(x.sha)),'liệt kê cloud chỉ trả metadata công khai');
+let blocked=null;try{await H.deleteCloudAsset('../manifest.enc')}catch(e){blocked=e}ok(blocked&&/không hợp lệ/.test(blocked.message)&&deleted.length===0,'chặn mã xóa không hợp lệ');
+const victim=cloudItems[0];
+const removed=await H.deleteCloudAsset(victim.sha);
+ok(removed.deleted&&removed.manifestUpdated&&removed.remaining===1,'xóa cloud cập nhật manifest mã hóa');
+ok(deleted.length===1&&deleted[0].startsWith('cv-assets/u1/a-'),'DELETE chỉ nhắm object thuộc uid hiện tại');
+cloudItems=await H.listCloudAssets();ok(cloudItems.length===1&&cloudItems[0].sha!==victim.sha,'danh mục sau xóa không còn tài nguyên');
 assets=[];r=await H.restoreLocal(false);ok(r.restored===2&&r.failed===0,'khôi phục từ máy '+JSON.stringify(r));
 /* hỏng một bên không hỏng bên kia */
 const kvSave=kv.folder;delete kv.folder;H._setHandle(null);assets=[{id:'q',name:'q.png',mime:'image/png',data:'data:image/png;base64,'+b64('QQ'),cat:'image'}];

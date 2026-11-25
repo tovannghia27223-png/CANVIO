@@ -150,6 +150,44 @@ function putEnc(c, path, obj, aad) {
     });
   });
 }
+function readCloudManifest(c, uid) {
+  return getEnc(c, uid + '/manifest.enc', MAN).then(function (man) {
+    if (!man) return { assets: [] };
+    if (!Array.isArray(man.assets)) throw new Error('Danh mục cloud không hợp lệ.');
+    return man;
+  });
+}
+function listCloudAssets() {
+  var c; try { c = client(); } catch (e) { return Promise.reject(e); }
+  var uid = uidOf(c); if (!uid) return Promise.reject(new Error('Chưa đăng nhập.'));
+  return readCloudManifest(c, uid).then(function (man) {
+    return man.assets.map(function (it) { return pub(it); });
+  });
+}
+function deleteCloudAsset(sha) {
+  var c; try { c = client(); } catch (e) { return Promise.reject(e); }
+  var uid = uidOf(c);
+  if (!uid) return Promise.reject(new Error('Chưa đăng nhập.'));
+  sha = String(sha || '');
+  if (!/^[a-f0-9]{64}$/i.test(sha)) return Promise.reject(new Error('Mã tài nguyên không hợp lệ.'));
+  return readCloudManifest(c, uid).then(function (man) {
+    var item = man.assets.find(function (it) { return it && it.sha === sha; });
+    if (!item) throw new Error('Không tìm thấy tài nguyên trong danh mục cloud của tài khoản này.');
+    var prefix = uid + '/a-';
+    if (typeof item.path !== 'string' || item.path.slice(0, prefix.length) !== prefix || !/^a-[a-f0-9]{24}$/i.test(item.path.slice(uid.length + 1))) {
+      throw new Error('Đường dẫn tài nguyên không thuộc định dạng lưu trữ P170 của tài khoản này; đã chặn xóa.');
+    }
+    return sreq(c, 'DELETE', BUCKET, JSON.stringify({ prefixes: [item.path] }), { 'Content-Type': 'application/json' }).then(function (r) {
+      if (!r.ok) return r.text().then(function (t) { throw new Error('Xóa tài nguyên cloud thất bại (' + r.status + ')' + (t ? ': ' + t.slice(0, 180) : '')); });
+      man.assets = man.assets.filter(function (it) { return it !== item && it.sha !== sha; });
+      return putEnc(c, uid + '/manifest.enc', { assets: man.assets, at: new Date().toISOString() }, MAN).then(function () {
+        return { deleted: true, manifestUpdated: true, asset: pub(item), remaining: man.assets.length };
+      }, function (e) {
+        return { deleted: true, manifestUpdated: false, asset: pub(item), remaining: man.assets.length, warning: 'Đối tượng đã xóa khỏi Storage nhưng chưa cập nhật được manifest mã hóa: ' + (e && e.message || e) };
+      });
+    });
+  });
+}
 var MAN = 'canvio:v1:asset-manifest';
 function saveCloud() {
   var c; try { c = client(); } catch (e) { return Promise.reject(e); }
@@ -199,8 +237,8 @@ function summary(o) {
     side('Cloud', o.cloud, function (r) { return r.uploaded + ' mới, ' + r.already + ' đã có' + (r.tooBig.length ? ', ' + r.tooBig.length + ' tệp quá lớn nên không lên cloud' : ''); })].join(' · ');
 }
 
-var api = { version: '170.0.0', sql: SQL, bucket: BUCKET, supported: supported, safeName: safeName, parseDataUrl: parseDataUrl, toDataUrl: toDataUrl, sha256: sha256, missing: missing, describe: describe,
-  pickFolder: pickFolder, folderState: function () { return folder(false); }, saveLocal: saveLocal, restoreLocal: restoreLocal, saveCloud: saveCloud, restoreCloud: restoreCloud, saveBoth: saveBoth, summary: summary, _setHandle: function (h) { mem = h; } };
+var api = { version: '170.1.0', sql: SQL, bucket: BUCKET, supported: supported, safeName: safeName, parseDataUrl: parseDataUrl, toDataUrl: toDataUrl, sha256: sha256, missing: missing, describe: describe,
+  pickFolder: pickFolder, folderState: function () { return folder(false); }, saveLocal: saveLocal, restoreLocal: restoreLocal, saveCloud: saveCloud, restoreCloud: restoreCloud, listCloudAssets: listCloudAssets, deleteCloudAsset: deleteCloudAsset, saveBoth: saveBoth, summary: summary, _setHandle: function (h) { mem = h; } };
 window.CVStorageHubP170 = api;
 
 /* ---------- giao diện: ngay dưới thẻ Đồng bộ đám mây ---------- */
@@ -212,6 +250,7 @@ function mount() {
   card.innerHTML = '<h3 style="margin:0 0 4px">Lưu trữ kép: máy tính + cloud</h3><p class="tiny" style="margin:0 0 10px">Một nút lưu tài nguyên và dự án đang mở vào thư mục trên máy (bản chính) và lên Supabase (bản sao lưu đã mã hóa). Tệp trùng nội dung không lưu lại.</p>'
     + '<div class="row" style="gap:6px;flex-wrap:wrap"><button class="btn btn-primary sm" id="cv170-both" type="button">Lưu cả máy và cloud</button><button class="btn btn-soft sm" id="cv170-pick" type="button">Chọn thư mục trên máy</button><button class="btn btn-ghost sm" id="cv170-local" type="button">Chỉ lưu máy</button><button class="btn btn-ghost sm" id="cv170-cloud" type="button">Chỉ lưu cloud</button></div>'
     + '<div class="row" style="gap:6px;flex-wrap:wrap;margin-top:8px"><button class="btn btn-ghost sm" id="cv170-rlocal" type="button">Khôi phục tài nguyên từ máy</button><button class="btn btn-ghost sm" id="cv170-rcloud" type="button">Khôi phục từ cloud</button><button class="btn btn-ghost sm" id="cv170-sql" type="button">Sao chép SQL kho tài nguyên</button></div>'
+    + '<div class="row" style="gap:6px;flex-wrap:wrap;margin-top:8px"><button class="btn btn-ghost sm" id="cv170-cloud-list" type="button">Tải danh sách cloud</button><select class="input sm" id="cv170-cloud-assets" aria-label="Chọn tài nguyên cloud" style="min-width:190px;max-width:100%"><option value="">Chọn tài nguyên cloud…</option></select><button class="btn btn-ghost sm" id="cv170-cloud-delete" type="button">Xóa tài nguyên đã chọn</button></div>'
     + '<div id="cv170-info" class="tiny" style="margin-top:8px"></div><div id="cv170-msg" class="tiny" role="status" aria-live="polite" style="margin-top:4px"></div>';
   after.insertAdjacentElement('afterend', card);
   var $ = function (s) { return card.querySelector(s); }, msg = $('#cv170-msg');
@@ -230,6 +269,37 @@ function mount() {
   $('#cv170-rlocal').addEventListener('click', function () { run(this, function () { return restoreLocal(true).then(function (r) { return 'Đã khôi phục ' + r.restored + ' tài nguyên từ máy (' + r.already + ' đã có' + (r.failed ? ', ' + r.failed + ' lỗi' : '') + ').'; }); }, 'Đang khôi phục'); });
   $('#cv170-rcloud').addEventListener('click', function () { run(this, function () { return restoreCloud().then(function (r) { return r.empty ? 'Cloud chưa có bản lưu tài nguyên.' : 'Đã khôi phục ' + r.restored + ' tài nguyên từ cloud (' + r.already + ' đã có' + (r.failed ? ', ' + r.failed + ' lỗi' : '') + ').'; }); }, 'Đang khôi phục'); });
   $('#cv170-sql').addEventListener('click', function () { try { navigator.clipboard.writeText(SQL).then(function () { say('Đã sao chép SQL. Dán vào Supabase → SQL Editor rồi bấm Run.'); }, function () { say('Không sao chép được, hãy cho phép clipboard.', true); }); } catch (e) { say('Không sao chép được.', true); } });
+  $('#cv170-cloud-list').addEventListener('click', function () {
+    run(this, function () {
+      return listCloudAssets().then(function (items) {
+        var sel = $('#cv170-cloud-assets'); sel.innerHTML = '';
+        var first = document.createElement('option'); first.value = '';
+        first.textContent = items.length ? 'Chọn tài nguyên cloud…' : 'Cloud chưa có tài nguyên';
+        sel.appendChild(first);
+        items.forEach(function (it) {
+          var opt = document.createElement('option'); opt.value = it.sha;
+          opt.textContent = it.name + ' · ' + it.size + ' B'; sel.appendChild(opt);
+        });
+        return 'Đã tải ' + items.length + ' tài nguyên cloud.';
+      });
+    }, 'Đang tải danh sách cloud');
+  });
+  $('#cv170-cloud-delete').addEventListener('click', function () {
+    var sel = $('#cv170-cloud-assets'), sha = sel.value;
+    if (!sha) { say('Hãy tải danh sách và chọn tài nguyên cần xóa.', true); return; }
+    var name = sel.options[sel.selectedIndex] ? sel.options[sel.selectedIndex].textContent : 'tài nguyên đã chọn';
+    if (!window.confirm('Xóa vĩnh viễn ' + name + ' khỏi cloud? Bản trong Asset Library và bản lưu trên máy không bị xóa.')) return;
+    run(this, function () {
+      return deleteCloudAsset(sha).then(function (r) {
+        if (!r.deleted) throw new Error('Cloud chưa xác nhận xóa tài nguyên.');
+        if (r.manifestUpdated) {
+          sel.remove(sel.selectedIndex); sel.value = '';
+          return 'Đã xóa ' + name + ' khỏi cloud. Còn ' + r.remaining + ' tài nguyên.';
+        }
+        throw new Error(r.warning || 'Đã xóa đối tượng nhưng manifest chưa cập nhật; hãy tải lại danh sách và kiểm tra.');
+      });
+    }, 'Đang xóa tài nguyên cloud');
+  });
   info(); return true;
 }
 function ready() { try { if (!mount() && window.MutationObserver) { var mo = new MutationObserver(function () { if (mount()) mo.disconnect(); }); mo.observe(document.body, { childList: true, subtree: true }); setTimeout(function () { mo.disconnect(); }, 30000); } } catch (e) {} }

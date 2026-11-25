@@ -1,14 +1,14 @@
 {
   "format": "CANVIO_P143_STYLE_TEMPLATE_LOADER_INVENTORY",
   "version": 1,
-  "generatedAt": "2026-11-25T06:19:58.386Z",
+  "generatedAt": "2026-11-25T08:25:42.223Z",
   "source": "restored canonical index.html after all workflow-managed module integration steps",
   "purpose": "Inventory inline styles, template elements, dynamic resource-loader call sites and lexical global-reference ordering candidates. Global references are not a human-reviewed semantic boot-order or runtime data-flow graph.",
-  "htmlBytes": 6102240,
+  "htmlBytes": 6107092,
   "styles": {
     "blockCount": 122,
-    "inlineStyleAttributeCount": 1717,
-    "totalStyleBytes": 449218,
+    "inlineStyleAttributeCount": 1719,
+    "totalStyleBytes": 449285,
     "blocks": [
       {
         "order": 0,
@@ -14565,11 +14565,23 @@
       {
         "order": 1715,
         "element": "div",
+        "bytes": 37,
+        "sha256": "e4913c189b4840ee5489d53028a5aea520fe21ad8a599fa04eff28481fff5ad6"
+      },
+      {
+        "order": 1716,
+        "element": "select",
+        "bytes": 30,
+        "sha256": "ec92d4714ceca5c44a1421593b12e2da4d259469b00ab873f4c8489d7f96f5b0"
+      },
+      {
+        "order": 1717,
+        "element": "div",
         "bytes": 14,
         "sha256": "43a97fe4943c812e3f8666ff8ae23b50fea757d4fd93892a735ac53715135c6d"
       },
       {
-        "order": 1716,
+        "order": 1718,
         "element": "div",
         "bytes": 14,
         "sha256": "eb2cdaa55e9f90594bdb7cace5272ca6e233868f497e0ec7ef346a365e3f7fd6"
@@ -21406,7 +21418,7 @@
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 184,
         "toId": "canvio-lot170h",
-        "toSha256": "24ce9106d2cc6574f233e77447e2125ca087b138a2ab6e7a807306a0259f2619",
+        "toSha256": "27309f9bb55529f8f359172b684d86f53e4a778d498a70913ef7d16762498e3d",
         "priorProviderCount": 1,
         "priorProviderOrders": [
           56
@@ -24122,7 +24134,7 @@
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 184,
         "toId": "canvio-lot170h",
-        "toSha256": "24ce9106d2cc6574f233e77447e2125ca087b138a2ab6e7a807306a0259f2619",
+        "toSha256": "27309f9bb55529f8f359172b684d86f53e4a778d498a70913ef7d16762498e3d",
         "priorProviderCount": 2,
         "priorProviderOrders": [
           1,
@@ -25134,7 +25146,7 @@
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 184,
         "toId": "canvio-lot170h",
-        "toSha256": "24ce9106d2cc6574f233e77447e2125ca087b138a2ab6e7a807306a0259f2619",
+        "toSha256": "27309f9bb55529f8f359172b684d86f53e4a778d498a70913ef7d16762498e3d",
         "priorProviderCount": 1,
         "priorProviderOrders": [
           142

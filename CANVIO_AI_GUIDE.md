@@ -4360,3 +4360,13 @@ P160–P166 module APIs currently report versions P160.2.0, P161.1.0, P162.2.0, 
 - SQL kho tài nguyên: `supabase/canvio-storage.sql` (cũng trong thẻ, nút "Sao chép SQL kho tài nguyên"); người dùng phải chạy MỘT LẦN sau SQL của P130. Test kiểm tra tệp khớp chuỗi trong module.
 - Test: `tests/p170/run-p170-tests.cjs` (28; thư mục giả + Storage giả + P130 thật bằng WebCrypto), `tests/p145/run-p170-browser.py` (12; dùng OPFS thay hộp thoại chọn thư mục). Lưu ý: đọc tay cầm OPFS từ IndexedDB làm sập Chromium headless → module giữ tay cầm trong bộ nhớ, test dùng `_setHandle`.
 - Chưa làm / chưa test: sao lưu video lớn và dữ liệu Project Vault/localStorage ra thư mục máy; khôi phục dự án (`projects/*.json`) về lại app (hiện chỉ khôi phục tài nguyên); xóa tài nguyên trên cloud; tự động lưu định kỳ; chọn thư mục thật và Supabase thật chưa được thử với tài khoản người dùng.
+
+
+## P170.1 — Cloud asset management (candidate · 2026-11-25)
+
+- Source owner: canvio-p170-storage-hub.js, API window.CVStorageHubP170, inline lot canvio-lot170h; module version 170.1.0.
+- listCloudAssets() uses the existing P130 unlocked client and decrypts <uid>/manifest.enc with the existing manifest AAD. It returns public metadata only (id/name/mime/size/cat/at/sha), never cloud object paths or decrypted bytes.
+- deleteCloudAsset(sha) validates a 64-hex SHA and verifies the stored path is exactly within the current UID's P170 namespace (<uid>/a-<24 hex>) before issuing DELETE /storage/v1/object/cv-assets with a JSON prefixes array. Existing cv_assets_delete_own RLS policy remains the server-side enforcement; no SQL policy broadening is required.
+- After Storage confirms deletion, the function rewrites the encrypted manifest with the existing P130 AES-GCM helper. It explicitly returns a partial result (deleted:true, manifestUpdated:false) if object deletion succeeded but manifest rewrite failed. The UI surfaces that warning rather than claiming full completion.
+- The Project Vault selector uses textContent for asset labels and requires window.confirm before permanent cloud deletion. Local Asset Library data and computer-folder backups are untouched.
+- Regression: tests/p170/run-p170-tests.cjs adds five Node assertions; tests/p145/run-p170-browser.py checks the added controls/API presence. Branch feat/p170-cloud-asset-management requires exact-head hosted CI and post-merge mainline parity before acceptance. Real Supabase account/storage behavior remains a user-side gate.

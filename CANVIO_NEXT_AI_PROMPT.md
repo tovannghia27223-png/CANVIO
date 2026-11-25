@@ -423,3 +423,12 @@ Khi sửa module: sửa file standalone rồi chép y hệt vào lot (parity so 
 - SQL kho tài nguyên: `supabase/canvio-storage.sql` (cũng trong thẻ, nút "Sao chép SQL kho tài nguyên"); người dùng phải chạy MỘT LẦN sau SQL của P130. Test kiểm tra tệp khớp chuỗi trong module.
 - Test: `tests/p170/run-p170-tests.cjs` (28; thư mục giả + Storage giả + P130 thật bằng WebCrypto), `tests/p145/run-p170-browser.py` (12; dùng OPFS thay hộp thoại chọn thư mục). Lưu ý: đọc tay cầm OPFS từ IndexedDB làm sập Chromium headless → module giữ tay cầm trong bộ nhớ, test dùng `_setHandle`.
 - Chưa làm / chưa test: sao lưu video lớn và dữ liệu Project Vault/localStorage ra thư mục máy; khôi phục dự án (`projects/*.json`) về lại app (hiện chỉ khôi phục tài nguyên); xóa tài nguyên trên cloud; tự động lưu định kỳ; chọn thư mục thật và Supabase thật chưa được thử với tài khoản người dùng.
+
+
+## P170.1 — Current continuation (2026-11-25)
+
+- Branch: feat/p170-cloud-asset-management; module version CVStorageHubP170 170.1.0. Changes: encrypted cloud asset listing + owner-scoped permanent deletion + manifest rewrite + explicit partial-failure reporting.
+- Updated source: canvio-p170-storage-hub.js; Node tests: tests/p170/run-p170-tests.cjs; browser checks: tests/p145/run-p170-browser.py; this handoff, Guide and Roadmap were appended without deleting history.
+- Before merge: inspect the exact diff, require the workflow CANVIO 23.3.111 — hosted runtime and integration verification on this branch to pass Node P170, Chromium P170, P143 inline/source parity, full audits and all existing regression suites. Do not claim accepted from unit tests alone.
+- Limit: no real Supabase account has been used here. If object DELETE succeeds but encrypted manifest update fails, the API deliberately reports a partial failure; verify/reconcile the manifest before retrying. Cloud deletion never removes the local Asset Library or computer backup.
+- Remaining P170 work after this slice: restore projects/*.json through the actual Shared Core/Project Vault owners; include Project Vault/large-media backup only through established backup APIs; decide whether scheduled backup-to-cloud is needed without duplicating Project Vault autosave; test with real user-selected folder and Supabase account. Keep P70's fourteen manual release gates open unless independently evidenced.
