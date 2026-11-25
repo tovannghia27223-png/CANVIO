@@ -4494,7 +4494,7 @@ Nối tiếp P231–P236 (editor vừa khít màn hình). Người dùng muốn 
 
 - window.CVEditorShellP231 exposes mount(pageId, options), adopt(selector, slot, pageId), toggle(pageId), state(pageId), tests(). Slot names: rail, canvas, props, bottom, actions.
 - Adoption uses real DOM nodes and comment placeholders; the reverse restoration path returns each node to its original parent/position. No node cloning, new project store, timeline, database, or asset owner is introduced.
-- window.CVPosterShellP232 adapts only the existing Poster engine surface. Ownership remains: CV.poster.history for Undo/Redo, CV.project.autosave/save for persistence, Poster fit() for canvas sizing, CV.assets and current Poster engine for media.
+- window.CVPosterShellP232 adapts only the existing Poster engine surface. Ownership remains: CV.poster.history for Undo/Redo, CV.project.save(true) for explicit Save and the existing autosave hook for routine persistence, Poster fit() for canvas sizing, CV.assets and current Poster engine for media.
 - Integration order: P231 script/lot before P232 script/lot; both load after existing workspace/runtime owners. Keep the two source files byte-equivalent to embedded lots via P143 parity.
 - Responsive shell breakpoint is 900 px; mobile uses a bottom tool rail and user-opened property drawer. App-level overflow lock is scoped to .app.cv231-app-active and removed when Legacy Layout is restored.
 - Tests: tests/p231/run-p231-tests.cjs and tests/p231/run-p231-browser.py. Fixture coverage is not a substitute for live-origin persistence, accessibility or real project acceptance.
