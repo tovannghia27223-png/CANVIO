@@ -1069,10 +1069,10 @@ jobs:
           if(!source.includes('CVUnifiedThemeP230'))throw new Error('P230 unified theme source contract missing');
           let html=fs.readFileSync(file,'utf8');
           const open='<script id="'+id+'">';
-          const re=/(<script\\b(?=[^>]*\\bid=["\\']canvio-lot230["\\'])[^>]*>)[\\s\\S]*?(<\\/script\\s*>)/i;
-          const tag=open+'\\n'+source+'\\n</script>';
+          const re=/(<script\b(?=[^>]*\bid=["']canvio-lot230["'])[^>]*>)[\s\S]*?(<\/script\s*>)/i;
+          const tag=open+'\n'+source+'\n</script>';
           if(re.test(html))html=html.replace(re,tag);
-          else{const at=html.lastIndexOf('</body>');if(at<0)throw new Error('index.html has no closing body tag');html=html.slice(0,at)+tag+'\\n'+html.slice(at);}
+          else{const at=html.lastIndexOf('</body>');if(at<0)throw new Error('index.html has no closing body tag');html=html.slice(0,at)+tag+'\n'+html.slice(at);}
           if((html.match(/id="canvio-lot230"/g)||[]).length!==1)throw new Error('P230 embedded lot duplicate/missing');
           fs.writeFileSync(file,html,'utf8');
           console.log('P230 single accent source synchronized into canonical index.html');
