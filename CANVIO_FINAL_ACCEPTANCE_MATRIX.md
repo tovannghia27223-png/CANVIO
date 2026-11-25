@@ -51,3 +51,5 @@
 | P124.4 selected component layouts | Node/Chromium selected Grid/Stack/Row/Split, responsive CSS, whitelisted variants, existing CSS Manager/save path, P143 parity | No structural tree conversion, nested variants, drag/resize, complex user-project or assistive-technology certification. |
 
 | P135.2 editable Pixel adjustment stack | Node PNG metadata/CRC/32-layer round-trip; hosted Chromium snapshot → reload → native restore and unchanged raster check; P143 standalone/embedded parity | Independent two-device/cloud sync, third-party PNG re-encoding, masks/local corrections, smart objects, clone/patch and liquify remain unverified/out of scope. |
+
+| P150/P151.1/P229.2 theme ownership | Hosted runs #895 and #896; Chromium 90/90 in both; P229 already-embedded 81-script re-entry passed; P151.1 contrast exclusions checked | Spatial classes/selectors are scoped to `#cv229-inspector`; no body/global theme leakage; navigation/menu, Spatial launcher and workspace Export computed styles unchanged across palette change; Home/Holographic skin roots remain isolated. Automated candidate acceptance only; P70's 14 manual release gates remain open. |

@@ -786,3 +786,11 @@ Mainline workflow #551 passed 53/53; Pages #275 passed build/deploy. P143 parity
 - Combined hosted run 889 passed; P170 Node suite 28/28, hosted runtime 20/20, and P150/P229 browser suite 90/90. The candidate commit then triggered a rerun against an index already containing both P229 and P170.
 - Run 890 stopped at P229 integration because its idempotency guard accepted 79 or 80 scripts but not the correct P229+P170 count of 81. No browser test failed in that rerun.
 - Commit 558637f extends the guard to accept 81 as already-integrated state; the P170 sync step continues to validate the final count. Latest-head full CI remains required.
+
+
+## P150/P151.1/P229.2 — final theme-isolation acceptance (2026-11-25)
+- Exact source/candidate chain: #895 passed on source head `84d7de0` and produced candidate `10a6ceb`; #896 re-ran on the already-generated candidate and also passed. Both workflow runs concluded `success`, with zero failed steps.
+- Chromium: 90/90 assertions in each run. Verified Spatial palette changes remain inside `#cv229-inspector`; `body` has no Spatial theme classes; global `body.cv229-theme-*` selectors are removed/scoped; menu/navigation, launcher and Export computed styles are identical before/after changing Spatial palette. P151.1 does not contrast-overwrite navigation, buttons, inputs or Spatial. P150 Home and Holographic skin roots remain isolated.
+- Run #896 reports: integrated source contracts 20/20; hosted runtime 20/20; P107 ZIP round-trip 6/6; P170 Node 28/28; no uncaught browser page errors. GLB uncompressed, Draco, Meshopt and KTX2 fixtures loaded in the real Three.js r187 viewer; P85 WASM runtimes initialized and OpenCV processed 144 tracked points across two local frames.
+- Limits: P106 ran on ANGLE SwiftShader, not physical GPU; real Supabase/cloud credentials and independent two-device recovery were not exercised; P70 has 14/14 manual gates pending. Keep `releaseCertified=false`.
+- PR #104 is still open/unmerged. GitHub marks the PR-triggered check `action_required`; exact-head workflow_dispatch #896 passed.

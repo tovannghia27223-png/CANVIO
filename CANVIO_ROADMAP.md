@@ -1502,3 +1502,9 @@ P167.1 and P168.1 are therefore mainline-integrated and hosted-CI verified, with
 - Run 889 verified the combined P229/P170 candidate (90/90 browser checks, P170 node 28/28, hosted runtime 20/20). The generated index has 81 script tags after both modules are present.
 - Run 890 revealed the P229 integration guard did not accept 81 on an already-integrated rerun. Commit 558637f accepts the existing 81-count state while preserving the 79→80→81 transition for fresh integration.
 - Final combined candidate must pass the full exact-head workflow again before merge.
+
+
+## P150/P151.1/P229.2 — Spatial theme ownership accepted (2026-11-25)
+- P229.2 scopes the six Spatial theme palettes to `#cv229-inspector`; body-level theme classes and global selectors do not remain. P151.1 contrast automation excludes shared navigation, controls and Spatial. P150 Home/Holographic skin state remains independent.
+- Evidence: hosted run #895 passed on source head `84d7de0`; generated candidate `10a6ceb` then passed exact-candidate run #896. Both browser suites 90/90; #896 also passed source contracts 20/20, hosted runtime 20/20, P107 ZIP 6/6 and P170 Node 28/28. P229's already-embedded 81-script re-entry path passed.
+- This closes automated theme-isolation acceptance for the candidate, not overall release certification. P70 retains 14 manual gates; physical GPU, real Supabase, real ComfyUI/model-quality and two-device sync remain separate acceptance work. PR #104 remains open/unmerged.
