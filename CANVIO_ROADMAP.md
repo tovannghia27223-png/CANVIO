@@ -1477,3 +1477,9 @@ P167.1 and P168.1 are therefore mainline-integrated and hosted-CI verified, with
 - Corrected ownership: P229 applies theme classes to `#cv229-inspector`; CSS selectors are scoped to that inspector and its descendants. The theme picker still changes Spatial panel surfaces and controls but no longer owns shell navigation or other workspace colors.
 - P151.1 narrows automatic contrast correction to visible workspace text, excluding navigation, interactive controls and Spatial Inspector.
 - Browser acceptance added to `tests/p145/run-p150-browser.py`: compare computed styles for studio menu, Spatial launcher and Export across Graffiti/Midnight changes; assert no P151 override is applied to menu/inspector. Pending exact-head hosted run.
+
+
+## P229.2 — CI integration re-entry correction (2026-11-25)
+- Full hosted run 879 passed all 68 job steps, including Spatial theme isolation and P151 contrast-guard browser assertions. The workflow's candidate commit then caused a new PR run against the generated index.
+- That re-entry exposed a non-idempotent integration guard (already-embedded P229.2 was rejected as duplicate). Commit f5b7c4c makes the integration idempotent and retains exactly-one-module/script-count validation.
+- Final status: browser acceptance passed on the generated candidate in run 879; rerun the complete workflow on the latest branch head before merge because run 880 stopped at integration.
