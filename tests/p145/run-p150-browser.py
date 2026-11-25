@@ -78,8 +78,9 @@ with sync_playwright() as p:
     # P150 tech intentionally changes the toolbar while Home is active.
     # Capture the base-pink baseline only after opening a non-Home workspace.
     pg.evaluate("CVWS.open('design')");pg.wait_for_timeout(900)
-    baseline=pg.evaluate('getComputedStyle(document.getElementById("ws-export")).backgroundColor')
-    ck('theme fixture baseline is original pink Export',baseline=='rgb(255, 61, 154)')
+    baseline=pg.evaluate("""()=>{const color=getComputedStyle(document.getElementById('ws-export')).backgroundColor;const token=getComputedStyle(document.body).getPropertyValue('--cv-accent').trim();const c=document.createElement('canvas').getContext('2d');c.fillStyle=color;const actual=c.fillStyle;c.fillStyle=token;return {actual:actual,expected:c.fillStyle}}""")
+    ck('theme fixture baseline follows the unified accent token',baseline['actual']==baseline['expected'])
+    baseline=baseline['actual']
     for sp in ['design','site','media','proj','ai']:
         pg.evaluate("CVWS.open('%s')"%sp);pg.wait_for_timeout(900)
         ck('không gian '+sp+' không lẫn trang Tổng quan',pg.evaluate('document.getElementById("page-home").offsetHeight')==0 and not pg.is_visible('#cv150-skins'))
