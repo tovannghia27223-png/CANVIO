@@ -154,7 +154,7 @@ jobs:
           console.log('P151.1 contrast guard scope synced into canonical index.html');
           NODE
 
-      - name: Integrate P229.1 Spatial theme isolation
+      - name: Integrate P229.2 Spatial theme isolation
         shell: bash
         run: |
           set -euo pipefail
@@ -162,18 +162,18 @@ jobs:
           const fs=require('node:fs');
           const file='index.html',source=fs.readFileSync('canvio-p229-theme-isolation.js','utf8').trim();
           const id='canvio-lot229-theme-isolation',open='<script id="'+id+'">';
-          if(!source.includes("version: '229.1.0'"))throw new Error('P229.1 source version missing');
+          if(!source.includes("version: '229.2.0'"))throw new Error('P229.2 source version missing');
           let html=fs.readFileSync(file,'utf8');
           const close='</body>',at=html.lastIndexOf(close);
           if(at<0)throw new Error('Canonical body close missing');
-          if(html.includes(open))throw new Error('P229.1 duplicate embedded module');
+          if(html.includes(open))throw new Error('P229.2 duplicate embedded module');
           html=html.slice(0,at)+open+String.fromCharCode(10)+source+String.fromCharCode(10)+'</script>'+String.fromCharCode(10)+html.slice(at);
           const oldCount='noNewScriptTag:document.scripts.length===79';
           if(!html.includes(oldCount))throw new Error('CV229 script-count contract not found');
           html=html.replace(oldCount,'noNewScriptTag:document.scripts.length===80');
-          if((html.match(/id="canvio-lot229-theme-isolation"/g)||[]).length!==1)throw new Error('P229.1 embed count mismatch');
+          if((html.match(/id="canvio-lot229-theme-isolation"/g)||[]).length!==1)throw new Error('P229.2 embed count mismatch');
           fs.writeFileSync(file,html,'utf8');
-          console.log('P229.1 Spatial theme isolation embedded before body close');
+          console.log('P229.2 Spatial theme isolation embedded before body close');
           NODE
 
       - name: Integrate P125.2 scroll storyboard editor
