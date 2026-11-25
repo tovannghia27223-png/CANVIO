@@ -62,7 +62,7 @@ win.CVCloudP130.client=c;
 ok(c.isUnlocked(),'đã mở khóa (giả)');
 r=await H.saveCloud();ok(r.uploaded===2&&r.already===0,'cloud: 2 tệp mới '+JSON.stringify(r));
 const keys=Object.keys(store);ok(keys.length===3&&keys.every(k=>k.startsWith('cv-assets/u1/')||k.startsWith('u1/')||/u1\//.test(k)),'đường dẫn theo uid');
-ok(!Object.values(store).some(v=>v.includes('AAAA')||v.includes(b64('AAAA-1'))||v.includes('a/b')),'nội dung và tên tệp không lộ trong bản mã');
+ok(!Object.values(store).some(v=>v.includes('AAAA-1')||v.includes(b64('AAAA-1'))||v.includes('data:image/png')||v.includes('a/b:c.png')||v.includes('a_b_c.png')),'nội dung và tên tệp không lộ trong bản mã');
 r=await H.saveCloud();ok(r.uploaded===0&&r.already===2,'cloud: không tải lại tệp đã có');
 /* khôi phục sang "máy mới" */
 assets=[{id:'z',name:'a/b:c.png',mime:'image/png',data:'data:image/png;base64,'+b64('AAAA-1'),cat:'image'}];
