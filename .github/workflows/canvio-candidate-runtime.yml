@@ -108,6 +108,36 @@ jobs:
             echo "Using committed CANVIO candidate index."
           fi
 
+      - name: Carry forward latest main P130.2 cloud defaults
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          node <<'NODE'
+          const fs=require('node:fs'),cp=require('node:child_process');
+          const mainFile=p=>cp.execFileSync('git',['show','origin/main:'+p],{encoding:'utf8',maxBuffer:16*1024*1024});
+          const oldCfg="function cfg() { return jget(CFG) || { url: '', anon: '' }; }";
+          const newCfg="function cfg() { var c = jget(CFG); return c && c.url ? c : { url: 'https://szdyeqzqyyxmenoiiqxe.supabase.co', anon: 'sb_publishable_FmLKzCWH4W83IJ2Zfzy8ZA_9qYzMYow' }; }";
+          const mainIndex=mainFile('index.html');
+          if(!mainIndex.includes(newCfg))throw new Error('main P130.2 inline default not found');
+          let index=fs.readFileSync('index.html','utf8');
+          if(index.includes(oldCfg))index=index.replace(oldCfg,newCfg);
+          else if(!index.includes(newCfg))throw new Error('candidate P130 cfg differs from both supported versions');
+          fs.writeFileSync('index.html',index,'utf8');
+          const p130=mainFile('canvio-p130-cloud.js');
+          fs.writeFileSync('canvio-p130-cloud.js',p130,'utf8');
+          for(const path of ['CANVIO_AI_GUIDE.md','CANVIO_ROADMAP.md','CANVIO_NEXT_AI_PROMPT.md']){
+            const heading='## P130.2 — Điền sẵn Supabase mặc định';
+            const mainDoc=mainFile(path),at=mainDoc.lastIndexOf(heading);
+            if(at<0)throw new Error('main P130.2 documentation missing in '+path);
+            const section=mainDoc.slice(at).trimEnd()+'\n';
+            let doc=fs.readFileSync(path,'utf8');
+            if(!doc.includes(heading))doc=doc.trimEnd()+'\n\n'+section;
+            fs.writeFileSync(path,doc,'utf8');
+          }
+          console.log('P130.2 main defaults, standalone source and documentation carried forward idempotently');
+          NODE
+
       - name: Synchronize P102 background removal into canonical index
         shell: bash
         run: |
