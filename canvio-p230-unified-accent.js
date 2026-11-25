@@ -1,0 +1,26 @@
+/* P230 — Single Accent System. One hue across all CANVIO workspaces and controls. */
+(function (root, doc) {
+'use strict';
+if (!root || !doc || root.CVUnifiedThemeP230) return;
+var STYLE_ID='canvio-p230-unified-accent-css';
+var CSS=[
+'html,body{--cv-accent:var(--brand,#7b3fe4);--cv-accent-ink:var(--brand-ink,#5a2cc0);--cv-accent-soft:var(--brand-soft,#f1eaff);--cv-accent-line:var(--brand-line,#d9c8fb);}',
+'body{--primary:var(--cv-accent)!important;--accent:var(--cv-accent)!important;--violet:var(--cv-accent)!important;--g-purple:var(--cv-accent)!important;--neon-a:var(--cv-accent)!important;--primary-soft:var(--cv-accent-soft)!important;--primary-ink:var(--cv-accent-ink)!important;}',
+'body :is(.btn-primary,.btn.btn-primary,.sh-b.pri,.mkBtn,#mkBtn,#ws-export,#ws-jgo,#ws-obc button[data-a="open"],button[data-variant="primary"],button[data-tone="primary"]){background:var(--cv-accent)!important;background-image:none!important;border-color:var(--cv-accent)!important;color:#fff!important;box-shadow:none!important;text-shadow:none!important;}',
+'body :is(.btn-primary,.btn.btn-primary,.sh-b.pri,.mkBtn,#mkBtn,#ws-export,#ws-jgo,#ws-obc button[data-a="open"],button[data-variant="primary"],button[data-tone="primary"]):is(:hover,:focus-visible){background:var(--cv-accent-ink)!important;border-color:var(--cv-accent-ink)!important;color:#fff!important;filter:none!important;}',
+'body :is(.btn-soft,.btn-ghost,.btn.btn-soft,.btn.btn-ghost,button[data-variant="secondary"],button[data-tone="secondary"]){background:var(--cv-accent-soft)!important;background-image:none!important;border-color:var(--cv-accent-line)!important;color:var(--cv-accent-ink)!important;box-shadow:none!important;}',
+'body :is(.btn-soft,.btn-ghost,.btn.btn-soft,.btn.btn-ghost,button[data-variant="secondary"],button[data-tone="secondary"]):is(:hover,:focus-visible){background:var(--cv-accent)!important;border-color:var(--cv-accent)!important;color:#fff!important;}',
+'body .side :is(a,button).active,body .side :is(a,button)[aria-current],body #ws-nav button.on,body .wsn button.on,body [data-ws].on,body [data-ws][aria-current],body #ws-tabs button[aria-selected="true"],body #ws-tabs [role="tab"][aria-selected="true"]{background:var(--cv-accent)!important;background-image:none!important;border-color:var(--cv-accent)!important;color:#fff!important;box-shadow:none!important;}',
+'body .side :is(a,button).active *,body .side :is(a,button)[aria-current] *,body #ws-nav button.on *,body .wsn button.on *,body #ws-tabs button[aria-selected="true"] *{color:#fff!important;background-color:transparent!important;}',
+'body .cv229-route.active,body [data-cv229-theme].active,body [data-cv229-dock].active,body [data-cv229-action][aria-pressed="true"]{background:var(--cv-accent)!important;background-image:none!important;border-color:var(--cv-accent)!important;color:#fff!important;box-shadow:none!important;}',
+'body :is(input,select,textarea,[contenteditable="true"]):focus,body :is(input,select,textarea,[contenteditable="true"]):focus-visible{border-color:var(--cv-accent)!important;outline-color:var(--cv-accent)!important;box-shadow:0 0 0 3px color-mix(in srgb,var(--cv-accent) 20%,transparent)!important;}',
+'body :is(.chip.on,.chip.active,.tab.active,.tabs [aria-selected="true"],.segmented-control .active){background:var(--cv-accent-soft)!important;border-color:var(--cv-accent-line)!important;color:var(--cv-accent-ink)!important;}',
+'body :is(.btn-primary,.btn.btn-primary,.sh-b.pri,.mkBtn,#mkBtn,#ws-export,#ws-jgo,.side a.active,.side button.active,#ws-nav button.on,#ws-tabs [aria-selected="true"]){background-image:none!important;}',
+'@media(prefers-reduced-motion:reduce){body :is(button,a,input,select,textarea){transition:none!important;}}'
+].join('\n');
+function mount(){var style=doc.getElementById(STYLE_ID);if(!style){style=doc.createElement('style');style.id=STYLE_ID;(doc.head||doc.documentElement).appendChild(style)}style.textContent=CSS;doc.documentElement.setAttribute('data-cv-accent-system','p230');return style}
+function audit(){var probes=['.side button.active','.btn-primary','.btn-soft','#ws-export','#cv229-inspector button'],results={};probes.forEach(function(selector){var el=doc.querySelector(selector);if(!el){results[selector]=null;return}var cs=root.getComputedStyle(el);results[selector]={background:cs.backgroundColor,backgroundImage:cs.backgroundImage,color:cs.color,borderColor:cs.borderColor}});return{version:'230.1.0',mounted:!!doc.getElementById(STYLE_ID),accent:root.getComputedStyle(doc.body).getPropertyValue('--cv-accent').trim(),probes:results}}
+root.CVUnifiedThemeP230={version:'230.1.0',styleId:STYLE_ID,css:CSS,mount:mount,audit:audit};
+if(doc.readyState==='loading')doc.addEventListener('DOMContentLoaded',mount,{once:true});else mount();
+if(root.MutationObserver&&doc.documentElement){var observer=new root.MutationObserver(function(){if(!doc.getElementById(STYLE_ID))mount()});observer.observe(doc.documentElement,{childList:true,subtree:true})}
+})(typeof window!=='undefined'?window:null,typeof document!=='undefined'?document:null);
