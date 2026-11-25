@@ -1,7 +1,7 @@
 {
   "format": "CANVIO_P143_INLINE_SOURCE_INVENTORY",
   "version": 1,
-  "generatedAt": "2026-11-25T06:18:27.745Z",
+  "generatedAt": "2026-11-25T06:19:58.181Z",
   "source": "restored canonical index.html after hosted workflow integration steps",
   "purpose": "Complete script-tag inventory in browser execution order; known global reference detection is heuristic, not a semantic dependency DAG.",
   "htmlBytes": 6102240,
