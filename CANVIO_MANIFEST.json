@@ -2,7 +2,7 @@
   "format": "CANVIO_DELIVERY_MANIFEST",
   "schemaVersion": 2,
   "candidate": "23.3.111-github-runtime-ci",
-  "generatedAt": "2026-11-25T02:54:53.096Z",
+  "generatedAt": "2026-11-25T03:20:16.477Z",
   "hashAlgorithm": "SHA-256",
   "indexSha256": "420d4cb0b566015f2ce8b3c13ae4433f02376ab738b465863715b89515d84e61",
   "indexBytes": 6079846,
@@ -1402,8 +1402,8 @@
     },
     {
       "path": "CANVIO_SESSION_SUMMARY_2026-11-21.md",
-      "bytes": 36910,
-      "sha256": "25454ebeba3b51a7b80b93e8ef5eb96e6f0151c26a971cad2f451f1c25597795"
+      "bytes": 37383,
+      "sha256": "ad42c17b036626cd4013f6070f6b6ef4418a95ccacd39db9abfd275b969c39ef"
     },
     {
       "path": "canvio-home-creative-flow.js",
@@ -1937,8 +1937,8 @@
     },
     {
       "path": "tests/hosted/hosted-runtime-report.json",
-      "bytes": 19594,
-      "sha256": "f4bab0d209a7e9f32d6c80a4856337471648a5a44c3ec6f020e14d5e7f039685"
+      "bytes": 19302,
+      "sha256": "2c0fda409b91b793c89406887395f751b81d6b642ec386acedd6d246ff3a83f6"
     },
     {
       "path": "tests/hosted/integrated-source-contracts.cjs",
@@ -1967,8 +1967,8 @@
     },
     {
       "path": "tests/hosted/run-hosted-runtime-acceptance.py",
-      "bytes": 25191,
-      "sha256": "fa864d41f486c279da5989f129e294109c0766f12ff6268bd266b5279a24d703"
+      "bytes": 25852,
+      "sha256": "a2f036c18c69540a185112525d39f4834935f88b196c2f510c651557f0b5df55"
     },
     {
       "path": "tests/p109/run-p109-tests.cjs",
@@ -2278,7 +2278,7 @@
     {
       "path": "tests/p143/inline-source-inventory.json",
       "bytes": 461609,
-      "sha256": "2a81d04deb295b814b9110566ec56911b91d672b7f0719d19282fbabaff774c7"
+      "sha256": "f78b46e596be42c61e738fad399dbeaaaecd8489b1aa8a2fe370c8e6c468caff"
     },
     {
       "path": "tests/p143/js-global-scanner.cjs",
@@ -2303,7 +2303,7 @@
     {
       "path": "tests/p143/style-template-loader-inventory.json",
       "bytes": 905676,
-      "sha256": "1191ba72da86615590dedbac0f8bdad50a7d1c8aca628fac79ff673c4c69425b"
+      "sha256": "e7439951e1d00f93e823e9658fe0bd20718271211985b1469c1578469e01e542"
     },
     {
       "path": "tests/p143/verify-style-template-inventory.cjs",
@@ -2542,8 +2542,8 @@
     },
     {
       "path": "tests/p145/run-p150-browser.py",
-      "bytes": 11229,
-      "sha256": "0ff40248a063a6671a533d8e83b4209d39a8d9511aa8d841bff56a64f13f6160"
+      "bytes": 11447,
+      "sha256": "eb3faa95e89a4c336d387646984a4ab3fb23f5d832e8d5d371c78c95e03a817b"
     },
     {
       "path": "tests/p145/run-p153-browser.py",
