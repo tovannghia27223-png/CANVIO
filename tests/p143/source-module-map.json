@@ -205,7 +205,11 @@
     {
       "source": "canvio-p132-pdf-import.js",
       "scriptId": "canvio-lot132pdf"
+    },
+    {
+      "source": "canvio-p229-theme-isolation.js",
+      "scriptId": "canvio-lot229-theme-isolation"
     }
   ],
-  "totalModules": 51
+  "totalModules": 52
 }
