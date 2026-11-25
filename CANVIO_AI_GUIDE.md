@@ -4388,3 +4388,10 @@ P160–P166 module APIs currently report versions P160.2.0, P161.1.0, P162.2.0, 
 - P151.1 contrast guard now scans visible workspace pages only and skips interactive controls, navigation and Spatial Inspector, so it cannot force inline `color: !important` over menu or Spatial palette styling.
 - Hosted P150 browser regression adds checks that switching Spatial Graffiti → Midnight leaves the studio menu, Spatial launcher and workspace Export computed styles unchanged, and that P151 does not attach contrast overrides to menu/inspector elements.
 - Acceptance: source edits staged for exact-head hosted Chromium and integrated CI. Do not mark fixed until the workflow passes on the resulting commit.
+
+
+## P150/P229 browser acceptance harness correction (2026-11-25 · commit 1a61509)
+
+- Source review found the P150 browser test closed its Chromium page after the cross-workspace Export assertions, then attempted to reuse that closed page for P229 Spatial theme isolation and P151 contrast-guard assertions. This was a test-driver lifecycle defect, not evidence of a product regression or a passing theme test.
+- Removed the premature close; the same live page now runs the P229/P151 checks and is closed only after those assertions. The subsequent Holographic-skin checks continue on a separate page.
+- Acceptance remains pending a fresh exact-head hosted Chromium run. Do not mark P229/P151 theme isolation accepted until the new run proves all assertions pass.
