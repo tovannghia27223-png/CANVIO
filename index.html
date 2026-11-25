@@ -17791,7 +17791,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   var queued=false,mo=new MutationObserver(function(){if(queued)return;queued=true;requestAnimationFrame(function(){queued=false;refreshMockup()})});
   mo.observe(stage,{attributes:true,childList:true,subtree:true,characterData:true,attributeFilter:['style','class','src']});
  }
- function tests(){var buttons=$$('.side button[data-page]'),ids=buttons.map(function(b){return b.dataset.page}).filter(Boolean),dups=ids.filter(function(x,i){return ids.indexOf(x)!==i});return {release:!!window.CANVIO_RELEASE&&CANVIO_RELEASE.version==='23.3.0',inspector:!!$('#cv229-inspector'),topbarControl:!!$('#cv229-open'),workspaceRoutes:ids.length>0&&dups.length===0,themeOptions:$$('[data-cv229-theme]').length===6,dockOptions:$$('[data-cv229-dock]').length===4,layoutPresets:$$('[data-cv230-layout]').length===4,mockupPreview:!!$('#cv230-preview-stage')&&!!$('#cv230-preview-screen'),panelResize:!!$('.cv230-resize-handle'),canvasNavigator:!!$('#canvasWrap'),noNewScriptTag:document.scripts.length===79,localPreferencesOnly:KEY==='canvio22.9:spatial-ui'}}
+ function tests(){var buttons=$$('.side button[data-page]'),ids=buttons.map(function(b){return b.dataset.page}).filter(Boolean),dups=ids.filter(function(x,i){return ids.indexOf(x)!==i});return {release:!!window.CANVIO_RELEASE&&CANVIO_RELEASE.version==='23.3.0',inspector:!!$('#cv229-inspector'),topbarControl:!!$('#cv229-open'),workspaceRoutes:ids.length>0&&dups.length===0,themeOptions:$$('[data-cv229-theme]').length===6,dockOptions:$$('[data-cv229-dock]').length===4,layoutPresets:$$('[data-cv230-layout]').length===4,mockupPreview:!!$('#cv230-preview-stage')&&!!$('#cv230-preview-screen'),panelResize:!!$('.cv230-resize-handle'),canvasNavigator:!!$('#canvasWrap'),noNewScriptTag:document.scripts.length===80,localPreferencesOnly:KEY==='canvio22.9:spatial-ui'}}
  function audit(){return {version:'23.3.0',page:pageInfo(),state:Object.assign({},state),workspaceCount:$$('.cv229-route').length,layoutPreset:state.layoutPreset,panelWidth:state.panelWidth,previewDevice:state.previewDevice,tests:tests(),storageKey:KEY}}
  function mount(){if(mount.done)return;mount.done=true;bindPanel();bindDrag();bindTop();apply();bind23Controls();initPanelResize();bindPosterPreview();observer();var canvas=$('#canvasWrap');if(canvas&&window.MutationObserver){var mo=new MutationObserver(function(){if(!$('#cv229-canvas-hud'))bindCanvasHUD()});mo.observe(canvas,{childList:true,subtree:true})}}
  window.CV229={version:'23.3.0',mount:mount,tests:tests,audit:audit,state:function(){return Object.assign({},state)},setTheme:applyTheme,setDock:setDock,setSidebar:setSidebar,setFocus:setFocus,setCompact:setCompact,setOpen:setOpen,setPanelWidth:setPanelWidth,setPreviewDevice:setPreviewDevice,applyLayoutPreset:applyLayoutPreset,refreshMockup:refreshMockup,open:function(){setOpen(true)},close:function(){setOpen(false)}};
@@ -31691,12 +31691,12 @@ html[data-home-skin=fashion] #page-home #ws-cards .ws-grid>* .ws-ic{color:#15151
 #cv-pn.on,.cv-pn.on{z-index:900!important}
 </style>
 <script id="canvio-lot151g">
-/* P151 · Bảo vệ độ tương phản: tự sửa chữ/icon gần như vô hình (chữ tối trên nền tối, chữ sáng trên nền sáng) ở mọi giao diện và skin.
-   Chỉ đổi màu chữ khi tương phản < 2.4 và nền xác định được (không gradient/ảnh); hoàn tác khi đổi giao diện/skin. Không đụng canvas, svg, iframe, trình soạn thảo. */
+/* P151.1 · Contrast guard chỉ sửa văn bản nội dung workspace; không chiếm quyền màu của menu, nút điều khiển hay Spatial Inspector.
+   Chỉ đổi màu chữ khi tương phản < 2.4 và nền xác định được; hoàn tác khi đổi giao diện/skin. */
 (function () {
 'use strict';
 if (window.CVContrastGuardP151) return;
-var MIN = 2.4, TARGET_LIGHT = '#eef2fa', TARGET_DARK = '#10182a', SKIP = 'canvas,svg,iframe,script,style,#gjs,.gjs-editor,.konvajs-content,[id*=Stage],[id*=stage],[class*=preview],[class*=Preview],[data-cvg-skip]';
+var MIN = 2.4, TARGET_LIGHT = '#eef2fa', TARGET_DARK = '#10182a', SKIP = 'canvas,svg,iframe,script,style,button,a,input,select,textarea,[role=button],[role=menuitem],[data-route],[data-cv-studio-trigger],#cv-studio-menu,#cv229-inspector,#gjs,.gjs-editor,.konvajs-content,[id*=Stage],[id*=stage],[class*=preview],[class*=Preview],[data-cvg-skip]';
 function parse(c) { var m = c && c.match(/[\d.]+/g); return m && m.length >= 3 ? { r: +m[0], g: +m[1], b: +m[2], a: m.length > 3 ? +m[3] : 1 } : null; }
 function lum(c) { function f(v) { v /= 255; return v <= .03928 ? v / 12.92 : Math.pow((v + .055) / 1.055, 2.4); } return .2126 * f(c.r) + .7152 * f(c.g) + .0722 * f(c.b); }
 function over(f, b) { return { r: f.r * f.a + b.r * (1 - f.a), g: f.g * f.a + b.g * (1 - f.a), b: f.b * f.a + b.b * (1 - f.a), a: 1 }; }
@@ -31710,12 +31710,12 @@ function bgOf(el) {
   return base;
 }
 var changed = [], sig = '', lastPage = '';
-function signature() { var d = document.documentElement, b = document.body; return [d.getAttribute('data-theme'), d.getAttribute('data-skin'), d.getAttribute('data-home-skin'), b && b.className].join('|'); }
+function signature() { var d = document.documentElement, b = document.body; var i = document.getElementById('cv229-inspector'); return [d.getAttribute('data-theme'), d.getAttribute('data-skin'), d.getAttribute('data-home-skin'), b && b.className, i && i.className].join('|'); }
 function undo() { changed.forEach(function (it) { if (it.el.isConnected) { if (it.prev) it.el.style.setProperty('color', it.prev, it.prio); else it.el.style.removeProperty('color'); it.el.removeAttribute('data-cvg'); } }); changed = []; }
 function scan() {
   var s = signature(); if (s !== sig) { undo(); sig = s; }
   var pages = [].filter.call(document.querySelectorAll('.page'), function (p) { return p.offsetParent !== null; });
-  var roots = pages.concat([].slice.call(document.querySelectorAll('header.top,.side,.cv229-inspector.open'))), fixed = 0, seen = 0;
+  var roots = pages, fixed = 0, seen = 0;
   roots.forEach(function (root) {
     root.querySelectorAll('*').forEach(function (el) {
       if (seen > 40000 || el.hasAttribute('data-cvg') || (el.closest && el.closest(SKIP))) return; seen++;
@@ -31735,7 +31735,7 @@ function scan() {
   return fixed;
 }
 var timer = 0; function later() { clearTimeout(timer); timer = setTimeout(function () { try { scan(); } catch (e) {} }, 700); }
-window.CVContrastGuardP151 = { version: '151.0.0', scan: scan, undo: undo, count: function () { return changed.length; } };
+window.CVContrastGuardP151 = { version: '151.1.0', scan: scan, undo: undo, count: function () { return changed.length; } };
 if (typeof document === 'undefined' || !document.body) return;
 function start() { later(); if (window.MutationObserver) { new MutationObserver(later).observe(document.body, { childList: true, subtree: true }); new MutationObserver(later).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme', 'data-skin', 'data-home-skin', 'class'] }); new MutationObserver(later).observe(document.body, { attributes: true, attributeFilter: ['class'] }); } window.addEventListener('hashchange', later); setInterval(function () { var pg = [].filter.call(document.querySelectorAll('.page'), function (p) { return p.offsetParent !== null; }).map(function (p) { return p.id; }).join(','); if (signature() !== sig || pg !== lastPage) { lastPage = pg; later(); } }, 1200); }
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true }); else start();
@@ -37685,6 +37685,115 @@ if (doc) {
   else mount();
 }
 })(window);
+</script>
+<script id="canvio-lot229-theme-isolation">
+/* P229.2 — keep Spatial theme ownership inside the Spatial Inspector.
+   The Inspector is mounted lazily in some shell states. Install the theme adapter
+   as soon as its root exists instead of silently returning during initial boot. */
+(function () {
+  'use strict';
+  if (window.CV229ThemeIsolationP229) return;
+  var names = ['glass', 'midnight', 'aurora', 'cyber', 'graffiti', 'neonlight'];
+  var api = window.CV229;
+  if (!api || typeof api.setTheme !== 'function') return;
+  var originalSetTheme = api.setTheme;
+  var clickBound = false;
+  var observer = null;
+
+  function getRoot() { return document.getElementById('cv229-inspector'); }
+  function activeTheme(theme) {
+    var state = typeof api.state === 'function' ? api.state() : {};
+    return names.indexOf(state.theme) >= 0 ? state.theme :
+      (names.indexOf(theme) >= 0 ? theme : 'graffiti');
+  }
+  function cleanBody() {
+    names.forEach(function (name) {
+      if (document.body) document.body.classList.remove('cv229-theme-' + name);
+    });
+  }
+  function scopeCss(style) {
+    if (!style || style.tagName !== 'STYLE' || style.dataset.cv229ThemeScoped === '1') return false;
+    var source = style.textContent || '';
+    if (!source.includes('cv229-theme-')) return false;
+    var scoped = source.replace(/(?:html\s+)?body\.cv229-theme-(glass|midnight|aurora|cyber|graffiti|neonlight)/g,
+      '.cv229-inspector.cv229-theme-$1');
+    if (scoped !== source) style.textContent = scoped;
+    style.dataset.cv229ThemeScoped = '1';
+    return scoped !== source;
+  }
+  function scopeAllCss() {
+    document.querySelectorAll('style').forEach(scopeCss);
+  }
+  function syncRoot(theme) {
+    var root = getRoot();
+    cleanBody();
+    if (!root) return false;
+    names.forEach(function (name) { root.classList.remove('cv229-theme-' + name); });
+    var active = activeTheme(theme);
+    root.classList.add('cv229-theme-' + active);
+    if (active === 'cyber') root.classList.add('cv229-theme-midnight');
+    root.setAttribute('data-cv229-theme', active);
+    scopeAllCss();
+    if (!clickBound) {
+      root.addEventListener('click', function (event) {
+        var button = event.target && event.target.closest ? event.target.closest('[data-cv229-theme]') : null;
+        if (!button || !root.contains(button)) return;
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        setTheme(button.dataset.cv229Theme);
+      }, true);
+      clickBound = true;
+    }
+    return true;
+  }
+  function setTheme(theme) {
+    var result = originalSetTheme.call(api, theme);
+    cleanBody();
+    syncRoot(theme);
+    return result;
+  }
+
+  api.setTheme = setTheme;
+  scopeAllCss();
+  syncRoot((typeof api.state === 'function' && api.state().theme) || 'graffiti');
+
+  if (window.MutationObserver && document.documentElement) {
+    observer = new MutationObserver(function (records) {
+      var rootAdded = false;
+      records.forEach(function (record) {
+        if (record.type === 'childList') {
+          record.addedNodes.forEach(function (node) {
+            if (node.nodeType !== 1) return;
+            if (node.tagName === 'STYLE') scopeCss(node);
+            if (node.querySelectorAll) {
+              node.querySelectorAll('style').forEach(scopeCss);
+              if (node.id === 'cv229-inspector' || node.querySelector('#cv229-inspector')) rootAdded = true;
+            }
+          });
+        }
+      });
+      if (rootAdded || (getRoot() && !clickBound)) syncRoot();
+    });
+    observer.observe(document.documentElement, { childList: true, subtree: true });
+  }
+
+  window.CV229ThemeIsolationP229 = {
+    version: '229.2.0',
+    setTheme: setTheme,
+    audit: function () {
+      var root = getRoot();
+      return {
+        bodyThemeClasses: names.filter(function (name) { return document.body.classList.contains('cv229-theme-' + name); }),
+        inspectorThemeClasses: root ? names.filter(function (name) { return root.classList.contains('cv229-theme-' + name); }) : [],
+        inspectorMounted: !!root,
+        scopedStyleCount: document.querySelectorAll('style[data-cv229-theme-scoped="1"]').length,
+        globalThemeSelectors: Array.from(document.querySelectorAll('style')).filter(function (style) {
+          return /(?:html\s+)?body\.cv229-theme-(?:glass|midnight|aurora|cyber|graffiti|neonlight)/.test(style.textContent || '');
+        }).length
+      };
+    }
+  };
+})();
 </script>
 </body>
 </html>
