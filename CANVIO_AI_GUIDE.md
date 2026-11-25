@@ -4368,3 +4368,12 @@ P160–P166 module APIs currently report versions P160.2.0, P161.1.0, P162.2.0, 
 - All workspace primary controls, secondary controls, active sidebar/menu tabs, Spatial routes/actions, input focus rings and active chips resolve to one shared accent token derived from the active P229 `--brand` value. This keeps the selected theme hue while preventing modules from independently choosing pink, purple, cyan, yellow or gradients for primary navigation/actions.
 - Primary actions use solid accent; secondary actions use a light tint and same-hue border; active menu states use solid accent. Semantic success/error/warning colors are intentionally not reclassified as accent.
 - CI embeds the source after candidate index reconstruction and runs Node + Chromium P230 checks across six P229 themes, five workspaces, desktop/mobile and page errors. Acceptance is pending hosted CI and visual review.
+
+
+## P230 — main merge and canonical index rebuild handoff (2026-11-25)
+
+- PR #106 was merged into `main` by merge commit `da8bf32c6dcd1ecc97caa192218a9c2feb29c0b0`.
+- Post-merge corrections are on `main`: `91ffd178b4cfb9f5a4f534ce903d524c4d2415b0` tightens accent precedence for Home skin and Photo Workflow overrides; `423185a73e66ad5fb68179dde18a3cd72c37f07d` fixes a Python boolean expression in Chromium acceptance.
+- `.github/workflows/canvio-candidate-runtime.yml` contains the canonical injection step: read `canvio-p230-unified-accent.js`, replace/create exactly one `<script id="canvio-lot230">` in `index.html`, then run `tests/p145/run-p230-tests.cjs` and `tests/p145/run-p230-browser.py`.
+- At this handoff the committed `CANVIO_MANIFEST.json` still does not list `canvio-p230-unified-accent.js` among the indexed delivery files. Therefore the generated canonical index/manifest must be rebuilt by a fresh push-triggered hosted workflow before claiming the P230 embed is complete. Confirm the resulting manifest includes the source and updated index SHA, and require the exact-main hosted Node/Chromium checks to pass.
+- Preserve six P229 themes and semantic success/error/warning colors. Keep the release-certification boundary unchanged; this P230 color acceptance does not close P70's fourteen manual gates.
