@@ -1439,3 +1439,9 @@ P167.1 and P168.1 are therefore mainline-integrated and hosted-CI verified, with
 - P161.2 adds saved GLB camera-position replay through the existing P74/P81 viewer; the current acceptance fixture covers nonzero position and exact pose readback. Complex real-world animated GLBs and physical GPU review remain manual.
 - P166.2 sends generated static landing content through P131 sanitizer into existing GrapesJS/CSS Manager and canonical Website save owner. No backend forms, CRM, hosting or publish service is claimed.
 - P70 stays blocked until its fourteen real-world gates have independently reviewed evidence.
+
+
+## P130.2 — Điền sẵn Supabase mặc định (2026-11-25)
+- `cfg()` trong `canvio-p130-cloud.js` và lot trong `index.html` (giữ parity) trả về URL `https://szdyeqzqyyxmenoiiqxe.supabase.co` + publishable key (`sb_publishable_…`, an toàn công khai) khi máy chưa lưu cấu hình; cấu hình người dùng nhập vẫn ưu tiên.
+- Việc còn lại của người dùng: chạy `supabase/canvio-schema.sql` (nút "Sao chép SQL" ở thẻ P130) trong Supabase SQL Editor, rồi đăng ký/đăng nhập và đặt cụm mật khẩu. Chưa test được với project thật.
+- Không dùng 2 schema `canvio_*` (Foundation 1.0) và "Studio 4.0" (không RLS, không mã hóa) cho P130; nếu muốn làm việc nhóm thì cần quyết định riêng. Không bao giờ đưa secret/service_role key vào repo.

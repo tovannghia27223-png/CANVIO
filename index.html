@@ -31473,7 +31473,7 @@ function create(deps) {
   var CFG = 'canvio.p130.cfg', SES = 'canvio.p130.session', key = null, last = '';
   function jget(k) { try { return JSON.parse(St.getItem(k) || 'null'); } catch (e) { return null; } }
   function jset(k, v) { try { if (v == null) St.removeItem(k); else St.setItem(k, JSON.stringify(v)); } catch (e) {} }
-  function cfg() { return jget(CFG) || { url: '', anon: '' }; }
+  function cfg() { var c = jget(CFG); return c && c.url ? c : { url: 'https://szdyeqzqyyxmenoiiqxe.supabase.co', anon: 'sb_publishable_FmLKzCWH4W83IJ2Zfzy8ZA_9qYzMYow' }; }
   function setCfg(url, anon) { url = String(url || '').trim().replace(/\/+$/, ''); anon = String(anon || '').trim(); if (!okUrl(url)) throw new Error('Địa chỉ Supabase phải dạng https://xxxx.supabase.co'); if (anon.length < 20 || /\s/.test(anon)) throw new Error('Khóa anon/publishable không hợp lệ.'); if (/service_role/i.test(anon) || (anon.split('.').length === 3 && /"role"\s*:\s*"service_role"/.test((function () { try { return atob(anon.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')); } catch (e) { return ''; } })()))) throw new Error('Đây là khóa service_role (bí mật). Chỉ dùng khóa anon/publishable.'); jset(CFG, { url: url, anon: anon }); return true; }
   function session() { return jget(SES); }
   function hdr(tok, extra) { var c = cfg(), h = { apikey: c.anon, 'Content-Type': 'application/json' }; h.Authorization = 'Bearer ' + (tok || c.anon); if (extra) Object.keys(extra).forEach(function (k) { h[k] = extra[k]; }); return h; }

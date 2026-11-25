@@ -408,3 +408,9 @@ Khi sửa module: sửa file standalone rồi chép y hệt vào lot (parity so 
 - P132: one-page PDF raster handoff into existing Pixel Atelier; P163: visible labels only; P161: camera pose replay on existing r187 viewer; P166: P131-sanitized static landing handoff to existing GrapesJS/CSS/Website save owners.
 - Preserve explicit limits: no editable PDF vector/text/password/batch import; no WCAG certification; no universal complex-GLB/physical-GPU certification; no backend forms, CRM, hosting or publishing.
 - P70 remains blocked with fourteen manual gates pending. Never mark release certified until all have independently reviewed evidence.
+
+
+## P130.2 — Điền sẵn Supabase mặc định (2026-11-25)
+- `cfg()` trong `canvio-p130-cloud.js` và lot trong `index.html` (giữ parity) trả về URL `https://szdyeqzqyyxmenoiiqxe.supabase.co` + publishable key (`sb_publishable_…`, an toàn công khai) khi máy chưa lưu cấu hình; cấu hình người dùng nhập vẫn ưu tiên.
+- Việc còn lại của người dùng: chạy `supabase/canvio-schema.sql` (nút "Sao chép SQL" ở thẻ P130) trong Supabase SQL Editor, rồi đăng ký/đăng nhập và đặt cụm mật khẩu. Chưa test được với project thật.
+- Không dùng 2 schema `canvio_*` (Foundation 1.0) và "Studio 4.0" (không RLS, không mã hóa) cho P130; nếu muốn làm việc nhóm thì cần quyết định riêng. Không bao giờ đưa secret/service_role key vào repo.

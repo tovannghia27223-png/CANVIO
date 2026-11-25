@@ -4345,3 +4345,9 @@ P160–P166 module APIs currently report versions P160.2.0, P161.1.0, P162.2.0, 
 - P161.2/P74.1: the existing Three.js r187 viewer owns rendering, camera and OrbitControls; absolute camera presets persist yaw/pitch/FOV/X/Y/Z and flush damping before apply. Hosted fixture proves nonzero-position GLB replay; complex production assets and physical GPU/device acceptance remain manual.
 - P166.2: P131 sanitizer to existing GrapesJS component manager to scoped canonical CSS Manager media rules to existing Website Engine save owner. Lazy readiness is bounded; failed save is never reported as success. Chromium integrated P160–P166 acceptance passed 32/32. Landing output is static; no backend forms, CRM, hosting or publishing.
 - P70 remains fail-closed: releaseCertified:false, fourteen real-world acceptance gates pending. Hosted Chromium uses software rendering; it does not certify physical GPU, production HTTPS/security headers, independent-device recovery, human accessibility or real customer media quality.
+
+
+## P130.2 — Điền sẵn Supabase mặc định (2026-11-25)
+- `cfg()` trong `canvio-p130-cloud.js` và lot trong `index.html` (giữ parity) trả về URL `https://szdyeqzqyyxmenoiiqxe.supabase.co` + publishable key (`sb_publishable_…`, an toàn công khai) khi máy chưa lưu cấu hình; cấu hình người dùng nhập vẫn ưu tiên.
+- Việc còn lại của người dùng: chạy `supabase/canvio-schema.sql` (nút "Sao chép SQL" ở thẻ P130) trong Supabase SQL Editor, rồi đăng ký/đăng nhập và đặt cụm mật khẩu. Chưa test được với project thật.
+- Không dùng 2 schema `canvio_*` (Foundation 1.0) và "Studio 4.0" (không RLS, không mã hóa) cho P130; nếu muốn làm việc nhóm thì cần quyết định riêng. Không bao giờ đưa secret/service_role key vào repo.
