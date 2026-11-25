@@ -4355,3 +4355,9 @@ P160–P166 module APIs currently report versions P160.2.0, P161.1.0, P162.2.0, 
 - Visual-system audit: the shell uses Inter/system fallbacks, base text 13.5 px, standard buttons 36 px / 12.4 px, small buttons 29 px and large buttons 44 px. Primary/soft/ghost/mint/danger colors are intentional variants; editor-specific typography and control sizing are scoped and should not be flattened into one style.
 - Static image inventory on main contains one standalone image asset (assets/icons/canvio-icon.svg). Other image surfaces are generated as inline SVG/data URLs or come from the existing Asset Library/user imports; the repository does not currently contain a broad static stock-photo pack.
 - Acceptance status at edit time: source-level correction prepared; exact-head hosted Chromium, P143 parity, P150 workspace color suite and final mainline verification remain pending. Actual ORMBG model inference is not marked PASS by a UI-only smoke.
+
+
+## P102 UI smoke follow-up — route-owner navigation (2026-11-25)
+
+- Hosted run #842 reached the new UI smoke after P143/source contracts and P47–P70 regressions had passed. The smoke stopped before inspecting P102 because it attempted to click a sidebar item marked advanced/hidden in the default headless navigation state. This was a test-driver error, not evidence of a failing model or missing panel.
+- Updated the smoke to navigate through the existing canonical CV.go('imageStudio') route owner, then assert the panel is visible directly below the heading and exposes file/run/download controls. Await a fresh exact-head hosted run before accepting the UI regression fix.
