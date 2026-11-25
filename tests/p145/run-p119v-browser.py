@@ -39,7 +39,10 @@ with sync_playwright() as p:
     page.wait_for_function("!!CV.engines.video._state().clips.some(c=>c.type==='image')",timeout=45000)
     clip_id=page.evaluate("CV.engines.video._state().clips.find(c=>c.type==='image').id")
     page.evaluate("(id)=>CV.engines.video.select(id)",clip_id)
-    page.locator('#vtProps details').first.locator('summary').click()
+    details=page.locator('#vtProps details').first
+    if not details.evaluate('(el)=>el.open'):
+        details.locator('summary').click()
+    page.locator('#cv119v-select').wait_for(state='visible',timeout=30000)
     page.wait_for_selector('#vtKFEasing',timeout=30000)
     page.wait_for_selector('#cv119v-select',timeout=30000)
     checks['presetAdapterMounted']=page.locator('#cv119v-select').count()==1
@@ -81,7 +84,10 @@ with sync_playwright() as p:
     page.evaluate("CV.go('videoEngine')")
     page.evaluate("(id)=>CV.engines.video.select(id)",clip_id)
     page.wait_for_selector('#vtProps details',timeout=30000)
-    page.locator('#vtProps details').first.locator('summary').click()
+    details=page.locator('#vtProps details').first
+    if not details.evaluate('(el)=>el.open'):
+        details.locator('summary').click()
+    page.locator('#cv119v-select').wait_for(state='visible',timeout=30000)
     page.select_option('#cv119v-select','motion')
     checks['customMotionCurveLoaded']=page.evaluate("""()=>{
       const v=document.getElementById('vtKFEasing').value;
@@ -101,7 +107,10 @@ with sync_playwright() as p:
     }""")
     page.evaluate("(id)=>CV.engines.video.select(id)",clip_id)
     page.wait_for_selector('#vtProps details',timeout=30000)
-    page.locator('#vtProps details').first.locator('summary').click()
+    details=page.locator('#vtProps details').first
+    if not details.evaluate('(el)=>el.open'):
+        details.locator('summary').click()
+    page.locator('#cv119v-select').wait_for(state='visible',timeout=30000)
     before=page.locator('#vtKFCurveX1').input_value()
     page.select_option('#cv119v-select','motion')
     checks['springCurveRejectedWithoutMutation']=page.locator('#vtKFCurveX1').input_value()==before and 'linear()' in page.locator('#cv119v-status').inner_text()
