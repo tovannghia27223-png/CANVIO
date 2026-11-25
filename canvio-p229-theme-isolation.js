@@ -41,7 +41,13 @@
       css += root + '{background:' + p.panel + '!important;color:' + p.ink + '!important;border-color:' + p.line + '!important;}\n';
       css += root + ' .cv229-inspector-head{background:' + p.section + '!important;border-color:' + p.line + '!important;color:' + p.ink + '!important;}\n';
       css += root + ' .cv229-inspector-brand strong,' + root + ' .cv229-section-title b{color:' + p.ink + '!important;}\n';
-      css += root + ' .cv229-inspector-brand small,' + root + ' .cv229-inspector-foot,' + root + ' .cv229-section-title span{color:' + p.muted + '!important;}\n';
+      css += root + ' .cv229-inspector-brand small,' + root + ' .cv229-inspector-foot,' + root + ' .cv229-section-title span,' + root + ' .cv230-preview-controls label{color:' + p.muted + '!important;}\n';
+      css += root + ' .cv229-kicker{color:' + p.accent + '!important;}\n';
+      css += root + ' .cv229-search{background:' + p.section + '!important;border-color:' + p.line + '!important;color:' + p.ink + '!important;}\n';
+      css += root + ' .cv229-search input{color:' + p.ink + '!important;}\n';
+      css += root + ' .cv229-search span{color:' + p.muted + '!important;}\n';
+      css += root + ' .cv230-preview-controls input{accent-color:' + p.accent + '!important;}\n';
+      css += root + ' .cv229-empty{color:' + p.muted + '!important;border-color:' + p.line + '!important;}\n';
       css += root + ' .cv229-section,' + root + ' .cv230-preview-stage,' + root + ' .cv230-preview-empty{background:' + p.section + '!important;border-color:' + p.line + '!important;color:' + p.ink + '!important;}\n';
       css += root + ' .cv229-route,' + root + ' .cv229-control,' + root + ' .cv229-dock-row button,' + root + ' .cv229-theme-grid button,' + root + ' .cv229-shortcuts kbd,' + root + ' .cv229-icon-btn,' + root + ' .cv230-layout-grid button,' + root + ' .cv230-preview-toolbar button,' + root + ' .cv230-preview-controls button{background:' + p.section + '!important;border-color:' + p.line + '!important;color:' + p.ink + '!important;}\n';
       css += root + ' .cv229-route.active,' + root + ' .cv229-control[aria-pressed="true"],' + root + ' .cv229-dock-row button.active,' + root + ' .cv229-theme-grid button.active,' + root + ' .cv230-layout-grid button.active,' + root + ' .cv230-preview-toolbar button.active{background:' + p.soft + '!important;border-color:' + p.accent + '!important;color:' + p.accent + '!important;box-shadow:inset 0 0 0 1px ' + p.accent + '!important;}\n';
