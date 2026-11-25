@@ -769,3 +769,8 @@ Mainline workflow #551 passed 53/53; Pages #275 passed build/deploy. P143 parity
 - Verified root cause: P229 `applyTheme()` applied theme classes to `document.body`; broad `body.cv229-theme-*` selectors changed `.side`, `.top`, common cards, fields and buttons outside Spatial. This is why changing Spatial palette altered the menu and unrelated components.
 - Candidate fix scopes the six palette classes to `#cv229-inspector` and rewrites theme selectors to the inspector root/descendants. P151.1 additionally excludes nav, buttons, inputs, and Spatial Inspector from automatic contrast overrides.
 - Added hosted regression assertions for menu, launcher and Export computed styles across Graffiti → Midnight, plus P151 override exclusion. Status remains pending exact-head CI; no PASS claim until run completes.
+
+
+## P150/P229 browser harness correction — 2026-11-25
+- Commit 1a61509 fixes a test-driver lifecycle defect: the P150 Chromium page was closed before the P229/P151 assertions attempted to reuse it. The premature close is removed; the page remains alive through Spatial theme isolation and contrast-guard checks, then closes before the separate Holographic-skin fixture.
+- This is not a product acceptance result. Re-run the full exact-head hosted workflow and require P150/P229/P151 assertions to pass before marking Spatial theme isolation accepted.
