@@ -4395,3 +4395,10 @@ P160–P166 module APIs currently report versions P160.2.0, P161.1.0, P162.2.0, 
 - Source review found the P150 browser test closed its Chromium page after the cross-workspace Export assertions, then attempted to reuse that closed page for P229 Spatial theme isolation and P151 contrast-guard assertions. This was a test-driver lifecycle defect, not evidence of a product regression or a passing theme test.
 - Removed the premature close; the same live page now runs the P229/P151 checks and is closed only after those assertions. The subsequent Holographic-skin checks continue on a separate page.
 - Acceptance remains pending a fresh exact-head hosted Chromium run. Do not mark P229/P151 theme isolation accepted until the new run proves all assertions pass.
+
+
+## P229.2 integration idempotency follow-up (2026-11-25 · commit f5b7c4c)
+
+- Hosted run 879 passed all 68 job steps, including Chromium acceptance for P150/P229/P151, but its final candidate commit embedded P229.2 into the canonical index. The subsequent pull-request run 880 then exposed that the workflow integration step rejected an already-correct embedded module as a duplicate.
+- Updated `.github/workflows/canvio-candidate-runtime.yml` so P229.2 integration is idempotent: it verifies one existing module, refreshes it only when its content differs, inserts it when absent, and accepts either the pre-integration or post-integration script-count contract.
+- Run 880 failed only at the P229.2 integration step before runtime acceptance; this was a workflow re-entry defect, not a failed browser theme assertion. Re-run exact-head CI after commit f5b7c4c before calling the final branch state accepted.
