@@ -134,6 +134,25 @@ jobs:
           fs.writeFileSync(file,html,'utf8');
           console.log('P150.13 Home skin root isolation synced into canonical index.html');
           NODE
+      - name: Integrate P151.1 contrast guard scope
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs=require('node:fs');
+          const file='index.html', source=fs.readFileSync('canvio-p151-contrast-guard.js','utf8').trim();
+          if(!source.includes("version: '151.1.0'"))throw new Error('P151.1 source version missing');
+          const id='canvio-lot151g', open='<script id="'+id+'">';
+          let html=fs.readFileSync(file,'utf8');
+          const at=html.indexOf(open);
+          if(at<0||html.indexOf(open,at+open.length)>=0)throw new Error('P151 expected exactly one embedded lot');
+          const start=at+open.length, end=html.indexOf('</script>',start);
+          if(end<0)throw new Error('P151 embedded lot close missing');
+          html=html.slice(0,at)+open+'\\n'+source+'\\n</script>'+html.slice(end+'</script>'.length);
+          if((html.match(/id="canvio-lot151g"/g)||[]).length!==1)throw new Error('P151 duplicate/missing lot');
+          fs.writeFileSync(file,html,'utf8');
+          console.log('P151.1 contrast guard scope synced into canonical index.html');
+          NODE
 
       - name: Integrate P125.2 scroll storyboard editor
         shell: bash
