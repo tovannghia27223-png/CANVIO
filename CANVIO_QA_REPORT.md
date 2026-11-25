@@ -774,3 +774,9 @@ Mainline workflow #551 passed 53/53; Pages #275 passed build/deploy. P143 parity
 ## P150/P229 browser harness correction — 2026-11-25
 - Commit 1a61509 fixes a test-driver lifecycle defect: the P150 Chromium page was closed before the P229/P151 assertions attempted to reuse it. The premature close is removed; the page remains alive through Spatial theme isolation and contrast-guard checks, then closes before the separate Holographic-skin fixture.
 - This is not a product acceptance result. Re-run the full exact-head hosted workflow and require P150/P229/P151 assertions to pass before marking Spatial theme isolation accepted.
+
+
+## P229.2 CI re-entry defect — 2026-11-25
+- Run 879 passed the complete 68-step hosted workflow, including same-origin runtime and Chromium browser acceptance. It then committed the generated canonical candidate to the PR branch.
+- The follow-up PR run 880 failed at `Integrate P229.2 Spatial theme isolation` because the step treated the already-embedded, verified P229 module as an error. No browser test failed in run 880; execution stopped during candidate integration.
+- Commit f5b7c4c makes that workflow step idempotent by validating/reusing an identical embedded module or replacing stale content in place, while preserving the script-count and exactly-one-module checks. Exact-head CI is pending again.
