@@ -39,9 +39,9 @@ with sync_playwright() as p:
     page.wait_for_function("!!CV.engines.video._state().clips.some(c=>c.type==='image')",timeout=45000)
     clip_id=page.evaluate("CV.engines.video._state().clips.find(c=>c.type==='image').id")
     page.evaluate("(id)=>CV.engines.video.select(id)",clip_id)
-    page.locator('#vtProps details').first.locator('summary').click()
+    page.locator('#vtProps details').first.evaluate('(el)=>{el.open=true}')
     page.wait_for_selector('#vtKFEasing',timeout=30000)
-    page.wait_for_selector('#cv119v-select',timeout=30000)
+    page.wait_for_selector('#cv119v-select',state='visible',timeout=30000)
     checks['presetAdapterMounted']=page.locator('#cv119v-select').count()==1
     checks['presetOptionsFromP119']=page.locator('#cv119v-select option').count()>=8
     page.evaluate("""()=>{
@@ -81,7 +81,8 @@ with sync_playwright() as p:
     page.evaluate("CV.go('videoEngine')")
     page.evaluate("(id)=>CV.engines.video.select(id)",clip_id)
     page.wait_for_selector('#vtProps details',timeout=30000)
-    page.locator('#vtProps details').first.locator('summary').click()
+    page.locator('#vtProps details').first.evaluate('(el)=>{el.open=true}')
+    page.wait_for_selector('#cv119v-select',state='visible',timeout=30000)
     page.select_option('#cv119v-select','motion')
     checks['customMotionCurveLoaded']=page.evaluate("""()=>{
       const v=document.getElementById('vtKFEasing').value;
@@ -101,8 +102,9 @@ with sync_playwright() as p:
     }""")
     page.evaluate("(id)=>CV.engines.video.select(id)",clip_id)
     page.wait_for_selector('#vtProps details',timeout=30000)
-    page.locator('#vtProps details').first.locator('summary').click()
+    page.locator('#vtProps details').first.evaluate('(el)=>{el.open=true}')
     before=page.locator('#vtKFCurveX1').input_value()
+    page.wait_for_selector('#cv119v-select',state='visible',timeout=30000)
     page.select_option('#cv119v-select','motion')
     checks['springCurveRejectedWithoutMutation']=page.locator('#vtKFCurveX1').input_value()==before and 'linear()' in page.locator('#cv119v-status').inner_text()
     checks['existingTimelineOwnerUnchanged']=page.evaluate("id=>!!(CV.engines.video._state().clips.some(c=>c.id===id)&&typeof CV.engines.video.undo==='function'&&typeof CV.engines.video.snapshotState==='function')",clip_id)
