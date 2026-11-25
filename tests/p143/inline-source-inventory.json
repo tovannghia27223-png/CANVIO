@@ -1,17 +1,17 @@
 {
   "format": "CANVIO_P143_INLINE_SOURCE_INVENTORY",
   "version": 1,
-  "generatedAt": "2026-11-24T21:20:56.217Z",
+  "generatedAt": "2026-11-25T05:50:33.872Z",
   "source": "restored canonical index.html after hosted workflow integration steps",
   "purpose": "Complete script-tag inventory in browser execution order; known global reference detection is heuristic, not a semantic dependency DAG.",
-  "htmlBytes": 6079703,
-  "scriptTagCount": 185,
-  "inlineScriptCount": 185,
+  "htmlBytes": 6084227,
+  "scriptTagCount": 186,
+  "inlineScriptCount": 186,
   "externalScriptCount": 0,
   "moduleScriptCount": 0,
   "asyncScriptCount": 0,
   "deferScriptCount": 0,
-  "uniqueScriptIds": 182,
+  "uniqueScriptIds": 183,
   "duplicateScriptIds": [],
   "modules": [
     {
@@ -8011,7 +8011,7 @@
       "defer": false,
       "noModule": false,
       "bytes": 292274,
-      "sha256": "dbda8d9850a819c6a481aad4acbb8c870b438a44d3fa753d6714ec5059b57011",
+      "sha256": "2f43a1ffcd22fa157303276dc5ec5286b5fb39515983460c19a51ce5be6476dd",
       "exportedGlobals": [
         "CANVIO22",
         "CANVIOCreativeSuite",
@@ -12652,8 +12652,8 @@
       "async": false,
       "defer": false,
       "noModule": false,
-      "bytes": 9672,
-      "sha256": "19b41cb64d7dfb32c3cb4fd5779bc139e712154d6126558aadff452fd954fc7c",
+      "bytes": 9815,
+      "sha256": "34c6488e48652d0f80560ef6bf342b9b7f8349a75452fcea3ee68fd29b443fa5",
       "exportedGlobals": [
         "CANVIOBackgroundRemovalP102"
       ],
@@ -15635,8 +15635,8 @@
       "async": false,
       "defer": false,
       "noModule": false,
-      "bytes": 5499,
-      "sha256": "cc075306f0338789ef626310bd075f496b84bee6fc1b0ec42d97d51933ad36bb",
+      "bytes": 5453,
+      "sha256": "f0d275b78f0d08fe91424e5981df3913f8f9da407c59c79e5f163480d5c2b9fc",
       "exportedGlobals": [
         "CVContrastGuardP151"
       ],
@@ -18788,6 +18788,66 @@
         "propertyReads": [],
         "knownReads": [],
         "writes": [],
+        "scannerLimitations": [
+          "Template literal bodies and interpolation expressions are skipped as one lexical region.",
+          "Destructured globals, alias flow, computed property names, eval and dynamically assembled identifiers are not resolved.",
+          "Top-level bindings are detected only for simple var/let/const/function/class declarations.",
+          "This scanner is lexical evidence, not a JavaScript AST or proof of runtime data flow."
+        ]
+      }
+    },
+    {
+      "order": 185,
+      "id": "canvio-lot229-theme-isolation",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 4374,
+      "sha256": "9eef40f112ed14763979e7d92f7eea0c6e0ed879acecb5cdccc9eae35592d4d6",
+      "exportedGlobals": [
+        "CV229ThemeIsolationP229"
+      ],
+      "globalDeclarations": [],
+      "globalPropertyReads": [
+        "CV229",
+        "CV229ThemeIsolationP229",
+        "MutationObserver"
+      ],
+      "knownGlobalReads": [],
+      "globalReferenceEvidence": {
+        "propertyReads": [
+          {
+            "name": "CV229",
+            "count": 1,
+            "lines": [
+              9
+            ]
+          },
+          {
+            "name": "CV229ThemeIsolationP229",
+            "count": 1,
+            "lines": [
+              7
+            ]
+          },
+          {
+            "name": "MutationObserver",
+            "count": 1,
+            "lines": [
+              72
+            ]
+          }
+        ],
+        "knownReads": [],
+        "writes": [
+          {
+            "name": "CV229ThemeIsolationP229",
+            "line": 92,
+            "kind": "window.property"
+          }
+        ],
         "scannerLimitations": [
           "Template literal bodies and interpolation expressions are skipped as one lexical region.",
           "Destructured globals, alias flow, computed property names, eval and dynamically assembled identifiers are not resolved.",

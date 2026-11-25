@@ -29,6 +29,16 @@ test('P102/P105/P80 workers use self-hosted Transformers.js and local ONNX WASM'
  assert.ok(whisper.includes('Xenova/whisper-tiny')&&whisper.includes('automatic-speech-recognition'));
  for(const s of [rmbg,depth,whisper]){assert.ok(s.includes('p85/transformers/transformers.min.js'));assert.ok(s.includes('wasmPaths'));assert.ok(!/esm\.sh|cdn\.jsdelivr\.net/i.test(s));}
 });
+const p102=read('canvio-p102-background-removal.js');
+test('P102 background-removal panel is discoverable directly below the Image Studio heading',()=>{
+ const page=html.match(/<section class="page" id="page-imageStudio">[\s\S]*?<\/section>/)?.[0]||'';
+ assert.ok(page,'Image Studio page is present');
+ assert.ok(p102.includes("var head = page.querySelector('.head');"),'heading fallback is present');
+ assert.ok(p102.includes("head.insertAdjacentElement('afterend', panel)"),'panel is mounted immediately after the heading');
+ assert.ok(p102.includes('page.insertBefore(panel, page.firstChild)'),'safe first-child fallback is present');
+ const inline=html.match(/<script id="canvio-p102-background-removal">([\s\S]*?)<\/script>/)?.[1]||'';
+ assert.equal(inline.trim(),p102.trim(),'canonical inline script matches the standalone source');
+});
 const p107=read('canvio-p105-p107-depth-parallax.js');
 test('P107 portable bundle is a strict three-file CRC-checked ZIP with rollback on partial import',()=>{
  for(const token of ['function exportPresetBundle','function importPresetBundle','function parsePresetZip','CRC32','central directory','source.png','depth.png','rollback','strength'])assert.ok(p107.includes(token),token);
