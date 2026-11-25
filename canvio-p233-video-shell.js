@@ -56,7 +56,8 @@ function mount(){
   adopt:[
    {node:assetCard,slot:'rail',key:'video-assets'},
    {node:preview,slot:'canvas',key:'video-preview'},
-   {node:right,slot:'props',key:'video-inspector-captions'},\n   {node:externalCard,slot:'props',key:'video-external-editor'},
+   {node:right,slot:'props',key:'video-inspector-captions'},
+   {node:externalCard,slot:'props',key:'video-external-editor'},
    {node:timelineCard,slot:'bottom',key:'video-timeline'},
    {node:toolbar,slot:'actions',key:'video-native-toolbar'}
   ]
