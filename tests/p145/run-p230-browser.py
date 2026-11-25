@@ -20,7 +20,7 @@ with sync_playwright() as p:
             ck(name+' '+theme+' nút chính cùng màu accent',state['primary'] and state['primary']==state['accent'])
             ck(name+' '+theme+' menu active cùng màu accent',!state['menu']||state['menu']==state['accent'])
             ck(name+' '+theme+' class theme được giữ',state['activeTheme'])
-        pg.evaluate("CVLot47&&CVLot47.set('plain');CV229.setTheme('graffiti')")
+        pg.evaluate("if(window.CVLot47)window.CVLot47.set('plain');CV229.setTheme('graffiti')")
         pg.evaluate("CVWS.open('design')");pg.wait_for_timeout(300)
         pg.evaluate("CV.go('assets')");pg.wait_for_function("!!document.querySelector('.cv-pwf')",timeout=15000);pg.wait_for_timeout(150)
         pwf=pg.evaluate("""()=>{const a=getComputedStyle(document.querySelector('.cv-pwf button[data-pwf-open]')).backgroundColor;const s=getComputedStyle(document.getElementById('cv-pwf-save')).backgroundColor;const n=getComputedStyle(document.getElementById('cv-pwf-refresh')).backgroundColor;const accent=getComputedStyle(document.body).getPropertyValue('--cv-accent').trim();const c=document.createElement('canvas').getContext('2d');c.fillStyle=accent;return {accent:c.fillStyle,open:a,save:s,refresh:n}}""")
