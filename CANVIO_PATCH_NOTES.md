@@ -11,5 +11,5 @@
 - Added P163.1.1 visible labels for existing character-profile controls, preserving Shared Core, Asset Library and Storyboard ownership; P169 browser coverage checks visible field labels and profile round-trip.
 - Added P161.2/P74.1 saved GLB camera-pose replay in the existing Three.js r187 viewer, including yaw/pitch/FOV/X-Y-Z, OrbitControls damping flush and same-origin GLB fixture checks.
 - Added P166.2 brief-to-GrapesJS Website Engine handoff through P131 sanitization, scoped responsive CSS and the canonical save owner, with lazy-engine readiness and Chromium integration tests.
-- P229.3 makes the Spatial Appearance picker the shared CANVIO palette; hosted Chromium run #906 passed P150/P229 96/96 across the six palettes.
+- P229.3 makes the Spatial Appearance picker the shared CANVIO palette: `body.cv229-theme-*` drives shell/workspaces and the Spatial palette bridge themes controls; hosted run #906 passed P150/P229 Chromium 96/96 across all six palettes.
 - Stable release remains fail-closed at P70; no physical GPU or two-device certification is implied.
