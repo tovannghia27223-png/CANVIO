@@ -738,3 +738,11 @@ Mainline workflow #551 passed 53/53; Pages #275 passed build/deploy. P143 parity
 - Corrected mount fallback to place the panel directly after .head, before the prompt builder and queue. Existing Asset Library integration and same-origin worker/runtime paths are unchanged.
 - Added a Node source-contract assertion and a normal hosted Chromium UI smoke for visible panel + file/run/download controls. The expensive ORMBG inference remains an opt-in check and is not inferred from panel presence.
 - Pending exact-head workflow result. P150.13 cross-workspace Export color checks also remain subject to fresh hosted-browser acceptance; do not call color consistency fully certified until that run passes.
+
+
+## P102 run #842 — UI smoke driver correction (2026-11-25)
+
+- Run #842: P143 parity, full HTML/inline-JS audit, P47–P70 regressions, integrated source contracts and P107 ZIP round-trip passed. P74/P81 compressed GLB (Draco/Meshopt/KTX2), P161 camera replay, P85 runtime initialization/PostFX/OpenCV optical flow also passed.
+- P102 UI smoke did not reach its assertions: Playwright timed out trying to click the Image Generation nav button, which is intentionally hidden in the headless advanced-nav state. This is a test-driver selector issue, not a verified P102 UI failure.
+- Changed the smoke to invoke the existing CV.go('imageStudio') route owner directly; it still checks visible panel placement and all three controls without loading model weights. Fresh CI pending. Real ORMBG inference remains opt-in and unclaimed.
+- The browser step stopped before P150; P150 cross-workspace Export color acceptance is not established by run #842.
