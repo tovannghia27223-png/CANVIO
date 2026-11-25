@@ -2,10 +2,11 @@
 const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
 const source=fs.readFileSync('canvio-p230-unified-accent.js','utf8');
 const root={setAttribute:(k,v)=>{root[k]=v},getComputedStyle:()=>({getPropertyValue:()=> '#7b3fe4'}),MutationObserver:function(){this.observe=()=>{}}};
-const doc={readyState:'complete',documentElement:{},head:{appendChild:x=>{doc.style=x}},getElementById:id=>id==='canvio-p230-unified-accent-css'?(doc.style||null):null,createElement:()=>({id:'',textContent:''}),querySelector:()=>null,addEventListener:()=>{}};
+const doc={readyState:'complete',documentElement:{setAttribute:(k,v)=>{doc.documentElement[k]=v}},head:{appendChild:x=>{doc.style=x}},getElementById:id=>id==='canvio-p230-unified-accent-css'?(doc.style||null):null,createElement:()=>({id:'',textContent:''}),querySelector:()=>null,addEventListener:()=>{}};
 vm.runInNewContext(source,{window:root,document:doc,MutationObserver:root.MutationObserver});
 assert.equal(root.CVUnifiedThemeP230.version,'230.1.0');
 assert.equal(doc.style.id,'canvio-p230-unified-accent-css');
+assert.equal(doc.documentElement['data-cv-accent-system'],'p230');
 const css=doc.style.textContent;
 for(const token of ['--cv-accent:var(--brand','--primary:var(--cv-accent)','--accent:var(--cv-accent)','html body[class] .side','html body[class] #ws-tabs','html body[class] .cv229-route.active','background-image:none!important'])assert.ok(css.includes(token),'missing '+token);
 assert.ok(css.includes('.btn-primary')&&css.includes('.btn-soft')&&css.includes('.btn-ghost'));
