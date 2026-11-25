@@ -16,6 +16,9 @@ var CSS=[
 'body :is(input,select,textarea,[contenteditable="true"]):focus,body :is(input,select,textarea,[contenteditable="true"]):focus-visible{border-color:var(--cv-accent)!important;outline-color:var(--cv-accent)!important;box-shadow:0 0 0 3px color-mix(in srgb,var(--cv-accent) 20%,transparent)!important;}',
 'body :is(.chip.on,.chip.active,.tab.active,.tabs [aria-selected="true"],.segmented-control .active){background:var(--cv-accent-soft)!important;border-color:var(--cv-accent-line)!important;color:var(--cv-accent-ink)!important;}',
 'body :is(.btn-primary,.btn.btn-primary,.sh-b.pri,.mkBtn,#mkBtn,#ws-export,#ws-jgo,.side a.active,.side button.active,#ws-nav button.on,#ws-tabs [aria-selected="true"]){background-image:none!important;}',
+'html[data-home-skin] body[class] #page-home :is(.btn-primary,#ws-jobs>button,#ws-jobs button#ws-jgo,#ws-jgo,#ws-obc button,.t-con button,.fa-cta .p,#cv150-cta .p){background:var(--cv-accent)!important;background-image:none!important;border-color:var(--cv-accent)!important;color:#fff!important;box-shadow:none!important;}',
+'html body[class] :is(.cv-pwf button[data-pwf-open],#cv-pwf-save){background:var(--cv-accent)!important;background-image:none!important;border-color:var(--cv-accent)!important;color:#fff!important;box-shadow:none!important;}',
+'html body[class] #cv-pwf-refresh{background:var(--cv-accent-soft)!important;background-image:none!important;border-color:var(--cv-accent-line)!important;color:var(--cv-accent-ink)!important;}',
 '@media(prefers-reduced-motion:reduce){body :is(button,a,input,select,textarea){transition:none!important;}}'
 ].join('\n');
 function mount(){var style=doc.getElementById(STYLE_ID);if(!style){style=doc.createElement('style');style.id=STYLE_ID;(doc.head||doc.documentElement).appendChild(style)}style.textContent=CSS;doc.documentElement.setAttribute('data-cv-accent-system','p230');return style}
