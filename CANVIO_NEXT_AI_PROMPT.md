@@ -423,3 +423,11 @@ Khi sửa module: sửa file standalone rồi chép y hệt vào lot (parity so 
 - SQL kho tài nguyên: `supabase/canvio-storage.sql` (cũng trong thẻ, nút "Sao chép SQL kho tài nguyên"); người dùng phải chạy MỘT LẦN sau SQL của P130. Test kiểm tra tệp khớp chuỗi trong module.
 - Test: `tests/p170/run-p170-tests.cjs` (28; thư mục giả + Storage giả + P130 thật bằng WebCrypto), `tests/p145/run-p170-browser.py` (12; dùng OPFS thay hộp thoại chọn thư mục). Lưu ý: đọc tay cầm OPFS từ IndexedDB làm sập Chromium headless → module giữ tay cầm trong bộ nhớ, test dùng `_setHandle`.
 - Chưa làm / chưa test: sao lưu video lớn và dữ liệu Project Vault/localStorage ra thư mục máy; khôi phục dự án (`projects/*.json`) về lại app (hiện chỉ khôi phục tài nguyên); xóa tài nguyên trên cloud; tự động lưu định kỳ; chọn thư mục thật và Supabase thật chưa được thử với tài khoản người dùng.
+
+
+## P230 — Tiếp tục nghiệm thu unified accent (2026-11-25)
+
+- Branch `fix/unified-global-accent-p230`; source `canvio-p230-unified-accent.js`; embedded lot `canvio-lot230`; API `CVUnifiedThemeP230 230.1.0`.
+- P230 uses the currently selected P229 `--brand` as the sole accent hue. Primary actions solid accent; secondary controls accent tint/outline; active sidebar/menu/workspace states solid accent. Removes separate primary gradients/pink/cyan/yellow overrides without recoloring semantic success/error/warning states.
+- CI workflow injects P230 after candidate index reconstruction and runs `tests/p145/run-p230-tests.cjs` plus `tests/p145/run-p230-browser.py`. Browser test exercises P229 themes graffiti/glass/midnight/aurora/cyber/neonlight, Design/Site/Media/Project/AI routes and desktop/mobile.
+- Acceptance: inspect computed styles for Photo Workflow Luma/open/save controls, sidebar active state, P229 Spatial routes and P47 Holo. Confirm no contrast regressions, page errors or duplicate style. Do not claim full synchronization until hosted workflow passes.

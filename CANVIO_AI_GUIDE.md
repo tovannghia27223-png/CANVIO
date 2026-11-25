@@ -4360,3 +4360,11 @@ P160–P166 module APIs currently report versions P160.2.0, P161.1.0, P162.2.0, 
 - SQL kho tài nguyên: `supabase/canvio-storage.sql` (cũng trong thẻ, nút "Sao chép SQL kho tài nguyên"); người dùng phải chạy MỘT LẦN sau SQL của P130. Test kiểm tra tệp khớp chuỗi trong module.
 - Test: `tests/p170/run-p170-tests.cjs` (28; thư mục giả + Storage giả + P130 thật bằng WebCrypto), `tests/p145/run-p170-browser.py` (12; dùng OPFS thay hộp thoại chọn thư mục). Lưu ý: đọc tay cầm OPFS từ IndexedDB làm sập Chromium headless → module giữ tay cầm trong bộ nhớ, test dùng `_setHandle`.
 - Chưa làm / chưa test: sao lưu video lớn và dữ liệu Project Vault/localStorage ra thư mục máy; khôi phục dự án (`projects/*.json`) về lại app (hiện chỉ khôi phục tài nguyên); xóa tài nguyên trên cloud; tự động lưu định kỳ; chọn thư mục thật và Supabase thật chưa được thử với tài khoản người dùng.
+
+
+## P230 — Unified global accent (candidate · 2026-11-25)
+
+- Canonical source: `canvio-p230-unified-accent.js`, embedded as `canvio-lot230`; API `window.CVUnifiedThemeP230` version `230.1.0`.
+- All workspace primary controls, secondary controls, active sidebar/menu tabs, Spatial routes/actions, input focus rings and active chips resolve to one shared accent token derived from the active P229 `--brand` value. This keeps the selected theme hue while preventing modules from independently choosing pink, purple, cyan, yellow or gradients for primary navigation/actions.
+- Primary actions use solid accent; secondary actions use a light tint and same-hue border; active menu states use solid accent. Semantic success/error/warning colors are intentionally not reclassified as accent.
+- CI embeds the source after candidate index reconstruction and runs Node + Chromium P230 checks across six P229 themes, five workspaces, desktop/mobile and page errors. Acceptance is pending hosted CI and visual review.

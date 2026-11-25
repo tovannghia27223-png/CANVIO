@@ -1454,3 +1454,11 @@ P167.1 and P168.1 are therefore mainline-integrated and hosted-CI verified, with
 - SQL kho tài nguyên: `supabase/canvio-storage.sql` (cũng trong thẻ, nút "Sao chép SQL kho tài nguyên"); người dùng phải chạy MỘT LẦN sau SQL của P130. Test kiểm tra tệp khớp chuỗi trong module.
 - Test: `tests/p170/run-p170-tests.cjs` (28; thư mục giả + Storage giả + P130 thật bằng WebCrypto), `tests/p145/run-p170-browser.py` (12; dùng OPFS thay hộp thoại chọn thư mục). Lưu ý: đọc tay cầm OPFS từ IndexedDB làm sập Chromium headless → module giữ tay cầm trong bộ nhớ, test dùng `_setHandle`.
 - Chưa làm / chưa test: sao lưu video lớn và dữ liệu Project Vault/localStorage ra thư mục máy; khôi phục dự án (`projects/*.json`) về lại app (hiện chỉ khôi phục tài nguyên); xóa tài nguyên trên cloud; tự động lưu định kỳ; chọn thư mục thật và Supabase thật chưa được thử với tài khoản người dùng.
+
+
+## P230 — Đồng bộ một màu nhấn toàn hệ thống (candidate · 2026-11-25)
+
+- Người dùng báo menu và nút trong Photo Workflow/Spatial/Studio có màu khác nhau dù theme đã cập nhật. Rà soát P229 theme cho thấy nhiều màu accent cùng tồn tại (graffiti đặt brand tím nhưng primary pink, active menu black/yellow, button phụ trắng/cyan); P47 Holo, P150 Home skin và CSS module cũng có selector override riêng.
+- P230 thêm `canvio-p230-unified-accent.js` (lot `canvio-lot230`) đặt một accent token lấy từ `--brand` của theme P229 đang chọn. Nút chính, nút phụ, menu đang chọn, tab/route active, focus ring và chip active dùng cùng một họ màu; bỏ gradient và màu riêng ở primary actions. Secondary vẫn dùng tint/outline cùng hue để giữ phân cấp dễ đọc.
+- Không đổi màu trạng thái semantic success/error/warning. Không xóa tùy chọn theme P229; theme khác nhau vẫn có thể chọn hue khác, nhưng trong cùng theme mọi workspace dùng chung một hue.
+- Node + Chromium CI kiểm tra sáu theme, năm workspace, desktop/mobile và pageerror. Chưa nghiệm thu cho tới khi CI đúng head PASS và xem ảnh thực tế.
