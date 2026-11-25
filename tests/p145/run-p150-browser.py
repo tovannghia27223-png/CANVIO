@@ -73,7 +73,7 @@ with sync_playwright() as p:
     pg.goto('http://127.0.0.1:%d/index.html'%h.server_address[1],wait_until='commit');pg.wait_for_function('!!(window.CVHomeSkyP150&&window.CVWS&&window.CVLot47&&window.CV229)',timeout=90000);pg.wait_for_timeout(1500)
     # Establish the existing, intended baseline through the owning theme APIs.
     # Merely writing localStorage does not prove the runtime has applied the skin.
-    pg.evaluate("CVLot47.set('plain');CV229.setTheme('graffiti')")
+    pg.evaluate("CVLot47.set('plain');CV229.open();CV229.setTheme('graffiti')")
     pg.wait_for_function("""window.CV229ThemeIsolationP229&&!document.documentElement.hasAttribute('data-skin')&&document.getElementById('cv229-inspector').classList.contains('cv229-theme-graffiti')&&!document.body.classList.contains('cv229-theme-graffiti')""",timeout=30000)
     # P150 tech intentionally changes the toolbar while Home is active.
     # Capture the workspace's own Export baseline; Spatial palette must not set it.
