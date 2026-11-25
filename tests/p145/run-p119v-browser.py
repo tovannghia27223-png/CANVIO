@@ -101,13 +101,12 @@ with sync_playwright() as p:
         required:['vtName','vtStart','vtLen','vtTrack'].map(id=>({id,present:!!get(id),value:get(id)&&get(id).value}))};
     }""")
     custom_motion_apply_result=page.evaluate("CV.engines.video.apply()")
+    checks['customMotionApplyAccepted']=custom_motion_apply_result is True
     custom_motion_debug=page.evaluate("""(id)=>{
       const c=CV.engines.video._state().clips.find(x=>x.id===id);
       const m=c&&c.motion;
       return {
         clipFound:!!c,
-        applyResult:custom_motion_apply_result,
-        beforeApply:custom_motion_before_apply,
         motionKeys:m?Object.keys(m):[],
         topLevelBezier:m&&Array.isArray(m.bezier)?m.bezier.slice():null,
         easing:m&&m.easing||null,
@@ -119,6 +118,8 @@ with sync_playwright() as p:
         evaluatedMidOpacity:c&&CV.engines.video.motionAt?CV.engines.video.motionAt(c,.5).opacity:null
       };
     }""",clip_id)
+    custom_motion_debug['applyResult']=custom_motion_apply_result
+    custom_motion_debug['beforeApply']=custom_motion_before_apply
     checks['customMotionCurveSaved']=page.evaluate("""(id)=>{
       const c=CV.engines.video._state().clips.find(x=>x.id===id);
       return !!(c&&c.motion&&c.motion.bezier&&c.motion.bezier.every((x,i)=>Math.abs(x-[.1,.2,.3,.4][i])<.001))
@@ -142,5 +143,5 @@ with sync_playwright() as p:
     checks['zeroPageErrors']=len(errors)==0
     browser.close()
 server.shutdown()
-result={'suite':'CANVIO_P119_3_VIDEO_ENGINE_SHARED_EASING_CHROMIUM','checks':checks,'diagnostics':{'customMotionAfterApply':custom_motion_debug} if not checks.get('customMotionCurveSaved',True) else {},'pageErrors':errors,'failed':[k for k,v in checks.items() if not v]}
+result={'suite':'CANVIO_P119_3_VIDEO_ENGINE_SHARED_EASING_CHROMIUM','checks':checks,'diagnostics':{'customMotionAfterApply':custom_motion_debug} if not (checks.get('customMotionCurveSaved',True) and checks.get('customMotionApplyAccepted',True)) else {},'pageErrors':errors,'failed':[k for k,v in checks.items() if not v]}
 print(json.dumps(result,ensure_ascii=False,indent=1));sys.exit(1 if result['failed'] else 0)
