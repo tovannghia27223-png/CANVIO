@@ -8,4 +8,5 @@ ck('P233 maps preview, properties, native asset picker and timeline to shared sl
 ck('P233 keeps native toolbar/export handlers without cloning or replacing nodes',()=>{assert.ok(src.includes(".engine-toolbar"));assert.ok(src.includes("slot:'actions'"));assert.ok(!src.includes('cloneNode('));assert.ok(!src.includes('innerHTML='));});
 ck('P233 exposes a bottom timeline row and narrow-screen layout',()=>{assert.ok(src.includes('cv231-has-bottom'));assert.ok(src.includes('grid-template-rows:minmax(190px,1fr) 54px minmax(126px,28dvh)'));});
 ck('P233 retries safely until the shared shell and engine exist',()=>{assert.ok(src.includes('function retry()'));assert.ok(src.includes('if(++n<100)'));});
+ck('P233 adopts the existing External editor card by its Reframe link',()=>{assert.ok(src.includes("var externalLink=page.querySelector('a[href^=\"https://reframe-os.netlify.app/\"]');"));assert.ok(src.includes("var externalCard=externalLink&&externalLink.closest('.card');"));assert.ok(src.includes("{node:externalCard,slot:'props',key:'video-external-editor'}"));});
 console.log(checks.length+'/'+checks.length+' P233 source assertions passed');

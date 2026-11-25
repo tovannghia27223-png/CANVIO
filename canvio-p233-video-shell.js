@@ -41,6 +41,8 @@ function mount(){
  var asset=el('vtAssetPicker'),assetCard=asset&&asset.closest('.card');
  var assetGrid=assetCard&&assetCard.parentElement;
  var head=page.querySelector('.headActions');
+ var externalLink=page.querySelector('a[href^="https://reframe-os.netlify.app/"]');
+ var externalCard=externalLink&&externalLink.closest('.card');
  if(!toolbar||!toolbarCard||!preview||!grid||!right||!timelineCard||!assetCard||!assetGrid||!externalCard||!head)return false;
  toolbarCard.classList.add('cv231-source-editor');
  grid.classList.add('cv231-source-editor');

@@ -20,6 +20,7 @@ with sync_playwright() as p:
       preview:!!document.querySelector('#cv231-shell-videoEngine .cv231-canvas #vtCanvas'),
       props:!!document.querySelector('#cv231-shell-videoEngine .cv231-props #vtProps'),
       assets:!!document.querySelector('#cv231-shell-videoEngine .cv231-rail #vtAssetPicker'),
+      externalEditor:!!document.querySelector('#cv231-shell-videoEngine .cv231-props a[href^="https://reframe-os.netlify.app/"]'),
       timeline:!!document.querySelector('#cv231-shell-videoEngine .cv231-bottom #vtTimeline'),
       bottomVisible:!document.querySelector('#cv231-shell-videoEngine .cv231-bottom').hidden
     })""")
@@ -33,6 +34,7 @@ with sync_playwright() as p:
       pageActive:document.querySelector('#page-videoEngine').classList.contains('active')
     })""")
     ck('Legacy layout restores the original video preview DOM',restored['canvasBack'])
+    ck('Legacy layout restores the External editor card',!!document.querySelector('#page-videoEngine .grid.g2 a[href^="https://reframe-os.netlify.app/"]'))
     page.locator('#page-videoEngine [data-cv231-launch]').click()
     page.wait_for_function("!document.querySelector('#cv231-shell-videoEngine').hidden")
     page.set_viewport_size({'width':390,'height':844})
