@@ -2,11 +2,11 @@
  "format": "CANVIO_P143_BOOT_ORDER_GRAPH",
  "version": 1,
  "purpose": "Heuristic boot-order graph from the inline inventory. forwardReferences are reads of a global that only a later script defines.",
- "scriptCount": 186,
- "edgeCount": 203,
+ "scriptCount": 188,
+ "edgeCount": 204,
  "summary": {
-  "leafStandalone": 47,
-  "orderedDependent": 137,
+  "leafStandalone": 48,
+  "orderedDependent": 138,
   "reviewForwardReference": 2,
   "forwardReferenceCount": 2
  },
@@ -2710,8 +2710,32 @@
   },
   {
    "order": 185,
+   "id": "canvio-lot171n",
+   "bytes": 4871,
+   "provides": [
+    "CVNavDrawerP171"
+   ],
+   "dependsOnOrders": [
+    78
+   ],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "ordered-dependent"
+  },
+  {
+   "order": 186,
    "id": "canvio-lot132pdf",
    "bytes": 15810,
+   "provides": [],
+   "dependsOnOrders": [],
+   "forwardReads": [],
+   "unresolvedReads": [],
+   "extractionClass": "leaf-standalone"
+  },
+  {
+   "order": 187,
+   "id": "canvio-lot230",
+   "bytes": 7221,
    "provides": [],
    "dependsOnOrders": [],
    "forwardReads": [],

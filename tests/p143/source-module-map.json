@@ -209,6 +209,14 @@
     {
       "source": "canvio-p170-storage-hub.js",
       "scriptId": "canvio-lot170h"
+    },
+    {
+      "source": "canvio-p171-nav-drawer.js",
+      "scriptId": "canvio-lot171n"
+    },
+    {
+      "source": "canvio-p230-unified-accent.js",
+      "scriptId": "canvio-lot230"
     }
   ],
   "totalModules": 52

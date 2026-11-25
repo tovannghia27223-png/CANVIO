@@ -1,17 +1,17 @@
 {
   "format": "CANVIO_P143_INLINE_SOURCE_INVENTORY",
   "version": 1,
-  "generatedAt": "2026-11-25T06:19:58.181Z",
+  "generatedAt": "2026-11-25T11:02:28.507Z",
   "source": "restored canonical index.html after hosted workflow integration steps",
   "purpose": "Complete script-tag inventory in browser execution order; known global reference detection is heuristic, not a semantic dependency DAG.",
-  "htmlBytes": 6102240,
-  "scriptTagCount": 186,
-  "inlineScriptCount": 186,
+  "htmlBytes": 6114409,
+  "scriptTagCount": 188,
+  "inlineScriptCount": 188,
   "externalScriptCount": 0,
   "moduleScriptCount": 0,
   "asyncScriptCount": 0,
   "deferScriptCount": 0,
-  "uniqueScriptIds": 183,
+  "uniqueScriptIds": 185,
   "duplicateScriptIds": [],
   "modules": [
     {
@@ -18868,6 +18868,60 @@
     },
     {
       "order": 185,
+      "id": "canvio-lot171n",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 4871,
+      "sha256": "9c9d56ff65f375f2967f411eca5fa93809c383bad68143e7dd83cba9fbc259c7",
+      "exportedGlobals": [
+        "CVNavDrawerP171"
+      ],
+      "globalDeclarations": [],
+      "globalPropertyReads": [
+        "CVNavDrawerP171"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ],
+      "globalReferenceEvidence": {
+        "propertyReads": [
+          {
+            "name": "CVNavDrawerP171",
+            "count": 1,
+            "lines": [
+              9
+            ]
+          }
+        ],
+        "knownReads": [
+          {
+            "name": "CV",
+            "count": 1,
+            "lines": [
+              32
+            ]
+          }
+        ],
+        "writes": [
+          {
+            "name": "CVNavDrawerP171",
+            "line": 47,
+            "kind": "window.property"
+          }
+        ],
+        "scannerLimitations": [
+          "Template literal bodies and interpolation expressions are skipped as one lexical region.",
+          "Destructured globals, alias flow, computed property names, eval and dynamically assembled identifiers are not resolved.",
+          "Top-level bindings are detected only for simple var/let/const/function/class declarations.",
+          "This scanner is lexical evidence, not a JavaScript AST or proof of runtime data flow."
+        ]
+      }
+    },
+    {
+      "order": 186,
       "id": "canvio-lot132pdf",
       "type": "classic",
       "src": null,
@@ -18876,6 +18930,32 @@
       "noModule": false,
       "bytes": 15810,
       "sha256": "4dd75b7c7cf8607b424579c293e16f027753f9ca369ffd5e02d0726a332d2566",
+      "exportedGlobals": [],
+      "globalDeclarations": [],
+      "globalPropertyReads": [],
+      "knownGlobalReads": [],
+      "globalReferenceEvidence": {
+        "propertyReads": [],
+        "knownReads": [],
+        "writes": [],
+        "scannerLimitations": [
+          "Template literal bodies and interpolation expressions are skipped as one lexical region.",
+          "Destructured globals, alias flow, computed property names, eval and dynamically assembled identifiers are not resolved.",
+          "Top-level bindings are detected only for simple var/let/const/function/class declarations.",
+          "This scanner is lexical evidence, not a JavaScript AST or proof of runtime data flow."
+        ]
+      }
+    },
+    {
+      "order": 187,
+      "id": "canvio-lot230",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 7221,
+      "sha256": "e714509a40c6450befc751846a8624b70c24b261eddc84af3d4dc9d4cd1211af",
       "exportedGlobals": [],
       "globalDeclarations": [],
       "globalPropertyReads": [],

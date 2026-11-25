@@ -37635,6 +37635,57 @@ function ready() { try { if (!mount() && window.MutationObserver) { var mo = new
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', ready, { once: true }); else ready();
 })();
 </script>
+<script id="canvio-lot171n">
+/* P171 · Nút thu gọn menu ở thanh trên hoạt động lại + lối vào "Cổng bảo vệ" (khóa truy cập, chống AI cào, bảo vệ tác phẩm).
+   Nguyên nhân: giao diện shell (data-nav=shell, P114) ẩn hẳn menu trái nên nút `.railBtn` chỉ đổi lớp `rail` của một menu đang ẩn → bấm không thấy gì;
+   "Cổng bảo vệ" chỉ có trong không gian "AI & cài đặt", không có nút trong menu trái.
+   Cách sửa (chỉ thêm): ở chế độ shell, nút mở menu đầy đủ dạng ngăn kéo (đóng bằng Esc, bấm nền, hoặc chọn mục); chế độ cổ điển giữ nguyên hành vi cũ.
+   Thêm nút "Cổng bảo vệ" ngay dưới nút Spatial Workspace ở menu trái (cả khi menu mở dạng ngăn kéo), dùng CV.go('shield') có sẵn. Không thêm route hay kho dữ liệu. */
+(function () {
+'use strict';
+if (window.CVNavDrawerP171) return;
+var CLS = 'cv171-open', root = document.documentElement;
+function shell() { return root.getAttribute('data-nav') === 'shell'; }
+function isOpen() { return document.body.classList.contains(CLS); }
+function setOpen(on) {
+  document.body.classList.toggle(CLS, !!on);
+  var b = document.querySelector('header.top .railBtn'); if (b) { b.setAttribute('aria-expanded', on ? 'true' : 'false'); b.setAttribute('aria-controls', 'side'); }
+  var s = document.getElementById('side'); if (s) { s.setAttribute('aria-hidden', on || !shell() ? 'false' : 'true'); }
+  if (on && s) { var first = s.querySelector('.nav button'); try { first && first.focus({ preventScroll: true }); } catch (e) {} }
+}
+function css() {
+  if (document.getElementById('cv171-style')) return;
+  var st = document.createElement('style'); st.id = 'cv171-style';
+  st.textContent = 'html[data-nav=shell] body.' + CLS + ' #side{display:flex!important;flex-direction:column;position:fixed!important;left:14px;top:78px;bottom:14px;width:min(300px,calc(100vw - 28px));max-height:none;overflow:auto;z-index:140;box-shadow:0 24px 60px rgba(8,12,28,.38);border-radius:18px;transform:none!important}'
+    + '#cv171-scrim{display:none}html[data-nav=shell] body.' + CLS + ' #cv171-scrim{display:block;position:fixed;inset:0;background:rgba(13,26,43,.32);z-index:139}'
+    + 'html[data-nav=shell] body.' + CLS + ' #side .nl,html[data-nav=shell] body.' + CLS + ' #side .navgroup>label{display:revert!important}';
+  document.head.appendChild(st);
+}
+function addShield() {
+  var side = document.getElementById('side'); if (!side) return false;
+  if (!document.getElementById('cv171-scrim') && side.parentNode) { var sc = document.createElement('div'); sc.id = 'cv171-scrim'; sc.setAttribute('aria-hidden', 'true'); side.parentNode.insertBefore(sc, side); } if (side.querySelector('.cv171-shield')) return true;
+  var anchor = side.querySelector('.cv229-side-launch'); if (!anchor) return false;
+  var b = document.createElement('button'); b.type = 'button'; b.className = 'cv229-side-launch cv171-shield'; b.setAttribute('data-page', 'shield'); b.setAttribute('aria-label', 'Mở Cổng bảo vệ');
+  b.onclick = function () { setOpen(false); CV.go('shield'); }; b.innerHTML = '<span aria-hidden="true">◈</span><b>Cổng bảo vệ</b><small>Khóa · Chống AI cào · Bảo vệ tác phẩm</small>';
+  anchor.parentNode.insertBefore(b, anchor.nextSibling); return true;
+}
+function bind() {
+  var btn = document.querySelector('header.top .railBtn'); if (!btn) return false; if (btn.__cv171) return true; btn.__cv171 = 1;
+  btn.addEventListener('click', function (e) { if (!shell()) return; e.stopImmediatePropagation(); e.preventDefault(); setOpen(!isOpen()); }, true);
+  btn.title = 'Menu đầy đủ'; btn.setAttribute('aria-label', 'Mở hoặc đóng menu đầy đủ'); return true;
+}
+function mount() { css(); var a = bind(), b = addShield(); return a && b; }
+document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && isOpen()) { setOpen(false); var b = document.querySelector('header.top .railBtn'); b && b.focus(); } });
+document.addEventListener('click', function (e) {
+  if (!isOpen()) return; var t = e.target;
+  if (t.closest && t.closest('#side') && t.closest('button[data-page],button[data-ws],.nav button')) { setTimeout(function () { setOpen(false); }, 0); return; }
+  if (t.closest && !t.closest('#side') && !t.closest('header.top .railBtn')) setOpen(false);
+}, true);
+window.CVNavDrawerP171 = { version: '171.0.0', open: function () { setOpen(true); }, close: function () { setOpen(false); }, isOpen: isOpen, mount: mount };
+function ready() { var n = 0; (function loop() { var ok = false; try { ok = mount(); } catch (e) {} if (!ok && ++n < 80) setTimeout(loop, 250); })(); }
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', ready, { once: true }); else ready();
+})();
+</script>
 <script id="canvio-lot132pdf">
 /* P132.1 — PDF page import for Pixel Atelier.
  * Renders one selected PDF page through same-origin, locally pinned PDF.js and
@@ -37924,6 +37975,39 @@ if (doc) {
   else mount();
 }
 })(window);
+</script>
+<script id="canvio-lot230">
+/* P230 — Single Accent System. One hue across all CANVIO workspaces and controls. */
+(function (root, doc) {
+'use strict';
+if (!root || !doc || root.CVUnifiedThemeP230) return;
+var STYLE_ID='canvio-p230-unified-accent-css';
+var CSS=[
+'html,body{--cv-accent:var(--brand,#7b3fe4);--cv-accent-ink:var(--brand-ink,#5a2cc0);--cv-accent-soft:var(--brand-soft,#f1eaff);--cv-accent-line:var(--brand-line,#d9c8fb);}',
+'body{--primary:var(--cv-accent)!important;--accent:var(--cv-accent)!important;--violet:var(--cv-accent)!important;--g-purple:var(--cv-accent)!important;--neon-a:var(--cv-accent)!important;--primary-soft:var(--cv-accent-soft)!important;--primary-ink:var(--cv-accent-ink)!important;}',
+'html body[class] :is(.btn-primary,.btn.btn-primary,.sh-b.pri,.mkBtn,#mkBtn,#ws-export,#ws-jgo,#ws-obc button[data-a="open"],button[data-variant="primary"],button[data-tone="primary"]),html body[class] .cv-pwf button[data-pwf-open],html body[class] .cv-pwf-actions #cv-pwf-save{background:var(--cv-accent)!important;background-image:none!important;border-color:var(--cv-accent)!important;color:#fff!important;box-shadow:none!important;text-shadow:none!important;}',
+'html body[class] :is(.btn-primary,.btn.btn-primary,.sh-b.pri,.mkBtn,#mkBtn,#ws-export,#ws-jgo,#ws-obc button[data-a="open"],button[data-variant="primary"],button[data-tone="primary"]):is(:hover,:focus-visible),html body[class] .cv-pwf button[data-pwf-open]:is(:hover,:focus-visible),html body[class] .cv-pwf-actions #cv-pwf-save:is(:hover,:focus-visible){background:var(--cv-accent)!important;border-color:var(--cv-accent)!important;color:#fff!important;filter:none!important;box-shadow:0 0 0 3px var(--cv-accent-soft)!important;}',
+'html body[class] :is(.btn-soft,.btn-ghost,.btn.btn-soft,.btn.btn-ghost,button[data-variant="secondary"],button[data-tone="secondary"]),html body[class] .cv-pwf-actions #cv-pwf-refresh{background:var(--cv-accent-soft)!important;background-image:none!important;border-color:var(--cv-accent-line)!important;color:var(--cv-accent-ink)!important;box-shadow:none!important;}',
+'html body[class] :is(.btn-soft,.btn-ghost,.btn.btn-soft,.btn.btn-ghost,button[data-variant="secondary"],button[data-tone="secondary"]):is(:hover,:focus-visible),html body[class] .cv-pwf-actions #cv-pwf-refresh:is(:hover,:focus-visible){background:var(--cv-accent)!important;border-color:var(--cv-accent)!important;color:#fff!important;}',
+'html body[class] .side :is(a,button).active,html body[class] .side :is(a,button)[aria-current],html body[class] #ws-nav button.on,html body[class] .wsn button.on,html body[class] [data-ws].on,html body[class] [data-ws][aria-current],html body[class] #ws-tabs button[aria-selected="true"],html body[class] #ws-tabs [role="tab"][aria-selected="true"]{background:var(--cv-accent)!important;background-image:none!important;border-color:var(--cv-accent)!important;color:#fff!important;box-shadow:none!important;}',
+'html body[class] .side :is(a,button).active *,html body[class] .side :is(a,button)[aria-current] *,html body[class] #ws-nav button.on *,html body[class] .wsn button.on *,html body[class] #ws-tabs button[aria-selected="true"] *{color:#fff!important;background-color:transparent!important;}',
+'html body[class] .cv229-route.active,html body[class] [data-cv229-theme].active,html body[class] [data-cv229-dock].active,html body[class] [data-cv229-action][aria-pressed="true"]{background:var(--cv-accent)!important;background-image:none!important;border-color:var(--cv-accent)!important;color:#fff!important;box-shadow:none!important;}',
+'body :is(input,select,textarea,[contenteditable="true"]):focus,body :is(input,select,textarea,[contenteditable="true"]):focus-visible{border-color:var(--cv-accent)!important;outline-color:var(--cv-accent)!important;box-shadow:0 0 0 3px color-mix(in srgb,var(--cv-accent) 20%,transparent)!important;}',
+'body :is(.chip.on,.chip.active,.tab.active,.tabs [aria-selected="true"],.segmented-control .active){background:var(--cv-accent-soft)!important;border-color:var(--cv-accent-line)!important;color:var(--cv-accent-ink)!important;}',
+'body :is(.btn-primary,.btn.btn-primary,.sh-b.pri,.mkBtn,#mkBtn,#ws-export,#ws-jgo,.side a.active,.side button.active,#ws-nav button.on,#ws-tabs [aria-selected="true"]){background-image:none!important;}',
+'html[data-home-skin] body[class] #page-home :is(.btn-primary,#ws-jobs>button,#ws-jobs button#ws-jgo,#ws-jgo,#ws-obc button,.t-con button,.fa-cta .p,#cv150-cta .p){background:var(--cv-accent)!important;background-image:none!important;border-color:var(--cv-accent)!important;color:#fff!important;box-shadow:none!important;}',
+'html body[class] :is(.cv-pwf button[data-pwf-open],#cv-pwf-save){background:var(--cv-accent)!important;background-image:none!important;border-color:var(--cv-accent)!important;color:#fff!important;box-shadow:none!important;}',
+'html body[class] #cv-pwf-refresh{background:var(--cv-accent-soft)!important;background-image:none!important;border-color:var(--cv-accent-line)!important;color:var(--cv-accent-ink)!important;}',
+'html body.cv229-theme-graffiti[class] :is(.btn-primary,.btn.btn-primary,.sh-b.pri,.mkBtn,#mkBtn,#ws-export,#ws-jgo,#ws-obc button[data-a="open"],button[data-variant="primary"],button[data-tone="primary"],.cv-pwf button[data-pwf-open],#cv-pwf-save){background:var(--cv-accent)!important;background-image:none!important;border-color:var(--cv-accent)!important;color:#fff!important;box-shadow:none!important;text-shadow:none!important;}',
+'html[data-skin] body[class] .top :is(.btn-primary,#ws-export),html[data-skin] body[class] .top button.btn.btn-primary{background:var(--cv-accent)!important;background-image:none!important;background-size:auto!important;border-color:var(--cv-accent)!important;color:#fff!important;box-shadow:none!important;text-shadow:none!important;}',
+ '@media(prefers-reduced-motion:reduce){body :is(button,a,input,select,textarea){transition:none!important;}}'
+].join('\n');
+function mount(){var style=doc.getElementById(STYLE_ID);if(!style){style=doc.createElement('style');style.id=STYLE_ID;(doc.head||doc.documentElement).appendChild(style)}style.textContent=CSS;doc.documentElement.setAttribute('data-cv-accent-system','p230');return style}
+function audit(){var probes=['.side button.active','.btn-primary','.btn-soft','#ws-export','#cv229-inspector button'],results={};probes.forEach(function(selector){var el=doc.querySelector(selector);if(!el){results[selector]=null;return}var cs=root.getComputedStyle(el);results[selector]={background:cs.backgroundColor,backgroundImage:cs.backgroundImage,color:cs.color,borderColor:cs.borderColor}});return{version:'230.1.0',mounted:!!doc.getElementById(STYLE_ID),accent:root.getComputedStyle(doc.body).getPropertyValue('--cv-accent').trim(),probes:results}}
+root.CVUnifiedThemeP230={version:'230.1.0',styleId:STYLE_ID,css:CSS,mount:mount,audit:audit};
+if(doc.readyState==='loading')doc.addEventListener('DOMContentLoaded',mount,{once:true});else mount();
+if(root.MutationObserver&&doc.documentElement){var observer=new root.MutationObserver(function(){if(!doc.getElementById(STYLE_ID))mount()});observer.observe(doc.documentElement,{childList:true,subtree:true})}
+})(typeof window!=='undefined'?window:null,typeof document!=='undefined'?document:null);
 </script>
 </body>
 </html>

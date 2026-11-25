@@ -1469,3 +1469,10 @@ P167.1 and P168.1 are therefore mainline-integrated and hosted-CI verified, with
 - PR #106 merged into `main` as `da8bf32c6dcd1ecc97caa192218a9c2feb29c0b0`; post-merge fixes: `91ffd178` (Home/Photo Workflow accent precedence) and `423185a7` (Chromium Python assertion fix).
 - Main workflow includes the idempotent `canvio-lot230` injection into canonical `index.html`, followed by Node and Chromium P230 tests.
 - The current committed manifest has not yet indexed `canvio-p230-unified-accent.js`; generated index/manifest rebuild and exact-main hosted test results remain pending. Do not mark P230 fully accepted until both are confirmed.
+
+
+## P171 + hoàn tất P230 (2026-11-25)
+- **P171** (`canvio-p171-nav-drawer.js`, lot `canvio-lot171n`): ở giao diện shell (`data-nav=shell`, P114) menu trái `#side` bị ẩn nên nút `.railBtn` ở thanh trên (biểu tượng ô vuông tách đôi) bấm không thấy gì. Nay nút mở menu đầy đủ dạng ngăn kéo (Esc, bấm nền hoặc chọn mục để đóng; scrim là `#cv171-scrim` đặt trong `.app` để không đè lên menu); chế độ cổ điển giữ hành vi rail cũ. Thêm nút "Cổng bảo vệ" (khóa truy cập, chống AI cào, bảo vệ tác phẩm) dưới nút Spatial Workspace; trước đó trang chỉ vào được qua không gian "AI & cài đặt"/Ctrl+K. Test `tests/p145/run-p171-browser.py` (11).
+- **P230** hoàn tất phần còn dở: nhúng `canvio-lot230` vào `index.html` (cuối `</body>`, CI vẫn ghi đè idempotent), thêm vào map parity. Sửa CSS: nút chính `.cvExport` trong `header.top` bị rule Graffiti (`.top :is(...)`) ghi đè → thêm rule cùng accent. Sửa test: chọn nút chính ĐANG HIỂN THỊ (trước đó lấy nút ẩn `.cvExport`), chờ 700ms sau `setTheme` để màu hết chuyển tiếp. Kết quả cục bộ: node OK, Chromium 68 PASS / 0 FAIL.
+- Bài học: z-index trong `.app` không vượt được phần tử gắn ở cấp `body`; test màu phải đợi hết transition.
+- Chưa làm: xem ảnh thực tế các theme sau P230 trên máy người dùng; xác nhận CI đúng head.
