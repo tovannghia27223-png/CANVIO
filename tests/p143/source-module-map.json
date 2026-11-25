@@ -205,6 +205,10 @@
     {
       "source": "canvio-p132-pdf-import.js",
       "scriptId": "canvio-lot132pdf"
+    },
+    {
+      "source": "canvio-p170-storage-hub.js",
+      "scriptId": "canvio-lot170h"
     }
   ],
   "totalModules": 51

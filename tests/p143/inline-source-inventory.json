@@ -1,17 +1,17 @@
 {
   "format": "CANVIO_P143_INLINE_SOURCE_INVENTORY",
   "version": 1,
-  "generatedAt": "2026-11-24T21:20:56.217Z",
+  "generatedAt": "2026-11-25T06:18:27.745Z",
   "source": "restored canonical index.html after hosted workflow integration steps",
   "purpose": "Complete script-tag inventory in browser execution order; known global reference detection is heuristic, not a semantic dependency DAG.",
-  "htmlBytes": 6079703,
-  "scriptTagCount": 185,
-  "inlineScriptCount": 185,
+  "htmlBytes": 6102240,
+  "scriptTagCount": 186,
+  "inlineScriptCount": 186,
   "externalScriptCount": 0,
   "moduleScriptCount": 0,
   "asyncScriptCount": 0,
   "deferScriptCount": 0,
-  "uniqueScriptIds": 182,
+  "uniqueScriptIds": 183,
   "duplicateScriptIds": [],
   "modules": [
     {
@@ -15462,8 +15462,8 @@
       "async": false,
       "defer": false,
       "noModule": false,
-      "bytes": 29463,
-      "sha256": "7ac741cb93e1eee35118a4a462497bceaeff60239e4c2656b299ef577f7502ce",
+      "bytes": 29622,
+      "sha256": "f6ff97b69e9dbe8f66c5c60c7dea960077f301f19eb84f9fe503d0f848e94a64",
       "exportedGlobals": [
         "CVCloudP130"
       ],
@@ -18772,6 +18772,102 @@
     },
     {
       "order": 184,
+      "id": "canvio-lot170h",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 22339,
+      "sha256": "24ce9106d2cc6574f233e77447e2125ca087b138a2ab6e7a807306a0259f2619",
+      "exportedGlobals": [
+        "CVStorageHubP170"
+      ],
+      "globalDeclarations": [],
+      "globalPropertyReads": [
+        "CV",
+        "CVCloudP130",
+        "CVCreativeCore",
+        "CVStorageHubP170",
+        "MutationObserver",
+        "showDirectoryPicker"
+      ],
+      "knownGlobalReads": [
+        "CV"
+      ],
+      "globalReferenceEvidence": {
+        "propertyReads": [
+          {
+            "name": "CV",
+            "count": 1,
+            "lines": [
+              52
+            ]
+          },
+          {
+            "name": "CVCloudP130",
+            "count": 1,
+            "lines": [
+              133
+            ]
+          },
+          {
+            "name": "CVCreativeCore",
+            "count": 1,
+            "lines": [
+              98
+            ]
+          },
+          {
+            "name": "CVStorageHubP170",
+            "count": 1,
+            "lines": [
+              9
+            ]
+          },
+          {
+            "name": "MutationObserver",
+            "count": 1,
+            "lines": [
+              236
+            ]
+          },
+          {
+            "name": "showDirectoryPicker",
+            "count": 2,
+            "lines": [
+              60,
+              63
+            ]
+          }
+        ],
+        "knownReads": [
+          {
+            "name": "CV",
+            "count": 4,
+            "lines": [
+              52,
+              53
+            ]
+          }
+        ],
+        "writes": [
+          {
+            "name": "CVStorageHubP170",
+            "line": 205,
+            "kind": "window.property"
+          }
+        ],
+        "scannerLimitations": [
+          "Template literal bodies and interpolation expressions are skipped as one lexical region.",
+          "Destructured globals, alias flow, computed property names, eval and dynamically assembled identifiers are not resolved.",
+          "Top-level bindings are detected only for simple var/let/const/function/class declarations.",
+          "This scanner is lexical evidence, not a JavaScript AST or proof of runtime data flow."
+        ]
+      }
+    },
+    {
+      "order": 185,
       "id": "canvio-lot132pdf",
       "type": "classic",
       "src": null,

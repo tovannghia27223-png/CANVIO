@@ -1445,3 +1445,12 @@ P167.1 and P168.1 are therefore mainline-integrated and hosted-CI verified, with
 - `cfg()` trong `canvio-p130-cloud.js` và lot trong `index.html` (giữ parity) trả về URL `https://szdyeqzqyyxmenoiiqxe.supabase.co` + publishable key (`sb_publishable_…`, an toàn công khai) khi máy chưa lưu cấu hình; cấu hình người dùng nhập vẫn ưu tiên.
 - Việc còn lại của người dùng: chạy `supabase/canvio-schema.sql` (nút "Sao chép SQL" ở thẻ P130) trong Supabase SQL Editor, rồi đăng ký/đăng nhập và đặt cụm mật khẩu. Chưa test được với project thật.
 - Không dùng 2 schema `canvio_*` (Foundation 1.0) và "Studio 4.0" (không RLS, không mã hóa) cho P130; nếu muốn làm việc nhóm thì cần quyết định riêng. Không bao giờ đưa secret/service_role key vào repo.
+
+
+## P170 — Kho lưu trữ kép: máy tính + Supabase (2026-11-25)
+- Module `canvio-p170-storage-hub.js` (`CVStorageHubP170`, lot `canvio-lot170h`, thẻ `#cv170-card` ngay dưới thẻ P130 trong `#page-projectVault`). Một nút "Lưu cả máy và cloud" gọi `saveBoth()`; mỗi bên độc lập, lỗi một bên không chặn bên kia.
+- Máy: File System Access API (Chrome/Edge) → thư mục `CANVIO/{manifest.json, projects/<id>.json, assets/<sha12>-<tên>}`; tay cầm thư mục nhớ trong IndexedDB `CANVIO_P170` (cần cấp lại quyền sau khi mở lại trình duyệt: bấm nút lưu một lần). Cloud: bucket riêng tư `cv-assets/<uid>/…`, mỗi tài nguyên mã hóa AES-GCM bằng khóa P130 + `manifest.enc` mã hóa; trùng nội dung (SHA-256) không lưu lại; tệp > ~48MB không lên cloud (chỉ ở máy).
+- Nối với: `CV.assets` (đọc `list()`, khôi phục bằng `addBlob`), `CVCreativeCore.active` (là THUỘC TÍNH getter, không phải hàm), P130 (thêm `_key()` và `_token` vào client). Không có kho dữ liệu riêng.
+- SQL kho tài nguyên: `supabase/canvio-storage.sql` (cũng trong thẻ, nút "Sao chép SQL kho tài nguyên"); người dùng phải chạy MỘT LẦN sau SQL của P130. Test kiểm tra tệp khớp chuỗi trong module.
+- Test: `tests/p170/run-p170-tests.cjs` (28; thư mục giả + Storage giả + P130 thật bằng WebCrypto), `tests/p145/run-p170-browser.py` (12; dùng OPFS thay hộp thoại chọn thư mục). Lưu ý: đọc tay cầm OPFS từ IndexedDB làm sập Chromium headless → module giữ tay cầm trong bộ nhớ, test dùng `_setHandle`.
+- Chưa làm / chưa test: sao lưu video lớn và dữ liệu Project Vault/localStorage ra thư mục máy; khôi phục dự án (`projects/*.json`) về lại app (hiện chỉ khôi phục tài nguyên); xóa tài nguyên trên cloud; tự động lưu định kỳ; chọn thư mục thật và Supabase thật chưa được thử với tài khoản người dùng.

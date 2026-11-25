@@ -108,7 +108,7 @@ function create(deps) {
       return chain.then(function () { return syncUnits(res, remoteAll); });
     }).then(function () { last = new Date().toISOString(); return res; });
   }
-  return { cfg: cfg, setCfg: setCfg, session: session, signUp: signUp, signIn: signIn, signOut: signOut, unlock: unlock, sync: sync, exportKey: exportKey, importKey: importKey, isUnlocked: function () { return !!key; }, lastSync: function () { return last; }, _encrypt: encrypt, _decrypt: decrypt, _deriveKey: deriveKey };
+  return { cfg: cfg, setCfg: setCfg, session: session, signUp: signUp, signIn: signIn, signOut: signOut, unlock: unlock, sync: sync, exportKey: exportKey, importKey: importKey, isUnlocked: function () { return !!key; }, lastSync: function () { return last; }, _encrypt: encrypt, _decrypt: decrypt, _deriveKey: deriveKey, _key: function () { return key; }, _token: token };
 }
 var api = { version: '130.1.0', create: create, schemaSql: SCHEMA_SQL, okUrl: okUrl };
 window.CVCloudP130 = api;
