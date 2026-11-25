@@ -4347,11 +4347,66 @@ P160–P166 module APIs currently report versions P160.2.0, P161.1.0, P162.2.0, 
 - P70 remains fail-closed: releaseCertified:false, fourteen real-world acceptance gates pending. Hosted Chromium uses software rendering; it does not certify physical GPU, production HTTPS/security headers, independent-device recovery, human accessibility or real customer media quality.
 
 
+## P102 — Image Studio discoverability audit and correction (2026-11-25)
+
+- Main-branch source audit confirmed the P102 background-removal module and worker were present, the canonical inline script matched the standalone module, and #page-imageStudio existed. The page has no .engine-toolbar, so the old fallback appended the Background Remover card after the entire prompt builder and queue. The card is now inserted immediately after the Image Studio heading; a first-child fallback is retained if the heading is absent.
+- The module continues to use the existing Asset Library CV.assets.addBlob owner, the same Apache-2.0 ORMBG model and the same local P85 Transformers.js/ONNX WASM assets. No API, dependency, storage owner or timeline was added.
+- Added an integrated source contract for standalone/inline parity and heading placement. The hosted Chromium suite now checks that the panel, file input, run button and download button are visible on the Image Studio route during the normal browser run; model inference remains separately gated by full_model_acceptance=true.
+- Visual-system audit: the shell uses Inter/system fallbacks, base text 13.5 px, standard buttons 36 px / 12.4 px, small buttons 29 px and large buttons 44 px. Primary/soft/ghost/mint/danger colors are intentional variants; editor-specific typography and control sizing are scoped and should not be flattened into one style.
+- Static image inventory on main contains one standalone image asset (assets/icons/canvio-icon.svg). Other image surfaces are generated as inline SVG/data URLs or come from the existing Asset Library/user imports; the repository does not currently contain a broad static stock-photo pack.
+- Acceptance status at edit time: source-level correction prepared; exact-head hosted Chromium, P143 parity, P150 workspace color suite and final mainline verification remain pending. Actual ORMBG model inference is not marked PASS by a UI-only smoke.
+
+
+## P102 UI smoke follow-up — route-owner navigation (2026-11-25)
+
+- Hosted run #842 reached the new UI smoke after P143/source contracts and P47–P70 regressions had passed. The smoke stopped before inspecting P102 because it attempted to click a sidebar item marked advanced/hidden in the default headless navigation state. This was a test-driver error, not evidence of a failing model or missing panel.
+- Updated the smoke to navigate through the existing canonical CV.go('imageStudio') route owner, then assert the panel is visible directly below the heading and exposes file/run/download controls. Await a fresh exact-head hosted run before accepting the UI regression fix.
+
+
+## P102 UI smoke diagnostics after run #845 (2026-11-25)
+
+- Run #845 passed the canonical source/inline P102 parity and integrated contracts but the browser UI smoke still timed out after CV.go('imageStudio'). The smoke now waits for DOM readiness and records route class/display, P102 API presence, panel parent/visibility, document order relative to the heading and prompt-builder, controls, page errors and console errors.
+- The placement assertion now checks DOM order rather than requiring the panel to be the immediate next sibling of .head, allowing independent helper cards without weakening the requirement that Background Remover appears before the prompt builder.
+- Acceptance remains pending; do not merge until a fresh hosted browser run proves automatic panel mount and visibility.
+
+
+## P102/P150 — exact-head visual acceptance follow-up (2026-11-25 · run #852)
+
+- PR #104 branch candidate 83afb13b81a2fa035a828d0f61df41800020b6ed passed the exact-head hosted workflow #852: 66/66 steps, no failed steps. The workflow generated the canonical delivery manifest and committed the built candidate to this review branch (827eed312c226e0932df8377563b785a35227aa7).
+- P102 UI smoke passed 20/20 hosted runtime assertions. The background-removal panel is mounted inside #page-imageStudio, after the page heading and before the prompt builder; file, run and PNG-download controls are visible. P102 source/inline parity and the Asset Library contract passed. The product correction is discoverability/placement only; model, worker and CV.assets.addBlob remain the existing owners.
+- P150 Chromium passed 86/86 checks across desktop/mobile. It verifies Home skins, card/tab interactions, the Tech prompt handoff and routing, the original pink Export control in Design/Site/Media/Project/AI, and independent P47 Holo preservation. The previously unconditional "or True" assertion was replaced by a check of both transferred #ws-jin value and the #ws-jnote route acknowledgement.
+- Hosted runtime passed 20/20 checks. P74/P81 GLB (including Draco/Meshopt/KTX2), P161 camera pose, P85 vendor/runtime initialization, PostFX preview, OpenCV optical flow, P102 UI availability and P107 portability checks passed. All same-origin WASM responses had application/wasm; consoleErrors, pageErrors and badWasmMimeResponses were empty.
+- Inference boundary: actualModelInference.performed=false; P102 ORMBG, P105 Depth Anything and P80 Whisper model inference were skipped because full_model_acceptance=true is a separate explicit opt-in. This run does not claim cutout quality on real user photos, fine hair/transparency accuracy, physical GPU throughput or production model performance.
+- Visual system audit: the active P233 shell uses a 14 px body baseline and local fallbacks (Segoe UI Variable, Aptos, Inter, system-ui and platform defaults). P231 common .btn is 36 px high / 11.2 px; .btn.sm 29 px / 10 px; .btn.lg 43 px / 12.2 px; icon buttons 34 px. Compact/mobile rules reduce standard buttons to 34 px and small buttons to 28 px. Role-based color variants (primary, soft, ghost, mint, danger), theme skins and editor-specific controls are intentional; do not flatten them into a single colour/size. System fonts may render differently by OS because no commercial font binaries are bundled.
+- Image inventory boundary: manifest inventory contains one standalone image file (assets/icons/canvio-icon.svg). The application also has generated/inline SVG and data-URL art, the 25-item icon catalog and eight original P145.8 illustrations in four palettes, plus user/imported Asset Library assets. Those illustrations are a starter set, not a stock-photo library. GitHub inspection cannot enumerate assets stored only in the user's browser.
+- Historical P102 #842/#845 pending notes above record earlier failed test-driver attempts and are superseded for UI discoverability by #852. They remain in history. P70 still has fourteen open manual release gates; do not mark CANVIO Stable/production-certified.
+
+
+## P229 / P151.1 — Spatial theme isolation correction (2026-11-25)
+- Root cause verified in canonical index: P229 `applyTheme()` wrote `cv229-theme-*` classes to `document.body`; 266 global CSS selector occurrences then recolored shell `.side`, `.top`, workspace cards, fields and shared buttons. This made a Spatial-only palette choice leak into other workspaces and the menu.
+- P229 now owns theme classes on `#cv229-inspector` only. Theme CSS is scoped to that inspector root and its descendants; body, shell navigation, topbar and unrelated workspace controls retain their own theme owners. The six existing Spatial palettes remain available.
+- P151.1 contrast guard now scans visible workspace pages only and skips interactive controls, navigation and Spatial Inspector, so it cannot force inline `color: !important` over menu or Spatial palette styling.
+- Hosted P150 browser regression adds checks that switching Spatial Graffiti → Midnight leaves the studio menu, Spatial launcher and workspace Export computed styles unchanged, and that P151 does not attach contrast overrides to menu/inspector elements.
+- Acceptance: source edits staged for exact-head hosted Chromium and integrated CI. Do not mark fixed until the workflow passes on the resulting commit.
+
+
+## P150/P229 browser acceptance harness correction (2026-11-25 · commit 1a61509)
+
+- Source review found the P150 browser test closed its Chromium page after the cross-workspace Export assertions, then attempted to reuse that closed page for P229 Spatial theme isolation and P151 contrast-guard assertions. This was a test-driver lifecycle defect, not evidence of a product regression or a passing theme test.
+- Removed the premature close; the same live page now runs the P229/P151 checks and is closed only after those assertions. The subsequent Holographic-skin checks continue on a separate page.
+- Acceptance remains pending a fresh exact-head hosted Chromium run. Do not mark P229/P151 theme isolation accepted until the new run proves all assertions pass.
+
+
+## P229.2 integration idempotency follow-up (2026-11-25 · commit f5b7c4c)
+
+- Hosted run 879 passed all 68 job steps, including Chromium acceptance for P150/P229/P151, but its final candidate commit embedded P229.2 into the canonical index. The subsequent pull-request run 880 then exposed that the workflow integration step rejected an already-correct embedded module as a duplicate.
+- Updated `.github/workflows/canvio-candidate-runtime.yml` so P229.2 integration is idempotent: it verifies one existing module, refreshes it only when its content differs, inserts it when absent, and accepts either the pre-integration or post-integration script-count contract.
+- Run 880 failed only at the P229.2 integration step before runtime acceptance; this was a workflow re-entry defect, not a failed browser theme assertion. Re-run exact-head CI after commit f5b7c4c before calling the final branch state accepted.
+
 ## P130.2 — Điền sẵn Supabase mặc định (2026-11-25)
 - `cfg()` trong `canvio-p130-cloud.js` và lot trong `index.html` (giữ parity) trả về URL `https://szdyeqzqyyxmenoiiqxe.supabase.co` + publishable key (`sb_publishable_…`, an toàn công khai) khi máy chưa lưu cấu hình; cấu hình người dùng nhập vẫn ưu tiên.
 - Việc còn lại của người dùng: chạy `supabase/canvio-schema.sql` (nút "Sao chép SQL" ở thẻ P130) trong Supabase SQL Editor, rồi đăng ký/đăng nhập và đặt cụm mật khẩu. Chưa test được với project thật.
 - Không dùng 2 schema `canvio_*` (Foundation 1.0) và "Studio 4.0" (không RLS, không mã hóa) cho P130; nếu muốn làm việc nhóm thì cần quyết định riêng. Không bao giờ đưa secret/service_role key vào repo.
-
 
 ## P170 — Kho lưu trữ kép: máy tính + Supabase (2026-11-25)
 - Module `canvio-p170-storage-hub.js` (`CVStorageHubP170`, lot `canvio-lot170h`, thẻ `#cv170-card` ngay dưới thẻ P130 trong `#page-projectVault`). Một nút "Lưu cả máy và cloud" gọi `saveBoth()`; mỗi bên độc lập, lỗi một bên không chặn bên kia.

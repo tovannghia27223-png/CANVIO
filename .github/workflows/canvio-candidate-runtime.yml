@@ -108,6 +108,44 @@ jobs:
             echo "Using committed CANVIO candidate index."
           fi
 
+      - name: Carry forward latest main P130.2 cloud defaults
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          node <<'NODE'
+          const fs=require('node:fs'),cp=require('node:child_process');
+          const mainFile=p=>cp.execFileSync('git',['show','origin/main:'+p],{encoding:'utf8',maxBuffer:16*1024*1024});
+          const oldCfg="function cfg() { return jget(CFG) || { url: '', anon: '' }; }";
+          const newCfg="function cfg() { var c = jget(CFG); return c && c.url ? c : { url: 'https://szdyeqzqyyxmenoiiqxe.supabase.co', anon: 'sb_publishable_FmLKzCWH4W83IJ2Zfzy8ZA_9qYzMYow' }; }";
+          const mainIndex=mainFile('index.html');
+          if(!mainIndex.includes(newCfg))throw new Error('main P130.2 inline default not found');
+          let index=fs.readFileSync('index.html','utf8');
+          if(index.includes(oldCfg))index=index.replace(oldCfg,newCfg);
+          else if(!index.includes(newCfg))throw new Error('candidate P130 cfg differs from both supported versions');
+          fs.writeFileSync('index.html',index,'utf8');
+          const p130=mainFile('canvio-p130-cloud.js');
+          fs.writeFileSync('canvio-p130-cloud.js',p130,'utf8');
+          fs.writeFileSync('canvio-p170-storage-hub.js',mainFile('canvio-p170-storage-hub.js'),'utf8');
+          fs.writeFileSync('supabase/canvio-storage.sql',mainFile('supabase/canvio-storage.sql'),'utf8');
+          for(const path of ['CANVIO_AI_GUIDE.md','CANVIO_ROADMAP.md','CANVIO_NEXT_AI_PROMPT.md']){
+            const heading='## P130.2 — Điền sẵn Supabase mặc định';
+            const mainDoc=mainFile(path),at=mainDoc.lastIndexOf(heading);
+            if(at<0)throw new Error('main P130.2 documentation missing in '+path);
+            const section=mainDoc.slice(at).trimEnd()+'\n';
+            let doc=fs.readFileSync(path,'utf8');
+            if(!doc.includes(heading))doc=doc.trimEnd()+'\n\n'+section;
+            fs.writeFileSync(path,doc,'utf8');
+          }
+          console.log('P130.2 main defaults, standalone source and documentation carried forward idempotently');
+          NODE
+
+      - name: Synchronize P102 background removal into canonical index
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/sync-p102-background-removal.cjs
+
       - name: Integrate P150.13 Home skin root isolation
         shell: bash
         run: |
@@ -127,6 +165,57 @@ jobs:
           if((html.match(/id="canvio-lot150h"/g)||[]).length!==1)throw new Error('P150 duplicate/missing lot');
           fs.writeFileSync(file,html,'utf8');
           console.log('P150.13 Home skin root isolation synced into canonical index.html');
+          NODE
+      - name: Integrate P151.1 contrast guard scope
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs=require('node:fs');
+          const file='index.html', source=fs.readFileSync('canvio-p151-contrast-guard.js','utf8').trim();
+          if(!source.includes("version: '151.1.0'"))throw new Error('P151.1 source version missing');
+          const id='canvio-lot151g', open='<script id="'+id+'">';
+          let html=fs.readFileSync(file,'utf8');
+          const at=html.indexOf(open);
+          if(at<0||html.indexOf(open,at+open.length)>=0)throw new Error('P151 expected exactly one embedded lot');
+          const start=at+open.length, end=html.indexOf('</script>',start);
+          if(end<0)throw new Error('P151 embedded lot close missing');
+          html=html.slice(0,at)+open+String.fromCharCode(10)+source+String.fromCharCode(10)+'</script>'+html.slice(end+'</script>'.length);
+          if((html.match(/id="canvio-lot151g"/g)||[]).length!==1)throw new Error('P151 duplicate/missing lot');
+          fs.writeFileSync(file,html,'utf8');
+          console.log('P151.1 contrast guard scope synced into canonical index.html');
+          NODE
+
+      - name: Integrate P229.2 Spatial theme isolation
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs=require('node:fs');
+          const file='index.html',source=fs.readFileSync('canvio-p229-theme-isolation.js','utf8').trim();
+          const id='canvio-lot229-theme-isolation',open='<script id="'+id+'">';
+          if(!source.includes("version: '229.2.0'"))throw new Error('P229.2 source version missing');
+          let html=fs.readFileSync(file,'utf8');
+          const close='</body>',bodyAt=html.lastIndexOf(close);
+          if(bodyAt<0)throw new Error('Canonical body close missing');
+          const first=html.indexOf(open),last=html.indexOf(open,first+open.length);
+          if(last>=0)throw new Error('P229.2 duplicate embedded module');
+          if(first>=0){
+            const contentAt=first+open.length,endAt=html.indexOf('</script>',contentAt);
+            if(endAt<0)throw new Error('P229.2 embedded script close missing');
+            const current=html.slice(contentAt,endAt).trim();
+            if(current!==source)html=html.slice(0,contentAt)+'\n'+source+'\n'+html.slice(endAt);
+            console.log(current===source?'P229.2 embedded module already current':'P229.2 embedded module refreshed in place');
+          }else{
+            html=html.slice(0,bodyAt)+open+'\n'+source+'\n</script>\n'+html.slice(bodyAt);
+            console.log('P229.2 Spatial theme isolation embedded before body close');
+          }
+          const oldCount='noNewScriptTag:document.scripts.length===79';
+          const newCount='noNewScriptTag:document.scripts.length===80';
+          if(html.includes(oldCount))html=html.replace(oldCount,newCount);
+          else if(!html.includes(newCount))throw new Error('CV229 script-count contract missing or unexpected');
+          if((html.match(/id="canvio-lot229-theme-isolation"/g)||[]).length!==1)throw new Error('P229.2 embed count mismatch');
+          fs.writeFileSync(file,html,'utf8');
           NODE
 
       - name: Integrate P125.2 scroll storyboard editor
@@ -771,6 +860,7 @@ jobs:
             }
             if((html.match(new RegExp('id="'+id+'"','g'))||[]).length!==1)throw new Error('P159 duplicate/missing inline lot: '+id);
           }
+          syncLot('canvio-lot130c','canvio-p130-cloud.js',false);
           syncLot('canvio-lot153b','canvio-p153-board.js',true);
           syncLot('canvio-lot155s','canvio-p155-scene-pack.js',true);
           syncLot('canvio-lot159i','canvio-p159-integration.js',false);
@@ -786,6 +876,10 @@ jobs:
           syncLot('canvio-lot168m','canvio-p168-motion.js',false);
           syncLot('canvio-lot169c','canvio-p169-character-studio.js',false);
           syncLot('canvio-lot170h','canvio-p170-storage-hub.js',false);
+          const oldP229Count='noNewScriptTag:document.scripts.length===80';
+          const newP229Count='noNewScriptTag:document.scripts.length===81';
+          if(html.includes(oldP229Count))html=html.replace(oldP229Count,newP229Count);
+          else if(!html.includes(newP229Count))throw new Error('P229/P170 script-count contract missing or unexpected');
           const old="LS.set('assets',arr.slice(0,40));render();resolve()";
           const replacement="LS.set('assets',arr.slice(0,200));render();resolve()";
           const count=html.split(old).length-1;
