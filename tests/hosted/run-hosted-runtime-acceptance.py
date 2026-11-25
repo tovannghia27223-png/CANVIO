@@ -161,22 +161,36 @@ def main():
         record('P85 OpenCV Lucas-Kanade processes real points on local video frames',track['started'] and track['dimensions']==[320,240] and track['points']>0 and 'OpenCV.js LK optical flow' in track['status'],track)
         # P102 UI availability is a normal browser smoke; only heavy model inference is opt-in.
         try:
+            page.wait_for_function("document.readyState !== 'loading'",timeout=15000)
             page.evaluate("""() => {
               if(!window.CV || typeof CV.go !== 'function') throw new Error('CV.go route owner is unavailable');
               CV.go('imageStudio');
             }""")
-            page.wait_for_function("""() => {
+            page.wait_for_timeout(250)
+            ui=page.evaluate("""() => {
               const route=document.querySelector('#page-imageStudio');
               const panel=document.querySelector('#cv102-background-removal');
-              return !!(route&&route.classList.contains('active')&&panel&&panel.getBoundingClientRect().height>0&&panel.previousElementSibling?.classList.contains('head'));
-            }""",timeout=15000)
-            ui=page.evaluate("""() => {
-              const panel=document.querySelector('#cv102-background-removal');
-              return {visible:!!(panel&&panel.getBoundingClientRect().height>0),afterHeading:!!(panel&&panel.previousElementSibling?.classList.contains('head')),file:!!panel?.querySelector('#cv102-file'),run:!!panel?.querySelector('#cv102-run'),download:!!panel?.querySelector('#cv102-download')};
+              const head=route?.querySelector('.head');
+              const stats=route?.querySelector('.grid.g3');
+              const follows=(a,b)=>!!(a&&b&&(a.compareDocumentPosition(b)&Node.DOCUMENT_POSITION_FOLLOWING));
+              return {
+                routeExists:!!route,routeClass:route?.className||null,
+                routeDisplay:route?getComputedStyle(route).display:null,
+                panelPresent:!!panel,panelVisible:!!(panel&&panel.getBoundingClientRect().height>0),
+                panelParent:panel?.parentElement?.id||null,
+                headExists:!!head,statsExists:!!stats,
+                afterHeading:follows(head,panel),beforePromptBuilder:follows(panel,stats),
+                file:!!panel?.querySelector('#cv102-file'),run:!!panel?.querySelector('#cv102-run'),download:!!panel?.querySelector('#cv102-download'),
+                p102Api:typeof window.CANVIOBackgroundRemovalP102,
+                p102Tests:window.CANVIOBackgroundRemovalP102?.tests?.()||null
+              };
             }""")
-            record('P102 UI panel is visible below the Image Studio heading without model download',ui['visible'] and ui['afterHeading'] and ui['file'] and ui['run'] and ui['download'],ui)
+            ui['pageErrors']=page_errors[-5:]
+            ui['consoleErrors']=console_errors[-5:]
+            ok=ui['routeExists'] and 'active' in (ui['routeClass'] or '').split() and ui['panelVisible'] and ui['afterHeading'] and ui['beforePromptBuilder'] and ui['file'] and ui['run'] and ui['download']
+            record('P102 UI panel appears after heading and before prompt builder, with file/run/download controls',ok,ui)
         except Exception as e:
-            record('P102 UI panel is visible below the Image Studio heading without model download',False,{'error':str(e)[:400]})
+            record('P102 UI panel appears after heading and before prompt builder, with file/run/download controls',False,{'error':str(e)[:400],'pageErrors':page_errors[-5:],'consoleErrors':console_errors[-5:]})
         full_model_acceptance=os.environ.get("CANVIO_FULL_MODEL_ACCEPTANCE", "false").lower() in ("1","true","yes")
         if full_model_acceptance:
             # Real ORMBG and Depth Anything ONNX WASM inference through the shipped workers.
