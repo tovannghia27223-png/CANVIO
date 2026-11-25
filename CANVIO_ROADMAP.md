@@ -1462,3 +1462,10 @@ P167.1 and P168.1 are therefore mainline-integrated and hosted-CI verified, with
 - P230 thêm `canvio-p230-unified-accent.js` (lot `canvio-lot230`) đặt một accent token lấy từ `--brand` của theme P229 đang chọn. Nút chính, nút phụ, menu đang chọn, tab/route active, focus ring và chip active dùng cùng một họ màu; bỏ gradient và màu riêng ở primary actions. Secondary vẫn dùng tint/outline cùng hue để giữ phân cấp dễ đọc.
 - Không đổi màu trạng thái semantic success/error/warning. Không xóa tùy chọn theme P229; theme khác nhau vẫn có thể chọn hue khác, nhưng trong cùng theme mọi workspace dùng chung một hue.
 - Node + Chromium CI kiểm tra sáu theme, năm workspace, desktop/mobile và pageerror. Chưa nghiệm thu cho tới khi CI đúng head PASS và xem ảnh thực tế.
+
+
+## P230 — main merge and canonical index rebuild handoff (2026-11-25)
+
+- PR #106 merged into `main` as `da8bf32c6dcd1ecc97caa192218a9c2feb29c0b0`; post-merge fixes: `91ffd178` (Home/Photo Workflow accent precedence) and `423185a7` (Chromium Python assertion fix).
+- Main workflow includes the idempotent `canvio-lot230` injection into canonical `index.html`, followed by Node and Chromium P230 tests.
+- The current committed manifest has not yet indexed `canvio-p230-unified-accent.js`; generated index/manifest rebuild and exact-main hosted test results remain pending. Do not mark P230 fully accepted until both are confirmed.
