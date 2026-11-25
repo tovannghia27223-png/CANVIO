@@ -1583,3 +1583,21 @@ Nối tiếp P231–P236 (editor vừa khít màn hình). Người dùng muốn 
 - Source modules: canvio-p231-editor-shell.js / canvio-lot231; canvio-p232-poster-shell.js / canvio-lot232. Registered in P143 source parity and integrated through the hosted candidate workflow.
 - Local source suite: 6/6 PASS. Local synthetic Chromium suite: 13/13 PASS at 1440×900, 1280×720 and 390×844; zero uncaught page errors. These are local fixture results, not HTTPS origin, saved-user-project or production acceptance.
 - Remaining: hosted exact-PR CI, screenshots/review on a real user Chrome profile, keyboard/screen-reader/200% zoom and real Poster project save/reopen. P233 Video Studio remains the next roadmap step.
+
+
+
+## P231–P236 implementation candidate — 2026-11-25
+
+| P | Candidate implementation | Existing owner preserved | Verification status |
+|---|---|---|---|
+| P231 | Shared responsive editor frame with rail, canvas, inspector, optional bottom area and top actions; reversible DOM adoption | Existing editor DOM, handlers and projects | Prior local P231 fixture was reported 7/7 Node and 16/16 Chromium; exact hosted CI must pass on the latest branch head |
+| P232 | Poster adapter into P231 | Poster history, project save/autosave, fit and assets | Candidate PR #107; real project save/reopen and deployed HTTPS review remain open |
+| P233 | Video Engine adapter; timeline in bottom region, asset picker left, preview middle, captions/clip properties right, native export actions above | CV.engines.video, VT_KEY, CANVIO_81_MEDIA, CV.assets | New Node + Chromium suites added; pending exact-head hosted run |
+| P234 | Pixel Atelier, Luma Develop, Clarity Lab and Layout Foundry adapters | Native controllers, image/document state, export and asset functions | New Node + Chromium suites added; pending exact-head hosted run |
+| P235 | Editor-scoped shortcuts and mobile minimum target sizing | Native undo/redo/save/delete/playback methods; input/contenteditable keyboard behavior | New Node + Chromium suites added; two-finger pinch zoom and device review remain open |
+| P236 | Per-editor rail/inspector preference, Focus mode and three-step onboarding | Preferences stored only by editor key; no project data owner added | New Node + Chromium suites added; viewport screenshot and accessibility review remain open |
+
+Candidate implementation files: canvio-p233-video-shell.js, canvio-p234-native-studio-shell.js, canvio-p235-editor-inputs.js, canvio-p236-editor-experience.js; each is paired with canvio-lot233 through canvio-lot236 and registered in P143.
+
+Completion rule: Do not move P233–P236 to accepted until the exact PR-head workflow is green, P143 parity/inventory/boot order pass, browser suites pass, and remaining device/accessibility/project-persistence gates are recorded. P70's 14 manual gates remain separate and open. P237–P248 are still roadmap work, not included in this candidate.
+

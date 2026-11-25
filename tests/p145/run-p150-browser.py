@@ -86,8 +86,8 @@ with sync_playwright() as p:
         ck('không gian '+sp+' không lẫn trang Tổng quan',pg.evaluate('document.getElementById("page-home").offsetHeight')==0 and not pg.is_visible('#cv150-skins'))
         ck('không gian '+sp+' tắt Home-only toolbar scope',pg.evaluate('document.documentElement.getAttribute("data-cv150-home-active")!=="true"'))
         ck('không gian '+sp+' đưa skin gốc về classic ở root',pg.evaluate('document.documentElement.getAttribute("data-home-skin")==="classic"'))
-        state=pg.evaluate("""()=>{const e=document.getElementById('ws-export'),s=getComputedStyle(e);return {home:document.documentElement.getAttribute('data-home-skin'),active:document.documentElement.getAttribute('data-cv150-home-active'),skin:document.documentElement.getAttribute('data-skin'),bodyTheme:[...document.body.classList].filter(x=>x.indexOf('cv229-theme-')===0),background:s.backgroundColor,backgroundImage:s.backgroundImage,color:s.color,border:s.borderColor}}""")
-        if state['background']!='rgb(255, 61, 154)': print('P150_EXPORT_DIAGNOSTIC '+sp+' '+str(state))
+        state=pg.evaluate("""()=>{const e=document.getElementById('ws-export'),s=getComputedStyle(e),c=document.createElement('canvas').getContext('2d');c.fillStyle=s.backgroundColor;return {home:document.documentElement.getAttribute('data-home-skin'),active:document.documentElement.getAttribute('data-cv150-home-active'),skin:document.documentElement.getAttribute('data-skin'),bodyTheme:[...document.body.classList].filter(x=>x.indexOf('cv229-theme-')===0),background:c.fillStyle,rawBackground:s.backgroundColor,backgroundImage:s.backgroundImage,color:s.color,border:s.borderColor}}""")
+        if state['background']!=baseline: print('P150_EXPORT_DIAGNOSTIC '+sp+' '+str(state))
         ck('không gian '+sp+' giữ nút Xuất hồng gốc',state['background']==baseline)
     pg.close()
 

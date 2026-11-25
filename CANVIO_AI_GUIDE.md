@@ -4498,3 +4498,19 @@ Nối tiếp P231–P236 (editor vừa khít màn hình). Người dùng muốn 
 - Integration order: P231 script/lot before P232 script/lot; both load after existing workspace/runtime owners. Keep the two source files byte-equivalent to embedded lots via P143 parity.
 - Responsive shell breakpoint is 900 px; mobile uses a bottom tool rail and user-opened property drawer. App-level overflow lock is scoped to .app.cv231-app-active and removed when Legacy Layout is restored.
 - Tests: tests/p231/run-p231-tests.cjs and tests/p231/run-p231-browser.py. Fixture coverage is not a substitute for live-origin persistence, accessibility or real project acceptance.
+
+
+
+## 113. P231–P236 — Shared Editor Shell and Studio integrations (candidate 2026-11-25)
+
+- P231 is the single reusable editor frame. It adopts existing DOM nodes using comment anchors and restores them to their original parents in reverse order. It does not clone editor state, event handlers, project documents, timelines, asset databases or undo stacks.
+- P232 is the Poster adapter. Existing CV.poster.history, CV.project.save(true), Poster autosave, CV.assets and CV.poster.fit() remain the owners.
+- P233 is the Video Production Engine adapter. It reuses the existing CV.engines.video API, #vtCanvas, #vtProps, #vtTimeline, #vtAssetPicker, existing engine toolbar and export actions. The existing VT_KEY timeline persistence and CANVIO_81_MEDIA IndexedDB remain canonical; the shell creates no second video timeline or media store.
+- P234 adapts Pixel Atelier, Luma Develop, Clarity Lab and Layout Foundry. It moves their existing toolbars, canvas/SVG, inspectors, export controls, page list and editable document into P231 slots. Native controller state and export/asset actions stay in their existing modules.
+- P235 installs shortcuts only on supported active editor routes, and ignores key events originating in inputs, selects and contenteditable regions. Undo/redo/save/delete/playback are routed to existing owners. It does not replace the browser's text-editing shortcuts.
+- P236 adds per-editor rail/inspector preferences under canvio.p236.shell.*, a reversible Focus mode and a three-step onboarding dialog.
+- Standalone sources and embedded lots: canvio-p231-editor-shell.js / canvio-lot231; canvio-p232-poster-shell.js / canvio-lot232; canvio-p233-video-shell.js / canvio-lot233; canvio-p234-native-studio-shell.js / canvio-lot234; canvio-p235-editor-inputs.js / canvio-lot235; canvio-p236-editor-experience.js / canvio-lot236. All six pairs must pass P143 byte parity and boot-order checks.
+- New automated acceptance: tests/p233, tests/p234, tests/p235, tests/p236 Node source contracts and Chromium browser suites. These candidate suites must run successfully on the exact PR head before these P values are marked complete.
+- Not yet certified: two-finger pinch zoom has not been added as a cross-editor gesture; screen-reader/keyboard-only/200% zoom review, screenshots on physical displays, real-user IndexedDB project save/reopen, production media export and Chrome/Edge/Safari HTTPS checks remain manual. A synthetic Chromium fixture is not equivalent to these checks.
+- Release policy remains unchanged: P70 has 14 real-environment acceptance gates pending (0 passed). This candidate is not stable/release-certified until those gates are actually performed and recorded.
+
