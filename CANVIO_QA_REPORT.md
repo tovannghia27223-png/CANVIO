@@ -730,3 +730,11 @@ Mainline workflow #551 passed 53/53; Pages #275 passed build/deploy. P143 parity
 - P163.1.1/P169 Chromium confirms visible profile labels, eight labelled controls, preview/save, Shared Core round-trip and mobile no-overflow.
 - P166.2/P160–P166 Chromium passed 32/32: actual GrapesJS root insertion, P131 sanitization, scoped CSS base/mobile rule, Shared Core metadata and canonical Website Engine save. Lazy readiness is bounded; a save failure is surfaced as unsaved.
 - P143 parity, full HTML/inline-script audit, P47–P70 regression and the integrated Node/P107 ZIP stage passed. P70 remains 14/14 manual gates pending, zero passed; no stable-release or physical-GPU claim.
+
+
+## P231/P232 local candidate QA — 2026-11-25
+
+- Node source contracts: 6/6 PASS.
+- Playwright Chromium on an opaque page.set_content fixture: 13/13 PASS. Checked Poster shell mounting and region ownership at 1440×900 / 1280×720, top-level vertical scrolling, native export/undo/redo/save control presence, real add/Undo/Redo layer-count round-trip, exact legacy DOM restoration, shell re-entry without duplicate IDs, mobile 390 px width and property drawer action; zero uncaught page errors.
+- The browser fixture uses test-only storage shims. It does not verify native IndexedDB, user profile persistence, deployed HTTPS, cross-browser behavior, assistive technology or production media export.
+- Mainline workflow #941 was FAIL (85/86) before P231/P232. The failing assertion was a stale P150 expected-color constant (rgb(255, 61, 154)) after P230's unified accent changed to #F83E9F; the assertion is updated to compare the computed button color with the active --cv-accent token. Re-run on this exact PR head is required before treating hosted CI as PASS.
