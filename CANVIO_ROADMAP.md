@@ -1508,3 +1508,9 @@ P167.1 and P168.1 are therefore mainline-integrated and hosted-CI verified, with
 - P229.2 scopes the six Spatial theme palettes to `#cv229-inspector`; body-level theme classes and global selectors do not remain. P151.1 contrast automation excludes shared navigation, controls and Spatial. P150 Home/Holographic skin state remains independent.
 - Evidence: hosted run #895 passed on source head `84d7de0`; generated candidate `10a6ceb` then passed exact-candidate run #896. Both browser suites 90/90; #896 also passed source contracts 20/20, hosted runtime 20/20, P107 ZIP 6/6 and P170 Node 28/28. P229's already-embedded 81-script re-entry path passed.
 - This closes automated theme-isolation acceptance for the candidate, not overall release certification. P70 retains 14 manual gates; physical GPU, real Supabase, real ComfyUI/model-quality and two-device sync remain separate acceptance work. PR #104 remains open/unmerged.
+
+
+## P229.3 — shared global theme correction (2026-11-25)
+- Replace the P229.2 workspace-isolation objective with a shared palette objective: a Spatial palette change is global and updates the complete CANVIO shell and all workspaces.
+- Shared owner: `body.cv229-theme-*`; Spatial inherits the same active palette. Keep global theme selectors intact; no per-workspace palette forks for standard CANVIO chrome.
+- Exact-head browser acceptance must prove menu, topbar, Export and Spatial computed styles change together and all six palette choices update the body root. Retain P70's separate real-world release gates.

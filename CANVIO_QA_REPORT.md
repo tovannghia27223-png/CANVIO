@@ -794,3 +794,10 @@ Mainline workflow #551 passed 53/53; Pages #275 passed build/deploy. P143 parity
 - Run #896 reports: integrated source contracts 20/20; hosted runtime 20/20; P107 ZIP round-trip 6/6; P170 Node 28/28; no uncaught browser page errors. GLB uncompressed, Draco, Meshopt and KTX2 fixtures loaded in the real Three.js r187 viewer; P85 WASM runtimes initialized and OpenCV processed 144 tracked points across two local frames.
 - Limits: P106 ran on ANGLE SwiftShader, not physical GPU; real Supabase/cloud credentials and independent two-device recovery were not exercised; P70 has 14/14 manual gates pending. Keep `releaseCertified=false`.
 - PR #104 is still open/unmerged. GitHub marks the PR-triggered check `action_required`; exact-head workflow_dispatch #896 passed.
+
+
+## P229.3 — shared global theme correction (2026-11-25)
+- User clarified the expected behavior: the Spatial palette selector is the global CANVIO palette selector. The former P229.2 rule that kept the palette inside `#cv229-inspector` was the wrong product behavior and is superseded.
+- P229.3 uses `body.cv229-theme-*` as the shared theme root, lets Spatial inherit that theme, and keeps the canonical global CSS selectors intact.
+- Browser regression now verifies body/root ownership, menu/topbar/Export/Spatial computed-style changes, and all six palette transitions. Exact-head hosted Chromium acceptance is pending; do not mark as passed yet.
+- Run #898 had a separate `movingSubjectTracked` failure in the P145 tracking smoke. That result is not evidence for or against the theme change.

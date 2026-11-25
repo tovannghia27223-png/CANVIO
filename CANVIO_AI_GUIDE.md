@@ -4430,3 +4430,11 @@ P160–P166 module APIs currently report versions P160.2.0, P161.1.0, P162.2.0, 
 - Run #896 additionally verified 20/20 integrated source contracts, 20/20 hosted runtime checks, P107 portable ZIP round-trip 6/6, P170 Node tests 28/28, real Three.js r187 uncompressed/Draco/Meshopt/KTX2 GLB loading, P85 WASM/runtime initialization and OpenCV optical flow. No uncaught page errors were reported.
 - Boundaries remain: P106 used ANGLE SwiftShader (software WebGL, not a physical GPU); P107 does not claim cloud Project Vault or two-device sync; P130/P170 real Supabase credentials/storage were not exercised; P70 still has 14/14 manual release gates pending and `releaseCertified=false`. This is automated candidate acceptance, not production certification.
 - PR #104 remains open and unmerged. The PR-triggered run for the generated head is marked `action_required` by GitHub, while the explicit workflow_dispatch run #896 on the exact same head completed successfully.
+
+
+## P229.3 — shared global theme correction (2026-11-25)
+- Product requirement clarified by the user: changing the palette in Spatial must recolor the complete CANVIO interface, not Spatial alone.
+- P229.2 isolation is superseded as incorrect product behavior. P229.3 restores one shared theme owner: `body.cv229-theme-*` drives the app-wide palette; Spatial inherits that body theme and does not maintain a separate palette class.
+- Do not rewrite `body.cv229-theme-*` selectors or scope them to `.cv229-inspector`. Existing global palette rules style the shell, menu, navigation, buttons, fields, cards, toolbars, workspace surfaces and Spatial together.
+- The P150 browser test checks body-root state, computed-style changes for menu, topbar, Export and Spatial, and all six palette transitions. P150 Home/Holographic skins remain separately owned.
+- Hosted exact-head acceptance is pending. Do not claim P229.3 accepted until the refreshed workflow passes.

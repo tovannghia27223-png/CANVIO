@@ -95,9 +95,12 @@ with sync_playwright() as p:
     pg.evaluate("CV229.setTheme('midnight')");pg.wait_for_timeout(500)
     navAfter=pg.evaluate("""()=>{const pick=e=>{const s=getComputedStyle(e);return [s.backgroundColor,s.backgroundImage,s.color,s.borderColor].join('|')};return {menu:pick(document.querySelector('.side')),topbar:pick(document.querySelector('.top')),export:pick(document.getElementById('ws-export')),toolbar:pick(document.querySelector('.toolbar')),spatial:pick(document.getElementById('cv229-inspector')),spatialControl:pick(document.querySelector('#cv229-inspector [data-cv229-theme]'))}}""")
     ck('P229 đổi palette đặt theme trên body dùng chung, không gắn class riêng vào Inspector',pg.evaluate("document.body.classList.contains('cv229-theme-midnight')&&!document.getElementById('cv229-inspector').classList.contains('cv229-theme-midnight')&&document.documentElement.getAttribute('data-cv229-theme')==='midnight'"))
-    audit=pg.evaluate('CV229ThemeIsolationP229.audit()')
+    audit=pg.evaluate('CV229ThemeGlobalP229.audit()')
     ck('P229 giữ CSS theme toàn cục và chỉ có một body theme owner',audit['globalThemeSelectors']>0 and audit['bodyThemeClasses']==['midnight'] and audit['inspectorThemeClasses']==[] and audit['globalThemeApplied'] and audit['pickerButtonsSynced'])
     ck('P229 đồng bộ màu menu, topbar, nút Xuất và Spatial controls khi đổi palette',all(navBefore[k]!=navAfter[k] for k in ['menu','topbar','export','spatial','spatialControl']))
+    for palette in ['glass','midnight','aurora','cyber','graffiti','neonlight']:
+        pg.evaluate("CV229.setTheme('%s')"%palette);pg.wait_for_timeout(120)
+        ck('P229 palette '+palette+' đồng bộ body root và picker',pg.evaluate("document.body.classList.contains('cv229-theme-%s')&&document.documentElement.getAttribute('data-cv229-theme')==='%s'&&!document.getElementById('cv229-inspector').classList.contains('cv229-theme-%s')"%(palette,palette,palette)))
     pg.evaluate("CV229.setTheme('graffiti');CV229.open()");pg.wait_for_timeout(500)
     pg.evaluate("CVContrastGuardP151.scan()")
     ck('P151 không ghi đè màu menu hoặc Spatial Inspector',pg.evaluate("!document.querySelector('#cv-studio-menu [data-route][data-cvg]')&&!document.querySelector('#cv229-inspector [data-cvg]')"))
