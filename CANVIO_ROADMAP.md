@@ -1573,3 +1573,13 @@ Nối tiếp P231–P236 (editor vừa khít màn hình). Người dùng muốn 
 - Giữ giới hạn Supabase miễn phí (≈1GB file, ≈50MB/tệp); video lớn ở lại máy.
 - Mọi bước dùng theo thứ tự: parity P143 → inventory → boot-order → CI; đọc mục "Bài học" các P170/P171/P230 trước khi làm giao diện.
 - Cần người dùng chốt: Đợt A có đúng thứ tự mong muốn không; có cần P243 (token GitHub) trong Đợt A hay chuyển sang Đợt B.
+
+
+## P231–P232 — Editor Shell + Poster Studio · candidate 2026-11-25
+
+- P231 adds CVEditorShellP231 as one shared layout owner: top action strip, tool rail, central canvas, inspector panel and optional bottom slot. It moves existing DOM nodes with comment anchors (no clone, duplicate event handlers, new timeline or storage owner); “Bố cục cũ” restores the original DOM positions exactly.
+- The shell only applies app-height/overflow rules while .app.cv231-app-active is present. Layout preference is transient sessionStorage under canvio.p231.mode.*; project contents remain with existing owners.
+- P232 adds CVPosterShellP232: existing Poster toolbar → left rail, #canvasWrap → canvas, .stack → inspector, existing .headActions → top strip. Undo/Redo stays on CV.poster.history; Save stays on CV.project.autosave/save; fit stays on the Poster engine.
+- Source modules: canvio-p231-editor-shell.js / canvio-lot231; canvio-p232-poster-shell.js / canvio-lot232. Registered in P143 source parity and integrated through the hosted candidate workflow.
+- Local source suite: 6/6 PASS. Local synthetic Chromium suite: 13/13 PASS at 1440×900, 1280×720 and 390×844; zero uncaught page errors. These are local fixture results, not HTTPS origin, saved-user-project or production acceptance.
+- Remaining: hosted exact-PR CI, screenshots/review on a real user Chrome profile, keyboard/screen-reader/200% zoom and real Poster project save/reopen. P233 Video Studio remains the next roadmap step.
