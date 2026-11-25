@@ -95,6 +95,22 @@ with sync_playwright() as p:
       return v==='custom'&&c.every((x,i)=>Math.abs(x-[.1,.2,.3,.4][i])<.001)
     }""")
     page.evaluate("CV.engines.video.apply()")
+    custom_motion_debug=page.evaluate("""(id)=>{
+      const c=CV.engines.video._state().clips.find(x=>x.id===id);
+      const m=c&&c.motion;
+      return {
+        clipFound:!!c,
+        motionKeys:m?Object.keys(m):[],
+        topLevelBezier:m&&Array.isArray(m.bezier)?m.bezier.slice():null,
+        easing:m&&m.easing||null,
+        keyframes:m&&Array.isArray(m.keyframes)?m.keyframes.map(k=>({
+          t:k&&k.t, time:k&&k.time, property:k&&k.property, value:k&&k.value,
+          opacity:k&&k.opacity, bezier:k&&Array.isArray(k.bezier)?k.bezier.slice():null,
+          easing:k&&k.easing
+        })):null,
+        evaluatedMidOpacity:c&&CV.engines.video.motionAt?CV.engines.video.motionAt(c,.5).opacity:null
+      };
+    }""",clip_id)
     checks['customMotionCurveSaved']=page.evaluate("""(id)=>{
       const c=CV.engines.video._state().clips.find(x=>x.id===id);
       return !!(c&&c.motion&&c.motion.bezier&&c.motion.bezier.every((x,i)=>Math.abs(x-[.1,.2,.3,.4][i])<.001))
@@ -118,5 +134,5 @@ with sync_playwright() as p:
     checks['zeroPageErrors']=len(errors)==0
     browser.close()
 server.shutdown()
-result={'suite':'CANVIO_P119_3_VIDEO_ENGINE_SHARED_EASING_CHROMIUM','checks':checks,'pageErrors':errors,'failed':[k for k,v in checks.items() if not v]}
+result={'suite':'CANVIO_P119_3_VIDEO_ENGINE_SHARED_EASING_CHROMIUM','checks':checks,'diagnostics':{'customMotionAfterApply':custom_motion_debug} if not checks.get('customMotionCurveSaved',True) else {},'pageErrors':errors,'failed':[k for k,v in checks.items() if not v]}
 print(json.dumps(result,ensure_ascii=False,indent=1));sys.exit(1 if result['failed'] else 0)
