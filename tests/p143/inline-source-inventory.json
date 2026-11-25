@@ -1,10 +1,10 @@
 {
   "format": "CANVIO_P143_INLINE_SOURCE_INVENTORY",
   "version": 1,
-  "generatedAt": "2026-11-25T06:46:18.804Z",
+  "generatedAt": "2026-11-25T07:38:52.803Z",
   "source": "restored canonical index.html after hosted workflow integration steps",
   "purpose": "Complete script-tag inventory in browser execution order; known global reference detection is heuristic, not a semantic dependency DAG.",
-  "htmlBytes": 6106764,
+  "htmlBytes": 6111248,
   "scriptTagCount": 187,
   "inlineScriptCount": 187,
   "externalScriptCount": 0,
@@ -18900,15 +18900,15 @@
       "async": false,
       "defer": false,
       "noModule": false,
-      "bytes": 4374,
-      "sha256": "9eef40f112ed14763979e7d92f7eea0c6e0ed879acecb5cdccc9eae35592d4d6",
+      "bytes": 8858,
+      "sha256": "dc3fddaadd246b57e3d615a0016b10821395b8cbc07637faee05b4b04ef3626f",
       "exportedGlobals": [
-        "CV229ThemeIsolationP229"
+        "CV229ThemeGlobalP229"
       ],
       "globalDeclarations": [],
       "globalPropertyReads": [
         "CV229",
-        "CV229ThemeIsolationP229",
+        "CV229ThemeGlobalP229",
         "MutationObserver"
       ],
       "knownGlobalReads": [],
@@ -18918,29 +18918,29 @@
             "name": "CV229",
             "count": 1,
             "lines": [
-              9
+              11
             ]
           },
           {
-            "name": "CV229ThemeIsolationP229",
+            "name": "CV229ThemeGlobalP229",
             "count": 1,
             "lines": [
-              7
+              9
             ]
           },
           {
             "name": "MutationObserver",
             "count": 1,
             "lines": [
-              72
+              107
             ]
           }
         ],
         "knownReads": [],
         "writes": [
           {
-            "name": "CV229ThemeIsolationP229",
-            "line": 92,
+            "name": "CV229ThemeGlobalP229",
+            "line": 126,
             "kind": "window.property"
           }
         ],
