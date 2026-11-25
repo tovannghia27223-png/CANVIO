@@ -1,9 +1,11 @@
-/* P229.2 — keep Spatial theme ownership inside the Spatial Inspector.
-   The Inspector is mounted lazily in some shell states. Install the theme adapter
-   as soon as its root exists instead of silently returning during initial boot. */
+/* P229.3 — one shared appearance palette for the complete CANVIO interface.
+   The Spatial Appearance picker is the global palette control: shell navigation,
+   topbar, menus, shared buttons, cards, toolbars, workspace surfaces and Spatial
+   Inspector all follow the same active palette. Keep the canonical body selectors
+   intact; never rewrite or scope them to the Inspector. */
 (function () {
   'use strict';
-  if (window.CV229ThemeIsolationP229) return;
+  if (window.CV229ThemeGlobalP229) return;
   var names = ['glass', 'midnight', 'aurora', 'cyber', 'graffiti', 'neonlight'];
   var api = window.CV229;
   if (!api || typeof api.setTheme !== 'function') return;
@@ -12,95 +14,103 @@
   var observer = null;
 
   function getRoot() { return document.getElementById('cv229-inspector'); }
-  function activeTheme(theme) {
+  function activeTheme(hint) {
     var state = typeof api.state === 'function' ? api.state() : {};
-    return names.indexOf(state.theme) >= 0 ? state.theme :
-      (names.indexOf(theme) >= 0 ? theme : 'graffiti');
+    return names.indexOf(state && state.theme) >= 0 ? state.theme :
+      (names.indexOf(hint) >= 0 ? hint : 'graffiti');
   }
-  function cleanBody() {
+  function syncGlobalTheme(hint) {
+    var body = document.body;
+    var root = document.documentElement;
+    var inspector = getRoot();
+    if (!body || !root) return false;
+    var active = activeTheme(hint);
+
+    /* The body is the single theme owner. Descendant workspaces inherit the
+       shared semantic variables and match the existing body.cv229-theme-* CSS. */
     names.forEach(function (name) {
-      if (document.body) document.body.classList.remove('cv229-theme-' + name);
+      body.classList.remove('cv229-theme-' + name);
+      if (inspector) inspector.classList.remove('cv229-theme-' + name);
     });
-  }
-  function scopeCss(style) {
-    if (!style || style.tagName !== 'STYLE' || style.dataset.cv229ThemeScoped === '1') return false;
-    var source = style.textContent || '';
-    if (!source.includes('cv229-theme-')) return false;
-    var scoped = source.replace(/(?:html\s+)?body\.cv229-theme-(glass|midnight|aurora|cyber|graffiti|neonlight)/g,
-      '.cv229-inspector.cv229-theme-$1');
-    if (scoped !== source) style.textContent = scoped;
-    style.dataset.cv229ThemeScoped = '1';
-    return scoped !== source;
-  }
-  function scopeAllCss() {
-    document.querySelectorAll('style').forEach(scopeCss);
-  }
-  function syncRoot(theme) {
-    var root = getRoot();
-    cleanBody();
-    if (!root) return false;
-    names.forEach(function (name) { root.classList.remove('cv229-theme-' + name); });
-    var active = activeTheme(theme);
-    root.classList.add('cv229-theme-' + active);
-    if (active === 'cyber') root.classList.add('cv229-theme-midnight');
+    body.classList.add('cv229-theme-' + active);
+    if (active === 'cyber') body.classList.add('cv229-theme-midnight');
     root.setAttribute('data-cv229-theme', active);
-    scopeAllCss();
-    if (!clickBound) {
-      root.addEventListener('click', function (event) {
-        var button = event.target && event.target.closest ? event.target.closest('[data-cv229-theme]') : null;
-        if (!button || !root.contains(button)) return;
-        event.preventDefault();
-        event.stopImmediatePropagation();
-        setTheme(button.dataset.cv229Theme);
-      }, true);
-      clickBound = true;
-    }
+    body.setAttribute('data-cv229-theme', active);
+
+    Array.prototype.forEach.call(document.querySelectorAll('[data-cv229-theme]'), function (button) {
+      var selected = button.getAttribute('data-cv229-theme') === active;
+      button.classList.toggle('active', selected);
+      button.setAttribute('aria-pressed', selected ? 'true' : 'false');
+    });
     return true;
   }
   function setTheme(theme) {
     var result = originalSetTheme.call(api, theme);
-    cleanBody();
-    syncRoot(theme);
+    syncGlobalTheme(theme);
     return result;
+  }
+  function bindPicker() {
+    var root = getRoot();
+    if (!root || clickBound) return;
+    root.addEventListener('click', function (event) {
+      var button = event.target && event.target.closest ?
+        event.target.closest('[data-cv229-theme]') : null;
+      if (!button || !root.contains(button)) return;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      setTheme(button.getAttribute('data-cv229-theme'));
+    }, true);
+    clickBound = true;
   }
 
   api.setTheme = setTheme;
-  scopeAllCss();
-  syncRoot((typeof api.state === 'function' && api.state().theme) || 'graffiti');
+  bindPicker();
+  syncGlobalTheme();
 
   if (window.MutationObserver && document.documentElement) {
     observer = new MutationObserver(function (records) {
       var rootAdded = false;
       records.forEach(function (record) {
-        if (record.type === 'childList') {
-          record.addedNodes.forEach(function (node) {
-            if (node.nodeType !== 1) return;
-            if (node.tagName === 'STYLE') scopeCss(node);
-            if (node.querySelectorAll) {
-              node.querySelectorAll('style').forEach(scopeCss);
-              if (node.id === 'cv229-inspector' || node.querySelector('#cv229-inspector')) rootAdded = true;
-            }
-          });
-        }
+        if (record.type !== 'childList') return;
+        Array.prototype.forEach.call(record.addedNodes, function (node) {
+          if (!node || node.nodeType !== 1) return;
+          if (node.id === 'cv229-inspector' ||
+              (node.querySelector && node.querySelector('#cv229-inspector'))) rootAdded = true;
+        });
       });
-      if (rootAdded || (getRoot() && !clickBound)) syncRoot();
+      if (rootAdded) bindPicker();
     });
     observer.observe(document.documentElement, { childList: true, subtree: true });
   }
 
-  window.CV229ThemeIsolationP229 = {
-    version: '229.2.0',
+  window.CV229ThemeGlobalP229 = {
+    version: '229.3.0',
     setTheme: setTheme,
+    sync: syncGlobalTheme,
     audit: function () {
-      var root = getRoot();
+      var body = document.body;
+      var inspector = getRoot();
+      var active = activeTheme();
+      var globalSelectorCount = 0;
+      Array.prototype.forEach.call(document.querySelectorAll('style'), function (style) {
+        var css = style.textContent || '';
+        var matches = css.match(/(?:html\s+)?body\.cv229-theme-(?:glass|midnight|aurora|cyber|graffiti|neonlight)/g);
+        globalSelectorCount += matches ? matches.length : 0;
+      });
       return {
-        bodyThemeClasses: names.filter(function (name) { return document.body.classList.contains('cv229-theme-' + name); }),
-        inspectorThemeClasses: root ? names.filter(function (name) { return root.classList.contains('cv229-theme-' + name); }) : [],
-        inspectorMounted: !!root,
-        scopedStyleCount: document.querySelectorAll('style[data-cv229-theme-scoped="1"]').length,
-        globalThemeSelectors: Array.from(document.querySelectorAll('style')).filter(function (style) {
-          return /(?:html\s+)?body\.cv229-theme-(?:glass|midnight|aurora|cyber|graffiti|neonlight)/.test(style.textContent || '');
-        }).length
+        activeTheme: active,
+        bodyThemeClasses: names.filter(function (name) {
+          return body.classList.contains('cv229-theme-' + name);
+        }),
+        inspectorThemeClasses: inspector ? names.filter(function (name) {
+          return inspector.classList.contains('cv229-theme-' + name);
+        }) : [],
+        globalThemeSelectors: globalSelectorCount,
+        globalThemeApplied: body.classList.contains('cv229-theme-' + active),
+        pickerButtonsSynced: Array.prototype.every.call(document.querySelectorAll('[data-cv229-theme]'), function (button) {
+          return button.getAttribute('aria-pressed') ===
+            (button.getAttribute('data-cv229-theme') === active ? 'true' : 'false');
+        })
       };
     }
   };
