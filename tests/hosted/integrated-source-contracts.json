@@ -1,12 +1,13 @@
 {
   "suite": "CANVIO_23.3.111_INTEGRATED_SOURCE_CONTRACTS",
-  "passed": 19,
-  "total": 19,
+  "passed": 20,
+  "total": 20,
   "checks": {
     "Integrated P74/P81, P85, P102/P105/P107 and P70 module owners are present exactly once": true,
     "P74/P81 uses pinned local r187 runtime and strict vendor manifest SHA verification": true,
     "P85 owner is lazy, same-origin, SHA-pinned and disposes GPU/OpenCV/player resources": true,
     "P102/P105/P80 workers use self-hosted Transformers.js and local ONNX WASM": true,
+    "P102 background-removal panel is discoverable directly below the Image Studio heading": true,
     "P107 portable bundle is a strict three-file CRC-checked ZIP with rollback on partial import": true,
     "P97–P101 local Video Editor UX module is extracted and its workflow boundaries are explicit": true,
     "P70 remains fail-closed and enumerates fourteen manual acceptance gates": true,

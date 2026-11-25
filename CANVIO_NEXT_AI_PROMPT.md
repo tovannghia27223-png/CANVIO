@@ -410,11 +410,19 @@ Khi sửa module: sửa file standalone rồi chép y hệt vào lot (parity so 
 - P70 remains blocked with fourteen manual gates pending. Never mark release certified until all have independently reviewed evidence.
 
 
+## Handoff — P102/P150 verification on PR #104 (2026-11-25)
+
+- PR #104: https://github.com/tovannghia27223-png/CANVIO/pull/104. P102 background-removal panel has been moved directly below the Image Studio heading and before the prompt builder; it retains the original local ORMBG worker/model and canonical Asset Library flow.
+- Run #852 passed 66/66 workflow steps. P102 hosted UI check: 20/20; P150 desktop/mobile browser checks: 86/86; hosted runtime: 20/20; zero page errors, console errors or invalid WASM MIME responses.
+- Removed the always-true "or True" clause from the Tech prompt handoff test; it now checks the actual transferred #ws-jin value and route acknowledgement. Hosted test server now serves one validated application/wasm MIME type and asserts it.
+- The generated candidate commit on this branch is 827eed312c226e0932df8377563b785a35227aa7; exact tested source commit is 83afb13b81a2fa035a828d0f61df41800020b6ed.
+- Full model inference was intentionally not run: workflow requires explicit full_model_acceptance=true. Do not call P102 AI quality verified on real photographs. P70 remains 14 manual gates open; physical GPU, real media, accessibility/device checks and cloud/two-device sync remain open.
+- Earlier P102 #842/#845 pending notes and P150 test-isolation notes in this file are historical; this run supersedes only the P102 UI discoverability and P150 browser regression status, not the manual/model acceptance boundaries.
+
 ## P130.2 — Điền sẵn Supabase mặc định (2026-11-25)
 - `cfg()` trong `canvio-p130-cloud.js` và lot trong `index.html` (giữ parity) trả về URL `https://szdyeqzqyyxmenoiiqxe.supabase.co` + publishable key (`sb_publishable_…`, an toàn công khai) khi máy chưa lưu cấu hình; cấu hình người dùng nhập vẫn ưu tiên.
 - Việc còn lại của người dùng: chạy `supabase/canvio-schema.sql` (nút "Sao chép SQL" ở thẻ P130) trong Supabase SQL Editor, rồi đăng ký/đăng nhập và đặt cụm mật khẩu. Chưa test được với project thật.
 - Không dùng 2 schema `canvio_*` (Foundation 1.0) và "Studio 4.0" (không RLS, không mã hóa) cho P130; nếu muốn làm việc nhóm thì cần quyết định riêng. Không bao giờ đưa secret/service_role key vào repo.
-
 
 ## P170 — Kho lưu trữ kép: máy tính + Supabase (2026-11-25)
 - Module `canvio-p170-storage-hub.js` (`CVStorageHubP170`, lot `canvio-lot170h`, thẻ `#cv170-card` ngay dưới thẻ P130 trong `#page-projectVault`). Một nút "Lưu cả máy và cloud" gọi `saveBoth()`; mỗi bên độc lập, lỗi một bên không chặn bên kia.
