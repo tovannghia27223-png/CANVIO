@@ -159,6 +159,21 @@ def main():
         page.locator('#p85-video').set_input_files(str(video_path))
         track=page.evaluate("""async()=>{const s=window.CANVIOP85Suite;const r=await s.startOpticalFlow();const deadline=performance.now()+5000;let status='';let frames=0;while(performance.now()<deadline){status=document.querySelector('#p85-cv-status')?.textContent||'';const m=status.match(/· (\\d+) khung xử lý/);frames=m?Number(m[1]):0;if(frames>=2)break;await new Promise(resolve=>setTimeout(resolve,100));}const match=status.match(/LK optical flow · (?:khởi tạo lại )?(\\d+) điểm/);const points=match?Number(match[1]):0;const result={started:!!r,duration:r.duration,dimensions:[r.width,r.height],status,points,frames,loaded:s.inspect().openCvLoaded};s.stopOpticalFlow();return result;}""")
         record('P85 OpenCV Lucas-Kanade processes real points on local video frames',track['started'] and track['dimensions']==[320,240] and track['points']>0 and 'OpenCV.js LK optical flow' in track['status'],track)
+        # P102 UI availability is a normal browser smoke; only heavy model inference is opt-in.
+        try:
+            page.locator('.nav button[data-page="imageStudio"]').click()
+            page.wait_for_function("""() => {
+              const route=document.querySelector('#page-imageStudio');
+              const panel=document.querySelector('#cv102-background-removal');
+              return !!(route&&route.classList.contains('active')&&panel&&panel.getBoundingClientRect().height>0&&panel.previousElementSibling?.classList.contains('head'));
+            }""",timeout=15000)
+            ui=page.evaluate("""() => {
+              const panel=document.querySelector('#cv102-background-removal');
+              return {visible:!!(panel&&panel.getBoundingClientRect().height>0),afterHeading:!!(panel&&panel.previousElementSibling?.classList.contains('head')),file:!!panel?.querySelector('#cv102-file'),run:!!panel?.querySelector('#cv102-run'),download:!!panel?.querySelector('#cv102-download')};
+            }""")
+            record('P102 UI panel is visible below the Image Studio heading without model download',ui['visible'] and ui['afterHeading'] and ui['file'] and ui['run'] and ui['download'],ui)
+        except Exception as e:
+            record('P102 UI panel is visible below the Image Studio heading without model download',False,{'error':str(e)[:400]})
         full_model_acceptance=os.environ.get("CANVIO_FULL_MODEL_ACCEPTANCE", "false").lower() in ("1","true","yes")
         if full_model_acceptance:
             # Real ORMBG and Depth Anything ONNX WASM inference through the shipped workers.
