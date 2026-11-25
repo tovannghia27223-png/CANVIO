@@ -1488,3 +1488,9 @@ P167.1 and P168.1 are therefore mainline-integrated and hosted-CI verified, with
 - Người dùng dùng theme khác Graffiti và vẫn thấy tím nên P230.2 mở rộng: `canvio-p230-unified-accent.js` đặt `--brand/--cv-accent/--violet/--primary/--accent` = `#F83E9F` (!important) cho MỌI theme, nút chính gradient hồng `#F83E9F→#FF63B1`. Màu theo theme riêng (xanh glass, midnight…) không còn ở nút/menu/chip; nếu cần trả lại hue riêng theo theme thì sửa dòng P230.2 trong file này.
 - Còn lại ít màu tím/xanh không phải accent: chip "POSTER OWNER", thanh công cụ editor xanh, icon trang trí sidebar Graffiti (`#7b3fe4` cố định), ảnh minh họa trang chủ.
 - Test: Chromium P230 68 PASS, smoke 21/21, parity 54/54.
+
+
+## P230.4 — Hồng neon Graffiti cho chữ nhỏ, chip, thanh editor (2026-11-25)
+- `canvio-p230-unified-accent.js` thêm quy tắc: `.eyebrow`, `.cv-pwf-kicker/.cv-pwf-count/.cv-pwf-steps article>span`, `.badgeSoft`, `.cv11-chip`, `.cvh-ic` dùng `--cv-accent-ink`/`--cv-accent-soft`; vạch `.eyebrow::before` gradient hồng; thanh editor `#cv-top.cv189-sticky` nền đen→tím đậm `#0B0B10→#2A1030` + viền dưới hồng `#F83E9F`.
+- Cố ý KHÔNG đổi: nội dung mẫu trên canvas (`.ly`), chữ xám-xanh trung tính (`63,88,115`), hero trang chủ (cyan), chip lọc kind của Bảng cảm hứng (`.cv153-chip`), avatar HR. Nếu người dùng muốn đổi thêm thì thêm quy tắc P230.5.
+- Test: Chromium P230 68 PASS, smoke 21/21, P171 11/11.
