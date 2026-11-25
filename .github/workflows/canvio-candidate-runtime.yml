@@ -148,7 +148,7 @@ jobs:
           if(at<0||html.indexOf(open,at+open.length)>=0)throw new Error('P151 expected exactly one embedded lot');
           const start=at+open.length, end=html.indexOf('</script>',start);
           if(end<0)throw new Error('P151 embedded lot close missing');
-          html=html.slice(0,at)+open+'\\n'+source+'\\n</script>'+html.slice(end+'</script>'.length);
+          html=html.slice(0,at)+open+String.fromCharCode(10)+source+String.fromCharCode(10)+'</script>'+html.slice(end+'</script>'.length);
           if((html.match(/id="canvio-lot151g"/g)||[]).length!==1)throw new Error('P151 duplicate/missing lot');
           fs.writeFileSync(file,html,'utf8');
           console.log('P151.1 contrast guard scope synced into canonical index.html');
