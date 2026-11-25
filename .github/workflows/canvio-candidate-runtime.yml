@@ -186,7 +186,7 @@ jobs:
           console.log('P151.1 contrast guard scope synced into canonical index.html');
           NODE
 
-      - name: Integrate P229.2 Spatial theme isolation
+      - name: Integrate P229.3 global theme synchronization
         shell: bash
         run: |
           set -euo pipefail
@@ -194,7 +194,7 @@ jobs:
           const fs=require('node:fs');
           const file='index.html',source=fs.readFileSync('canvio-p229-theme-isolation.js','utf8').trim();
           const id='canvio-lot229-theme-isolation',open='<script id="'+id+'">';
-          if(!source.includes("version: '229.2.0'"))throw new Error('P229.2 source version missing');
+          if(!source.includes("version: '229.3.0'"))throw new Error('P229.3 global theme source version missing');
           let html=fs.readFileSync(file,'utf8');
           const close='</body>',bodyAt=html.lastIndexOf(close);
           if(bodyAt<0)throw new Error('Canonical body close missing');
@@ -205,10 +205,10 @@ jobs:
             if(endAt<0)throw new Error('P229.2 embedded script close missing');
             const current=html.slice(contentAt,endAt).trim();
             if(current!==source)html=html.slice(0,contentAt)+'\n'+source+'\n'+html.slice(endAt);
-            console.log(current===source?'P229.2 embedded module already current':'P229.2 embedded module refreshed in place');
+            console.log(current===source?'P229.3 embedded module already current':'P229.3 embedded module refreshed in place');
           }else{
             html=html.slice(0,bodyAt)+open+'\n'+source+'\n</script>\n'+html.slice(bodyAt);
-            console.log('P229.2 Spatial theme isolation embedded before body close');
+            console.log('P229.3 global theme synchronization embedded before body close');
           }
           const oldCount='noNewScriptTag:document.scripts.length===79';
           const newCount='noNewScriptTag:document.scripts.length===80';
