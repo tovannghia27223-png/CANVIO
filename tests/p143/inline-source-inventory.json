@@ -1,10 +1,10 @@
 {
   "format": "CANVIO_P143_INLINE_SOURCE_INVENTORY",
   "version": 1,
-  "generatedAt": "2026-11-25T06:19:58.181Z",
+  "generatedAt": "2026-11-25T08:25:42.016Z",
   "source": "restored canonical index.html after hosted workflow integration steps",
   "purpose": "Complete script-tag inventory in browser execution order; known global reference detection is heuristic, not a semantic dependency DAG.",
-  "htmlBytes": 6102240,
+  "htmlBytes": 6107092,
   "scriptTagCount": 186,
   "inlineScriptCount": 186,
   "externalScriptCount": 0,
@@ -18778,13 +18778,14 @@
       "async": false,
       "defer": false,
       "noModule": false,
-      "bytes": 22339,
-      "sha256": "24ce9106d2cc6574f233e77447e2125ca087b138a2ab6e7a807306a0259f2619",
+      "bytes": 27191,
+      "sha256": "27309f9bb55529f8f359172b684d86f53e4a778d498a70913ef7d16762498e3d",
       "exportedGlobals": [
         "CVStorageHubP170"
       ],
       "globalDeclarations": [],
       "globalPropertyReads": [
+        "confirm",
         "CV",
         "CVCloudP130",
         "CVCreativeCore",
@@ -18797,6 +18798,13 @@
       ],
       "globalReferenceEvidence": {
         "propertyReads": [
+          {
+            "name": "confirm",
+            "count": 1,
+            "lines": [
+              292
+            ]
+          },
           {
             "name": "CV",
             "count": 1,
@@ -18829,7 +18837,7 @@
             "name": "MutationObserver",
             "count": 1,
             "lines": [
-              236
+              306
             ]
           },
           {
@@ -18854,7 +18862,7 @@
         "writes": [
           {
             "name": "CVStorageHubP170",
-            "line": 205,
+            "line": 243,
             "kind": "window.property"
           }
         ],
