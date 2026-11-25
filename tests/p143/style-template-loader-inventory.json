@@ -1,10 +1,10 @@
 {
   "format": "CANVIO_P143_STYLE_TEMPLATE_LOADER_INVENTORY",
   "version": 1,
-  "generatedAt": "2026-11-25T06:19:58.386Z",
+  "generatedAt": "2026-11-25T06:33:27.523Z",
   "source": "restored canonical index.html after all workflow-managed module integration steps",
   "purpose": "Inventory inline styles, template elements, dynamic resource-loader call sites and lexical global-reference ordering candidates. Global references are not a human-reviewed semantic boot-order or runtime data-flow graph.",
-  "htmlBytes": 6102240,
+  "htmlBytes": 6106764,
   "styles": {
     "blockCount": 122,
     "inlineStyleAttributeCount": 1717,
@@ -15168,15 +15168,15 @@
     ]
   },
   "dependencyCandidates": {
-    "count": 522,
+    "count": 523,
     "confidence": "lexical-static-order-candidate-not-semantic",
     "summary": {
-      "staticReadReferenceCount": 797,
-      "resolvedEdgeCount": 522,
+      "staticReadReferenceCount": 799,
+      "resolvedEdgeCount": 523,
       "unresolvedReferenceCount": 40,
-      "sameScriptReferenceCount": 235,
+      "sameScriptReferenceCount": 236,
       "ambiguousMultiWriterEdges": 83,
-      "providerGlobals": 313
+      "providerGlobals": 314
     },
     "edges": [
       {
@@ -16675,7 +16675,7 @@
         "providerKind": "window-or-globalThis-assignment|top-level-lexical-or-function-binding",
         "toOrder": 75,
         "toId": "canvio219-shape-anim",
-        "toSha256": "dbda8d9850a819c6a481aad4acbb8c870b438a44d3fa753d6714ec5059b57011",
+        "toSha256": "4b3100ec90f5f2a629f702856cf322fd4c8688b1a27f895dfbea701ff41f0987",
         "priorProviderCount": 1,
         "priorProviderOrders": [
           1
@@ -17619,7 +17619,7 @@
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 75,
         "toId": "canvio219-shape-anim",
-        "toSha256": "dbda8d9850a819c6a481aad4acbb8c870b438a44d3fa753d6714ec5059b57011",
+        "toSha256": "4b3100ec90f5f2a629f702856cf322fd4c8688b1a27f895dfbea701ff41f0987",
         "priorProviderCount": 1,
         "priorProviderOrders": [
           6
@@ -17885,7 +17885,7 @@
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 75,
         "toId": "canvio219-shape-anim",
-        "toSha256": "dbda8d9850a819c6a481aad4acbb8c870b438a44d3fa753d6714ec5059b57011",
+        "toSha256": "4b3100ec90f5f2a629f702856cf322fd4c8688b1a27f895dfbea701ff41f0987",
         "priorProviderCount": 1,
         "priorProviderOrders": [
           9
@@ -21581,7 +21581,7 @@
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 75,
         "toId": "canvio219-shape-anim",
-        "toSha256": "dbda8d9850a819c6a481aad4acbb8c870b438a44d3fa753d6714ec5059b57011",
+        "toSha256": "4b3100ec90f5f2a629f702856cf322fd4c8688b1a27f895dfbea701ff41f0987",
         "priorProviderCount": 1,
         "priorProviderOrders": [
           57
@@ -21601,7 +21601,7 @@
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 75,
         "toId": "canvio219-shape-anim",
-        "toSha256": "dbda8d9850a819c6a481aad4acbb8c870b438a44d3fa753d6714ec5059b57011",
+        "toSha256": "4b3100ec90f5f2a629f702856cf322fd4c8688b1a27f895dfbea701ff41f0987",
         "priorProviderCount": 1,
         "priorProviderOrders": [
           57
@@ -21931,7 +21931,7 @@
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 75,
         "toId": "canvio219-shape-anim",
-        "toSha256": "dbda8d9850a819c6a481aad4acbb8c870b438a44d3fa753d6714ec5059b57011",
+        "toSha256": "4b3100ec90f5f2a629f702856cf322fd4c8688b1a27f895dfbea701ff41f0987",
         "priorProviderCount": 1,
         "priorProviderOrders": [
           60
@@ -22110,7 +22110,7 @@
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 75,
         "toId": "canvio219-shape-anim",
-        "toSha256": "dbda8d9850a819c6a481aad4acbb8c870b438a44d3fa753d6714ec5059b57011",
+        "toSha256": "4b3100ec90f5f2a629f702856cf322fd4c8688b1a27f895dfbea701ff41f0987",
         "priorProviderCount": 1,
         "priorProviderOrders": [
           61
@@ -22513,7 +22513,7 @@
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 75,
         "toId": "canvio219-shape-anim",
-        "toSha256": "dbda8d9850a819c6a481aad4acbb8c870b438a44d3fa753d6714ec5059b57011",
+        "toSha256": "4b3100ec90f5f2a629f702856cf322fd4c8688b1a27f895dfbea701ff41f0987",
         "priorProviderCount": 1,
         "priorProviderOrders": [
           71
@@ -22532,7 +22532,7 @@
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 75,
         "toId": "canvio219-shape-anim",
-        "toSha256": "dbda8d9850a819c6a481aad4acbb8c870b438a44d3fa753d6714ec5059b57011",
+        "toSha256": "4b3100ec90f5f2a629f702856cf322fd4c8688b1a27f895dfbea701ff41f0987",
         "priorProviderCount": 1,
         "priorProviderOrders": [
           72
@@ -22551,7 +22551,7 @@
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 75,
         "toId": "canvio219-shape-anim",
-        "toSha256": "dbda8d9850a819c6a481aad4acbb8c870b438a44d3fa753d6714ec5059b57011",
+        "toSha256": "4b3100ec90f5f2a629f702856cf322fd4c8688b1a27f895dfbea701ff41f0987",
         "priorProviderCount": 1,
         "priorProviderOrders": [
           73
@@ -22570,7 +22570,7 @@
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 75,
         "toId": "canvio219-shape-anim",
-        "toSha256": "dbda8d9850a819c6a481aad4acbb8c870b438a44d3fa753d6714ec5059b57011",
+        "toSha256": "4b3100ec90f5f2a629f702856cf322fd4c8688b1a27f895dfbea701ff41f0987",
         "priorProviderCount": 1,
         "priorProviderOrders": [
           74
@@ -22585,7 +22585,7 @@
         "global": "CVLocalMasking",
         "fromOrder": 75,
         "fromId": "canvio219-shape-anim",
-        "fromSha256": "dbda8d9850a819c6a481aad4acbb8c870b438a44d3fa753d6714ec5059b57011",
+        "fromSha256": "4b3100ec90f5f2a629f702856cf322fd4c8688b1a27f895dfbea701ff41f0987",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 78,
         "toId": null,
@@ -22604,7 +22604,7 @@
         "global": "CVShapeAnim",
         "fromOrder": 75,
         "fromId": "canvio219-shape-anim",
-        "fromSha256": "dbda8d9850a819c6a481aad4acbb8c870b438a44d3fa753d6714ec5059b57011",
+        "fromSha256": "4b3100ec90f5f2a629f702856cf322fd4c8688b1a27f895dfbea701ff41f0987",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 78,
         "toId": null,
@@ -22623,7 +22623,7 @@
         "global": "CVSubtitleQC",
         "fromOrder": 75,
         "fromId": "canvio219-shape-anim",
-        "fromSha256": "dbda8d9850a819c6a481aad4acbb8c870b438a44d3fa753d6714ec5059b57011",
+        "fromSha256": "4b3100ec90f5f2a629f702856cf322fd4c8688b1a27f895dfbea701ff41f0987",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 78,
         "toId": null,
@@ -22642,7 +22642,7 @@
         "global": "CVVideoPreflight",
         "fromOrder": 75,
         "fromId": "canvio219-shape-anim",
-        "fromSha256": "dbda8d9850a819c6a481aad4acbb8c870b438a44d3fa753d6714ec5059b57011",
+        "fromSha256": "4b3100ec90f5f2a629f702856cf322fd4c8688b1a27f895dfbea701ff41f0987",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 78,
         "toId": null,
@@ -22661,11 +22661,30 @@
         "global": "CVShapeAnim",
         "fromOrder": 75,
         "fromId": "canvio219-shape-anim",
-        "fromSha256": "dbda8d9850a819c6a481aad4acbb8c870b438a44d3fa753d6714ec5059b57011",
+        "fromSha256": "4b3100ec90f5f2a629f702856cf322fd4c8688b1a27f895dfbea701ff41f0987",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 89,
         "toId": "canvio-p63-p67-main",
         "toSha256": "1c02a7761a074054d3eeb2df0fc5598164d9d982c6b2afbdbe29a86085990dea",
+        "priorProviderCount": 1,
+        "priorProviderOrders": [
+          75
+        ],
+        "executionOrder": "provider-before-consumer",
+        "confidence": "lexical-single-prior-provider",
+        "evidenceKinds": [
+          "window-property-reference"
+        ]
+      },
+      {
+        "global": "CV229",
+        "fromOrder": 75,
+        "fromId": "canvio219-shape-anim",
+        "fromSha256": "4b3100ec90f5f2a629f702856cf322fd4c8688b1a27f895dfbea701ff41f0987",
+        "providerKind": "window-or-globalThis-assignment",
+        "toOrder": 186,
+        "toId": "canvio-lot229-theme-isolation",
+        "toSha256": "9eef40f112ed14763979e7d92f7eea0c6e0ed879acecb5cdccc9eae35592d4d6",
         "priorProviderCount": 1,
         "priorProviderOrders": [
           75
@@ -23098,7 +23117,7 @@
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 106,
         "toId": "canvio-p102-background-removal",
-        "toSha256": "19b41cb64d7dfb32c3cb4fd5779bc139e712154d6126558aadff452fd954fc7c",
+        "toSha256": "34c6488e48652d0f80560ef6bf342b9b7f8349a75452fcea3ee68fd29b443fa5",
         "priorProviderCount": 2,
         "priorProviderOrders": [
           1,
@@ -27736,6 +27755,14 @@
         "global": "CVStorageHubP170",
         "scriptOrder": 184,
         "scriptId": "canvio-lot170h",
+        "evidenceKinds": [
+          "window-property-reference"
+        ]
+      },
+      {
+        "global": "CV229ThemeIsolationP229",
+        "scriptOrder": 186,
+        "scriptId": "canvio-lot229-theme-isolation",
         "evidenceKinds": [
           "window-property-reference"
         ]
