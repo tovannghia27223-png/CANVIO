@@ -18,7 +18,7 @@ with sync_playwright() as p:
             state=pg.evaluate("""()=>{const root=getComputedStyle(document.body),brand=root.getPropertyValue('--brand').trim(),accent=root.getPropertyValue('--cv-accent').trim();const p=document.querySelector('.btn-primary');const s=document.querySelector('.btn-soft');const menu=document.querySelector('.side button.active');const norm=x=>{const c=document.createElement('canvas').getContext('2d');c.fillStyle=x;return c.fillStyle};return {brand:norm(brand),accent:norm(accent),primary:p&&norm(getComputedStyle(p).backgroundColor),menu:menu&&norm(getComputedStyle(menu).backgroundColor),soft:s&&getComputedStyle(s).backgroundColor,activeTheme:document.body.className.includes('cv229-theme-'+(window.CV229.state().theme))}}""")
             ck(name+' '+theme+' accent bám brand',state['brand']==state['accent'])
             ck(name+' '+theme+' nút chính cùng màu accent',state['primary'] and state['primary']==state['accent'])
-            ck(name+' '+theme+' menu active cùng màu accent',!state['menu']||state['menu']==state['accent'])
+            ck(name+' '+theme+' menu active cùng màu accent',(not state['menu']) or state['menu']==state['accent'])
             ck(name+' '+theme+' class theme được giữ',state['activeTheme'])
         pg.evaluate("if(window.CVLot47)window.CVLot47.set('plain');CV229.setTheme('graffiti')")
         pg.evaluate("CVWS.open('design')");pg.wait_for_timeout(300)
