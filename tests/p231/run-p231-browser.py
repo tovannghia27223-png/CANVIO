@@ -30,7 +30,7 @@ with sync_playwright() as p:
     ck('Poster add + native Undo restores exact prior layer count',after==before+1 and page.evaluate('CV.poster.doc.layers.length')==before)
     page.locator('[data-cv231-action="redo"]').click();page.wait_for_function('(n)=>CV.poster.doc.layers.length===n+1',arg=before,timeout=10000)
     ck('Poster native Redo restores the added layer',page.evaluate('CV.poster.doc.layers.length')==before+1)
-    page.locator('[data-cv231-action="legacy"]').click();page.wait_for_timeout(250)
+    page.locator('#cv231-shell-poster [data-cv231-action="legacy"]').click();page.wait_for_timeout(250)
     legacy=page.evaluate("""()=>({off:!CVEditorShellP231.state('poster').enabled,head:getComputedStyle(document.querySelector('#page-poster>.head')).display!=='none',toolbar:document.querySelector('#page-poster .toolbar')?.closest('.editor')!==null,canvas:document.querySelector('#page-poster #canvasWrap')?.closest('.editor')!==null})""")
     ck('Legacy Layout restores original DOM positions and header',legacy['off'] and legacy['head'] and legacy['toolbar'] and legacy['canvas'])
     page.locator('#page-poster [data-cv231-launch]').click();page.wait_for_function("CVEditorShellP231.state('poster').enabled",timeout=10000)
