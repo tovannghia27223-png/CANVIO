@@ -275,6 +275,6 @@ The candidate is built and verified by the hosted runtime workflow. Runtime vend
 ## P239–P248 candidate handoff (2026-11-26)
 
 - Branch `feat/p239-p248-studio-pro`, base `2275a034930c5f14613707947e3963efb4c09b31`. Ten standalone module sources map to lots239–248; CI injects them into canonical index before extraction/P143 checks.
-- UI entry: Project Vault → CANVIO Studio Pro. Reuses CVCreativeCore, CVZip/CANVIOProjectBundle, P170, Video Engine and P120/P126.
+- UI entry: Project Vault → CANVIO Studio Pro. Reuses CVCreativeCore, CVZip/CANVIOProjectBundle, P170 project JSON restore, Video Engine and P120/P126.
 - Limits are recorded in CANVIO_AI_GUIDE.md. SVG starters are not arbitrary layer reflow; CSV batch is not native PDF/PNG; repo update is not Pages provisioning; TTS preview is not audio render; RMS peaks are not musical downbeats; local review is not live cloud collaboration; PWA diagnostics are not code splitting; browser memory is not physical VRAM.
 - Required gates: P239–P248 Node + Chromium, P143 parity, inline inventory, boot-order, HTML/JS syntax and regression suites on exact branch head. No merge/deploy is included.
