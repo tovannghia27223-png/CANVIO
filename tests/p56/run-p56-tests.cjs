@@ -142,7 +142,7 @@ api.setPendingPreview(report);
 assert('P56 preview context is one-use and cleared after consumption', api.consumePendingPreview().entryCount===3 && api.consumePendingPreview()===null);
 
 assert('P56 is wired before legacy ZIP parser and restore confirmation', /CANVIOArchivePreflight\.inspect\(file\)[\s\S]{0,350}readStoreZip\(file\)/.test(html) && /XEM TRƯỚC KHÔI PHỤC/.test(html));
-assert('P56 candidate title observer follows the current 23.3.111 build marker', /buildTitleForVersion=function\(\)\{var version=window\.CANVIO_BUILD&&window\.CANVIO_BUILD\.version/.test(html) && /version==='23\.3\.111-github-runtime-ci'\?'CANVIO 23\.3\.111 — GitHub Runtime Verified Candidate'/.test(html));
+assert('P56 candidate title observer follows the current 23.3.112 Studio Pro build marker', /buildTitleForVersion=function\(\)\{var version=window\.CANVIO_BUILD&&window\.CANVIO_BUILD\.version/.test(html) && /version==='23\.3\.112-p239-p248-studio-pro'\?'CANVIO 23\.3\.112 — Studio Pro P239–P248 Candidate'/.test(html));
 assert('P56 is one additive inline script after P55', /<script id="canvio-p55-runtime-release-gate">[\s\S]*?<\/script>\s*<script id="canvio-p56-portable-archive-preflight">/.test(html));
 
 console.log(`\nP56: ${passed}/${passed} assertions passed.`);
