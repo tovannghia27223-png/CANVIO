@@ -814,3 +814,9 @@ Chạy CI thật trên GitHub cho PR #107; thử trên Chrome thật, bàn phím
 - P242 export now recursively removes token, API-key, password, authorization, credential, secret and private-key fields before creating the project JSON; the manifest records the number of excluded fields. Asset data is bounded (100 assets inspected, per-data-URL ceiling, 14 MiB aggregate asset bytes, 25 MiB project JSON) before ZIP creation. Import retains the existing stored-ZIP/CRC/SHA checks and explicit confirmation.
 - P245 local beat analysis now bounds the input to 40 MiB, 300 seconds, 96 kHz and two channels and always closes AudioContext. This is a CPU/RMS onset proxy, not an exact musical beat-grid detector.
 - Run #993 executed P231–P237 Chromium suites successfully (including P237 37/37) but stopped when the P239–P248 Python smoke file failed to parse: an async JavaScript expression had been placed directly in a Python argument instead of inside page.evaluate(...). The browser harness has been corrected; a new exact-head run is required.
+
+
+## P239–P248 browser mount failure analysis — run #994 (2026-11-26)
+- Run #994 passed build/syntax, P143, P47–P70, integrated source contracts and P107 ZIP roundtrip. Chromium suites P231–P237 also passed, including P237 37/37.
+- The new Studio Pro browser smoke then timed out waiting for `#cv240-card` after `#cvstudio-pro-p239` had appeared. The shared UI used one broad try/catch and a short post-root retry window, so one mount exception could stop remaining feature panels without diagnostics.
+- Corrected the P239 container to call the Studio Pro mount API when it is created/reused. The UI now mounts each panel independently, records per-module errors and presence in `CVStudioProUI239248Diagnostics`, retries while any card is missing, and exposes `mountNow()` for route-driven re-entry. Chromium harness now explicitly invokes that idempotent mount and prints diagnostics if a required panel is absent.

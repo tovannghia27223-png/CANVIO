@@ -15,7 +15,12 @@ with sync_playwright() as p:
  page=browser.new_page(viewport={'width':1440,'height':900});page.on('pageerror',lambda e:errors.append(str(e)))
  page.goto('http://127.0.0.1:%d/index.html'%server.server_address[1],wait_until='domcontentloaded',timeout=120000)
  page.wait_for_function("!!(window.CVBriefPackP239&&window.CVMagicResizeP240&&window.CVBulkP241&&window.CVProjectBundleP242&&window.CVWebsitePublishP243&&window.CVCaptionVoiceP244&&window.CVBeatEditorP245&&window.CVCollabLiteP246&&window.CVPerformanceP247&&window.CVLocalModelsP248&&window.CVStudioProUI239248)",timeout=90000)
- page.evaluate("CV.go('projectVault')");page.wait_for_selector('#cvstudio-pro-p239',timeout=30000);page.wait_for_selector('#cv240-card',timeout=30000);page.wait_for_selector('#cv248-card',timeout=30000)
+ page.evaluate("CV.go('projectVault')");page.wait_for_selector('#cvstudio-pro-p239',timeout=30000);page.evaluate("CVStudioProUI239248.mountNow()");
+ try:
+  page.wait_for_selector('#cv240-card',timeout=10000);page.wait_for_selector('#cv248-card',timeout=10000)
+ except Exception:
+  print('STUDIO_PRO_MOUNT_DIAGNOSTICS',page.evaluate("CVStudioProUI239248Diagnostics||CVStudioProUI239248.tests()"))
+  raise
  page.locator('#cv239-brief').fill('Chiến dịch tuyển dụng nhân tài cho doanh nghiệp Việt Nam')
  page.locator('#cv239-build').click();page.wait_for_timeout(300)
  ck('P239 generates five project-scoped editable documents',page.evaluate("(()=>{const p=CVCreativeCore.active.documents.briefPack;return !!p&&Object.keys(p.documents).length===5&&['poster','social','slides','website','storyboard'].every(k=>!!p.documents[k])})()"))

@@ -40,7 +40,7 @@ const suites=[
 ['P246',()=>{const r=win.CVCollabLiteP246.tests();assert.equal(r.readOnlyPayload,true);}],
 ['P247',()=>{const r=win.CVPerformanceP247.tests();assert.equal(r.honestCodeSplitFlag,true);}],
 ['P248',()=>{const r=win.CVLocalModelsP248.tests();assert.equal(r.sevenGbRecommendation,true);}],
-['UI',()=>{const r=win.CVStudioProUI239248.tests();assert.ok(r.p240&&r.p241&&r.p242&&r.p243&&r.p244&&r.p245&&r.p246&&r.p247&&r.p248);}]
+['UI',()=>{const r=win.CVStudioProUI239248.tests();assert.ok(r.p240Api&&r.p241Api&&r.p242Api&&r.p243Api&&r.p244Api&&r.p245Api&&r.p246Api&&r.p247Api&&r.p248Api);assert.equal(typeof win.CVStudioProUI239248.mountNow,'function');}]
 ];
 let pass=0;for(const [name,fn] of suites){try{fn();pass++;console.log('PASS '+name);}catch(e){console.error('FAIL '+name+': '+e.message);process.exitCode=1;}}
 console.log(pass+'/'+suites.length+' P239–P248 checks passed.');

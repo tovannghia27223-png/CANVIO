@@ -1676,3 +1676,8 @@ Chạy CI thật trên GitHub cho PR #107; thử trên Chrome thật, bàn phím
 - P242 excludes token-like and credential field names from the exported project JSON and imposes per-asset, total-asset and project JSON budgets; import remains confirmed and integrity-checked.
 - P245 limits local beat analysis to 40 MiB / 5 minutes / 96 kHz / 2 channels. The beat map is an editable suggestion, not automatic timeline mutation.
 - Hosted run #993 reached P239 smoke after P231–P237 suites passed, but the new test file stopped on Python SyntaxError. A corrected exact-head run is pending.
+
+
+### P239–P248 browser mount repair — 2026-11-26
+- Run #994 browser regression passed through P237, then failed to find `#cv240-card` after P239 appeared. The UI's single broad try/catch could silently stop the remaining mounts.
+- The shared mount is now per-module guarded and diagnostic, called directly from P239 container creation/re-entry, and exposed as idempotent `mountNow()`. The browser smoke calls it after route navigation and prints diagnostics on failure.

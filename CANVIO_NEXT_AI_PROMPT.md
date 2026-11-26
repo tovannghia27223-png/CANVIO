@@ -563,3 +563,9 @@ Nối tiếp P231–P236 (editor vừa khít màn hình). Người dùng muốn 
 - Verify latest P242 secret-key scrub and bounded project/asset export; keep manifest exclusion counts and integrity checks.
 - Verify latest P245 bounds (40 MiB, five minutes, 96 kHz, stereo) and non-destructive plan only.
 - Run #993 passed earlier Chromium suites through P237; P239–P248 browser harness had Python SyntaxError due raw JS async arrow outside page.evaluate. Corrected the harness; rerun all checks without weakening assertions.
+
+
+## P239–P248 mount issue after run #994
+- Exact failure: P239 projectVault card mounted, but Chromium timed out waiting for P240; previous shared UI start swallowed exceptions across all mount calls.
+- P239 now invokes `CVStudioProUI239248.mountNow()` when the container is created/reused. UI mount calls each P240–P248 independently, captures errors/cards into `CVStudioProUI239248Diagnostics`, exposes `mountNow()`, and retries until all cards appear.
+- Browser smoke now explicitly calls `mountNow()` after opening Project Vault and prints the diagnostics object if cards are still absent. Keep assertions; do not skip cards to green the build.
