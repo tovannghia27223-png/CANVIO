@@ -802,3 +802,9 @@ Chạy CI thật trên GitHub cho PR #107; thử trên Chrome thật, bàn phím
 ## P47–P70 regression adjustment — candidate title 23.3.112 (2026-11-26)
 - P239–P248 candidate intentionally advances build marker/title from 23.3.111 to 23.3.112. Updated P55 regression assertions for the exact current title and P42 title-observer version mapping while preserving the independent P62 lineage assertion.
 - Run #989 reached P47–P70 and stopped only because P55 still expected the prior 23.3.111 candidate title; the P239–P248 Node suite (11/11), P143 source parity (72/72), inline inventory (206 scripts / 635 unique IDs) and boot-order check all passed. This P55 expectation correction is queued in the next exact-head run.
+
+
+## P56 title assertion update — Studio Pro candidate 23.3.112 (2026-11-26)
+- Run #991 confirmed the P55 title/observer assertion is now correct; it next stopped at the P56 test which still hard-coded the prior 23.3.111 candidate marker.
+- Updated only the P56 title-observer expectation to `23.3.112-p239-p248-studio-pro` / “CANVIO 23.3.112 — Studio Pro P239–P248 Candidate”. P56 archive preflight order, parser, integrity and P62 lineage checks remain intact.
+- A fresh exact-head workflow is pending; no regression pass is claimed from runs #989–#991.

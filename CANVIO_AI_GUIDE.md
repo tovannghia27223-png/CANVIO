@@ -4584,3 +4584,7 @@ Chạy CI thật trên GitHub cho PR #107; thử trên Chrome thật, bàn phím
 
 ### Version-bound regression note — 2026-11-26
 - P55's title observer assertion now follows the explicit candidate build marker `23.3.112-p239-p248-studio-pro`; the older 23.3.111 assertion was tied to the preceding candidate and not to the P62 feature contract. P62 lineage remains separately asserted.
+
+
+### P55/P56 version-pinned regression follow-up — 2026-11-26
+- Candidate version/title is intentionally `23.3.112-p239-p248-studio-pro`. P55 and P56 test assertions now follow this exact marker/title while retaining separate historical P62 lineage assertion and P56 archive-integrity assertions.

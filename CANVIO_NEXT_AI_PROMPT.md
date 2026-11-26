@@ -551,3 +551,9 @@ Nối tiếp P231–P236 (editor vừa khít màn hình). Người dùng muốn 
 - P242 now remaps project asset IDs on import and the browser suite performs an actual ZIP/CRC/SHA round-trip against existing CVZip.
 - P248 has a deliberate local ComfyUI model inventory scan for known `/models/{folder}` routes, persisted as metadata under the existing Shared Core project; real models/GPU inference remain manual gates.
 - Do not merge or deploy until the exact PR head has green CI and all limits remain explicit.
+
+
+## CI follow-up — P55/P56 title gate
+- Candidate version/title remains `23.3.112-p239-p248-studio-pro` / “CANVIO 23.3.112 — Studio Pro P239–P248 Candidate”.
+- P55 and P56 tests now match that candidate title. Keep their independent P62 lineage, ZIP preflight order, CRC, no-secret and restore checks unchanged.
+- Re-run exact head after P56 assertion commit, then handle the next actual failure.

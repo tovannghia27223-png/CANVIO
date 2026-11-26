@@ -1666,3 +1666,7 @@ Chạy CI thật trên GitHub cho PR #107; thử trên Chrome thật, bàn phím
 ### 23.3.112 candidate version marker
 - The canonical title/build marker is now `23.3.112-p239-p248-studio-pro` / “CANVIO 23.3.112 — Studio Pro P239–P248 Candidate”.
 - Updated the P55 version-specific title assertion; retained the independent P62 lineage assertion.
+
+
+### P55/P56 candidate title test follow-up (2026-11-26)
+- The candidate marker/title is `23.3.112-p239-p248-studio-pro`; P55 and P56 version-specific observer assertions follow it. This updates the title contract only; P55/P56 integrity and historical P62 checks are not bypassed.
