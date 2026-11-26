@@ -782,3 +782,10 @@ Chạy CI thật trên GitHub cho PR #107; thử trên Chrome thật, bàn phím
 - Toàn bộ suite trình duyệt: 61/62 PASS; còn `run-hosted-runtime-acceptance` chưa chạy trọn vì thiếu GLB fixture/runtime phải tải.
 - 38 bước workflow (khôi phục index → source contracts) chạy OK. `p133w` đạt ở lượt này nhưng từng chập chờn.
 - OPEN: GitHub CI, thiết bị thật, trình đọc màn hình.
+
+
+## P239–P248 candidate QA boundary (2026-11-26)
+
+- Candidate workflow registers all ten modules, injects them into canonical index, adds P143 parity, Node contracts and Chromium smoke. Browser tests check Project Vault mount, five-document generation, six resize formats, quoted Vietnamese CSV, SRT readback, shot-plan output, performance diagnostics and hardware profile.
+- Not proven: production Pages provisioning, Supabase collaboration/RLS, real ASR/TTS media quality, native PDF/PNG batch, arbitrary layer reflow, true musical beat accuracy, physical GPU/VRAM or full index splitting.
+- Status is candidate only until exact-head hosted Actions/browser outcomes are reviewed. P70 release gates remain open.

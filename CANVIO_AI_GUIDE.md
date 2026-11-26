@@ -4559,3 +4559,19 @@ Chạy CI thật trên GitHub cho PR #107; thử trên Chrome thật, bàn phím
 - Sửa: thanh công cụ Poster (z-index 680) nổi đè lên ô lệnh.
 - Test `tests/p237/run-p237-browser.py` (đã thêm vào workflow, đăng ký P143).
 - Còn mở: nhập nội dung chữ ngay trong lệnh (ví dụ "thêm tiêu đề ABC"), lệnh đổi màu/cỡ vẫn do CVCmd cũ xử lý; hoàn tác chỉ áp dụng Poster, Video, Pixel.
+
+
+## P239–P248 — CANVIO Studio Pro · implementation candidate (2026-11-26)
+
+- **P239** `canvio-p239-brief-pack.js` / lot239: creates five separate project documents (poster brief, social copy, slide outline, website sections and storyboard outline) under unique `documents.studioPack239_*` keys, reusing CVCreativeCore and Brand Kit. Structured content is editable data, not final rendered assets; native editor hydration remains open.
+- **P240** `canvio-p240-magic-resize.js` / lot240: six formats, safe-area metadata, constrained SVG layouts and manifest ZIP via CVZip. Not arbitrary layer-aware reflow for imported Poster documents.
+- **P241** `canvio-p241-bulk-csv.js` / lot241: 500-row CSV cap, Vietnamese, escaped quotes, quoted commas, {{column}} merge and SVG ZIP. Current parser is synchronous; dedicated Web Worker, native PNG/PDF export and Asset Library batch handoff remain open.
+- **P242** `canvio-p242-project-recovery.js` / lot242: P170 save only after directory permission is already granted; `.canvio` wraps the existing CANVIOProjectBundle portable backup/restore owner, not a new project archive schema. Native round-trip SHA proof and periodic restore acceptance remain pending.
+- **P243** `canvio-p243-web-publisher.js` / lot243: SEO gate and explicit update of an existing user-selected GitHub repo/path. PAT is supplied per click and cleared from UI; GitHub Pages must already be enabled. No Supabase contact-form backend is provisioned.
+- **P244** `canvio-p244-video-voice.js` / lot244: canonical Video Engine caption read/SRT output and browser SpeechSynthesis preview with vi-VN voices. Whisper ASR remains P49/P80; TTS preview is not a rendered audio track.
+- **P245** `canvio-p245-beat-editor.js` / lot245: local RMS transient candidates, 50 MiB audio cap and a basic shot plan. Not a trained musical beat/downbeat classifier; does not auto-mutate the canonical timeline.
+- **P246** `canvio-p246-review-collab.js` / lot246: project-local comments, up to 30 snapshots, compare metadata and portable read-only JSON export. Live share URLs, Supabase RLS, cross-user sync and E2E remote comments are not implemented.
+- **P247** `canvio-p247-performance-pwa.js` / lot247: nav/resource/inline-size diagnostics and optional install prompt via existing PWA event. Index remains monolithic; no full code split or 5×4 screenshot matrix claimed.
+- **P248** `canvio-p248-model-manager.js` / lot248: browser hardware profile and local ComfyUI inventory via loopback-only P120/P126. Never downloads/installs models; deviceMemory is not physical GPU VRAM.
+- UI attaches to existing Project Vault. Ten standalone source modules are registered in P143 and injected into canonical inline lots by candidate CI. No new SQL schema, DB, paid API, parallel timeline or asset store.
+- Status: candidate on `feat/p239-p248-studio-pro`; exact-head hosted CI/browser report required before acceptance. P70 fourteen real-world gates remain separate.

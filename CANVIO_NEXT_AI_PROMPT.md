@@ -535,3 +535,10 @@ Nối tiếp P231–P236 (editor vừa khít màn hình). Người dùng muốn 
 - Giữ giới hạn Supabase miễn phí (≈1GB file, ≈50MB/tệp); video lớn ở lại máy.
 - Mọi bước dùng theo thứ tự: parity P143 → inventory → boot-order → CI; đọc mục "Bài học" các P170/P171/P230 trước khi làm giao diện.
 - Cần người dùng chốt: Đợt A có đúng thứ tự mong muốn không; có cần P243 (token GitHub) trong Đợt A hay chuyển sang Đợt B.
+
+
+## Continue P239–P248 after candidate
+
+- Branch `feat/p239-p248-studio-pro` contains ten additive Studio Pro source modules. Read P239–P248 in CANVIO_AI_GUIDE.md before changing owners.
+- Remaining increments: P239 native editor hydration; P240 layer-aware reflow; P241 worker + PNG/PDF + Asset Library handoff; P242 project JSON restore/SHA round-trip; P243 Pages provisioning + Supabase forms; P244 ASR/TTS quality/audio render; P245 beat accuracy/timeline handoff; P246 secure Supabase RLS sharing; P247 true code splitting + screenshot matrix; P248 physical GPU/VRAM/model acceptance.
+- Never persist PAT/provider secrets in project docs, localStorage, Cloud Sync, source, tests or logs. Preserve P170, Project Vault, Video Engine and CV.assets.

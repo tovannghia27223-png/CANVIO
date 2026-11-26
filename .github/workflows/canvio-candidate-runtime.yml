@@ -872,12 +872,41 @@ jobs:
           console.log('P231–P236 standalone sources synchronized into canonical index.html');
           NODE
 
+      - name: Integrate P239–P248 Studio Pro modules into canonical index
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs=require('node:fs');
+          let html=fs.readFileSync('index.html','utf8');
+          const specs=[["canvio-p239-brief-pack.js","canvio-lot239","CVBriefPackP239"],["canvio-p240-magic-resize.js","canvio-lot240","CVMagicResizeP240"],["canvio-p241-bulk-csv.js","canvio-lot241","CVBulkP241"],["canvio-p242-project-recovery.js","canvio-lot242","CVProjectRecoveryP242"],["canvio-p243-web-publisher.js","canvio-lot243","CVWebPublisherP243"],["canvio-p244-video-voice.js","canvio-lot244","CVVideoVoiceP244"],["canvio-p245-beat-editor.js","canvio-lot245","CVBeatEditorP245"],["canvio-p246-review-collab.js","canvio-lot246","CVReviewCollabP246"],["canvio-p247-performance-pwa.js","canvio-lot247","CVPerformanceP247"],["canvio-p248-model-manager.js","canvio-lot248","CVModelManagerP248"]];
+          for(const [file,id,api] of specs){
+            const source=fs.readFileSync(file,'utf8').trim();
+            if(!source.includes(api))throw new Error(file+' API contract missing');
+            const open='<script id="'+id+'">',close='</script>',tag=open+'\\n'+source+'\\n'+close;
+            const at=html.indexOf(open);
+            if(at>=0){
+              if(html.indexOf(open,at+open.length)>=0)throw new Error(id+' duplicate embedded lot');
+              const end=html.indexOf(close,at+open.length);
+              if(end<0)throw new Error(id+' embedded lot closing tag missing');
+              html=html.slice(0,at)+tag+html.slice(end+close.length);
+            }else{
+              const end=html.lastIndexOf('</body>');
+              if(end<0)throw new Error('index.html closing body missing');
+              html=html.slice(0,end)+tag+'\\n'+html.slice(end);
+            }
+          }
+          fs.writeFileSync('index.html',html,'utf8');
+          console.log('P239–P248 source lots embedded into canonical index.html');
+          NODE
+
       - name: Extract and syntax-check integrated modules and workers
         run: |
           set -euo pipefail
           node scripts/extract-integrated-modules.mjs
           node tests/p146/run-p146-tests.cjs
-          for file in canvio-p74-p81-three-viewer.js canvio-p85-studio.js canvio-p102-background-removal.js canvio-p105-p107-depth-parallax.js canvio-p68-p70.js canvio-p72-glb-viewer.js canvio-p73-offline-site.js canvio-p82-p84-vector-pdf.js canvio-p87-cv-docx.js canvio-p90-p96.js canvio-p97-p101.js canvio-p104.js canvio-p127-duck.js canvio-p145-shader.js canvio-p119-video.js canvio-p119-website.js canvio-p153-board.js canvio-p155-scene-pack.js canvio-p159-integration.js canvio-p160-collections.js canvio-p161-spatial-workspace.js canvio-p162-reference-canvas.js canvio-p163-character-continuity.js canvio-p164-shotlist.js canvio-p165-ai-workflow.js canvio-p166-landing-studio.js canvio-p159u-dock.js canvio-p167-blocking.js canvio-p168-motion.js canvio-p169-character-studio.js canvio-p170-storage-hub.js canvio-p171-nav-drawer.js canvio-p231-editor-shell.js canvio-p232-poster-shell.js canvio-p233-video-shell.js canvio-p234-native-studio-shell.js canvio-p235-editor-inputs.js canvio-p236-editor-experience.js assets/canvio-rmbg-worker.js assets/canvio-depth-worker.js assets/canvio-whisper-worker.js canvio-p132-pdf-import.js; do node --check "$file"; done
+          node tests/p239-248/run-p239-248-tests.cjs
+          for file in canvio-p74-p81-three-viewer.js canvio-p85-studio.js canvio-p102-background-removal.js canvio-p105-p107-depth-parallax.js canvio-p68-p70.js canvio-p72-glb-viewer.js canvio-p73-offline-site.js canvio-p82-p84-vector-pdf.js canvio-p87-cv-docx.js canvio-p90-p96.js canvio-p97-p101.js canvio-p104.js canvio-p127-duck.js canvio-p145-shader.js canvio-p119-video.js canvio-p119-website.js canvio-p153-board.js canvio-p155-scene-pack.js canvio-p159-integration.js canvio-p160-collections.js canvio-p161-spatial-workspace.js canvio-p162-reference-canvas.js canvio-p163-character-continuity.js canvio-p164-shotlist.js canvio-p165-ai-workflow.js canvio-p166-landing-studio.js canvio-p159u-dock.js canvio-p167-blocking.js canvio-p168-motion.js canvio-p169-character-studio.js canvio-p170-storage-hub.js canvio-p171-nav-drawer.js canvio-p231-editor-shell.js canvio-p232-poster-shell.js canvio-p233-video-shell.js canvio-p234-native-studio-shell.js canvio-p235-editor-inputs.js canvio-p236-editor-experience.js canvio-p239-brief-pack.js canvio-p240-magic-resize.js canvio-p241-bulk-csv.js canvio-p242-project-recovery.js canvio-p243-web-publisher.js canvio-p244-video-voice.js canvio-p245-beat-editor.js canvio-p246-review-collab.js canvio-p247-performance-pwa.js canvio-p248-model-manager.js assets/canvio-rmbg-worker.js assets/canvio-depth-worker.js assets/canvio-whisper-worker.js canvio-p132-pdf-import.js; do node --check "$file"; done
 
       - name: P143 standalone source and canonical lot parity audit
         shell: bash
@@ -1119,6 +1148,7 @@ jobs:
           /tmp/canvio-playwright/bin/python tests/p235/run-p235-browser.py
           /tmp/canvio-playwright/bin/python tests/p236/run-p236-browser.py
           /tmp/canvio-playwright/bin/python tests/p237/run-p237-browser.py
+          /tmp/canvio-playwright/bin/python tests/p239-248/run-p239-248-browser.py
           /tmp/canvio-playwright/bin/python tests/p160/run-p160-166-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p114n-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p150-browser.py

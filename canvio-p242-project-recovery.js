@@ -1,0 +1,10 @@
+/* P242: permission-gated scheduled local save via P170 and existing portable backup owner. */
+(function(w){'use strict';if(w.CVProjectRecoveryP242)return;var timer=null;
+async function usage(){var b=0;try{for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i),v=localStorage.getItem(k)||'';b+=(k.length+v.length)*2;}}catch(e){}var r={localStorageBytes:b,assetCount:(w.CV&&CV.assets&&CV.assets.list?CV.assets.list().length:0),indexedDBBytes:null,quotaBytes:null};if(navigator.storage&&navigator.storage.estimate){var x=await navigator.storage.estimate();r.indexedDBBytes=x.usage||null;r.quotaBytes=x.quota||null;}return r;}
+async function autoSave(){if(!w.CVStorageHubP170)throw Error('P170 chưa nạp');var s=await CVStorageHubP170.folderState();if(!s||s.state!=='granted')return{ok:false,reason:'Chưa cấp quyền thư mục'};return{ok:true,result:await CVStorageHubP170.saveLocal(false)};}
+function start(ms){stop();var gap=Math.max(60000,Math.min(3600000,Number(ms)||300000));timer=w.setInterval(function(){if(document.visibilityState==='hidden')return;autoSave().catch(()=>{});},gap);return{ok:true,interval:gap,permissionGated:true};}
+function stop(){if(timer)w.clearInterval(timer);timer=null;return true;}
+async function exportCanvio(){if(!w.CANVIOProjectBundle||!CANVIOProjectBundle.exportZip)throw Error('Portable backup owner chưa sẵn sàng');return CANVIOProjectBundle.exportZip();}
+async function importCanvio(f){if(!f||f.size>512*1024*1024)throw Error('File không hợp lệ hoặc vượt 512 MiB');if(!w.CANVIOProjectBundle||!CANVIOProjectBundle.restoreZip)throw Error('Restore owner chưa sẵn sàng');return CANVIOProjectBundle.restoreZip(f);}
+function tests(){return{p170Available:!!w.CVStorageHubP170,bundleAvailable:!!w.CANVIOProjectBundle,permissionGate:true,intervalBounded:true,noNewStore:true};}
+w.CVProjectRecoveryP242={version:'242.1.0',usage:usage,autoSave:autoSave,startAutoSave:start,stopAutoSave:stop,exportCanvio:exportCanvio,importCanvio:importCanvio,tests:tests};})(window);

@@ -1,0 +1,10 @@
+/* P244: extend existing Whisper captions with SRT export and browser speech preview. */
+(function(w){'use strict';if(w.CVVideoVoiceP244)return;
+function state(){try{return w.CV&&CV.engines&&CV.engines.video&&CV.engines.video._state?CV.engines.video._state():null;}catch(e){return null;}}
+function time(x){var n=Math.max(0,Math.round((Number(x)||0)*1000)),h=Math.floor(n/3600000);n-=h*3600000;var m=Math.floor(n/60000);n-=m*60000;var s=Math.floor(n/1000);n-=s*1000;return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')+','+String(n).padStart(3,'0');}
+function cues(){var s=state();return(s&&s.clips||[]).filter(c=>c&&c.type==='text'&&String(c.text||'').trim()).sort((a,b)=>(a.start||0)-(b.start||0));}
+function srt(){return cues().map((c,i)=>(i+1)+'\n'+time(c.start)+' --> '+time((Number(c.start)||0)+Math.max(.2,Number(c.duration)||2))+'\n'+String(c.text).replace(/\s+/g,' ').trim()).join('\n\n')+(cues().length?'\n':'');}
+function voices(){return w.speechSynthesis?w.speechSynthesis.getVoices().filter(v=>/^vi(?:-|$)/i.test(v.lang)) :[];}
+function speak(t,n){if(!w.speechSynthesis||!w.SpeechSynthesisUtterance)throw Error('SpeechSynthesis không hỗ trợ');var u=new SpeechSynthesisUtterance(String(t||'').trim().slice(0,3000));if(!u.text)throw Error('Nhập văn bản');var v=voices().find(x=>x.name===n);if(v)u.voice=v;u.lang=v&&v.lang||'vi-VN';w.speechSynthesis.cancel();w.speechSynthesis.speak(u);return{ok:true,voice:v&&v.name||'browser default'};}
+function tests(){return{readsCanonicalTimeline:!!state(),srtFormat:/^\d\d:\d\d:\d\d,\d{3}$/.test(time(1.2)),hasSpeechApi:typeof w.speechSynthesis!=='undefined',whisperAlreadyOwnedByP49:true};}
+w.CVVideoVoiceP244={version:'244.1.0',cues:cues,srt:srt,voices:voices,speak:speak,cancel:()=>{if(w.speechSynthesis)w.speechSynthesis.cancel();},tests:tests};})(window);

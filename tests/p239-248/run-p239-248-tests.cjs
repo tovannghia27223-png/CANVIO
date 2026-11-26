@@ -1,0 +1,21 @@
+const fs=require('node:fs'),vm=require('node:vm'),path=require('node:path');
+const root=path.resolve(__dirname,'../..'),files=["canvio-p239-brief-pack.js","canvio-p240-magic-resize.js","canvio-p241-bulk-csv.js","canvio-p242-project-recovery.js","canvio-p243-web-publisher.js","canvio-p244-video-voice.js","canvio-p245-beat-editor.js","canvio-p246-review-collab.js","canvio-p247-performance-pwa.js","canvio-p248-model-manager.js"],project={id:'p-test',name:'Test',brief:'HR',documents:{},assetIds:[]};
+const core={get active(){return project;},create(){return project;},capture(){return true;}};
+const CV={engines:{video:{_state(){return{clips:[{type:'text',text:'Xin chào',start:1,duration:2}]};}}},assets:{list(){return[];}}};
+const doc={readyState:'loading',scripts:[],documentElement:{},addEventListener(){},getElementById(){return null;},createElement(){return{getContext(){return null;}};}};
+class DP{parseFromString(){return{querySelector(q){return q==='title'?{textContent:'T'}:q.indexOf('description')>=0?{content:'D'}:q==='h1'?{textContent:'H'}:null;},querySelectorAll(){return[];}};}}
+const win={CVCreativeCore:core,CV,addEventListener(){},setTimeout,clearTimeout,setInterval,clearInterval,getComputedStyle(){return{getPropertyValue(){return'#F83E9F';}}},speechSynthesis:{getVoices(){return[];},cancel(){},speak(){}},SpeechSynthesisUtterance:function(t){this.text=t;},performance:{getEntriesByType(){return[];}},localStorage:{length:0,key(){return null;},getItem(){return null;}},URL,Blob};
+const ctx={window:win,document:doc,navigator:{deviceMemory:8,hardwareConcurrency:4,storage:null,serviceWorker:null},DOMParser:DP,Blob,URL,Uint8Array,Array,Set,Map,Date,Math,Promise,JSON,Object,String,Number,RegExp,Error,TextEncoder,fetch:async()=>({ok:false,status:404,json:async()=>({})}),console};
+for(const f of files){const s=fs.readFileSync(path.join(root,f),'utf8');new vm.Script(s,{filename:f});vm.runInNewContext(s,ctx,{filename:f});}
+const checks=[];const ck=(n,v)=>checks.push({name:n,pass:!!v});
+const pack=win.CVBriefPackP239.build({name:'HR',brief:'Hiring'});ck('P239 five separate project documents',pack.ok&&pack.count===5&&pack.documents.poster.id in project.documents);
+const sizes=win.CVMagicResizeP240.build({title:'HR'});ck('P240 six valid formats',sizes.length===6&&sizes.every(x=>x.safeArea.width>0&&x.safeArea.height>0));
+const csv=win.CVBulkP241.process('name,role,note\n"Nguyễn An",HR,"Talent, Acquisition"\nBình,Finance,"Nói ""chào"""',{title:'{{name}}',body:'{{role}}'});ck('P241 Vietnamese quoted CSV',csv.items.length===2&&csv.items[0].title==='Nguyễn An'&&csv.items[0].record.note==='Talent, Acquisition'&&csv.items[1].record.note==='Nói "chào"');
+win.CVStorageHubP170={folderState:async()=>({state:'none'}),saveLocal:async()=>({})};win.CANVIOProjectBundle={exportZip:async()=>new Blob(['x']),restoreZip:async()=>({ok:true})};ck('P242 reuses P170 and bundle owner',win.CVProjectRecoveryP242.tests().p170Available&&win.CVProjectRecoveryP242.tests().bundleAvailable);
+ck('P243 SEO title/H1/alt gate',win.CVWebPublisherP243.tests().seoPass&&win.CVWebPublisherP243.tests().missingAltDetected);
+ck('P244 canonical SRT timeline export',win.CVVideoVoiceP244.srt().includes('Xin chào')&&win.CVVideoVoiceP244.srt().includes('00:00:01,000'));
+ck('P245 shot plan maps times',win.CVBeatEditorP245.plan({beats:[{time:0,strength:2}]})[0].time===0);
+ck('P246 local comments and snapshots',win.CVReviewCollabP246.tests().commentStored&&win.CVReviewCollabP246.tests().snapshotStored);
+ck('P247 performance diagnostic',win.CVPerformanceP247.measure().indexMonolithic===true);
+ck('P248 bounded device profile',/^(conservative|balanced|capable)$/.test(win.CVModelManagerP248.hardware().profile));
+const fail=checks.filter(x=>!x.pass);console.log(JSON.stringify({suite:'P239-P248 Node contracts',passed:checks.length-fail.length,total:checks.length,failed:fail.map(x=>x.name)},null,2));if(fail.length)process.exit(1);
