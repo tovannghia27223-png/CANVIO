@@ -820,3 +820,10 @@ Chạy CI thật trên GitHub cho PR #107; thử trên Chrome thật, bàn phím
 - Run #994 passed build/syntax, P143, P47–P70, integrated source contracts and P107 ZIP roundtrip. Chromium suites P231–P237 also passed, including P237 37/37.
 - The new Studio Pro browser smoke then timed out waiting for `#cv240-card` after `#cvstudio-pro-p239` had appeared. The shared UI used one broad try/catch and a short post-root retry window, so one mount exception could stop remaining feature panels without diagnostics.
 - Corrected the P239 container to call the Studio Pro mount API when it is created/reused. The UI now mounts each panel independently, records per-module errors and presence in `CVStudioProUI239248Diagnostics`, retries while any card is missing, and exposes `mountNow()` for route-driven re-entry. Chromium harness now explicitly invokes that idempotent mount and prints diagnostics if a required panel is absent.
+
+
+## P239–P248 Chromium mount root cause and repair — run #995 (2026-11-26)
+- Run #994: all source/Node/P143/P47–P70/integrated-contract steps passed; browser reached P239 after P231–P237 suites passed, then timed out on `#cv240-card`.
+- Run #995: source/Node/P143/P47–P70/integrated-contract stages passed with the independent `mountNow()` retry/diagnostics, but the browser step was still running at the point this update was written.
+- Root cause confirmed by code review: the shared UI helper `addSection(id, html)` appended the generated panel but never assigned `n.id = id`. The panels were created without the selectors used by the browser smoke and repeat mounts could append duplicates.
+- Fix: assign the requested ID before append, return an existing element by ID, and guard a missing root separately. Browser suite now verifies all nine diagnostic cards, zero mount errors and exactly one element for every `cv240-card` … `cv248-card` ID.

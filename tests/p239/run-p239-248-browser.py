@@ -23,6 +23,8 @@ with sync_playwright() as p:
   raise
  page.locator('#cv239-brief').fill('Chiến dịch tuyển dụng nhân tài cho doanh nghiệp Việt Nam')
  page.locator('#cv239-build').click();page.wait_for_timeout(300)
+ ck('Studio Pro mount diagnostics report all nine panels without errors',page.evaluate("(()=>{const r=CVStudioProUI239248Diagnostics;return !!r&&r.ok&&Object.values(r.cards).every(Boolean)&&r.errors.length===0})()"));
+ ck('Studio Pro panel IDs are unique',page.evaluate("['cv240-card','cv241-card','cv242-card','cv243-card','cv244-card','cv245-card','cv246-card','cv247-card','cv248-card'].every(id=>document.querySelectorAll('#'+id).length===1)"));
  ck('P239 generates five project-scoped editable documents',page.evaluate("(()=>{const p=CVCreativeCore.active.documents.briefPack;return !!p&&Object.keys(p.documents).length===5&&['poster','social','slides','website','storyboard'].every(k=>!!p.documents[k])})()"))
  ck('P240 produces six constrained formats',page.evaluate("CVMagicResizeP240.buildSet(CVBriefPackP239.read().documents.poster).length===6"))
  ck('P241 parses Vietnamese CSV and quoted commas',page.evaluate("CVBulkP241.parseCSV('name,role\\n\\\"Nguyễn, A\\\",HR').rows[0].name==='Nguyễn, A'"))

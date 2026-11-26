@@ -4598,3 +4598,8 @@ Chạy CI thật trên GitHub cho PR #107; thử trên Chrome thật, bàn phím
 ### P239–P248 mount retry hardening — 2026-11-26
 - P239 now calls the idempotent Studio Pro UI mount when the Project Vault container is created or reused. The shared UI mounts P240–P248 independently, exposes `mountNow()`, records per-module card presence/errors, and retries until every module card appears.
 - Run #994 confirmed P231–P237 browser tests all passed, then timed out waiting for P240 after P239 existed. The shared try/catch had hidden the individual mount failure; the revised diagnostics surface the exact failing module.
+
+
+### P239–P248 root cause fix — 2026-11-26
+- The shared Studio Pro `addSection` helper now assigns `n.id=id` before appending. It first returns an existing panel to keep re-entry idempotent, and only returns null when the Project Vault tools root is not ready.
+- Chromium acceptance now checks the diagnostics object reports all nine panels mounted with zero errors and verifies each panel ID occurs exactly once.

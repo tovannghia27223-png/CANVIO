@@ -569,3 +569,9 @@ Nối tiếp P231–P236 (editor vừa khít màn hình). Người dùng muốn 
 - Exact failure: P239 projectVault card mounted, but Chromium timed out waiting for P240; previous shared UI start swallowed exceptions across all mount calls.
 - P239 now invokes `CVStudioProUI239248.mountNow()` when the container is created/reused. UI mount calls each P240–P248 independently, captures errors/cards into `CVStudioProUI239248Diagnostics`, exposes `mountNow()`, and retries until all cards appear.
 - Browser smoke now explicitly calls `mountNow()` after opening Project Vault and prints the diagnostics object if cards are still absent. Keep assertions; do not skip cards to green the build.
+
+
+## P239–P248 final mount identity correction
+- Root cause: `addSection(id, html)` failed to assign the passed ID to the generated element. Fixed by assigning `n.id=id` before appending, returning any existing element by ID and not appending duplicate cards on retry.
+- Chromium browser test now checks all nine P240–P248 card IDs are unique and the shared diagnostics report `ok:true`, all cards present and no mount errors.
+- Workflow artifact, manifest, acceptance matrix and patch notes now use `23.3.112-p239-p248-studio-pro`. Base marker `23.3.111-github-runtime-ci` is deliberately kept for restoring the verified mainline source before candidate promotion.

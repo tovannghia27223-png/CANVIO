@@ -1,4 +1,4 @@
-name: CANVIO 23.3.111 — hosted runtime and integration verification
+name: CANVIO 23.3.112 — hosted runtime and integration verification
 
 on:
   push:
@@ -1232,7 +1232,7 @@ jobs:
           ROADMAP
           fi
           cat > CANVIO_FINAL_ACCEPTANCE_MATRIX.md <<'MATRIX'
-          # CANVIO 23.3.111 final acceptance matrix
+          # CANVIO 23.3.112 Studio Pro final acceptance matrix
 
           | Gate | Automated evidence | Current acceptance boundary |
           |---|---|---|
@@ -1251,6 +1251,16 @@ jobs:
           | P163.1.1 visible character-profile labels | P169 Chromium verifies visible labels for existing P163 profile controls, eight labelled Character Studio fields, Shared Core profile round-trip, preview/save/reset and mobile overflow; P143 source parity | Automated label/layout checks are not WCAG certification; keyboard, screen reader, 200% zoom and physical-device review remain manual. |
           | P161.2 / P74.1 GLB camera-pose replay | Existing Three.js r187 viewer applies and reads back yaw/pitch/FOV; hosted GLB fixture replays P161 preset through Asset Library with nonzero X/Y/Z; OrbitControls damping flush; same-origin GLB and Draco/Meshopt/KTX2 decoder fixtures | Complex animated/multi-camera production GLBs, physical GPU/frame rate and target-device visual review remain manual. |
           | P166.2 brief-to-Website Engine handoff | P160–P166 Chromium 32/32; delayed lazy-editor Node test; P131 sanitized body inserted into existing GrapesJS owner, scoped base/mobile rules in canonical CSS Manager, Shared Core metadata and native Website Engine save; no page errors | Output is a static landing page. Backend form submission, CRM, hosting/live publishing and authored customer Website project review are not included. |
+          | P239 Brief Pack | Chromium/Node verifies five project-scoped structured documents | Data documents with native editor routes; semantic poster/slide rendering remains a follow-up |
+          | P240 Magic Resize | Six bounded sizes, safe inset, collision report and SVG ZIP path | No semantic reflow of every complex design group |
+          | P241 CSV Data Merge | Bounded 500-row UTF-8/quoted CSV and placeholder merge | Current bulk output is SVG; batch PNG/PDF remain open |
+          | P242 .canvio bundle | Stored-ZIP CRC32, project SHA-256, secret-key scrub, explicit confirmation and bounded asset/project payload | Supported project documents/assets only; does not replace full IndexedDB/P170 portable backup |
+          | P243 Website Publish | SEO gate and explicit GitHub Contents API upload; token kept only in input/memory | Repo/branch must exist; Pages source settings and contact-form backend remain manual/open |
+          | P244 Caption & Voice | Canonical Video Engine text cues to SRT; browser SpeechSynthesis | Whisper quality and voice inventory require real Vietnamese/English review |
+          | P245 Beat Sync | Local onset proxy with 40 MiB / 5 min / 96 kHz / stereo bounds; non-destructive plan | Approximate onset suggestions, not a music-grade beat grid or auto timeline edit |
+          | P246 Review | Project-local pinned comments, snapshots and read-only share payload | Not Supabase multi-user/RLS/E2E cloud collaboration |
+          | P247 Performance/PWA | Navigation/resource metrics and existing Service Worker readiness | Full main-index code splitting and viewport/editor performance matrix remain open |
+          | P248 Local Models | Metadata catalogue, bounded SHA for small files and explicit loopback ComfyUI model inventory | No model downloads, model inference or physical GPU certification |
           | P70 Stable release | Fourteen fail-closed manual gates | releaseCertified:false until every gate has reviewed production evidence |
 
           ## Required manual gates
@@ -1283,10 +1293,10 @@ jobs:
           | Integrated CI | Exact same-tree run #836 PASS 66/66 | P143, full HTML audit, P47–P70, Node contracts, P107 ZIP round-trip and hosted Chromium | Post-merge #838 is tracked independently; P70 fourteen manual gates remain pending |
           TRACKER
           fi
-          if ! grep -q 'CANVIO 23.3.111 hosted runtime handoff' CANVIO_HANDOFF.md; then
+          if ! grep -q 'CANVIO 23.3.112 Studio Pro P239–P248 handoff' CANVIO_HANDOFF.md; then
             cat >> CANVIO_HANDOFF.md <<'HANDOFF'
 
-          ## CANVIO 23.3.111 hosted runtime handoff
+          ## CANVIO 23.3.112 Studio Pro P239–P248 handoff
 
           The candidate is built and verified by the hosted runtime workflow. Runtime vendor binaries are pinned and same-origin; model weights stay outside git and download only when a user runs the feature. Review hosted reports before promotion. Main-branch Pages auto-deploy is disabled; deployment remains manual and requires a certified P70 manifest. This version does not claim physical GPU, two-device Project Vault sync or Stable release acceptance.
           HANDOFF
@@ -1304,7 +1314,7 @@ jobs:
           NEXT
           fi
           cat > CANVIO_PATCH_NOTES.md <<'PATCH'
-          # CANVIO 23.3.111 patch notes
+          # CANVIO 23.3.112 Studio Pro patch notes
 
           - Added GitHub-hosted build and acceptance for candidate source restoration, pinned vendor runtimes, module extraction, source contracts and runtime inference.
           - Added local same-origin runtime packages and SHA-256 manifests for Three.js r187, Draco, Meshopt, Basis/KTX2, PostFX, OpenCV, dotLottie, Rive, Transformers.js and ONNX WASM.
@@ -1317,6 +1327,9 @@ jobs:
           - Added P163.1.1 visible labels for existing character-profile controls, preserving Shared Core, Asset Library and Storyboard ownership; P169 browser coverage checks visible field labels and profile round-trip.
           - Added P161.2/P74.1 saved GLB camera-pose replay in the existing Three.js r187 viewer, including yaw/pitch/FOV/X-Y-Z, OrbitControls damping flush and same-origin GLB fixture checks.
           - Added P166.2 brief-to-GrapesJS Website Engine handoff through P131 sanitization, scoped responsive CSS and the canonical save owner, with lazy-engine readiness and Chromium integration tests.
+          - P239–P248 Studio Pro adds brief-to-five-doc project packs, six-size SVG resize, bounded CSV merge, secure .canvio portable project bundle, SEO-gated GitHub website publish, SRT/browser TTS, local beat suggestions, project-local review snapshots/share links, PWA/performance telemetry and local ComfyUI model inventory.
+          - P242 filters token/API-key/password/secret/credential fields and caps exported project/assets; P245 bounds audio decoding to 40 MiB, five minutes, 96 kHz and stereo.
+          - P241 bulk output remains SVG (not PNG/PDF); P246 is local-only (not Supabase collaboration); P247 does not code-split the entire index; P248 does not download models or certify GPU inference.
           - Stable release remains fail-closed at P70; no physical GPU or two-device certification is implied.
           PATCH
           if ! grep -q '## 23.3.111 integrated acceptance — P132.1, P163.1.1, P161.2 and P166.2' CANVIO_AI_GUIDE.md; then
@@ -1378,7 +1391,7 @@ jobs:
           }
           walk('.');files.sort((a,b)=>a.path.localeCompare(b.path));
           const index=files.find(x=>x.path==='index.html');
-          const manifest={format:'CANVIO_DELIVERY_MANIFEST',schemaVersion:2,candidate:'23.3.111-github-runtime-ci',generatedAt:new Date().toISOString(),hashAlgorithm:'SHA-256',indexSha256:index.sha256,indexBytes:index.bytes,fileCount:files.length,releaseCertified:false,releaseStatus:'BLOCKED_PENDING_REAL_WORLD_ACCEPTANCE',p70ManualGates:{total:14,pending:14,passed:0},files};
+          const manifest={format:'CANVIO_DELIVERY_MANIFEST',schemaVersion:2,candidate:'23.3.112-p239-p248-studio-pro',generatedAt:new Date().toISOString(),hashAlgorithm:'SHA-256',indexSha256:index.sha256,indexBytes:index.bytes,fileCount:files.length,releaseCertified:false,releaseStatus:'BLOCKED_PENDING_REAL_WORLD_ACCEPTANCE',p70ManualGates:{total:14,pending:14,passed:0},files};
           fs.writeFileSync('CANVIO_MANIFEST.json',JSON.stringify(manifest,null,2)+'\n');
           console.log('Manifest refreshed:',files.length,'files; index SHA-256:',index.sha256);
           NODE
@@ -1994,7 +2007,7 @@ jobs:
           walk('.');files.sort((a,b)=>a.path.localeCompare(b.path));
           const index=files.find(x=>x.path==='index.html');
           if(!index)throw new Error('Canonical index.html missing from delivery tree');
-          const manifest={format:'CANVIO_DELIVERY_MANIFEST',schemaVersion:2,candidate:'23.3.111-github-runtime-ci',generatedAt:new Date().toISOString(),hashAlgorithm:'SHA-256',indexSha256:index.sha256,indexBytes:index.bytes,fileCount:files.length,releaseCertified:false,releaseStatus:'BLOCKED_PENDING_REAL_WORLD_ACCEPTANCE',p70ManualGates:{total:14,pending:14,passed:0},files};
+          const manifest={format:'CANVIO_DELIVERY_MANIFEST',schemaVersion:2,candidate:'23.3.112-p239-p248-studio-pro',generatedAt:new Date().toISOString(),hashAlgorithm:'SHA-256',indexSha256:index.sha256,indexBytes:index.bytes,fileCount:files.length,releaseCertified:false,releaseStatus:'BLOCKED_PENDING_REAL_WORLD_ACCEPTANCE',p70ManualGates:{total:14,pending:14,passed:0},files};
           fs.writeFileSync('CANVIO_MANIFEST.json',JSON.stringify(manifest,null,2)+String.fromCharCode(10));
           console.log('Final manifest refreshed after all documentation:',files.length,'files; index SHA-256:',index.sha256);
           NODE
@@ -2033,16 +2046,16 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p dist
-          zip -qr dist/CANVIO_23.3.111_GITHUB_RUNTIME_VERIFIED_SOURCE_2026-11-18.zip . -x '.git/*' 'dist/*' '.canvio/candidate/*' 'node_modules/*'
-          sha256sum dist/CANVIO_23.3.111_GITHUB_RUNTIME_VERIFIED_SOURCE_2026-11-18.zip > dist/CANVIO_23.3.111_GITHUB_RUNTIME_VERIFIED_SOURCE_2026-11-18.zip.sha256
+          zip -qr dist/CANVIO_23.3.112_STUDIO_PRO_SOURCE_2026-11-26.zip . -x '.git/*' 'dist/*' '.canvio/candidate/*' 'node_modules/*'
+          sha256sum dist/CANVIO_23.3.112_STUDIO_PRO_SOURCE_2026-11-26.zip > dist/CANVIO_23.3.112_STUDIO_PRO_SOURCE_2026-11-26.zip.sha256
 
       - name: Upload candidate package and acceptance evidence
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
         with:
-          name: CANVIO-23.3.111-GITHUB-RUNTIME-VERIFIED-${{ github.run_number }}
+          name: CANVIO-23.3.112-STUDIO-PRO-${{ github.run_number }}
           path: |
-            dist/CANVIO_23.3.111_GITHUB_RUNTIME_VERIFIED_SOURCE_2026-11-18.zip
-            dist/CANVIO_23.3.111_GITHUB_RUNTIME_VERIFIED_SOURCE_2026-11-18.zip.sha256
+            dist/CANVIO_23.3.112_STUDIO_PRO_SOURCE_2026-11-26.zip
+            dist/CANVIO_23.3.112_STUDIO_PRO_SOURCE_2026-11-26.zip.sha256
             CANVIO_MANIFEST.json
             tests/hosted/*.json
             tests/p143/inline-source-inventory.json
@@ -2064,5 +2077,5 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add -A
           if git diff --cached --quiet; then echo "No generated candidate changes to commit."; exit 0; fi
-          git commit -m "build: commit verified CANVIO 23.3.111 runtimes and QA [skip ci]"
+          git commit -m "build: commit verified CANVIO 23.3.112 Studio Pro and QA [skip ci]"
           git push origin "HEAD:${GITHUB_REF_NAME}"

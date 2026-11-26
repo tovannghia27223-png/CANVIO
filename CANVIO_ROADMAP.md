@@ -1681,3 +1681,8 @@ Chạy CI thật trên GitHub cho PR #107; thử trên Chrome thật, bàn phím
 ### P239–P248 browser mount repair — 2026-11-26
 - Run #994 browser regression passed through P237, then failed to find `#cv240-card` after P239 appeared. The UI's single broad try/catch could silently stop the remaining mounts.
 - The shared mount is now per-module guarded and diagnostic, called directly from P239 container creation/re-entry, and exposed as idempotent `mountNow()`. The browser smoke calls it after route navigation and prints diagnostics on failure.
+
+
+### P239–P248 panel identity and delivery candidate — 2026-11-26
+- Root cause in run #994/#995 browser attempts: P240–P243 cards were appended without the IDs expected by UI selectors; repaired by assigning the ID before append and keeping panel creation idempotent.
+- Browser acceptance now verifies nine panel IDs, all mount diagnostics, and no duplicates. Artifact, manifest and generated acceptance matrix are aligned to candidate `23.3.112-p239-p248-studio-pro`.
