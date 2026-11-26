@@ -883,7 +883,7 @@ jobs:
           for(const [file,id,api] of specs){
             const source=fs.readFileSync(file,'utf8').trim();
             if(!source.includes(api))throw new Error(file+' API contract missing');
-            const open='<script id="'+id+'">',close='</script>',tag=open+'\\n'+source+'\\n'+close;
+            const open='<script id="'+id+'">',close='</script>',tag=open+'\n'+source+'\n'+close;
             const at=html.indexOf(open);
             if(at>=0){
               if(html.indexOf(open,at+open.length)>=0)throw new Error(id+' duplicate embedded lot');
@@ -893,7 +893,7 @@ jobs:
             }else{
               const end=html.lastIndexOf('</body>');
               if(end<0)throw new Error('index.html closing body missing');
-              html=html.slice(0,end)+tag+'\\n'+html.slice(end);
+              html=html.slice(0,end)+tag+'\n'+html.slice(end);
             }
           }
           fs.writeFileSync('index.html',html,'utf8');
