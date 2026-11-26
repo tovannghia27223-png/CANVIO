@@ -4588,3 +4588,8 @@ Chạy CI thật trên GitHub cho PR #107; thử trên Chrome thật, bàn phím
 
 ### P55/P56 version-pinned regression follow-up — 2026-11-26
 - Candidate version/title is intentionally `23.3.112-p239-p248-studio-pro`. P55 and P56 test assertions now follow this exact marker/title while retaining separate historical P62 lineage assertion and P56 archive-integrity assertions.
+
+
+### P242/P245 safety bounds — 2026-11-26
+- P242 sanitizes project metadata recursively before export and reports excluded secret-key counts, with bounded project/asset sizes. Project bundle is portable ZIP of supported project JSON/assets, not a replacement for full Project Vault IndexedDB restore.
+- P245 limits local audio analysis to 40 MiB / five minutes / 96 kHz / stereo maximum; CPU analysis remains approximate.

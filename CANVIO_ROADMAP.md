@@ -1670,3 +1670,9 @@ Chạy CI thật trên GitHub cho PR #107; thử trên Chrome thật, bàn phím
 
 ### P55/P56 candidate title test follow-up (2026-11-26)
 - The candidate marker/title is `23.3.112-p239-p248-studio-pro`; P55 and P56 version-specific observer assertions follow it. This updates the title contract only; P55/P56 integrity and historical P62 checks are not bypassed.
+
+
+### P242/P245 reliability follow-up — 2026-11-26
+- P242 excludes token-like and credential field names from the exported project JSON and imposes per-asset, total-asset and project JSON budgets; import remains confirmed and integrity-checked.
+- P245 limits local beat analysis to 40 MiB / 5 minutes / 96 kHz / 2 channels. The beat map is an editable suggestion, not automatic timeline mutation.
+- Hosted run #993 reached P239 smoke after P231–P237 suites passed, but the new test file stopped on Python SyntaxError. A corrected exact-head run is pending.

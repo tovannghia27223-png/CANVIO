@@ -6,11 +6,32 @@ function u8(s){return new TextEncoder().encode(s);}
 function hex(b){return Array.from(new Uint8Array(b)).map(function(x){return x.toString(16).padStart(2,'0');}).join('');}
 async function sha(data){var b=data instanceof Blob?await data.arrayBuffer():data instanceof ArrayBuffer?data:u8(String(data)).buffer;return hex(await crypto.subtle.digest('SHA-256',b));}
 function safeName(s){return String(s||'').replace(/\\/g,'/').replace(/^\/+|\/+$/g,'').split('/').every(function(x){return x&&x!=='.'&&x!=='..';});}
+function scrubSecrets(value, counter) {
+ if(!value||typeof value!=='object')return value;
+ if(Array.isArray(value))return value.map(function(x){return scrubSecrets(x,counter);});
+ var out={};
+ Object.keys(value).forEach(function(key){
+  if(/apikey|access.?token|refresh.?token|authorization|password|secret|credential|private.?key|(^|[^a-z])token($|[^a-z])/i.test(key)){counter.count++;return;}
+  out[key]=scrubSecrets(value[key],counter);
+ });
+ return out;
+}
+function sanitizeProject(source){
+ var counter={count:0},copy=JSON.parse(JSON.stringify(source||{})),safe=scrubSecrets(copy,counter);
+ return{project:safe,excludedSecretFields:counter.count};
+}
 async function exportBundle(){
  var p=project();if(!p)throw new Error('Chưa có dự án đang mở.');
- var payload={format:'CANVIO_PROJECT',version:1,project:JSON.parse(JSON.stringify(p)),assets:[]},assets=w.CV&&CV.assets&&CV.assets.list?CV.assets.list():[];
- for(var a of assets.slice(0,100)){if(!a||!/^data:/.test(a.data||'')||a.data.length>12*1024*1024)continue;var blob=await fetch(a.data).then(function(r){return r.blob();}),hash=await sha(blob);payload.assets.push({id:a.id,name:a.name,mime:a.mime||blob.type,sha256:hash,data:a.data});}
- var body=JSON.stringify(payload),manifest={format:'CANVIO_PROJECT_BUNDLE',version:1,projectId:p.id,sha256:await sha(body),assetCount:payload.assets.length};
+ var clean=sanitizeProject(p),payload={format:'CANVIO_PROJECT',version:1,project:clean.project,excludedSecretFields:clean.excludedSecretFields,assets:[]},assets=w.CV&&CV.assets&&CV.assets.list?CV.assets.list():[],assetBytes=0,skippedAssets=0;
+ for(var a of assets.slice(0,100)){
+  if(!a||!/^data:/.test(a.data||'')||a.data.length>12*1024*1024){skippedAssets++;continue;}
+  var blob=await fetch(a.data).then(function(r){return r.blob();});
+  if(assetBytes+blob.size>14*1024*1024){skippedAssets++;continue;}
+  var hash=await sha(blob);payload.assets.push({id:a.id,name:a.name,mime:a.mime||blob.type,sha256:hash,data:a.data});assetBytes+=blob.size;
+ }
+ var body=JSON.stringify(payload);
+ if(new TextEncoder().encode(body).byteLength>25*1024*1024)throw new Error('Project JSON vượt 25 MiB; giảm dung lượng hoặc xuất bớt tài nguyên rồi thử lại.');
+ var manifest={format:'CANVIO_PROJECT_BUNDLE',version:1,projectId:p.id,sha256:await sha(body),assetCount:payload.assets.length,skippedAssets:skippedAssets,excludedSecretFields:clean.excludedSecretFields};
  if(!w.CVZip||!CVZip.build)throw new Error('CVZip hiện có chưa sẵn sàng.');
  return CVZip.build([{name:'manifest.json',data:JSON.stringify(manifest)},{name:'project.json',data:body}]);
 }
@@ -65,6 +86,6 @@ async function startAutoSave(interval){
  autoTimer=w.setInterval(function(){if(w.document&&document.visibilityState==='hidden')return;w.CVStorageHubP170.saveLocal(false).catch(function(){});},ms);return{ok:true,intervalMs:ms};
 }
 function stopAutoSave(){if(autoTimer)w.clearInterval(autoTimer);autoTimer=null;return true;}
-var api={version:'242.1.1',exportBundle:exportBundle,readStoredZip:readStoredZip,importBundle:importBundle,startAutoSave:startAutoSave,stopAutoSave:stopAutoSave,tests:function(){return{zipReaderStoredOnly:true,crc32:crc32(u8('123456789'))===0xcbf43926,projectOwner:!!w.CVCreativeCore,assetOwner:!!(w.CV&&CV.assets),storageOwner:!!w.CVStorageHubP170,entryLimit:110,totalBytesLimit:120*1024*1024,assetRelink:typeof importBundle==='function'&&typeof project==='function'};}};
+var api={version:'242.2.0',exportBundle:exportBundle,sanitizeProject:sanitizeProject,readStoredZip:readStoredZip,importBundle:importBundle,startAutoSave:startAutoSave,stopAutoSave:stopAutoSave,tests:function(){return{zipReaderStoredOnly:true,crc32:crc32(u8('123456789'))===0xcbf43926,projectOwner:!!w.CVCreativeCore,assetOwner:!!(w.CV&&CV.assets),storageOwner:!!w.CVStorageHubP170,entryLimit:110,totalBytesLimit:120*1024*1024,assetRelink:typeof importBundle==='function'&&typeof project==='function',secretScrub:typeof sanitizeProject==='function',boundedAssetBundle:true};}};
 w.CVProjectBundleP242=api;
 })(window);

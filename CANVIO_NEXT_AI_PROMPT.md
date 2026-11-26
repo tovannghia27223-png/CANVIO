@@ -557,3 +557,9 @@ Nối tiếp P231–P236 (editor vừa khít màn hình). Người dùng muốn 
 - Candidate version/title remains `23.3.112-p239-p248-studio-pro` / “CANVIO 23.3.112 — Studio Pro P239–P248 Candidate”.
 - P55 and P56 tests now match that candidate title. Keep their independent P62 lineage, ZIP preflight order, CRC, no-secret and restore checks unchanged.
 - Re-run exact head after P56 assertion commit, then handle the next actual failure.
+
+
+## P242/P245 hardening and browser harness repair
+- Verify latest P242 secret-key scrub and bounded project/asset export; keep manifest exclusion counts and integrity checks.
+- Verify latest P245 bounds (40 MiB, five minutes, 96 kHz, stereo) and non-destructive plan only.
+- Run #993 passed earlier Chromium suites through P237; P239–P248 browser harness had Python SyntaxError due raw JS async arrow outside page.evaluate. Corrected the harness; rerun all checks without weakening assertions.

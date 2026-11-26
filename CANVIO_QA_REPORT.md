@@ -808,3 +808,9 @@ Chạy CI thật trên GitHub cho PR #107; thử trên Chrome thật, bàn phím
 - Run #991 confirmed the P55 title/observer assertion is now correct; it next stopped at the P56 test which still hard-coded the prior 23.3.111 candidate marker.
 - Updated only the P56 title-observer expectation to `23.3.112-p239-p248-studio-pro` / “CANVIO 23.3.112 — Studio Pro P239–P248 Candidate”. P56 archive preflight order, parser, integrity and P62 lineage checks remain intact.
 - A fresh exact-head workflow is pending; no regression pass is claimed from runs #989–#991.
+
+
+## P242/P245 hardening update — 2026-11-26
+- P242 export now recursively removes token, API-key, password, authorization, credential, secret and private-key fields before creating the project JSON; the manifest records the number of excluded fields. Asset data is bounded (100 assets inspected, per-data-URL ceiling, 14 MiB aggregate asset bytes, 25 MiB project JSON) before ZIP creation. Import retains the existing stored-ZIP/CRC/SHA checks and explicit confirmation.
+- P245 local beat analysis now bounds the input to 40 MiB, 300 seconds, 96 kHz and two channels and always closes AudioContext. This is a CPU/RMS onset proxy, not an exact musical beat-grid detector.
+- Run #993 executed P231–P237 Chromium suites successfully (including P237 37/37) but stopped when the P239–P248 Python smoke file failed to parse: an async JavaScript expression had been placed directly in a Python argument instead of inside page.evaluate(...). The browser harness has been corrected; a new exact-head run is required.
