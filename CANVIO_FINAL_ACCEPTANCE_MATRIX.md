@@ -51,20 +51,3 @@
 | P124.4 selected component layouts | Node/Chromium selected Grid/Stack/Row/Split, responsive CSS, whitelisted variants, existing CSS Manager/save path, P143 parity | No structural tree conversion, nested variants, drag/resize, complex user-project or assistive-technology certification. |
 
 | P135.2 editable Pixel adjustment stack | Node PNG metadata/CRC/32-layer round-trip; hosted Chromium snapshot → reload → native restore and unchanged raster check; P143 standalone/embedded parity | Independent two-device/cloud sync, third-party PNG re-encoding, masks/local corrections, smart objects, clone/patch and liquify remain unverified/out of scope. |
-
-
-| P231 Shared Editor Shell | Local Node 7/7; local Chromium 16/16 for 1440×900, 1280×720, 390×844; exact DOM restore, route-scoped app lock and no page errors | Exact-head hosted CI, real user-profile Chrome, keyboard/screen-reader/200% zoom and project persistence remain OPEN. |
-| P232 Poster Studio adapter | Chromium verifies existing toolbar/canvas/inspector/export placement and native Poster add → Undo → Redo; no second project/history owner | Hosted exact-PR CI, real Poster save/reopen, actual production export files and browser/assistive-technology matrix remain OPEN. |
-
-
-
-| P233 Video Production Engine shell | New Chromium suite checks existing media picker, native preview, properties/captions, multitrack timeline, toolbar/export placement, legacy DOM restoration and 390px layout | Exact-head hosted CI and live media preview/import/export on HTTPS; real project reopen and cross-browser testing remain OPEN |
-| P234 Pixel/Luma/Clarity/Layout shell adapters | New Chromium suite checks native tools/canvas/inspector/export controls and reversibility for all four pages, plus 390px layout | Exact-head hosted CI, real image/document import-save-export and accessibility/physical-device review remain OPEN |
-| P235 editor keyboard/mobile layer | New Chromium suite covers Video native play/pause, undo/redo, duplicate/delete, save routing, Alt focus and input keyboard guard | Two-finger pinch zoom, per-tool shortcut validation, keyboard-only/screen reader, actual touch devices and 200% zoom remain OPEN |
-| P236 editor preferences/Focus/onboarding | New Chromium suite covers Focus enter/exit, three-step guide, preference persistence and five viewport widths × four editors | Screenshot evidence on real displays, keyboard/screen-reader review and cross-browser acceptance remain OPEN |
-
-
-
-| P119.3.1 + P231–P236.1 (2026-11-26) | Local Chromium: editor suites 82/82; chi tiết trong QA Report | GitHub CI trên HEAD mới, GLB/runtime acceptance, p133w chập chờn, thiết bị thật: OPEN |
-
-| P237 Lệnh tiếng Việt (2026-11-26) | Local Chromium 37/37 | GitHub CI, thiết bị thật: OPEN |
