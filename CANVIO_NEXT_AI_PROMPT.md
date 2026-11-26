@@ -575,3 +575,8 @@ Nối tiếp P231–P236 (editor vừa khít màn hình). Người dùng muốn 
 - Root cause: `addSection(id, html)` failed to assign the passed ID to the generated element. Fixed by assigning `n.id=id` before appending, returning any existing element by ID and not appending duplicate cards on retry.
 - Chromium browser test now checks all nine P240–P248 card IDs are unique and the shared diagnostics report `ok:true`, all cards present and no mount errors.
 - Workflow artifact, manifest, acceptance matrix and patch notes now use `23.3.112-p239-p248-studio-pro`. Base marker `23.3.111-github-runtime-ci` is deliberately kept for restoring the verified mainline source before candidate promotion.
+
+
+## P242 run #996 repair
+- Studio Pro UI mount is now confirmed: P240–P248 cards present, unique IDs; P239 five-doc creation, P240 six formats and P241 CSV parse passed.
+- P242 actual ZIP roundtrip failed at the canonical reader size check (25 MiB max per entry) after an export body was larger than that. Keep export project JSON at <=20 MiB, raw assets <=6 MiB/50 items and complete ZIP <=64 MiB. Browser test directly inspects ZIP STORE method, zero flags, exact manifest byte count and SHA-256 before reader roundtrip.

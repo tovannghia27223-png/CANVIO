@@ -4603,3 +4603,8 @@ Chạy CI thật trên GitHub cho PR #107; thử trên Chrome thật, bàn phím
 ### P239–P248 root cause fix — 2026-11-26
 - The shared Studio Pro `addSection` helper now assigns `n.id=id` before appending. It first returns an existing panel to keep re-entry idempotent, and only returns null when the Project Vault tools root is not ready.
 - Chromium acceptance now checks the diagnostics object reports all nine panels mounted with zero errors and verifies each panel ID occurs exactly once.
+
+
+### P242 portable bundle budget — 2026-11-26
+- P242 now keeps `project.json` <=20 MiB (reader limit 25 MiB), embedded raw assets <=6 MiB, at most 50 assets, each data URL <=8 MiB, and complete ZIP <=64 MiB. Manifest stores actual JSON and asset byte counts.
+- Chromium run #996 confirmed P239–P241 and nine UI panel mounts, then exposed the export-vs-reader limit mismatch; browser test now checks central-directory STORE metadata and exact entry bytes before round-trip.

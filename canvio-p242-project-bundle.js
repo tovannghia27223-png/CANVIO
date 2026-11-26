@@ -20,20 +20,23 @@ function sanitizeProject(source){
  var counter={count:0},copy=JSON.parse(JSON.stringify(source||{})),safe=scrubSecrets(copy,counter);
  return{project:safe,excludedSecretFields:counter.count};
 }
+var MAX_PROJECT_JSON_BYTES=20*1024*1024,MAX_ASSET_BYTES=6*1024*1024,MAX_ASSET_DATA_URL_CHARS=8*1024*1024,MAX_ASSETS=50,MAX_BUNDLE_BYTES=64*1024*1024;
 async function exportBundle(){
  var p=project();if(!p)throw new Error('Chưa có dự án đang mở.');
  var clean=sanitizeProject(p),payload={format:'CANVIO_PROJECT',version:1,project:clean.project,excludedSecretFields:clean.excludedSecretFields,assets:[]},assets=w.CV&&CV.assets&&CV.assets.list?CV.assets.list():[],assetBytes=0,skippedAssets=0;
- for(var a of assets.slice(0,100)){
-  if(!a||!/^data:/.test(a.data||'')||a.data.length>12*1024*1024){skippedAssets++;continue;}
+ for(var a of assets.slice(0,MAX_ASSETS)){
+  if(!a||!/^data:/.test(a.data||'')||a.data.length>MAX_ASSET_DATA_URL_CHARS){skippedAssets++;continue;}
   var blob=await fetch(a.data).then(function(r){return r.blob();});
-  if(assetBytes+blob.size>14*1024*1024){skippedAssets++;continue;}
+  if(assetBytes+blob.size>MAX_ASSET_BYTES){skippedAssets++;continue;}
   var hash=await sha(blob);payload.assets.push({id:a.id,name:a.name,mime:a.mime||blob.type,sha256:hash,data:a.data});assetBytes+=blob.size;
  }
- var body=JSON.stringify(payload);
- if(new TextEncoder().encode(body).byteLength>25*1024*1024)throw new Error('Project JSON vượt 25 MiB; giảm dung lượng hoặc xuất bớt tài nguyên rồi thử lại.');
- var manifest={format:'CANVIO_PROJECT_BUNDLE',version:1,projectId:p.id,sha256:await sha(body),assetCount:payload.assets.length,skippedAssets:skippedAssets,excludedSecretFields:clean.excludedSecretFields};
+ var body=JSON.stringify(payload),bodyBytes=new TextEncoder().encode(body).byteLength;
+ if(bodyBytes>MAX_PROJECT_JSON_BYTES)throw new Error('Project JSON vượt ngân sách 20 MiB; đã giới hạn tài nguyên nhúng để ZIP tương thích reader. Hãy giảm dữ liệu dự án rồi thử lại.');
+ var manifest={format:'CANVIO_PROJECT_BUNDLE',version:1,projectId:p.id,sha256:await sha(body),assetCount:payload.assets.length,assetBytes:assetBytes,projectJsonBytes:bodyBytes,skippedAssets:skippedAssets,excludedSecretFields:clean.excludedSecretFields};
  if(!w.CVZip||!CVZip.build)throw new Error('CVZip hiện có chưa sẵn sàng.');
- return CVZip.build([{name:'manifest.json',data:JSON.stringify(manifest)},{name:'project.json',data:body}]);
+ var zip=await CVZip.build([{name:'manifest.json',data:JSON.stringify(manifest)},{name:'project.json',data:body}]);
+ if(!zip||zip.size>MAX_BUNDLE_BYTES)throw new Error('Gói .canvio vượt ngân sách 64 MiB sau khi đóng ZIP.');
+ return zip;
 }
 function crc32(bytes){var c=~0;for(var i=0;i<bytes.length;i++){c^=bytes[i];for(var j=0;j<8;j++)c=(c>>>1)^((c&1)?0xEDB88320:0);}return(~c)>>>0;}
 async function readStoredZip(file){
@@ -86,6 +89,6 @@ async function startAutoSave(interval){
  autoTimer=w.setInterval(function(){if(w.document&&document.visibilityState==='hidden')return;w.CVStorageHubP170.saveLocal(false).catch(function(){});},ms);return{ok:true,intervalMs:ms};
 }
 function stopAutoSave(){if(autoTimer)w.clearInterval(autoTimer);autoTimer=null;return true;}
-var api={version:'242.2.0',exportBundle:exportBundle,sanitizeProject:sanitizeProject,readStoredZip:readStoredZip,importBundle:importBundle,startAutoSave:startAutoSave,stopAutoSave:stopAutoSave,tests:function(){return{zipReaderStoredOnly:true,crc32:crc32(u8('123456789'))===0xcbf43926,projectOwner:!!w.CVCreativeCore,assetOwner:!!(w.CV&&CV.assets),storageOwner:!!w.CVStorageHubP170,entryLimit:110,totalBytesLimit:120*1024*1024,assetRelink:typeof importBundle==='function'&&typeof project==='function',secretScrub:typeof sanitizeProject==='function',boundedAssetBundle:true};}};
+var api={version:'242.3.0',MAX_PROJECT_JSON_BYTES:MAX_PROJECT_JSON_BYTES,MAX_ASSET_BYTES:MAX_ASSET_BYTES,MAX_ASSETS:MAX_ASSETS,MAX_BUNDLE_BYTES:MAX_BUNDLE_BYTES,exportBundle:exportBundle,sanitizeProject:sanitizeProject,readStoredZip:readStoredZip,importBundle:importBundle,startAutoSave:startAutoSave,stopAutoSave:stopAutoSave,tests:function(){return{zipReaderStoredOnly:true,crc32:crc32(u8('123456789'))===0xcbf43926,projectOwner:!!w.CVCreativeCore,assetOwner:!!(w.CV&&CV.assets),storageOwner:!!w.CVStorageHubP170,entryLimit:110,totalBytesLimit:120*1024*1024,assetRelink:typeof importBundle==='function'&&typeof project==='function',secretScrub:typeof sanitizeProject==='function',boundedAssetBundle:true,jsonEntryBelowReaderLimit:MAX_PROJECT_JSON_BYTES<25*1024*1024,assetBytesBounded:MAX_ASSET_BYTES===6*1024*1024};}};
 w.CVProjectBundleP242=api;
 })(window);

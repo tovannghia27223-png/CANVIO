@@ -827,3 +827,9 @@ Chạy CI thật trên GitHub cho PR #107; thử trên Chrome thật, bàn phím
 - Run #995: source/Node/P143/P47–P70/integrated-contract stages passed with the independent `mountNow()` retry/diagnostics, but the browser step was still running at the point this update was written.
 - Root cause confirmed by code review: the shared UI helper `addSection(id, html)` appended the generated panel but never assigned `n.id = id`. The panels were created without the selectors used by the browser smoke and repeat mounts could append duplicates.
 - Fix: assign the requested ID before append, return an existing element by ID, and guard a missing root separately. Browser suite now verifies all nine diagnostic cards, zero mount errors and exactly one element for every `cv240-card` … `cv248-card` ID.
+
+
+## P242 bundle-size compatibility repair — run #996 (2026-11-26)
+- Chromium confirmed the Studio Pro panels and their IDs mount correctly; P239 creation, P240 six-format generation, P241 Vietnamese CSV parsing, and P242 secret scrubbing all passed.
+- The real P242 ZIP round-trip failed because the writer allowed up to 25 MiB of JSON, equal to the reader's maximum uncompressed size per ZIP entry; serialized data URLs/base64 and project metadata could push the actual entry beyond the reader boundary.
+- Export budgets are now deliberately below the reader limit: project JSON <=20 MiB, embedded raw assets <=6 MiB, at most 50 assets and <=8 MiB per data URL; final archive <=64 MiB. Manifest records exact JSON bytes and included asset bytes. Browser acceptance inspects the actual ZIP central directory (STORE method, zero flags, entry size) before passing the same ZIP to the canonical reader and verifying SHA-256.

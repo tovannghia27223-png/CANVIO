@@ -29,7 +29,15 @@ with sync_playwright() as p:
  ck('P240 produces six constrained formats',page.evaluate("CVMagicResizeP240.buildSet(CVBriefPackP239.read().documents.poster).length===6"))
  ck('P241 parses Vietnamese CSV and quoted commas',page.evaluate("CVBulkP241.parseCSV('name,role\\n\\\"Nguyễn, A\\\",HR').rows[0].name==='Nguyễn, A'"))
  ck('P242 validates stored ZIP CRC fixture',page.evaluate("CVProjectBundleP242.tests().crc32"))
- ck('P242 exports and re-reads a real stored .canvio ZIP with manifest and project payload',page.evaluate("""async () => { const z=await CVProjectBundleP242.exportBundle(); const e=await CVProjectBundleP242.readStoredZip(z); const m=JSON.parse(new TextDecoder().decode(e['manifest.json'])); const body=new TextDecoder().decode(e['project.json']); const hash=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(body)))).map(x=>x.toString(16).padStart(2,'0')).join(''); return m.format==='CANVIO_PROJECT_BUNDLE' && m.sha256===hash && JSON.parse(body).format==='CANVIO_PROJECT'; }"""));
+ ck('P242 exports a bounded real stored .canvio ZIP with verified manifest and project payload',page.evaluate("""async () => {
+ const z=await CVProjectBundleP242.exportBundle(),b=new Uint8Array(await z.arrayBuffer()),v=new DataView(b.buffer),sig=0x06054b50;let eocd=-1;
+ for(let i=b.length-22;i>=Math.max(0,b.length-65558);i--)if(v.getUint32(i,true)===sig){eocd=i;break;}
+ if(eocd<0)return false;let pos=v.getUint32(eocd+16,true),count=v.getUint16(eocd+10,true),entries={};
+ for(let n=0;n<count;n++){if(v.getUint32(pos,true)!==0x02014b50)return false;const flags=v.getUint16(pos+8,true),method=v.getUint16(pos+10,true),size=v.getUint32(pos+24,true),nl=v.getUint16(pos+28,true),el=v.getUint16(pos+30,true),cl=v.getUint16(pos+32,true),name=new TextDecoder().decode(b.slice(pos+46,pos+46+nl));entries[name]={flags,method,size};pos+=46+nl+el+cl;}
+ const meta=entries['project.json'];if(!meta||meta.flags!==0||meta.method!==0||meta.size>CVProjectBundleP242.MAX_PROJECT_JSON_BYTES)return false;
+ const e=await CVProjectBundleP242.readStoredZip(z),m=JSON.parse(new TextDecoder().decode(e['manifest.json'])),body=new TextDecoder().decode(e['project.json']),hash=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(body)))).map(x=>x.toString(16).padStart(2,'0')).join('');
+ return m.format==='CANVIO_PROJECT_BUNDLE'&&m.sha256===hash&&m.projectJsonBytes===meta.size&&JSON.parse(body).format==='CANVIO_PROJECT'&&z.size<=CVProjectBundleP242.MAX_BUNDLE_BYTES;
+ }"""));
  ck('P242 export removes token-like keys before bundling',page.evaluate("(()=>{const r=CVProjectBundleP242.sanitizeProject({apiKey:'x',documents:{refreshToken:'y',title:'safe'}});return r.excludedSecretFields===2&&!r.project.apiKey&&!r.project.documents.refreshToken&&r.project.documents.title==='safe'})()"));
  ck('P245 analysis limits audio duration and file bytes',page.evaluate("CVBeatEditorP245.MAX_DURATION_SECONDS===300&&CVBeatEditorP245.MAX_FILE_BYTES===40*1024*1024"));
  ck('P243 SEO gate blocks missing title/alt',page.evaluate("!CVWebsitePublishP243.audit('<h1>Thiếu metadata</h1><img>').ok"))

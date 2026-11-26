@@ -1686,3 +1686,8 @@ Chạy CI thật trên GitHub cho PR #107; thử trên Chrome thật, bàn phím
 ### P239–P248 panel identity and delivery candidate — 2026-11-26
 - Root cause in run #994/#995 browser attempts: P240–P243 cards were appended without the IDs expected by UI selectors; repaired by assigning the ID before append and keeping panel creation idempotent.
 - Browser acceptance now verifies nine panel IDs, all mount diagnostics, and no duplicates. Artifact, manifest and generated acceptance matrix are aligned to candidate `23.3.112-p239-p248-studio-pro`.
+
+
+### P242 ZIP reader/writer budget alignment — 2026-11-26
+- Export now targets a 20 MiB project JSON ceiling, 6 MiB aggregate asset bytes, 50 assets maximum and 64 MiB archive ceiling, staying strictly beneath the reader's 25 MiB per-entry boundary.
+- Real browser acceptance inspects the ZIP Central Directory (method/flags/size) before canonical re-read and SHA-256 comparison.
