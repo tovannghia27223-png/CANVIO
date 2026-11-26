@@ -829,11 +829,47 @@ jobs:
           const open='<script id="'+id+'">';
           const re=/(<script\b(?=[^>]*\bid=["']canvio-lot230["'])[^>]*>)[\s\S]*?(<\/script\s*>)/i;
           const tag=open+'\n'+source+'\n</script>';
-          if(re.test(html))html=html.replace(re,tag);
+          if(re.test(html))html=html.replace(re,()=>tag);
           else{const at=html.lastIndexOf('</body>');if(at<0)throw new Error('index.html has no closing body tag');html=html.slice(0,at)+tag+'\n'+html.slice(at);}
           if((html.match(/id="canvio-lot230"/g)||[]).length!==1)throw new Error('P230 embedded lot duplicate/missing');
           fs.writeFileSync(file,html,'utf8');
-          console.log('P230 single accent source synchronized into canonical index.html');
+          NODE
+
+      - name: Integrate P231–P236 shared Editor Shell and native Studio adapters
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs=require('node:fs');
+          const file='index.html';
+          let html=fs.readFileSync(file,'utf8');
+          const modules=[
+            ['canvio-p231-editor-shell.js','canvio-lot231',/CVEditorShellP231\s*=/],
+            ['canvio-p232-poster-shell.js','canvio-lot232',/CVPosterShellP232\s*=/],
+            ['canvio-p233-video-shell.js','canvio-lot233',/CVVideoShellP233\s*=/],
+            ['canvio-p234-native-studio-shell.js','canvio-lot234',/CVNativeStudioShellP234\s*=/],
+            ['canvio-p235-editor-inputs.js','canvio-lot235',/CVEditorInputP235\s*=/],
+            ['canvio-p236-editor-experience.js','canvio-lot236',/CVEditorExperienceP236\s*=/],
+            ['canvio-p237-command-bar.js','canvio-lot237',/CVCommandP237\s*=/]
+          ];
+          for(const [path,id,contract] of modules){
+            const source=fs.readFileSync(path,'utf8').trim();
+            if(!contract.test(source))throw new Error(id+' source contract missing');
+            const re=new RegExp('(<script\\b(?=[^>]*\\bid="'+id+'"[^>]*)[^>]*>)[\\s\\S]*?(<\\/script\\s*>)','i');
+            const tag='<script id="'+id+'">\n'+source+'\n</script>';
+            if(re.test(html))html=html.replace(re,()=>tag);
+            else{const at=html.lastIndexOf('</body>');if(at<0)throw new Error('index.html has no closing body tag');html=html.slice(0,at)+tag+'\n'+html.slice(at);}
+            if((html.match(new RegExp('id="'+id+'"','g'))||[]).length!==1)throw new Error(id+' embedded lot duplicate/missing');
+          }
+          // P235.1: adding a text clip must be undoable through the existing Video Engine history.
+          const oldAdd="start:0,duration:5,track:3};videoState.clips.push(c);videoState.selected=c.id;vSave();vRender();vProps()}";
+          const newAdd="start:0,duration:5,track:3};vPushUndo();videoState.clips.push(c);videoState.selected=c.id;vSave();vRender();vProps()}";
+          if(!html.includes(newAdd)){
+            if(html.split(oldAdd).length!==2)throw new Error('P235.1 expected one canonical vAddText body');
+            html=html.replace(oldAdd,newAdd);
+          }
+          fs.writeFileSync(file,html,'utf8');
+          console.log('P231–P236 standalone sources synchronized into canonical index.html');
           NODE
 
       - name: Extract and syntax-check integrated modules and workers
@@ -841,7 +877,7 @@ jobs:
           set -euo pipefail
           node scripts/extract-integrated-modules.mjs
           node tests/p146/run-p146-tests.cjs
-          for file in canvio-p74-p81-three-viewer.js canvio-p85-studio.js canvio-p102-background-removal.js canvio-p105-p107-depth-parallax.js canvio-p68-p70.js canvio-p72-glb-viewer.js canvio-p73-offline-site.js canvio-p82-p84-vector-pdf.js canvio-p87-cv-docx.js canvio-p90-p96.js canvio-p97-p101.js canvio-p104.js canvio-p127-duck.js canvio-p145-shader.js canvio-p119-video.js canvio-p119-website.js canvio-p153-board.js canvio-p155-scene-pack.js canvio-p159-integration.js canvio-p160-collections.js canvio-p161-spatial-workspace.js canvio-p162-reference-canvas.js canvio-p163-character-continuity.js canvio-p164-shotlist.js canvio-p165-ai-workflow.js canvio-p166-landing-studio.js canvio-p159u-dock.js canvio-p167-blocking.js canvio-p168-motion.js canvio-p169-character-studio.js canvio-p170-storage-hub.js canvio-p171-nav-drawer.js assets/canvio-rmbg-worker.js assets/canvio-depth-worker.js assets/canvio-whisper-worker.js canvio-p132-pdf-import.js; do node --check "$file"; done
+          for file in canvio-p74-p81-three-viewer.js canvio-p85-studio.js canvio-p102-background-removal.js canvio-p105-p107-depth-parallax.js canvio-p68-p70.js canvio-p72-glb-viewer.js canvio-p73-offline-site.js canvio-p82-p84-vector-pdf.js canvio-p87-cv-docx.js canvio-p90-p96.js canvio-p97-p101.js canvio-p104.js canvio-p127-duck.js canvio-p145-shader.js canvio-p119-video.js canvio-p119-website.js canvio-p153-board.js canvio-p155-scene-pack.js canvio-p159-integration.js canvio-p160-collections.js canvio-p161-spatial-workspace.js canvio-p162-reference-canvas.js canvio-p163-character-continuity.js canvio-p164-shotlist.js canvio-p165-ai-workflow.js canvio-p166-landing-studio.js canvio-p159u-dock.js canvio-p167-blocking.js canvio-p168-motion.js canvio-p169-character-studio.js canvio-p170-storage-hub.js canvio-p171-nav-drawer.js canvio-p231-editor-shell.js canvio-p232-poster-shell.js canvio-p233-video-shell.js canvio-p234-native-studio-shell.js canvio-p235-editor-inputs.js canvio-p236-editor-experience.js assets/canvio-rmbg-worker.js assets/canvio-depth-worker.js assets/canvio-whisper-worker.js canvio-p132-pdf-import.js; do node --check "$file"; done
 
       - name: P143 standalone source and canonical lot parity audit
         shell: bash
@@ -982,6 +1018,11 @@ jobs:
           node tests/p169/run-p169-tests.cjs
           node tests/p170/run-p170-tests.cjs
           node tests/p145/run-p230-tests.cjs
+          node tests/p231/run-p231-tests.cjs
+          node tests/p233/run-p233-tests.cjs
+          node tests/p234/run-p234-tests.cjs
+          node tests/p235/run-p235-tests.cjs
+          node tests/p236/run-p236-tests.cjs
           node tests/p159/run-p159-tests.cjs
           node tests/p160/run-p160-166-tests.cjs
           node tests/p127/run-p120-comfyui-tests.cjs
@@ -1072,6 +1113,12 @@ jobs:
           /tmp/canvio-playwright/bin/python tests/p145/run-p170-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p230-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p171-browser.py
+          /tmp/canvio-playwright/bin/python tests/p231/run-p231-browser.py
+          /tmp/canvio-playwright/bin/python tests/p233/run-p233-browser.py
+          /tmp/canvio-playwright/bin/python tests/p234/run-p234-browser.py
+          /tmp/canvio-playwright/bin/python tests/p235/run-p235-browser.py
+          /tmp/canvio-playwright/bin/python tests/p236/run-p236-browser.py
+          /tmp/canvio-playwright/bin/python tests/p237/run-p237-browser.py
           /tmp/canvio-playwright/bin/python tests/p160/run-p160-166-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p114n-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p150-browser.py

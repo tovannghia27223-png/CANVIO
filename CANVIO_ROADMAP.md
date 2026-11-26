@@ -1573,3 +1573,69 @@ Nối tiếp P231–P236 (editor vừa khít màn hình). Người dùng muốn 
 - Giữ giới hạn Supabase miễn phí (≈1GB file, ≈50MB/tệp); video lớn ở lại máy.
 - Mọi bước dùng theo thứ tự: parity P143 → inventory → boot-order → CI; đọc mục "Bài học" các P170/P171/P230 trước khi làm giao diện.
 - Cần người dùng chốt: Đợt A có đúng thứ tự mong muốn không; có cần P243 (token GitHub) trong Đợt A hay chuyển sang Đợt B.
+
+
+## P231–P232 — Editor Shell + Poster Studio · candidate 2026-11-25
+
+- P231 adds CVEditorShellP231 as one shared layout owner: top action strip, tool rail, central canvas, inspector panel and optional bottom slot. It moves existing DOM nodes with comment anchors (no clone, duplicate event handlers, new timeline or storage owner); “Bố cục cũ” restores the original DOM positions exactly.
+- The shell only applies app-height/overflow rules while .app.cv231-app-active is present. Layout preference is transient sessionStorage under canvio.p231.mode.*; project contents remain with existing owners.
+- P232 adds CVPosterShellP232: existing Poster toolbar → left rail, #canvasWrap → canvas, .stack → inspector, existing .headActions → top strip. Undo/Redo stays on CV.poster.history; Manual Save uses CV.project.save(true); routine edits retain the existing autosave owner; fit stays on the Poster engine.
+- Source modules: canvio-p231-editor-shell.js / canvio-lot231; canvio-p232-poster-shell.js / canvio-lot232. Registered in P143 source parity and integrated through the hosted candidate workflow.
+- Local source suite: 6/6 PASS. Local synthetic Chromium suite: 13/13 PASS at 1440×900, 1280×720 and 390×844; zero uncaught page errors. These are local fixture results, not HTTPS origin, saved-user-project or production acceptance.
+- Remaining: hosted exact-PR CI, screenshots/review on a real user Chrome profile, keyboard/screen-reader/200% zoom and real Poster project save/reopen. P233 Video Studio remains the next roadmap step.
+
+
+
+## P231–P236 implementation candidate — 2026-11-25
+
+| P | Candidate implementation | Existing owner preserved | Verification status |
+|---|---|---|---|
+| P231 | Shared responsive editor frame with rail, canvas, inspector, optional bottom area and top actions; reversible DOM adoption | Existing editor DOM, handlers and projects | Prior local P231 fixture was reported 7/7 Node and 16/16 Chromium; exact hosted CI must pass on the latest branch head |
+| P232 | Poster adapter into P231 | Poster history, project save/autosave, fit and assets | Candidate PR #107; real project save/reopen and deployed HTTPS review remain open |
+| P233 | Video Engine adapter; timeline in bottom region, asset picker left, preview middle, captions/clip properties right, native export actions above | CV.engines.video, VT_KEY, CANVIO_81_MEDIA, CV.assets | New Node + Chromium suites added; pending exact-head hosted run |
+| P234 | Pixel Atelier, Luma Develop, Clarity Lab and Layout Foundry adapters | Native controllers, image/document state, export and asset functions | New Node + Chromium suites added; pending exact-head hosted run |
+| P235 | Editor-scoped shortcuts and mobile minimum target sizing | Native undo/redo/save/delete/playback methods; input/contenteditable keyboard behavior | New Node + Chromium suites added; two-finger pinch zoom and device review remain open |
+| P236 | Per-editor rail/inspector preference, Focus mode and three-step onboarding | Preferences stored only by editor key; no project data owner added | New Node + Chromium suites added; viewport screenshot and accessibility review remain open |
+
+Candidate implementation files: canvio-p233-video-shell.js, canvio-p234-native-studio-shell.js, canvio-p235-editor-inputs.js, canvio-p236-editor-experience.js; each is paired with canvio-lot233 through canvio-lot236 and registered in P143.
+
+Completion rule: Do not move P233–P236 to accepted until the exact PR-head workflow is green, P143 parity/inventory/boot order pass, browser suites pass, and remaining device/accessibility/project-persistence gates are recorded. P70's 14 manual gates remain separate and open. P237–P248 are still roadmap work, not included in this candidate.
+
+
+
+## P231–P236.1 — Sửa chặn CI, bố cục editor và easing P119.3 (2026-11-26 · candidate)
+
+### Đã sửa
+| Mã | Vấn đề | Cách sửa | File chủ |
+|---|---|---|---|
+| P119.3.1 | CI báo `customMotionCurveSaved`: curve đã chọn có thể mất khi Video Engine vẽ lại inspector trước Apply (nguyên nhân suy ra; trên máy này test gốc PASS nên chưa tái hiện được lỗi CI) | Giữ curve chưa áp dụng (draft) theo clip, khôi phục sau khi vẽ lại, bỏ khi clip đổi motion. Apply/Undo/snapshot giữ nguyên. Thêm kiểm tra `draftCurveSurvivesInspectorRedraw` | `canvio-p119-video.js` |
+| P231.2 | Khung editor cao 0px ở Poster/Video vì thẻ cũ chiếm hết chỗ; thanh sticky che nút | Shell cao đúng 100% trang và đứng đầu; thẻ cũ nằm bên dưới, cuộn trong trang; nút ⊕ "Tiện ích mở rộng" để nhảy xuống/lên. Không xoá thẻ nào | `canvio-p231-editor-shell.js` |
+| P231.3 | Mobile: editor chỉ còn 320px; thanh "Nguồn chung" nhiều hàng; nút bị bóp | `.main` cao theo cửa sổ, `#ws-src` một hàng cuộn ngang, nút không co; 390×844 đạt khoảng 669px | `canvio-p231-editor-shell.js` |
+| P233.2 | Thanh công cụ Video tràn trên desktop | Cho xuống hàng, giới hạn chiều cao | `canvio-p233-video-shell.js` |
+| P234.2 | Clarity Lab: nút Xuất PNG không vào shell | Chọn đúng thanh công cụ chứa nút export | `canvio-p234-native-studio-shell.js` |
+| P235.1 | Thêm clip chữ không hoàn tác được (Ctrl+Z không có tác dụng) | `vPushUndo()` trong `vAddText`, vá qua bước CI P231–P236 | workflow |
+| P236.1 | Gợi ý lần đầu che nút zoom/nút đóng rời | Gộp thành một thẻ gọn phía dưới | `canvio-p236-editor-experience.js` |
+| CI | Bước P230 thiếu dòng kết thúc heredoc `NODE` (cảnh báo bash); `String.replace` có thể hỏng khi mã chứa `$` | Thêm `NODE`; dùng hàm thay thế | workflow |
+
+### Sửa bài test (không nới tiêu chí)
+- P234 mobile: bản cũ đo trang đang ẩn (rộng 0) nên luôn FAIL; nay mở từng trang rồi đo, thêm kiểm tra không tràn ngang.
+- P133a: chờ ghi IndexedDB xong (tối đa 20 giây) thay vì chờ cứng 1,5 giây.
+
+### Kết quả kiểm thử (máy cloud 2 nhân, Chrome headless, KHÔNG phải GitHub CI)
+- Các bước workflow từ "Restore complete candidate index" đến "Run integrated source contracts": 38 bước chạy OK; bỏ qua các bước cài/tải runtime vì không có mạng.
+- Editor: P231 18/18 · P233 13/13 · P234 11/11 · P235 12/12 · P236 28/28.
+- Lượt chạy toàn bộ cuối (3 suite song song): 58 PASS; `p133a`, `p133w` FAIL do thời gian; `run-hosted-runtime-acceptance` chưa chạy trọn (thiếu GLB fixture/runtime phải tải).
+- `p133a` sau khi sửa: 4/4 PASS. `p133w` còn chập chờn (kiểm tra độ phản hồi event-loop phụ thuộc tải máy; chạy riêng 2/3 PASS ở lượt cuối). Chưa sửa.
+
+### Còn mở
+Chạy CI thật trên GitHub cho PR #107; thử trên Chrome thật, bàn phím/trình đọc màn hình/zoom 200%; chạm hai ngón; lưu và mở lại dự án thật; trên mobile tên công cụ bị ẩn và vài thanh cần cuộn ngang; P237–P248 chưa làm.
+
+
+## P237 — Lệnh tiếng Việt trong ô Ctrl+K (2026-11-26 · candidate)
+- Module `canvio-p237-command-bar.js` (`CVCommandP237`, lot `canvio-lot237`), gộp vào ô Ctrl+K sẵn có; không tạo ô lệnh mới. Câu không khớp quy tắc vẫn đi qua "Chạy bằng lệnh tự nhiên" (CVCmd) như cũ.
+- Hơn 50 lệnh, gõ có dấu hoặc không dấu: mở công cụ; Poster (thêm đối tượng, đổi khổ, nhân bản/xoá/sắp lớp, lưới, zoom, QA, xuất PNG/SVG/PDF); Video (chữ, phát/dừng, tách, xoá, xuất); sửa ảnh, dàn trang; hoàn tác/làm lại/lưu/giao diện/tập trung.
+- Gọi đúng hàm hoặc nút sẵn có của từng editor; không thêm kho dữ liệu hay lịch sử. Chỉ lưu 3 lệnh gần đây ở `canvio.p237.recent`. Thiết kế mới phải xác nhận.
+- Mobile: nút thanh editor có tên (Công cụ, Chỉnh, Thêm, Bản cũ, Trợ giúp, Tập trung).
+- Sửa: thanh công cụ Poster (z-index 680) nổi đè lên ô lệnh.
+- Test `tests/p237/run-p237-browser.py` (đã thêm vào workflow, đăng ký P143).
+- Còn mở: nhập nội dung chữ ngay trong lệnh (ví dụ "thêm tiêu đề ABC"), lệnh đổi màu/cỡ vẫn do CVCmd cũ xử lý; hoàn tác chỉ áp dụng Poster, Video, Pixel.

@@ -1,0 +1,9 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
+const root=path.resolve(__dirname,'..','..'),src=fs.readFileSync(path.join(root,'canvio-p236-editor-experience.js'),'utf8');
+const checks=[];
+function ck(n,f){f();checks.push(n);process.stdout.write('PASS '+n+'\n');}
+ck('P236 stores rail and inspector preferences per editor',()=>{assert.ok(src.includes("var KEY='canvio.p236.shell.'"));assert.ok(src.includes("current.rail=shell.classList.contains('cv231-rail-collapsed')"));assert.ok(src.includes("current.props=shell.classList.contains('cv231-props-collapsed')"));});
+ck('P236 offers an accessible three-step guide and reversible focus mode',()=>{assert.ok(src.includes("STEPS=["));assert.ok(src.includes("setAttribute('role','dialog')"));assert.ok(src.includes('cv236-focus-exit'));assert.ok(src.includes('cv236-focus'));});
+ck('P236 attaches to newly mounted shells without polling timers',()=>{assert.ok(src.includes('MutationObserver'));assert.ok(src.includes("querySelectorAll('.cv231-shell')"));assert.ok(!src.includes('setInterval('));});
+console.log(checks.length+'/'+checks.length+' P236 source assertions passed');

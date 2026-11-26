@@ -78,15 +78,16 @@ with sync_playwright() as p:
     # P150 tech intentionally changes the toolbar while Home is active.
     # Capture the base-pink baseline only after opening a non-Home workspace.
     pg.evaluate("CVWS.open('design')");pg.wait_for_timeout(900)
-    baseline=pg.evaluate('getComputedStyle(document.getElementById("ws-export")).backgroundColor')
-    ck('theme fixture baseline is original pink Export',baseline=='rgb(255, 61, 154)')
+    baseline=pg.evaluate("""()=>{const color=getComputedStyle(document.getElementById('ws-export')).backgroundColor;const token=getComputedStyle(document.body).getPropertyValue('--cv-accent').trim();const c=document.createElement('canvas').getContext('2d');c.fillStyle=color;const actual=c.fillStyle;c.fillStyle=token;return {actual:actual,expected:c.fillStyle}}""")
+    ck('theme fixture baseline follows the unified accent token',baseline['actual']==baseline['expected'])
+    baseline=baseline['actual']
     for sp in ['design','site','media','proj','ai']:
         pg.evaluate("CVWS.open('%s')"%sp);pg.wait_for_timeout(900)
         ck('không gian '+sp+' không lẫn trang Tổng quan',pg.evaluate('document.getElementById("page-home").offsetHeight')==0 and not pg.is_visible('#cv150-skins'))
         ck('không gian '+sp+' tắt Home-only toolbar scope',pg.evaluate('document.documentElement.getAttribute("data-cv150-home-active")!=="true"'))
         ck('không gian '+sp+' đưa skin gốc về classic ở root',pg.evaluate('document.documentElement.getAttribute("data-home-skin")==="classic"'))
-        state=pg.evaluate("""()=>{const e=document.getElementById('ws-export'),s=getComputedStyle(e);return {home:document.documentElement.getAttribute('data-home-skin'),active:document.documentElement.getAttribute('data-cv150-home-active'),skin:document.documentElement.getAttribute('data-skin'),bodyTheme:[...document.body.classList].filter(x=>x.indexOf('cv229-theme-')===0),background:s.backgroundColor,backgroundImage:s.backgroundImage,color:s.color,border:s.borderColor}}""")
-        if state['background']!='rgb(255, 61, 154)': print('P150_EXPORT_DIAGNOSTIC '+sp+' '+str(state))
+        state=pg.evaluate("""()=>{const e=document.getElementById('ws-export'),s=getComputedStyle(e),c=document.createElement('canvas').getContext('2d');c.fillStyle=s.backgroundColor;return {home:document.documentElement.getAttribute('data-home-skin'),active:document.documentElement.getAttribute('data-cv150-home-active'),skin:document.documentElement.getAttribute('data-skin'),bodyTheme:[...document.body.classList].filter(x=>x.indexOf('cv229-theme-')===0),background:c.fillStyle,rawBackground:s.backgroundColor,backgroundImage:s.backgroundImage,color:s.color,border:s.borderColor}}""")
+        if state['background']!=baseline: print('P150_EXPORT_DIAGNOSTIC '+sp+' '+str(state))
         ck('không gian '+sp+' giữ nút Xuất hồng gốc',state['background']==baseline)
     pg.close()
 

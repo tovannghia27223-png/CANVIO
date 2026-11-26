@@ -13,7 +13,7 @@ const BUILTIN={
  'ease-out':[0,0,.58,1],
  'ease-in-out':[.42,0,.58,1]
 };
-let observer=null,applying=false,mountedNode=null;
+let observer=null,applying=false,mountedNode=null,draft=null;
 const $=id=>doc&&doc.getElementById(id);
 const copy=c=>Array.isArray(c)?c.map(Number):null;
 function validCurve(c){
@@ -86,6 +86,21 @@ function nativeCurveState(){
  const values=ids.map(id=>{const n=$(id);return n?Number(n.value):NaN;});
  return validCurve(values)?{curve:values,kind:findPreset(values)?'preset':'custom',preset:findPreset(values)}:{curve:null,kind:'invalid'};
 }
+/* A curve chosen but not yet applied lives only in the inspector fields. The Video Engine may
+ * redraw that inspector at any time, so keep the draft until the clip itself changes. */
+function motionSignature(clip){return JSON.stringify((clip&&clip.motion)||null);}
+function keepDraft(curve){
+ const clip=selectedClip();
+ draft=clip&&validCurve(curve)?{id:clip.id,curve:copy(curve),base:motionSignature(clip)}:null;
+}
+function restoreDraft(){
+ if(!draft)return false;
+ const clip=selectedClip();
+ if(!clip||clip.locked||clip.id!==draft.id||motionSignature(clip)!==draft.base){draft=null;return false;}
+ const shown=nativeCurveState().curve;
+ if(!equalCurve(shown,draft.curve)&&!setNativeCurve(draft.curve))return false;
+ return true;
+}
 function setStatus(message,warning){
  const out=$('cv119v-status');if(!out)return;
  const next=message||'Chọn preset rồi bấm Áp dụng để lưu vào clip.';
@@ -112,6 +127,7 @@ function setNativeCurve(curve){
 function choosePreset(name){
  const map=presetMap(),curve=map[name];
  if(!curve||!setNativeCurve(curve)){setStatus('Không thể áp dụng preset: Video Engine chưa mở clip hình/video.',true);return false;}
+ keepDraft(curve);
  setStatus('Đã chọn preset “'+name+'”. Bấm Áp dụng để lưu vào clip bằng lịch sử hiện tại.');
  return true;
 }
@@ -119,6 +135,7 @@ function chooseMotion(){
  const curve=parseMotionCurve();
  if(!curve){setStatus('Motion hiện không dùng cubic-bezier hợp lệ. Preset lò xo linear() không thể chuyển thành một đường Bezier duy nhất.',true);return false;}
  if(!setNativeCurve(curve)){setStatus('Chưa thể nhận đường cong từ Motion: hãy chọn clip hình/video trước.',true);return false;}
+ keepDraft(normalized(curve));
  const name=findPreset(curve);
  setStatus(name?'Đã lấy preset “'+name+'” từ Motion. Bấm Áp dụng để lưu.':'Đã lấy cubic-bezier tùy chỉnh từ Motion. Bấm Áp dụng để lưu.');
  return true;
@@ -138,6 +155,11 @@ function refreshSelection(panel){
  const clip=selectedClip(),locked=!!(clip&&clip.locked);
  select.disabled=!clip||locked;
  if(locked){setStatus('Clip đang khóa. Mở khóa trong Video Engine trước khi đổi easing.',true);return;}
+ if(restoreDraft()){
+  const name=findPreset(draft.curve),value=name?'preset:'+name:'current-custom';
+  if(select.value!==value&&select.value!=='motion')select.value=value;
+  return;
+ }
  const state=clip?motionCurveState(clip):nativeCurveState();
  if(state.mixed){select.value='current-custom';setStatus('Clip có nhiều đường cong theo từng đoạn keyframe; preset không đồng nhất nên đang giữ nguyên.');return;}
  if(state.preset&&select.querySelector('option[value="preset:'+state.preset+'"]'))select.value='preset:'+state.preset;
@@ -171,10 +193,11 @@ function mount(){
   const input=$(id);if(input)input.addEventListener('input',()=>{
    if(applying)return;
    const s=field.querySelector('#cv119v-select');if(s)s.value='current-custom';
+   keepDraft(nativeCurveState().curve);
    setStatus('Đang dùng curve tùy chỉnh. Bấm Áp dụng để lưu.');
   });
  });
- native.addEventListener('change',()=>{if(!applying)refreshSelection(field);});
+ native.addEventListener('change',()=>{if(!applying){draft=null;refreshSelection(field);}});
  mountedNode=field;refreshSelection(field);return true;
 }
 function start(){

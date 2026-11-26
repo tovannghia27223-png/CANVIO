@@ -1,17 +1,17 @@
 {
   "format": "CANVIO_P143_INLINE_SOURCE_INVENTORY",
   "version": 1,
-  "generatedAt": "2026-11-25T11:25:31.078Z",
+  "generatedAt": "2026-11-26T07:52:03.169Z",
   "source": "restored canonical index.html after hosted workflow integration steps",
   "purpose": "Complete script-tag inventory in browser execution order; known global reference detection is heuristic, not a semantic dependency DAG.",
-  "htmlBytes": 6116149,
-  "scriptTagCount": 188,
-  "inlineScriptCount": 188,
+  "htmlBytes": 6184554,
+  "scriptTagCount": 195,
+  "inlineScriptCount": 195,
   "externalScriptCount": 0,
   "moduleScriptCount": 0,
   "asyncScriptCount": 0,
   "deferScriptCount": 0,
-  "uniqueScriptIds": 185,
+  "uniqueScriptIds": 192,
   "duplicateScriptIds": [],
   "modules": [
     {
@@ -82,8 +82,8 @@
       "async": false,
       "defer": false,
       "noModule": false,
-      "bytes": 397475,
-      "sha256": "706e0b5f3273f8c85db1048d71add2326fc921d68d28a3c32ad7a438deb0b30a",
+      "bytes": 397487,
+      "sha256": "921efa3bdc45a4f377e9a9fb35b56ec14510c30273c06ec65d25b2996a05d9d1",
       "exportedGlobals": [
         "CV",
         "CV190PosterSamples",
@@ -18592,8 +18592,8 @@
       "async": false,
       "defer": false,
       "noModule": false,
-      "bytes": 11196,
-      "sha256": "98c31fa94436896042adac99f8dea05fad5e3d2c4687bbd24ec0b5f426134b62",
+      "bytes": 12233,
+      "sha256": "4ac2e8a7c13872dfbab6b5023b81df57a1afb27ce4ec9802f9eba0051cbf3b1f",
       "exportedGlobals": [],
       "globalDeclarations": [],
       "globalPropertyReads": [],
@@ -18954,8 +18954,236 @@
       "async": false,
       "defer": false,
       "noModule": false,
-      "bytes": 8961,
-      "sha256": "46f047d639a3269a860fa43dbb132314f952b13f7a2fb0cbea3bebbb3b9b34ec",
+      "bytes": 8920,
+      "sha256": "95ea52132ab49b4838035f077dd44e5d50b8c5944376677622796b00330d197c",
+      "exportedGlobals": [],
+      "globalDeclarations": [],
+      "globalPropertyReads": [],
+      "knownGlobalReads": [],
+      "globalReferenceEvidence": {
+        "propertyReads": [],
+        "knownReads": [],
+        "writes": [],
+        "scannerLimitations": [
+          "Template literal bodies and interpolation expressions are skipped as one lexical region.",
+          "Destructured globals, alias flow, computed property names, eval and dynamically assembled identifiers are not resolved.",
+          "Top-level bindings are detected only for simple var/let/const/function/class declarations.",
+          "This scanner is lexical evidence, not a JavaScript AST or proof of runtime data flow."
+        ]
+      }
+    },
+    {
+      "order": 188,
+      "id": "canvio-lot231",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 18334,
+      "sha256": "d3f88030467cc2335f50f1105feb0eb820090a6f743250d75f520144bca42e89",
+      "exportedGlobals": [],
+      "globalDeclarations": [],
+      "globalPropertyReads": [],
+      "knownGlobalReads": [
+        "CV"
+      ],
+      "globalReferenceEvidence": {
+        "propertyReads": [],
+        "knownReads": [
+          {
+            "name": "CV",
+            "count": 2,
+            "lines": [
+              65
+            ]
+          }
+        ],
+        "writes": [],
+        "scannerLimitations": [
+          "Template literal bodies and interpolation expressions are skipped as one lexical region.",
+          "Destructured globals, alias flow, computed property names, eval and dynamically assembled identifiers are not resolved.",
+          "Top-level bindings are detected only for simple var/let/const/function/class declarations.",
+          "This scanner is lexical evidence, not a JavaScript AST or proof of runtime data flow."
+        ]
+      }
+    },
+    {
+      "order": 189,
+      "id": "canvio-lot232",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 2317,
+      "sha256": "a8d6c427f9336eeec84d9c0abcc86ac258c82c4deac34a053141df0825cacd20",
+      "exportedGlobals": [],
+      "globalDeclarations": [],
+      "globalPropertyReads": [],
+      "knownGlobalReads": [
+        "CV"
+      ],
+      "globalReferenceEvidence": {
+        "propertyReads": [],
+        "knownReads": [
+          {
+            "name": "CV",
+            "count": 6,
+            "lines": [
+              8
+            ]
+          }
+        ],
+        "writes": [],
+        "scannerLimitations": [
+          "Template literal bodies and interpolation expressions are skipped as one lexical region.",
+          "Destructured globals, alias flow, computed property names, eval and dynamically assembled identifiers are not resolved.",
+          "Top-level bindings are detected only for simple var/let/const/function/class declarations.",
+          "This scanner is lexical evidence, not a JavaScript AST or proof of runtime data flow."
+        ]
+      }
+    },
+    {
+      "order": 190,
+      "id": "canvio-lot233",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 7497,
+      "sha256": "42028a4460043c3934cdfaaebe03c3f5f17fb8ee595670b4fafdbfb213a5116d",
+      "exportedGlobals": [],
+      "globalDeclarations": [],
+      "globalPropertyReads": [],
+      "knownGlobalReads": [
+        "CV"
+      ],
+      "globalReferenceEvidence": {
+        "propertyReads": [],
+        "knownReads": [
+          {
+            "name": "CV",
+            "count": 4,
+            "lines": [
+              39,
+              91
+            ]
+          }
+        ],
+        "writes": [],
+        "scannerLimitations": [
+          "Template literal bodies and interpolation expressions are skipped as one lexical region.",
+          "Destructured globals, alias flow, computed property names, eval and dynamically assembled identifiers are not resolved.",
+          "Top-level bindings are detected only for simple var/let/const/function/class declarations.",
+          "This scanner is lexical evidence, not a JavaScript AST or proof of runtime data flow."
+        ]
+      }
+    },
+    {
+      "order": 191,
+      "id": "canvio-lot234",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 8026,
+      "sha256": "64749c04276ddaf36267a0b2dd797fa47a7b24a85bbebc2886a0b8c635321c46",
+      "exportedGlobals": [],
+      "globalDeclarations": [],
+      "globalPropertyReads": [],
+      "knownGlobalReads": [],
+      "globalReferenceEvidence": {
+        "propertyReads": [],
+        "knownReads": [],
+        "writes": [],
+        "scannerLimitations": [
+          "Template literal bodies and interpolation expressions are skipped as one lexical region.",
+          "Destructured globals, alias flow, computed property names, eval and dynamically assembled identifiers are not resolved.",
+          "Top-level bindings are detected only for simple var/let/const/function/class declarations.",
+          "This scanner is lexical evidence, not a JavaScript AST or proof of runtime data flow."
+        ]
+      }
+    },
+    {
+      "order": 192,
+      "id": "canvio-lot235",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 4356,
+      "sha256": "d33c673c63ffec0ec98660fc936fea519ebf1bd15983b5f4267d2c26a7087f0a",
+      "exportedGlobals": [],
+      "globalDeclarations": [],
+      "globalPropertyReads": [],
+      "knownGlobalReads": [
+        "CV"
+      ],
+      "globalReferenceEvidence": {
+        "propertyReads": [],
+        "knownReads": [
+          {
+            "name": "CV",
+            "count": 16,
+            "lines": [
+              23,
+              26,
+              31,
+              37,
+              45,
+              66
+            ]
+          }
+        ],
+        "writes": [],
+        "scannerLimitations": [
+          "Template literal bodies and interpolation expressions are skipped as one lexical region.",
+          "Destructured globals, alias flow, computed property names, eval and dynamically assembled identifiers are not resolved.",
+          "Top-level bindings are detected only for simple var/let/const/function/class declarations.",
+          "This scanner is lexical evidence, not a JavaScript AST or proof of runtime data flow."
+        ]
+      }
+    },
+    {
+      "order": 193,
+      "id": "canvio-lot236",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 6196,
+      "sha256": "b185ab333ec7794c6278d824ef37399d79c57026d7532f8f1a4b084dd0b41929",
+      "exportedGlobals": [],
+      "globalDeclarations": [],
+      "globalPropertyReads": [],
+      "knownGlobalReads": [],
+      "globalReferenceEvidence": {
+        "propertyReads": [],
+        "knownReads": [],
+        "writes": [],
+        "scannerLimitations": [
+          "Template literal bodies and interpolation expressions are skipped as one lexical region.",
+          "Destructured globals, alias flow, computed property names, eval and dynamically assembled identifiers are not resolved.",
+          "Top-level bindings are detected only for simple var/let/const/function/class declarations.",
+          "This scanner is lexical evidence, not a JavaScript AST or proof of runtime data flow."
+        ]
+      }
+    },
+    {
+      "order": 194,
+      "id": "canvio-lot237",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 20412,
+      "sha256": "eacfb5eb784fbbd48003900a1d8f29dde3165c341a1a25073be5f1cfc970b1a9",
       "exportedGlobals": [],
       "globalDeclarations": [],
       "globalPropertyReads": [],

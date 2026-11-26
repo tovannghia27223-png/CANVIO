@@ -5298,7 +5298,7 @@ var Engines = (function(){
   function vAddFiles(){var e=document.getElementById('vtFiles');if(e)e.click()}
   async function vImport(ev){var target=ev&&ev.target,files=Array.from(target&&target.files||[]),added=0,sessionOnly=0,failed=0;try{for(var f of files){if(!f||typeof f.type!=='string')continue;if(f.size>150*1024*1024){toast('Bỏ qua '+f.name+' vì vượt 150 MB');continue}var type=f.type.startsWith('video/')?'video':f.type.startsWith('audio/')?'audio':f.type.startsWith('image/')?'image':null;if(!type)continue;var track=vTrackForType(type);if(vTrackLocked(track)){failed++;toast('Bỏ qua '+(f.name||'media')+' vì track đích đang khóa');continue}var latestEnd=vNextTrackStart(track),id=U.uid('vt'),start=latestEnd,c={id:id,mediaId:id,name:String(f.name||'Media').slice(0,160),type:type,start:start,duration:type==='image'?5:10,trimIn:0,track:track,volume:1};try{var stored=await vPut(id,f);(videoState.fileRefs=videoState.fileRefs||{})[id]=f;c.url=URL.createObjectURL(f);vLoadClip(c);videoState.clips.push(c);if(type==='video'||type==='audio')videoState.selected=c.id;videoState.duration=Math.max(videoState.duration,c.start+c.duration+2);added++;if(!stored)sessionOnly++}catch(err){failed++;console.warn('Media import failed',f.name,err);toast('Không nhập được '+(f.name||'media')+': '+(err.message||'lỗi lưu trữ'))}}}finally{if(target&&'value'in target)try{target.value=''}catch(e){}if(added){vSave();vRender();vDraw();vProps()}}if(sessionOnly)toast(sessionOnly+' tệp chỉ dùng trong phiên này vì IndexedDB không khả dụng; hãy xuất dự án trước khi đóng tab.');if(failed)toast(failed+' tệp không nhập được; các tệp đã nhập thành công vẫn được giữ.');return added>0}
   function vLoadClip(c){if(c.type==='text'||!c.url)return;videoState.runtimeURLs[c.mediaId||c.id]=c.url;if(c.type==='video'){var m=document.createElement('video');m.src=c.url;m.muted=true;m.preload='auto';m.playsInline=true;videoState.media.push(m);c.el=m}else if(c.type==='image'){var im=new Image();im.src=c.url;c.el=im}else if(c.type==='audio'){var au=document.createElement('audio');au.src=c.url;au.preload='auto';c.el=au}}
-  function vAddText(){if(vTrackLocked(3)){toast('Track chữ đang khóa');return false}var c={id:U.uid('vt'),name:'Text overlay',type:'text',text:'Your message here',start:0,duration:5,track:3};videoState.clips.push(c);videoState.selected=c.id;vSave();vRender();vProps()}
+  function vAddText(){if(vTrackLocked(3)){toast('Track chữ đang khóa');return false}var c={id:U.uid('vt'),name:'Text overlay',type:'text',text:'Your message here',start:0,duration:5,track:3};vPushUndo();videoState.clips.push(c);videoState.selected=c.id;vSave();vRender();vProps()}
   function vAssetPicker(){var box=document.getElementById('vtAssetPicker');if(!box)return;var a=CV.assets.list().filter(function(x){return x.data});box.innerHTML=a.slice(0,12).map(function(x){return '<button class="assetCard" style="text-align:left" onclick="CV.engines.video.addAsset(\''+x.id+'\')"><div class="assetThumb"><img src="'+x.data+'"></div><div class="assetInfo"><b>'+String(x.name).replace(/</g,'&lt;')+'</b><small>Thêm vào timeline</small></div></button>'}).join('')||'<span class="tiny">Chưa có ảnh trong Assets.</span>'}
   async function vAddAsset(id){var a=CV.assets.list().find(function(x){return x.id===id});if(!a||!a.data)return;var blob=await (await fetch(a.data)).blob(),f=new File([blob],a.name,{type:a.mime||blob.type}),fake={target:{files:[f],value:''}};await vImport(fake)}
   /* 21.12.2 · thanh chuyển cảnh trực quan: vùng hai clip track 1 chồng nhau */
@@ -36884,7 +36884,7 @@ const BUILTIN={
  'ease-out':[0,0,.58,1],
  'ease-in-out':[.42,0,.58,1]
 };
-let observer=null,applying=false,mountedNode=null;
+let observer=null,applying=false,mountedNode=null,draft=null;
 const $=id=>doc&&doc.getElementById(id);
 const copy=c=>Array.isArray(c)?c.map(Number):null;
 function validCurve(c){
@@ -36957,6 +36957,21 @@ function nativeCurveState(){
  const values=ids.map(id=>{const n=$(id);return n?Number(n.value):NaN;});
  return validCurve(values)?{curve:values,kind:findPreset(values)?'preset':'custom',preset:findPreset(values)}:{curve:null,kind:'invalid'};
 }
+/* A curve chosen but not yet applied lives only in the inspector fields. The Video Engine may
+ * redraw that inspector at any time, so keep the draft until the clip itself changes. */
+function motionSignature(clip){return JSON.stringify((clip&&clip.motion)||null);}
+function keepDraft(curve){
+ const clip=selectedClip();
+ draft=clip&&validCurve(curve)?{id:clip.id,curve:copy(curve),base:motionSignature(clip)}:null;
+}
+function restoreDraft(){
+ if(!draft)return false;
+ const clip=selectedClip();
+ if(!clip||clip.locked||clip.id!==draft.id||motionSignature(clip)!==draft.base){draft=null;return false;}
+ const shown=nativeCurveState().curve;
+ if(!equalCurve(shown,draft.curve)&&!setNativeCurve(draft.curve))return false;
+ return true;
+}
 function setStatus(message,warning){
  const out=$('cv119v-status');if(!out)return;
  const next=message||'Chọn preset rồi bấm Áp dụng để lưu vào clip.';
@@ -36983,6 +36998,7 @@ function setNativeCurve(curve){
 function choosePreset(name){
  const map=presetMap(),curve=map[name];
  if(!curve||!setNativeCurve(curve)){setStatus('Không thể áp dụng preset: Video Engine chưa mở clip hình/video.',true);return false;}
+ keepDraft(curve);
  setStatus('Đã chọn preset “'+name+'”. Bấm Áp dụng để lưu vào clip bằng lịch sử hiện tại.');
  return true;
 }
@@ -36990,6 +37006,7 @@ function chooseMotion(){
  const curve=parseMotionCurve();
  if(!curve){setStatus('Motion hiện không dùng cubic-bezier hợp lệ. Preset lò xo linear() không thể chuyển thành một đường Bezier duy nhất.',true);return false;}
  if(!setNativeCurve(curve)){setStatus('Chưa thể nhận đường cong từ Motion: hãy chọn clip hình/video trước.',true);return false;}
+ keepDraft(normalized(curve));
  const name=findPreset(curve);
  setStatus(name?'Đã lấy preset “'+name+'” từ Motion. Bấm Áp dụng để lưu.':'Đã lấy cubic-bezier tùy chỉnh từ Motion. Bấm Áp dụng để lưu.');
  return true;
@@ -37009,6 +37026,11 @@ function refreshSelection(panel){
  const clip=selectedClip(),locked=!!(clip&&clip.locked);
  select.disabled=!clip||locked;
  if(locked){setStatus('Clip đang khóa. Mở khóa trong Video Engine trước khi đổi easing.',true);return;}
+ if(restoreDraft()){
+  const name=findPreset(draft.curve),value=name?'preset:'+name:'current-custom';
+  if(select.value!==value&&select.value!=='motion')select.value=value;
+  return;
+ }
  const state=clip?motionCurveState(clip):nativeCurveState();
  if(state.mixed){select.value='current-custom';setStatus('Clip có nhiều đường cong theo từng đoạn keyframe; preset không đồng nhất nên đang giữ nguyên.');return;}
  if(state.preset&&select.querySelector('option[value="preset:'+state.preset+'"]'))select.value='preset:'+state.preset;
@@ -37042,10 +37064,11 @@ function mount(){
   const input=$(id);if(input)input.addEventListener('input',()=>{
    if(applying)return;
    const s=field.querySelector('#cv119v-select');if(s)s.value='current-custom';
+   keepDraft(nativeCurveState().curve);
    setStatus('Đang dùng curve tùy chỉnh. Bấm Áp dụng để lưu.');
   });
  });
- native.addEventListener('change',()=>{if(!applying)refreshSelection(field);});
+ native.addEventListener('change',()=>{if(!applying){draft=null;refreshSelection(field);}});
  mountedNode=field;refreshSelection(field);return true;
 }
 function start(){
@@ -38017,6 +38040,683 @@ root.CVUnifiedThemeP230={version:'230.1.0',styleId:STYLE_ID,css:CSS,mount:mount,
 if(doc.readyState==='loading')doc.addEventListener('DOMContentLoaded',mount,{once:true});else mount();
 if(root.MutationObserver&&doc.documentElement){var observer=new root.MutationObserver(function(){if(!doc.getElementById(STYLE_ID))mount()});observer.observe(doc.documentElement,{childList:true,subtree:true})}
 })(typeof window!=='undefined'?window:null,typeof document!=='undefined'?document:null);
+</script>
+<script id="canvio-lot231">
+/* Canonical embedded lot: canvio-lot231. */
+/* P231: one responsive shell that adopts existing editor nodes without cloning state or handlers. */
+(function (w, d) {
+  'use strict';
+  if (!w || !d || w.CVEditorShellP231) return;
+  var states = Object.create(null), styleId = 'canvio-p231-editor-shell-css', routeObserver = null;
+  function el(tag, cls, text) { var n=d.createElement(tag); if(cls)n.className=cls; if(text!=null)n.textContent=text; return n; }
+  function pageFor(id) { return id && id.nodeType===1 ? id : d.getElementById(String(id||'').indexOf('page-')===0?id:'page-'+id); }
+  function installCss() {
+    if(d.getElementById(styleId)) return;
+    var s=el('style'); s.id=styleId;
+    s.textContent='.app.cv231-app-active{height:100dvh!important;min-height:100dvh!important;overflow:hidden!important}.main.cv231-app-active{min-height:0!important;overflow:hidden!important}.page.cv231-enabled{box-sizing:border-box!important;width:100%!important;max-width:none!important;height:calc(100dvh - 98px)!important;min-height:0!important;overflow:hidden!important;margin:0!important;padding:8px 10px!important}.page.cv231-enabled>.head,.page.cv231-enabled>.cv231-source-editor{display:none!important}.cv231-shell{display:grid;grid-template-rows:52px minmax(0,1fr);gap:8px;width:100%;height:100%;min-width:0;min-height:0;color:var(--ink)}.cv231-top{display:flex;align-items:center;gap:8px;min-width:0;padding:6px 9px;border:1px solid var(--line);border-radius:12px;background:var(--surface);box-shadow:var(--sh-1)}.cv231-ident{min-width:112px;max-width:190px;overflow:hidden}.cv231-ident strong{display:block;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.cv231-ident small{display:block;font-size:10px;color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.cv231-tools{display:flex;gap:4px;flex:none}.cv231-action{height:34px;padding:0 9px;border:1px solid var(--cv-accent-line,var(--line-2));border-radius:9px;background:var(--cv-accent-soft,var(--surface-3));color:var(--cv-accent-ink,var(--ink));font:700 11px inherit;white-space:nowrap;cursor:pointer}.cv231-action.primary{background:var(--cv-accent,#F83E9F);border-color:var(--cv-accent,#F83E9F);color:#fff}.cv231-actions{display:flex;align-items:center;gap:5px;flex:1;min-width:0;overflow:auto}.cv231-actions .headActions{display:flex!important;flex-wrap:nowrap!important;gap:5px!important;min-width:max-content}.cv231-layout{display:grid;grid-template-columns:minmax(168px,220px) minmax(0,1fr) minmax(250px,310px);gap:8px;min-width:0;min-height:0;overflow:hidden}.cv231-slot{box-sizing:border-box;min-width:0;min-height:0;overflow:hidden;border:1px solid var(--line);border-radius:12px;background:var(--surface)}.cv231-rail,.cv231-props{padding:8px;overflow:auto;overscroll-behavior:contain}.cv231-canvas{display:flex;min-width:0;min-height:0}.cv231-canvas #canvasWrap{width:100%!important;height:100%!important;max-height:100%!important;min-height:0!important;margin:0!important;overflow:auto!important;border:0!important}.cv231-rail .toolbar{position:static!important;display:flex!important;flex-direction:column!important;align-items:stretch!important;flex-wrap:nowrap!important;width:100%!important;max-height:none!important;margin:0!important;gap:6px!important;overflow:visible!important}.cv231-rail .toolbar .tbtn{width:100%;height:auto;min-height:36px;min-width:0;justify-content:flex-start;white-space:normal}.cv231-props>.stack{display:flex;flex-direction:column;gap:8px}.cv231-props .card{margin:0!important}.cv231-shell.cv231-rail-collapsed .cv231-layout{grid-template-columns:0 minmax(0,1fr) minmax(250px,310px)}.cv231-shell.cv231-rail-collapsed .cv231-rail,.cv231-shell.cv231-props-collapsed .cv231-props{display:none}.cv231-shell.cv231-props-collapsed .cv231-layout{grid-template-columns:minmax(168px,220px) minmax(0,1fr) 0}.cv231-shell.cv231-rail-collapsed.cv231-props-collapsed .cv231-layout{grid-template-columns:minmax(0,1fr)}@media(max-width:900px){.page.cv231-enabled{padding:6px!important}.cv231-shell{grid-template-rows:46px minmax(0,1fr);gap:6px}.cv231-top{gap:5px;padding:5px}.cv231-ident{min-width:80px;max-width:110px}.cv231-ident small{display:none}.cv231-action{height:34px;padding:0 7px;font-size:10px}.cv231-layout{grid-template-columns:minmax(0,1fr)!important;grid-template-rows:minmax(0,1fr) 50px}.cv231-canvas{grid-row:1}.cv231-rail{grid-row:2;padding:3px;overflow-x:auto;overflow-y:hidden}.cv231-rail .toolbar{flex-direction:row!important;align-items:center!important;width:max-content!important;max-width:none!important}.cv231-rail .toolbar .tbtn{width:auto;min-width:38px;min-height:38px;white-space:nowrap}.cv231-props{display:none;position:fixed;left:8px;right:8px;bottom:64px;top:auto;max-height:58dvh;z-index:1200;box-shadow:0 18px 44px rgba(12,20,38,.22)}.cv231-shell.cv231-mobile-props-open .cv231-props{display:block}.cv231-shell.cv231-props-collapsed .cv231-props{display:none!important}}@media(max-width:560px){.cv231-ident{min-width:72px;max-width:82px}.cv231-ident strong{font-size:11px}.cv231-action{padding:0 6px}.cv231-actions .headActions .btn{height:32px;padding:0 7px;font-size:10px}}@media(prefers-reduced-motion:reduce){.cv231-shell,.cv231-action{animation:none!important;transition:none!important}}'+".cv231-layout>.cv231-rail{grid-column:1;grid-row:1}.cv231-layout>.cv231-canvas{grid-column:2;grid-row:1}.cv231-layout>.cv231-props{grid-column:3;grid-row:1}.cv231-shell.cv231-rail-collapsed.cv231-props-collapsed .cv231-layout{grid-template-columns:0 minmax(0,1fr) 0}.page.cv231-enabled.active{display:flex!important;flex-direction:column;gap:6px}.page.cv231-enabled>*{flex:0 0 auto}.page.cv231-enabled{overflow-x:hidden!important;overflow-y:auto!important;overscroll-behavior:contain}.page.cv231-enabled>.cv231-shell{order:-1;flex:0 0 100%;height:auto;min-height:0}.page.cv231-enabled .cvux-actionbar,.page.cv231-enabled #cvg-globalbar{position:static!important}[data-cv231-action=more]::before{content:'\\2295'}body.cv231-editing :is(#page-poster,#page-videoEngine,#page-pixelStudio,#page-colorStudio,#page-clarityLab,#page-layoutFoundry) .cv231-shell :is(.toolbar,.ne-toolbar,.engine-toolbar,#cv-top,#cv-ctx,#pa-al){position:static!important;z-index:auto!important}@media(max-width:900px){.cv231-tools .cv231-action{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;width:42px;padding:0 1px;line-height:1}.cv231-tools .cv231-action::after{font:700 8.5px/1 inherit;font-family:inherit;font-size:8.5px;white-space:nowrap}[data-cv231-action=studio]::after{content:'Studio'}[data-cv231-action=toggle-rail]::after{content:'Công cụ'}[data-cv231-action=toggle-props]::after{content:'Chỉnh'}[data-cv231-action=more]::after{content:'Thêm'}[data-cv231-action=legacy]::after{content:'Bản cũ'}[data-cv236-action=guide]::after{content:'Trợ giúp'}[data-cv236-action=focus]::after{content:'Tập trung'}[data-cv231-action=studio]{display:none!important}}@media(max-width:900px){.main.cv231-app-active{height:calc(100dvh - 12px)!important}body.cv231-editing #ws-src:not([hidden]){display:flex!important;flex-wrap:nowrap!important;align-items:center;overflow-x:auto;overflow-y:hidden;flex:0 0 auto;height:44px;padding:4px 10px!important}body.cv231-editing #ws-src>*{flex:0 0 auto!important;white-space:nowrap}body.cv231-editing #ws-src>.ws-s-sp{display:none}.cv231-top{overflow:hidden}.cv231-actions{flex-wrap:nowrap!important;overflow-x:auto;overflow-y:hidden;height:40px}.cv231-actions>*,.cv231-actions .headActions,.cv231-actions .ne-toolbar,.cv231-actions .engine-toolbar{flex:0 0 auto!important;flex-wrap:nowrap!important;white-space:nowrap;margin:0!important}.cv231-actions>.ne-toolbar,.cv231-actions>.engine-toolbar{padding-top:0!important;padding-bottom:0!important;border:0!important;box-shadow:none!important;max-width:none!important;overflow:visible!important}.cv231-actions .headActions>*,.cv231-actions .ne-toolbar>*,.cv231-actions .engine-toolbar>*{flex:0 0 auto!important;width:auto!important;min-width:max-content!important}}.page.cv231-enabled [data-cv231-launch]{display:none!important}.cv231-tools .cv231-action{width:34px;padding:0;font-size:0!important;background:var(--surface);border-color:var(--line);color:var(--ink)}.cv231-tools .cv231-action::before{font-size:15px;line-height:1}.cv231-tools .cv231-action:hover,.cv231-tools .cv231-action[aria-pressed=true]{background:var(--cv-accent-soft,var(--surface-3));border-color:var(--cv-accent-line,var(--line-2));color:var(--cv-accent-ink,var(--ink))}.cv231-action:focus-visible{outline:2px solid var(--cv-accent,#F83E9F);outline-offset:2px}[data-cv231-action=studio]::before{content:'\\2630'}[data-cv231-action=toggle-rail]::before{content:'\\25E7'}[data-cv231-action=toggle-props]::before{content:'\\25E8'}[data-cv231-action=legacy]::before{content:'\\21A9'}[data-cv236-action=guide]::before{content:'?';font-weight:800}[data-cv236-action=focus]::before{content:'\\26F6'}@media(min-width:901px){body.cv231-editing:not(.cv231-nav-open) #cv-design-rail111{display:none!important}body.cv231-editing.cv231-nav-open #cv-design-rail111{z-index:1600!important}}body.cv231-editing #cvBanners{top:auto;bottom:12px}@media(max-width:900px){body.cv231-editing #cvBanners{bottom:76px}[data-cv231-action=studio]{display:none}}@media(min-width:901px){.cv231-rail .toolbar{display:grid!important;grid-template-columns:1fr 1fr;align-content:start}.cv231-rail .toolbar>:not(.tbtn){grid-column:1/-1}.cv231-rail .toolbar>.sep{width:100%;height:1px;margin:0}}@media(max-width:900px){.cv231-layout>.cv231-rail{grid-column:1;grid-row:2}.cv231-layout>.cv231-canvas{grid-column:1;grid-row:1}.cv231-tools{gap:3px}.cv231-tools .cv231-action{width:40px;height:40px}.cv231-ident{display:none}.cv231-actions{min-width:90px}}";
+    d.head.appendChild(s);
+  }
+  function restore(st) {
+    st.records.slice().reverse().forEach(function(r){if(r.marker.parentNode){r.marker.parentNode.insertBefore(r.node,r.marker);r.marker.parentNode.removeChild(r.marker);} if(r.node.dataset)delete r.node.dataset.cv231Adopted;});
+    st.records=[];
+  }
+  var fitQueued=false;
+  function activeState(){return Object.keys(states).map(function(k){return states[k];}).find(function(x){return x.enabled&&x.page.classList.contains('active');});}
+  /* Height comes from the real position of the page, so banners and the mobile bottom nav never push the editor off screen. */
+  function fit(){
+    fitQueued=false;var st=activeState();if(!st)return false;
+    if(w.scrollY)w.scrollTo(0,0);
+    var vh=w.innerHeight,top=st.page.getBoundingClientRect().top,bottom=vh-6,nav=d.getElementById('cv-design-rail111');
+    if(nav){var r=nav.getBoundingClientRect();if(r.height&&r.top>vh/2)bottom=r.top-4;}
+    var h=Math.max(320,Math.floor(bottom-top))+'px';
+    if(st.page.style.getPropertyValue('height')!==h)st.page.style.setProperty('height',h,'important');
+    return true;
+  }
+  function queueFit(){if(fitQueued)return;fitQueued=true;w.requestAnimationFrame(fit);}
+  function syncAppLock() {
+    var locked=Object.keys(states).some(function(k){var st=states[k];return st.enabled&&st.page.classList.contains('active');});
+    var app=d.querySelector('.app'),main=d.querySelector('.main');
+    if(app)app.classList.toggle('cv231-app-active',locked);
+    if(main)main.classList.toggle('cv231-app-active',locked);
+    d.body.classList.toggle('cv231-editing',locked);
+    if(!locked)d.body.classList.remove('cv231-nav-open');
+    if(locked){queueFit();w.setTimeout(queueFit,350);}
+    return locked;
+  }
+  function observeRoutes() {
+    if(routeObserver||!w.MutationObserver)return;
+    var pages=d.querySelectorAll('.page');if(!pages.length)return;
+    routeObserver=new w.MutationObserver(function(){d.body.classList.remove('cv231-nav-open');Object.keys(states).forEach(function(k){var p=states[k].page;if(!p.classList.contains('active'))p.scrollTop=0;});syncAppLock();});
+    w.addEventListener('resize',queueFit,{passive:true});
+    if(w.ResizeObserver){var ro=new w.ResizeObserver(queueFit);d.querySelectorAll('.main,.main>*,.page>*:not(.cv231-shell)').forEach(function(n){ro.observe(n);});}
+    pages.forEach(function(page){routeObserver.observe(page,{attributes:true,attributeFilter:['class']});});
+    syncAppLock();
+  }
+  function adoptNode(st,node,slot,key) {
+    var target=st.slots[slot]; if(!node||!target||target.contains(node))return false;
+    var rec=st.records.find(function(x){return x.node===node;});
+    if(!rec){if(!node.parentNode)return false;var marker=d.createComment('cv231-origin:'+key);node.parentNode.insertBefore(marker,node);rec={node:node,marker:marker};st.records.push(rec);}
+    target.appendChild(node);node.dataset.cv231Adopted=key;return true;
+  }
+  function setEnabled(st,on) {
+    on=!!on;if(on===st.enabled){syncAppLock();return on;}
+    if(on){st.options.adopt.forEach(function(x){adoptNode(st,x.node||st.page.querySelector(x.selector),x.slot,x.key||x.selector||x.slot);});if(st.options.topActions){var n=st.page.querySelector(st.options.topActions);if(n)adoptNode(st,n,'actions','topActions');}st.page.classList.add('cv231-enabled');st.shell.hidden=false;st.enabled=true;try{w.sessionStorage.setItem('canvio.p231.mode.'+st.id,'editor');}catch(e){}if(st.options.onEnable)st.options.onEnable(st);}
+    else{restore(st);st.page.classList.remove('cv231-enabled');st.page.style.removeProperty('height');st.shell.hidden=true;st.enabled=false;try{w.sessionStorage.setItem('canvio.p231.mode.'+st.id,'legacy');}catch(e){}if(st.options.onDisable)st.options.onDisable(st);}
+    syncAppLock();
+    return on;
+  }
+  function action(st,id,label,run,primary) {var b=el('button','cv231-action'+(primary?' primary':''),label);b.type='button';b.title=label;b.setAttribute('aria-label',label);b.dataset.cv231Action=id;b.addEventListener('click',function(){try{if(run)run();}catch(e){if(w.CV&&CV.toast)CV.toast('Thao tác chưa hoàn tất. Hãy thử lại.');}});return b;}
+  function mount(pageId,options) {
+    var page=pageFor(pageId);if(!page)return false;var id=page.id.replace(/^page-/,'');if(states[id]){if(options)states[id].options=options;var mode='';try{mode=w.sessionStorage.getItem('canvio.p231.mode.'+id)||'';}catch(e){}setEnabled(states[id],mode!=='legacy');return states[id];}
+    options=options||{};options.adopt=options.adopt||[];installCss();var head=page.querySelector('.head'),title=options.title||(head&&head.querySelector('h1')&&head.querySelector('h1').textContent.trim())||id;
+    var shell=el('section','cv231-shell');shell.id='cv231-shell-'+id;shell.setAttribute('aria-label',title+' Editor');var top=el('header','cv231-top'),ident=el('div','cv231-ident');ident.appendChild(el('strong','',title));ident.appendChild(el('small','',options.subtitle||'Không gian làm việc'));var tools=el('div','cv231-tools'),actions=el('div','cv231-actions');top.append(ident,tools,actions);
+    var layout=el('div','cv231-layout'),rail=el('aside','cv231-slot cv231-rail'),canvas=el('main','cv231-slot cv231-canvas'),props=el('aside','cv231-slot cv231-props'),bottom=el('div','cv231-slot cv231-bottom');rail.setAttribute('aria-label','Công cụ');canvas.setAttribute('aria-label','Khung làm việc');props.setAttribute('aria-label','Thuộc tính');bottom.hidden=true;layout.append(rail,canvas,props,bottom);shell.append(top,layout);if(head&&head.parentNode)head.parentNode.insertBefore(shell,head.nextSibling);else page.prepend(shell);
+    var st={id:id,page:page,shell:shell,enabled:false,options:options,records:[],slots:{rail:rail,canvas:canvas,props:props,bottom:bottom,actions:actions}};states[id]=st;observeRoutes();
+    tools.append(action(st,'studio','Chuyển công cụ Studio',function(){d.body.classList.toggle('cv231-nav-open');}));tools.append(action(st,'toggle-rail','Công cụ',function(){shell.classList.toggle('cv231-rail-collapsed');}));tools.append(action(st,'toggle-props','Thuộc tính',function(){if(w.innerWidth<=900)shell.classList.toggle('cv231-mobile-props-open');else shell.classList.toggle('cv231-props-collapsed');}));tools.append(action(st,'more','Tiện ích mở rộng (bên dưới khung chỉnh sửa)',function(){page.scrollTo({top:page.scrollTop>10?0:shell.offsetHeight+6,behavior:'smooth'});}));tools.append(action(st,'legacy','Bố cục cũ',function(){setEnabled(st,false);}));
+    (options.actions||[]).forEach(function(a){actions.append(action(st,a.id,a.label,a.run,a.variant==='primary'));});
+    if(options.launchButton&&head){var host=head.querySelector('.headActions');if(host&&!host.querySelector('[data-cv231-launch]')){var launch=el('button','btn btn-soft',options.launchLabel||'Mở Editor');launch.type='button';launch.dataset.cv231Launch=id;launch.addEventListener('click',function(){setEnabled(st,true);});host.insertBefore(launch,host.firstChild);}}
+    var mode='';try{mode=w.sessionStorage.getItem('canvio.p231.mode.'+id)||'';}catch(e){}setEnabled(st,mode!=='legacy');return st;
+  }
+  function adopt(selector,slot,pageId){var st=states[String(pageId||'').replace(/^page-/,'')]||Object.keys(states).map(function(k){return states[k];}).find(function(x){return x.enabled;});if(!st)return false;var n=selector&&selector.nodeType===1?selector:st.page.querySelector(selector);return adoptNode(st,n,slot,selector||slot);}
+  function toggle(pageId){var st=states[String(pageId||'').replace(/^page-/,'')]||Object.keys(states).map(function(k){return states[k];}).find(function(x){return x.page.classList.contains('active');});return st?setEnabled(st,!st.enabled):false;}
+  function state(id){var st=states[String(id||'').replace(/^page-/,'')];return st?{pageId:st.id,enabled:st.enabled,adopted:st.records.length,slots:Object.keys(st.slots)}:null;}
+  function tests(){var ids=Object.keys(states);return{singleton:true,styleReady:!!d.getElementById(styleId),mounted:ids.length,allHaveSlots:ids.every(function(k){return Object.keys(states[k].slots).length===5;}),allAdoptedNodesConnected:ids.every(function(k){return states[k].records.every(function(x){return x.node.isConnected;});}),routeObserverReady:!!routeObserver,appLockScopedToActivePage:!d.querySelector('.app.cv231-app-active')||Object.keys(states).some(function(k){return states[k].enabled&&states[k].page.classList.contains('active');})};}
+  w.CVEditorShellP231={version:'231.1.1',mount:mount,adopt:adopt,toggle:toggle,state:state,tests:tests};
+})(window,document);
+</script>
+<script id="canvio-lot232">
+/* Canonical embedded lot: canvio-lot232. */
+/* P232: move the existing Poster toolbar, canvas and inspector into the shared P231 shell. */
+(function(w,d){'use strict';if(!w||!d||w.CVPosterShellP232)return;var mounted=false,observer=null;
+function api(){return w.CV&&w.CV.poster?w.CV.poster:null;}
+function fit(){try{var p=api();if(p&&typeof p.fit==='function')p.fit();}catch(e){}}
+function mount(){if(mounted)return true;var page=d.getElementById('page-poster'),shell=w.CVEditorShellP231,p=api();if(!page||!shell||!p||!p.history)return false;var editor=page.querySelector('.editor'),toolbar=editor&&editor.querySelector('.toolbar'),inspector=editor&&editor.querySelector(':scope > .stack'),canvas=page.querySelector('#canvasWrap'),headActions=page.querySelector('.headActions');if(!editor||!toolbar||!inspector||!canvas||!headActions)return false;
+editor.classList.add('cv231-source-editor');var state=shell.mount('poster',{title:'Poster Studio',subtitle:'Thiết kế trực quan · Lớp · Thuộc tính · Xuất bản',launchButton:true,launchLabel:'Mở Editor toàn màn hình',topActions:'.headActions',adopt:[{node:toolbar,slot:'rail',key:'poster-toolbar'},{node:canvas,slot:'canvas',key:'poster-canvas'},{node:inspector,slot:'props',key:'poster-inspector'}],actions:[{id:'undo',label:'↶ Hoàn tác',run:function(){p.history.undo();}},{id:'redo',label:'↷ Làm lại',run:function(){p.history.redo();}},{id:'save',label:'Lưu',run:function(){if(w.CV&&CV.project&&typeof CV.project.save==='function')CV.project.save(true);else if(w.CV&&CV.project&&typeof CV.project.autosave==='function')CV.project.autosave();}}],onEnable:function(){w.requestAnimationFrame(fit);},onDisable:function(){w.requestAnimationFrame(fit);}});if(!state)return false;mounted=true;if(w.ResizeObserver){observer=new ResizeObserver(function(){w.requestAnimationFrame(fit);});observer.observe(canvas);}w.addEventListener('resize',fit,{passive:true});return true;}
+function ready(){var n=0;(function retry(){if(mount())return;if(++n<80)w.setTimeout(retry,250);})();}if(d.readyState==='loading')d.addEventListener('DOMContentLoaded',ready,{once:true});else ready();
+w.CVPosterShellP232={version:'232.1.1',mount:mount,fit:fit,state:function(){return w.CVEditorShellP231?w.CVEditorShellP231.state('poster'):null;}};
+})(window,document);
+</script>
+<script id="canvio-lot233">
+/* CANVIO P233 — Video Production Engine adapter for the shared P231 shell.
+ * Moves existing Video Engine DOM nodes only. Timeline, media DB, undo and export remain canonical.
+ */
+(function(w,d){'use strict';
+if(!w||!d||w.CVVideoShellP233)return;
+var mounted=false,resizeObserver=null,routeObserver=null,styleId='canvio-p233-video-shell-css';
+function el(id){return d.getElementById(id);}
+function installCss(){
+ if(el(styleId))return;
+ var s=d.createElement('style');s.id=styleId;
+ s.textContent=[
+ '.cv231-shell.cv233-video.cv231-has-bottom .cv231-layout{grid-template-rows:minmax(0,1fr) minmax(132px,27%)}',
+ '.cv231-shell.cv231-has-bottom .cv231-bottom{display:block!important;grid-column:1/-1;grid-row:2;min-height:0;padding:6px;overflow:hidden!important}',
+ '.cv231-shell.cv233-video .cv231-bottom>.card{height:100%;min-height:0;min-width:0;max-width:100%;box-sizing:border-box;margin:0!important;display:flex;flex-direction:column}',
+ '.cv231-shell.cv233-video .cv231-bottom #vtTimeline{flex:1;min-height:0;min-width:0;max-width:100%;box-sizing:border-box;max-height:100%;overflow:auto!important}',
+ '.cv231-shell.cv233-video .cv231-bottom .cardTop{flex:none;margin-bottom:6px}',
+ '.cv231-shell.cv233-video .cv231-top{min-width:0;max-width:100%;box-sizing:border-box}.cv231-shell.cv233-video .cv231-tools{min-width:0;max-width:100%}.cv231-shell.cv233-video .cv231-actions{min-width:0;max-width:100%}.cv231-shell.cv233-video .cv231-actions>.engine-toolbar{display:flex;flex:0 0 auto;align-items:center;gap:5px;flex-wrap:nowrap;min-width:max-content;overflow:visible}',
+ '.cv231-shell.cv233-video .cv231-actions>.engine-toolbar>*{flex:0 0 auto}',
+ '.cv231-shell.cv233-video .cv231-actions .headActions{min-width:max-content}',
+ '@media(min-width:901px){.cv231-shell.cv233-video{grid-template-rows:auto minmax(0,1fr)}.cv231-shell.cv233-video .cv231-top{flex-wrap:wrap}.cv231-shell.cv233-video .cv231-actions{flex:1 1 100%!important;flex-wrap:wrap;max-height:74px;overflow:auto}.cv231-shell.cv233-video .cv231-actions>.engine-toolbar{flex:1 1 100%;flex-wrap:wrap;min-width:0}.cv231-shell.cv233-video .cv231-actions .cv231-actions .headActions{flex-wrap:wrap}}',
+ '.cv231-shell.cv233-video .cv231-rail>.card{min-width:0;max-width:100%;box-sizing:border-box;margin:0!important;max-height:100%;overflow:auto}',
+ '.cv231-shell.cv233-video .cv231-canvas>.card{display:flex;flex-direction:column;width:100%;max-width:100%;box-sizing:border-box;height:100%;min-width:0;min-height:0;margin:0!important;overflow:hidden}',
+ '.cv231-shell.cv233-video .cv231-canvas>.card #vtCanvas{display:block;flex:1 1 auto;width:100%!important;height:100%!important;max-height:100%;min-height:0;object-fit:contain}',
+ '.cv231-shell.cv233-video .cv231-canvas>.card input#vtScrub{flex:none}',
+ '.cv231-shell.cv233-video .cv231-props>div{display:grid;min-width:0;max-width:100%;box-sizing:border-box;align-content:start;gap:8px;max-height:100%;overflow:auto}',
+ '.cv231-shell.cv233-video .cv231-props .card{margin:0!important;min-width:0}',
+ '.cv231-shell.cv233-video .cv231-props #vtCapList{max-height:25dvh!important;overflow:auto}',
+ '.cv231-shell.cv233-video .cv231-top,.cv231-shell.cv233-video .cv231-layout,.cv231-shell.cv233-video .cv231-bottom{box-sizing:border-box;width:100%;max-width:100%;min-width:0}',
+ '.cv231-shell.cv233-video .cv231-ident{flex:0 1 82px;min-width:0;max-width:82px}',
+ '.cv231-shell.cv233-video .cv231-actions{flex:1 1 0;min-width:0;max-width:100%;overflow-x:auto}',
+ '.cv231-shell.cv233-video .cv231-bottom>.card,.cv231-shell.cv233-video .cv231-bottom #vtTimeline{box-sizing:border-box;width:100%;max-width:100%;min-width:0}',
+ '@media(max-width:900px){.cv231-shell.cv233-video.cv231-has-bottom .cv231-layout{grid-template-columns:minmax(0,1fr)!important;grid-template-rows:minmax(190px,1fr) 54px minmax(126px,28dvh)!important}.cv231-shell.cv233-video .cv231-bottom{grid-column:1;grid-row:3}.cv231-shell.cv233-video .cv231-bottom>.card{padding:5px}.cv231-shell.cv233-video .cv231-rail{grid-column:1;grid-row:2}.cv231-shell.cv233-video .cv231-rail>.card{max-height:none;overflow:visible}.cv231-shell.cv233-video .cv231-props{z-index:1300;max-height:58dvh}.cv231-shell.cv233-video .cv231-canvas>.card{padding:6px}.cv231-shell.cv233-video .cv231-bottom #vtTimeline{overflow:auto!important}}'
+ ].join('');
+ d.head.appendChild(s);
+}
+function mount(){
+ if(mounted)return true;
+ var page=el('page-videoEngine'),shell=w.CVEditorShellP231,api=w.CV&&CV.engines&&CV.engines.video;
+ if(!page||!shell||!api||typeof api._state!=='function'||typeof api.save!=='function')return false;
+ var toolbar=page.querySelector('.engine-toolbar');
+ var toolbarCard=toolbar&&toolbar.parentElement;
+ var canvas=el('vtCanvas'),preview=canvas&&canvas.closest('.card');
+ var grid=canvas&&canvas.closest('.grid.g2');
+ var props=el('vtProps'),right=props&&props.parentElement&&props.parentElement.parentElement;
+ var timeline=el('vtTimeline'),timelineCard=timeline&&timeline.closest('.card');
+ var asset=el('vtAssetPicker'),assetCard=asset&&asset.closest('.card');
+ var assetGrid=assetCard&&assetCard.parentElement;
+ var head=page.querySelector('.headActions');
+ var externalLink=page.querySelector('a[href^="https://reframe-os.netlify.app/"]');
+ var externalCard=externalLink&&externalLink.closest('.card');
+ if(!toolbar||!toolbarCard||!preview||!grid||!right||!timelineCard||!assetCard||!assetGrid||!externalCard||!head)return false;
+ toolbarCard.classList.add('cv231-source-editor');
+ grid.classList.add('cv231-source-editor');
+ timelineCard.classList.add('cv231-source-editor');
+ assetGrid.classList.add('cv231-source-editor');
+ installCss();
+ var st=shell.mount('videoEngine',{
+  title:'Video Production Engine',
+  subtitle:'Preview · Media · Multitrack timeline · Export',
+  launchButton:true,
+  launchLabel:'Mở Video Editor',
+  topActions:'.headActions',
+  adopt:[
+   {node:assetCard,slot:'rail',key:'video-assets'},
+   {node:preview,slot:'canvas',key:'video-preview'},
+   {node:right,slot:'props',key:'video-inspector-captions'},
+   {node:externalCard,slot:'props',key:'video-external-editor'},
+   {node:timelineCard,slot:'bottom',key:'video-timeline'},
+   {node:toolbar,slot:'actions',key:'video-native-toolbar'}
+  ]
+ });
+ if(!st)return false;
+ st.slots.bottom.hidden=false;
+ st.shell.classList.add('cv231-has-bottom','cv233-video');
+ mounted=true;
+ function resize(){
+  var c=el('vtCanvas');
+  if(c){c.style.maxWidth='100%';}
+  var state=api._state();
+  if(state&&state.playing===false&&typeof api.seek==='function')api.seek(state.time||0);
+ }
+ if(w.ResizeObserver){resizeObserver=new ResizeObserver(function(){w.requestAnimationFrame(resize);});resizeObserver.observe(st.shell);}
+ w.addEventListener('resize',resize,{passive:true});
+ w.addEventListener('orientationchange',resize,{passive:true});
+ w.requestAnimationFrame(resize);
+ return true;
+}
+function ready(){var n=0;(function retry(){if(mount())return;if(++n<100)w.setTimeout(retry,200);})();if(w.MutationObserver&&!routeObserver){var main=d.querySelector('.main');if(main){routeObserver=new MutationObserver(function(){if(!mounted)mount();});routeObserver.observe(main,{childList:true,subtree:true});}}}
+if(d.readyState==='loading')d.addEventListener('DOMContentLoaded',ready,{once:true});else ready();
+w.CVVideoShellP233={version:'233.1.0',mount:mount,state:function(){var s=w.CVEditorShellP231&&w.CVEditorShellP231.state('videoEngine');return{mounted:mounted,shell:s,engineReady:!!(w.CV&&CV.engines&&CV.engines.video)};}};
+})(window,document);
+</script>
+<script id="canvio-lot234">
+/* CANVIO P234 — Pixel Atelier, Luma Develop, Clarity Lab and Layout Foundry adapters.
+ * Reuses each native editor's existing controls, canvas, inspector and persistence hooks.
+ */
+(function(w,d){'use strict';
+if(!w||!d||w.CVNativeStudioShellP234)return;
+var IDS=['pixelStudio','colorStudio','clarityLab','layoutFoundry'];
+var TITLES={pixelStudio:'Pixel Atelier',colorStudio:'Luma Develop',clarityLab:'Clarity Lab',layoutFoundry:'Layout Foundry'};
+var mounted=Object.create(null),styleId='canvio-p234-native-shell-css';
+function byId(id){return d.getElementById(id);}
+function installCss(){
+ if(byId(styleId))return;
+ var s=d.createElement('style');s.id=styleId;
+ s.textContent=[
+ '.cv231-shell.cv234-native .cv231-layout{grid-template-columns:minmax(190px,260px) minmax(0,1fr) minmax(250px,320px)}',
+ '.cv231-shell.cv234-native .cv231-rail{display:flex;flex-direction:column;align-items:stretch;gap:8px;overflow:auto}',
+ '.cv231-shell.cv234-native .cv231-rail>.ne-card{margin:0!important;max-height:100%;overflow:auto}',
+ '.cv231-shell.cv234-native .cv231-rail .ne-toolbar{display:flex;flex-direction:column;align-items:stretch;gap:6px;max-height:100%;overflow:auto;margin:0}',
+ '.cv231-shell.cv234-native .cv231-rail .ne-toolbar>*{min-width:0;max-width:100%;white-space:normal}',
+ '.cv231-shell.cv234-native .cv231-canvas{display:flex;flex-direction:column;gap:8px;overflow:auto;padding:8px}',
+ '.cv231-shell.cv234-native .cv231-canvas>.ne-stage{flex:1 1 auto;width:100%;height:100%;min-height:0!important;max-height:100%;padding:8px;overflow:auto}',
+ '.cv231-shell.cv234-native .cv231-canvas>.ne-stage canvas,.cv231-shell.cv234-native .cv231-canvas>.ne-stage svg{max-width:100%;max-height:100%;object-fit:contain}',
+ '.cv231-shell.cv234-native .cv231-canvas>.ne-hist{flex:none;max-height:100px;overflow:hidden}',
+ '.cv231-shell.cv234-native .cv231-props{overflow:auto}',
+ '.cv231-shell.cv234-native .cv231-props>.ne-side{position:static;top:auto;max-height:100%;overflow:auto}',
+ '.cv231-shell.cv234-native.cv231-has-bottom .cv231-bottom{display:block!important;grid-column:1/-1;grid-row:2;min-height:0;padding:5px;overflow:auto!important}',
+ '.cv231-shell.cv234-native.cv231-has-bottom .cv231-layout{grid-template-rows:minmax(0,1fr) 48px}',
+ '.cv231-shell.cv234-native .cv231-bottom .ne-toolbar{display:flex;align-items:center;gap:6px;flex-wrap:nowrap;min-width:max-content;overflow:auto;margin:0}',
+ '.cv231-shell.cv234-native .cv231-actions>.ne-toolbar{display:flex;align-items:center;gap:5px;flex-wrap:nowrap;min-width:max-content;overflow:auto}',
+ '.cv231-shell.cv234-native .cv231-actions>.ne-toolbar>*{flex:0 0 auto}',
+ '.cv231-shell.cv234-native .cv231-rail .ne-page-list{max-height:100%;overflow:auto}',
+ '.cv231-shell.cv234-native .cv231-canvas>.ne-layout-canvas{flex:1;min-width:0;min-height:0;width:100%;height:100%;overflow:auto;display:grid;place-items:start center}',
+ '.cv231-shell.cv234-native .cv231-canvas .ne-doc-page{max-width:100%;margin:0 auto}',
+ '.cv231-shell.cv234-native .cv231-props .card{margin:0!important}',
+ '@media(max-width:900px){.cv231-shell.cv234-native .cv231-layout{grid-template-columns:minmax(0,1fr)!important;grid-template-rows:minmax(180px,1fr) 54px minmax(42px,auto)!important}.cv231-shell.cv234-native .cv231-rail{grid-column:1;grid-row:2;flex-direction:row;align-items:center;overflow-x:auto;overflow-y:hidden}.cv231-shell.cv234-native .cv231-rail .ne-toolbar{flex-direction:row;align-items:center;width:max-content;max-width:none;overflow:visible}.cv231-shell.cv234-native .cv231-rail .ne-toolbar>*{flex:0 0 auto;min-height:40px;white-space:nowrap}.cv231-shell.cv234-native .cv231-rail>.ne-card{max-height:none;overflow:visible;min-width:220px}.cv231-shell.cv234-native .cv231-canvas{grid-column:1;grid-row:1}.cv231-shell.cv234-native .cv231-canvas>.ne-stage{min-height:160px!important}.cv231-shell.cv234-native .cv231-props{position:fixed;left:8px;right:8px;bottom:64px;top:auto;max-height:58dvh;z-index:1300}.cv231-shell.cv234-native .cv231-bottom{grid-column:1;grid-row:3}.cv231-shell.cv234-native .cv231-actions>.ne-toolbar{max-width:70vw}.cv231-shell.cv234-native .cv231-actions>.ne-toolbar>*{min-height:40px}}'
+ ].join('');
+ d.head.appendChild(s);
+}
+function markSource(page,selectors){selectors.forEach(function(sel){var n=page.querySelector(sel);if(n)n.classList.add('cv231-source-editor');});}
+function mountRaster(id){
+ var page=byId('page-'+id);if(!page||mounted[id])return !!mounted[id];
+ var shell=w.CVEditorShellP231,work=page.querySelector('.ne-workgrid'),main=work&&work.querySelector('.ne-maincol'),side=work&&work.querySelector('.ne-side'),stage=main&&main.querySelector('.ne-stage');
+ if(!shell||!work||!main||!side||!stage)return false;
+ var bars=Array.prototype.slice.call(main.querySelectorAll('.ne-toolbar'));
+ if(!bars.length)return false;
+ var extras=[];
+ if(id==='colorStudio'){var presets=main.querySelector('.ne-presets');if(presets){var card=presets.closest('.ne-card');if(card)extras.push(card);}}
+ if(id==='clarityLab'){var queue=byId('cyAssets');if(queue){var card2=queue.closest('.ne-card');if(card2)extras.push(card2);}}
+ markSource(page,['.ne-hero','.ne-workgrid','.ne-note']);
+ installCss();
+ var adopt=[{node:bars[0],slot:'rail',key:id+'-tools'},{node:stage,slot:'canvas',key:id+'-canvas'},{node:side,slot:'props',key:id+'-inspector'}];
+ extras.forEach(function(node,i){adopt.push({node:node,slot:'rail',key:id+'-extra-'+i});});
+ var key={pixelStudio:'px',colorStudio:'cl',clarityLab:'cy'}[id],exp=main.querySelector('[data-'+key+'="export"]');
+ var bottom=exp&&exp.closest('.ne-toolbar');
+ if(!bottom||bottom===bars[0])bottom=bars.length>1?bars[bars.length-1]:null;
+ if(bottom)adopt.push({node:bottom,slot:'bottom',key:id+'-export-actions'});
+ var hist=main.querySelector('.ne-hist');if(hist)adopt.push({node:hist,slot:'canvas',key:id+'-histogram'});
+ var st=shell.mount(id,{title:TITLES[id],subtitle:'Native editor · Canvas · Tools · Inspector',topActions:'.ne-hero-actions',adopt:adopt});
+ if(!st)return false;
+ if(bottom){st.slots.bottom.hidden=false;st.shell.classList.add('cv231-has-bottom');}
+ st.shell.classList.add('cv234-native');
+ mounted[id]=true;
+ w.requestAnimationFrame(function(){w.dispatchEvent(new Event('resize'));});
+ return true;
+}
+function mountLayout(){
+ var id='layoutFoundry',page=byId('page-'+id);if(!page||mounted[id])return !!mounted[id];
+ var shell=w.CVEditorShellP231,bar=page.querySelector(':scope > .ne-toolbar'),layout=page.querySelector('.ne-layout-work'),pages=byId('lfPages'),canvas=byId('lfCanvas'),side=layout&&layout.querySelector('.ne-side');
+ if(!shell||!bar||!layout||!pages||!canvas||!side)return false;
+ markSource(page,['.ne-hero','.ne-layout-work','.ne-note']);
+ installCss();
+ var st=shell.mount(id,{title:TITLES[id],subtitle:'Document Studio · Multi-page layout · Print / Export',topActions:'.ne-hero-actions',adopt:[
+  {node:bar,slot:'actions',key:'layout-toolbar'},
+  {node:pages,slot:'rail',key:'layout-pages'},
+  {node:canvas,slot:'canvas',key:'layout-canvas'},
+  {node:side,slot:'props',key:'layout-inspector'}
+ ]});
+ if(!st)return false;
+ st.shell.classList.add('cv234-native');
+ mounted[id]=true;
+ w.requestAnimationFrame(function(){w.dispatchEvent(new Event('resize'));});
+ return true;
+}
+function mount(id){return id==='layoutFoundry'?mountLayout():mountRaster(id);}
+function ready(){
+ var n=0;(function retry(){var ok=IDS.every(function(id){return mount(id);});if(ok)return;if(++n<100)w.setTimeout(retry,200);})();
+}
+if(d.readyState==='loading')d.addEventListener('DOMContentLoaded',ready,{once:true});else ready();
+w.CVNativeStudioShellP234={version:'234.1.0',mount:mount,state:function(id){var st=w.CVEditorShellP231&&w.CVEditorShellP231.state(id);return{mounted:!!mounted[id],shell:st};},tests:function(){return{allFourMounted:IDS.every(function(id){return !!mounted[id];}),pageIdsPresent:IDS.every(function(id){return !!byId('page-'+id);}),singleNativePagePerEditor:IDS.every(function(id){return d.querySelectorAll('#page-'+id).length===1;})};}};
+})(window,document);
+</script>
+<script id="canvio-lot235">
+/* CANVIO P235 — scoped editor keyboard actions and mobile target sizing.
+ * Does not override text entry, browser shortcuts outside editors, or native canvas gestures.
+ */
+(function(w,d){'use strict';
+if(!w||!d||w.CVEditorInputP235)return;
+var SUPPORTED=['poster','videoEngine','pixelStudio','colorStudio','clarityLab','layoutFoundry'];
+function active(){var p=d.querySelector('.page.active');if(!p)return null;var id=p.id.replace(/^page-/,'');return SUPPORTED.indexOf(id)>=0?{page:p,id:id}:null;}
+function typing(t){return !!(t&&((/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))||t.isContentEditable||t.closest&&t.closest('[contenteditable="true"]')));}
+function click(sel,page){var n=page.querySelector(sel);if(n){n.click();return true;}return false;}
+function focusSlot(page,id,n){
+ var shell=d.getElementById('cv231-shell-'+id);if(!shell)return false;
+ var sels=['.cv231-rail','.cv231-canvas','.cv231-props','.cv231-bottom','.cv231-actions'];
+ var region=shell.querySelector(sels[n-1]);if(!region)return false;
+ var target=region.querySelector('button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])');
+ if(!target){region.tabIndex=0;target=region;}
+ try{target.focus({preventScroll:true});}catch(e){target.focus();}
+ return true;
+}
+function perform(e){
+ var a=active();if(!a||typing(e.target))return;
+ var id=a.id,page=a.page,key=String(e.key||'').toLowerCase(),ctrl=e.ctrlKey||e.metaKey;
+ var video=w.CV&&CV.engines&&CV.engines.video,vs=video&&video._state?video._state():null;
+ if(ctrl&&key==='z'&&!e.shiftKey){
+  if(id==='videoEngine'&&video&&video.undoAuto){video.undoAuto();e.preventDefault();return;}
+  if(id==='poster'&&w.CV&&CV.poster&&CV.poster.history){CV.poster.history.undo();e.preventDefault();return;}
+  if(id==='pixelStudio'&&click('[data-px="undo"]',page)){e.preventDefault();return;}
+ }
+ if(ctrl&&(key==='y'||(key==='z'&&e.shiftKey))){
+  if(id==='videoEngine'&&video&&video.redo){video.redo();e.preventDefault();return;}
+  if(id==='poster'&&w.CV&&CV.poster&&CV.poster.history){CV.poster.history.redo();e.preventDefault();return;}
+  if(id==='pixelStudio'&&click('[data-px="redo"]',page)){e.preventDefault();return;}
+ }
+ if(ctrl&&key==='s'){
+  var done=false;
+  if(id==='videoEngine'&&video&&video.save){video.save();done=true;}
+  else if(id==='poster'&&w.CV&&CV.project&&typeof CV.project.save==='function'){CV.project.save(true);done=true;}
+  else if(id==='pixelStudio')done=click('[data-px="asset"]',page);
+  else if(id==='colorStudio')done=click('[data-cl="asset"]',page);
+  else if(id==='clarityLab')done=click('[data-cy="asset"]',page);
+  else if(id==='layoutFoundry')done=click('[data-lf="asset"]',page);
+  if(done){e.preventDefault();return;}
+ }
+ if(ctrl&&key==='d'){
+  if(id==='poster'&&w.CV&&CV.poster&&CV.poster.duplicate){CV.poster.duplicate();e.preventDefault();return;}
+  if(id==='videoEngine'&&video&&vs&&vs.selected&&video.duplicateLayer&&video.duplicateLayer(vs.selected)){e.preventDefault();return;}
+  if(id==='layoutFoundry'&&click('[data-lf="duplicate"]',page)){e.preventDefault();return;}
+ }
+ if(key==='delete'&&id==='videoEngine'&&video&&vs&&vs.selected&&video.deleteLayer&&video.deleteLayer(vs.selected)){e.preventDefault();return;}
+ if(key===' '&&id==='videoEngine'&&video&&vs){
+  if(vs.playing)video.pause();else video.play();
+  e.preventDefault();return;
+ }
+ if(e.altKey&&!ctrl&&/^[1-5]$/.test(key)){
+  if(focusSlot(page,id,Number(key))){e.preventDefault();return;}
+ }
+}
+function style(){
+ if(d.getElementById('canvio-p235-input-css'))return;
+ var s=d.createElement('style');s.id='canvio-p235-input-css';
+ s.textContent='@media(max-width:900px){.cv231-shell .cv231-action,.cv231-shell .cv231-rail button,.cv231-shell .cv231-rail .tbtn,.cv231-shell .cv231-bottom button{min-height:40px;min-width:40px}.cv231-shell .cv231-rail .ne-toolbar>*{min-height:40px}}';
+ d.head.appendChild(s);
+}
+function start(){style();d.addEventListener('keydown',perform,true);}
+if(d.readyState==='loading')d.addEventListener('DOMContentLoaded',start,{once:true});else start();
+w.CVEditorInputP235={version:'235.1.0',handle:perform,tests:function(){return{scopedPages:SUPPORTED.length===6,textEntryGuard:typeof typing==='function',videoPlaybackUsesNativeOwner:!!(w.CV&&CV.engines&&CV.engines.video),nativeCanvasGestureNotOverridden:true};}};
+})(window,document);
+</script>
+<script id="canvio-lot236">
+/* CANVIO P236 — persistent shell preferences, Focus mode and guided first-use tour. */
+(function(w,d){'use strict';
+if(!w||!d||w.CVEditorExperienceP236)return;
+var KEY='canvio.p236.shell.',observer=null;
+var STEPS=[
+ {title:'1 · Thanh công cụ',body:'Công cụ và thao tác nhanh nằm ở dải trên hoặc thanh dưới trên màn hình nhỏ. Dùng Alt+1 để đưa tiêu điểm vào công cụ.'},
+ {title:'2 · Khung làm việc',body:'Canvas và timeline dùng lại engine hiện có. Thay đổi vẫn được lưu bởi đúng bộ máy của từng Studio.'},
+ {title:'3 · Thuộc tính & tập trung',body:'Mở bảng Thuộc tính khi cần, thu gọn cột để rộng canvas hoặc bật Tập trung để ẩn thanh trên.'}
+];
+function read(id){try{return JSON.parse(w.localStorage.getItem(KEY+id)||'{}')||{};}catch(e){return {};}}
+function write(id,obj){try{w.localStorage.setItem(KEY+id,JSON.stringify(obj));return true;}catch(e){return false;}}
+function add(tag,cls,txt){var n=d.createElement(tag);if(cls)n.className=cls;if(txt!=null)n.textContent=txt;return n;}
+function tour(shell){
+ var old=shell.querySelector('.cv236-tour');if(old){old.remove();return;}
+ var step=0,box=add('section','cv236-tour');box.setAttribute('role','dialog');box.setAttribute('aria-modal','false');box.setAttribute('aria-label','Hướng dẫn nhanh CANVIO');
+ var title=add('strong','cv236-tour-title'),body=add('p','cv236-tour-body'),actions=add('div','cv236-tour-actions');
+ var close=add('button','cv231-action','Đóng'),next=add('button','cv231-action primary','Tiếp tục');
+ close.type=next.type='button';close.addEventListener('click',function(){box.remove();});
+ next.addEventListener('click',function(){step++;if(step>=STEPS.length){box.remove();return;}render();});
+ actions.append(close,next);box.append(title,body,actions);shell.appendChild(box);
+ function render(){title.textContent=STEPS[step].title;body.textContent=STEPS[step].body;next.textContent=step===STEPS.length-1?'Hoàn tất':'Tiếp tục';}
+ render();
+}
+function attach(shell){
+ if(!shell||shell.dataset.cv236Ready)return;
+ var id=shell.id.replace(/^cv231-shell-/,'');shell.dataset.cv236Ready='1';
+ var pref=read(id);
+ shell.classList.toggle('cv231-rail-collapsed',pref.rail===true);
+ shell.classList.toggle('cv231-props-collapsed',pref.props===true);
+ var tools=shell.querySelector('.cv231-tools');
+ if(tools){
+  var guide=add('button','cv231-action','Hướng dẫn');guide.type='button';guide.title='Hướng dẫn nhanh';guide.setAttribute('aria-label','Hướng dẫn nhanh');guide.dataset.cv236Action='guide';guide.addEventListener('click',function(){tour(shell);});
+  var focus=add('button','cv231-action','Tập trung');focus.type='button';focus.title='Tập trung';focus.setAttribute('aria-label','Tập trung');focus.dataset.cv236Action='focus';focus.addEventListener('click',function(){shell.classList.toggle('cv236-focus');});
+  tools.append(guide,focus);
+ }
+ var exit=add('button','cv231-action primary cv236-focus-exit','Thoát tập trung');exit.type='button';exit.addEventListener('click',function(){shell.classList.remove('cv236-focus');});shell.appendChild(exit);
+ if(w.MutationObserver){
+  var save=function(){var current=read(id);current.rail=shell.classList.contains('cv231-rail-collapsed');current.props=shell.classList.contains('cv231-props-collapsed');write(id,current);};
+  observer=new MutationObserver(save);observer.observe(shell,{attributes:true,attributeFilter:['class']});
+ }
+ if(!pref.tourSeen){var badge=add('div','cv236-first-use','Editor mới · Chọn “Hướng dẫn” để xem 3 bước');badge.setAttribute('role','status');shell.appendChild(badge);var dismiss=add('button','cv231-action','Đã rõ');dismiss.type='button';dismiss.addEventListener('click',function(){badge.remove();var cur=read(id);cur.tourSeen=true;write(id,cur);});badge.appendChild(dismiss);}
+}
+function scan(){d.querySelectorAll('.cv231-shell').forEach(attach);}
+function start(){
+ var s=d.createElement('style');s.id='canvio-p236-experience-css';s.textContent=[
+ '.cv231-shell{position:relative}',
+ '.cv231-shell.cv236-focus{grid-template-rows:minmax(0,1fr)!important}',
+ '.cv231-shell.cv236-focus .cv231-top{display:none!important}',
+ '.cv231-shell.cv236-focus .cv231-layout{height:100%;min-height:0}',
+ '.cv236-focus-exit{display:none;position:absolute;top:8px;right:8px;z-index:1500;box-shadow:0 4px 18px rgba(0,0,0,.18)}',
+ '.cv231-shell.cv236-focus .cv236-focus-exit{display:block}',
+ '.cv236-tour{position:absolute;z-index:1450;right:12px;top:64px;width:min(340px,calc(100% - 24px));padding:14px;border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink);box-shadow:0 18px 48px rgba(10,20,40,.24)}',
+ '.cv236-tour-title{display:block;font-size:13px}.cv236-tour-body{font-size:12px;line-height:1.6;color:var(--ink-2);margin:8px 0 12px}.cv236-tour-actions{display:flex;justify-content:flex-end;gap:6px}',
+ '.cv236-first-use{display:flex;align-items:center;gap:10px;position:absolute;z-index:1300;left:50%;transform:translateX(-50%);bottom:64px;width:max-content;max-width:calc(100% - 24px);box-sizing:border-box;padding:8px 10px;border:1px solid var(--cv-accent-line,var(--line));border-radius:10px;background:var(--surface);color:var(--ink);font-size:11px;box-shadow:0 5px 18px rgba(0,0,0,.12)}',
+ '@media(max-width:900px){.cv236-tour{top:52px;right:6px}.cv231-shell.cv236-focus .cv236-focus-exit{top:5px;right:5px}}'
+ ].join('');
+ d.head.appendChild(s);scan();
+ if(w.MutationObserver){var main=d.querySelector('.main');if(main){var mo=new MutationObserver(scan);mo.observe(main,{childList:true,subtree:true});}}
+}
+if(d.readyState==='loading')d.addEventListener('DOMContentLoaded',start,{once:true});else start();
+w.CVEditorExperienceP236={version:'236.1.0',scan:scan,tour:function(id){var shell=d.getElementById('cv231-shell-'+id);if(!shell)return false;tour(shell);return true;},tests:function(){var shells=Array.from(d.querySelectorAll('.cv231-shell'));return{allShellsHaveFocusExit:shells.every(function(s){return !!s.querySelector('.cv236-focus-exit');}),preferencesScopedPerEditor:true,threeStepTour:STEPS.length===3};}};
+})(window,document);
+</script>
+<script id="canvio-lot237">
+/* Canonical embedded lot: canvio-lot237. */
+/* P237: Vietnamese commands inside the existing Ctrl+K palette. Every action calls the editor's own
+ * method or button, so history, autosave and exports keep their current owners. Anything that does not
+ * match a rule falls through to the existing natural-language box (CVCmd). */
+(function (w, d) {
+  'use strict';
+  if (!w || !d || w.CVCommandP237) return;
+  var KEY = 'canvio.p237.recent', COMMANDS = [], installed = false;
+
+  function norm(t) {
+    return String(t == null ? '' : t).normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[đĐ]/g, 'd')
+      .toLowerCase().replace(/\s+/g, ' ').trim();
+  }
+  function clean(t) {
+    return norm(t).replace(/^(hay |giup toi |cho toi |toi muon )+/, '').replace(/( di| nhe| giup toi)+$/, '');
+  }
+  function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function byId(id) { return d.getElementById(id); }
+  function current() { var p = d.querySelector('.page.active'); return p ? p.id.replace(/^page-/, '') : ''; }
+  function sleep(ms) { return new Promise(function (r) { w.setTimeout(r, ms); }); }
+  function ok(msg) { return { ok: true, msg: msg }; }
+  function no(msg) { return { ok: false, msg: msg }; }
+  function waitFor(test) {
+    return new Promise(function (resolve) {
+      var n = 0; (function tick() { var v; try { v = test(); } catch (e) { v = false; } if (v) return resolve(v); if (++n > 60) return resolve(false); w.setTimeout(tick, 100); })();
+    });
+  }
+  async function open(id) {
+    if (!byId('page-' + id)) return false;
+    if (current() !== id) { w.CV.go(id); await sleep(250); }
+    return current() === id;
+  }
+  function add(id, label, examples, pattern, run) { COMMANDS.push({ id: id, label: label, examples: examples, pattern: pattern, run: run }); }
+
+  /* ---------- navigation ---------- */
+  [['home', 'Trang chủ', 'trang chu|home'], ['poster', 'Poster Studio', 'poster( studio)?'],
+    ['videoEngine', 'Video Engine', 'video( engine)?|dung video'], ['pixelStudio', 'Pixel Atelier', 'pixel( atelier)?|sua anh'],
+    ['colorStudio', 'Luma Develop', 'luma( develop)?|chinh mau anh'], ['clarityLab', 'Clarity Lab', 'clarity( lab)?|lam net( anh)?'],
+    ['layoutFoundry', 'Dàn trang', 'dan trang|layout( foundry)?'], ['assets', 'Tài nguyên', 'tai nguyen|kho anh|assets?'],
+    ['templates', 'Thư viện mẫu', '(thu vien )?mau|templates?'], ['settings', 'Cài đặt', 'cai dat|settings?'],
+    ['autodesign', 'Auto Design', 'auto design|tao website'], ['cvstudio', 'CV Studio', 'cv( studio)?'],
+    ['export', 'Trung tâm xuất', 'trung tam xuat'], ['motion', 'Motion Lab', 'motion( lab)?|chuyen dong']
+  ].forEach(function (p) {
+    add('go-' + p[0], 'Mở ' + p[1], ['mở ' + p[1]], new RegExp('^(mo|vao|chuyen (sang|den|toi)) (' + p[2] + ')$'), async function () {
+      return await open(p[0]) ? ok('Đã mở ' + p[1]) : no('Chưa mở được ' + p[1]);
+    });
+  });
+
+  /* ---------- poster ---------- */
+  function poster() { return w.CV && w.CV.poster; }
+  async function onPoster() { return await open('poster') && !!(await waitFor(function () { return poster() && poster().doc; })); }
+  function addLayer(type, name) {
+    return async function () {
+      if (!await onPoster()) return no('Poster Studio chưa sẵn sàng');
+      var n = poster().doc.layers.length; poster().add(type);
+      return poster().doc.layers.length === n + 1 ? ok('Đã thêm ' + name) : no('Chưa thêm được ' + name);
+    };
+  }
+  add('p-text', 'Thêm chữ vào poster', ['thêm chữ', 'thêm tiêu đề'], /^(them|chen) (chu|tieu de|van ban|text)( (vao )?poster)?$/, addLayer('text', 'lớp chữ'));
+  add('p-rect', 'Thêm khối chữ nhật', ['thêm khối', 'thêm hình chữ nhật'], /^(them|chen|ve) (khoi|hinh chu nhat|hinh vuong)$/, addLayer('rect', 'khối'));
+  add('p-ellipse', 'Thêm hình tròn', ['thêm hình tròn'], /^(them|chen|ve) (hinh )?tron$/, addLayer('ellipse', 'hình tròn'));
+  add('p-badge', 'Thêm nút kêu gọi', ['thêm nhãn', 'thêm nút'], /^(them|chen) (nhan|nut|cta|nut keu goi)$/, addLayer('badge', 'nhãn'));
+  add('p-line', 'Thêm đường kẻ', ['thêm đường kẻ'], /^(them|chen|ke) (duong( ke)?|gach)$/, addLayer('line', 'đường kẻ'));
+  add('p-image', 'Chèn ảnh vào poster', ['thêm ảnh'], /^(them|chen|tai) (anh|hinh anh)( len)?( (vao )?poster)?$/, async function () {
+    if (!await onPoster()) return no('Poster Studio chưa sẵn sàng');
+    var input = byId('posterImgInput'); if (!input) return no('Không thấy nút chọn ảnh');
+    input.click(); return ok('Hãy chọn ảnh trong hộp thoại');
+  });
+  [['portrait', '4:5', '4 ?[:x] ?5|doc'], ['square', '1:1', '1 ?[:x] ?1|vuong'], ['landscape', '3:2', '3 ?[:x] ?2|ngang'], ['a4', 'A4', 'a4'], ['story', '9:16', '9 ?[:x] ?16|story']
+  ].forEach(function (r) {
+    add('p-ratio-' + r[0], 'Đổi khổ poster sang ' + r[1], ['đổi sang ' + r[1]], new RegExp('^((doi|chuyen)( (kho|ti le|ty le|kich thuoc))?( (sang|thanh))?|kho|ti le|ty le) (' + r[2] + ')$'), async function () {
+      if (!await onPoster()) return no('Poster Studio chưa sẵn sàng');
+      if (poster().doc.ratio === r[0]) return ok('Poster đã ở khổ ' + r[1]);
+      poster().setRatio(r[0]); var sel = byId('posterRatio'); if (sel) sel.value = r[0];
+      return poster().doc.ratio === r[0] ? ok('Đã đổi sang ' + r[1]) : no('Chưa đổi được khổ');
+    });
+  });
+  function onSelected(id, label, examples, pattern, method, done) {
+    add(id, label, examples, pattern, async function () {
+      if (!await onPoster()) return no('Poster Studio chưa sẵn sàng');
+      if (!poster().selected) return no('Hãy chọn một đối tượng trên poster trước');
+      poster()[method](); return ok(done);
+    });
+  }
+  onSelected('p-dup', 'Nhân bản đối tượng đang chọn', ['nhân bản'], /^(nhan ban|nhan doi|duplicate)( doi tuong| lop)?$/, 'duplicate', 'Đã nhân bản');
+  onSelected('p-del', 'Xoá đối tượng đang chọn', ['xoá đối tượng'], /^(xoa|bo) (doi tuong|lop|lop dang chon)$/, 'remove', 'Đã xoá. Gõ “hoàn tác” để lấy lại');
+  onSelected('p-front', 'Đưa lên trước', ['đưa lên trước'], /^(dua )?len (tren( cung)?|truoc|dau)$/, 'front', 'Đã đưa lên trước');
+  onSelected('p-back', 'Đưa xuống sau', ['đưa xuống sau'], /^(dua )?(xuong|ra) (duoi( cung)?|sau|cuoi)$/, 'back', 'Đã đưa xuống sau');
+  function posterCall(id, label, examples, pattern, fn, done) {
+    add(id, label, examples, pattern, async function () {
+      if (!await onPoster()) return no('Poster Studio chưa sẵn sàng');
+      fn(poster()); return ok(done);
+    });
+  }
+  posterCall('p-grid', 'Bật hoặc tắt lưới', ['bật lưới', 'tắt lưới'], /^(bat\/tat |bat |tat )?luoi$/, function (p) { p.toggleGrid(); }, 'Đã đổi trạng thái lưới');
+  posterCall('p-snap', 'Bật hoặc tắt căn lề', ['căn lề'], /^(bat |tat )?(can le|snap)$/, function (p) { p.toggleSnap(); }, 'Đã đổi trạng thái căn lề');
+  posterCall('p-zin', 'Phóng to khung', ['phóng to'], /^(phong to|zoom in)( khung)?$/, function (p) { p.zoom(0.1); }, 'Đã phóng to');
+  posterCall('p-zout', 'Thu nhỏ khung', ['thu nhỏ'], /^(thu nho|zoom out)( khung)?$/, function (p) { p.zoom(-0.1); }, 'Đã thu nhỏ');
+  posterCall('p-fit', 'Vừa khung nhìn', ['vừa khung'], /^(vua khung|vua man hinh|fit)$/, function (p) { p.zoomFit(); }, 'Đã chỉnh vừa khung');
+  posterCall('p-qa', 'Kiểm tra chất lượng poster', ['kiểm tra poster'], /^(kiem tra|soat)( (chat luong|poster|thiet ke))$/, function (p) { p.qa(); }, 'Đã kiểm tra thiết kế');
+  add('p-new', 'Tạo thiết kế poster mới', ['poster mới'], /^((tao )?(poster|thiet ke) moi|tao poster)$/, async function () {
+    if (!await onPoster()) return no('Poster Studio chưa sẵn sàng');
+    if (!w.confirm('Tạo thiết kế mới sẽ thay khung đang mở. Tiếp tục?')) return no('Đã huỷ, thiết kế được giữ nguyên');
+    poster().newDesign(); return ok('Đã tạo thiết kế mới');
+  });
+
+  /* ---------- exports: press the editor's own button ---------- */
+  function press(selector, textPattern) {
+    var page = byId('page-' + current()); if (!page) return false;
+    var list = Array.prototype.slice.call(page.querySelectorAll(selector));
+    var b = textPattern ? list.find(function (n) { return textPattern.test(norm(n.textContent)); }) : list[0];
+    if (!b || b.disabled) return false; b.click(); return true;
+  }
+  var PREFIX = { pixelStudio: 'px', colorStudio: 'cl', clarityLab: 'cy', layoutFoundry: 'lf' };
+  add('x-png', 'Xuất PNG', ['xuất PNG'], /^(xuat|tai)( (file|anh))? png$/, async function () {
+    var c = current();
+    if (PREFIX[c] && c !== 'layoutFoundry') return press('[data-' + PREFIX[c] + '="export"]') ? ok('Đã gọi xuất PNG') : no('Hãy mở ảnh trước khi xuất');
+    if (!await onPoster()) return no('Poster Studio chưa sẵn sàng');
+    return press('button', /^(⇧ ?)?(xuat )?png$/) ? ok('Đã gọi xuất PNG') : no('Không thấy nút Xuất PNG');
+  });
+  add('x-svg', 'Xuất SVG poster', ['xuất SVG'], /^(xuat|tai)( file)? svg$/, async function () {
+    if (!await onPoster()) return no('Poster Studio chưa sẵn sàng');
+    return press('button', /^(⇧ ?)?(xuat )?svg$/) ? ok('Đã gọi xuất SVG') : no('Không thấy nút Xuất SVG');
+  });
+  add('x-pdf', 'Xuất PDF', ['xuất PDF'], /^(xuat|tai|in)( file)? pdf$/, async function () {
+    if (current() === 'layoutFoundry') return press('[data-lf="pdf"]') ? ok('Đã mở xuất PDF') : no('Không thấy nút PDF');
+    if (!await onPoster()) return no('Poster Studio chưa sẵn sàng');
+    return press('button', /pdf/) ? ok('Đã gọi xuất PDF') : no('Không thấy nút Xuất PDF');
+  });
+
+  /* ---------- video ---------- */
+  function video() { return w.CV && w.CV.engines && w.CV.engines.video; }
+  async function onVideo() { return await open('videoEngine') && !!(await waitFor(function () { return video() && video()._state; })); }
+  function videoCall(id, label, examples, pattern, method, done) {
+    add(id, label, examples, pattern, async function () {
+      if (!await onVideo() || typeof video()[method] !== 'function') return no('Video Engine chưa sẵn sàng');
+      var r = await video()[method](); return r === false ? no('Chưa thực hiện được. Hãy xem thông báo trong Video Engine') : ok(done);
+    });
+  }
+  videoCall('v-text', 'Thêm chữ vào video', ['thêm chữ vào video'], /^(them|chen) (chu|track chu|text) (vao )?video$/, 'addText', 'Đã thêm clip chữ');
+  videoCall('v-play', 'Phát video', ['phát video'], /^(phat|chay|play)( video)?$/, 'play', 'Đang phát');
+  videoCall('v-pause', 'Dừng video', ['dừng video'], /^(dung|tam dung|pause|stop)( video| phat)$|^(tam dung|pause)$/, 'pause', 'Đã dừng');
+  videoCall('v-split', 'Tách clip đang chọn', ['tách clip'], /^(tach|cat|chia) (clip|doan)$/, 'split', 'Đã tách clip');
+  videoCall('v-remove', 'Xoá clip đang chọn', ['xoá clip'], /^(xoa|bo) clip( dang chon)?$/, 'remove', 'Đã xoá clip. Gõ “hoàn tác” để lấy lại');
+  videoCall('v-webm', 'Xuất video WebM', ['xuất WebM'], /^(xuat|tai) (video )?webm$/, 'exportWebM', 'Đã bắt đầu xuất WebM');
+  videoCall('v-mp4', 'Xuất video MP4', ['xuất MP4'], /^(xuat|tai) (video )?mp4$/, 'exportMP4', 'Đã bắt đầu xuất MP4');
+  videoCall('v-srt', 'Xuất phụ đề SRT', ['xuất SRT'], /^(xuat|tai) (phu de|srt|phu de srt)$/, 'srtExport', 'Đã xuất phụ đề');
+
+  /* ---------- image and document editors ---------- */
+  [['i-rotate', 'pixelStudio', 'rotate', 'Xoay ảnh 90°', ['xoay ảnh'], /^xoay( anh)?( 90( do)?)?$/],
+    ['i-flip', 'pixelStudio', 'flip', 'Lật ảnh ngang', ['lật ảnh'], /^lat( anh)?( ngang)?$/],
+    ['i-auto', 'colorStudio', 'auto', 'Tự chỉnh màu ảnh', ['tự chỉnh màu'], /^(tu dong |tu )(chinh|can) mau( anh)?$/],
+    ['i-removebg', 'clarityLab', 'removeBg', 'Tách nền theo màu', ['tách nền'], /^(tach|xoa) (nen|phong)( anh)?$/],
+    ['l-page', 'layoutFoundry', 'page', 'Thêm trang tài liệu', ['thêm trang'], /^(them|tao) trang( moi)?$/],
+    ['l-heading', 'layoutFoundry', 'heading', 'Thêm tiêu đề tài liệu', ['thêm tiêu đề trang'], /^(them|chen) tieu de (trang|tai lieu)$/],
+    ['l-table', 'layoutFoundry', 'table', 'Thêm bảng', ['thêm bảng'], /^(them|chen) bang$/]
+  ].forEach(function (c) {
+    add(c[0], c[3], c[4], c[5], async function () {
+      var sel = '[data-' + PREFIX[c[1]] + '="' + c[2] + '"]';
+      if (!await open(c[1]) || !await waitFor(function () { return byId('page-' + c[1]).querySelector(sel); })) return no('Công cụ chưa sẵn sàng');
+      return press(sel) ? ok('Đã chạy: ' + c[3]) : no('Hãy mở ảnh hoặc tài liệu trước');
+    });
+  });
+
+  /* ---------- everywhere ---------- */
+  function historyStep(redo) {
+    return async function () {
+      var c = current(), done = false;
+      if (c === 'poster' && poster()) { poster().history[redo ? 'redo' : 'undo'](); done = true; }
+      else if (c === 'videoEngine' && video()) done = video()[redo ? 'redo' : 'undo']() !== false;
+      else if (c === 'pixelStudio') done = press('[data-px="' + (redo ? 'redo' : 'undo') + '"]');
+      return done ? ok(redo ? 'Đã làm lại' : 'Đã hoàn tác') : no('Trang này không có bước nào để ' + (redo ? 'làm lại' : 'hoàn tác'));
+    };
+  }
+  add('g-undo', 'Hoàn tác', ['hoàn tác'], /^(hoan tac|undo|quay lai buoc truoc)$/, historyStep(false));
+  add('g-redo', 'Làm lại', ['làm lại'], /^(lam lai|redo)$/, historyStep(true));
+  add('g-save', 'Lưu dự án', ['lưu'], /^(luu|save)( du an| lai)?$/, async function () {
+    var c = current();
+    if (c === 'videoEngine' && video()) { video().save(); return ok('Đã lưu video'); }
+    if (PREFIX[c]) return press('[data-' + PREFIX[c] + '="asset"]') ? ok('Đã lưu vào Tài nguyên') : no('Chưa có gì để lưu');
+    if (w.CV.project && w.CV.project.save) { w.CV.project.save(true); return ok('Đã lưu dự án'); }
+    return no('Chưa có dự án để lưu');
+  });
+  add('g-theme', 'Đổi giao diện sáng / tối', ['giao diện tối'], /^((doi |bat )?(giao dien|che do) (sang|toi|sang toi)|doi theme)$/, async function (text) {
+    var b = byId('l38-theme'); if (!b) return no('Không thấy nút đổi giao diện');
+    var root = d.documentElement, want = / toi$/.test(text) && !/sang toi$/.test(text) ? 'dark' : / sang$/.test(text) ? 'light' : '';
+    if (want && (root.getAttribute('data-theme') === 'dark') === (want === 'dark')) return ok('Giao diện đã đúng chế độ');
+    b.click(); return ok('Đã đổi giao diện');
+  });
+  add('g-focus', 'Chế độ tập trung', ['tập trung'], /^((bat|tat) )?(che do )?tap trung$/, async function () {
+    return press('[data-cv236-action="focus"]') ? ok('Đã đổi chế độ tập trung') : no('Hãy mở một editor trước');
+  });
+  add('g-guide', 'Hướng dẫn nhanh editor', ['hướng dẫn'], /^(huong dan|tro giup|help)$/, async function () {
+    return press('[data-cv236-action="guide"]') ? ok('Đã mở hướng dẫn') : (await open('settings') && await open('guide') ? ok('Đã mở hướng dẫn') : no('Hãy mở một editor trước'));
+  });
+
+  /* ---------- matching ---------- */
+  function match(text) { var q = clean(text); if (!q) return null; return COMMANDS.find(function (c) { return c.pattern.test(q); }) || null; }
+  function suggest(text, limit) {
+    var q = clean(text); if (q.length < 2) return [];
+    return COMMANDS.filter(function (c) { return c.examples.some(function (x) { return norm(x).indexOf(q) === 0; }); }).slice(0, limit || 4);
+  }
+  function recent() { try { var a = JSON.parse(w.localStorage.getItem(KEY) || '[]'); return Array.isArray(a) ? a.filter(function (x) { return typeof x === 'string'; }).slice(0, 3) : []; } catch (e) { return []; } }
+  function remember(text) { try { w.localStorage.setItem(KEY, JSON.stringify([text].concat(recent().filter(function (x) { return x !== text; })).slice(0, 3))); } catch (e) { /* storage is optional */ } }
+  function toast(m) { if (w.CV && w.CV.toast) w.CV.toast(m); }
+  var busy = false;
+  async function run(text) {
+    var c = match(text); if (!c) return no('Chưa hiểu lệnh này');
+    if (busy) return no('Đang chạy lệnh trước');
+    busy = true; var r;
+    try { r = await c.run(clean(text)); } catch (e) { r = no('Lệnh chưa hoàn tất. Hãy thử lại'); }
+    busy = false; if (r.ok) remember(String(text).trim()); return r;
+  }
+
+  /* ---------- palette rows ---------- */
+  function row(list, before, label, hint, text) {
+    var n = d.createElement('div'); n.className = 'palItem l237'; n.setAttribute('role', 'button');
+    n.innerHTML = '<span class="pi">▶</span><span>' + esc(label) + '</span><small>' + esc(hint) + '</small>';
+    n.dataset.cv237 = text;
+    n.addEventListener('click', function () { w.CV.palette.close(); run(text).then(function (r) { toast(r.msg); }); });
+    list.insertBefore(n, before); return n;
+  }
+  function decorate(query) {
+    var list = byId('paletteList'); if (!list) return;
+    var q = String(query || '').trim(), first = list.firstChild, rows = [], exact = match(q);
+    if (!q) recent().forEach(function (t) { if (match(t)) rows.push(row(list, first, t, 'Lệnh gần đây', t)); });
+    else if (exact) rows.push(row(list, first, exact.label, 'Enter để chạy', q));
+    else suggest(q).forEach(function (c) { rows.push(row(list, first, c.label, 'Gợi ý lệnh', c.examples[0])); });
+    if (rows.length && q) {
+      var empty = list.querySelector('.emptyState'); if (empty) empty.remove();
+      list.querySelectorAll('.palItem.on').forEach(function (n) { n.classList.remove('on'); });
+      rows[0].classList.add('on');
+    }
+  }
+  function install() {
+    if (installed) return true;
+    var input = byId('paletteInput');
+    if (!input || !w.CV || !w.CV.palette || !w.CV.palette.render) return false;
+    var css = d.createElement('style'); css.id = 'canvio-p237-css';
+    css.textContent = '.palItem.l237{cursor:pointer}.palItem.l237 .pi{color:var(--cv-accent,#F83E9F)}.palItem.l237.on{background:var(--cv-accent-soft,var(--surface-3));box-shadow:inset 3px 0 0 var(--cv-accent,#F83E9F)}';
+    d.head.appendChild(css);
+    var base = w.CV.palette.render;
+    w.CV.palette.render = function (q) { var r = base.apply(this, arguments); decorate(q); return r; };
+    input.placeholder = 'Gõ lệnh: “thêm chữ”, “đổi sang 9:16”, “xuất PNG”, “mở video”…';
+    /* window capture runs before the older palette key handlers, so a recognised command runs exactly once */
+    w.addEventListener('keydown', function (e) {
+      if (e.target !== input || e.key !== 'Enter' || e.isComposing) return;
+      var list = byId('paletteList'), on = list && list.querySelector('.palItem.on');
+      var text = match(input.value) && (!on || on.classList.contains('l237')) ? (on ? on.dataset.cv237 : input.value) : (on && on.classList.contains('l237') ? on.dataset.cv237 : '');
+      if (!text) return;
+      e.preventDefault(); e.stopImmediatePropagation(); w.CV.palette.close(); input.blur();
+      run(text).then(function (r) { toast(r.msg); });
+    }, true);
+    installed = true; return true;
+  }
+  function start() { var n = 0; (function retry() { if (!install() && ++n < 100) w.setTimeout(retry, 200); })(); }
+  if (d.readyState === 'loading') d.addEventListener('DOMContentLoaded', start, { once: true }); else start();
+
+  w.CVCommandP237 = {
+    version: '237.1.0', match: function (t) { var c = match(t); return c ? c.id : null; }, run: run, suggest: function (t) { return suggest(t).map(function (c) { return c.id; }); },
+    list: function () { return COMMANDS.map(function (c) { return { id: c.id, label: c.label, example: c.examples[0] }; }); },
+    tests: function () { return { installed: installed, atLeast30: COMMANDS.length >= 30, uniqueIds: new Set(COMMANDS.map(function (c) { return c.id; })).size === COMMANDS.length, everyExampleResolves: COMMANDS.every(function (c) { return c.examples.every(function (x) { return match(x) === c; }); }) }; }
+  };
+})(window, document);
 </script>
 </body>
 </html>

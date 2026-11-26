@@ -22,7 +22,8 @@ with sync_playwright() as p:
     r = page.evaluate("""async()=>{
       const mk=(i)=>({id:'big'+i,name:'a'+i+'.png',mime:'image/png',size:1000000,cat:'image',data:'data:image/png;base64,'+('QUJD'.repeat(262144)).slice(0,1000000-i),at:'x'});
       let arr=[];for(let i=0;i<12;i++){arr.unshift(mk(i));var ok=LS.set('assets',arr);if(!ok)return{fail:i}}
-      await new Promise(r=>setTimeout(r,1500));
+      /* wait for the IndexedDB writes to finish (max 20 s) instead of assuming 1.5 s is enough */
+      for(let t=0;t<200&&(CVAssetStoreP133.status().pending>0||CVAssetStoreP133.status().persisted<12);t++)await new Promise(r=>setTimeout(r,100));
       const s=CVAssetStoreP133.status();const raw=localStorage.getItem('canvio5:assets');
       return{ok:true,status:s,rawBytes:raw.length,listLen:LS.get('assets',[]).length,firstLen:LS.get('assets',[])[0].data.length}}""")
     c['tooBigForLocalStorageButAccepted'] = bool(r.get('ok'))

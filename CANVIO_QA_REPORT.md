@@ -730,3 +730,55 @@ Mainline workflow #551 passed 53/53; Pages #275 passed build/deploy. P143 parity
 - P163.1.1/P169 Chromium confirms visible profile labels, eight labelled controls, preview/save, Shared Core round-trip and mobile no-overflow.
 - P166.2/P160–P166 Chromium passed 32/32: actual GrapesJS root insertion, P131 sanitization, scoped CSS base/mobile rule, Shared Core metadata and canonical Website Engine save. Lazy readiness is bounded; a save failure is surfaced as unsaved.
 - P143 parity, full HTML/inline-script audit, P47–P70 regression and the integrated Node/P107 ZIP stage passed. P70 remains 14/14 manual gates pending, zero passed; no stable-release or physical-GPU claim.
+
+
+## P231/P232 local candidate QA — 2026-11-25
+
+- Node source contracts: 6/6 PASS.
+- Playwright Chromium on an opaque page.set_content fixture: 13/13 PASS. Checked Poster shell mounting and region ownership at 1440×900 / 1280×720, top-level vertical scrolling, native export/undo/redo/save control presence, real add/Undo/Redo layer-count round-trip, exact legacy DOM restoration, shell re-entry without duplicate IDs, Project.save(true), releasing/reapplying the app lock while navigating away/back, mobile 390 px width and property drawer action; zero uncaught page errors.
+- The browser fixture uses test-only storage shims. It does not verify native IndexedDB, user profile persistence, deployed HTTPS, cross-browser behavior, assistive technology or production media export.
+- Mainline workflow #941 was FAIL (85/86) before P231/P232. The failing assertion was a stale P150 expected-color constant (rgb(255, 61, 154)) after P230's unified accent changed to #F83E9F; the assertion is updated to compare the computed button color with the active --cv-accent token. Re-run on this exact PR head is required before treating hosted CI as PASS.
+
+- Mainline regression diagnosis: hosted run #948 failed the P150 suite at 81/86 only because its assertion compared a raw computed RGB background string with a Canvas-normalized hex baseline. The five failures were the same accent color expressed in different CSS serializations, not five distinct UI regressions. The P150 browser assertion now normalizes each observed computed color through Canvas before comparing; this changes test comparison only, not the UI theme or production button styles. Re-run is required on the updated exact PR head.
+
+## P233.1 — External editor card adapter regression (2026-11-25)
+
+- Exact-head hosted run #45617365852 reached the hosted same-origin runtime check and failed the uncaught-page-error gate with `ReferenceError: externalCard is not defined`.
+- Root cause: `canvio-p233-video-shell.js` referenced `externalCard` in its mount guard and adoption list without resolving the existing Video Engine External editor card.
+- Correction: resolve the existing Reframe anchor (`a[href^="https://reframe-os.netlify.app/"]`) and adopt its closest existing `.card` into P231's inspector. No replacement card or separate editor engine is introduced.
+- Added P233 Node source-contract and Chromium DOM assertions for inspector adoption and exact Legacy Layout restoration. The corrected exact-head hosted workflow remains required; do not mark P233–P236 accepted until it completes green.
+
+
+## P231–P236.1 — Sửa chặn CI, bố cục editor và easing P119.3 (2026-11-26 · candidate)
+
+### Đã sửa
+| Mã | Vấn đề | Cách sửa | File chủ |
+|---|---|---|---|
+| P119.3.1 | CI báo `customMotionCurveSaved`: curve đã chọn có thể mất khi Video Engine vẽ lại inspector trước Apply (nguyên nhân suy ra; trên máy này test gốc PASS nên chưa tái hiện được lỗi CI) | Giữ curve chưa áp dụng (draft) theo clip, khôi phục sau khi vẽ lại, bỏ khi clip đổi motion. Apply/Undo/snapshot giữ nguyên. Thêm kiểm tra `draftCurveSurvivesInspectorRedraw` | `canvio-p119-video.js` |
+| P231.2 | Khung editor cao 0px ở Poster/Video vì thẻ cũ chiếm hết chỗ; thanh sticky che nút | Shell cao đúng 100% trang và đứng đầu; thẻ cũ nằm bên dưới, cuộn trong trang; nút ⊕ "Tiện ích mở rộng" để nhảy xuống/lên. Không xoá thẻ nào | `canvio-p231-editor-shell.js` |
+| P231.3 | Mobile: editor chỉ còn 320px; thanh "Nguồn chung" nhiều hàng; nút bị bóp | `.main` cao theo cửa sổ, `#ws-src` một hàng cuộn ngang, nút không co; 390×844 đạt khoảng 669px | `canvio-p231-editor-shell.js` |
+| P233.2 | Thanh công cụ Video tràn trên desktop | Cho xuống hàng, giới hạn chiều cao | `canvio-p233-video-shell.js` |
+| P234.2 | Clarity Lab: nút Xuất PNG không vào shell | Chọn đúng thanh công cụ chứa nút export | `canvio-p234-native-studio-shell.js` |
+| P235.1 | Thêm clip chữ không hoàn tác được (Ctrl+Z không có tác dụng) | `vPushUndo()` trong `vAddText`, vá qua bước CI P231–P236 | workflow |
+| P236.1 | Gợi ý lần đầu che nút zoom/nút đóng rời | Gộp thành một thẻ gọn phía dưới | `canvio-p236-editor-experience.js` |
+| CI | Bước P230 thiếu dòng kết thúc heredoc `NODE` (cảnh báo bash); `String.replace` có thể hỏng khi mã chứa `$` | Thêm `NODE`; dùng hàm thay thế | workflow |
+
+### Sửa bài test (không nới tiêu chí)
+- P234 mobile: bản cũ đo trang đang ẩn (rộng 0) nên luôn FAIL; nay mở từng trang rồi đo, thêm kiểm tra không tràn ngang.
+- P133a: chờ ghi IndexedDB xong (tối đa 20 giây) thay vì chờ cứng 1,5 giây.
+
+### Kết quả kiểm thử (máy cloud 2 nhân, Chrome headless, KHÔNG phải GitHub CI)
+- Các bước workflow từ "Restore complete candidate index" đến "Run integrated source contracts": 38 bước chạy OK; bỏ qua các bước cài/tải runtime vì không có mạng.
+- Editor: P231 18/18 · P233 13/13 · P234 11/11 · P235 12/12 · P236 28/28.
+- Lượt chạy toàn bộ cuối (3 suite song song): 58 PASS; `p133a`, `p133w` FAIL do thời gian; `run-hosted-runtime-acceptance` chưa chạy trọn (thiếu GLB fixture/runtime phải tải).
+- `p133a` sau khi sửa: 4/4 PASS. `p133w` còn chập chờn (kiểm tra độ phản hồi event-loop phụ thuộc tải máy; chạy riêng 2/3 PASS ở lượt cuối). Chưa sửa.
+
+### Còn mở
+Chạy CI thật trên GitHub cho PR #107; thử trên Chrome thật, bàn phím/trình đọc màn hình/zoom 200%; chạm hai ngón; lưu và mở lại dự án thật; trên mobile tên công cụ bị ẩn và vài thanh cần cuộn ngang; P237–P248 chưa làm.
+
+
+## P237 — Kết quả kiểm thử (2026-11-26, máy cloud, Chrome headless, không phải GitHub CI)
+- Editor: P231 18/18 · P233 13/13 · P234 11/11 · P235 12/12 · P236 28/28 · P237 37/37.
+- Toàn bộ suite trình duyệt: 61/62 PASS; còn `run-hosted-runtime-acceptance` chưa chạy trọn vì thiếu GLB fixture/runtime phải tải.
+- 38 bước workflow (khôi phục index → source contracts) chạy OK. `p133w` đạt ở lượt này nhưng từng chập chờn.
+- OPEN: GitHub CI, thiết bị thật, trình đọc màn hình.
