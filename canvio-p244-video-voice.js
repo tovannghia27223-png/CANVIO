@@ -1,6 +1,6 @@
 /* P244: extend existing Whisper captions with SRT export and browser speech preview. */
 (function(w){'use strict';if(w.CVVideoVoiceP244)return;
-function state(){try{return w.CV&&CV.engines&&CV.engines.video&&CV.engines.video._state?CV.engines.video._state():null;}catch(e){return null;}}
+function state(){try{var C=w.CV;return C&&C.engines&&C.engines.video&&typeof C.engines.video._state==='function'?C.engines.video._state():null;}catch(e){return null;}}
 function time(x){var n=Math.max(0,Math.round((Number(x)||0)*1000)),h=Math.floor(n/3600000);n-=h*3600000;var m=Math.floor(n/60000);n-=m*60000;var s=Math.floor(n/1000);n-=s*1000;return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')+','+String(n).padStart(3,'0');}
 function cues(){var s=state();return(s&&s.clips||[]).filter(c=>c&&c.type==='text'&&String(c.text||'').trim()).sort((a,b)=>(a.start||0)-(b.start||0));}
 function srt(){return cues().map((c,i)=>(i+1)+'\n'+time(c.start)+' --> '+time((Number(c.start)||0)+Math.max(.2,Number(c.duration)||2))+'\n'+String(c.text).replace(/\s+/g,' ').trim()).join('\n\n')+(cues().length?'\n':'');}

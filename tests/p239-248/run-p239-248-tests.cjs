@@ -3,7 +3,7 @@ const root=path.resolve(__dirname,'../..'),files=["canvio-p239-brief-pack.js","c
 const core={get active(){return project;},create(){return project;},capture(){return true;}};
 const CV={engines:{video:{_state(){return{clips:[{type:'text',text:'Xin chào',start:1,duration:2}]};}}},assets:{list(){return[];}}};
 const doc={readyState:'loading',scripts:[],documentElement:{},addEventListener(){},getElementById(){return null;},createElement(){return{getContext(){return null;}};}};
-class DP{parseFromString(){return{querySelector(q){return q==='title'?{textContent:'T'}:q.indexOf('description')>=0?{content:'D'}:q==='h1'?{textContent:'H'}:null;},querySelectorAll(){return[];}};}}
+class DP{parseFromString(html){return{querySelector(q){return q==='title'?{textContent:'T'}:q.indexOf('description')>=0?{content:'D'}:q==='h1'?{textContent:'H'}:null;},querySelectorAll(){return[{getAttribute(k){return /alt=\"team\"/.test(html)&&k==='alt'?'team':null;}}];}};}}
 const win={CVCreativeCore:core,CV,addEventListener(){},setTimeout,clearTimeout,setInterval,clearInterval,getComputedStyle(){return{getPropertyValue(){return'#F83E9F';}}},speechSynthesis:{getVoices(){return[];},cancel(){},speak(){}},SpeechSynthesisUtterance:function(t){this.text=t;},performance:{getEntriesByType(){return[];}},localStorage:{length:0,key(){return null;},getItem(){return null;}},URL,Blob};
 const ctx={window:win,document:doc,navigator:{deviceMemory:8,hardwareConcurrency:4,storage:null,serviceWorker:null},DOMParser:DP,Blob,URL,Uint8Array,Array,Set,Map,Date,Math,Promise,JSON,Object,String,Number,RegExp,Error,TextEncoder,fetch:async()=>({ok:false,status:404,json:async()=>({})}),console};
 for(const f of files){const s=fs.readFileSync(path.join(root,f),'utf8');new vm.Script(s,{filename:f});vm.runInNewContext(s,ctx,{filename:f});}
@@ -15,7 +15,7 @@ win.CVStorageHubP170={folderState:async()=>({state:'none'}),saveLocal:async()=>(
 ck('P243 SEO title/H1/alt gate',win.CVWebPublisherP243.tests().seoPass&&win.CVWebPublisherP243.tests().missingAltDetected);
 ck('P244 canonical SRT timeline export',win.CVVideoVoiceP244.srt().includes('Xin chào')&&win.CVVideoVoiceP244.srt().includes('00:00:01,000'));
 ck('P245 shot plan maps times',win.CVBeatEditorP245.plan({beats:[{time:0,strength:2}]})[0].time===0);
-ck('P246 local comments and snapshots',win.CVReviewCollabP246.tests().commentStored&&win.CVReviewCollabP246.tests().snapshotStored);
+ck('P246 local comments and snapshots',(()=>{const t=win.CVReviewCollabP246.tests();return t.commentStored&&t.snapshotStored&&t.snapshotDoesNotNestReviewHistory&&t.snapshotSizeBounded;})());
 ck('P247 performance diagnostic',win.CVPerformanceP247.measure().indexMonolithic===true);
 ck('P248 bounded device profile',/^(conservative|balanced|capable)$/.test(win.CVModelManagerP248.hardware().profile));
 const fail=checks.filter(x=>!x.pass);console.log(JSON.stringify({suite:'P239-P248 Node contracts',passed:checks.length-fail.length,total:checks.length,failed:fail.map(x=>x.name)},null,2));if(fail.length)process.exit(1);
