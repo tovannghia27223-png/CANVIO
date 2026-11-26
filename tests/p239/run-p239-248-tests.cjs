@@ -33,7 +33,7 @@ const suites=[
 ['P239',()=>{const r=win.CVBriefPackP239.build('Chiến dịch tuyển dụng nhân sự cho doanh nghiệp');assert.equal(r.ok,true);assert.equal(Object.keys(r.documents).length,5);assert.equal(win.CVBriefPackP239.tests().fiveKinds,true);}],
 ['P240',()=>{const r=win.CVMagicResizeP240.tests();assert.ok(Object.values(r).every(Boolean),JSON.stringify(r));}],
 ['P241',()=>{const r=win.CVBulkP241.tests();assert.ok(Object.values(r).every(Boolean),JSON.stringify(r));const p=win.CVBulkP241.parseCSV('name,role\n"Nguyễn, A",HR');assert.equal(p.rows[0].name,'Nguyễn, A');}],
-['P242',()=>{const r=win.CVProjectBundleP242.tests();assert.equal(r.crc32,true);assert.equal(r.projectOwner,true);}],
+['P242',()=>{const r=win.CVProjectBundleP242.tests();assert.equal(r.crc32,true);assert.equal(r.projectOwner,true);assert.equal(r.assetRelink,true);}],
 ['P243',()=>{const r=win.CVWebsitePublishP243.tests();assert.equal(r.seoPass,true);assert.equal(r.rejectTraversal,true);}],
 ['P244',()=>{const r=win.CVCaptionVoiceP244.tests();assert.equal(r.srtTime,true);}],
 ['P245',()=>{const r=win.CVBeatEditorP245.tests();assert.equal(r.nonDestructive,true);}],

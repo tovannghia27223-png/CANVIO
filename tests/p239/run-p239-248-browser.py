@@ -22,6 +22,7 @@ with sync_playwright() as p:
  ck('P240 produces six constrained formats',page.evaluate("CVMagicResizeP240.buildSet(CVBriefPackP239.read().documents.poster).length===6"))
  ck('P241 parses Vietnamese CSV and quoted commas',page.evaluate("CVBulkP241.parseCSV('name,role\\n\\\"Nguyễn, A\\\",HR').rows[0].name==='Nguyễn, A'"))
  ck('P242 validates stored ZIP CRC fixture',page.evaluate("CVProjectBundleP242.tests().crc32"))
+ ck('P242 exports and re-reads a real stored .canvio ZIP with manifest and project payload',await page.evaluate(async()=>{const z=await CVProjectBundleP242.exportBundle(),e=await CVProjectBundleP242.readStoredZip(z);const m=JSON.parse(new TextDecoder().decode(e['manifest.json'])),body=new TextDecoder().decode(e['project.json']),hash=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(body)))).map(x=>x.toString(16).padStart(2,'0')).join('');return m.format==='CANVIO_PROJECT_BUNDLE'&&m.sha256===hash&&JSON.parse(body).format==='CANVIO_PROJECT'}));
  ck('P243 SEO gate blocks missing title/alt',page.evaluate("!CVWebsitePublishP243.audit('<h1>Thiếu metadata</h1><img>').ok"))
  ck('P244 exports native timeline subtitles as SRT',page.evaluate("CVCaptionVoiceP244.toSRT([{start:1.25,duration:2,text:'Xin chào'}]).includes('00:00:01,250 --> 00:00:03,250')"))
  ck('P245 beat planner leaves canonical clip starts unchanged',page.evaluate("(()=>{const a={clips:[{id:'a',track:1,type:'video',start:1.2}]},r=CVBeatEditorP245.plan([1,2],a);return r.length===1&&a.clips[0].start===1.2})()"))

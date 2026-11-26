@@ -4575,3 +4575,8 @@ Chạy CI thật trên GitHub cho PR #107; thử trên Chrome thật, bàn phím
 - P247 CVPerformanceP247: reports navigation/resource transfer and existing PWA registration. Full index.html code splitting and five-viewport/four-editor screenshot regression remain OPEN; fullIndexCodeSplit:false is exposed rather than misreported.
 - P248 CVLocalModelsP248: project-scoped local model metadata catalogue, full SHA-256 only for files up to 256 MiB, and an explicit loopback ComfyUI connectivity check. Large model binaries are not loaded into RAM, uploaded, downloaded or installed by CANVIO. Actual GPU inference/model inventory remains a manual acceptance item.
 - Test owners: tests/p239/run-p239-248-tests.cjs and tests/p239/run-p239-248-browser.py; CI adds embedded source syntax, P143 parity, Node contracts and Chromium smoke. Until the exact branch workflow passes, these P items remain candidate—not merged, deployed or Stable.
+
+
+### P242/P248 verification extensions — 2026-11-26
+- P242 updates `project.assetIds` using verified Asset Library IDs created during import, in addition to remapping document references. A browser test now verifies actual `CVZip.build()` → stored ZIP parsing → manifest/CRC/SHA integrity.
+- P248 adds an opt-in ComfyUI folder inventory scan via P120's loopback origin validator. It stores model names only; it does not download weights, scan remote hosts, or claim physical GPU/VRAM detection.

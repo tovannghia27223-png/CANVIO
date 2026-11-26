@@ -51,7 +51,10 @@ async function importBundle(file,confirmFn){
   if(w.CV&&CV.assets&&CV.assets.addBlob){var blob=await fetch(a.data).then(function(r){return r.blob();}),added=await CV.assets.addBlob(new File([blob],String(a.name||'asset'),{type:a.mime||blob.type}));var newId=added&& (added.id||added.asset&&added.asset.id);if(!newId&&CV.assets.list){var found=CV.assets.list().filter(function(x){return x.name===a.name;}).slice(-1)[0];newId=found&&found.id;}if(newId&&a.id)assetMap[a.id]=newId;restored++;}
  }
  function relink(node){if(!node||typeof node!=='object')return;if(Array.isArray(node)){node.forEach(relink);return;}Object.keys(node).forEach(function(k){if(typeof node[k]==='string'&&assetMap[node[k]])node[k]=assetMap[node[k]];else if(node[k]&&typeof node[k]==='object')relink(node[k]);});}
- relink(p.documents);try{if(C.capture)C.capture('project');}catch(e){}
+ relink(p.documents);
+ p.assetIds=Array.isArray(data.project.assetIds)?data.project.assetIds.map(function(id){return assetMap[id];}).filter(Boolean):[];
+ if(C.linkAsset)Object.keys(assetMap).forEach(function(oldId){try{C.linkAsset(assetMap[oldId]);}catch(e){}});
+ try{if(C.capture)C.capture('project');}catch(e){}
  return{ok:true,projectId:p.id,assetsRestored:restored,assetLinksUpdated:Object.keys(assetMap).length};
 }
 var autoTimer=null;
@@ -62,6 +65,6 @@ async function startAutoSave(interval){
  autoTimer=w.setInterval(function(){if(w.document&&document.visibilityState==='hidden')return;w.CVStorageHubP170.saveLocal(false).catch(function(){});},ms);return{ok:true,intervalMs:ms};
 }
 function stopAutoSave(){if(autoTimer)w.clearInterval(autoTimer);autoTimer=null;return true;}
-var api={version:'242.1.1',exportBundle:exportBundle,readStoredZip:readStoredZip,importBundle:importBundle,startAutoSave:startAutoSave,stopAutoSave:stopAutoSave,tests:function(){return{zipReaderStoredOnly:true,crc32:crc32(u8('123456789'))===0xcbf43926,projectOwner:!!w.CVCreativeCore,assetOwner:!!(w.CV&&CV.assets),storageOwner:!!w.CVStorageHubP170,entryLimit:110,totalBytesLimit:120*1024*1024,assetRelink:true};}};
+var api={version:'242.1.1',exportBundle:exportBundle,readStoredZip:readStoredZip,importBundle:importBundle,startAutoSave:startAutoSave,stopAutoSave:stopAutoSave,tests:function(){return{zipReaderStoredOnly:true,crc32:crc32(u8('123456789'))===0xcbf43926,projectOwner:!!w.CVCreativeCore,assetOwner:!!(w.CV&&CV.assets),storageOwner:!!w.CVStorageHubP170,entryLimit:110,totalBytesLimit:120*1024*1024,assetRelink:typeof importBundle==='function'&&typeof project==='function'};}};
 w.CVProjectBundleP242=api;
 })(window);

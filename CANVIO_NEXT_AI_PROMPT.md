@@ -544,3 +544,10 @@ Nối tiếp P231–P236 (editor vừa khít màn hình). Người dùng muốn 
 - Fix every failing assertion without weakening thresholds. Inspect P242 ZIP round-trip and imported asset references; P243 must use a disposable test repository/token only in a controlled manual test; never add a real token to code or CI.
 - Keep documented scope limits honest: P241 SVG-only batch, P243 Pages configuration/form backend, P246 lack of Supabase collaboration, P247 full-index code split and P248 real model/GPU inventory are still open.
 - Do not deploy or mark Stable; retain P70's independent real-world acceptance gates.
+
+
+## Continuation after run #985
+- Verify the corrected P239–P248 Node harness and follow through full P143, Chromium, packaging and full hosted runtime acceptance.
+- P242 now remaps project asset IDs on import and the browser suite performs an actual ZIP/CRC/SHA round-trip against existing CVZip.
+- P248 has a deliberate local ComfyUI model inventory scan for known `/models/{folder}` routes, persisted as metadata under the existing Shared Core project; real models/GPU inference remain manual gates.
+- Do not merge or deploy until the exact PR head has green CI and all limits remain explicit.

@@ -1655,3 +1655,9 @@ Chạy CI thật trên GitHub cho PR #107; thử trên Chrome thật, bàn phím
 - P247 adds runtime measurement/PWA readiness reporting. It deliberately does not rewrite the 6 MB app into code-split chunks; performance/code-splitting/visual regression acceptance remains OPEN.
 - P248 adds user-managed model metadata and explicit localhost ComfyUI connection testing. It does not enumerate every installed model, download weights or certify inference/GPU output.
 - Verification is pending exact-branch GitHub CI. Do not mark P239–P248 fully accepted or release-certified until CI and the listed real-project/device/provider gates pass.
+
+
+## P242/P248 continuation — round-trip and local model inventory (2026-11-26)
+- P242 import now maps original project asset IDs to actual IDs returned by Asset Library and updates `project.assetIds`; references within project documents are also remapped. Browser acceptance now creates a real `.canvio` with the existing `CVZip`, parses it with the stored-ZIP reader, validates per-entry CRC and recomputes project JSON SHA-256 against the manifest.
+- P248 adds an explicit loopback-only scan of ComfyUI `/models/{folder}` routes for checkpoints, LoRAs, VAE, ControlNet, upscale models, embeddings, UNet, diffusion models, text encoders and CLIP. It stores metadata names only in `documents.localModels.inventory`; unsupported 404 folders are skipped and other errors are reported. No model binary is downloaded or inferred.
+- Candidate remains unaccepted until the exact-head workflow passes. A mock or loopback inventory scan does not certify real GPU/model output quality.

@@ -791,3 +791,9 @@ Chạy CI thật trên GitHub cho PR #107; thử trên Chrome thật, bàn phím
 - Added workflow integration step to embed 11 script lots (P239–P248 and shared UI), update candidate marker to 23.3.112-p239-p248-studio-pro, syntax-check all ten source modules, run Node contracts, P143 source parity and real Chromium checks.
 - Results are PENDING until the exact branch/PR Actions run is complete. No PASS count is recorded here before execution.
 - Known scope limits: P241 currently outputs SVG rather than batch PNG/PDF; P243 publishes file content but does not configure Pages settings or Supabase forms; P246 is local-only, not Supabase collaboration; P247 does not code-split the main index; P248 stores model metadata rather than model binaries; Whisper and GPU inference need real media/hardware review.
+
+
+### P242/P248 follow-up QA — 2026-11-26
+- P242 browser suite exercises actual `CVZip.build()` output, stored ZIP parsing, per-entry CRC32, manifest format and SHA-256 comparison of the project payload. Asset ID remapping is covered by source/API contract; a full second-project media restore still needs real-project acceptance.
+- P248 includes opt-in local ComfyUI model-folder inventory; a live user-installed ComfyUI server is needed to verify actual folder results. Model inference remains outside this utility check.
+- Run #984 failed in the new Node test harness because the `MockDOMParser` class had mismatched braces; the harness syntax is corrected in commit `92155b8`. Run #985 is the exact-head rerun for that fix and the latest module updates; do not mark PASS until complete.
