@@ -63,3 +63,8 @@
 | P235 editor keyboard/mobile layer | New Chromium suite covers Video native play/pause, undo/redo, duplicate/delete, save routing, Alt focus and input keyboard guard | Two-finger pinch zoom, per-tool shortcut validation, keyboard-only/screen reader, actual touch devices and 200% zoom remain OPEN |
 | P236 editor preferences/Focus/onboarding | New Chromium suite covers Focus enter/exit, three-step guide, preference persistence and five viewport widths × four editors | Screenshot evidence on real displays, keyboard/screen-reader review and cross-browser acceptance remain OPEN |
 
+
+
+| P119.3.1 + P231–P236.1 (2026-11-26) | Local Chromium: editor suites 82/82; chi tiết trong QA Report | GitHub CI trên HEAD mới, GLB/runtime acceptance, p133w chập chờn, thiết bị thật: OPEN |
+
+| P237 Lệnh tiếng Việt (2026-11-26) | Local Chromium 37/37 | GitHub CI, thiết bị thật: OPEN |

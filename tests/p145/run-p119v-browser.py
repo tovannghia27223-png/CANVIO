@@ -94,6 +94,11 @@ with sync_playwright() as p:
       const c=['vtKFCurveX1','vtKFCurveY1','vtKFCurveX2','vtKFCurveY2'].map(id=>Number(document.getElementById(id).value));
       return v==='custom'&&c.every((x,i)=>Math.abs(x-[.1,.2,.3,.4][i])<.001)
     }""")
+    # The engine may redraw the inspector between choosing a curve and Apply; the draft must survive.
+    page.evaluate("(id)=>CV.engines.video.select(id)",clip_id)
+    page.wait_for_selector('#cv119v-select',state='attached',timeout=30000)
+    page.wait_for_timeout(250)
+    checks['draftCurveSurvivesInspectorRedraw']=page.evaluate("()=>document.getElementById('vtKFEasing').value==='custom'&&Math.abs(Number(document.getElementById('vtKFCurveX1').value)-.1)<.001")
     custom_motion_before_apply=page.evaluate("""()=>{
       const get=id=>document.getElementById(id),s=CV.engines.video._state();
       return {selected:s&&s.selected,easing:get('vtKFEasing')&&get('vtKFEasing').value,

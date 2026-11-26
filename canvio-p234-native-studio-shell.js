@@ -49,7 +49,9 @@ function mountRaster(id){
  installCss();
  var adopt=[{node:bars[0],slot:'rail',key:id+'-tools'},{node:stage,slot:'canvas',key:id+'-canvas'},{node:side,slot:'props',key:id+'-inspector'}];
  extras.forEach(function(node,i){adopt.push({node:node,slot:'rail',key:id+'-extra-'+i});});
- var bottom=bars.length>1?bars[bars.length-1]:null;
+ var key={pixelStudio:'px',colorStudio:'cl',clarityLab:'cy'}[id],exp=main.querySelector('[data-'+key+'="export"]');
+ var bottom=exp&&exp.closest('.ne-toolbar');
+ if(!bottom||bottom===bars[0])bottom=bars.length>1?bars[bars.length-1]:null;
  if(bottom)adopt.push({node:bottom,slot:'bottom',key:id+'-export-actions'});
  var hist=main.querySelector('.ne-hist');if(hist)adopt.push({node:hist,slot:'canvas',key:id+'-histogram'});
  var st=shell.mount(id,{title:TITLES[id],subtitle:'Native editor · Canvas · Tools · Inspector',topActions:'.ne-hero-actions',adopt:adopt});

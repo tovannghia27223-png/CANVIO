@@ -17,6 +17,7 @@ function installCss(){
  '.cv231-shell.cv233-video .cv231-top{min-width:0;max-width:100%;box-sizing:border-box}.cv231-shell.cv233-video .cv231-tools{min-width:0;max-width:100%}.cv231-shell.cv233-video .cv231-actions{min-width:0;max-width:100%}.cv231-shell.cv233-video .cv231-actions>.engine-toolbar{display:flex;flex:0 0 auto;align-items:center;gap:5px;flex-wrap:nowrap;min-width:max-content;overflow:visible}',
  '.cv231-shell.cv233-video .cv231-actions>.engine-toolbar>*{flex:0 0 auto}',
  '.cv231-shell.cv233-video .cv231-actions .headActions{min-width:max-content}',
+ '@media(min-width:901px){.cv231-shell.cv233-video{grid-template-rows:auto minmax(0,1fr)}.cv231-shell.cv233-video .cv231-top{flex-wrap:wrap}.cv231-shell.cv233-video .cv231-actions{flex:1 1 100%!important;flex-wrap:wrap;max-height:74px;overflow:auto}.cv231-shell.cv233-video .cv231-actions>.engine-toolbar{flex:1 1 100%;flex-wrap:wrap;min-width:0}.cv231-shell.cv233-video .cv231-actions .cv231-actions .headActions{flex-wrap:wrap}}',
  '.cv231-shell.cv233-video .cv231-rail>.card{min-width:0;max-width:100%;box-sizing:border-box;margin:0!important;max-height:100%;overflow:auto}',
  '.cv231-shell.cv233-video .cv231-canvas>.card{display:flex;flex-direction:column;width:100%;max-width:100%;box-sizing:border-box;height:100%;min-width:0;min-height:0;margin:0!important;overflow:hidden}',
  '.cv231-shell.cv233-video .cv231-canvas>.card #vtCanvas{display:block;flex:1 1 auto;width:100%!important;height:100%!important;max-height:100%;min-height:0;object-fit:contain}',

@@ -747,3 +747,38 @@ Mainline workflow #551 passed 53/53; Pages #275 passed build/deploy. P143 parity
 - Root cause: `canvio-p233-video-shell.js` referenced `externalCard` in its mount guard and adoption list without resolving the existing Video Engine External editor card.
 - Correction: resolve the existing Reframe anchor (`a[href^="https://reframe-os.netlify.app/"]`) and adopt its closest existing `.card` into P231's inspector. No replacement card or separate editor engine is introduced.
 - Added P233 Node source-contract and Chromium DOM assertions for inspector adoption and exact Legacy Layout restoration. The corrected exact-head hosted workflow remains required; do not mark P233–P236 accepted until it completes green.
+
+
+## P231–P236.1 — Sửa chặn CI, bố cục editor và easing P119.3 (2026-11-26 · candidate)
+
+### Đã sửa
+| Mã | Vấn đề | Cách sửa | File chủ |
+|---|---|---|---|
+| P119.3.1 | CI báo `customMotionCurveSaved`: curve đã chọn có thể mất khi Video Engine vẽ lại inspector trước Apply (nguyên nhân suy ra; trên máy này test gốc PASS nên chưa tái hiện được lỗi CI) | Giữ curve chưa áp dụng (draft) theo clip, khôi phục sau khi vẽ lại, bỏ khi clip đổi motion. Apply/Undo/snapshot giữ nguyên. Thêm kiểm tra `draftCurveSurvivesInspectorRedraw` | `canvio-p119-video.js` |
+| P231.2 | Khung editor cao 0px ở Poster/Video vì thẻ cũ chiếm hết chỗ; thanh sticky che nút | Shell cao đúng 100% trang và đứng đầu; thẻ cũ nằm bên dưới, cuộn trong trang; nút ⊕ "Tiện ích mở rộng" để nhảy xuống/lên. Không xoá thẻ nào | `canvio-p231-editor-shell.js` |
+| P231.3 | Mobile: editor chỉ còn 320px; thanh "Nguồn chung" nhiều hàng; nút bị bóp | `.main` cao theo cửa sổ, `#ws-src` một hàng cuộn ngang, nút không co; 390×844 đạt khoảng 669px | `canvio-p231-editor-shell.js` |
+| P233.2 | Thanh công cụ Video tràn trên desktop | Cho xuống hàng, giới hạn chiều cao | `canvio-p233-video-shell.js` |
+| P234.2 | Clarity Lab: nút Xuất PNG không vào shell | Chọn đúng thanh công cụ chứa nút export | `canvio-p234-native-studio-shell.js` |
+| P235.1 | Thêm clip chữ không hoàn tác được (Ctrl+Z không có tác dụng) | `vPushUndo()` trong `vAddText`, vá qua bước CI P231–P236 | workflow |
+| P236.1 | Gợi ý lần đầu che nút zoom/nút đóng rời | Gộp thành một thẻ gọn phía dưới | `canvio-p236-editor-experience.js` |
+| CI | Bước P230 thiếu dòng kết thúc heredoc `NODE` (cảnh báo bash); `String.replace` có thể hỏng khi mã chứa `$` | Thêm `NODE`; dùng hàm thay thế | workflow |
+
+### Sửa bài test (không nới tiêu chí)
+- P234 mobile: bản cũ đo trang đang ẩn (rộng 0) nên luôn FAIL; nay mở từng trang rồi đo, thêm kiểm tra không tràn ngang.
+- P133a: chờ ghi IndexedDB xong (tối đa 20 giây) thay vì chờ cứng 1,5 giây.
+
+### Kết quả kiểm thử (máy cloud 2 nhân, Chrome headless, KHÔNG phải GitHub CI)
+- Các bước workflow từ "Restore complete candidate index" đến "Run integrated source contracts": 38 bước chạy OK; bỏ qua các bước cài/tải runtime vì không có mạng.
+- Editor: P231 18/18 · P233 13/13 · P234 11/11 · P235 12/12 · P236 28/28.
+- Lượt chạy toàn bộ cuối (3 suite song song): 58 PASS; `p133a`, `p133w` FAIL do thời gian; `run-hosted-runtime-acceptance` chưa chạy trọn (thiếu GLB fixture/runtime phải tải).
+- `p133a` sau khi sửa: 4/4 PASS. `p133w` còn chập chờn (kiểm tra độ phản hồi event-loop phụ thuộc tải máy; chạy riêng 2/3 PASS ở lượt cuối). Chưa sửa.
+
+### Còn mở
+Chạy CI thật trên GitHub cho PR #107; thử trên Chrome thật, bàn phím/trình đọc màn hình/zoom 200%; chạm hai ngón; lưu và mở lại dự án thật; trên mobile tên công cụ bị ẩn và vài thanh cần cuộn ngang; P237–P248 chưa làm.
+
+
+## P237 — Kết quả kiểm thử (2026-11-26, máy cloud, Chrome headless, không phải GitHub CI)
+- Editor: P231 18/18 · P233 13/13 · P234 11/11 · P235 12/12 · P236 28/28 · P237 37/37.
+- Toàn bộ suite trình duyệt: 61/62 PASS; còn `run-hosted-runtime-acceptance` chưa chạy trọn vì thiếu GLB fixture/runtime phải tải.
+- 38 bước workflow (khôi phục index → source contracts) chạy OK. `p133w` đạt ở lượt này nhưng từng chập chờn.
+- OPEN: GitHub CI, thiết bị thật, trình đọc màn hình.

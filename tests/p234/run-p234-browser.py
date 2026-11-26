@@ -35,7 +35,14 @@ with sync_playwright() as p:
     ck('P234 exposes all four native studio adapters',page.evaluate("CVNativeStudioShellP234.tests().allFourMounted"))
     page.set_viewport_size({'width':390,'height':844})
     page.wait_for_timeout(250)
-    mobile=page.evaluate("""()=>['pixelStudio','colorStudio','clarityLab','layoutFoundry'].every(id=>{const s=document.querySelector('#cv231-shell-'+id);return s&&s.clientWidth>=s.scrollWidth-1&&s.querySelector('.cv231-canvas').clientWidth>0&&s.querySelector('.cv231-canvas').scrollWidth>=s.querySelector('.cv231-canvas').clientWidth})""")
+    # Inactive pages are display:none (width 0), so each editor is measured while it is on screen.
+    mobile=True
+    for pid in matrix:
+        page.evaluate("id=>CV.go(id)",pid)
+        page.wait_for_timeout(350)
+        fits=page.evaluate("id=>{const s=document.querySelector('#cv231-shell-'+id),c=s&&s.querySelector('.cv231-canvas');return !!(c&&s.clientWidth>0&&s.clientWidth>=s.scrollWidth-1&&c.clientWidth>0&&document.documentElement.scrollWidth<=innerWidth+1)}",pid)
+        if not fits: print('MOBILE_MISFIT '+pid)
+        mobile=mobile and fits
     ck('390px native editors have no horizontal shell/canvas overflow',mobile)
     ck('No uncaught JavaScript page errors',len(errors)==0)
     if errors: print('PAGE_ERRORS '+repr(errors))

@@ -29,8 +29,8 @@ function attach(shell){
  shell.classList.toggle('cv231-props-collapsed',pref.props===true);
  var tools=shell.querySelector('.cv231-tools');
  if(tools){
-  var guide=add('button','cv231-action','Hướng dẫn');guide.type='button';guide.dataset.cv236Action='guide';guide.addEventListener('click',function(){tour(shell);});
-  var focus=add('button','cv231-action','Tập trung');focus.type='button';focus.dataset.cv236Action='focus';focus.addEventListener('click',function(){shell.classList.toggle('cv236-focus');});
+  var guide=add('button','cv231-action','Hướng dẫn');guide.type='button';guide.title='Hướng dẫn nhanh';guide.setAttribute('aria-label','Hướng dẫn nhanh');guide.dataset.cv236Action='guide';guide.addEventListener('click',function(){tour(shell);});
+  var focus=add('button','cv231-action','Tập trung');focus.type='button';focus.title='Tập trung';focus.setAttribute('aria-label','Tập trung');focus.dataset.cv236Action='focus';focus.addEventListener('click',function(){shell.classList.toggle('cv236-focus');});
   tools.append(guide,focus);
  }
  var exit=add('button','cv231-action primary cv236-focus-exit','Thoát tập trung');exit.type='button';exit.addEventListener('click',function(){shell.classList.remove('cv236-focus');});shell.appendChild(exit);
@@ -38,7 +38,7 @@ function attach(shell){
   var save=function(){var current=read(id);current.rail=shell.classList.contains('cv231-rail-collapsed');current.props=shell.classList.contains('cv231-props-collapsed');write(id,current);};
   observer=new MutationObserver(save);observer.observe(shell,{attributes:true,attributeFilter:['class']});
  }
- if(!pref.tourSeen){var badge=add('div','cv236-first-use','Editor mới · Chọn “Hướng dẫn” để xem 3 bước');badge.setAttribute('role','status');shell.appendChild(badge);var dismiss=add('button','cv231-action','Đã rõ');dismiss.type='button';dismiss.style.position='absolute';dismiss.style.right='10px';dismiss.style.top='48px';dismiss.addEventListener('click',function(){badge.remove();dismiss.remove();pref.tourSeen=true;write(id,pref);});shell.appendChild(dismiss);}
+ if(!pref.tourSeen){var badge=add('div','cv236-first-use','Editor mới · Chọn “Hướng dẫn” để xem 3 bước');badge.setAttribute('role','status');shell.appendChild(badge);var dismiss=add('button','cv231-action','Đã rõ');dismiss.type='button';dismiss.addEventListener('click',function(){badge.remove();var cur=read(id);cur.tourSeen=true;write(id,cur);});badge.appendChild(dismiss);}
 }
 function scan(){d.querySelectorAll('.cv231-shell').forEach(attach);}
 function start(){
@@ -51,7 +51,7 @@ function start(){
  '.cv231-shell.cv236-focus .cv236-focus-exit{display:block}',
  '.cv236-tour{position:absolute;z-index:1450;right:12px;top:64px;width:min(340px,calc(100% - 24px));padding:14px;border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink);box-shadow:0 18px 48px rgba(10,20,40,.24)}',
  '.cv236-tour-title{display:block;font-size:13px}.cv236-tour-body{font-size:12px;line-height:1.6;color:var(--ink-2);margin:8px 0 12px}.cv236-tour-actions{display:flex;justify-content:flex-end;gap:6px}',
- '.cv236-first-use{position:absolute;z-index:1300;right:10px;top:58px;padding:8px 10px;border:1px solid var(--cv-accent-line,var(--line));border-radius:10px;background:var(--surface);color:var(--ink);font-size:11px;box-shadow:0 5px 18px rgba(0,0,0,.12)}',
+ '.cv236-first-use{display:flex;align-items:center;gap:10px;position:absolute;z-index:1300;left:50%;transform:translateX(-50%);bottom:64px;width:max-content;max-width:calc(100% - 24px);box-sizing:border-box;padding:8px 10px;border:1px solid var(--cv-accent-line,var(--line));border-radius:10px;background:var(--surface);color:var(--ink);font-size:11px;box-shadow:0 5px 18px rgba(0,0,0,.12)}',
  '@media(max-width:900px){.cv236-tour{top:52px;right:6px}.cv231-shell.cv236-focus .cv236-focus-exit{top:5px;right:5px}}'
  ].join('');
  d.head.appendChild(s);scan();
