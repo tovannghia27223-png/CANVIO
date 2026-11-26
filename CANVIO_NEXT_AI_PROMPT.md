@@ -537,8 +537,10 @@ Nối tiếp P231–P236 (editor vừa khít màn hình). Người dùng muốn 
 - Cần người dùng chốt: Đợt A có đúng thứ tự mong muốn không; có cần P243 (token GitHub) trong Đợt A hay chuyển sang Đợt B.
 
 
-## Continue P239–P248 after candidate
+## Next handoff — P239–P248 exact-head CI
 
-- Branch `feat/p239-p248-studio-pro` contains ten additive Studio Pro source modules. Read P239–P248 in CANVIO_AI_GUIDE.md before changing owners.
-- Remaining increments: P239 native editor hydration; P240 layer-aware reflow; P241 worker + PNG/PDF + Asset Library handoff; P242 project JSON restore/SHA round-trip; P243 Pages provisioning + Supabase forms; P244 ASR/TTS quality/audio render; P245 beat accuracy/timeline handoff; P246 secure Supabase RLS sharing; P247 true code splitting + screenshot matrix; P248 physical GPU/VRAM/model acceptance.
-- Never persist PAT/provider secrets in project docs, localStorage, Cloud Sync, source, tests or logs. Preserve P170, Project Vault, Video Engine and CV.assets.
+- Branch: feat/p239-p248-studio-pro.
+- Before merge, run exact-head .github/workflows/canvio-candidate-runtime.yml; check P239–P248 Node/Chromium, P143 source parity, inline script inventory, boot order, full smoke and manifest refresh.
+- Fix every failing assertion without weakening thresholds. Inspect P242 ZIP round-trip and imported asset references; P243 must use a disposable test repository/token only in a controlled manual test; never add a real token to code or CI.
+- Keep documented scope limits honest: P241 SVG-only batch, P243 Pages configuration/form backend, P246 lack of Supabase collaboration, P247 full-index code split and P248 real model/GPU inventory are still open.
+- Do not deploy or mark Stable; retain P70's independent real-world acceptance gates.

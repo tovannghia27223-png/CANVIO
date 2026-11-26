@@ -784,8 +784,10 @@ Chạy CI thật trên GitHub cho PR #107; thử trên Chrome thật, bàn phím
 - OPEN: GitHub CI, thiết bị thật, trình đọc màn hình.
 
 
-## P239–P248 candidate QA boundary (2026-11-26)
+## P239–P248 — Studio Pro candidate QA (2026-11-26)
 
-- Candidate workflow registers all ten modules, injects them into canonical index, adds P143 parity, Node contracts and Chromium smoke. Browser tests check Project Vault mount, five-document generation, six resize formats, quoted Vietnamese CSV, SRT readback, shot-plan output, performance diagnostics and hardware profile.
-- Not proven: production Pages provisioning, Supabase collaboration/RLS, real ASR/TTS media quality, native PDF/PNG batch, arbitrary layer reflow, true musical beat accuracy, physical GPU/VRAM or full index splitting.
-- Status is candidate only until exact-head hosted Actions/browser outcomes are reviewed. P70 release gates remain open.
+- Added Node contract suite: tests/p239/run-p239-248-tests.cjs.
+- Added Chromium acceptance suite: tests/p239/run-p239-248-browser.py.
+- Added workflow integration step to embed 11 script lots (P239–P248 and shared UI), update candidate marker to 23.3.112-p239-p248-studio-pro, syntax-check all ten source modules, run Node contracts, P143 source parity and real Chromium checks.
+- Results are PENDING until the exact branch/PR Actions run is complete. No PASS count is recorded here before execution.
+- Known scope limits: P241 currently outputs SVG rather than batch PNG/PDF; P243 publishes file content but does not configure Pages settings or Supabase forms; P246 is local-only, not Supabase collaboration; P247 does not code-split the main index; P248 stores model metadata rather than model binaries; Whisper and GPU inference need real media/hardware review.

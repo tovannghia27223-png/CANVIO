@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "description": "P143 phase-1 source registry for 71 standalone feature modules integrated into canonical inline script lots. The canonical inventory covers all script tags; this parity map covers paired standalone files explicitly listed here, not a claim that the whole index is modularized.",
+  "description": "P143 phase-1 source registry for 72 standalone feature modules integrated into canonical inline script lots. The canonical inventory covers all script tags; this parity map covers paired standalone files explicitly listed here, not a claim that the whole index is modularized.",
   "modules": [
     {
       "source": "canvio-p125-scrollframes.js",
@@ -255,19 +255,19 @@
       "scriptId": "canvio-lot240"
     },
     {
-      "source": "canvio-p241-bulk-csv.js",
+      "source": "canvio-p241-csv-bulk.js",
       "scriptId": "canvio-lot241"
     },
     {
-      "source": "canvio-p242-project-recovery.js",
+      "source": "canvio-p242-project-bundle.js",
       "scriptId": "canvio-lot242"
     },
     {
-      "source": "canvio-p243-web-publisher.js",
+      "source": "canvio-p243-website-publish.js",
       "scriptId": "canvio-lot243"
     },
     {
-      "source": "canvio-p244-video-voice.js",
+      "source": "canvio-p244-caption-voice.js",
       "scriptId": "canvio-lot244"
     },
     {
@@ -275,7 +275,7 @@
       "scriptId": "canvio-lot245"
     },
     {
-      "source": "canvio-p246-review-collab.js",
+      "source": "canvio-p246-collab-lite.js",
       "scriptId": "canvio-lot246"
     },
     {
@@ -283,9 +283,13 @@
       "scriptId": "canvio-lot247"
     },
     {
-      "source": "canvio-p248-model-manager.js",
+      "source": "canvio-p248-local-models.js",
       "scriptId": "canvio-lot248"
+    },
+    {
+      "source": "canvio-p239-p248-ui.js",
+      "scriptId": "canvio-lot239248ui"
     }
   ],
-  "totalModules": 71
+  "totalModules": 72
 }
