@@ -535,3 +535,48 @@ Nối tiếp P231–P236 (editor vừa khít màn hình). Người dùng muốn 
 - Giữ giới hạn Supabase miễn phí (≈1GB file, ≈50MB/tệp); video lớn ở lại máy.
 - Mọi bước dùng theo thứ tự: parity P143 → inventory → boot-order → CI; đọc mục "Bài học" các P170/P171/P230 trước khi làm giao diện.
 - Cần người dùng chốt: Đợt A có đúng thứ tự mong muốn không; có cần P243 (token GitHub) trong Đợt A hay chuyển sang Đợt B.
+
+
+## Next handoff — P239–P248 exact-head CI
+
+- Branch: feat/p239-p248-studio-pro.
+- Before merge, run exact-head .github/workflows/canvio-candidate-runtime.yml; check P239–P248 Node/Chromium, P143 source parity, inline script inventory, boot order, full smoke and manifest refresh.
+- Fix every failing assertion without weakening thresholds. Inspect P242 ZIP round-trip and imported asset references; P243 must use a disposable test repository/token only in a controlled manual test; never add a real token to code or CI.
+- Keep documented scope limits honest: P241 SVG-only batch, P243 Pages configuration/form backend, P246 lack of Supabase collaboration, P247 full-index code split and P248 real model/GPU inventory are still open.
+- Do not deploy or mark Stable; retain P70's independent real-world acceptance gates.
+
+
+## Continuation after run #985
+- Verify the corrected P239–P248 Node harness and follow through full P143, Chromium, packaging and full hosted runtime acceptance.
+- P242 now remaps project asset IDs on import and the browser suite performs an actual ZIP/CRC/SHA round-trip against existing CVZip.
+- P248 has a deliberate local ComfyUI model inventory scan for known `/models/{folder}` routes, persisted as metadata under the existing Shared Core project; real models/GPU inference remain manual gates.
+- Do not merge or deploy until the exact PR head has green CI and all limits remain explicit.
+
+
+## CI follow-up — P55/P56 title gate
+- Candidate version/title remains `23.3.112-p239-p248-studio-pro` / “CANVIO 23.3.112 — Studio Pro P239–P248 Candidate”.
+- P55 and P56 tests now match that candidate title. Keep their independent P62 lineage, ZIP preflight order, CRC, no-secret and restore checks unchanged.
+- Re-run exact head after P56 assertion commit, then handle the next actual failure.
+
+
+## P242/P245 hardening and browser harness repair
+- Verify latest P242 secret-key scrub and bounded project/asset export; keep manifest exclusion counts and integrity checks.
+- Verify latest P245 bounds (40 MiB, five minutes, 96 kHz, stereo) and non-destructive plan only.
+- Run #993 passed earlier Chromium suites through P237; P239–P248 browser harness had Python SyntaxError due raw JS async arrow outside page.evaluate. Corrected the harness; rerun all checks without weakening assertions.
+
+
+## P239–P248 mount issue after run #994
+- Exact failure: P239 projectVault card mounted, but Chromium timed out waiting for P240; previous shared UI start swallowed exceptions across all mount calls.
+- P239 now invokes `CVStudioProUI239248.mountNow()` when the container is created/reused. UI mount calls each P240–P248 independently, captures errors/cards into `CVStudioProUI239248Diagnostics`, exposes `mountNow()`, and retries until all cards appear.
+- Browser smoke now explicitly calls `mountNow()` after opening Project Vault and prints the diagnostics object if cards are still absent. Keep assertions; do not skip cards to green the build.
+
+
+## P239–P248 final mount identity correction
+- Root cause: `addSection(id, html)` failed to assign the passed ID to the generated element. Fixed by assigning `n.id=id` before appending, returning any existing element by ID and not appending duplicate cards on retry.
+- Chromium browser test now checks all nine P240–P248 card IDs are unique and the shared diagnostics report `ok:true`, all cards present and no mount errors.
+- Workflow artifact, manifest, acceptance matrix and patch notes now use `23.3.112-p239-p248-studio-pro`. Base marker `23.3.111-github-runtime-ci` is deliberately kept for restoring the verified mainline source before candidate promotion.
+
+
+## P242 run #996 repair
+- Studio Pro UI mount is now confirmed: P240–P248 cards present, unique IDs; P239 five-doc creation, P240 six formats and P241 CSV parse passed.
+- P242 actual ZIP roundtrip failed at the canonical reader size check (25 MiB max per entry) after an export body was larger than that. Keep export project JSON at <=20 MiB, raw assets <=6 MiB/50 items and complete ZIP <=64 MiB. Browser test directly inspects ZIP STORE method, zero flags, exact manifest byte count and SHA-256 before reader roundtrip.

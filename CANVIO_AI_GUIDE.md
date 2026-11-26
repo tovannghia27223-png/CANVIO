@@ -4559,3 +4559,52 @@ Chạy CI thật trên GitHub cho PR #107; thử trên Chrome thật, bàn phím
 - Sửa: thanh công cụ Poster (z-index 680) nổi đè lên ô lệnh.
 - Test `tests/p237/run-p237-browser.py` (đã thêm vào workflow, đăng ký P143).
 - Còn mở: nhập nội dung chữ ngay trong lệnh (ví dụ "thêm tiêu đề ABC"), lệnh đổi màu/cỡ vẫn do CVCmd cũ xử lý; hoàn tác chỉ áp dụng Poster, Video, Pixel.
+
+
+## 112. CANVIO Studio Pro P239–P248 — candidate implementation (2026-11-26)
+
+- Candidate modules are additive and are embedded in index.html by .github/workflows/canvio-candidate-runtime.yml; every standalone file has a unique canvio-lotNNN script lot and is registered in P143 source parity.
+- P239 CVBriefPackP239: creates five project-scoped structured documents in the active CVCreativeCore project (poster, social, slides, website, storyboard). These are editable data documents, not rendered previews; opening a document navigates to its native editor route.
+- P240 CVMagicResizeP240: six bounded target formats, centered proportional scaling, safe inset and collision/overflow report; SVG ZIP export uses the existing CVZip writer. It does not claim semantic reflow of every text group.
+- P241 CVBulkP241: bounded 500-row RFC4180-style parser, Vietnamese UTF-8 and quoted commas, placeholder merge and SVG ZIP. PNG/PDF batch rendering remains a follow-up acceptance item.
+- P242 CVProjectBundleP242: .canvio writer/reader for stored ZIP only, per-entry CRC32 and project JSON SHA-256, file/entry limits, explicit restore confirmation, best-effort Asset ID relinking. Uses the active Shared Core and CV.assets; does not replace full Project Vault/IndexedDB backup. Auto-save calls the existing P170 local folder writer only after folder permission is granted; it does not auto-enable cloud sync.
+- P243 CVWebsitePublishP243: SEO gate checks title, description, one H1 and image alt. Publishing uses the user-entered GitHub token only for an explicit HTTPS Contents API action; token is cleared from the UI and is not persisted. The target repository/branch must already exist and Pages source settings may still require manual configuration.
+- P244 CVCaptionVoiceP244: reads text cues from the canonical Video Engine timeline, exports SRT and provides browser SpeechSynthesis. Whisper inference remains the existing explicit user-triggered Video Engine route; real Vietnamese/English quality and voice availability are not certified by the utility tests.
+- P245 CVBeatEditorP245: local RMS/onset proxy analysis and non-destructive beat suggestions; stores a plan in project documents. It does not auto-move timeline clips or claim music-grade beat detection.
+- P246 CVCollabLiteP246: project-local pinned comments/version snapshots and a redacted read-only URL fragment. Supabase/RLS multi-user collaboration and E2E-encrypted cloud sharing are NOT implemented in this candidate.
+- P247 CVPerformanceP247: reports navigation/resource transfer and existing PWA registration. Full index.html code splitting and five-viewport/four-editor screenshot regression remain OPEN; fullIndexCodeSplit:false is exposed rather than misreported.
+- P248 CVLocalModelsP248: project-scoped local model metadata catalogue, full SHA-256 only for files up to 256 MiB, and an explicit loopback ComfyUI connectivity check. Large model binaries are not loaded into RAM, uploaded, downloaded or installed by CANVIO. Actual GPU inference/model inventory remains a manual acceptance item.
+- Test owners: tests/p239/run-p239-248-tests.cjs and tests/p239/run-p239-248-browser.py; CI adds embedded source syntax, P143 parity, Node contracts and Chromium smoke. Until the exact branch workflow passes, these P items remain candidate—not merged, deployed or Stable.
+
+
+### P242/P248 verification extensions — 2026-11-26
+- P242 updates `project.assetIds` using verified Asset Library IDs created during import, in addition to remapping document references. A browser test now verifies actual `CVZip.build()` → stored ZIP parsing → manifest/CRC/SHA integrity.
+- P248 adds an opt-in ComfyUI folder inventory scan via P120's loopback origin validator. It stores model names only; it does not download weights, scan remote hosts, or claim physical GPU/VRAM detection.
+
+
+### Version-bound regression note — 2026-11-26
+- P55's title observer assertion now follows the explicit candidate build marker `23.3.112-p239-p248-studio-pro`; the older 23.3.111 assertion was tied to the preceding candidate and not to the P62 feature contract. P62 lineage remains separately asserted.
+
+
+### P55/P56 version-pinned regression follow-up — 2026-11-26
+- Candidate version/title is intentionally `23.3.112-p239-p248-studio-pro`. P55 and P56 test assertions now follow this exact marker/title while retaining separate historical P62 lineage assertion and P56 archive-integrity assertions.
+
+
+### P242/P245 safety bounds — 2026-11-26
+- P242 sanitizes project metadata recursively before export and reports excluded secret-key counts, with bounded project/asset sizes. Project bundle is portable ZIP of supported project JSON/assets, not a replacement for full Project Vault IndexedDB restore.
+- P245 limits local audio analysis to 40 MiB / five minutes / 96 kHz / stereo maximum; CPU analysis remains approximate.
+
+
+### P239–P248 mount retry hardening — 2026-11-26
+- P239 now calls the idempotent Studio Pro UI mount when the Project Vault container is created or reused. The shared UI mounts P240–P248 independently, exposes `mountNow()`, records per-module card presence/errors, and retries until every module card appears.
+- Run #994 confirmed P231–P237 browser tests all passed, then timed out waiting for P240 after P239 existed. The shared try/catch had hidden the individual mount failure; the revised diagnostics surface the exact failing module.
+
+
+### P239–P248 root cause fix — 2026-11-26
+- The shared Studio Pro `addSection` helper now assigns `n.id=id` before appending. It first returns an existing panel to keep re-entry idempotent, and only returns null when the Project Vault tools root is not ready.
+- Chromium acceptance now checks the diagnostics object reports all nine panels mounted with zero errors and verifies each panel ID occurs exactly once.
+
+
+### P242 portable bundle budget — 2026-11-26
+- P242 now keeps `project.json` <=20 MiB (reader limit 25 MiB), embedded raw assets <=6 MiB, at most 50 assets, each data URL <=8 MiB, and complete ZIP <=64 MiB. Manifest stores actual JSON and asset byte counts.
+- Chromium run #996 confirmed P239–P241 and nine UI panel mounts, then exposed the export-vs-reader limit mismatch; browser test now checks central-directory STORE metadata and exact entry bytes before round-trip.

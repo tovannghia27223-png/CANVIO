@@ -1,0 +1,14 @@
+/* P247 · Runtime performance audit + existing PWA readiness; no risky wholesale index rewrite. */
+(function(w,d){
+'use strict';if(w.CVPerformanceP247)return;
+function measure(){
+ var nav=(w.performance&&performance.getEntriesByType)?performance.getEntriesByType('navigation')[0]:null,resources=(w.performance&&performance.getEntriesByType)?performance.getEntriesByType('resource'):[];
+ var total=resources.reduce(function(a,x){return a+(Number(x.transferSize)||0);},0),js=resources.filter(function(x){return /\.m?js(?:\?|$)/i.test(x.name);}).reduce(function(a,x){return a+(Number(x.transferSize)||0);},0);
+ var manifest=!!d.querySelector('link[rel="manifest"]'),sw=!!(navigator.serviceWorker),registration=null;
+ return{navigationMs:nav?Math.round(nav.domContentLoadedEventEnd-nav.startTime):null,loadMs:nav?Math.round(nav.loadEventEnd-nav.startTime):null,resourceCount:resources.length,transferredBytes:total,scriptBytes:js,manifest:manifest,serviceWorkerSupported:sw,httpsOrLocal:w.location.protocol==='https:'||w.location.hostname==='localhost'||w.location.hostname==='127.0.0.1',lazyLotsAreModuleScoped:true,fullIndexCodeSplit:false};
+}
+async function pwa(){var m=measure(),r=null;if(navigator.serviceWorker&&m.httpsOrLocal){try{r=await navigator.serviceWorker.getRegistration();}catch(e){}}return Object.assign(m,{serviceWorkerRegistered:!!r,scope:r&&r.scope||null});}
+function mount(){var page=d.getElementById('page-projectVault'),root=d.getElementById('cvstudio-pro-tools');if(!root||d.getElementById('cv247-card'))return false;var c=d.createElement('section');c.id='cv247-card';c.className='card';c.innerHTML='<h4>Hiệu năng & PWA</h4><p class="tiny">Đo tải trang hiện tại và kiểm tra PWA đang có. Không thay đổi index lớn tự động vì cần nghiệm thu từng route và boot-order.</p><div class="row" style="gap:8px;flex-wrap:wrap"><button class="btn btn-soft sm" id="cv247-run" type="button">Đo hiệu năng</button><span class="tiny" id="cv247-status" role="status"></span></div><pre id="cv247-result" class="tiny" style="white-space:pre-wrap"></pre>';root.appendChild(c);c.querySelector('#cv247-run').onclick=async function(){var r=await pwa();c.querySelector('#cv247-result').textContent=JSON.stringify(r,null,2);c.querySelector('#cv247-status').textContent='Đã đo. Full index code split vẫn là phần còn mở.';};return true;}
+var api={version:'247.1.0',measure:measure,pwa:pwa,mount:mount,tests:function(){var m=measure();return{performanceApi:!!w.performance,manifestField:typeof m.manifest==='boolean',honestCodeSplitFlag:m.fullIndexCodeSplit===false,pwaCapability:typeof m.serviceWorkerSupported==='boolean'};}};
+w.CVPerformanceP247=api;
+})(window,document);

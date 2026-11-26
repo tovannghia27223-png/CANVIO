@@ -1639,3 +1639,55 @@ Chạy CI thật trên GitHub cho PR #107; thử trên Chrome thật, bàn phím
 - Sửa: thanh công cụ Poster (z-index 680) nổi đè lên ô lệnh.
 - Test `tests/p237/run-p237-browser.py` (đã thêm vào workflow, đăng ký P143).
 - Còn mở: nhập nội dung chữ ngay trong lệnh (ví dụ "thêm tiêu đề ABC"), lệnh đổi màu/cỡ vẫn do CVCmd cũ xử lý; hoàn tác chỉ áp dụng Poster, Video, Pixel.
+
+
+## P239–P248 — Studio Pro implementation candidate (2026-11-26)
+
+- Added ten standalone module owners and a shared UI mount layer: canvio-p239-brief-pack.js through canvio-p248-local-models.js, plus canvio-p239-p248-ui.js. CI embeds each module in a unique canvio-lotNNN script in canonical index.html and registers source parity under P143.
+- P239 creates five structured project documents (poster, social, slides, website, storyboard) in CVCreativeCore.active.documents.briefPack; brand colors use project Brand Kit when available, otherwise current theme accent.
+- P240 provides six bounded size variants and an SVG ZIP export. Collision counts are reported for review; it does not automatically recompose all complex groups.
+- P241 implements bounded CSV parsing (500 rows), quoted commas, UTF-8 and placeholder merge. Current ZIP output is SVG/vector; bulk PNG/PDF rendering is OPEN.
+- P242 implements a stored-ZIP .canvio bundle with project JSON SHA-256, per-entry CRC32, strict entry/path/size limits, explicit restore confirmation and best-effort Asset ID relinking. Full native IndexedDB/media restore parity with Project Vault is OPEN. Periodic save uses P170 only after directory permission has been granted.
+- P243 implements SEO validation and explicit GitHub Contents API upload to an existing repo/branch. The GitHub token is not persisted and is cleared after the publish attempt. Automatic repository creation, Pages settings configuration and Supabase contact-form delivery remain OPEN.
+- P244 exposes SRT export and browser TTS for canonical Video Engine captions; Whisper remains the existing user-triggered route and still requires real Vietnamese/English acceptance.
+- P245 analyses an audio file locally with a bounded onset proxy and records non-destructive beat suggestions. Automatic clip/keyframe/transition arrangement and music-grade beat accuracy remain OPEN.
+- P246 adds project-local comments, snapshots and a redacted read-only link. This is not the requested Supabase multi-user/RLS/E2E encrypted collaboration; cloud collaboration remains OPEN.
+- P247 adds runtime measurement/PWA readiness reporting. It deliberately does not rewrite the 6 MB app into code-split chunks; performance/code-splitting/visual regression acceptance remains OPEN.
+- P248 adds user-managed model metadata and explicit localhost ComfyUI connection testing. It does not enumerate every installed model, download weights or certify inference/GPU output.
+- Verification is pending exact-branch GitHub CI. Do not mark P239–P248 fully accepted or release-certified until CI and the listed real-project/device/provider gates pass.
+
+
+## P242/P248 continuation — round-trip and local model inventory (2026-11-26)
+- P242 import now maps original project asset IDs to actual IDs returned by Asset Library and updates `project.assetIds`; references within project documents are also remapped. Browser acceptance now creates a real `.canvio` with the existing `CVZip`, parses it with the stored-ZIP reader, validates per-entry CRC and recomputes project JSON SHA-256 against the manifest.
+- P248 adds an explicit loopback-only scan of ComfyUI `/models/{folder}` routes for checkpoints, LoRAs, VAE, ControlNet, upscale models, embeddings, UNet, diffusion models, text encoders and CLIP. It stores metadata names only in `documents.localModels.inventory`; unsupported 404 folders are skipped and other errors are reported. No model binary is downloaded or inferred.
+- Candidate remains unaccepted until the exact-head workflow passes. A mock or loopback inventory scan does not certify real GPU/model output quality.
+
+
+### 23.3.112 candidate version marker
+- The canonical title/build marker is now `23.3.112-p239-p248-studio-pro` / “CANVIO 23.3.112 — Studio Pro P239–P248 Candidate”.
+- Updated the P55 version-specific title assertion; retained the independent P62 lineage assertion.
+
+
+### P55/P56 candidate title test follow-up (2026-11-26)
+- The candidate marker/title is `23.3.112-p239-p248-studio-pro`; P55 and P56 version-specific observer assertions follow it. This updates the title contract only; P55/P56 integrity and historical P62 checks are not bypassed.
+
+
+### P242/P245 reliability follow-up — 2026-11-26
+- P242 excludes token-like and credential field names from the exported project JSON and imposes per-asset, total-asset and project JSON budgets; import remains confirmed and integrity-checked.
+- P245 limits local beat analysis to 40 MiB / 5 minutes / 96 kHz / 2 channels. The beat map is an editable suggestion, not automatic timeline mutation.
+- Hosted run #993 reached P239 smoke after P231–P237 suites passed, but the new test file stopped on Python SyntaxError. A corrected exact-head run is pending.
+
+
+### P239–P248 browser mount repair — 2026-11-26
+- Run #994 browser regression passed through P237, then failed to find `#cv240-card` after P239 appeared. The UI's single broad try/catch could silently stop the remaining mounts.
+- The shared mount is now per-module guarded and diagnostic, called directly from P239 container creation/re-entry, and exposed as idempotent `mountNow()`. The browser smoke calls it after route navigation and prints diagnostics on failure.
+
+
+### P239–P248 panel identity and delivery candidate — 2026-11-26
+- Root cause in run #994/#995 browser attempts: P240–P243 cards were appended without the IDs expected by UI selectors; repaired by assigning the ID before append and keeping panel creation idempotent.
+- Browser acceptance now verifies nine panel IDs, all mount diagnostics, and no duplicates. Artifact, manifest and generated acceptance matrix are aligned to candidate `23.3.112-p239-p248-studio-pro`.
+
+
+### P242 ZIP reader/writer budget alignment — 2026-11-26
+- Export now targets a 20 MiB project JSON ceiling, 6 MiB aggregate asset bytes, 50 assets maximum and 64 MiB archive ceiling, staying strictly beneath the reader's 25 MiB per-entry boundary.
+- Real browser acceptance inspects the ZIP Central Directory (method/flags/size) before canonical re-read and SHA-256 comparison.

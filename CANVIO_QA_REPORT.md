@@ -782,3 +782,54 @@ Chạy CI thật trên GitHub cho PR #107; thử trên Chrome thật, bàn phím
 - Toàn bộ suite trình duyệt: 61/62 PASS; còn `run-hosted-runtime-acceptance` chưa chạy trọn vì thiếu GLB fixture/runtime phải tải.
 - 38 bước workflow (khôi phục index → source contracts) chạy OK. `p133w` đạt ở lượt này nhưng từng chập chờn.
 - OPEN: GitHub CI, thiết bị thật, trình đọc màn hình.
+
+
+## P239–P248 — Studio Pro candidate QA (2026-11-26)
+
+- Added Node contract suite: tests/p239/run-p239-248-tests.cjs.
+- Added Chromium acceptance suite: tests/p239/run-p239-248-browser.py.
+- Added workflow integration step to embed 11 script lots (P239–P248 and shared UI), update candidate marker to 23.3.112-p239-p248-studio-pro, syntax-check all ten source modules, run Node contracts, P143 source parity and real Chromium checks.
+- Results are PENDING until the exact branch/PR Actions run is complete. No PASS count is recorded here before execution.
+- Known scope limits: P241 currently outputs SVG rather than batch PNG/PDF; P243 publishes file content but does not configure Pages settings or Supabase forms; P246 is local-only, not Supabase collaboration; P247 does not code-split the main index; P248 stores model metadata rather than model binaries; Whisper and GPU inference need real media/hardware review.
+
+
+### P242/P248 follow-up QA — 2026-11-26
+- P242 browser suite exercises actual `CVZip.build()` output, stored ZIP parsing, per-entry CRC32, manifest format and SHA-256 comparison of the project payload. Asset ID remapping is covered by source/API contract; a full second-project media restore still needs real-project acceptance.
+- P248 includes opt-in local ComfyUI model-folder inventory; a live user-installed ComfyUI server is needed to verify actual folder results. Model inference remains outside this utility check.
+- Run #984 failed in the new Node test harness because the `MockDOMParser` class had mismatched braces; the harness syntax is corrected in commit `92155b8`. Run #985 is the exact-head rerun for that fix and the latest module updates; do not mark PASS until complete.
+
+
+## P47–P70 regression adjustment — candidate title 23.3.112 (2026-11-26)
+- P239–P248 candidate intentionally advances build marker/title from 23.3.111 to 23.3.112. Updated P55 regression assertions for the exact current title and P42 title-observer version mapping while preserving the independent P62 lineage assertion.
+- Run #989 reached P47–P70 and stopped only because P55 still expected the prior 23.3.111 candidate title; the P239–P248 Node suite (11/11), P143 source parity (72/72), inline inventory (206 scripts / 635 unique IDs) and boot-order check all passed. This P55 expectation correction is queued in the next exact-head run.
+
+
+## P56 title assertion update — Studio Pro candidate 23.3.112 (2026-11-26)
+- Run #991 confirmed the P55 title/observer assertion is now correct; it next stopped at the P56 test which still hard-coded the prior 23.3.111 candidate marker.
+- Updated only the P56 title-observer expectation to `23.3.112-p239-p248-studio-pro` / “CANVIO 23.3.112 — Studio Pro P239–P248 Candidate”. P56 archive preflight order, parser, integrity and P62 lineage checks remain intact.
+- A fresh exact-head workflow is pending; no regression pass is claimed from runs #989–#991.
+
+
+## P242/P245 hardening update — 2026-11-26
+- P242 export now recursively removes token, API-key, password, authorization, credential, secret and private-key fields before creating the project JSON; the manifest records the number of excluded fields. Asset data is bounded (100 assets inspected, per-data-URL ceiling, 14 MiB aggregate asset bytes, 25 MiB project JSON) before ZIP creation. Import retains the existing stored-ZIP/CRC/SHA checks and explicit confirmation.
+- P245 local beat analysis now bounds the input to 40 MiB, 300 seconds, 96 kHz and two channels and always closes AudioContext. This is a CPU/RMS onset proxy, not an exact musical beat-grid detector.
+- Run #993 executed P231–P237 Chromium suites successfully (including P237 37/37) but stopped when the P239–P248 Python smoke file failed to parse: an async JavaScript expression had been placed directly in a Python argument instead of inside page.evaluate(...). The browser harness has been corrected; a new exact-head run is required.
+
+
+## P239–P248 browser mount failure analysis — run #994 (2026-11-26)
+- Run #994 passed build/syntax, P143, P47–P70, integrated source contracts and P107 ZIP roundtrip. Chromium suites P231–P237 also passed, including P237 37/37.
+- The new Studio Pro browser smoke then timed out waiting for `#cv240-card` after `#cvstudio-pro-p239` had appeared. The shared UI used one broad try/catch and a short post-root retry window, so one mount exception could stop remaining feature panels without diagnostics.
+- Corrected the P239 container to call the Studio Pro mount API when it is created/reused. The UI now mounts each panel independently, records per-module errors and presence in `CVStudioProUI239248Diagnostics`, retries while any card is missing, and exposes `mountNow()` for route-driven re-entry. Chromium harness now explicitly invokes that idempotent mount and prints diagnostics if a required panel is absent.
+
+
+## P239–P248 Chromium mount root cause and repair — run #995 (2026-11-26)
+- Run #994: all source/Node/P143/P47–P70/integrated-contract steps passed; browser reached P239 after P231–P237 suites passed, then timed out on `#cv240-card`.
+- Run #995: source/Node/P143/P47–P70/integrated-contract stages passed with the independent `mountNow()` retry/diagnostics, but the browser step was still running at the point this update was written.
+- Root cause confirmed by code review: the shared UI helper `addSection(id, html)` appended the generated panel but never assigned `n.id = id`. The panels were created without the selectors used by the browser smoke and repeat mounts could append duplicates.
+- Fix: assign the requested ID before append, return an existing element by ID, and guard a missing root separately. Browser suite now verifies all nine diagnostic cards, zero mount errors and exactly one element for every `cv240-card` … `cv248-card` ID.
+
+
+## P242 bundle-size compatibility repair — run #996 (2026-11-26)
+- Chromium confirmed the Studio Pro panels and their IDs mount correctly; P239 creation, P240 six-format generation, P241 Vietnamese CSV parsing, and P242 secret scrubbing all passed.
+- The real P242 ZIP round-trip failed because the writer allowed up to 25 MiB of JSON, equal to the reader's maximum uncompressed size per ZIP entry; serialized data URLs/base64 and project metadata could push the actual entry beyond the reader boundary.
+- Export budgets are now deliberately below the reader limit: project JSON <=20 MiB, embedded raw assets <=6 MiB, at most 50 assets and <=8 MiB per data URL; final archive <=64 MiB. Manifest records exact JSON bytes and included asset bytes. Browser acceptance inspects the actual ZIP central directory (STORE method, zero flags, entry size) before passing the same ZIP to the canonical reader and verifying SHA-256.
