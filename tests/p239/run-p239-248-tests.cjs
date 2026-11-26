@@ -8,7 +8,24 @@ const assets=[];
 const core={get active(){return project;},create(o){project.id='p-import-'+Date.now();project.name=o.name;project.documents={};return project;},context(){return{projectId:project.id,projectName:project.name,brief:project.brief,goal:project.goal};},capture(){return true;},linkAsset(){return true;}};
 const win={CVCreativeCore:core,CV:{assets:{list(){return assets;},async addBlob(file){const x={id:'a'+assets.length,name:file.name,mime:file.type};assets.push(x);return x;},render(){}},engines:{video:{_state(){return{clips:[{id:'c1',type:'text',track:3,text:'Xin chào',start:1.25,duration:2},{id:'v1',type:'video',track:1,start:1.1,duration:4}]};}}}},CVZip:{async build(files){return new Blob(files.map(x=>String(x.data||'')),{type:'application/zip'});}},CVStorageHubP170:{async folderState(){return{state:'granted'};},async saveLocal(){return{ok:true};}},CVComfyP120P126:{async connect(){return{ok:true};}},location:{href:'https://example.test/app',hash:''},setTimeout(){return 1;},clearTimeout(){},setInterval(){return 1;},clearInterval(){},confirm(){return true},performance:{getEntriesByType(){return[];}},speechSynthesis:{cancel(){},getVoices(){return[];},speak(){}},SpeechSynthesisUtterance:function(t){this.text=t;},};
 const document={readyState:'complete',visibilityState:'visible',getElementById(){return null;},querySelector(){return null;},querySelectorAll(){return[];},addEventListener(){},createElement(){return{setAttribute(){},appendChild(){},click(){},remove(){},style:{},dataset:{}};},documentElement:{},body:{appendChild(){}}};
-class MockDOMParser{parseFromString(html){return{querySelector(sel){if(sel==='title'){const m=String(html).match(/<title[^>]*>([\s\S]*?)<\/title>/i);return m?{textContent:m[1]}:null;}if(sel==='meta[name="description"]'){const m=String(html).match(/<meta[^>]*name=["']description["'][^>]*content=["']([^"']*)["']/i);return m?{content:m[1]}:null;}return null;},querySelectorAll(sel){if(sel==='h1')return Array.from(String(html).matchAll(/<h1\b/gi));return[];},images:Array.from(String(html).matchAll(/<img\b([^>]*)>/gi)).map(m=>({hasAttribute(k){return k==='alt'&&/\balt\s*=/.test(m[1]);},getAttribute(){const x=m[1].match(/\balt=["']([^"']*)["']/);return x?x[1]:'';}})});}}}
+class MockDOMParser {
+ parseFromString(html) {
+  const source=String(html);
+  const images=Array.from(source.matchAll(/<img\\b([^>]*)>/gi)).map(m=>({
+   hasAttribute(k){return k==='alt'&&/\\balt\\s*=/.test(m[1]);},
+   getAttribute(){const x=m[1].match(/\\balt=["']([^"']*)["']/);return x?x[1]:'';}
+  }));
+  return {
+   querySelector(sel) {
+    if(sel==='title'){const m=source.match(/<title[^>]*>([\\s\\S]*?)<\\/title>/i);return m?{textContent:m[1]}:null;}
+    if(sel==='meta[name="description"]'){const m=source.match(/<meta[^>]*name=["']description["'][^>]*content=["']([^"']*)["']/i);return m?{content:m[1]}:null;}
+    return null;
+   },
+   querySelectorAll(sel){return sel==='h1'?Array.from(source.matchAll(/<h1\\b/gi)):[];},
+   images
+  };
+ }
+}
 Object.assign(win,{window:win,document,crypto:webcrypto,Blob,File:global.File||class File extends Blob{constructor(parts,name,opts){super(parts,opts);this.name=name;}},URL,TextEncoder,TextDecoder,DOMParser:MockDOMParser,navigator:{serviceWorker:null},fetch:async()=>{throw new Error('network disabled in test');},getComputedStyle(){return{getPropertyValue(){return'#F83E9F';}};},btoa:s=>Buffer.from(s,'binary').toString('base64'),atob:s=>Buffer.from(s,'base64').toString('binary'),unescape,escape,Date,Math,JSON,Array,Object,String,Number,Boolean,RegExp,Promise,Map,Set,Uint8Array,Uint32Array,DataView,Intl});
 const ctx={...win,window:win,document,navigator:win.navigator,crypto:webcrypto,DOMParser:MockDOMParser,getComputedStyle:win.getComputedStyle,URL,Blob:win.Blob,File:win.File,TextEncoder,TextDecoder,fetch:win.fetch,setTimeout:win.setTimeout,setInterval:win.setInterval,clearTimeout:win.clearTimeout,clearInterval:win.clearInterval,console,performance:win.performance,confirm:win.confirm,btoa:win.btoa,atob:win.atob,unescape,escape};
 for(const file of sources){const p=path.join(root,file);if(!fs.existsSync(p))throw new Error('Missing source '+file);vm.runInNewContext(fs.readFileSync(p,'utf8'),ctx,{filename:file,timeout:10000});}
