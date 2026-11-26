@@ -11,17 +11,17 @@ const document={readyState:'complete',visibilityState:'visible',getElementById()
 class MockDOMParser {
  parseFromString(html) {
   const source=String(html);
-  const images=Array.from(source.matchAll(new RegExp('<img\\b([^>]*)>','gi'))).map(m=>({
-   hasAttribute(k){return k==='alt'&&new RegExp('\\balt\\s*=').test(m[1]);},
-   getAttribute(){const x=m[1].match(new RegExp('\\balt=["\\']([^"\\']*)["\\']'));return x?x[1]:'';}
+  const images=Array.from(source.matchAll(new RegExp("<img\\b([^>]*)>","gi"))).map(m=>({
+   hasAttribute(k){return k==='alt'&&new RegExp("\\balt\\s*=\\s*(['\\\"])(.*?)\\\\1","i").test(m[1]);},
+   getAttribute(){const x=m[1].match(new RegExp("\\balt\\s*=\\s*(['\\\"])(.*?)\\\\1","i"));return x?x[2]:'';}
   }));
   return {
    querySelector(sel) {
-    if(sel==='title'){const m=source.match(new RegExp('<title[^>]*>([\\s\\S]*?)<\\/title>','i'));return m?{textContent:m[1]}:null;}
-    if(sel==='meta[name="description"]'){const m=source.match(new RegExp('<meta[^>]*name=["\\']description["\\'][^>]*content=["\\']([^"\\']*)["\\']','i'));return m?{content:m[1]}:null;}
+    if(sel==='title'){const m=source.match(new RegExp("<title[^>]*>([\\\\s\\\\S]*?)</title>","i"));return m?{textContent:m[1]}:null;}
+    if(sel==='meta[name="description"]'){const m=source.match(new RegExp("<meta[^>]*name=['\\\"]description['\\\"][^>]*content=['\\\"]([^'\\\"]*)['\\\"]","i"));return m?{content:m[1]}:null;}
     return null;
    },
-   querySelectorAll(sel){return sel==='h1'?Array.from(source.matchAll(new RegExp('<h1\\b','gi'))):[];},
+   querySelectorAll(sel){return sel==='h1'?Array.from(source.matchAll(new RegExp("<h1\\\\b","gi"))):[];},
    images
   };
  }
