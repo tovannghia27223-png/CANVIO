@@ -797,3 +797,8 @@ Chạy CI thật trên GitHub cho PR #107; thử trên Chrome thật, bàn phím
 - P242 browser suite exercises actual `CVZip.build()` output, stored ZIP parsing, per-entry CRC32, manifest format and SHA-256 comparison of the project payload. Asset ID remapping is covered by source/API contract; a full second-project media restore still needs real-project acceptance.
 - P248 includes opt-in local ComfyUI model-folder inventory; a live user-installed ComfyUI server is needed to verify actual folder results. Model inference remains outside this utility check.
 - Run #984 failed in the new Node test harness because the `MockDOMParser` class had mismatched braces; the harness syntax is corrected in commit `92155b8`. Run #985 is the exact-head rerun for that fix and the latest module updates; do not mark PASS until complete.
+
+
+## P47–P70 regression adjustment — candidate title 23.3.112 (2026-11-26)
+- P239–P248 candidate intentionally advances build marker/title from 23.3.111 to 23.3.112. Updated P55 regression assertions for the exact current title and P42 title-observer version mapping while preserving the independent P62 lineage assertion.
+- Run #989 reached P47–P70 and stopped only because P55 still expected the prior 23.3.111 candidate title; the P239–P248 Node suite (11/11), P143 source parity (72/72), inline inventory (206 scripts / 635 unique IDs) and boot-order check all passed. This P55 expectation correction is queued in the next exact-head run.

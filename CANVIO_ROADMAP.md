@@ -1661,3 +1661,8 @@ Chạy CI thật trên GitHub cho PR #107; thử trên Chrome thật, bàn phím
 - P242 import now maps original project asset IDs to actual IDs returned by Asset Library and updates `project.assetIds`; references within project documents are also remapped. Browser acceptance now creates a real `.canvio` with the existing `CVZip`, parses it with the stored-ZIP reader, validates per-entry CRC and recomputes project JSON SHA-256 against the manifest.
 - P248 adds an explicit loopback-only scan of ComfyUI `/models/{folder}` routes for checkpoints, LoRAs, VAE, ControlNet, upscale models, embeddings, UNet, diffusion models, text encoders and CLIP. It stores metadata names only in `documents.localModels.inventory`; unsupported 404 folders are skipped and other errors are reported. No model binary is downloaded or inferred.
 - Candidate remains unaccepted until the exact-head workflow passes. A mock or loopback inventory scan does not certify real GPU/model output quality.
+
+
+### 23.3.112 candidate version marker
+- The canonical title/build marker is now `23.3.112-p239-p248-studio-pro` / “CANVIO 23.3.112 — Studio Pro P239–P248 Candidate”.
+- Updated the P55 version-specific title assertion; retained the independent P62 lineage assertion.

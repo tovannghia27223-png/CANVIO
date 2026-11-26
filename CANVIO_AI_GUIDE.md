@@ -4580,3 +4580,7 @@ Chạy CI thật trên GitHub cho PR #107; thử trên Chrome thật, bàn phím
 ### P242/P248 verification extensions — 2026-11-26
 - P242 updates `project.assetIds` using verified Asset Library IDs created during import, in addition to remapping document references. A browser test now verifies actual `CVZip.build()` → stored ZIP parsing → manifest/CRC/SHA integrity.
 - P248 adds an opt-in ComfyUI folder inventory scan via P120's loopback origin validator. It stores model names only; it does not download weights, scan remote hosts, or claim physical GPU/VRAM detection.
+
+
+### Version-bound regression note — 2026-11-26
+- P55's title observer assertion now follows the explicit candidate build marker `23.3.112-p239-p248-studio-pro`; the older 23.3.111 assertion was tied to the preceding candidate and not to the P62 feature contract. P62 lineage remains separately asserted.
