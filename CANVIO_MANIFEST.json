@@ -2,7 +2,7 @@
   "format": "CANVIO_DELIVERY_MANIFEST",
   "schemaVersion": 2,
   "candidate": "23.3.112-p239-p248-studio-pro",
-  "generatedAt": "2026-11-27T11:59:18.042Z",
+  "generatedAt": "2026-11-27T12:15:46.515Z",
   "hashAlgorithm": "SHA-256",
   "indexSha256": "d7fa4b03d182def40b24e57a500d0379df49ac4fb984d10ab98c1e17e2c38f02",
   "indexBytes": 6256120,
@@ -32,8 +32,8 @@
     },
     {
       "path": ".github/workflows/canvio-candidate-runtime.yml",
-      "bytes": 162736,
-      "sha256": "fd77ce64d26a81be7438af2320d378fcc4041f8808709a10328da490fdb7ed2b"
+      "bytes": 162838,
+      "sha256": "15bac3e9e925e7cc5ff9f7644337d3e1c792519e5ad4add1882176e3599eda94"
     },
     {
       "path": ".github/workflows/canvio-lottie-web.yml",
@@ -1407,8 +1407,8 @@
     },
     {
       "path": "CANVIO_SESSION_SUMMARY_2026-11-21.md",
-      "bytes": 38329,
-      "sha256": "6cf9ea504ec727a372bbce0083365d6e9ae176776adddd5ee43b3a643833295f"
+      "bytes": 38802,
+      "sha256": "373c5fc6b600f3be12d6d580518cf0dbc00f0ac07d619b5071f65147e85427e8"
     },
     {
       "path": "canvio-home-creative-flow.js",
@@ -2048,7 +2048,7 @@
     {
       "path": "tests/hosted/hosted-runtime-report.json",
       "bytes": 18296,
-      "sha256": "0819dc7536e3e63b518eb901d4b30429ad664a941f7308c7f3b581c01095fcef"
+      "sha256": "cfae752625b5e49ec1fdeedefed74e6b3c08e4659b598b7ece066981fd9e3ba9"
     },
     {
       "path": "tests/hosted/integrated-source-contracts.cjs",
@@ -2388,7 +2388,7 @@
     {
       "path": "tests/p143/inline-source-inventory.json",
       "bytes": 486253,
-      "sha256": "d9382682d6015adb89a9b622a92341b05143225b64e2ddc1b1fda7557ebca7be"
+      "sha256": "7250b422adcfc4a21653d53c2c22086c43f3f5d0daf190c10d824374d1dcc1a2"
     },
     {
       "path": "tests/p143/js-global-scanner.cjs",
@@ -2413,7 +2413,7 @@
     {
       "path": "tests/p143/style-template-loader-inventory.json",
       "bytes": 921605,
-      "sha256": "b339203f3bba39c610ee302c821cfb7708d49f9283dd350a9cb4f2bb955aef1f"
+      "sha256": "7e5edcd1c0f47093a6e3a4a80ea282bca0b81e83056cb95aa994e64746932f74"
     },
     {
       "path": "tests/p143/verify-style-template-inventory.cjs",
