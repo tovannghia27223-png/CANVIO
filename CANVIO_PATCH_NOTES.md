@@ -1,4 +1,4 @@
-# CANVIO 23.3.111 patch notes
+# CANVIO 23.3.112 Studio Pro patch notes
 
 - Added GitHub-hosted build and acceptance for candidate source restoration, pinned vendor runtimes, module extraction, source contracts and runtime inference.
 - Added local same-origin runtime packages and SHA-256 manifests for Three.js r187, Draco, Meshopt, Basis/KTX2, PostFX, OpenCV, dotLottie, Rive, Transformers.js and ONNX WASM.
@@ -11,4 +11,7 @@
 - Added P163.1.1 visible labels for existing character-profile controls, preserving Shared Core, Asset Library and Storyboard ownership; P169 browser coverage checks visible field labels and profile round-trip.
 - Added P161.2/P74.1 saved GLB camera-pose replay in the existing Three.js r187 viewer, including yaw/pitch/FOV/X-Y-Z, OrbitControls damping flush and same-origin GLB fixture checks.
 - Added P166.2 brief-to-GrapesJS Website Engine handoff through P131 sanitization, scoped responsive CSS and the canonical save owner, with lazy-engine readiness and Chromium integration tests.
+- P239–P248 Studio Pro adds brief-to-five-doc project packs, six-size SVG resize, bounded CSV merge, secure .canvio portable project bundle, SEO-gated GitHub website publish, SRT/browser TTS, local beat suggestions, project-local review snapshots/share links, PWA/performance telemetry and local ComfyUI model inventory.
+- P242 filters token/API-key/password/secret/credential fields and caps exported project/assets; P245 bounds audio decoding to 40 MiB, five minutes, 96 kHz and stereo.
+- P241 bulk output remains SVG (not PNG/PDF); P246 is local-only (not Supabase collaboration); P247 does not code-split the entire index; P248 does not download models or certify GPU inference.
 - Stable release remains fail-closed at P70; no physical GPU or two-device certification is implied.

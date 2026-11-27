@@ -270,3 +270,7 @@ The candidate is built and verified by the hosted runtime workflow. Runtime vend
 - Newly reconciled explicit open items from the existing handoff/roadmap: P122.3 MCP (not implemented/no transport-security contract), P124 Auto Layout/Component (P123 static starters are not equivalent), P133 OPFS/proxy (no owner/test; must coordinate with current storage), P143 full code split (not performed), and P144 (basic palette already in P109; parity audit before extending).
 - P142 Pages deployment is confirmed by run #192 (`44819441586`), but real-origin, Windows/GTX 1650/RAM 7 GB, Firefox/WebKit/touch and physical GPU acceptance have not been performed.
 - PR #44 docs update hosted run #320 passed; artifact SHA-256 `74cb03f31a7c55d94f69376b74f46a22bef1538b473aeca1165c42296f2e69ba`. Do not interpret docs/CI success as all-P or Stable certification.
+
+## CANVIO 23.3.112 Studio Pro P239–P248 handoff
+
+The candidate is built and verified by the hosted runtime workflow. Runtime vendor binaries are pinned and same-origin; model weights stay outside git and download only when a user runs the feature. Review hosted reports before promotion. Main-branch Pages auto-deploy is disabled; deployment remains manual and requires a certified P70 manifest. This version does not claim physical GPU, two-device Project Vault sync or Stable release acceptance.

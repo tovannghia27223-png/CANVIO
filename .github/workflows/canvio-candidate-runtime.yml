@@ -104,7 +104,7 @@ jobs:
             rm -rf .canvio/candidate/index
           else
             test -s index.html
-            grep -q '23.3.111-github-runtime-ci' index.html || { echo "No staged candidate chunks or pinned 23.3.111 index found." >&2; exit 1; }
+            grep -qE '23\.3\.(111-github-runtime-ci|112-p239-p248-studio-pro)' index.html || { echo "No staged candidate chunks or pinned 23.3.111 index found." >&2; exit 1; }
             echo "Using committed CANVIO candidate index."
           fi
 
@@ -903,7 +903,7 @@ jobs:
             if((html.match(new RegExp('id="'+id+'"','g'))||[]).length!==1)throw new Error(id+' embedded lot duplicate/missing');
           }
           const marker='23.3.111-github-runtime-ci';
-          if(!html.includes(marker))throw new Error('Expected 23.3.111 base marker missing before P239–P248 integration');
+          if(!html.includes(marker)&&!html.includes('23.3.112-p239-p248-studio-pro'))throw new Error('Expected 23.3.111 base or 23.3.112 integrated marker missing before P239–P248 integration');
           html=html.replaceAll(marker,'23.3.112-p239-p248-studio-pro');
           html=html.replaceAll('CANVIO 23.3.111 — GitHub Runtime Verified Candidate','CANVIO 23.3.112 — Studio Pro P239–P248 Candidate');
           html=html.replaceAll('<title>CANVIO 23.3.111 — GitHub Runtime Verified Candidate</title>','<title>CANVIO 23.3.112 — Studio Pro P239–P248 Candidate</title>');
