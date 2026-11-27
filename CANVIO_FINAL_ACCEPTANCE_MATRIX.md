@@ -1,4 +1,4 @@
-# CANVIO 23.3.111 final acceptance matrix
+# CANVIO 23.3.112 Studio Pro final acceptance matrix
 
 | Gate | Automated evidence | Current acceptance boundary |
 |---|---|---|
@@ -17,6 +17,16 @@
 | P163.1.1 visible character-profile labels | P169 Chromium verifies visible labels for existing P163 profile controls, eight labelled Character Studio fields, Shared Core profile round-trip, preview/save/reset and mobile overflow; P143 source parity | Automated label/layout checks are not WCAG certification; keyboard, screen reader, 200% zoom and physical-device review remain manual. |
 | P161.2 / P74.1 GLB camera-pose replay | Existing Three.js r187 viewer applies and reads back yaw/pitch/FOV; hosted GLB fixture replays P161 preset through Asset Library with nonzero X/Y/Z; OrbitControls damping flush; same-origin GLB and Draco/Meshopt/KTX2 decoder fixtures | Complex animated/multi-camera production GLBs, physical GPU/frame rate and target-device visual review remain manual. |
 | P166.2 brief-to-Website Engine handoff | P160–P166 Chromium 32/32; delayed lazy-editor Node test; P131 sanitized body inserted into existing GrapesJS owner, scoped base/mobile rules in canonical CSS Manager, Shared Core metadata and native Website Engine save; no page errors | Output is a static landing page. Backend form submission, CRM, hosting/live publishing and authored customer Website project review are not included. |
+| P239 Brief Pack | Chromium/Node verifies five project-scoped structured documents | Data documents with native editor routes; semantic poster/slide rendering remains a follow-up |
+| P240 Magic Resize | Six bounded sizes, safe inset, collision report and SVG ZIP path | No semantic reflow of every complex design group |
+| P241 CSV Data Merge | Bounded 500-row UTF-8/quoted CSV and placeholder merge | Current bulk output is SVG; batch PNG/PDF remain open |
+| P242 .canvio bundle | Stored-ZIP CRC32, project SHA-256, secret-key scrub, explicit confirmation and bounded asset/project payload | Supported project documents/assets only; does not replace full IndexedDB/P170 portable backup |
+| P243 Website Publish | SEO gate and explicit GitHub Contents API upload; token kept only in input/memory | Repo/branch must exist; Pages source settings and contact-form backend remain manual/open |
+| P244 Caption & Voice | Canonical Video Engine text cues to SRT; browser SpeechSynthesis | Whisper quality and voice inventory require real Vietnamese/English review |
+| P245 Beat Sync | Local onset proxy with 40 MiB / 5 min / 96 kHz / stereo bounds; non-destructive plan | Approximate onset suggestions, not a music-grade beat grid or auto timeline edit |
+| P246 Review | Project-local pinned comments, snapshots and read-only share payload | Not Supabase multi-user/RLS/E2E cloud collaboration |
+| P247 Performance/PWA | Navigation/resource metrics and existing Service Worker readiness | Full main-index code splitting and viewport/editor performance matrix remain open |
+| P248 Local Models | Metadata catalogue, bounded SHA for small files and explicit loopback ComfyUI model inventory | No model downloads, model inference or physical GPU certification |
 | P70 Stable release | Fourteen fail-closed manual gates | releaseCertified:false until every gate has reviewed production evidence |
 
 ## Required manual gates

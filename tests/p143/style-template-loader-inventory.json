@@ -1,14 +1,14 @@
 {
   "format": "CANVIO_P143_STYLE_TEMPLATE_LOADER_INVENTORY",
   "version": 1,
-  "generatedAt": "2026-11-26T08:26:40.016Z",
+  "generatedAt": "2026-11-27T11:49:08.751Z",
   "source": "restored canonical index.html after all workflow-managed module integration steps",
   "purpose": "Inventory inline styles, template elements, dynamic resource-loader call sites and lexical global-reference ordering candidates. Global references are not a human-reviewed semantic boot-order or runtime data-flow graph.",
-  "htmlBytes": 6184554,
+  "htmlBytes": 6256120,
   "styles": {
     "blockCount": 122,
-    "inlineStyleAttributeCount": 1717,
-    "totalStyleBytes": 449218,
+    "inlineStyleAttributeCount": 1734,
+    "totalStyleBytes": 449664,
     "blocks": [
       {
         "order": 0,
@@ -14573,6 +14573,108 @@
         "element": "div",
         "bytes": 14,
         "sha256": "eb2cdaa55e9f90594bdb7cace5272ca6e233868f497e0ec7ef346a365e3f7fd6"
+      },
+      {
+        "order": 1717,
+        "element": "textarea",
+        "bytes": 23,
+        "sha256": "25453f287b90d16f0639f7bb3e31273093ec1a61e44614bcca27d6198787b1bb"
+      },
+      {
+        "order": 1718,
+        "element": "div",
+        "bytes": 22,
+        "sha256": "19678f38f54a886122802114fa0da932a5df421c136ba163455f01be0175cde1"
+      },
+      {
+        "order": 1719,
+        "element": "div",
+        "bytes": 38,
+        "sha256": "a2eca26b95495f35a82c0ff87ed66700c56d3e812c42cb169fb42c5b99d1b097"
+      },
+      {
+        "order": 1720,
+        "element": "div",
+        "bytes": 37,
+        "sha256": "8b9d0bbb7aa8a77ad4d4cdcbc8f64ec751b3330ad2be3a9a963e6b1c421120c2"
+      },
+      {
+        "order": 1721,
+        "element": "div",
+        "bytes": 22,
+        "sha256": "19678f38f54a886122802114fa0da932a5df421c136ba163455f01be0175cde1"
+      },
+      {
+        "order": 1722,
+        "element": "div",
+        "bytes": 37,
+        "sha256": "963a61bc0a651f4f4e320ee57f153ae1c047b1b1cd36b253737696a1786f6244"
+      },
+      {
+        "order": 1723,
+        "element": "pre",
+        "bytes": 20,
+        "sha256": "092af903b212f5d470dd4a3b4c5118f8eb3528a8d48e7742a995b3916e2e4da6"
+      },
+      {
+        "order": 1724,
+        "element": "div",
+        "bytes": 37,
+        "sha256": "963a61bc0a651f4f4e320ee57f153ae1c047b1b1cd36b253737696a1786f6244"
+      },
+      {
+        "order": 1725,
+        "element": "div",
+        "bytes": 22,
+        "sha256": "19678f38f54a886122802114fa0da932a5df421c136ba163455f01be0175cde1"
+      },
+      {
+        "order": 1726,
+        "element": "pre",
+        "bytes": 20,
+        "sha256": "092af903b212f5d470dd4a3b4c5118f8eb3528a8d48e7742a995b3916e2e4da6"
+      },
+      {
+        "order": 1727,
+        "element": "div",
+        "bytes": 37,
+        "sha256": "963a61bc0a651f4f4e320ee57f153ae1c047b1b1cd36b253737696a1786f6244"
+      },
+      {
+        "order": 1728,
+        "element": "input",
+        "bytes": 15,
+        "sha256": "101bfa174da6afd0ba3163cdca8893f7204e7b8586370502c2b2e029d48265e5"
+      },
+      {
+        "order": 1729,
+        "element": "textarea",
+        "bytes": 10,
+        "sha256": "b7aa1ec0049dec9d6f060e6642d5f8865f1b83c15e7a0605337b1c28b2216147"
+      },
+      {
+        "order": 1730,
+        "element": "div",
+        "bytes": 37,
+        "sha256": "963a61bc0a651f4f4e320ee57f153ae1c047b1b1cd36b253737696a1786f6244"
+      },
+      {
+        "order": 1731,
+        "element": "div",
+        "bytes": 22,
+        "sha256": "19678f38f54a886122802114fa0da932a5df421c136ba163455f01be0175cde1"
+      },
+      {
+        "order": 1732,
+        "element": "textarea",
+        "bytes": 10,
+        "sha256": "b7aa1ec0049dec9d6f060e6642d5f8865f1b83c15e7a0605337b1c28b2216147"
+      },
+      {
+        "order": 1733,
+        "element": "div",
+        "bytes": 37,
+        "sha256": "963a61bc0a651f4f4e320ee57f153ae1c047b1b1cd36b253737696a1786f6244"
       }
     ]
   },
@@ -14581,11 +14683,11 @@
     "blocks": []
   },
   "dynamicLoaders": {
-    "count": 82,
+    "count": 88,
     "countsByKind": {
       "dynamic-script-element": 4,
       "dedicated-worker": 5,
-      "dynamic-fetch": 54,
+      "dynamic-fetch": 60,
       "document-write": 3,
       "script-src-assignment": 4,
       "dynamic-import": 12
@@ -15164,18 +15266,60 @@
         "scriptId": "canvio-lot132pdf",
         "offset": 3482,
         "excerpt": "ets/vendor/pdfjs/pdf.worker.mjs', doc.baseURI).href; pdfjsPromise = import(moduleUrl).then(function (pdfjs) { if (!pdfjs || typeof pdfjs.getDocument !== 'function' || !pdfjs.GlobalWorkerOptions) throw new"
+      },
+      {
+        "kind": "dynamic-fetch",
+        "scriptOrder": 198,
+        "scriptId": "canvio-lot242",
+        "offset": 2063,
+        "excerpt": "MAX_ASSET_DATA_URL_CHARS){skippedAssets++;continue;} var blob=await fetch(a.data).then(function(r){return r.blob();}); if(assetBytes+blob.size>MAX_ASSET_BYTES){skippedAssets++;continue;} var hash=await sh"
+      },
+      {
+        "kind": "dynamic-fetch",
+        "scriptOrder": 198,
+        "scriptId": "canvio-lot242",
+        "offset": 7427,
+        "excerpt": "r a of (data.assets||[]).slice(0,100)){ if(!a.data||await sha(await fetch(a.data).then(function(r){return r.blob();}))!==a.sha256)continue; if(w.CV&&CV.assets&&CV.assets.addBlob){var blob=await fetch(a.data"
+      },
+      {
+        "kind": "dynamic-fetch",
+        "scriptOrder": 198,
+        "scriptId": "canvio-lot242",
+        "offset": 7555,
+        "excerpt": "256)continue; if(w.CV&&CV.assets&&CV.assets.addBlob){var blob=await fetch(a.data).then(function(r){return r.blob();}),added=await CV.assets.addBlob(new File([blob],String(a.name||'asset'),{type:a.mime||blob.t"
+      },
+      {
+        "kind": "dynamic-fetch",
+        "scriptOrder": 199,
+        "scriptId": "canvio-lot243",
+        "offset": 2385,
+        "excerpt": "Bearer '+token,'X-GitHub-Api-Version':'2022-11-28'}; var prior=await fetch(url+'?ref='+encodeURIComponent(branch),{headers:headers}),sha=null; if(prior.ok){var p=await prior.json();sha=p.sha||null;}else if(pr"
+      },
+      {
+        "kind": "dynamic-fetch",
+        "scriptOrder": 199,
+        "scriptId": "canvio-lot243",
+        "offset": 2760,
+        "excerpt": "t:base64Utf8(html),branch:branch};if(sha)body.sha=sha; var res=await fetch(url,{method:'PUT',headers:Object.assign({'Content-Type':'application/json'},headers),body:JSON.stringify(body)}); if(!res.ok){var err"
+      },
+      {
+        "kind": "dynamic-fetch",
+        "scriptOrder": 204,
+        "scriptId": "canvio-lot248",
+        "offset": 2872,
+        "excerpt": "mer=w.setTimeout(function(){ctrl.abort();},10000); var res=await w.fetch(origin+'/models/'+encodeURIComponent(folder),{method:'GET',signal:ctrl?ctrl.signal:undefined}); if(timer)w.clearTimeout(timer);"
       }
     ]
   },
   "dependencyCandidates": {
-    "count": 527,
+    "count": 532,
     "confidence": "lexical-static-order-candidate-not-semantic",
     "summary": {
-      "staticReadReferenceCount": 803,
-      "resolvedEdgeCount": 527,
+      "staticReadReferenceCount": 808,
+      "resolvedEdgeCount": 532,
       "unresolvedReferenceCount": 40,
       "sameScriptReferenceCount": 236,
-      "ambiguousMultiWriterEdges": 88,
+      "ambiguousMultiWriterEdges": 92,
       "providerGlobals": 314
     },
     "edges": [
@@ -16735,7 +16879,7 @@
         "providerKind": "top-level-lexical-or-function-binding",
         "toOrder": 78,
         "toId": null,
-        "toSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "toSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "priorProviderCount": 1,
         "priorProviderOrders": [
           1
@@ -17904,7 +18048,7 @@
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 78,
         "toId": null,
-        "toSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "toSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "priorProviderCount": 1,
         "priorProviderOrders": [
           9
@@ -17923,7 +18067,7 @@
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 78,
         "toId": null,
-        "toSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "toSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "priorProviderCount": 1,
         "priorProviderOrders": [
           9
@@ -19052,7 +19196,7 @@
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 78,
         "toId": null,
-        "toSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "toSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "priorProviderCount": 1,
         "priorProviderOrders": [
           11
@@ -19261,7 +19405,7 @@
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 78,
         "toId": null,
-        "toSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "toSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "priorProviderCount": 1,
         "priorProviderOrders": [
           15
@@ -19812,7 +19956,7 @@
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 78,
         "toId": null,
-        "toSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "toSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "priorProviderCount": 1,
         "priorProviderOrders": [
           25
@@ -20415,7 +20559,7 @@
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 78,
         "toId": null,
-        "toSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "toSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "priorProviderCount": 1,
         "priorProviderOrders": [
           37
@@ -20550,7 +20694,7 @@
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 78,
         "toId": null,
-        "toSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "toSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "priorProviderCount": 2,
         "priorProviderOrders": [
           1,
@@ -20571,7 +20715,7 @@
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 78,
         "toId": null,
-        "toSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "toSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "priorProviderCount": 2,
         "priorProviderOrders": [
           1,
@@ -21121,7 +21265,7 @@
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 78,
         "toId": null,
-        "toSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "toSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "priorProviderCount": 1,
         "priorProviderOrders": [
           56
@@ -21640,7 +21784,7 @@
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 78,
         "toId": null,
-        "toSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "toSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "priorProviderCount": 1,
         "priorProviderOrders": [
           57
@@ -21713,6 +21857,25 @@
         ]
       },
       {
+        "global": "CVNativeEngines",
+        "fromOrder": 57,
+        "fromId": "canvio18-native-engines",
+        "fromSha256": "619d36fbbf2a87564cdb6042b391f0cdf8d610468ee3b5ef40c0c4b4633ffd77",
+        "providerKind": "window-or-globalThis-assignment",
+        "toOrder": 195,
+        "toId": "canvio-lot239",
+        "toSha256": "a3a3c0a21075927b53d6f385ec9b8682b22b424f909f6111ff08a77a90275b0b",
+        "priorProviderCount": 1,
+        "priorProviderOrders": [
+          57
+        ],
+        "executionOrder": "provider-before-consumer",
+        "confidence": "lexical-single-prior-provider",
+        "evidenceKinds": [
+          "known-global-identifier-read"
+        ]
+      },
+      {
         "global": "CVGlobalDesignToolkit",
         "fromOrder": 58,
         "fromId": "canvio18-global-design-toolkit",
@@ -21777,7 +21940,7 @@
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 78,
         "toId": null,
-        "toSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "toSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "priorProviderCount": 1,
         "priorProviderOrders": [
           58
@@ -21815,7 +21978,7 @@
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 78,
         "toId": null,
-        "toSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "toSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "priorProviderCount": 1,
         "priorProviderOrders": [
           59
@@ -21951,7 +22114,7 @@
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 78,
         "toId": null,
-        "toSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "toSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "priorProviderCount": 1,
         "priorProviderOrders": [
           60
@@ -22130,7 +22293,7 @@
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 78,
         "toId": null,
-        "toSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "toSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "priorProviderCount": 1,
         "priorProviderOrders": [
           61
@@ -22456,7 +22619,7 @@
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 78,
         "toId": null,
-        "toSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "toSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "priorProviderCount": 1,
         "priorProviderOrders": [
           68
@@ -22475,7 +22638,7 @@
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 78,
         "toId": null,
-        "toSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "toSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "priorProviderCount": 1,
         "priorProviderOrders": [
           70
@@ -22494,7 +22657,7 @@
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 78,
         "toId": null,
-        "toSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "toSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "priorProviderCount": 1,
         "priorProviderOrders": [
           70
@@ -22589,7 +22752,7 @@
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 78,
         "toId": null,
-        "toSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "toSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "priorProviderCount": 1,
         "priorProviderOrders": [
           75
@@ -22608,7 +22771,7 @@
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 78,
         "toId": null,
-        "toSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "toSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "priorProviderCount": 1,
         "priorProviderOrders": [
           75
@@ -22627,7 +22790,7 @@
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 78,
         "toId": null,
-        "toSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "toSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "priorProviderCount": 1,
         "priorProviderOrders": [
           75
@@ -22646,7 +22809,7 @@
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 78,
         "toId": null,
-        "toSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "toSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "priorProviderCount": 1,
         "priorProviderOrders": [
           75
@@ -22684,7 +22847,7 @@
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 78,
         "toId": null,
-        "toSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "toSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "priorProviderCount": 1,
         "priorProviderOrders": [
           77
@@ -22699,7 +22862,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 79,
         "toId": "canvio-phase-completion-suite",
@@ -22720,7 +22883,7 @@
         "global": "CVWebsitePublishQC",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 79,
         "toId": "canvio-phase-completion-suite",
@@ -22739,7 +22902,7 @@
         "global": "CANVIO_BUILD",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 80,
         "toId": "canvio-p55-runtime-release-gate",
@@ -22760,7 +22923,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 80,
         "toId": "canvio-p55-runtime-release-gate",
@@ -22780,7 +22943,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 83,
         "toId": "canvio-p58-media-export-acceptance",
@@ -22801,7 +22964,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 89,
         "toId": "canvio-p63-p67-main",
@@ -22822,7 +22985,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 91,
         "toId": "canvio-p90-p96-main",
@@ -22842,7 +23005,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 92,
         "toId": null,
@@ -22863,7 +23026,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 93,
         "toId": "canvio-p104-module",
@@ -22884,7 +23047,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 95,
         "toId": "canvio-p82-p84-vector-pdf",
@@ -22905,7 +23068,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 96,
         "toId": "canvio-p76-p77-p83-brand",
@@ -22926,7 +23089,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 97,
         "toId": "canvio-p75-logo-studio",
@@ -22947,7 +23110,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 98,
         "toId": "canvio-p79-webcodecs",
@@ -22968,7 +23131,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 99,
         "toId": "canvio-p80-whisper-webgpu",
@@ -22989,7 +23152,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 100,
         "toId": "canvio-p89-template-multisize",
@@ -23010,7 +23173,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 101,
         "toId": "canvio-p86-cv-vector-pdf",
@@ -23031,7 +23194,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 102,
         "toId": "canvio-p78-motion-checklist",
@@ -23052,7 +23215,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 104,
         "toId": "canvio-p73-offline-site",
@@ -23073,7 +23236,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 105,
         "toId": "canvio-p103-sfx-library",
@@ -23094,7 +23257,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 106,
         "toId": "canvio-p102-background-removal",
@@ -23115,7 +23278,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 107,
         "toId": "canvio-p105-p107-depth-parallax",
@@ -23136,7 +23299,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 110,
         "toId": "canvio-p85-module",
@@ -23156,7 +23319,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 111,
         "toId": "canvio-lot109",
@@ -23177,7 +23340,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 112,
         "toId": "canvio-lot110",
@@ -23198,7 +23361,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 113,
         "toId": "canvio-lot111",
@@ -23219,7 +23382,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 114,
         "toId": "canvio-lot112",
@@ -23239,7 +23402,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 115,
         "toId": "canvio-lot113",
@@ -23259,7 +23422,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 116,
         "toId": "canvio-lot114",
@@ -23280,7 +23443,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 117,
         "toId": "canvio-lot122",
@@ -23300,7 +23463,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 118,
         "toId": "canvio-lot123",
@@ -23320,7 +23483,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 119,
         "toId": "canvio-lot127",
@@ -23341,7 +23504,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 120,
         "toId": "canvio-lot127q",
@@ -23362,7 +23525,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 121,
         "toId": "canvio-lot127l",
@@ -23383,7 +23546,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 122,
         "toId": "canvio-lot127t",
@@ -23404,7 +23567,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 124,
         "toId": "canvio-lot145c",
@@ -23425,7 +23588,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 125,
         "toId": "canvio-lot132g",
@@ -23446,7 +23609,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 126,
         "toId": "canvio-lot145s",
@@ -23467,7 +23630,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 129,
         "toId": "canvio-lot138d",
@@ -23488,7 +23651,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 130,
         "toId": "canvio-lot140c",
@@ -23509,7 +23672,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 131,
         "toId": "canvio-lot133r",
@@ -23530,7 +23693,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 132,
         "toId": "canvio-lot144u",
@@ -23551,7 +23714,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 134,
         "toId": "canvio-lot118w",
@@ -23572,7 +23735,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 138,
         "toId": "canvio-lot114n",
@@ -23593,7 +23756,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 141,
         "toId": "canvio-lot133a",
@@ -23614,7 +23777,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 142,
         "toId": "canvio-lot130c",
@@ -23635,7 +23798,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 145,
         "toId": "canvio-lot153b",
@@ -23656,7 +23819,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 146,
         "toId": "canvio-lot154p",
@@ -23677,7 +23840,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 147,
         "toId": "canvio-lot155s",
@@ -23698,7 +23861,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 148,
         "toId": "canvio-lot159i",
@@ -23719,7 +23882,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 149,
         "toId": "canvio-lot160c",
@@ -23740,7 +23903,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 150,
         "toId": "canvio-lot161s",
@@ -23761,7 +23924,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 151,
         "toId": "canvio-lot162r",
@@ -23782,7 +23945,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 152,
         "toId": "canvio-lot163c",
@@ -23803,7 +23966,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 154,
         "toId": "canvio-lot165w",
@@ -23824,7 +23987,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 155,
         "toId": "canvio-lot166l",
@@ -23845,7 +24008,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 157,
         "toId": "canvio-lot167b",
@@ -23866,7 +24029,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 158,
         "toId": "canvio-lot168m",
@@ -23887,7 +24050,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 159,
         "toId": "canvio-lot131",
@@ -23908,7 +24071,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 161,
         "toId": "canvio-lot1222",
@@ -23929,7 +24092,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 162,
         "toId": "canvio-lot127k",
@@ -23950,7 +24113,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 165,
         "toId": "canvio-lot1454",
@@ -23971,7 +24134,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 168,
         "toId": "canvio-lot1272",
@@ -23992,7 +24155,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 172,
         "toId": "canvio-lot145910",
@@ -24013,7 +24176,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 174,
         "toId": "canvio-lot124",
@@ -24034,7 +24197,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 175,
         "toId": "canvio-lot133p",
@@ -24055,7 +24218,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 177,
         "toId": "canvio-lot133m",
@@ -24076,7 +24239,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 179,
         "toId": "canvio-lot120126",
@@ -24097,7 +24260,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 182,
         "toId": "canvio-lot146",
@@ -24118,7 +24281,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 184,
         "toId": "canvio-lot170h",
@@ -24139,7 +24302,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 185,
         "toId": "canvio-lot171n",
@@ -24159,7 +24322,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 188,
         "toId": "canvio-lot231",
@@ -24179,7 +24342,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 189,
         "toId": "canvio-lot232",
@@ -24199,7 +24362,7 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 190,
         "toId": "canvio-lot233",
@@ -24219,11 +24382,91 @@
         "global": "CV",
         "fromOrder": 78,
         "fromId": null,
-        "fromSha256": "f18332f1299dab8c9b94163cf817da9498a0dcaf1797181bbda399327126fa8b",
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
         "providerKind": "window-or-globalThis-assignment",
         "toOrder": 192,
         "toId": "canvio-lot235",
         "toSha256": "d33c673c63ffec0ec98660fc936fea519ebf1bd15983b5f4267d2c26a7087f0a",
+        "priorProviderCount": 2,
+        "priorProviderOrders": [
+          1,
+          78
+        ],
+        "executionOrder": "provider-before-consumer",
+        "confidence": "lexical-multiple-prior-writers-last-in-order",
+        "evidenceKinds": [
+          "known-global-identifier-read"
+        ]
+      },
+      {
+        "global": "CV",
+        "fromOrder": 78,
+        "fromId": null,
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
+        "providerKind": "window-or-globalThis-assignment",
+        "toOrder": 195,
+        "toId": "canvio-lot239",
+        "toSha256": "a3a3c0a21075927b53d6f385ec9b8682b22b424f909f6111ff08a77a90275b0b",
+        "priorProviderCount": 2,
+        "priorProviderOrders": [
+          1,
+          78
+        ],
+        "executionOrder": "provider-before-consumer",
+        "confidence": "lexical-multiple-prior-writers-last-in-order",
+        "evidenceKinds": [
+          "known-global-identifier-read"
+        ]
+      },
+      {
+        "global": "CV",
+        "fromOrder": 78,
+        "fromId": null,
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
+        "providerKind": "window-or-globalThis-assignment",
+        "toOrder": 198,
+        "toId": "canvio-lot242",
+        "toSha256": "dc171498a0cc7aceb27bce1e379b5043975eaac171accad37c9108580574ae0b",
+        "priorProviderCount": 2,
+        "priorProviderOrders": [
+          1,
+          78
+        ],
+        "executionOrder": "provider-before-consumer",
+        "confidence": "lexical-multiple-prior-writers-last-in-order",
+        "evidenceKinds": [
+          "known-global-identifier-read"
+        ]
+      },
+      {
+        "global": "CV",
+        "fromOrder": 78,
+        "fromId": null,
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
+        "providerKind": "window-or-globalThis-assignment",
+        "toOrder": 200,
+        "toId": "canvio-lot244",
+        "toSha256": "f889d5f2b9f1cc11e50bb0ff79ba039e25f87a353f7899196bb72622ebe3ff75",
+        "priorProviderCount": 2,
+        "priorProviderOrders": [
+          1,
+          78
+        ],
+        "executionOrder": "provider-before-consumer",
+        "confidence": "lexical-multiple-prior-writers-last-in-order",
+        "evidenceKinds": [
+          "known-global-identifier-read"
+        ]
+      },
+      {
+        "global": "CV",
+        "fromOrder": 78,
+        "fromId": null,
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
+        "providerKind": "window-or-globalThis-assignment",
+        "toOrder": 201,
+        "toId": "canvio-lot245",
+        "toSha256": "6be1817bd419e3b2a7c09225c760bdf6060d51a163ac6cd160ae7e7ea33d6f74",
         "priorProviderCount": 2,
         "priorProviderOrders": [
           1,
