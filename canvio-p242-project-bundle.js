@@ -34,9 +34,15 @@ async function exportBundle(){
  if(bodyBytes>MAX_PROJECT_JSON_BYTES)throw new Error('Project JSON vượt ngân sách 20 MiB; đã giới hạn tài nguyên nhúng để ZIP tương thích reader. Hãy giảm dữ liệu dự án rồi thử lại.');
  var manifest={format:'CANVIO_PROJECT_BUNDLE',version:1,projectId:p.id,sha256:await sha(body),assetCount:payload.assets.length,assetBytes:assetBytes,projectJsonBytes:bodyBytes,skippedAssets:skippedAssets,excludedSecretFields:clean.excludedSecretFields};
  if(!w.CVZip||!CVZip.build)throw new Error('CVZip hiện có chưa sẵn sàng.');
- var zip=await CVZip.build([{name:'manifest.json',data:JSON.stringify(manifest)},{name:'project.json',data:body}]);
+ var zip=await plainNames(await CVZip.build([{name:'manifest.json',data:JSON.stringify(manifest)},{name:'project.json',data:body}]));
  if(!zip||zip.size>MAX_BUNDLE_BYTES)throw new Error('Gói .canvio vượt ngân sách 64 MiB sau khi đóng ZIP.');
  return zip;
+}
+/* CVZip marks names as UTF-8; both bundle names are ASCII, so clear the flag to meet the strict .canvio format. */
+async function plainNames(zip){
+ var b=new Uint8Array(await zip.arrayBuffer()),v=new DataView(b.buffer),end=b.length-22,pos=v.getUint32(end+16,true),count=v.getUint16(end+10,true);
+ for(var n=0;n<count;n++){v.setUint16(v.getUint32(pos+42,true)+6,0,true);v.setUint16(pos+8,0,true);pos+=46+v.getUint16(pos+28,true)+v.getUint16(pos+30,true)+v.getUint16(pos+32,true);}
+ return new Blob([b],{type:'application/zip'});
 }
 function crc32(bytes){var c=~0;for(var i=0;i<bytes.length;i++){c^=bytes[i];for(var j=0;j<8;j++)c=(c>>>1)^((c&1)?0xEDB88320:0);}return(~c)>>>0;}
 async function readStoredZip(file){
@@ -54,8 +60,8 @@ async function readStoredZip(file){
   if(flags!==0||method!==0||compressed!==size||!safeName(name)||name in out||size>25*1024*1024)throw new Error('ZIP chỉ nhận stored entry an toàn, duy nhất, tối đa 25 MiB/tệp.');
   total+=size;if(total>120*1024*1024)throw new Error('Tổng nội dung ZIP vượt 120 MiB.');
   if(lo+30>b.length||v.getUint32(lo,true)!==0x04034b50)throw new Error('Local ZIP header sai.');
-  var lf=v.getUint16(lo+6,true),lm=v.getUint16(lo+8,true),ls=v.getUint32(lo+18,true),lc=v.getUint32(lo+22,true),ln=v.getUint16(lo+26,true),le=v.getUint16(lo+28,true),start=lo+30+ln+le,bytes=b.slice(start,start+size);
-  if(lf!==0||lm!==0||ls!==size||lc!==crc||ln!==nl||new TextDecoder().decode(b.slice(lo+30,lo+30+ln))!==name||start+size>off||bytes.length!==size||crc32(bytes)!==crc)throw new Error('Local header hoặc CRC32 không khớp: '+name);
+  var lf=v.getUint16(lo+6,true),lm=v.getUint16(lo+8,true),ls=v.getUint32(lo+18,true),lc=v.getUint32(lo+14,true),lu=v.getUint32(lo+22,true),ln=v.getUint16(lo+26,true),le=v.getUint16(lo+28,true),start=lo+30+ln+le,bytes=b.slice(start,start+size);
+  if(lf!==0||lm!==0||ls!==size||lu!==size||lc!==crc||ln!==nl||new TextDecoder().decode(b.slice(lo+30,lo+30+ln))!==name||start+size>off||bytes.length!==size||crc32(bytes)!==crc)throw new Error('Local header hoặc CRC32 không khớp: '+name);
   out[name]=bytes;pos+=46+nl+el+cl;
  }
  if(pos!==off+cdSize)throw new Error('Central directory length không khớp.');return out;

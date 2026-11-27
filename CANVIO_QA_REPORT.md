@@ -833,3 +833,13 @@ Chạy CI thật trên GitHub cho PR #107; thử trên Chrome thật, bàn phím
 - Chromium confirmed the Studio Pro panels and their IDs mount correctly; P239 creation, P240 six-format generation, P241 Vietnamese CSV parsing, and P242 secret scrubbing all passed.
 - The real P242 ZIP round-trip failed because the writer allowed up to 25 MiB of JSON, equal to the reader's maximum uncompressed size per ZIP entry; serialized data URLs/base64 and project metadata could push the actual entry beyond the reader boundary.
 - Export budgets are now deliberately below the reader limit: project JSON <=20 MiB, embedded raw assets <=6 MiB, at most 50 assets and <=8 MiB per data URL; final archive <=64 MiB. Manifest records exact JSON bytes and included asset bytes. Browser acceptance inspects the actual ZIP central directory (STORE method, zero flags, entry size) before passing the same ZIP to the canonical reader and verifying SHA-256.
+
+
+## Sửa lỗi P239–P248 (2026-11-27, kiểm tra cục bộ, chưa chạy trên GitHub CI)
+- P242: không nhập lại được file .canvio vì (1) CVZip gắn cờ tên UTF-8, (2) bộ đọc lấy CRC sai vị trí trong local header. Đã sửa cả hai; bộ đọc vẫn chặt như cũ.
+- P240: chữ trong SVG nay tự xuống dòng và thu nhỏ theo khung; `overflow` tính theo bố cục chữ.
+- P239: nút "Mở" nạp nội dung vào Poster Studio, Dàn trang (có khôi phục), Website Engine, Video Studio.
+- P246: mở link chia sẻ hiện bản chỉ đọc (chỉ dùng textContent); giới hạn dữ liệu 60.000 ký tự.
+- Test: 8 assertion Chromium mới, không nới assertion cũ. P239–P248 25/25; Node 11/11; bước nguồn 39/39.
+- 62 bộ browser: 61 đạt khi chạy song song; p133w (đo thời gian) chập chờn cả trên bản chưa sửa, chạy riêng đạt 3/3. Chưa chạy hosted acceptance (thiếu fixture GLB cục bộ).
+- Chưa kiểm: P244 với phụ đề thật, P245 với file nhạc, P248 với ComfyUI. P238 chưa có trên main.

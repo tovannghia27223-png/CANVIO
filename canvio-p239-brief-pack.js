@@ -25,7 +25,61 @@ function build(brief,opts){
  return{ok:true,id:id,documents:docs,projectId:p.id,brand:brand};
 }
 function read(){var p=project(false);return p&&p.documents&&p.documents.briefPack||null;}
-function open(kind){var p=read(),doc=p&&p.documents&&p.documents[kind];if(!doc)return{ok:false,error:'Chưa có tài liệu '+kind+'.'};var route={poster:'poster',social:'poster',slides:'layoutFoundry',website:'website',storyboard:'videoEngine'}[kind]||'poster';try{if(w.CV&&CV.go)CV.go(route);}catch(e){}return{ok:true,kind:kind,document:doc,route:route};}
+function copy(v){return JSON.parse(JSON.stringify(v));}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function sleep(ms){return new Promise(function(r){w.setTimeout(r,ms);});}
+async function waitFor(test){for(var i=0;i<80;i++){try{if(test())return true;}catch(e){}await sleep(100);}return false;}
+function hex(v,fallback){return/^#[0-9a-f]{6}$/i.test(v||'')?String(v).toLowerCase():fallback;}
+function posterDoc(pack,kind){
+ var src=pack.documents.poster,primary=hex(pack.brand.primary,'#f83e9f'),ink=hex(pack.brand.secondary,'#20172b');
+ var pal={id:'canvio-brief-pack',name:'CANVIO · Brief Pack',mood:'Bộ nhận diện của dự án',tags:['canvio'],c:{bg1:'#ffffff',bg2:'#f6f4f9',ink:ink,primary:primary,accent:primary,muted:'#5f6f86'}},list=w.CV.palettes;
+ if(list){var i=list.findIndex(function(x){return x.id===pal.id;});if(i>=0)list[i]=pal;else list.push(pal);}
+ var el=function(type){return(src.elements.filter(function(e){return e.type===type;})[0]||{}).text||'';},square=kind==='social';
+ return w.CV.designer.build({w:440,h:square?440:550,ratio:square?'square':'portrait',palette:list?pal.id:'indigo',style:'corporate',raw:pack.brief,headline:String(src.title).slice(0,70),bodyText:el('body').slice(0,180),tagText:el('eyebrow').slice(0,40),ctaText:'Liên hệ',brandName:el('eyebrow').slice(0,40),variant:square?1:0,name:square?'Bài đăng':'Poster'});
+}
+var layoutBefore=null;
+async function open(kind){
+ var pack=read(),doc=pack&&pack.documents&&pack.documents[kind];if(!doc)return{ok:false,error:'Chưa có tài liệu '+kind+'.'};
+ var done=function(route,msg){return{ok:true,kind:kind,route:route,message:msg};},fail=function(msg){return{ok:false,error:msg};};
+ if(!w.CV||!CV.go)return fail('Ứng dụng chưa tải xong.');
+ if(kind==='poster'||kind==='social'){
+  CV.go('poster');if(!await waitFor(function(){return CV.poster&&CV.poster.doc&&CV.designer;}))return fail('Poster Studio chưa sẵn sàng.');
+  var next=posterDoc(pack,kind);CV.poster.history.push();CV.poster.setDoc(next);
+  return done('poster','Đã mở trong Poster Studio. Bấm Hoàn tác để quay lại thiết kế trước.');
+ }
+ if(kind==='slides'){
+  CV.go('layoutFoundry');var api=function(){return w.CVNativeEngines&&CVNativeEngines.layout;};
+  if(!await waitFor(function(){return api()&&d.getElementById('lfColor');}))return fail('Dàn trang chưa sẵn sàng.');
+  var seen='',still=0;for(var t=0;t<40&&still<6;t++){await sleep(200);var now=api().snapshotState();still=now===seen?still+1:0;seen=now;}
+  if(!w.confirm('Mở slide của bộ sẽ thay tài liệu đang có trong Dàn trang. Tiếp tục?'))return fail('Đã huỷ, tài liệu được giữ nguyên.');
+  var before={state:api().snapshotState(),color:d.getElementById('lfColor').value},stamp=Date.now().toString(36);
+  var pages=doc.slides.map(function(s,i){return{id:'p239-'+stamp+i,html:(i?'<h2>':'<h1>')+esc(s.title)+(i?'</h2>':'</h1>')+String(s.body||'').split('\n').map(function(l){return'<p>'+esc(l)+'</p>';}).join('')};});
+  d.getElementById('lfColor').value=hex(pack.brand.primary,'#f83e9f');
+  if(!api().restoreState({pages:pages,active:0}))return fail('Dàn trang từ chối tài liệu.');
+  layoutBefore=before;await sleep(600);
+  if(JSON.parse(api().snapshotState()).pages.length!==pages.length)return fail('Dàn trang vừa tự tải lại tài liệu. Hãy bấm “Mở” lần nữa.');
+  return done('layoutFoundry','Đã mở slide trong Dàn trang.');
+ }
+ if(kind==='website'){
+  if(!w.CVLandingStudioP166)return fail('Website Engine chưa sẵn sàng.');
+  var hero=doc.sections[0]||{},r=await CVLandingStudioP166.sendToWebsite({name:String(doc.title).slice(0,40),headline:doc.title,subheadline:hero.body||'',cta:hero.cta||'Liên hệ',brief:pack.brief,color:hex(pack.brand.primary,'#f83e9f')}).catch(function(e){return{ok:false,error:String(e&&e.message||e)};});
+  return r&&r.ok?done('website','Đã thêm trang vào Website Engine (nội dung cũ được giữ).'):fail(r&&r.error||'Website Engine chưa nhận được trang.');
+ }
+ if(kind==='storyboard'){
+  var KEY='canvio5:media_video_project_v1',cur=null;try{cur=JSON.parse(w.localStorage.getItem(KEY)||'null');}catch(e){}
+  if(cur&&cur.shots&&cur.shots.length&&!w.confirm('Video Studio đang có '+cur.shots.length+' shot. Thay bằng storyboard của bộ?'))return fail('Đã huỷ, storyboard cũ được giữ nguyên.');
+  var id=Date.now().toString(36),board={name:String(doc.title).slice(0,60)+' — Video',ratio:'9:16',resolution:1080,media:[],updated:new Date().toISOString(),shots:doc.shots.map(function(s,i){return{id:'m_p239'+id+i,title:'Shot '+String(i+1).padStart(2,'0'),description:s.title+' — '+s.description,duration:s.duration,mediaId:null,transition:i?'fade':'none',voice:s.description};})};
+  try{w.localStorage.setItem(KEY,JSON.stringify(board));}catch(e){return fail('Bộ nhớ trình duyệt đã đầy.');}
+  CV.go('videoStudio');return done('videoStudio','Đã mở storyboard trong Video Studio.');
+ }
+ return fail('Không rõ loại sản phẩm.');
+}
+function restoreLayout(){
+ var api=w.CVNativeEngines&&CVNativeEngines.layout;if(!layoutBefore||!api)return false;
+ var picker=d.getElementById('lfColor'),now=picker&&picker.value;if(picker)picker.value=layoutBefore.color;
+ var ok=api.restoreState(layoutBefore.state);if(ok)layoutBefore=null;else if(picker)picker.value=now;
+ var b=d.getElementById('cv239-restore');if(b)b.hidden=!layoutBefore;return ok;
+}
 function mount(){
  var page=d.getElementById('page-projectVault');if(!page)return false;
  if(d.getElementById('cvstudio-pro-p239')){try{if(w.CVStudioProUI239248&&w.CVStudioProUI239248.mountNow)w.CVStudioProUI239248.mountNow();}catch(e){}return true;}
@@ -37,8 +91,8 @@ function mount(){
  card.querySelector('#cv239-build').addEventListener('click',function(){var b=this;b.disabled=true;var t=Date.now(),r=build(inp.value);card.querySelector('#cv239-status').textContent=r.ok?'Đã tạo 5 tài liệu trong '+Math.round((Date.now()-t))+' ms.':'Chưa tạo được: '+r.error;b.disabled=false;renderDocs();});
  renderDocs();try{if(w.CVStudioProUI239248&&w.CVStudioProUI239248.mountNow)w.CVStudioProUI239248.mountNow();}catch(e){}return true;
 }
-function renderDocs(){var box=d.getElementById('cv239-docs'),p=read();if(!box)return;box.innerHTML='';['poster','social','slides','website','storyboard'].forEach(function(k){var doc=p&&p.documents&&p.documents[k],b=d.createElement('button');b.type='button';b.className='btn btn-soft sm';b.textContent=(doc? 'Mở ':'Tạo ') + ({poster:'Poster',social:'Bài đăng',slides:'Slide',website:'Website/CV',storyboard:'Storyboard'}[k]);b.disabled=!doc;b.addEventListener('click',function(){open(k);});box.appendChild(b);});}
-var api={version:'239.1.0',build:build,read:read,open:open,mount:mount,tests:function(){var p=read();return{api:true,fiveKinds:['poster','social','slides','website','storyboard'].every(function(k){return !!(p&&p.documents&&p.documents[k]);}),projectScoped:!!(project(false)&&project(false).documents),noNetwork:true};}};
+function renderDocs(){var box=d.getElementById('cv239-docs'),p=read();if(!box)return;box.innerHTML='';['poster','social','slides','website','storyboard'].forEach(function(k){var doc=p&&p.documents&&p.documents[k],b=d.createElement('button');b.type='button';b.className='btn btn-soft sm';b.textContent=(doc? 'Mở ':'Tạo ') + ({poster:'Poster',social:'Bài đăng',slides:'Slide',website:'Website/CV',storyboard:'Storyboard'}[k]);b.disabled=!doc;b.addEventListener('click',function(){b.disabled=true;open(k).then(function(r){var m=r.ok?r.message:r.error,st=d.getElementById('cv239-status');if(st)st.textContent=m;if(w.CV&&CV.toast)CV.toast(m);b.disabled=false;var rb=d.getElementById('cv239-restore');if(rb)rb.hidden=!layoutBefore;});});box.appendChild(b);});if(!d.getElementById('cv239-restore')){var rb=d.createElement('button');rb.id='cv239-restore';rb.type='button';rb.className='btn btn-ghost sm';rb.textContent='Khôi phục tài liệu Dàn trang trước đó';rb.hidden=!layoutBefore;rb.onclick=restoreLayout;box.parentNode.insertBefore(rb,box.nextSibling);}}
+var api={version:'239.1.0',build:build,read:read,open:open,restoreLayout:restoreLayout,mount:mount,tests:function(){var p=read();return{api:true,fiveKinds:['poster','social','slides','website','storyboard'].every(function(k){return !!(p&&p.documents&&p.documents[k]);}),projectScoped:!!(project(false)&&project(false).documents),noNetwork:true};}};
 w.CVBriefPackP239=api;
 if(d.readyState==='loading')d.addEventListener('DOMContentLoaded',function(){var n=0;(function r(){if(!mount()&&++n<80)setTimeout(r,250);})();},{once:true});else setTimeout(mount,0);
 })(window,document);
