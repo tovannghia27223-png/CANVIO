@@ -1,17 +1,17 @@
 {
   "format": "CANVIO_P143_INLINE_SOURCE_INVENTORY",
   "version": 1,
-  "generatedAt": "2026-11-27T12:53:53.285Z",
+  "generatedAt": "2026-11-28T07:32:32.197Z",
   "source": "restored canonical index.html after hosted workflow integration steps",
   "purpose": "Complete script-tag inventory in browser execution order; known global reference detection is heuristic, not a semantic dependency DAG.",
-  "htmlBytes": 6256120,
-  "scriptTagCount": 206,
-  "inlineScriptCount": 206,
+  "htmlBytes": 6485380,
+  "scriptTagCount": 208,
+  "inlineScriptCount": 208,
   "externalScriptCount": 0,
   "moduleScriptCount": 0,
   "asyncScriptCount": 0,
   "deferScriptCount": 0,
-  "uniqueScriptIds": 203,
+  "uniqueScriptIds": 205,
   "duplicateScriptIds": [],
   "modules": [
     {
@@ -82,8 +82,8 @@
       "async": false,
       "defer": false,
       "noModule": false,
-      "bytes": 397487,
-      "sha256": "921efa3bdc45a4f377e9a9fb35b56ec14510c30273c06ec65d25b2996a05d9d1",
+      "bytes": 397622,
+      "sha256": "ba85c47c69b99ab7a4a22aa7764928d48c212a6c394a43fe11b4411d445ae09f",
       "exportedGlobals": [
         "CV",
         "CV190PosterSamples",
@@ -148,209 +148,209 @@
             "name": "__canvio10Keys",
             "count": 1,
             "lines": [
-              3830
+              3833
             ]
           },
           {
             "name": "__cvImg",
             "count": 2,
             "lines": [
-              2829
+              2832
             ]
           },
           {
             "name": "__cvNeedLib",
             "count": 1,
             "lines": [
-              221
+              224
             ]
           },
           {
             "name": "addEventListener",
             "count": 2,
             "lines": [
-              1054,
-              3839
+              1057,
+              3842
             ]
           },
           {
             "name": "AudioContext",
             "count": 1,
             "lines": [
-              3540
+              3543
             ]
           },
           {
             "name": "confirm",
             "count": 2,
             "lines": [
-              3383
+              3386
             ]
           },
           {
             "name": "CV11",
             "count": 1,
             "lines": [
-              229
+              232
             ]
           },
           {
             "name": "CVAudioMix",
             "count": 1,
             "lines": [
-              3767
+              3770
             ]
           },
           {
             "name": "CVEasingP119",
             "count": 1,
             "lines": [
-              3431
+              3434
             ]
           },
           {
             "name": "CVHealth",
             "count": 1,
             "lines": [
-              3617
+              3620
             ]
           },
           {
             "name": "CVMediaOPFSP133",
             "count": 3,
             "lines": [
-              3396,
-              3422,
-              3423
+              3399,
+              3425,
+              3426
             ]
           },
           {
             "name": "CVPhotoTools",
             "count": 5,
             "lines": [
-              3460,
-              3464,
-              3466,
-              3473,
-              3478
+              3463,
+              3467,
+              3469,
+              3476,
+              3481
             ]
           },
           {
             "name": "CVWebsitePublishQC",
             "count": 1,
             "lines": [
-              3383
+              3386
             ]
           },
           {
             "name": "CVZip",
             "count": 1,
             "lines": [
-              2418
+              2421
             ]
           },
           {
             "name": "dispatchEvent",
             "count": 4,
             "lines": [
-              3826,
-              3850,
-              3852,
-              3863
+              3829,
+              3853,
+              3855,
+              3866
             ]
           },
           {
             "name": "grapesjs",
             "count": 1,
             "lines": [
-              3378
+              3381
             ]
           },
           {
             "name": "HRVisual",
             "count": 1,
             "lines": [
-              252
+              255
             ]
           },
           {
             "name": "indexedDB",
             "count": 2,
             "lines": [
-              3197,
-              3395
+              3200,
+              3398
             ]
           },
           {
             "name": "innerHeight",
             "count": 1,
             "lines": [
-              948
+              951
             ]
           },
           {
             "name": "Konva",
             "count": 3,
             "lines": [
-              3345,
               3348,
-              3852
+              3351,
+              3855
             ]
           },
           {
             "name": "MediaRecorder",
             "count": 6,
             "lines": [
-              3249,
-              3721,
-              3730,
-              3731,
-              3769,
-              3885
+              3252,
+              3724,
+              3733,
+              3734,
+              3772,
+              3888
             ]
           },
           {
             "name": "OfflineAudioContext",
             "count": 2,
             "lines": [
-              3540,
-              3583
+              3543,
+              3586
             ]
           },
           {
             "name": "open",
             "count": 1,
             "lines": [
-              2963
+              2966
             ]
           },
           {
             "name": "scrollTo",
             "count": 1,
             "lines": [
-              228
+              231
             ]
           },
           {
             "name": "webkitAudioContext",
             "count": 1,
             "lines": [
-              3540
+              3543
             ]
           },
           {
             "name": "webkitOfflineAudioContext",
             "count": 2,
             "lines": [
-              3540,
-              3583
+              3543,
+              3586
             ]
           },
           {
             "name": "Worker",
             "count": 1,
             "lines": [
-              3527
+              3530
             ]
           }
         ],
@@ -359,46 +359,46 @@
             "name": "CV",
             "count": 19,
             "lines": [
-              3371,
-              3372,
-              3373,
               3374,
+              3375,
+              3376,
               3377,
-              3593
+              3380,
+              3596
             ]
           },
           {
             "name": "LS",
             "count": 50,
             "lines": [
-              197,
               200,
               203,
-              1389,
-              1390,
-              1402
+              206,
+              1392,
+              1393,
+              1405
             ]
           }
         ],
         "writes": [
           {
             "name": "LS",
-            "line": 205,
+            "line": 208,
             "kind": "window.property"
           },
           {
             "name": "CV190PosterSamples",
-            "line": 1224,
+            "line": 1227,
             "kind": "window.property"
           },
           {
             "name": "__canvio10Keys",
-            "line": 3830,
+            "line": 3833,
             "kind": "window.property"
           },
           {
             "name": "CV",
-            "line": 3890,
+            "line": 3893,
             "kind": "window.property"
           }
         ],
@@ -19208,8 +19208,8 @@
       "async": false,
       "defer": false,
       "noModule": false,
-      "bytes": 13914,
-      "sha256": "a3a3c0a21075927b53d6f385ec9b8682b22b424f909f6111ff08a77a90275b0b",
+      "bytes": 14388,
+      "sha256": "e7e40a81dc778148c5c0a83b6be5a847b3ef527e5d6efef5f40f3786c2227a57",
       "exportedGlobals": [],
       "globalDeclarations": [],
       "globalPropertyReads": [],
@@ -19224,20 +19224,20 @@
             "name": "CV",
             "count": 11,
             "lines": [
-              45,
-              47,
+              46,
               48,
-              52,
-              74,
-              95
+              49,
+              53,
+              75,
+              96
             ]
           },
           {
             "name": "CVNativeEngines",
             "count": 2,
             "lines": [
-              52,
-              79
+              53,
+              80
             ]
           }
         ],
@@ -19499,8 +19499,8 @@
       "async": false,
       "defer": false,
       "noModule": false,
-      "bytes": 6883,
-      "sha256": "19946d4975055ea18a918b80645611435a0c41ac25bff42da5c0d2c7d07b6825",
+      "bytes": 6940,
+      "sha256": "3212dba38e6ada28d2e7ee4bb8bdbab6463c6d887627fa5d066501c00ac982ab",
       "exportedGlobals": [],
       "globalDeclarations": [],
       "globalPropertyReads": [],
@@ -19534,6 +19534,70 @@
       "globalReferenceEvidence": {
         "propertyReads": [],
         "knownReads": [],
+        "writes": [],
+        "scannerLimitations": [
+          "Template literal bodies and interpolation expressions are skipped as one lexical region.",
+          "Destructured globals, alias flow, computed property names, eval and dynamically assembled identifiers are not resolved.",
+          "Top-level bindings are detected only for simple var/let/const/function/class declarations.",
+          "This scanner is lexical evidence, not a JavaScript AST or proof of runtime data flow."
+        ]
+      }
+    },
+    {
+      "order": 206,
+      "id": "canvio-lot238",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 44582,
+      "sha256": "ecbd5b48d3fa66937d27d3e74b21dbc46eee0b1d71619626440af9b5198d3411",
+      "exportedGlobals": [],
+      "globalDeclarations": [],
+      "globalPropertyReads": [],
+      "knownGlobalReads": [],
+      "globalReferenceEvidence": {
+        "propertyReads": [],
+        "knownReads": [],
+        "writes": [],
+        "scannerLimitations": [
+          "Template literal bodies and interpolation expressions are skipped as one lexical region.",
+          "Destructured globals, alias flow, computed property names, eval and dynamically assembled identifiers are not resolved.",
+          "Top-level bindings are detected only for simple var/let/const/function/class declarations.",
+          "This scanner is lexical evidence, not a JavaScript AST or proof of runtime data flow."
+        ]
+      }
+    },
+    {
+      "order": 207,
+      "id": "canvio-lot249",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 183938,
+      "sha256": "ad37a970de4a9c0d995bb3c8f4e2c7f5302bccb3474355091e9da73b37c119d4",
+      "exportedGlobals": [],
+      "globalDeclarations": [],
+      "globalPropertyReads": [],
+      "knownGlobalReads": [
+        "CV"
+      ],
+      "globalReferenceEvidence": {
+        "propertyReads": [],
+        "knownReads": [
+          {
+            "name": "CV",
+            "count": 4,
+            "lines": [
+              147,
+              151,
+              153
+            ]
+          }
+        ],
         "writes": [],
         "scannerLimitations": [
           "Template literal bodies and interpolation expressions are skipped as one lexical region.",
