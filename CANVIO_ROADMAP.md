@@ -1691,3 +1691,28 @@ Chạy CI thật trên GitHub cho PR #107; thử trên Chrome thật, bàn phím
 ### P242 ZIP reader/writer budget alignment — 2026-11-26
 - Export now targets a 20 MiB project JSON ceiling, 6 MiB aggregate asset bytes, 50 assets maximum and 64 MiB archive ceiling, staying strictly beneath the reader's 25 MiB per-entry boundary.
 - Real browser acceptance inspects the ZIP Central Directory (method/flags/size) before canonical re-read and SHA-256 comparison.
+
+
+## P238 — Trợ lý thiết kế trong editor (2026-11-26 · candidate)
+- Module `canvio-p238-assistant.js` (`CVAssistantP238`, lot `canvio-lot238`). Nút "✦ Trợ lý" đứng đầu hàng công cụ của shell Poster Studio và Video Engine; khung chat nổi bên phải (mobile: gần toàn màn hình).
+- Luồng bắt buộc: yêu cầu → kế hoạch JSON `{v, editor, actions:[{op,id,value}]}` → `validate()` → hiển thị cũ → mới → người dùng bấm "Áp dụng" → một bước hoàn tác. Không có đường tự áp dụng.
+- Phạm vi: đối tượng đang chọn; Poster cho phép mọi lớp không khoá, đang hiện khi người dùng ghi "tất cả/toàn bộ". Video chỉ một clip đang chọn.
+- Thao tác Poster: nội dung, màu chữ, màu nền, cỡ, đậm, phông, canh chữ, vị trí, độ rõ, bo góc. Video: nội dung (clip chữ), tên, bắt đầu, thời lượng.
+- Owner: Poster ghi qua `snapshotState`/`restoreState` (một mục History, có autosave); Video qua `select` + trường Inspector + `apply`. Không ghi thẳng vào clip/lớp. Ngoại lệ: `getLayers()` của Poster được gọi để cấp id cho lớp còn thiếu.
+- An toàn: kế hoạch có một thao tác sai bị từ chối toàn bộ (op lạ, id ngoài phạm vi, trường lạ, sai kiểu/miền giá trị, quá 40 thao tác); kế hoạch cũ (đối tượng đã đổi/khoá) bị từ chối; nút hoàn tác trong khung chỉ chạy khi chưa có thay đổi mới hơn.
+- Tầng: quy tắc tiếng Việt chạy không cần mạng. AI là tuỳ chọn (ô "Dùng AI…", mặc định TẮT, khoá `canvio.p238.ai`), đi qua `CVOrchestratorP128` (local → Gemini miễn phí); kết quả AI qua cùng bộ kiểm tra.
+- Gộp với P237: câu là lệnh editor (thêm, xuất…) chỉ hiện nút "Chạy lệnh".
+- Bài học UI: nút trong `.cv231-tools` bị CSS cũ đặt `font-size:0` và màu `!important`; cần selector theo ID. `--cv-accent-ink` là màu chữ hồng đậm trên nền nhạt, không phải màu chữ trên nền accent.
+- Giới hạn: quy tắc "rút gọn" chỉ giữ vế đầu; viết lại sáng tạo cần AI; chưa có trợ lý cho Pixel/Luma/Clarity/Dàn trang; clip video chưa đổi được màu/cỡ chữ vì owner chưa hỗ trợ; AI thật chưa thử (test dùng bộ xử lý giả).
+
+## P249 — Mẫu poster mới cho Brief Pack (2026-11-28 · candidate)
+- Module `canvio-p249-poster-art.js` (`CVPosterArtP249`, lot `canvio-lot249`). `make(brief, variant, {square,color})` trả tài liệu Poster gồm lớp chỉnh được (rect, text, ellipse, image); `CVBriefPackP239` dùng nó cho Poster và Bài đăng.
+- Ba bố cục (Rực rỡ, Tạp chí, Đậm chất), bảy chủ đề nhận theo từ khoá (sữa, đồ ăn uống, tuyển dụng, giáo dục, giảm giá, công nghệ, chung), hình minh hoạ và biểu tượng vẽ riêng cho CANVIO.
+- Phông nhúng offline (Anton, Montserrat, Lora; tập con Việt + Latin; SIL OFL), khoá `cvDisplay`, `cvText`, `cvAccent`. Bước CI vá `var FONTS` để Poster nhận ba khoá này. Xuất PNG/SVG nhúng `@font-face` qua `window.__cvImg`.
+- Ảnh sản phẩm: PNG/JPG/WebP ≤15MB, chỉ giữ trong phiên đang mở.
+- Bài học UI: P151 contrast guard từng đổi màu chữ trong ảnh xem trước; ảnh xem trước thiết kế phải có `data-cvg-skip`. Anton cần `lineHeight` 1.2 để dấu tiếng Việt không đè nhau.
+- Giới hạn: câu chữ lấy từ brief, thiếu ý thì dùng câu mẫu theo chủ đề (ví dụ "Giao tận nơi") nên người dùng phải kiểm lại; chưa có AI viết nội dung; Slide, Website, Storyboard chưa đổi giao diện.
+
+## Sửa kèm (2026-11-28)
+- P248: danh sách mô hình xuống dòng đúng.
+- P239: nút khôi phục bố cục chỉ hiện khi có bản để khôi phục.

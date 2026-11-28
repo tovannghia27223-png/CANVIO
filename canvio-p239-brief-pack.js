@@ -20,7 +20,7 @@ function build(brief,opts){
   website:{id:id+'-website',kind:'website',title:title,meta:{description:summary.slice(0,155)},sections:[{id:'hero',type:'hero',heading:title,body:summary,cta:'Liên hệ'},{id:'about',type:'content',heading:'Bối cảnh',body:brief},{id:'benefits',type:'list',heading:'Giá trị chính',items:['Thông điệp rõ ràng','Triển khai nhất quán','Đo lường được kết quả']},{id:'contact',type:'contact',heading:'Bước tiếp theo',body:'Trao đổi để xác nhận phạm vi và kế hoạch'}],theme:{primary:primary,secondary:secondary,fontFamily:font},createdAt:new Date().toISOString()},
   storyboard:{id:id+'-storyboard',kind:'storyboard',title:title,shots:[{title:'Mở cảnh',duration:4,description:'Thiết lập bối cảnh và vấn đề',camera:'wide'},{title:'Nêu insight',duration:5,description:summary,camera:'medium'},{title:'Giải pháp',duration:6,description:'Trình bày thông điệp và lợi ích',camera:'close-up'},{title:'Kết thúc',duration:4,description:'CTA và nhận diện thương hiệu',camera:'hero'}],createdAt:new Date().toISOString()}
  };
- p.documents=p.documents||{};p.documents.briefPack={version:1,id:id,brief:brief,brand:{primary:primary,secondary:secondary,fontFamily:font},documents:docs,createdAt:new Date().toISOString()};
+ p.documents=p.documents||{};p.documents.briefPack={version:1,id:id,brief:brief,brand:{custom:!!(brand.primary||brand.primaryColor),primary:primary,secondary:secondary,fontFamily:font},documents:docs,createdAt:new Date().toISOString()};
  try{if(w.CVCreativeCore.capture)w.CVCreativeCore.capture('project');}catch(e){}
  return{ok:true,id:id,documents:docs,projectId:p.id,brand:brand};
 }
@@ -31,6 +31,7 @@ function sleep(ms){return new Promise(function(r){w.setTimeout(r,ms);});}
 async function waitFor(test){for(var i=0;i<80;i++){try{if(test())return true;}catch(e){}await sleep(100);}return false;}
 function hex(v,fallback){return/^#[0-9a-f]{6}$/i.test(v||'')?String(v).toLowerCase():fallback;}
 function posterDoc(pack,kind){
+ var art=w.CVPosterArtP249;if(art)return art.make(pack.brief,art.selected(),{square:kind==='social',color:pack.brand.custom?pack.brand.primary:''});
  var src=pack.documents.poster,primary=hex(pack.brand.primary,'#f83e9f'),ink=hex(pack.brand.secondary,'#20172b');
  var pal={id:'canvio-brief-pack',name:'CANVIO · Brief Pack',mood:'Bộ nhận diện của dự án',tags:['canvio'],c:{bg1:'#ffffff',bg2:'#f6f4f9',ink:ink,primary:primary,accent:primary,muted:'#5f6f86'}},list=w.CV.palettes;
  if(list){var i=list.findIndex(function(x){return x.id===pal.id;});if(i>=0)list[i]=pal;else list.push(pal);}
@@ -78,7 +79,7 @@ function restoreLayout(){
  var api=w.CVNativeEngines&&CVNativeEngines.layout;if(!layoutBefore||!api)return false;
  var picker=d.getElementById('lfColor'),now=picker&&picker.value;if(picker)picker.value=layoutBefore.color;
  var ok=api.restoreState(layoutBefore.state);if(ok)layoutBefore=null;else if(picker)picker.value=now;
- var b=d.getElementById('cv239-restore');if(b)b.hidden=!layoutBefore;return ok;
+ var b=d.getElementById('cv239-restore');if(b){b.hidden=!layoutBefore;b.style.display=layoutBefore?'':'none';}return ok;
 }
 function mount(){
  var page=d.getElementById('page-projectVault');if(!page)return false;
@@ -91,7 +92,7 @@ function mount(){
  card.querySelector('#cv239-build').addEventListener('click',function(){var b=this;b.disabled=true;var t=Date.now(),r=build(inp.value);card.querySelector('#cv239-status').textContent=r.ok?'Đã tạo 5 tài liệu trong '+Math.round((Date.now()-t))+' ms.':'Chưa tạo được: '+r.error;b.disabled=false;renderDocs();});
  renderDocs();try{if(w.CVStudioProUI239248&&w.CVStudioProUI239248.mountNow)w.CVStudioProUI239248.mountNow();}catch(e){}return true;
 }
-function renderDocs(){var box=d.getElementById('cv239-docs'),p=read();if(!box)return;box.innerHTML='';['poster','social','slides','website','storyboard'].forEach(function(k){var doc=p&&p.documents&&p.documents[k],b=d.createElement('button');b.type='button';b.className='btn btn-soft sm';b.textContent=(doc? 'Mở ':'Tạo ') + ({poster:'Poster',social:'Bài đăng',slides:'Slide',website:'Website/CV',storyboard:'Storyboard'}[k]);b.disabled=!doc;b.addEventListener('click',function(){b.disabled=true;open(k).then(function(r){var m=r.ok?r.message:r.error,st=d.getElementById('cv239-status');if(st)st.textContent=m;if(w.CV&&CV.toast)CV.toast(m);b.disabled=false;var rb=d.getElementById('cv239-restore');if(rb)rb.hidden=!layoutBefore;});});box.appendChild(b);});if(!d.getElementById('cv239-restore')){var rb=d.createElement('button');rb.id='cv239-restore';rb.type='button';rb.className='btn btn-ghost sm';rb.textContent='Khôi phục tài liệu Dàn trang trước đó';rb.hidden=!layoutBefore;rb.onclick=restoreLayout;box.parentNode.insertBefore(rb,box.nextSibling);}}
+function renderDocs(){w.setTimeout(function(){var host=d.getElementById('cv239-docs');if(host&&w.CVPosterArtP249)CVPosterArtP249.mount(d.getElementById('cv239-restore')||host);},0);var box=d.getElementById('cv239-docs'),p=read();if(!box)return;box.innerHTML='';['poster','social','slides','website','storyboard'].forEach(function(k){var doc=p&&p.documents&&p.documents[k],b=d.createElement('button');b.type='button';b.className='btn btn-soft sm';b.textContent=(doc? 'Mở ':'Tạo ') + ({poster:'Poster',social:'Bài đăng',slides:'Slide',website:'Website/CV',storyboard:'Storyboard'}[k]);b.disabled=!doc;b.addEventListener('click',function(){b.disabled=true;open(k).then(function(r){var m=r.ok?r.message:r.error,st=d.getElementById('cv239-status');if(st)st.textContent=m;if(w.CV&&CV.toast)CV.toast(m);b.disabled=false;var rb=d.getElementById('cv239-restore');if(rb)rb.hidden=!layoutBefore;rb.style.display=layoutBefore?'':'none';});});box.appendChild(b);});if(!d.getElementById('cv239-restore')){var rb=d.createElement('button');rb.id='cv239-restore';rb.type='button';rb.className='btn btn-ghost sm';rb.textContent='Khôi phục tài liệu Dàn trang trước đó';rb.hidden=!layoutBefore;rb.style.display=layoutBefore?'':'none';rb.onclick=restoreLayout;box.parentNode.insertBefore(rb,box.nextSibling);}}
 var api={version:'239.1.0',build:build,read:read,open:open,restoreLayout:restoreLayout,mount:mount,tests:function(){var p=read();return{api:true,fiveKinds:['poster','social','slides','website','storyboard'].every(function(k){return !!(p&&p.documents&&p.documents[k]);}),projectScoped:!!(project(false)&&project(false).documents),noNetwork:true};}};
 w.CVBriefPackP239=api;
 if(d.readyState==='loading')d.addEventListener('DOMContentLoaded',function(){var n=0;(function r(){if(!mount()&&++n<80)setTimeout(r,250);})();},{once:true});else setTimeout(mount,0);

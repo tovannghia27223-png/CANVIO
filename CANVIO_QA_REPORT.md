@@ -843,3 +843,14 @@ Chạy CI thật trên GitHub cho PR #107; thử trên Chrome thật, bàn phím
 - Test: 8 assertion Chromium mới, không nới assertion cũ. P239–P248 25/25; Node 11/11; bước nguồn 39/39.
 - 62 bộ browser: 61 đạt khi chạy song song; p133w (đo thời gian) chập chờn cả trên bản chưa sửa, chạy riêng đạt 3/3. Chưa chạy hosted acceptance (thiếu fixture GLB cục bộ).
 - Chưa kiểm: P244 với phụ đề thật, P245 với file nhạc, P248 với ComfyUI. P238 chưa có trên main.
+
+
+## P238 — Kết quả kiểm thử (2026-11-26, máy cloud, Chrome headless, chưa chạy trên GitHub CI)
+- `tests/p238/run-p238-browser.py`: 81/81 PASS khi chạy riêng (lặp lại, kể cả 3 tiến trình song song).
+- 38 bước workflow (khôi phục index → source contracts) chạy OK; bỏ qua các bước cài/tải runtime vì không có mạng.
+- Lượt chạy mọi suite (3 song song): 4 FAIL. `p238` lỗi phần chuẩn bị của test khi máy tải nặng (đã sửa: đợi thiết kế khởi động ổn định, lấy id từ đối tượng vừa thêm); `p1455` hết giờ chờ tải xuống và `p133w` lỗi độ phản hồi, cả hai PASS khi chạy riêng; `run-hosted-runtime-acceptance` thiếu GLB fixture ở máy cục bộ.
+- OPEN: GitHub CI cho nhánh P238, thiết bị thật, trình đọc màn hình, AI cục bộ/Gemini thật.
+
+## P249 và ghép P238 — Kết quả kiểm thử (2026-11-28, máy cloud, Chrome headless)
+- `tests/p249/run-p249-browser.py`: 16/16 PASS. `tests/p238/run-p238-browser.py`: 81/81 PASS trên main mới. `tests/p239/run-p239-248-browser.py`: 25/25 PASS.
+- OPEN: thiết bị thật, trình đọc màn hình, AI cục bộ/Gemini thật; GitHub CI xem ở PR.

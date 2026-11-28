@@ -911,6 +911,36 @@ jobs:
           console.log('P239–P248 Studio Pro modules embedded in canonical index.html');
           NODE
 
+      - name: Integrate P238 assistant and P249 poster art
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs=require('node:fs');
+          const file='index.html';
+          let html=fs.readFileSync(file,'utf8');
+          if(!html.includes('cvDisplay:')){
+            const fontMap=/var FONTS = \{(\r?\n)  sans:/;
+            if(!fontMap.test(html))throw new Error('Poster font map not found');
+            html=html.replace(fontMap,(m,eol)=>'var FONTS = {'+eol+"  cvDisplay: \"'CVAnton', Impact, sans-serif\","+eol+"  cvText: \"'CVMont', 'Segoe UI', sans-serif\","+eol+"  cvAccent: \"'CVLora', Georgia, serif\","+eol+'  sans:');
+          }
+          const modules=[
+            ['canvio-p238-assistant.js','canvio-lot238',/CVAssistantP238\s*=/],
+            ['canvio-p249-poster-art.js','canvio-lot249',/CVPosterArtP249\s*=/]
+          ];
+          for(const [path,id,contract] of modules){
+            const source=fs.readFileSync(path,'utf8').trim();
+            if(!contract.test(source))throw new Error(id+' source contract missing');
+            const re=new RegExp('(<script\\b(?=[^>]*\\bid="'+id+'"[^>]*)[^>]*>)[\\s\\S]*?(<\\/script\\s*>)','i');
+            const tag='<script id="'+id+'">\n'+source+'\n</script>';
+            if(re.test(html))html=html.replace(re,()=>tag);
+            else{const at=html.lastIndexOf('</body>');if(at<0)throw new Error('index.html has no closing body tag');html=html.slice(0,at)+tag+'\n'+html.slice(at);}
+            if((html.match(new RegExp('id="'+id+'"','g'))||[]).length!==1)throw new Error(id+' embedded lot duplicate/missing');
+          }
+          fs.writeFileSync(file,html,'utf8');
+          console.log('P238 and P249 embedded in canonical index.html');
+          NODE
+
       - name: Extract and syntax-check integrated modules and workers
         run: |
           set -euo pipefail
@@ -1160,6 +1190,8 @@ jobs:
           /tmp/canvio-playwright/bin/python tests/p236/run-p236-browser.py
           /tmp/canvio-playwright/bin/python tests/p237/run-p237-browser.py
           /tmp/canvio-playwright/bin/python tests/p239/run-p239-248-browser.py
+          /tmp/canvio-playwright/bin/python tests/p238/run-p238-browser.py
+          /tmp/canvio-playwright/bin/python tests/p249/run-p249-browser.py
           /tmp/canvio-playwright/bin/python tests/p160/run-p160-166-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p114n-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p150-browser.py
