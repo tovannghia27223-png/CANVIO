@@ -1,14 +1,14 @@
 {
   "format": "CANVIO_P143_STYLE_TEMPLATE_LOADER_INVENTORY",
   "version": 1,
-  "generatedAt": "2026-11-28T09:38:25.381Z",
+  "generatedAt": "2026-11-28T11:07:50.494Z",
   "source": "restored canonical index.html after all workflow-managed module integration steps",
   "purpose": "Inventory inline styles, template elements, dynamic resource-loader call sites and lexical global-reference ordering candidates. Global references are not a human-reviewed semantic boot-order or runtime data-flow graph.",
-  "htmlBytes": 6485380,
+  "htmlBytes": 6528558,
   "styles": {
-    "blockCount": 123,
+    "blockCount": 125,
     "inlineStyleAttributeCount": 1734,
-    "totalStyleBytes": 449672,
+    "totalStyleBytes": 450884,
     "blocks": [
       {
         "order": 0,
@@ -4277,6 +4277,43 @@
         "type": "text/css",
         "bytes": 8,
         "sha256": "8c840b399fdbed47f3ea87ca30c5d71ca55a334cfdb4fbafe946940034ab2eee",
+        "selectorCount": 0,
+        "selectors": []
+      },
+      {
+        "order": 123,
+        "id": null,
+        "media": null,
+        "type": "text/css",
+        "bytes": 1203,
+        "sha256": "28b44a9ef420fc994fd4928150de066ac6344e5f21aaa829d7f5fab65bce36cc",
+        "selectorCount": 16,
+        "selectors": [
+          "'+css+'*",
+          "body",
+          ".in",
+          "header",
+          "header .in",
+          "header .tx",
+          "header img",
+          "h1",
+          "h2",
+          ".cta,button",
+          "section:nth-of-type(even)",
+          "ul",
+          "li",
+          "form",
+          "input,textarea",
+          "p"
+        ]
+      },
+      {
+        "order": 124,
+        "id": null,
+        "media": null,
+        "type": "text/css",
+        "bytes": 9,
+        "sha256": "ca8d23dc9c26d1362b9870d890d18e79bce2a241842cbcae36ffbd665510b93d",
         "selectorCount": 0,
         "selectors": []
       }
@@ -14693,11 +14730,11 @@
     "blocks": []
   },
   "dynamicLoaders": {
-    "count": 88,
+    "count": 90,
     "countsByKind": {
       "dynamic-script-element": 4,
       "dedicated-worker": 5,
-      "dynamic-fetch": 60,
+      "dynamic-fetch": 62,
       "document-write": 3,
       "script-src-assignment": 4,
       "dynamic-import": 12
@@ -15318,18 +15355,32 @@
         "scriptId": "canvio-lot248",
         "offset": 2872,
         "excerpt": "mer=w.setTimeout(function(){ctrl.abort();},10000); var res=await w.fetch(origin+'/models/'+encodeURIComponent(folder),{method:'GET',signal:ctrl?ctrl.signal:undefined}); if(timer)w.clearTimeout(timer);"
+      },
+      {
+        "kind": "dynamic-fetch",
+        "scriptOrder": 208,
+        "scriptId": "canvio-lot250",
+        "offset": 14863,
+        "excerpt": "\"return=minimal\"};if(K.indexOf(\"sb_\")!==0)h.Authorization=\"Bearer \"+K;fetch(U+\"/rest/v1/cv_leads\",{method:\"POST\",headers:h,body:JSON.stringify(Object.fromEntries(new FormData(f)))}).then(function(r){if(!r.ok)th"
+      },
+      {
+        "kind": "dynamic-fetch",
+        "scriptOrder": 208,
+        "scriptId": "canvio-lot250",
+        "offset": 26113,
+        "excerpt": "omfy){try{var base=CVComfyP120P126.normalizeBase(comfy),j=await(await fetch(base+'/system_stats')).json(),dev=j.devices&&j.devices[0];if(dev&&dev.vram_total){out.vramGB=+(dev.vram_total/1073741824).toFixed(1);o"
       }
     ]
   },
   "dependencyCandidates": {
-    "count": 533,
+    "count": 535,
     "confidence": "lexical-static-order-candidate-not-semantic",
     "summary": {
-      "staticReadReferenceCount": 809,
-      "resolvedEdgeCount": 533,
+      "staticReadReferenceCount": 811,
+      "resolvedEdgeCount": 535,
       "unresolvedReferenceCount": 40,
       "sameScriptReferenceCount": 236,
-      "ambiguousMultiWriterEdges": 93,
+      "ambiguousMultiWriterEdges": 94,
       "providerGlobals": 314
     },
     "edges": [
@@ -24509,6 +24560,26 @@
         ]
       },
       {
+        "global": "CV",
+        "fromOrder": 78,
+        "fromId": null,
+        "fromSha256": "343fefe667308dc1567c010a54018d9a0f6f4c8d90dd008f0714a4bb0ccc46a8",
+        "providerKind": "window-or-globalThis-assignment",
+        "toOrder": 208,
+        "toId": "canvio-lot250",
+        "toSha256": "e28c1bc4c07ddcb098ad35c6e9987069576e96face882c5fc8becd49709c89a8",
+        "priorProviderCount": 2,
+        "priorProviderOrders": [
+          1,
+          78
+        ],
+        "executionOrder": "provider-before-consumer",
+        "confidence": "lexical-multiple-prior-writers-last-in-order",
+        "evidenceKinds": [
+          "known-global-identifier-read"
+        ]
+      },
+      {
         "global": "CANVIOPhaseSuite",
         "fromOrder": 79,
         "fromId": "canvio-phase-completion-suite",
@@ -25744,6 +25815,25 @@
         "confidence": "lexical-single-prior-provider",
         "evidenceKinds": [
           "window-property-reference"
+        ]
+      },
+      {
+        "global": "CVComfyP120P126",
+        "fromOrder": 179,
+        "fromId": "canvio-lot120126",
+        "fromSha256": "8b3d78a3ba43126ec6a7c8e8895ae9e27b22ece8e305b27a3245e07125444114",
+        "providerKind": "window-or-globalThis-assignment",
+        "toOrder": 208,
+        "toId": "canvio-lot250",
+        "toSha256": "e28c1bc4c07ddcb098ad35c6e9987069576e96face882c5fc8becd49709c89a8",
+        "priorProviderCount": 1,
+        "priorProviderOrders": [
+          179
+        ],
+        "executionOrder": "provider-before-consumer",
+        "confidence": "lexical-single-prior-provider",
+        "evidenceKinds": [
+          "known-global-identifier-read"
         ]
       }
     ],
