@@ -854,3 +854,8 @@ Chạy CI thật trên GitHub cho PR #107; thử trên Chrome thật, bàn phím
 ## P249 và ghép P238 — Kết quả kiểm thử (2026-11-28, máy cloud, Chrome headless)
 - `tests/p249/run-p249-browser.py`: 16/16 PASS. `tests/p238/run-p238-browser.py`: 81/81 PASS trên main mới. `tests/p239/run-p239-248-browser.py`: 25/25 PASS.
 - OPEN: thiết bị thật, trình đọc màn hình, AI cục bộ/Gemini thật; GitHub CI xem ở PR.
+
+
+## P250 — Kết quả kiểm thử (2026-11-28, máy cloud, Chrome headless)
+- `tests/p250/run-p250-browser.py`: 29/29 PASS (dữ liệu giả lập: WAV tổng hợp, Supabase giả).
+- Toàn bộ suite và GitHub CI: xem PR.

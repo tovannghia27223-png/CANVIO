@@ -88,7 +88,12 @@ with sync_playwright() as p:
     if not details.evaluate('(el)=>el.open'):
         details.locator('summary').click()
     page.locator('#cv119v-select').wait_for(state='visible',timeout=30000)
-    page.select_option('#cv119v-select','motion')
+    try:
+        page.select_option('#cv119v-select','motion')
+    except Exception:
+        # diagnostics only: report why the control is hidden, then fail as before
+        print('P119V_HIDDEN',page.evaluate("""()=>{const o=[];let n=document.getElementById('cv119v-select');while(n&&n!==document.body){const c=getComputedStyle(n),r=n.getBoundingClientRect();o.push([n.tagName,n.id,String(n.className).slice(0,60),c.display,c.visibility,Math.round(r.width),Math.round(r.height),n.open===undefined?'':n.open]);n=n.parentElement}return {page:(document.querySelector('.page.active')||{}).id,count:document.querySelectorAll('#cv119v-select').length,details:document.querySelectorAll('#vtProps details').length,chain:o}}"""),flush=True)
+        raise
     checks['customMotionCurveLoaded']=page.evaluate("""()=>{
       const v=document.getElementById('vtKFEasing').value;
       const c=['vtKFCurveX1','vtKFCurveY1','vtKFCurveX2','vtKFCurveY2'].map(id=>Number(document.getElementById(id).value));

@@ -911,7 +911,7 @@ jobs:
           console.log('P239–P248 Studio Pro modules embedded in canonical index.html');
           NODE
 
-      - name: Integrate P238 assistant and P249 poster art
+      - name: Integrate P238 assistant, P249 poster art and P250 completion
         shell: bash
         run: |
           set -euo pipefail
@@ -926,7 +926,8 @@ jobs:
           }
           const modules=[
             ['canvio-p238-assistant.js','canvio-lot238',/CVAssistantP238\s*=/],
-            ['canvio-p249-poster-art.js','canvio-lot249',/CVPosterArtP249\s*=/]
+            ['canvio-p249-poster-art.js','canvio-lot249',/CVPosterArtP249\s*=/],
+            ['canvio-p250-studio-complete.js','canvio-lot250',/CVStudioCompleteP250\s*=/]
           ];
           for(const [path,id,contract] of modules){
             const source=fs.readFileSync(path,'utf8').trim();
@@ -938,7 +939,7 @@ jobs:
             if((html.match(new RegExp('id="'+id+'"','g'))||[]).length!==1)throw new Error(id+' embedded lot duplicate/missing');
           }
           fs.writeFileSync(file,html,'utf8');
-          console.log('P238 and P249 embedded in canonical index.html');
+          console.log('P238, P249 and P250 embedded in canonical index.html');
           NODE
 
       - name: Extract and syntax-check integrated modules and workers
@@ -1192,6 +1193,7 @@ jobs:
           /tmp/canvio-playwright/bin/python tests/p239/run-p239-248-browser.py
           /tmp/canvio-playwright/bin/python tests/p238/run-p238-browser.py
           /tmp/canvio-playwright/bin/python tests/p249/run-p249-browser.py
+          /tmp/canvio-playwright/bin/python tests/p250/run-p250-browser.py
           /tmp/canvio-playwright/bin/python tests/p160/run-p160-166-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p114n-browser.py
           /tmp/canvio-playwright/bin/python tests/p145/run-p150-browser.py

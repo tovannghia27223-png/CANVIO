@@ -1,17 +1,17 @@
 {
   "format": "CANVIO_P143_INLINE_SOURCE_INVENTORY",
   "version": 1,
-  "generatedAt": "2026-11-28T09:38:25.172Z",
+  "generatedAt": "2026-11-28T11:07:50.208Z",
   "source": "restored canonical index.html after hosted workflow integration steps",
   "purpose": "Complete script-tag inventory in browser execution order; known global reference detection is heuristic, not a semantic dependency DAG.",
-  "htmlBytes": 6485380,
-  "scriptTagCount": 208,
-  "inlineScriptCount": 208,
+  "htmlBytes": 6528558,
+  "scriptTagCount": 209,
+  "inlineScriptCount": 209,
   "externalScriptCount": 0,
   "moduleScriptCount": 0,
   "asyncScriptCount": 0,
   "deferScriptCount": 0,
-  "uniqueScriptIds": 205,
+  "uniqueScriptIds": 206,
   "duplicateScriptIds": [],
   "modules": [
     {
@@ -19595,6 +19595,55 @@
               147,
               151,
               153
+            ]
+          }
+        ],
+        "writes": [],
+        "scannerLimitations": [
+          "Template literal bodies and interpolation expressions are skipped as one lexical region.",
+          "Destructured globals, alias flow, computed property names, eval and dynamically assembled identifiers are not resolved.",
+          "Top-level bindings are detected only for simple var/let/const/function/class declarations.",
+          "This scanner is lexical evidence, not a JavaScript AST or proof of runtime data flow."
+        ]
+      }
+    },
+    {
+      "order": 208,
+      "id": "canvio-lot250",
+      "type": "classic",
+      "src": null,
+      "async": false,
+      "defer": false,
+      "noModule": false,
+      "bytes": 43141,
+      "sha256": "e28c1bc4c07ddcb098ad35c6e9987069576e96face882c5fc8becd49709c89a8",
+      "exportedGlobals": [],
+      "globalDeclarations": [],
+      "globalPropertyReads": [],
+      "knownGlobalReads": [
+        "CV",
+        "CVComfyP120P126"
+      ],
+      "globalReferenceEvidence": {
+        "propertyReads": [],
+        "knownReads": [
+          {
+            "name": "CV",
+            "count": 13,
+            "lines": [
+              15,
+              21,
+              84,
+              123,
+              170,
+              265
+            ]
+          },
+          {
+            "name": "CVComfyP120P126",
+            "count": 1,
+            "lines": [
+              247
             ]
           }
         ],

@@ -1716,3 +1716,25 @@ Chạy CI thật trên GitHub cho PR #107; thử trên Chrome thật, bàn phím
 ## Sửa kèm (2026-11-28)
 - P248: danh sách mô hình xuống dòng đúng.
 - P239: nút khôi phục bố cục chỉ hiện khi có bản để khôi phục.
+
+
+## Chốt đợt 1 và đợt hoàn thiện (2026-11-28)
+PR #110 đã merge (`7c67b72`). Trạng thái P240–P248 mới nhất và phần còn mở: xem mục "P250" trong `CANVIO_AI_GUIDE.md`.
+
+
+## P250 — Hoàn thiện Studio Pro (2026-11-28 · candidate)
+Module `canvio-p250-studio-complete.js` (`CVStudioCompleteP250`, lot `canvio-lot250`), chỉ THÊM vào các thẻ sẵn có.
+- P240: 6 khổ PNG giữ phông, hình (canh giữa trên nền kéo giãn; không tự sắp lại bố cục).
+- P241: mẫu `{{cột}}` từ poster đang mở hoặc mẫu thẻ; xem trước; PNG (ZIP) và PDF; dòng lỗi được báo, tối đa 500 dòng, có Huỷ. Chạy trên luồng chính (không dùng web worker); tải ZIP, chưa ghi thẳng vào thư mục P170.
+- Slide, bảng phân cảnh: PDF có thiết kế (ảnh trong PDF, chữ không chọn được). Website: một tệp HTML, biểu mẫu liên hệ Supabase tuỳ chọn (RLS chỉ cho ghi; từ chối khoá bí mật).
+- P242: gói đầy đủ kèm timeline và media video (≤25 MB/tệp, ≤110 MB/gói; tệp vượt được liệt kê); xem dung lượng.
+- P244/P245: nút gọi Whisper, sửa cue, chọn giọng; xếp cảnh theo nhịp (một bước hoàn tác), nối `beatSync`/`autoCut`.
+- P246: ghim góp ý theo lớp, đánh dấu xử lý, xuất/nhập tệp góp ý, so sánh và khôi phục phiên bản.
+- P247: nút cài ứng dụng, kiểm tra ngoại tuyến (PWA có sẵn). P248: đo máy, đọc VRAM từ ComfyUI.
+- Nút "✦ Trọn bộ từ brief" ở trang chủ.
+
+### Chưa làm và lý do
+- P246 cộng tác trực tiếp qua máy chủ: cần dự án Supabase và đăng nhập thật của người dùng để thiết kế RLS và nghiệm thu.
+- P247 tách `index.html`: trái với mô hình một tệp đang dùng, rủi ro boot-order; cần người dùng quyết định.
+- P248 chạy suy luận thử: cần ComfyUI và mô hình thật.
+- Cần nghiệm thu thật: Whisper, giọng đọc, nhạc, xuất bản GitHub, Supabase, ComfyUI, thiết bị.
