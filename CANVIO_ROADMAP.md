@@ -1691,3 +1691,22 @@ Chạy CI thật trên GitHub cho PR #107; thử trên Chrome thật, bàn phím
 ### P242 ZIP reader/writer budget alignment — 2026-11-26
 - Export now targets a 20 MiB project JSON ceiling, 6 MiB aggregate asset bytes, 50 assets maximum and 64 MiB archive ceiling, staying strictly beneath the reader's 25 MiB per-entry boundary.
 - Real browser acceptance inspects the ZIP Central Directory (method/flags/size) before canonical re-read and SHA-256 comparison.
+
+
+## Chốt đợt 1 và việc còn lại (2026-11-28)
+PR #110 (P238, P249, hai lỗi nhỏ) đã merge vào `main` (merge `7c67b72`, bot build `eeab9cb`); CI trên `main` đạt. Mục này thay cho các ghi chú "chưa đẩy GitHub" và "candidate chờ CI" cũ của P238/P249.
+
+Còn dở (P240–P248 đã có trên `main` nhưng phần lớn mới một phần):
+- P241: chưa xuất PNG/PDF hàng loạt.
+- P242: chưa khôi phục trọn media.
+- P243: chưa thử xuất bản thật; chưa có biểu mẫu liên hệ.
+- P244: phụ đề tự động chưa trọn.
+- P245: chưa tự sắp cắt video theo nhịp.
+- P246: chưa cộng tác qua Supabase.
+- P247: chưa tách mã.
+- P248: chưa có chạy thử mô hình.
+- Slide, Website, Storyboard trong Brief Pack chưa đổi giao diện; Studio Pro còn khó tìm (Ctrl+K → "Dự án của tôi").
+- Chưa nghiệm thu: thiết bị thật, giọng nói/nhạc/ComfyUI thật, AI thật, trình đọc màn hình.
+- `run-p133w-browser.py` chập chờn (đo độ phản hồi), không hạ ngưỡng tuỳ tiện.
+
+Đề xuất nếu làm tiếp: P241 + P245, sau đó P246 + P247.
